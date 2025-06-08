@@ -26,7 +26,8 @@
     "project_updates": "Projektaktualisierungen",
     "overview": "Übersicht",
     "workflows": "Arbeitsabläufe",
-    "templates": "Vorlagen"
+    "templates": "Vorlagen",
+    "members_and_teamspaces": "Mitglieder & Teamspaces"
   },
   "updates": {
     "add_update": "Aktualisieren",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Beginnen Sie damit, Projekte mit diesem Teamspace zu verknüpfen.",
-        "description": "Teamspaces verknüpfen Projekte, in denen Teammitglieder sind, sodass Sie nur deren Arbeit, ihren Beitrag zum Fortschritt in diesen Projekten und teamspezifische Arbeitsmetriken sehen können."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Sie haben noch keine Teamspaces verknüpft.",
+          "description": "Teamspace- und Projektbesitzer können den Zugriff auf Projekte verwalten."
+        }
+      },
+      "primary_button": {
+        "text": "Teamspace verknüpfen"
+      },
+      "secondary_button": {
+        "text": "Mehr erfahren"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Teamspace-Name",
+          "members": "Mitglieder",
+          "accountType": "Kontotyp"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Teamspace entfernen"
+            },
+            "confirm": {
+              "title": "{teamspaceName} aus {projectName} entfernen",
+              "description": "Wenn Sie diesen Teamspace aus einem verknüpften Projekt entfernen, verlieren die Mitglieder hier den Zugriff auf das verknüpfte Projekt."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Keine passenden Teamspaces gefunden"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Sie haben einen Teamspace mit diesem Projekt verknüpft.} other {Sie haben # Teamspaces mit diesem Projekt verknüpft.}}",
+            "description": "{additionalCount, plural, =0 {Teamspace {firstTeamspaceName} ist jetzt mit diesem Projekt verknüpft.} other {Teamspace {firstTeamspaceName} und {additionalCount} weitere sind jetzt mit diesem Projekt verknüpft.}}"
+          },
+          "error": {
+            "title": "Das hat nicht funktioniert.",
+            "description": "Versuchen Sie es erneut oder laden Sie diese Seite neu, bevor Sie es erneut versuchen."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Sie haben diesen Teamspace aus diesem Projekt entfernt.",
+            "description": "Teamspace {teamspaceName} wurde aus {projectName} entfernt."
+          },
+          "error": {
+            "title": "Das hat nicht funktioniert.",
+            "description": "Versuchen Sie es erneut oder laden Sie diese Seite neu, bevor Sie es erneut versuchen."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Nach Teamspaces suchen",
+        "info": {
+          "title": "Durch das Hinzufügen eines Teamspaces erhalten alle Teamspace-Mitglieder Zugriff auf dieses Projekt.",
+          "link": "Mehr erfahren"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Sie haben keine Teamspaces zum Verknüpfen.",
+            "description": "Entweder sind Sie nicht in einem Teamspace, den Sie verknüpfen können, oder Sie haben bereits alle verfügbaren Teamspaces verknüpft."
+          },
+          "no_results": {
+            "title": "Das entspricht keinem Ihrer Teamspaces.",
+            "description": "Versuchen Sie einen anderen Begriff oder stellen Sie sicher, dass Sie Teamspaces zum Verknüpfen haben."
+          }
+        },
+        "primary_button": {
+          "text": "Ausgewählte Teamspace(s) verknüpfen"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Ansicht erstellen"
         }
       },
-      "project_view": {
-        "title": "Keines Ihrer verknüpften Projekte hat öffentliche Ansichten.",
-        "description": "Öffentliche Ansichten in verknüpften Projekten werden hier automatisch angezeigt. Um öffentliche Ansichten aus verknüpften Projekten hier zu sehen, stellen Sie sicher, dass diese Projekte öffentliche Ansichten haben, die für alle Projektmitglieder zugänglich sind."
-      },
       "filter": {
         "title": "Keine passenden Ansichten",
         "description": "Keine Ansichten entsprechen den Suchkriterien. \n Erstellen Sie stattdessen eine neue Ansicht."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Erstellen Sie Ihre erste Team-Seite"
         }
-      },
-      "project_page": {
-        "title": "Keines Ihrer verknüpften Projekte hat öffentliche Seiten.",
-        "description": "Öffentliche Seiten in verknüpften Projekten werden hier automatisch angezeigt. Wenn Sie erwarten, hier öffentliche Seiten zu sehen, stellen Sie sicher, dass Ihre verknüpften Projekte öffentliche Seiten haben, die für alle Projektmitglieder verfügbar sind."
       },
       "filter": {
         "title": "Keine passenden Seiten",

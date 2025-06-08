@@ -2,7 +2,7 @@ import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -45,16 +45,19 @@ const Attributes: React.FC<Props> = observer((props) => {
     containerClass = "",
     displayProperties,
   } = props;
-  const projectMembersIds = project.members;
-
+  // store hooks
   const { getUserDetails } = useMember();
   const { t } = useTranslation();
+  const { allowPermissions } = useUserPermissions();
+  // derived values
   const lead = getUserDetails(project.project_lead as string);
-  const { workspaceProjectsPermissions } = useUserPermissions();
-  const isEditingAllowed =
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
+  const projectMembersIds = project.members;
+  const isEditingAllowed = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    project.id
+  );
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();

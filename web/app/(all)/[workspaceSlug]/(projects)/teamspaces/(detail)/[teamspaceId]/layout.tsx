@@ -9,11 +9,11 @@ export default function TeamspaceDetailLayout({ children }: { children: ReactNod
   // router
   const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamSpaceId } = useParams();
   // store hooks
-  const { isUserMemberOfTeamspace, fetchTeamspaceDetails } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, fetchTeamspaceDetails } = useTeamspaces();
   // derived values
   const workspaceSlug = routerWorkspaceSlug!.toString();
   const teamspaceId = routerTeamSpaceId!.toString();
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
 
   // fetching teamspace details
   useSWR(

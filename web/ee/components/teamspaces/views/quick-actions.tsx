@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
@@ -35,17 +35,14 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isOwner = view?.owned_by === data?.id;
-  const isAdmin = view.is_team_view
-    ? allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)
-    : allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, view.project);
+  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
   const canPublishView = isAdmin;
-  const viewDetailLink = view.is_team_view
-    ? `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`
-    : `/${workspaceSlug}/projects/${view.project}/views/${view.id}`;
+  const viewDetailLink = `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`;
+  const isPublishAllowed = false && (isAdmin || isOwner); // TODO: Publish operation is not supported for teamspace views right now
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,
-    !view.is_team_view && (isAdmin || isOwner)
+    isPublishAllowed
   );
 
   const handleCopyText = () =>

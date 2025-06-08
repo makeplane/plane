@@ -25,7 +25,8 @@
     "epics": "Epics",
     "project_updates": "Mises à jour du projet",
     "overview": "Vue d'ensemble",
-    "workflows": "Flux de travail"
+    "workflows": "Flux de travail",
+    "members_and_teamspaces": "Membres et espaces de travail"
   },
   "updates": {
     "add_update": "Ajouter une mise à jour",
@@ -184,10 +185,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Commencez par lier des projets à cet espace d'équipe.",
-        "description": "Les espaces d'équipe relient les projets auxquels les membres de l'équipe participent, vous permettant de voir uniquement leur travail, leur contribution aux progrès dans ces projets et les métriques de travail spécifiques à l'équipe."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Vous n'avez pas encore lié d'espaces d'équipe.",
+          "description": "Les propriétaires d'espaces d'équipe et de projets peuvent gérer l'accès aux projets."
+        }
+      },
+      "primary_button": {
+        "text": "Lier un espace d'équipe"
+      },
+      "secondary_button": {
+        "text": "En savoir plus"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nom de l'espace d'équipe",
+          "members": "Membres",
+          "accountType": "Type de compte"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Supprimer l'espace d'équipe"
+            },
+            "confirm": {
+              "title": "Supprimer {teamspaceName} de {projectName}",
+              "description": "Lorsque vous supprimez cet espace d'équipe d'un projet lié, les membres ici perdront l'accès au projet lié."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Aucun espace d'équipe correspondant trouvé"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Vous avez lié un espace d'équipe à ce projet.} other {Vous avez lié # espaces d'équipe à ce projet.}}",
+            "description": "{additionalCount, plural, =0 {L'espace d'équipe {firstTeamspaceName} est maintenant lié à ce projet.} other {L'espace d'équipe {firstTeamspaceName} et {additionalCount} autres sont maintenant liés à ce projet.}}"
+          },
+          "error": {
+            "title": "Cela n'a pas fonctionné.",
+            "description": "Essayez à nouveau ou rechargez cette page avant de réessayer."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Vous avez supprimé cet espace d'équipe de ce projet.",
+            "description": "L'espace d'équipe {teamspaceName} a été supprimé de {projectName}."
+          },
+          "error": {
+            "title": "Cela n'a pas fonctionné.",
+            "description": "Essayez à nouveau ou rechargez cette page avant de réessayer."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Rechercher des espaces d'équipe",
+        "info": {
+          "title": "L'ajout d'un espace d'équipe donne accès à ce projet à tous les membres de l'espace d'équipe.",
+          "link": "En savoir plus"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Vous n'avez pas d'espaces d'équipe à lier.",
+            "description": "Soit vous n'êtes pas dans un espace d'équipe que vous pouvez lier, soit vous avez déjà lié tous les espaces d'équipe disponibles."
+          },
+          "no_results": {
+            "title": "Cela ne correspond à aucun de vos espaces d'équipe.",
+            "description": "Essayez un autre terme ou assurez-vous d'avoir des espaces d'équipe à lier."
+          }
+        },
+        "primary_button": {
+          "text": "Lier l'espace(s) d'équipe sélectionné(s)"
+        }
       }
     }
   },
@@ -234,10 +308,6 @@
           "text": "Créer une vue"
         }
       },
-      "project_view": {
-        "title": "Aucun de vos projets liés n'a de vues publiques.",
-        "description": "Les vues publiques des projets liés apparaîtront automatiquement ici. Pour voir les vues publiques des projets liés ici, assurez-vous que ces projets ont des vues publiques accessibles à tous les membres du projet."
-      },
       "filter": {
         "title": "Aucune vue correspondante",
         "description": "Aucune vue ne correspond aux critères de recherche. \n Créez plutôt une nouvelle vue."
@@ -252,10 +322,6 @@
         "primary_button": {
           "text": "Créez votre première Page"
         }
-      },
-      "project_page": {
-        "title": "Aucun de vos projets liés n'a de Pages publiques.",
-        "description": "Les Pages publiques des projets liés apparaîtront automatiquement ici. Si vous vous attendez à voir des Pages publiques ici, assurez-vous que vos projets liés ont des Pages publiques disponibles pour tous les membres du projet."
       },
       "filter": {
         "title": "Aucune Page correspondante",

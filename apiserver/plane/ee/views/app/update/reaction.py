@@ -14,7 +14,6 @@ from plane.ee.models import (
     UpdateReaction,
 )
 
-
 class UpdatesReactionViewSet(BaseViewSet):
     serializer_class = UpdateReactionSerializer
     model = UpdateReaction
@@ -27,12 +26,11 @@ class UpdatesReactionViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(update_id=self.kwargs.get("update_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .order_by("-created_at")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
 
     @allow_permission(

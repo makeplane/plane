@@ -20,7 +20,6 @@ from plane.db.models import IssueActivity, IssueComment, CommentReaction, Intake
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
-
 class IssueActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
@@ -35,13 +34,12 @@ class IssueActivityEndpoint(BaseAPIView):
             IssueActivity.objects.filter(issue_id=issue_id)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
+            .accessible_to(request.user.id, slug)
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
@@ -51,12 +49,7 @@ class IssueActivityEndpoint(BaseAPIView):
 
         issue_comments = (
             IssueComment.objects.filter(issue_id=issue_id)
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-                workspace__slug=slug,
-            )
+            .filter(project__archived_at__isnull=True, workspace__slug=slug)
             .filter(**filters)
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
@@ -66,6 +59,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     queryset=CommentReaction.objects.select_related("actor"),
                 )
             )
+            .accessible_to(request.user.id, slug)
         )
 
         if request.GET.get("activity_type", None) == "issue-property":

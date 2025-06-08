@@ -6,7 +6,7 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
@@ -24,15 +24,16 @@ export const ProjectBoardListItem: FC<ProjectBoardListItem> = observer((props) =
   const { workspaceSlug } = useParams();
   // hooks
   const { getProjectById } = useProject();
-  const { workspaceProjectsPermissions } = useUserPermissions();
-
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId);
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const isDragAllowed =
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] &&
-    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserProjectRoles.ADMIN;
+  const isDragAllowed = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId
+  );
   if (!project) return <></>;
 
   useEffect(() => {

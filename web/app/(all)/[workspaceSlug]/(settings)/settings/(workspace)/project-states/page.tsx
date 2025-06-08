@@ -27,16 +27,16 @@ const WorklogsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceInfoBySlug } = useUserPermissions();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   const isFeatureEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_GROUPING");
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Project States` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;

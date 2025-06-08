@@ -1,5 +1,5 @@
 // plane constants
-import { API_BASE_URL, ETeamspaceEntityScope } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 // plane types
 import { TPage, TDocumentPayload } from "@plane/types";
 // helpers;
@@ -16,8 +16,8 @@ export class TeamspacePageService extends APIService {
    * @param teamspaceId
    * @returns
    */
-  async fetchAll(workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope): Promise<TPage[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/?scope=${scope}`)
+  async fetchAll(workspaceSlug: string, teamspaceId: string): Promise<TPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/pages/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

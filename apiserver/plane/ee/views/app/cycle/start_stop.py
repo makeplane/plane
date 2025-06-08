@@ -48,9 +48,7 @@ class CycleStartStopEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     project_id=project_id,
                     project__archived_at__isnull=True,
-                    project__project_projectmember__member=request.user,
-                    project__project_projectmember__is_active=True,
-                ).filter(start_date__lte=timezone.now(), end_date__gte=timezone.now())
+                ).filter(start_date__lte=timezone.now(), end_date__gte=timezone.now()).accessible_to(request.user.id, slug)
 
                 if cycle not in active_cycles:
                     return Response(
@@ -70,12 +68,10 @@ class CycleStartStopEndpoint(BaseAPIView):
                         workspace__slug=slug,
                         project_id=project_id,
                         project__archived_at__isnull=True,
-                        project__project_projectmember__member=request.user,
-                        project__project_projectmember__is_active=True,
                     )
                     .filter(start_date__gt=current_datetime)
                     .order_by("start_date")
-                )
+                ).accessible_to(request.user.id, slug)
 
                 upcoming_first_cycle = upcoming_cycles.first()
 

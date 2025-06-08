@@ -21,7 +21,6 @@ import {
   StatisticsDependencyFilter,
   StatisticsDueByFilter,
   StatisticsLegend,
-  StatisticsScope,
   StatisticsStateGroupFilter,
 } from "./filters";
 
@@ -155,13 +154,6 @@ export const TeamspaceStatisticsRoot: FC<Props> = observer((props) => {
                 {teamspaceStatisticsLoader && ["init-loader", "mutation"].includes(teamspaceStatisticsLoader) && (
                   <Spinner size={14} className="animate-spin flex-shrink-0" />
                 )}
-              </div>
-              <div className={COMMON_FILTER_LIST_CLASSNAME}>
-                <StatisticsScope
-                  value={teamspaceStatisticsFilter.scope}
-                  isLoading={isLoading}
-                  handleFilterChange={(value) => handleTeamspaceStatisticsFilterChange("scope", value)}
-                />
               </div>
             </div>
             <TeamspaceStatisticsMap teamspaceId={teamspaceId} />

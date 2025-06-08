@@ -14,7 +14,6 @@ from plane.db.models import Workspace
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
-
 class CycleUpdatesViewSet(BaseViewSet):
     serializer_class = UpdatesSerializer
     model = EntityUpdates
@@ -29,11 +28,10 @@ class CycleUpdatesViewSet(BaseViewSet):
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .filter(parent__isnull=True)
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .select_related("workspace", "project", "cycle")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 

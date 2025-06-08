@@ -58,7 +58,7 @@ export const TeamspaceAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <Header variant={EHeaderVariant.TERNARY} className="border-none py-0">
+    <Header variant={EHeaderVariant.TERNARY}>
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}

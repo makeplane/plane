@@ -26,7 +26,8 @@
     "project_updates": "프로젝트 업데이트",
     "overview": "오버뷰",
     "workflows": "워크플로우",
-    "templates": "템플릿"
+    "templates": "템플릿",
+    "members_and_teamspaces": "멤버와 팀스페이스"
   },
   "updates": {
     "add_update": "업데이트 추가",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "이 팀스페이스에 프로젝트를 연결하는 것부터 시작하세요.",
-        "description": "팀스페이스는 팀 구성원이 참여하는 프로젝트를 연결하여 해당 작업, 프로젝트 진행 상황에 대한 기여, 팀별 작업 메트릭만 볼 수 있게 합니다."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "아직 연결된 팀스페이스가 없습니다.",
+          "description": "팀스페이스와 프로젝트 소유자가 프로젝트에 대한 접근을 관리할 수 있습니다."
+        }
+      },
+      "primary_button": {
+        "text": "팀스페이스 연결"
+      },
+      "secondary_button": {
+        "text": "자세히 알아보기"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "팀스페이스 이름",
+          "members": "구성원",
+          "accountType": "계정 유형"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "팀스페이스 제거"
+            },
+            "confirm": {
+              "title": "{projectName}에서 {teamspaceName} 제거",
+              "description": "연결된 프로젝트에서 이 팀스페이스를 제거하면 여기의 구성원은 연결된 프로젝트에 대한 접근 권한을 잃게 됩니다."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "일치하는 팀스페이스를 찾을 수 없습니다"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {이 프로젝트에 팀스페이스를 연결했습니다.} other {이 프로젝트에 #개의 팀스페이스를 연결했습니다.}}",
+            "description": "{additionalCount, plural, =0 {팀스페이스 {firstTeamspaceName}가 이제 이 프로젝트에 연결되었습니다.} other {팀스페이스 {firstTeamspaceName}와 {additionalCount}개가 이제 이 프로젝트에 연결되었습니다.}}"
+          },
+          "error": {
+            "title": "처리되지 않았습니다.",
+            "description": "다시 시도하거나 페이지를 새로고침한 후 다시 시도해 주세요."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "이 프로젝트에서 해당 팀스페이스를 제거했습니다.",
+            "description": "팀스페이스 {teamspaceName}가 {projectName}에서 제거되었습니다."
+          },
+          "error": {
+            "title": "처리되지 않았습니다.",
+            "description": "다시 시도하거나 페이지를 새로고침한 후 다시 시도해 주세요."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "팀스페이스 검색",
+        "info": {
+          "title": "팀스페이스를 추가하면 모든 팀스페이스 구성원이 이 프로젝트에 접근할 수 있습니다.",
+          "link": "자세히 알아보기"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "연결할 팀스페이스가 없습니다.",
+            "description": "연결할 수 있는 팀스페이스에 속해 있지 않거나 이미 사용 가능한 모든 팀스페이스를 연결했습니다."
+          },
+          "no_results": {
+            "title": "일치하는 팀스페이스가 없습니다.",
+            "description": "다른 검색어를 시도하거나 연결할 팀스페이스가 있는지 확인하세요."
+          }
+        },
+        "primary_button": {
+          "text": "선택한 팀스페이스 연결"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "뷰 만들기"
         }
       },
-      "project_view": {
-        "title": "연결된 프로젝트에 공개 뷰가 없습니다.",
-        "description": "연결된 프로젝트의 공개 뷰가 여기에 자동으로 표시됩니다. 연결된 프로젝트의 공개 뷰를 여기서 보려면, 해당 프로젝트에 모든 프로젝트 구성원이 접근할 수 있는 공개 뷰가 있는지 확인하세요."
-      },
       "filter": {
         "title": "일치하는 뷰 없음",
         "description": "검색 기준과 일치하는 뷰가 없습니다. \n 대신 새 뷰를 만드세요."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "첫 번째 팀 페이지 만들기"
         }
-      },
-      "project_page": {
-        "title": "연결된 프로젝트에 공개 페이지가 없습니다.",
-        "description": "연결된 프로젝트의 공개 페이지가 여기에 자동으로 표시됩니다. 여기에서 공개 페이지가 표시될 것으로 예상되는 경우, 연결된 프로젝트에 모든 프로젝트 구성원이 사용할 수 있는 공개 페이지가 있는지 확인하세요."
       },
       "filter": {
         "title": "일치하는 페이지 없음",

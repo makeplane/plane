@@ -17,7 +17,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.widget_graph_plot import build_widget_chart
 from plane.ee.utils.chart_validations import validate_chart_config
-
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -155,16 +154,14 @@ class WidgetListEndpoint(BaseAPIView):
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
             .filter(workspace__slug=slug)
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .filter(project_id__in=dashboard_project_ids)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related(
                 "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
             )
+            .accessible_to(request.user.id, slug)
         )
+
 
         if (
             x_axis_property == Widget.PropertyEnum.EPICS

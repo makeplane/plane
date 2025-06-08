@@ -16,13 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import CycleIssueSerializer
-from plane.db.models import (
-    Cycle,
-    Issue,
-    FileAsset,
-    CycleIssue,
-    IssueLink,
-)
+from plane.db.models import Cycle, Issue, FileAsset, CycleIssue, IssueLink
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -60,10 +54,6 @@ class CycleIssueViewSet(BaseViewSet):
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .filter(project__archived_at__isnull=True)
             .filter(cycle_id=self.kwargs.get("cycle_id"))
             .select_related("project")
@@ -71,8 +61,10 @@ class CycleIssueViewSet(BaseViewSet):
             .select_related("cycle")
             .select_related("issue", "issue__state", "issue__project")
             .prefetch_related("issue__assignees", "issue__labels")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
+
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -248,23 +240,16 @@ class CycleIssueViewSet(BaseViewSet):
         new_issues = list(set(issues) - set(existing_issues))
 
         issue_cycle_data_added = [
-            {
-                "issue_id": str(issue_id),
-                "cycle_id": str(cycle_id),
-            }
+            {"issue_id": str(issue_id), "cycle_id": str(cycle_id)}
             for issue_id in issues
         ]
 
         issues_removed = CycleIssue.objects.filter(
-            issue_id__in=existing_issues,
-            workspace__slug=slug,
+            issue_id__in=existing_issues, workspace__slug=slug
         ).values("issue_id", "cycle_id")
 
         issue_cycle_data_removed = [
-            {
-                "issue_id": str(issue["issue_id"]),
-                "cycle_id": str(issue["cycle_id"]),
-            }
+            {"issue_id": str(issue["issue_id"]), "cycle_id": str(issue["cycle_id"])}
             for issue in issues_removed
         ]
 
@@ -371,12 +356,7 @@ class CycleIssueViewSet(BaseViewSet):
         cycle_issue.delete()
         # Trigger the entity issue state activity task
         entity_issue_state_activity_task.delay(
-            issue_cycle_data=[
-                {
-                    "issue_id": str(issue_id),
-                    "cycle_id": str(cycle_id),
-                }
-            ],
+            issue_cycle_data=[{"issue_id": str(issue_id), "cycle_id": str(cycle_id)}],
             user_id=str(self.request.user.id),
             slug=slug,
             action="REMOVED",

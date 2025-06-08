@@ -53,7 +53,7 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
-
+from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
 
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
@@ -72,8 +72,6 @@ class PageViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(
-                projects__project_projectmember__member=self.request.user,
-                projects__project_projectmember__is_active=True,
                 projects__archived_at__isnull=True,
             )
             .filter(moved_to_page__isnull=True)
@@ -117,6 +115,7 @@ class PageViewSet(BaseViewSet):
                 ).values("anchor")
             )
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs.get("slug"))
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -233,6 +232,7 @@ class PageViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not page.owned_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this page"},
@@ -369,6 +369,7 @@ class PageViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             queryset = queryset.filter(owned_by=request.user)
 

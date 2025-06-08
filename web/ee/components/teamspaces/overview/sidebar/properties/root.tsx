@@ -99,13 +99,6 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(
     () => [
       {
-        key: "projects",
-        label: "Projects",
-        icon: BriefcaseIcon,
-        value: teamspaceEntities?.linked_entities.projects,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
-      },
-      {
         key: "issues",
         label: "Work items",
         icon: LayersIcon,

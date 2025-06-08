@@ -27,14 +27,15 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
         filters = issue_filters(request.query_params, "GET")
         issue_worklogs = (
             IssueWorkLog.objects.filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
             .order_by("created_at")
             .select_related("logged_by", "issue", "project", "workspace")
+            .accessible_to(request.user.id, slug)
         )
+
+
         # after getting the dataset, filter it based on the filters
         issue_worklogs = issue_worklogs.filter(**filters)
 

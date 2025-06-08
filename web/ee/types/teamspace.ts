@@ -1,23 +1,14 @@
 import { ReactNode } from "react";
 // plane imports
 import {
-  EIssueCommentAccessSpecifier,
   ETeamspaceAnalyticsDataKeys,
   ETeamspaceAnalyticsValueKeys,
   EStatisticsLegend,
   EProgressXAxisKeys,
   EProgressDataKeys,
   ERelationType,
-  ETeamspaceEntityScope,
 } from "@plane/constants";
-import {
-  IUserLite,
-  TChartData,
-  TStateGroups,
-  TTeamspaceActivity,
-  TTeamspaceActivityKeys,
-  TTeamspaceReaction,
-} from "@plane/types";
+import { TChartData, TStateGroups, TTeamspaceActivity, TTeamspaceActivityKeys } from "@plane/types";
 
 export type TTeamspaceActivityDetails = {
   icon: ReactNode;
@@ -39,7 +30,6 @@ export type TTeamspaceProgressChart = {
 };
 
 export type TStatisticsFilter = {
-  scope: ETeamspaceEntityScope;
   data_key: ETeamspaceAnalyticsDataKeys;
   value_key: ETeamspaceAnalyticsValueKeys;
   issue_type: string[]; // issue type ids

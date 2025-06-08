@@ -25,7 +25,8 @@
     "epics": "エピック",
     "project_updates": "プロジェクトの更新",
     "overview": "概要",
-    "workflows": "ワークフロー"
+    "workflows": "ワークフロー",
+    "members_and_teamspaces": "メンバーとチームスペース"
   },
   "updates": {
     "add_update": "更新を追加",
@@ -184,10 +185,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "このチームスペースにプロジェクトをリンクすることから始めましょう。",
-        "description": "チームスペースはチームメンバーが所属するプロジェクトをリンクし、彼らの作業、プロジェクトの進捗への貢献、チーム固有の作業指標を確認できます。"
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "まだチームスペースをリンクしていません。",
+          "description": "チームスペースとプロジェクトの所有者はプロジェクトへのアクセスを管理できます。"
+        }
+      },
+      "primary_button": {
+        "text": "チームスペースをリンク"
+      },
+      "secondary_button": {
+        "text": "詳細を見る"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "チームスペース名",
+          "members": "メンバー",
+          "accountType": "アカウントタイプ"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "チームスペースを削除"
+            },
+            "confirm": {
+              "title": "{projectName}から{teamspaceName}を削除",
+              "description": "リンクされたプロジェクトからこのチームスペースを削除すると、ここのメンバーはリンクされたプロジェクトへのアクセス権を失います。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {このプロジェクトにチームスペースをリンクしました。} other {このプロジェクトに#つのチームスペースをリンクしました。}}",
+            "description": "{additionalCount, plural, =0 {チームスペース{firstTeamspaceName}がこのプロジェクトにリンクされました。} other {チームスペース{firstTeamspaceName}と{additionalCount}つのチームスペースがこのプロジェクトにリンクされました。}}"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "このプロジェクトからチームスペースを削除しました。",
+            "description": "チームスペース{teamspaceName}が{projectName}から削除されました。"
+          },
+          "error": {
+            "title": "処理が完了しませんでした。",
+            "description": "もう一度試すか、ページを再読み込みしてから再試行してください。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "チームスペースを検索",
+        "info": {
+          "title": "チームスペースを追加すると、そのチームスペースの全メンバーがこのプロジェクトにアクセスできるようになります。",
+          "link": "詳細を見る"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "リンクできるチームスペースがありません。",
+            "description": "リンクできるチームスペースに所属していないか、利用可能なチームスペースをすべてリンク済みです。"
+          },
+          "no_results": {
+            "title": "一致するチームスペースが見つかりません。",
+            "description": "別の検索語を試すか、リンクできるチームスペースがあることを確認してください。"
+          }
+        },
+        "primary_button": {
+          "text": "選択したチームスペースをリンク"
+        }
       }
     }
   },
@@ -234,10 +308,6 @@
           "text": "ビューを作成"
         }
       },
-      "project_view": {
-        "title": "リンクされたプロジェクトに公開ビューがありません。",
-        "description": "リンクされたプロジェクトの公開ビューは自動的にここに表示されます。リンクされたプロジェクトの公開ビューをここで見るには、それらのプロジェクトにすべてのプロジェクトメンバーがアクセスできる公開ビューがあることを確認してください。"
-      },
       "filter": {
         "title": "一致するビューがありません",
         "description": "検索条件に一致するビューがありません。\n 代わりに新しいビューを作成してください。"
@@ -252,10 +322,6 @@
         "primary_button": {
           "text": "最初のチームページを作成"
         }
-      },
-      "project_page": {
-        "title": "リンクされたプロジェクトに公開ページがありません。",
-        "description": "リンクされたプロジェクトの公開ページは自動的にここに表示されます。公開ページが表示されるはずの場合は、リンクされたプロジェクトにすべてのプロジェクトメンバーが利用できる公開ページがあることを確認してください。"
       },
       "filter": {
         "title": "一致するページがありません",

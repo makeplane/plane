@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIconPicker } from "@plane/ui";
-// plane utils
 import { convertHexEmojiToDecimal } from "@plane/utils";
-// ui
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { JoinTeamspaceButton } from "@/plane-web/components/teamspaces/actions";
 import AddTeamspaceMembersButton from "@/plane-web/components/teamspaces/actions/members/button";
 import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
 import { TeamspaceDescriptionInput, TeamNameInput } from "@/plane-web/components/teamspaces/overview";
-// plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TTeamsOverviewPropertiesProps = {
@@ -30,10 +28,11 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
-  const { isUserMemberOfTeamspace, getTeamspaceById, updateTeamspace } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
+  const areProjectsLinked = teamspace?.project_ids && teamspace.project_ids.length > 0;
   const teamLead = teamspace?.lead_id ? getUserDetails(teamspace.lead_id) : undefined;
   const teamspaceMemberIdsExceptLead = teamspace?.member_ids?.filter((memberId) => memberId !== teamLead?.id);
   const teamspaceDescription =
@@ -89,7 +88,7 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
         disabled={!isEditingAllowed}
         containerClassName="-ml-3 border-none"
       />
-      <div className="flex items-center justify-between gap-x-2 py-4">
+      <div className="flex items-center justify-between gap-x-2 py-1.5">
         <div className="flex items-center gap-x-2">
           {teamLead && (
             <Tooltip tooltipContent={`${teamLead.first_name} ${teamLead.last_name} (Lead)`} position="bottom">
@@ -122,11 +121,10 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
           />
         </div>
         <div className="flex items-center gap-x-2">
-          {isTeamspaceMember ? (
+          {isTeamspaceMember && areProjectsLinked && (
             <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId?.toString()} isEditingAllowed={isEditingAllowed} />
-          ) : (
-            <JoinTeamspaceButton teamspaceId={teamspaceId?.toString()} />
           )}
+          {!isTeamspaceMember && <JoinTeamspaceButton teamspaceId={teamspaceId?.toString()} />}
         </div>
       </div>
     </div>

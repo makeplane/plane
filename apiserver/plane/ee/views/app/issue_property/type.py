@@ -26,10 +26,9 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
         issue_types = (
             IssueType.objects.filter(
                 workspace__slug=slug,
-                project_issue_types__project__project_projectmember__member=request.user,
-                project_issue_types__project__project_projectmember__is_active=True,
                 is_epic=False,
             )
+            .accessible_to(request.user.id, slug)
             .annotate(
                 issue_exists=Exists(
                     Issue.objects.filter(workspace__slug=slug, type_id=OuterRef("pk"))

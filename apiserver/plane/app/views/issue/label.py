@@ -31,13 +31,14 @@ class LabelViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("sort_order")
         )
+
 
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True

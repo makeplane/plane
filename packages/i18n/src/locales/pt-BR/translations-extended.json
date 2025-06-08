@@ -26,7 +26,8 @@
     "project_updates": "Atualizações do projeto",
     "overview": "Visão geral",
     "workflows": "Fluxos de trabalho",
-    "templates": "Modelos"
+    "templates": "Modelos",
+    "members_and_teamspaces": "Membros e espaços de equipe"
   },
   "updates": {
     "add_update": "Adicionar atualização",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Comece vinculando projetos a este espaço de equipe.",
-        "description": "Espaços de equipe vinculam projetos que os membros da equipe estão, para que você possa ver apenas o trabalho deles, sua contribuição para o progresso nesses projetos e métricas de trabalho específicas da equipe."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Você ainda não vinculou nenhum espaço de equipe.",
+          "description": "Proprietários de espaços de equipe e projetos podem gerenciar o acesso aos projetos."
+        }
+      },
+      "primary_button": {
+        "text": "Vincular um espaço de equipe"
+      },
+      "secondary_button": {
+        "text": "Saiba mais"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nome do espaço de equipe",
+          "members": "Membros",
+          "accountType": "Tipo de conta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Remover espaço de equipe"
+            },
+            "confirm": {
+              "title": "Remover {teamspaceName} de {projectName}",
+              "description": "Quando você remove este espaço de equipe de um projeto vinculado, os membros aqui perderão o acesso ao projeto vinculado."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nenhum espaço de equipe correspondente encontrado"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Você vinculou um espaço de equipe a este projeto.} other {Você vinculou # espaços de equipe a este projeto.}}",
+            "description": "{additionalCount, plural, =0 {O espaço de equipe {firstTeamspaceName} agora está vinculado a este projeto.} other {O espaço de equipe {firstTeamspaceName} e mais {additionalCount} agora estão vinculados a este projeto.}}"
+          },
+          "error": {
+            "title": "Isso não funcionou.",
+            "description": "Tente novamente ou recarregue esta página antes de tentar novamente."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Você removeu esse espaço de equipe deste projeto.",
+            "description": "O espaço de equipe {teamspaceName} foi removido de {projectName}."
+          },
+          "error": {
+            "title": "Isso não funcionou.",
+            "description": "Tente novamente ou recarregue esta página antes de tentar novamente."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Pesquisar espaços de equipe",
+        "info": {
+          "title": "Adicionar um espaço de equipe concede a todos os membros do espaço de equipe acesso a este projeto.",
+          "link": "Saiba mais"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Você não tem nenhum espaço de equipe para vincular.",
+            "description": "Ou você não está em um espaço de equipe que pode vincular ou já vinculou todos os espaços de equipe disponíveis."
+          },
+          "no_results": {
+            "title": "Isso não corresponde a nenhum dos seus espaços de equipe.",
+            "description": "Tente outro termo ou certifique-se de que você tem espaços de equipe para vincular."
+          }
+        },
+        "primary_button": {
+          "text": "Vincular espaço(s) de equipe selecionado(s)"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Criar uma visualização"
         }
       },
-      "project_view": {
-        "title": "Nenhum dos seus projetos vinculados tem visualizações públicas.",
-        "description": "Visualizações públicas em projetos vinculados aparecerão automaticamente aqui. Para ver visualizações públicas de projetos vinculados aqui, certifique-se de que esses projetos tenham visualizações públicas acessíveis a todos os membros do projeto."
-      },
       "filter": {
         "title": "Nenhuma visualização correspondente",
         "description": "Nenhuma visualização corresponde aos critérios de pesquisa. \n Crie uma nova visualização em vez disso."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Crie sua primeira página de equipe"
         }
-      },
-      "project_page": {
-        "title": "Nenhum dos seus projetos vinculados tem páginas públicas.",
-        "description": "Páginas públicas em projetos vinculados aparecerão automaticamente aqui. Se você espera ver páginas públicas aqui, certifique-se de que seus projetos vinculados tenham páginas públicas disponíveis para todos os membros do projeto."
       },
       "filter": {
         "title": "Nenhuma página correspondente",

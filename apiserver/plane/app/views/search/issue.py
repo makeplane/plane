@@ -126,27 +126,31 @@ class IssueSearchEndpoint(BaseAPIView):
         issue_id = request.query_params.get("issue_id", False)
         convert = request.query_params.get("convert", False)
 
-        issues = Issue.issue_objects.filter(
-            workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-            project__deleted_at__isnull=True,
-        )
-
-        issues_and_epics = (
-            Issue.objects.filter(
+        issues = (
+            Issue.issue_objects.filter(
                 workspace__slug=slug,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 project__deleted_at__isnull=True,
             )
-            .filter(deleted_at__isnull=True)
-            .filter(state__is_triage=False)
-            .exclude(archived_at__isnull=False)
-            .exclude(project__archived_at__isnull=False)
-            .exclude(is_draft=True)
+            .accessible_to(self.request.user.id, slug)
+            .distinct()
+        )
+
+        issues_and_epics = (
+            (
+                Issue.objects.filter(
+                    workspace__slug=slug,
+                    project__archived_at__isnull=True,
+                    project__deleted_at__isnull=True,
+                )
+                .filter(deleted_at__isnull=True)
+                .filter(state__is_triage=False)
+                .exclude(archived_at__isnull=False)
+                .exclude(project__archived_at__isnull=False)
+                .exclude(is_draft=True)
+            )
+            .accessible_to(self.request.user.id, slug)
+            .distinct()
         )
 
         # Filter issues and epics by project

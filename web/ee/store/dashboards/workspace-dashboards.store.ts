@@ -74,8 +74,7 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
 
   private addDashboardToStore = (workspaceSlug: string, dashboardId: string, dashboard: TDashboard) => {
     const currentUser = this.rootStore.user.data;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)
-      ?.role as EUserWorkspaceRoles;
+    const currentUserWorkspaceRole = this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     this.baseStore.addDashboard(dashboard, "workspace", {
       dashboard: {
         actions: {
@@ -146,9 +145,10 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   // permissions
   get currentUserWorkspaceRole(): EUserPermissions {
     const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    const currentWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(currentWorkspaceSlug ?? "")
-      ?.role as EUserPermissions;
-    return currentWorkspaceRole ?? EUserPermissions.GUEST;
+    const currentWorkspaceRole = currentWorkspaceSlug
+      ? this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(currentWorkspaceSlug)
+      : EUserPermissions.GUEST;
+    return currentWorkspaceRole as EUserPermissions;
   }
 
   get canCurrentUserCreateDashboard() {

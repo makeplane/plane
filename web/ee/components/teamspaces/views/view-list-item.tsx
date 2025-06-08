@@ -28,9 +28,7 @@ export const TeamspaceViewListItem: FC<Props> = observer((props) => {
   // store hooks
   const { isMobile } = usePlatformOS();
   // derived values
-  const detailPageLink = view.is_team_view
-    ? `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`
-    : `/${workspaceSlug}/projects/${view.project}/views/${view.id}`;
+  const detailPageLink = `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`;
 
   return (
     <ListItem

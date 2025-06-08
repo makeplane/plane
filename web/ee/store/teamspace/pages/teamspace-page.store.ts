@@ -2,40 +2,31 @@ import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { ETeamspaceEntityScope } from "@plane/constants";
 import { TLoader, TPageFilters, TPage } from "@plane/types";
 // plane web services
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
-// services
-import { ProjectPageService } from "@/services/page/project-page.service";
-import { TProjectPage, ProjectPage } from "@/store/pages/project-page";
+// local imports
 import { TTeamspacePage, TeamspacePage } from "./teamspace-page";
-
-export type TTeamspacePageDetails = TProjectPage | TTeamspacePage;
 
 export interface ITeamspacePageStore {
   // observables
   loaderMap: Record<string, TLoader>; // teamspaceId -> loader
   fetchedMap: Record<string, boolean>; // teamspaceId -> fetched
-  scopeMap: Record<string, ETeamspaceEntityScope>; // teamspaceId -> scope
-  pageMap: Record<string, Record<string, TTeamspacePageDetails>>; // teamspaceId -> pageId -> page
+  pageMap: Record<string, Record<string, TTeamspacePage>>; // teamspaceId -> pageId -> page
   filtersMap: Record<string, TPageFilters>; // teamspaceId -> filters
   // computed functions
   getTeamspacePagesLoader: (teamspaceId: string) => TLoader | undefined;
   getTeamspacePagesFetchedStatus: (teamspaceId: string) => boolean | undefined;
   getTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
   getFilteredTeamspacePageIds: (teamspaceId: string) => string[] | undefined;
-  getPageById: (pageId: string) => TTeamspacePageDetails | undefined;
+  getPageById: (pageId: string) => TTeamspacePage | undefined;
   isNestedPagesEnabled: (workspaceSlug: string) => boolean;
   // helper actions
-  initTeamspacePagesScope: (teamspaceId: string) => void;
-  getTeamspacePagesScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
   initTeamspacePagesFilters: (teamspaceId: string) => void;
   getTeamspacePagesFilters: (teamspaceId: string) => TPageFilters | undefined;
-  updateTeamScope: (workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope) => void;
   updateFilters: <T extends keyof TPageFilters>(
     teamspaceId: string,
     filterKey: T,
@@ -48,7 +39,7 @@ export interface ITeamspacePageStore {
   // CRUD actions
   createPage: (data: Partial<TPage>) => Promise<TPage>;
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
-  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePageDetails | undefined>;
+  getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
 }
 
@@ -56,29 +47,24 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   // observables
   loaderMap: Record<string, TLoader> = {}; // teamspaceId -> loader
   fetchedMap: Record<string, boolean> = {}; // teamspaceId -> fetched
-  scopeMap: Record<string, ETeamspaceEntityScope> = {}; // teamspaceId -> scope
-  pageMap: Record<string, Record<string, TTeamspacePageDetails>> = {}; // teamspaceId -> pageId -> page
+  pageMap: Record<string, Record<string, TTeamspacePage>> = {}; // teamspaceId -> pageId -> page
   filtersMap: Record<string, TPageFilters> = {}; // teamspaceId -> filters
   // root store
   rootStore;
   // services
   teamspacePageService;
-  projectPageService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       loaderMap: observable,
       fetchedMap: observable,
-      scopeMap: observable,
       pageMap: observable,
       filtersMap: observable,
       // computed
       flattenedPages: computed,
       // helper actions
-      initTeamspacePagesScope: action,
       initTeamspacePagesFilters: action,
-      updateTeamScope: action,
       updateFilters: action,
       clearAllFilters: action,
       // fetch actions
@@ -92,7 +78,6 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     this.rootStore = _rootStore;
     // services
     this.teamspacePageService = new TeamspacePageService();
-    this.projectPageService = new ProjectPageService();
   }
 
   // computed functions
@@ -158,7 +143,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * Returns page details by id
    * @param teamspaceId
    * @param pageId
-   * @returns TTeamspacePageDetails | undefined
+   * @returns TTeamspacePage | undefined
    */
   getPageById = computedFn((pageId: string) => this.flattenedPages[pageId]);
 
@@ -167,26 +152,6 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @returns boolean
    */
   isNestedPagesEnabled = computedFn(() => false);
-
-  /**
-   * Initializes teamspace pages scope
-   * @param teamspaceId
-   */
-  initTeamspacePagesScope = (teamspaceId: string) => {
-    set(this.scopeMap, teamspaceId, "teams");
-  };
-
-  /**
-   * Returns teamspace scope
-   * @param teamspaceId
-   * @returns ETeamspaceEntityScope | undefined
-   */
-  getTeamspacePagesScope = computedFn((teamspaceId: string) => {
-    if (!this.scopeMap[teamspaceId]) {
-      this.initTeamspacePagesScope(teamspaceId);
-    }
-    return this.scopeMap[teamspaceId];
-  });
 
   /**
    * Initializes teamspace pages filters
@@ -214,21 +179,6 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   });
 
   /**
-   * Updates teamspace scope
-   * @params workspaceSlug
-   * @param teamspaceId
-   * @param scope
-   */
-  updateTeamScope = (workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope) => {
-    runInAction(() => {
-      set(this.scopeMap, teamspaceId, scope);
-      set(this.pageMap, [teamspaceId], {});
-      set(this.fetchedMap, teamspaceId, false);
-    });
-    this.fetchTeamspacePages(workspaceSlug, teamspaceId);
-  };
-
-  /**
    * Updates the filter
    * @param teamspaceId
    * @param filterKey
@@ -253,7 +203,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * Fetches pages for current teamspace
    * @param workspaceSlug
    * @param teamspaceId
-   * @returns Promise<TTeamspacePageDetails[]> | undefined
+   * @returns Promise<TTeamspacePage[]> | undefined
    */
   fetchTeamspacePages = async (workspaceSlug: string, teamspaceId: string, loader: TLoader = "init-loader") => {
     try {
@@ -262,8 +212,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       }
       set(this.loaderMap, teamspaceId, loader);
       // Fetch pages
-      const scope = this.getTeamspacePagesScope(teamspaceId);
-      await this.teamspacePageService.fetchAll(workspaceSlug, teamspaceId, scope).then((response) => {
+      await this.teamspacePageService.fetchAll(workspaceSlug, teamspaceId).then((response) => {
         runInAction(() => {
           response.forEach((page) => {
             if (page?.id) {
@@ -273,13 +222,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
               if (existingInstance) {
                 existingInstance.mutateProperties(pageInstance);
               } else {
-                set(
-                  this.pageMap,
-                  [teamspaceId, page.id],
-                  pageInstance.team
-                    ? new TeamspacePage(this.rootStore, pageInstance)
-                    : new ProjectPage(this.rootStore, pageInstance)
-                );
+                set(this.pageMap, [teamspaceId, page.id], new TeamspacePage(this.rootStore, pageInstance));
               }
             }
           });
@@ -301,13 +244,13 @@ export class TeamspacePageStore implements ITeamspacePageStore {
    * @param workspaceSlug
    * @param teamspaceId
    * @param pageId
-   * @returns Promise<TTeamspacePageDetails>
+   * @returns Promise<TTeamspacePage>
    */
   fetchPageDetails = async (
     teamspaceId: string,
     pageId: string,
     loader: TLoader = "init-loader"
-  ): Promise<TTeamspacePageDetails | undefined> => {
+  ): Promise<TTeamspacePage | undefined> => {
     try {
       const { workspaceSlug } = this.rootStore.router;
       if (!workspaceSlug) return;
@@ -323,11 +266,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
             if (existingInstance) {
               existingInstance.mutateProperties(response);
             } else {
-              set(
-                this.pageMap,
-                [teamspaceId, pageId],
-                response.team ? new TeamspacePage(this.rootStore, response) : new ProjectPage(this.rootStore, response)
-              );
+              set(this.pageMap, [teamspaceId, pageId], new TeamspacePage(this.rootStore, response));
             }
           }
           set(this.loaderMap, teamspaceId, "loaded");
@@ -378,14 +317,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     });
 
     if (shouldSync) {
-      const deletePagePromise =
-        currentPage.project_ids?.length === 0
-          ? this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId)
-          : currentPage.project_ids?.[0] &&
-            this.projectPageService.remove(workspaceSlug, currentPage.project_ids[0], pageId);
-      if (!deletePagePromise || !teamspaceId) return;
-
-      await deletePagePromise.then(() => {});
+      await this.teamspacePageService.remove(workspaceSlug, teamspaceId, pageId);
     }
   };
 
@@ -398,7 +330,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       if (!workspaceSlug || !teamspaceId) return;
       const page = await this.fetchPageDetails(teamspaceId, pageId);
       if (page) {
-        return page.team ? new TeamspacePage(this.rootStore, page) : new ProjectPage(this.rootStore, page);
+        return new TeamspacePage(this.rootStore, page);
       }
     }
   };

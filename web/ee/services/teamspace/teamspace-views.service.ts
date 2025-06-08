@@ -1,5 +1,5 @@
 // plane constants
-import { EViewAccess, API_BASE_URL, ETeamspaceEntityScope } from "@plane/constants";
+import { EViewAccess, API_BASE_URL } from "@plane/constants";
 // plane types
 import { TTeamspaceView, TPublishViewSettings, TIssuesResponse } from "@plane/types";
 // helpers
@@ -67,8 +67,8 @@ export class TeamspaceViewService extends APIService {
    * @param teamspaceId
    * @returns
    */
-  async getViews(workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope): Promise<TTeamspaceView[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/views/?scope=${scope}`)
+  async getViews(workspaceSlug: string, teamspaceId: string): Promise<TTeamspaceView[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/views/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

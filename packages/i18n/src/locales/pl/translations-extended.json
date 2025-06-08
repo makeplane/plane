@@ -26,7 +26,8 @@
     "project_updates": "Aktualizacje projektu",
     "overview": "Przegląd",
     "workflows": "Workflowy",
-    "templates": "Szablony"
+    "templates": "Szablony",
+    "members_and_teamspaces": "Członkowie i tymacz"
   },
   "updates": {
     "add_update": "Dodaj aktualizację",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Zacznij od połączenia projektów z tą przestrzenią zespołu.",
-        "description": "Przestrzenie zespołu łączą projekty, w których znajdują się członkowie zespołu, dzięki czemu możesz zobaczyć tylko ich pracę, ich wkład w postęp w tych projektach i metryki pracy specyficzne dla zespołu."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Nie połączyłeś jeszcze żadnych przestrzeni zespołu.",
+          "description": "Właściciele przestrzeni zespołu i projektu mogą zarządzać dostępem do projektów."
+        }
+      },
+      "primary_button": {
+        "text": "Połącz przestrzeń zespołu"
+      },
+      "secondary_button": {
+        "text": "Dowiedz się więcej"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nazwa przestrzeni zespołu",
+          "members": "Członkowie",
+          "accountType": "Typ konta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Usuń przestrzeń zespołu"
+            },
+            "confirm": {
+              "title": "Usuń {teamspaceName} z {projectName}",
+              "description": "Po usunięciu tej przestrzeni zespołu z połączonego projektu, członkowie stracą dostęp do połączonego projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nie znaleziono pasujących przestrzeni zespołu"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Połączyłeś przestrzeń zespołu z tym projektem.} other {Połączyłeś # przestrzeni zespołu z tym projektem.}}",
+            "description": "{additionalCount, plural, =0 {Przestrzeń zespołu {firstTeamspaceName} jest teraz połączona z tym projektem.} other {Przestrzeń zespołu {firstTeamspaceName} i {additionalCount} więcej jest teraz połączonych z tym projektem.}}"
+          },
+          "error": {
+            "title": "To się nie powiodło.",
+            "description": "Spróbuj ponownie lub odśwież stronę przed ponowną próbą."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Usunąłeś tę przestrzeń zespołu z tego projektu.",
+            "description": "Przestrzeń zespołu {teamspaceName} została usunięta z {projectName}."
+          },
+          "error": {
+            "title": "To się nie powiodło.",
+            "description": "Spróbuj ponownie lub odśwież stronę przed ponowną próbą."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Szukaj przestrzeni zespołu",
+        "info": {
+          "title": "Dodanie przestrzeni zespołu daje wszystkim jej członkom dostęp do tego projektu.",
+          "link": "Dowiedz się więcej"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nie masz żadnych przestrzeni zespołu do połączenia.",
+            "description": "Albo nie jesteś w przestrzeni zespołu, którą możesz połączyć, albo połączyłeś już wszystkie dostępne przestrzenie zespołu."
+          },
+          "no_results": {
+            "title": "To nie pasuje do żadnej z Twoich przestrzeni zespołu.",
+            "description": "Spróbuj innego terminu lub upewnij się, że masz przestrzenie zespołu do połączenia."
+          }
+        },
+        "primary_button": {
+          "text": "Połącz wybrane przestrzenie zespołu"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Utwórz widok"
         }
       },
-      "project_view": {
-        "title": "Żaden z Twoich połączonych projektów nie ma żadnych publicznych widoków.",
-        "description": "Publiczne widoki w połączonych projektach automatycznie pojawią się tutaj. Aby zobaczyć publiczne widoki z połączonych projektów tutaj, upewnij się, że te projekty mają publiczne widoki dostępne dla wszystkich członków projektu."
-      },
       "filter": {
         "title": "Brak pasujących widoków",
         "description": "Żadne widoki nie pasują do kryteriów wyszukiwania. \n Zamiast tego utwórz nowy widok."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Utwórz swoją pierwszą stronę zespołu"
         }
-      },
-      "project_page": {
-        "title": "Żaden z Twoich połączonych projektów nie ma publicznych stron.",
-        "description": "Publiczne strony w połączonych projektach automatycznie pojawią się tutaj. Jeśli spodziewasz się zobaczyć publiczne strony tutaj, upewnij się, że Twoje połączone projekty mają publiczne strony dostępne dla wszystkich członków projektu."
       },
       "filter": {
         "title": "Brak pasujących stron",

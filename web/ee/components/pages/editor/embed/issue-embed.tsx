@@ -27,14 +27,14 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const [error, setError] = useState<any | null>(null);
 
   // store hooks
-  const { workspaceProjectsPermissions } = useUserPermissions();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
   } = useIssueDetail();
 
   // derived values
-  const projectRole = workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
+  const projectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const issueDetails = getIssueById(issueId);
 
   // auth

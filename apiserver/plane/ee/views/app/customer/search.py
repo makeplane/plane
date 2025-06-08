@@ -16,7 +16,6 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.ee.models.issue import Issue
 from plane.ee.models.customer import CustomerRequestIssue, CustomerRequest
 
-
 class CustomerIssueSearchEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
 
@@ -56,8 +55,6 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
         issues = (
             Issue.objects.filter(
                 q,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 workspace__slug=slug,
                 archived_at__isnull=True,
@@ -73,6 +70,7 @@ class CustomerIssueSearchEndpoint(BaseAPIView):
                 & Q(project__project_projectfeature__is_epic_enabled=False)
             )
             .exclude(id__in=issue_ids_to_exclude)
+            .accessible_to(request.user.id, slug)
         )
 
         issues = issues.distinct().values(

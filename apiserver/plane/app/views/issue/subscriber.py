@@ -38,12 +38,9 @@ class IssueSubscriberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project__archived_at__isnull=True)
             .order_by("-created_at")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
 

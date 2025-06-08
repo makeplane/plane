@@ -8,13 +8,13 @@ from rest_framework.response import Response
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from django.db.models import Q, Case, When, Value, PositiveSmallIntegerField
+from django.db.models import Q
 
 # Module imports
 from .base import TeamspaceBaseEndpoint
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, ProjectMember
-from plane.ee.models import Teamspace, TeamspaceMember, TeamspaceProject
+from plane.db.models import Workspace
+from plane.ee.models import Teamspace, TeamspaceMember
 from plane.ee.serializers import TeamspaceMemberSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -26,45 +26,6 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
     permission_classes = [WorkspaceUserPermission]
     model = TeamspaceMember
     serializer_class = TeamspaceMemberSerializer
-
-    def add_project_members(self, member_ids):
-        # Get the workspace
-        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
-
-        # Add new members
-        project_ids = TeamspaceProject.objects.filter(
-            team_space_id=self.team_space_id, workspace__slug=self.kwargs.get("slug")
-        ).values_list("project_id", flat=True)
-        # Update project members
-        ProjectMember.objects.filter(
-            project_id__in=project_ids,
-            workspace__slug=self.kwargs.get("slug"),
-            member_id__in=member_ids,
-        ).update(
-            is_active=True,
-            role=Case(
-                When(role=5, then=Value(15)),
-                default="role",
-                output_field=PositiveSmallIntegerField(),
-            ),
-        )
-
-        # Create new project members
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project_id=project_id,
-                    member_id=member_id,
-                    is_active=True,
-                    role=15,
-                    workspace=workspace,
-                )
-                for project_id in project_ids
-                for member_id in member_ids
-            ],
-            ignore_conflicts=True,
-            batch_size=100,
-        )
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def get(self, request, slug, team_space_id=None, pk=None):
@@ -164,9 +125,6 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
         TeamspaceMember.objects.bulk_create(
             bulk_team_space_members, ignore_conflicts=True, batch_size=100
         )
-
-        # Add project members
-        self.add_project_members(member_ids)
 
         team_space_members = TeamspaceMember.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id

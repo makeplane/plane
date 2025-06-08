@@ -66,7 +66,7 @@ from plane.app.views.issue.version import (
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
-
+from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
 
 class EpicViewSet(BaseViewSet):
     def get_queryset(self):
@@ -691,14 +691,12 @@ class WorkspaceEpicEndpoint(BaseAPIView):
 
         epics_query = Issue.objects.filter(
             workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
             project__project_projectfeature__is_epic_enabled=True,
         ).filter(
             Q(type__isnull=False)
             & Q(type__is_epic=True)
             & Q(project__deleted_at__isnull=True)
-        )
+        ).accessible_to(request.user.id, slug)
 
         if initiative_id:
             # Exclude epics that are already in the initiative
@@ -954,6 +952,7 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

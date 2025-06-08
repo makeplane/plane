@@ -16,7 +16,7 @@ from django.db import connection
 
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.mixins import SoftDeletionManager
+from plane.db.models.project import ProjectManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
@@ -88,7 +88,7 @@ def get_default_display_properties():
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(SoftDeletionManager):
+class IssueManager(ProjectManager):
     def get_queryset(self):
         return (
             super()

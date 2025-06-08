@@ -26,10 +26,10 @@ export const TeamspaceListItem = observer((props: TeamspaceListItemProps) => {
   // hooks
   const { isMobile } = usePlatformOS();
   // plane web hooks
-  const { getTeamspaceById, isUserMemberOfTeamspace } = useTeamspaces();
+  const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
 
   if (!teamspace) return null;
   return (

@@ -18,7 +18,7 @@ from plane.db.models import IssueComment, ProjectMember, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-
+from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
 
 class EpicCommentViewSet(BaseViewSet):
     serializer_class = EpicCommentSerializer
@@ -27,15 +27,13 @@ class EpicCommentViewSet(BaseViewSet):
     filterset_fields = ["issue__id", "workspace__id"]
 
     def get_queryset(self):
-        return self.filter_queryset(
+        queryset = self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("epic_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .select_related("project")
@@ -52,7 +50,10 @@ class EpicCommentViewSet(BaseViewSet):
                 )
             )
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
@@ -69,6 +70,7 @@ class EpicCommentViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not epic.created_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to comment on the epic"},

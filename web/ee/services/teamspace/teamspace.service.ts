@@ -5,7 +5,7 @@ import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
-export class TeamspaceSpace extends APIService {
+export class TeamspaceService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -114,7 +114,11 @@ export class TeamspaceSpace extends APIService {
    * @param memberIds
    * @returns Promise<TTeamspaceMember[]>
    */
-  async addTeamspaceMembers(workspaceSlug: string, teamspaceId: string, memberIds: string[]): Promise<TTeamspaceMember[]> {
+  async addTeamspaceMembers(
+    workspaceSlug: string,
+    teamspaceId: string,
+    memberIds: string[]
+  ): Promise<TTeamspaceMember[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/members/`, { member_ids: memberIds })
       .then((response) => response?.data)
       .catch((error) => {
@@ -145,6 +149,23 @@ export class TeamspaceSpace extends APIService {
    */
   async deleteTeamspace(workspaceSlug: string, teamspaceId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  /**
+   * Adds teamspaces to a project
+   * @param workspaceSlug
+   * @param projectId
+   * @param teamspaceIds
+   * @returns Promise<void>
+   */
+  async addTeamspacesToProject(workspaceSlug: string, projectId: string, teamspaceIds: string[]): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/teamspaces/`, {
+      teamspace_ids: teamspaceIds,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

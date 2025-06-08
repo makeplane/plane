@@ -21,20 +21,21 @@ class ProjectUpdatesViewSet(BaseViewSet):
     filterset_fields = ["issue__id", "workspace__id"]
 
     def get_queryset(self):
-        return self.filter_queryset(
+        queryset = self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(parent__isnull=True)
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .select_related("workspace", "project")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])

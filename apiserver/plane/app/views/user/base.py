@@ -32,6 +32,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Session,
 )
+from plane.ee.models import TeamspaceMember
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
@@ -145,6 +146,9 @@ class UserEndpoint(BaseViewSet):
         WorkspaceMember.objects.bulk_update(
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(member_id=request.user.id).delete()
 
         # Sync workspace members
         [

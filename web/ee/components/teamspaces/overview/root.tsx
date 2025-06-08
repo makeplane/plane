@@ -25,9 +25,9 @@ export const TeamsOverviewRoot = observer((props: TTeamsOverviewRootProps) => {
   const { workspaceSlug } = useParams();
   // hooks
   const { allowPermissions } = useUserPermissions();
-  const { isUserMemberOfTeamspace } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
   const hasAdminLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,

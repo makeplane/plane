@@ -11,10 +11,11 @@ import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
 // components
-import { MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { isEditorEmpty } from "@/helpers/editor.helper";
 import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
 import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // store hooks
@@ -126,7 +127,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               type="text"
               value={formData.name}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Teamspace name"
+              placeholder="Name this teamspace."
               className="w-full resize-none text-base"
               hasError={Boolean(errors.name)}
               tabIndex={1}
@@ -148,7 +149,11 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               handleFormDataChange("description_json", description_json);
               handleFormDataChange("description_html", description_html);
             }}
-            placeholder={(isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))}
+            placeholder={(isFocused, value) =>
+              isEditorEmpty(value)
+                ? "Include a helpful description for members you add to this teamspace."
+                : t(getDescriptionPlaceholderI18n(isFocused, value))
+            }
             searchMentionCallback={searchEntity}
             editorClassName="text-xs"
             containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
@@ -190,7 +195,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               "h-8 w-full text-left",
               formData.lead_id ? "text-custom-text-200" : "text-custom-text-400"
             )}
-            placeholder="Select team lead"
+            placeholder="Pick from your list of members."
             showUserDetails
             tabIndex={3}
           />
@@ -209,28 +214,10 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
               "h-8 w-full text-left",
               formData.member_ids?.length ? "text-custom-text-200" : "text-custom-text-400"
             )}
-            placeholder="Search for members"
+            placeholder="Pick from your list of members."
             hideIcon={formData.member_ids?.length === 0}
             showUserDetails
             tabIndex={3}
-          />
-        </div>
-        <div className="space-y-0.5">
-          <p className="text-sm text-custom-text-300">Projects</p>
-          <ProjectDropdown
-            value={formData.project_ids ?? []}
-            onChange={(val) => {
-              handleFormDataChange("project_ids", val);
-            }}
-            multiple
-            buttonVariant="border-with-text"
-            buttonContainerClassName={cn(
-              "h-8 w-full text-left",
-              formData.project_ids?.length ? "text-custom-text-200" : "text-custom-text-400"
-            )}
-            buttonClassName="gap-1"
-            placeholder="Search for projects"
-            tabIndex={4}
           />
         </div>
       </div>

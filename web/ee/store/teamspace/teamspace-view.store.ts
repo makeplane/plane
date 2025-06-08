@@ -2,7 +2,7 @@ import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { ETeamspaceEntityScope, EViewAccess } from "@plane/constants";
+import { EViewAccess } from "@plane/constants";
 import { TLoader, TPublishViewDetails, TPublishViewSettings, TTeamspaceView, TViewFilters } from "@plane/types";
 // plane web helpers
 import {
@@ -22,7 +22,6 @@ export interface ITeamspaceViewStore {
   // observables
   loaderMap: Record<string, TLoader>; // teamspaceId -> loader
   fetchedMap: Record<string, boolean>; // teamspaceId -> fetched
-  scopeMap: Record<string, ETeamspaceEntityScope>; // teamspaceId -> scope
   viewMap: Record<string, Record<string, TTeamspaceView>>; // teamspaceId -> viewId -> view
   filtersMap: Record<string, TViewFilters>; // teamspaceId -> filters
   // computed functions
@@ -33,13 +32,14 @@ export interface ITeamspaceViewStore {
   getFilteredTeamspaceViews: (teamspaceId: string) => TTeamspaceView[] | undefined;
   getViewById: (teamspaceId: string, viewId: string) => TTeamspaceView | undefined;
   // helper actions
-  initTeamspaceViewsScope: (teamspaceId: string) => void;
-  getTeamspaceViewsScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
   initTeamspaceViewsFilters: (teamspaceId: string) => void;
   getTeamspaceViewsFilters: (teamspaceId: string) => TViewFilters | undefined;
-  updateTeamScope: (workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope) => void;
   // fetch actions
-  fetchTeamspaceViews: (workspaceSlug: string, teamspaceId: string, loader?: TLoader) => Promise<TTeamspaceView[] | undefined>;
+  fetchTeamspaceViews: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    loader?: TLoader
+  ) => Promise<TTeamspaceView[] | undefined>;
   fetchTeamspaceViewDetails: (
     workspaceSlug: string,
     teamspaceId: string,
@@ -48,9 +48,18 @@ export interface ITeamspaceViewStore {
   ) => Promise<TTeamspaceView | undefined>;
   // CRUD actions
   createView: (workspaceSlug: string, teamspaceId: string, data: Partial<TTeamspaceView>) => Promise<TTeamspaceView>;
-  updateView: (workspaceSlug: string, teamspaceId: string, viewId: string, data: Partial<TTeamspaceView>) => Promise<void>;
+  updateView: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    viewId: string,
+    data: Partial<TTeamspaceView>
+  ) => Promise<void>;
   deleteView: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
-  updateFilters: <T extends keyof TViewFilters>(teamspaceId: string, filterKey: T, filterValue: TViewFilters[T]) => void;
+  updateFilters: <T extends keyof TViewFilters>(
+    teamspaceId: string,
+    filterKey: T,
+    filterValue: TViewFilters[T]
+  ) => void;
   clearAllFilters: (teamspaceId: string) => void;
   // favorites actions
   addViewToFavorites: (workspaceSlug: string, teamspaceId: string, viewId: string) => Promise<void>;
@@ -80,27 +89,22 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
   // observables
   loaderMap: Record<string, TLoader> = {}; // teamspaceId -> loader
   fetchedMap: Record<string, boolean> = {}; // teamspaceId -> fetched
-  scopeMap: Record<string, ETeamspaceEntityScope> = {}; // teamspaceId -> scope
   viewMap: Record<string, Record<string, TTeamspaceView>> = {}; // teamspaceId -> viewId -> view
   filtersMap: Record<string, TViewFilters> = {}; // teamspaceId -> filters
   // root store
   rootStore;
   // services
   teamspaceViewService;
-  projectViewService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       loaderMap: observable,
       fetchedMap: observable,
-      scopeMap: observable,
       viewMap: observable,
       filtersMap: observable,
       // helper actions
-      initTeamspaceViewsScope: action,
       initTeamspaceViewsFilters: action,
-      updateTeamScope: action,
       // fetch actions
       fetchTeamspaceViews: action,
       fetchTeamspaceViewDetails: action,
@@ -119,7 +123,6 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
     this.rootStore = _rootStore;
     // services
     this.teamspaceViewService = new TeamspaceViewService();
-    this.projectViewService = new ProjectViewService();
   }
 
   // computed functions
@@ -155,7 +158,9 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    */
   getTeamspaceViews = computedFn((teamspaceId: string) => {
     if (!this.fetchedMap[teamspaceId]) return undefined;
-    const ViewsList = Object.values(this.viewMap[teamspaceId] ?? {}).filter((view) => view.access === EViewAccess.PUBLIC);
+    const ViewsList = Object.values(this.viewMap[teamspaceId] ?? {}).filter(
+      (view) => view.access === EViewAccess.PUBLIC
+    );
     const teamspaceFilters = this.getTeamspaceViewsFilters(teamspaceId);
     // helps to filter views based on the teamspaceId
     const filteredViews = orderViews(ViewsList, teamspaceFilters.sortKey, teamspaceFilters.sortBy);
@@ -191,26 +196,6 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
   getViewById = computedFn((teamspaceId: string, viewId: string) => this.viewMap[teamspaceId]?.[viewId] ?? undefined);
 
   /**
-   * Initializes teamspace views scope
-   * @param teamspaceId
-   */
-  initTeamspaceViewsScope = (teamspaceId: string) => {
-    set(this.scopeMap, teamspaceId, "teams");
-  };
-
-  /**
-   * Returns teamspace scope
-   * @param teamspaceId
-   * @returns ETeamspaceEntityScope | undefined
-   */
-  getTeamspaceViewsScope = computedFn((teamspaceId: string) => {
-    if (!this.scopeMap[teamspaceId]) {
-      this.initTeamspaceViewsScope(teamspaceId);
-    }
-    return this.scopeMap[teamspaceId];
-  });
-
-  /**
    * Initializes teamspace views filters
    * @param teamspaceId
    */
@@ -236,21 +221,6 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
   });
 
   /**
-   * Updates teamspace scope
-   * @params workspaceSlug
-   * @param teamspaceId
-   * @param scope
-   */
-  updateTeamScope = (workspaceSlug: string, teamspaceId: string, scope: ETeamspaceEntityScope) => {
-    runInAction(() => {
-      set(this.scopeMap, teamspaceId, scope);
-      set(this.viewMap, [teamspaceId], {});
-      set(this.fetchedMap, teamspaceId, false);
-    });
-    this.fetchTeamspaceViews(workspaceSlug, teamspaceId)
-  };
-
-  /**
    * Fetches views for current teamspace
    * @param workspaceSlug
    * @param teamspaceId
@@ -263,8 +233,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
       }
       set(this.loaderMap, teamspaceId, loader);
       // Fetch views
-      const scope = this.getTeamspaceViewsScope(teamspaceId);
-      await this.teamspaceViewService.getViews(workspaceSlug, teamspaceId, scope).then((response) => {
+      await this.teamspaceViewService.getViews(workspaceSlug, teamspaceId).then((response) => {
         runInAction(() => {
           response.forEach((view) => {
             set(this.viewMap, [teamspaceId, view.id], view);
@@ -320,8 +289,16 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    * @param data
    * @returns Promise<TTeamspaceView>
    */
-  createView = async (workspaceSlug: string, teamspaceId: string, data: Partial<TTeamspaceView>): Promise<TTeamspaceView> => {
-    const response = await this.teamspaceViewService.createView(workspaceSlug, teamspaceId, getValidatedViewFilters(data));
+  createView = async (
+    workspaceSlug: string,
+    teamspaceId: string,
+    data: Partial<TTeamspaceView>
+  ): Promise<TTeamspaceView> => {
+    const response = await this.teamspaceViewService.createView(
+      workspaceSlug,
+      teamspaceId,
+      getValidatedViewFilters(data)
+    );
     runInAction(() => {
       set(this.viewMap, [teamspaceId, response.id], response);
     });
@@ -348,11 +325,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
     const currentView = this.getViewById(teamspaceId, viewId);
     // update view
     const promiseRequests = [];
-    promiseRequests.push(
-      currentView.is_team_view
-        ? this.teamspaceViewService.patchView(workspaceSlug, teamspaceId, viewId, data)
-        : this.projectViewService.patchView(workspaceSlug, currentView.project, viewId, data)
-    );
+    promiseRequests.push(this.teamspaceViewService.patchView(workspaceSlug, teamspaceId, viewId, data));
     runInAction(() => {
       set(this.viewMap, [teamspaceId, viewId], { ...currentView, ...data });
     });
@@ -377,10 +350,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    * @returns
    */
   deleteView = async (workspaceSlug: string, teamspaceId: string, viewId: string): Promise<void> => {
-    const currentView = this.getViewById(teamspaceId, viewId);
-    const deleteViewPromise = currentView.is_team_view
-      ? this.teamspaceViewService.deleteView(workspaceSlug, teamspaceId, viewId)
-      : this.projectViewService.deleteView(workspaceSlug, currentView.project, viewId);
+    const deleteViewPromise = this.teamspaceViewService.deleteView(workspaceSlug, teamspaceId, viewId);
     // delete view
     await deleteViewPromise.then(() => {
       runInAction(() => {
@@ -424,9 +394,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "is_locked"], true);
       });
-      await (currentView.is_team_view
-        ? this.teamspaceViewService.lockView(workspaceSlug, teamspaceId, viewId)
-        : this.projectViewService.lockView(workspaceSlug, currentView.project, viewId));
+      await this.teamspaceViewService.lockView(workspaceSlug, teamspaceId, viewId);
     } catch (error) {
       console.error("Failed to lock the view in view store", error);
       runInAction(() => {
@@ -449,9 +417,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "is_locked"], false);
       });
-      await (currentView.is_team_view
-        ? this.teamspaceViewService.unLockView(workspaceSlug, teamspaceId, viewId)
-        : this.projectViewService.unLockView(workspaceSlug, currentView.project, viewId));
+      await this.teamspaceViewService.unLockView(workspaceSlug, teamspaceId, viewId);
     } catch (error) {
       console.error("Failed to unlock view in view store", error);
       runInAction(() => {
@@ -480,9 +446,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "access"], access);
       });
-      await (currentView.is_team_view
-        ? this.teamspaceViewService.updateViewAccess(workspaceSlug, teamspaceId, viewId, access)
-        : this.projectViewService.updateViewAccess(workspaceSlug, currentView.project, viewId, access));
+      await this.teamspaceViewService.updateViewAccess(workspaceSlug, teamspaceId, viewId, access);
     } catch (error) {
       console.error("Failed to update Access for view", error);
       runInAction(() => {
@@ -551,10 +515,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    */
   publishView = async (workspaceSlug: string, teamspaceId: string, viewId: string, data: TPublishViewSettings) => {
     try {
-      const currentView = this.getViewById(teamspaceId, viewId);
-      const response = await (currentView.is_team_view
-        ? this.teamspaceViewService.publishView(workspaceSlug, teamspaceId, viewId, data)
-        : this.projectViewService.publishView(workspaceSlug, currentView.project, viewId, data));
+      const response = await this.teamspaceViewService.publishView(workspaceSlug, teamspaceId, viewId, data);
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "anchor"], response?.anchor);
       });
@@ -574,10 +535,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    */
   fetchPublishDetails = async (workspaceSlug: string, teamspaceId: string, viewId: string) => {
     try {
-      const currentView = this.getViewById(teamspaceId, viewId);
-      const response = await (currentView.is_team_view
-        ? this.teamspaceViewService.getPublishDetails(workspaceSlug, teamspaceId, viewId)
-        : this.projectViewService.getPublishDetails(workspaceSlug, currentView.project, viewId));
+      const response = await this.teamspaceViewService.getPublishDetails(workspaceSlug, teamspaceId, viewId);
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "anchor"], response?.anchor);
       });
@@ -601,10 +559,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
     data: Partial<TPublishViewSettings>
   ) => {
     try {
-      const currentView = this.getViewById(teamspaceId, viewId);
-      return await (currentView.is_team_view
-        ? this.teamspaceViewService.updatePublishedView(workspaceSlug, teamspaceId, viewId, data)
-        : this.projectViewService.updatePublishedView(workspaceSlug, currentView.project, viewId, data));
+      return await this.teamspaceViewService.updatePublishedView(workspaceSlug, teamspaceId, viewId, data);
     } catch (error) {
       console.error("Failed to update published view details", error);
     }
@@ -619,10 +574,7 @@ export class TeamspaceViewStore implements ITeamspaceViewStore {
    */
   unPublishView = async (workspaceSlug: string, teamspaceId: string, viewId: string) => {
     try {
-      const currentView = this.getViewById(teamspaceId, viewId);
-      const response = await (currentView.is_team_view
-        ? this.teamspaceViewService.unPublishView(workspaceSlug, teamspaceId, viewId)
-        : this.projectViewService.unPublishView(workspaceSlug, currentView.project, viewId));
+      const response = await this.teamspaceViewService.unPublishView(workspaceSlug, teamspaceId, viewId);
       runInAction(() => {
         set(this.viewMap, [teamspaceId, viewId, "anchor"], null);
       });

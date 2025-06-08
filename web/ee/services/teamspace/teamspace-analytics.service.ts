@@ -71,10 +71,13 @@ export class TeamspaceAnalyticsService extends APIService {
    * @param params
    * @returns
    */
-  async getTeamspaceStatistics(workspaceSlug: string, teamspaceId: string, params: TStatisticsFilter): Promise<TTeamspaceStatistics> {
+  async getTeamspaceStatistics(
+    workspaceSlug: string,
+    teamspaceId: string,
+    params: TStatisticsFilter
+  ): Promise<TTeamspaceStatistics> {
     return this.get(`/api/workspaces/${workspaceSlug}/teamspaces/${teamspaceId}/statistics/`, {
       params: {
-        scope: params.scope,
         data_key: params.data_key,
         dependency_type: params.dependency_type,
         state_group: params.state_group.map((val) => val?.toString()).join(","),

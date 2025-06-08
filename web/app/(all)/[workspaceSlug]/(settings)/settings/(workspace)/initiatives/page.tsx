@@ -10,32 +10,29 @@ import { useTranslation } from "@plane/i18n";
 import { InitiativeIcon, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
-// store hooks
 import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+// store hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { InitiativesUpgrade } from "@/plane-web/components/initiatives/upgrade";
-// plane web constants
-// plane web hooks
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
-// plane web types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 const InitiativesSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceInfoBySlug } = useUserPermissions();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
 
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Initiatives` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
 
   if (!workspaceSlug || !currentWorkspace?.id) return <></>;

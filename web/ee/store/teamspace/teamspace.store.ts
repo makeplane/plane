@@ -1,3 +1,4 @@
+import concat from "lodash/concat";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
 import update from "lodash/update";
@@ -11,7 +12,7 @@ import { TLoader, TTeamspace, TTeamspaceMember, TTeamspaceEntities, TNameDescrip
 // utils
 import { shouldFilterTeam, orderTeams } from "@plane/utils";
 // plane web services
-import { TeamspaceSpace } from "@/plane-web/services/teamspace/teamspace.service";
+import { TeamspaceService } from "@/plane-web/services/teamspace/teamspace.service";
 // plane web types
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // root store
@@ -41,14 +42,21 @@ export interface ITeamspaceStore {
   getTeamspaceProjectIds: (teamspaceId: string) => string[] | undefined;
   getTeamspaceMemberIds: (teamspaceId: string) => string[] | undefined;
   getTeamspaceMemberIdsFromMembersMap: (teamspaceId: string) => string[];
-  isUserMemberOfTeamspace: (teamspaceId: string) => boolean;
+  getProjectTeamspaceIds: (projectId: string) => string[] | undefined;
+  getAvailableTeamspaceIdsForProject: (projectId: string) => string[];
+  isUserMemberOfTeamspace: (userId: string, teamspaceId: string) => boolean;
+  isCurrentUserMemberOfTeamspace: (teamspaceId: string) => boolean;
   // helper actions
   updateTeamspaceNameDescriptionLoader: (teamspaceId: string, loaderType: TNameDescriptionLoader) => void;
   toggleTeamsSidebar: (collapsed?: boolean) => void;
   // fetch actions
   fetchTeamspaces: (workspaceSlug: string) => Promise<TTeamspace[]>;
   fetchTeamspaceDetails: (workspaceSlug: string, teamspaceId: string) => Promise<TTeamspace>;
-  fetchTeamspaceEntities: (workspaceSlug: string, teamspaceId: string, loaderType?: TLoader) => Promise<TTeamspaceEntities>;
+  fetchTeamspaceEntities: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    loaderType?: TLoader
+  ) => Promise<TTeamspaceEntities>;
   // CURD actions
   createTeamspace: (workspaceSlug: string, data: Partial<TTeamspace>) => Promise<TTeamspace>;
   updateTeamspace: (workspaceSlug: string, teamspaceId: string, data: Partial<TTeamspace>) => Promise<TTeamspace>;
@@ -61,6 +69,8 @@ export interface ITeamspaceStore {
   removeTeamspaceMember: (workspaceSlug: string, teamspaceId: string, memberId: string) => Promise<void>;
   joinTeam: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   deleteTeamspace: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
+  addTeamspacesToProject: (workspaceSlug: string, projectId: string, teamspaceIds: string[]) => Promise<void>;
+  removeTeamspaceFromProject: (workspaceSlug: string, projectId: string, teamspaceId: string) => Promise<void>;
 }
 
 export class TeamspaceStore implements ITeamspaceStore {
@@ -73,7 +83,7 @@ export class TeamspaceStore implements ITeamspaceStore {
   teamspaceEntitiesMap: Record<string, TTeamspaceEntities> = {};
   isTeamSidebarCollapsed: boolean = false;
   // service
-  teamService: TeamspaceSpace;
+  teamService: TeamspaceService;
 
   constructor(private rootStore: RootStore) {
     makeObservable(this, {
@@ -106,9 +116,11 @@ export class TeamspaceStore implements ITeamspaceStore {
       removeTeamspaceMember: action,
       joinTeam: action,
       deleteTeamspace: action,
+      addTeamspacesToProject: action,
+      removeTeamspaceFromProject: action,
     });
     // service
-    this.teamService = new TeamspaceSpace();
+    this.teamService = new TeamspaceService();
   }
 
   // computed
@@ -117,7 +129,9 @@ export class TeamspaceStore implements ITeamspaceStore {
    * @returns string[] | undefined
    */
   get currentTeamspaceProjectIds() {
-    return this.rootStore.router.teamspaceId ? this.getTeamspaceProjectIds(this.rootStore.router.teamspaceId) : undefined;
+    return this.rootStore.router.teamspaceId
+      ? this.getTeamspaceProjectIds(this.rootStore.router.teamspaceId)
+      : undefined;
   }
 
   /**
@@ -128,7 +142,9 @@ export class TeamspaceStore implements ITeamspaceStore {
     if (!currentWorkspace) return [];
     // Get all teamspace IDs for current workspace
     const teamspaces = Object.values(this.teamspaceMap ?? {});
-    const teamIds = teamspaces.filter((teamspace) => teamspace.workspace === currentWorkspace.id).map((teamspace) => teamspace.id);
+    const teamIds = teamspaces
+      .filter((teamspace) => teamspace.workspace === currentWorkspace.id)
+      .map((teamspace) => teamspace.id);
     return teamIds;
   }
 
@@ -136,7 +152,7 @@ export class TeamspaceStore implements ITeamspaceStore {
    * Returns joined teamspace IDs
    */
   get joinedTeamSpaceIds() {
-    return this.allTeamSpaceIds.filter((teamspaceId) => this.isUserMemberOfTeamspace(teamspaceId));
+    return this.allTeamSpaceIds.filter((teamspaceId) => this.isCurrentUserMemberOfTeamspace(teamspaceId));
   }
 
   /**
@@ -158,7 +174,10 @@ export class TeamspaceStore implements ITeamspaceStore {
     const filteredTeams = this.currentScopeTeamSpaceIds
       .map((teamspaceId) => this.getTeamspaceById(teamspaceId))
       .filter(Boolean)
-      .filter((teamspace) => teamspace.name.toLowerCase().includes(searchQuery.toLowerCase()) && shouldFilterTeam(teamspace, filters));
+      .filter(
+        (teamspace) =>
+          teamspace.name.toLowerCase().includes(searchQuery.toLowerCase()) && shouldFilterTeam(teamspace, filters)
+      );
     const orderedTeams = orderTeams(filteredTeams, displayFilters.order_by);
     return orderedTeams.map((teamspace: TTeamspace) => teamspace.id);
   }
@@ -208,7 +227,9 @@ export class TeamspaceStore implements ITeamspaceStore {
    * @param teamspaceId
    * @returns TNameDescriptionLoader | undefined
    */
-  getTeamspaceNameDescriptionLoaderById = computedFn((teamspaceId: string) => this.teamspaceNameDescriptionLoader[teamspaceId]);
+  getTeamspaceNameDescriptionLoaderById = computedFn(
+    (teamspaceId: string) => this.teamspaceNameDescriptionLoader[teamspaceId]
+  );
 
   /**
    * Returns teamspace entities by teamspace ID
@@ -240,14 +261,45 @@ export class TeamspaceStore implements ITeamspaceStore {
   );
 
   /**
+   * Returns project teamspace IDs by project ID
+   * @param projectId
+   * @returns string[] | undefined
+   */
+  getProjectTeamspaceIds = computedFn((projectId: string) =>
+    Object.values(this.teamspaceMap)
+      .filter((teamspace) => teamspace.project_ids?.includes(projectId))
+      .map((teamspace) => teamspace.id)
+  );
+
+  /**
+   * Returns available teamspace IDs for a project
+   * @param projectId
+   * @returns string[]
+   */
+  getAvailableTeamspaceIdsForProject = computedFn((projectId: string) => {
+    const projectTeamspaceIds = this.getProjectTeamspaceIds(projectId);
+    return this.joinedTeamSpaceIds.filter((teamspaceId) => !projectTeamspaceIds.includes(teamspaceId));
+  });
+
+  /**
    * Returns whether the user is a member of the teamspace
+   * @param userId
    * @param teamspaceId
    * @returns boolean
    */
-  isUserMemberOfTeamspace = computedFn((teamspaceId: string) => {
+  isUserMemberOfTeamspace = computedFn(
+    (userId: string, teamspaceId: string) => this.getTeamspaceMemberIds(teamspaceId)?.includes(userId) ?? false
+  );
+
+  /**
+   * Returns whether the current user is a member of the teamspace
+   * @param teamspaceId
+   * @returns boolean
+   */
+  isCurrentUserMemberOfTeamspace = computedFn((teamspaceId: string) => {
     const currentUserId = this.rootStore.user.data?.id;
     if (!currentUserId) return false;
-    return this.getTeamspaceMemberIds(teamspaceId)?.includes(currentUserId) ?? false;
+    return this.isUserMemberOfTeamspace(currentUserId, teamspaceId);
   });
 
   // helper actions
@@ -392,7 +444,7 @@ export class TeamspaceStore implements ITeamspaceStore {
       await this.updateTeamspaceMembers(
         workspaceSlug,
         teamspace.id,
-        currentUserId ? uniq([...data.member_ids ?? [], currentUserId]) : data.member_ids ?? [],
+        currentUserId ? uniq([...(data.member_ids ?? []), currentUserId]) : (data.member_ids ?? []),
         false
       );
       // set teamspace map along with member_ids
@@ -552,7 +604,11 @@ export class TeamspaceStore implements ITeamspaceStore {
       // get team member ids
       const teamspaceMemberIds = this.getTeamspaceMemberIds(teamspaceId);
       // join teamspace
-      await this.updateTeamspaceMembers(workspaceSlug, teamspaceId, uniq([...(teamspaceMemberIds ?? []), currentUserId]));
+      await this.updateTeamspaceMembers(
+        workspaceSlug,
+        teamspaceId,
+        uniq([...(teamspaceMemberIds ?? []), currentUserId])
+      );
       this.loader = "loaded";
     } catch (error) {
       console.error("Failed to join teamspace", error);
@@ -582,6 +638,60 @@ export class TeamspaceStore implements ITeamspaceStore {
       });
     } catch (error) {
       console.error("Failed to delete teamspace", error);
+      throw error;
+    }
+  };
+
+  /**
+   * Adds teamspaces to a project and updates the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param teamspaceIds
+   * @returns Promise<void>
+   */
+  addTeamspacesToProject = async (workspaceSlug: string, projectId: string, teamspaceIds: string[]) => {
+    try {
+      this.loader = "mutation";
+      await this.teamService.addTeamspacesToProject(workspaceSlug, projectId, teamspaceIds);
+      // refetch project members
+      this.rootStore.memberRoot.project.fetchProjectMembers(workspaceSlug, projectId, true);
+      runInAction(() => {
+        teamspaceIds.forEach((teamspaceId) => {
+          update(this.teamspaceMap, [teamspaceId], (teamspace) => ({
+            ...teamspace,
+            project_ids: uniq(concat(teamspace.project_ids, projectId)),
+          }));
+        });
+        this.loader = "loaded";
+      });
+    } catch (error) {
+      console.error("Failed to add teamspaces to project", error);
+      this.loader = "loaded";
+      throw error;
+    }
+  };
+
+  /**
+   * Removes a teamspace from a project and updates the store
+   * @param workspaceSlug
+   * @param projectId
+   * @param teamspaceId
+   * @returns Promise<void>
+   */
+  removeTeamspaceFromProject = async (workspaceSlug: string, projectId: string, teamspaceId: string) => {
+    try {
+      // get the teamspace project ids
+      const currentTeamspaceProjectIds = this.getTeamspaceProjectIds(teamspaceId) ?? [];
+      // Filter out the project id to remove
+      const updatedProjectIds = currentTeamspaceProjectIds.filter((id) => id !== projectId);
+      // update teamspace
+      await this.updateTeamspace(workspaceSlug, teamspaceId, {
+        project_ids: updatedProjectIds,
+      });
+      // refetch project members
+      this.rootStore.memberRoot.project.fetchProjectMembers(workspaceSlug, projectId, true);
+    } catch (error) {
+      console.error("Failed to remove teamspace from project", error);
       throw error;
     }
   };

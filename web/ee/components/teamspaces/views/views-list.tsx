@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ETeamspaceEntityScope, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ListLayout } from "@/components/core/list";
@@ -25,11 +25,9 @@ export const TeamspaceViewsList = observer((props: Props) => {
   // store hooks
   const { toggleCreateTeamspaceViewModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  const { getTeamspaceViewsLoader, getTeamspaceViewsScope, getTeamspaceViews, getFilteredTeamspaceViews } =
-    useTeamspaceViews();
+  const { getTeamspaceViewsLoader, getTeamspaceViews, getFilteredTeamspaceViews } = useTeamspaceViews();
   // derived values
   const teamspaceViewsLoader = getTeamspaceViewsLoader(teamspaceId);
-  const teamspaceViewsScope = getTeamspaceViewsScope(teamspaceId);
   const teamspaceViews = getTeamspaceViews(teamspaceId);
   const filteredTeamspaceViews = getFilteredTeamspaceViews(teamspaceId);
   const hasWorkspaceMemberLevelPermissions = allowPermissions(
@@ -72,26 +70,16 @@ export const TeamspaceViewsList = observer((props: Props) => {
           </ListLayout>
         </div>
       ) : (
-        <>
-          {teamspaceViewsScope === ETeamspaceEntityScope.PROJECT ? (
-            <DetailedEmptyState
-              title={t("teamspace_views.empty_state.project_view.title")}
-              description={t("teamspace_views.empty_state.project_view.description")}
-              assetPath={generalViewResolvedPath}
-            />
-          ) : (
-            <DetailedEmptyState
-              title={t("teamspace_views.empty_state.team_view.title")}
-              description={t("teamspace_views.empty_state.team_view.description")}
-              assetPath={generalViewResolvedPath}
-              primaryButton={{
-                text: t("teamspace_views.empty_state.team_view.primary_button.text"),
-                onClick: () => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId }),
-                disabled: !hasWorkspaceMemberLevelPermissions,
-              }}
-            />
-          )}
-        </>
+        <DetailedEmptyState
+          title={t("teamspace_views.empty_state.team_view.title")}
+          description={t("teamspace_views.empty_state.team_view.description")}
+          assetPath={generalViewResolvedPath}
+          primaryButton={{
+            text: t("teamspace_views.empty_state.team_view.primary_button.text"),
+            onClick: () => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId }),
+            disabled: !hasWorkspaceMemberLevelPermissions,
+          }}
+        />
       )}
     </>
   );

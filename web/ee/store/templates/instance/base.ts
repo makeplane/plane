@@ -198,7 +198,7 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       return this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
     }
 
-    return this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role ?? undefined;
+    return this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   }
 
   // abstract computed

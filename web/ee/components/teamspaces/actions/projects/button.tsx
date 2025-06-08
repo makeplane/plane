@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { BriefcaseIcon, PlusIcon } from "lucide-react";
+import { BriefcaseIcon } from "lucide-react";
 // components
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-import { ProjectMultiSelectModal } from "@/components/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
+// local imports
+import { LinkProjectModal } from "./link-modal";
 
 type UpdateTeamspaceProjectsButtonProps = {
-  variant?: "default" | "header" | "empty-state";
+  variant?: "default" | "empty-state";
   teamspaceId: string;
   isEditingAllowed: boolean;
 };
@@ -56,9 +57,10 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
   if (!teamspace) return null;
   return (
     <>
-      <ProjectMultiSelectModal
+      <LinkProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        teamspaceId={teamspaceId}
         onSubmit={handleProjectsUpdate}
         selectedProjectIds={teamspace.project_ids ?? []}
         projectIds={workspaceProjectIds ?? []}
@@ -88,38 +90,19 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
           </button>
         </Tooltip>
       )}
-      {variant === "header" && (
-        <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
-          <div>
-            <Button
-              size="sm"
-              className="flex gap-1 items-center"
-              onClick={() => {
-                if (!isEditingAllowed) return;
-                setIsModalOpen(true);
-              }}
-              disabled={!isEditingAllowed}
-            >
-              <PlusIcon className="size-3.5" />
-              Link a project
-            </Button>
-          </div>
-        </Tooltip>
-      )}
       {variant === "empty-state" && (
         <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="right">
           <div>
             <Button
-              variant="accent-primary"
+              variant="primary"
               size="sm"
-              className="relative flex flex-shrink-0 items-center gap-x-1 mt-2"
+              className="flex-shrink-0 mt-2 text-xs"
               onClick={() => {
                 if (!isEditingAllowed) return;
                 setIsModalOpen(true);
               }}
               disabled={!isEditingAllowed}
             >
-              <PlusIcon className="size-3.5" />
               Link a project
             </Button>
           </div>

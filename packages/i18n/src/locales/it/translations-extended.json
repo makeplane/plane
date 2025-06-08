@@ -24,7 +24,8 @@
     "epics": "Epiche",
     "project_updates": "Aggiornamenti del progetto",
     "overview": "Panoramica",
-    "workflows": "Flussi di lavoro"
+    "workflows": "Flussi di lavoro",
+    "members_and_teamspaces": "Membri e teamspaces"
   },
   "updates": {
     "add_update": "Aggiungi aggiornamento",
@@ -183,10 +184,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Inizia collegando progetti a questo teamspace.",
-        "description": "I teamspaces collegano progetti a cui partecipano i membri del team, così puoi vedere solo il loro lavoro, il loro contributo ai progressi in quei progetti e metriche di lavoro specifiche del team."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Non hai ancora collegato alcun teamspace.",
+          "description": "I proprietari del teamspace e del progetto possono gestire l'accesso ai progetti."
+        }
+      },
+      "primary_button": {
+        "text": "Collega un teamspace"
+      },
+      "secondary_button": {
+        "text": "Scopri di più"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nome teamspace",
+          "members": "Membri",
+          "accountType": "Tipo di account"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Rimuovi teamspace"
+            },
+            "confirm": {
+              "title": "Rimuovi {teamspaceName} da {projectName}",
+              "description": "Quando rimuovi questo teamspace da un progetto collegato, i membri qui perderanno l'accesso al progetto collegato."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nessun teamspace corrispondente trovato"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Hai collegato un teamspace a questo progetto.} other {Hai collegato # teamspace a questo progetto.}}",
+            "description": "{additionalCount, plural, =0 {Il teamspace {firstTeamspaceName} è ora collegato a questo progetto.} other {Il teamspace {firstTeamspaceName} e altri {additionalCount} sono ora collegati a questo progetto.}}"
+          },
+          "error": {
+            "title": "Non è andato a buon fine.",
+            "description": "Riprova o ricarica questa pagina prima di riprovare."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Hai rimosso quel teamspace da questo progetto.",
+            "description": "Il teamspace {teamspaceName} è stato rimosso da {projectName}."
+          },
+          "error": {
+            "title": "Non è andato a buon fine.",
+            "description": "Riprova o ricarica questa pagina prima di riprovare."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Cerca teamspace",
+        "info": {
+          "title": "Aggiungere un teamspace concede a tutti i membri del teamspace l'accesso a questo progetto.",
+          "link": "Scopri di più"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Non hai teamspace da collegare.",
+            "description": "O non sei in un teamspace che puoi collegare o hai già collegato tutti i teamspace disponibili."
+          },
+          "no_results": {
+            "title": "Non corrisponde a nessuno dei tuoi teamspace.",
+            "description": "Prova un altro termine o assicurati di avere teamspace da collegare."
+          }
+        },
+        "primary_button": {
+          "text": "Collega i teamspace selezionati"
+        }
       }
     }
   },
@@ -233,10 +307,6 @@
           "text": "Crea una vista"
         }
       },
-      "project_view": {
-        "title": "Nessuno dei tuoi progetti collegati ha viste pubbliche.",
-        "description": "Le viste pubbliche nei progetti collegati appariranno automaticamente qui. Per vedere le viste pubbliche dai progetti collegati qui, assicurati che quei progetti abbiano viste pubbliche accessibili a tutti i membri del progetto."
-      },
       "filter": {
         "title": "Nessuna vista corrispondente",
         "description": "Nessuna vista corrisponde ai criteri di ricerca. \n Crea una nuova vista invece."
@@ -251,10 +321,6 @@
         "primary_button": {
           "text": "Crea la tua prima pagina del team"
         }
-      },
-      "project_page": {
-        "title": "Nessuno dei tuoi progetti collegati ha pagine pubbliche.",
-        "description": "Le pagine pubbliche nei progetti collegati appariranno automaticamente qui. Se ti aspetti di vedere pagine pubbliche qui, assicurati che i tuoi progetti collegati abbiano pagine pubbliche disponibili per tutti i membri del progetto."
       },
       "filter": {
         "title": "Nessuna pagina corrispondente",

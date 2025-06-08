@@ -101,7 +101,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
   private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {
     const { workspaceSlug } = this.rootStore.router;
     if (!workspaceSlug || !this.team) return;
-    const userRole = this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug)?.role;
+    const userRole = this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     return userRole;
   });
 

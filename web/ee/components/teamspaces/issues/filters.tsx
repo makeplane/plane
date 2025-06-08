@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ETeamspaceEntityScope, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
@@ -26,18 +26,14 @@ export const TeamHeaderFilters = observer((props: Props) => {
   const { t } = useTranslation();
   // store hooks
   const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
-  const {
-    issuesFilter: { issueFilters, updateFilters, getTeamspaceScope },
+    issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.TEAM);
   const { workspaceLabels } = useLabel();
   const { getTeamspaceMemberIds } = useTeamspaces();
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
-  const currentScope = getTeamspaceScope(teamspaceId);
-  const memberIds = currentScope === ETeamspaceEntityScope.TEAM ? teamspaceMemberIds : workspaceMemberIds;
+  const memberIds = teamspaceMemberIds;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {

@@ -25,6 +25,7 @@ from plane.ee.views.app.teamspace import (
     TeamspaceStatisticsEndpoint,
     TeamspacePageDuplicateEndpoint,
     TeamspaceProgressSummaryEndpoint,
+    AddTeamspaceProjectEndpoint,
 )
 
 urlpatterns = [
@@ -175,5 +176,10 @@ urlpatterns = [
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/statistics/",
         TeamspaceStatisticsEndpoint.as_view(),
         name="teamspace-statistics",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/teamspaces/",
+        AddTeamspaceProjectEndpoint.as_view(),
+        name="teamspace-projects",
     ),
 ]

@@ -11,32 +11,29 @@ import { cn } from "@plane/utils";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
-// store hooks
 import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+// hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { CustomerUpgrade, CustomerSettingsRoot } from "@/plane-web/components/customers";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
-// plane web constants
-// plane web hooks
 import { useCustomers, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
-// plane web types
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 
 const CustomerSettingsPage = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { workspaceInfoBySlug } = useUserPermissions();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { updateWorkspaceFeature } = useWorkspaceFeatures();
 
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceDetail = workspaceInfoBySlug(workspaceSlug.toString());
+  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Customers` : undefined;
-  const isAdmin = currentWorkspaceDetail?.role === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const { isCustomersFeatureEnabled } = useCustomers();
   const isFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.CUSTOMERS);
 

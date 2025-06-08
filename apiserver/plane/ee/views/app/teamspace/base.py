@@ -16,7 +16,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace, ProjectMember
+from plane.db.models import Workspace
 from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.ee.serializers import TeamspaceSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -108,39 +108,6 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
 
         return project_ids_to_be_added, project_ids_to_be_removed
 
-    def add_project_members(self, project_ids):
-        # Get the workspace
-        workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
-
-        # Add new members
-        member_ids = TeamspaceMember.objects.filter(
-            team_space_id=self.team_space_id, workspace__slug=self.kwargs.get("slug")
-        ).values_list("member_id", flat=True)
-        # Update project members
-        ProjectMember.objects.filter(
-            project_id__in=project_ids,
-            workspace__slug=self.kwargs.get("slug"),
-            member_id__in=member_ids,
-        ).update(is_active=True)
-
-        # Create new project members
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project_id=project_id,
-                    member_id=member_id,
-                    is_active=True,
-                    role=15,
-                    workspace=workspace,
-                )
-                for project_id in project_ids
-                for member_id in member_ids
-            ],
-            ignore_conflicts=True,
-            batch_size=100,
-        )
-        return
-
     @allow_permission(
         level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST]
     )
@@ -162,7 +129,7 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project_ids = request.data.pop("project_ids", [])
+            request.data.pop("project_ids", [])
 
             # Create team space
             serializer = TeamspaceSerializer(data=request.data)
@@ -187,21 +154,6 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                         workspace=workspace,
                         member_id=request.data.get("lead_id"),
                     )
-
-                # Create team space projects
-                TeamspaceProject.objects.bulk_create(
-                    [
-                        TeamspaceProject(
-                            team_space=team_space,
-                            workspace=workspace,
-                            project_id=project_id,
-                            sort_order=random.randint(1, 65535),
-                        )
-                        for project_id in project_ids
-                    ],
-                    ignore_conflicts=True,
-                    batch_size=100,
-                )
 
                 # Track the teamspace creation activity
                 team_space_activity.delay(
@@ -287,8 +239,6 @@ class TeamspaceEndpoint(TeamspaceBaseEndpoint):
                         ignore_conflicts=True,
                         batch_size=100,
                     )
-                    # Add project members
-                    self.add_project_members(project_ids_to_be_added)
 
                     # Delete team space projects
                     TeamspaceProject.objects.filter(

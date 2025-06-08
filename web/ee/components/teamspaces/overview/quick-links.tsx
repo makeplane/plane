@@ -21,12 +21,6 @@ export const TeamsOverviewQuickLinks = observer(() => {
 
   const TEAM_QUICK_LINKS: TTeamQuickLink[] = [
     {
-      key: "projects",
-      name: "Projects",
-      icon: <BriefcaseIcon className="size-4 text-custom-text-300" />,
-      href: `/${workspaceSlug}/teamspaces/${teamspaceId}/projects`,
-    },
-    {
       key: "issues",
       name: "Work items",
       icon: <LayersIcon className="size-4 text-custom-text-300" />,
@@ -55,7 +49,7 @@ export const TeamsOverviewQuickLinks = observer(() => {
   return (
     <div className="w-full flex flex-col gap-y-3 pb-6">
       <div className="text-sm font-semibold text-custom-text-300">Jump into</div>
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 items-center gap-4">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 items-center gap-4">
         {TEAM_QUICK_LINKS.map((link) => (
           <Link
             key={link.key}

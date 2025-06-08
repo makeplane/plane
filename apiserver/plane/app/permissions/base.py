@@ -1,8 +1,16 @@
-from plane.db.models import WorkspaceMember, ProjectMember
+# Python imports
+from enum import Enum
 from functools import wraps
+
+# Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from enum import Enum
+
+# Module imports
+from plane.db.models import WorkspaceMember, ProjectMember
+from plane.ee.models import TeamspaceProject, TeamspaceMember
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class ROLE(Enum):
@@ -52,6 +60,27 @@ def allow_permission(
                     is_active=True,
                 ).exists():
                     return view_func(instance, request, *args, **kwargs)
+                #
+                # Check if the user is member of the team space
+                # if scope is project further check if user is member of the team space
+                # only if member is present in allowed roles
+                #
+                if (
+                    ROLE.MEMBER.value in allowed_role_values
+                    and check_workspace_feature_flag(
+                        feature_key=FeatureFlag.TEAMSPACES,
+                        slug=kwargs["slug"],
+                        user_id=request.user.id,
+                    )
+                ):
+                    teamspace_ids = TeamspaceProject.objects.filter(
+                        workspace__slug=kwargs["slug"], project_id=kwargs["project_id"]
+                    ).values_list("team_space_id", flat=True)
+
+                    if TeamspaceMember.objects.filter(
+                        member=request.user, team_space_id__in=teamspace_ids
+                    ).exists():
+                        return view_func(instance, request, *args, **kwargs)
 
             # Return permission denied if no conditions are met
             return Response(

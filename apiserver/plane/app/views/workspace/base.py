@@ -58,7 +58,6 @@ from plane.utils.url import contains_url
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from django.conf import settings
 
-
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
@@ -439,10 +438,9 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
             workspace__slug=slug,
             created_at__date=request.data.get("date"),
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             actor_id=user_id,
-        ).select_related("actor", "workspace", "issue", "project")[:10000]
+        ).accessible_to(user_id, slug).select_related("actor", "workspace", "issue", "project")[:10000]
+
 
         header = [
             "Actor name",

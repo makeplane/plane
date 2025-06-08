@@ -18,7 +18,14 @@ from plane.app.serializers import (
 )
 from plane.app.views.base import BaseAPIView
 from plane.utils.cache import invalidate_cache
-from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue, Cycle
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    WorkspaceMember,
+    DraftIssue,
+    Cycle,
+)
+from plane.ee.models import TeamspaceMember
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.payment.utils.member_payment_count import workspace_member_check
 from .. import BaseViewSet
@@ -157,6 +164,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.is_active = False
         workspace_member.save()
 
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).delete()
+
         # Sync workspace members
         member_sync_task.delay(slug)
 
@@ -222,6 +234,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the user
         workspace_member.is_active = False
         workspace_member.save()
+
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).delete()
 
         # # Sync workspace members
         member_sync_task.delay(slug)

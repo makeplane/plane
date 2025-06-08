@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // plane imports
-import { EViewAccess, EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { EViewAccess, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
 import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
@@ -38,30 +38,24 @@ export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
   const { addViewToFavorites, removeViewFromFavorites } = useTeamspaceViews();
   const { getUserDetails } = useMember();
   // derived values
-  const isEditingAllowed = view.is_team_view
-    ? allowPermissions(
-        [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-        EUserPermissionsLevel.WORKSPACE,
-        workspaceSlug?.toString()
-      )
-    : allowPermissions(
-        [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-        EUserPermissionsLevel.PROJECT,
-        workspaceSlug?.toString(),
-        view.project
-      );
+  const isEditingAllowed = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug?.toString()
+  );
   const totalFilters = calculateTotalFilters(view.filters ?? {});
   const access = view.access;
+  const isFavoriteOperationAllowed = false; // TODO: Favorite operation is not supported for teamspace views right now
 
   // handlers
   const handleAddToFavorites = () => {
-    if (!workspaceSlug || !teamspaceId || view.is_team_view) return;
+    if (!workspaceSlug || !teamspaceId || !isFavoriteOperationAllowed) return;
 
     addViewToFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id);
   };
 
   const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !teamspaceId || view.is_team_view) return;
+    if (!workspaceSlug || !teamspaceId || !isFavoriteOperationAllowed) return;
 
     removeViewFromFavorites(workspaceSlug.toString(), teamspaceId.toString(), view.id);
   };
@@ -93,7 +87,7 @@ export const TeamspaceViewListItemAction: FC<Props> = observer((props) => {
       {/* created by */}
       {<ButtonAvatars showTooltip={false} userIds={ownedByDetails?.id ?? []} />}
 
-      {isEditingAllowed && !view.is_team_view && (
+      {isEditingAllowed && isFavoriteOperationAllowed && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();

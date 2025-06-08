@@ -25,7 +25,8 @@
     "epics": "Epics",
     "project_updates": "Actualizaciones del proyecto",
     "overview": "Resumen",
-    "workflows": "Flujos de trabajo"
+    "workflows": "Flujos de trabajo",
+    "members_and_teamspaces": "Miembros y espacios de equipo"
   },
   "updates": {
     "add_update": "Agregar actualización",
@@ -184,10 +185,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Comienza vinculando proyectos a este espacio de equipo.",
-        "description": "Los espacios de equipo vinculan proyectos en los que están los miembros del equipo, para que puedas ver solo su trabajo, su contribución al progreso en esos proyectos y las métricas de trabajo específicas del equipo."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Aún no has vinculado ningún espacio de equipo.",
+          "description": "Los propietarios del espacio de equipo y del proyecto pueden gestionar el acceso a los proyectos."
+        }
+      },
+      "primary_button": {
+        "text": "Vincular un espacio de equipo"
+      },
+      "secondary_button": {
+        "text": "Más información"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nombre del espacio de equipo",
+          "members": "Miembros",
+          "accountType": "Tipo de cuenta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Eliminar espacio de equipo"
+            },
+            "confirm": {
+              "title": "Eliminar {teamspaceName} de {projectName}",
+              "description": "Cuando elimines este espacio de equipo de un proyecto vinculado, los miembros aquí perderán el acceso al proyecto vinculado."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No se encontraron espacios de equipo coincidentes"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Has vinculado un espacio de equipo a este proyecto.} other {Has vinculado # espacios de equipo a este proyecto.}}",
+            "description": "{additionalCount, plural, =0 {El espacio de equipo {firstTeamspaceName} ahora está vinculado a este proyecto.} other {El espacio de equipo {firstTeamspaceName} y {additionalCount} más ahora están vinculados a este proyecto.}}"
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Has eliminado ese espacio de equipo de este proyecto.",
+            "description": "El espacio de equipo {teamspaceName} fue eliminado de {projectName}."
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Buscar espacios de equipo",
+        "info": {
+          "title": "Agregar un espacio de equipo otorga a todos los miembros del espacio de equipo acceso a este proyecto.",
+          "link": "Más información"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "No tienes ningún espacio de equipo para vincular.",
+            "description": "O bien no estás en un espacio de equipo que puedas vincular o ya has vinculado todos los espacios de equipo disponibles."
+          },
+          "no_results": {
+            "title": "Eso no coincide con ninguno de tus espacios de equipo.",
+            "description": "Prueba con otro término o asegúrate de tener espacios de equipo para vincular."
+          }
+        },
+        "primary_button": {
+          "text": "Vincular espacio(s) de equipo seleccionado(s)"
+        }
       }
     }
   },
@@ -234,10 +308,6 @@
           "text": "Crear una vista"
         }
       },
-      "project_view": {
-        "title": "Ninguno de tus proyectos vinculados tiene vistas públicas.",
-        "description": "Las vistas públicas en proyectos vinculados aparecerán automáticamente aquí. Para ver vistas públicas de proyectos vinculados aquí, asegúrate de que esos proyectos tengan vistas públicas accesibles para todos los miembros del proyecto."
-      },
       "filter": {
         "title": "No hay vistas coincidentes",
         "description": "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar."
@@ -252,10 +322,6 @@
         "primary_button": {
           "text": "Crea tu primera Page"
         }
-      },
-      "project_page": {
-        "title": "Ninguno de tus proyectos vinculados tiene Pages públicas.",
-        "description": "Las Pages públicas en proyectos vinculados aparecerán automáticamente aquí. Si esperas ver Pages públicas aquí, asegúrate de que tus proyectos vinculados tengan Pages públicas disponibles para todos los miembros del proyecto."
       },
       "filter": {
         "title": "No hay Pages coincidentes",

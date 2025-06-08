@@ -4,7 +4,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType, ETeamspaceEntityScope } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 // types
 import {
   IIssueFilterOptions,
@@ -24,12 +24,7 @@ import { IBaseIssueFilterStore, IssueFilterHelperStore } from "@/store/issue/hel
 import { IIssueRootStore } from "@/store/issue/root.store";
 
 export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
-  // observables
-  scopeMap: Record<string, ETeamspaceEntityScope>; // teamspaceId -> scope
   //helper actions
-  initTeamScope: (teamspaceId: string) => void;
-  getTeamspaceScope: (teamspaceId: string) => ETeamspaceEntityScope | undefined;
-  updateTeamScope: (teamspaceId: string, scope: ETeamspaceEntityScope) => void;
   getFilterParams: (
     options: IssuePaginationOptions,
     teamspaceId: string,
@@ -50,7 +45,6 @@ export interface ITeamIssuesFilter extends IBaseIssueFilterStore {
 
 export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIssuesFilter {
   // observables
-  scopeMap: Record<string, ETeamspaceEntityScope> = {}; // teamspaceId -> scope
   filters: { [teamspaceId: string]: IIssueFilters } = {};
   // root store
   rootIssueStore: IIssueRootStore;
@@ -61,14 +55,10 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
     super();
     makeObservable(this, {
       // observables
-      scopeMap: observable,
       filters: observable,
       // computed
       issueFilters: computed,
       appliedFilters: computed,
-      // helper actions
-      initTeamScope: action,
-      updateTeamScope: action,
       // actions
       fetchFilters: action,
       updateFilters: action,
@@ -101,37 +91,6 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
   }
 
   // helpers
-  /**
-   * Initializes teamspace views scope
-   * @param teamspaceId
-   */
-  initTeamScope = (teamspaceId: string) => {
-    set(this.scopeMap, teamspaceId, "teams");
-  };
-
-  /**
-   * Returns teamspace scope
-   * @param teamspaceId
-   * @returns ETeamspaceEntityScope | undefined
-   */
-  getTeamspaceScope = computedFn((teamspaceId: string) => {
-    if (!this.scopeMap[teamspaceId]) {
-      this.initTeamScope(teamspaceId);
-    }
-    return this.scopeMap[teamspaceId];
-  });
-
-  /**
-   * Updates teamspace scope
-   * @param teamspaceId
-   * @param scope
-   */
-  updateTeamScope = (teamspaceId: string, scope: ETeamspaceEntityScope) => {
-    runInAction(() => {
-      set(this.scopeMap, teamspaceId, scope);
-    });
-  };
-
   /**
    * @description This method is used to get the issue filters for the teamspace
    * @returns {IIssueFilters | undefined}
@@ -175,10 +134,9 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
       groupId: string | undefined,
       subGroupId: string | undefined
     ) => {
-      const currentScope = this.getTeamspaceScope(teamspaceId);
       const filterParams = this.getAppliedFilters(teamspaceId);
       const paginationParams = this.getPaginationParams(filterParams, options, cursor, groupId, subGroupId);
-      return { ...paginationParams, scope: currentScope };
+      return paginationParams;
     }
   );
 
@@ -189,7 +147,10 @@ export class TeamIssuesFilter extends IssueFilterHelperStore implements ITeamIss
   fetchFilters = async (workspaceSlug: string, teamspaceId: string): Promise<void> => {
     try {
       // fetch the filters for the teamspace
-      const _filters = await this.teamspaceWorkItemFilterService.fetchTeamspaceWorkItemFilters(workspaceSlug, teamspaceId);
+      const _filters = await this.teamspaceWorkItemFilterService.fetchTeamspaceWorkItemFilters(
+        workspaceSlug,
+        teamspaceId
+      );
       // compute the filters
       const filters = this.computedFilters(_filters?.filters);
       const displayFilters = this.computedDisplayFilters(_filters?.display_filters);

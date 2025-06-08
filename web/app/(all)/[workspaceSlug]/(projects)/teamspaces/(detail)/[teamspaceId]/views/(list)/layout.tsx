@@ -6,7 +6,7 @@ import { ETeamspaceNavigationItem } from "@plane/constants";
 // components
 import { AppHeader, ContentWrapper, PageHead } from "@/components/core";
 // plane web components
-import { TeamDetailHeader } from "@/plane-web/components/teamspaces/headers/detail-header";
+import { TeamspaceDetailHeader } from "@/plane-web/components/teamspaces/headers/detail-header";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
@@ -21,7 +21,7 @@ export default function TeamspaceViewsLayout({ children }: { children: ReactNode
   return (
     <>
       <PageHead title={pageTitle} />
-      <AppHeader header={<TeamDetailHeader selectedNavigationKey={ETeamspaceNavigationItem.VIEWS} />} />
+      <AppHeader header={<TeamspaceDetailHeader selectedNavigationKey={ETeamspaceNavigationItem.VIEWS} />} />
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );

@@ -21,10 +21,10 @@ type TTeamsOverviewContentProps = {
 export const TeamsOverviewContent = observer((props: TTeamsOverviewContentProps) => {
   const { teamspaceId, isEditingAllowed } = props;
   // hooks
-  const { getTeamspaceById, isUserMemberOfTeamspace } = useTeamspaces();
+  const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
   const areProjectsLinked = teamspace?.project_ids && teamspace.project_ids.length > 0;
 
   if (!teamspace) return <></>;

@@ -26,7 +26,8 @@
     "project_updates": "Cập nhật dự án",
     "overview": "Tổng quan",
     "workflows": "Quy trình làm việc",
-    "templates": "Mẫu"
+    "templates": "Mẫu",
+    "members_and_teamspaces": "Thành viên và không gian nhóm"
   },
   "updates": {
     "add_update": "Thêm cập nhật",
@@ -175,10 +176,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Bắt đầu bằng cách liên kết các dự án với không gian nhóm này.",
-        "description": "Không gian nhóm liên kết các dự án mà thành viên nhóm tham gia, để bạn có thể chỉ xem công việc của họ, đóng góp của họ vào tiến độ trong những dự án đó, và các số liệu công việc cụ thể của nhóm."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Bạn chưa liên kết bất kỳ không gian nhóm nào.",
+          "description": "Chủ sở hữu không gian nhóm và dự án có thể quản lý quyền truy cập vào các dự án."
+        }
+      },
+      "primary_button": {
+        "text": "Liên kết không gian nhóm"
+      },
+      "secondary_button": {
+        "text": "Tìm hiểu thêm"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Tên không gian nhóm",
+          "members": "Thành viên",
+          "accountType": "Loại tài khoản"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Xóa không gian nhóm"
+            },
+            "confirm": {
+              "title": "Xóa {teamspaceName} khỏi {projectName}",
+              "description": "Khi bạn xóa không gian nhóm này khỏi dự án liên kết, các thành viên ở đây sẽ mất quyền truy cập vào dự án liên kết."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Không tìm thấy không gian nhóm phù hợp"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bạn đã liên kết một không gian nhóm với dự án này.} other {Bạn đã liên kết # không gian nhóm với dự án này.}}",
+            "description": "{additionalCount, plural, =0 {Không gian nhóm {firstTeamspaceName} hiện đã được liên kết với dự án này.} other {Không gian nhóm {firstTeamspaceName} và {additionalCount} không gian khác hiện đã được liên kết với dự án này.}}"
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bạn đã xóa không gian nhóm đó khỏi dự án này.",
+            "description": "Không gian nhóm {teamspaceName} đã được xóa khỏi {projectName}."
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Tìm kiếm không gian nhóm",
+        "info": {
+          "title": "Thêm không gian nhóm cấp cho tất cả thành viên không gian nhóm quyền truy cập vào dự án này.",
+          "link": "Tìm hiểu thêm"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bạn không có không gian nhóm nào để liên kết.",
+            "description": "Hoặc bạn không ở trong không gian nhóm mà bạn có thể liên kết hoặc bạn đã liên kết tất cả các không gian nhóm có sẵn."
+          },
+          "no_results": {
+            "title": "Điều đó không khớp với bất kỳ không gian nhóm nào của bạn.",
+            "description": "Hãy thử một thuật ngữ khác hoặc đảm bảo bạn có không gian nhóm để liên kết."
+          }
+        },
+        "primary_button": {
+          "text": "Liên kết không gian nhóm đã chọn"
+        }
       }
     }
   },
@@ -225,10 +299,6 @@
           "text": "Tạo một góc nhìn"
         }
       },
-      "project_view": {
-        "title": "Không có dự án liên kết nào của bạn có bất kỳ góc nhìn công khai nào.",
-        "description": "Góc nhìn công khai trong các dự án liên kết sẽ tự động xuất hiện ở đây. Để xem góc nhìn công khai từ các dự án liên kết ở đây, hãy đảm bảo những dự án đó có góc nhìn công khai truy cập được cho tất cả thành viên dự án."
-      },
       "filter": {
         "title": "Không có góc nhìn phù hợp",
         "description": "Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm. \n Tạo góc nhìn mới thay thế."
@@ -243,10 +313,6 @@
         "primary_button": {
           "text": "Tạo trang nhóm đầu tiên của bạn"
         }
-      },
-      "project_page": {
-        "title": "Không có dự án liên kết nào của bạn có trang công khai.",
-        "description": "Các trang công khai trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy các trang công khai ở đây, hãy đảm bảo các dự án liên kết của bạn có các trang công khai có sẵn cho tất cả thành viên dự án."
       },
       "filter": {
         "title": "Không có trang phù hợp",

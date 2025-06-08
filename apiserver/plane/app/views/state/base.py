@@ -52,15 +52,15 @@ class StateViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .filter(is_triage=False)
             .select_related("project")
             .select_related("workspace")
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
+        
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])

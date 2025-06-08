@@ -93,10 +93,6 @@ class CycleViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .filter(project__archived_at__isnull=True)
             .select_related("project", "workspace", "owned_by")
             .prefetch_related(
@@ -184,6 +180,7 @@ class CycleViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -1068,10 +1065,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         # Trigger the entity issue state activity task for removal of issues
         entity_issue_state_activity_task.delay(
             issue_cycle_data=[
-                {
-                    "issue_id": str(cycle_issue.issue_id),
-                    "cycle_id": str(cycle_id),
-                }
+                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(cycle_id)}
                 for cycle_issue in cycle_issues
             ],
             user_id=str(self.request.user.id),
@@ -1082,10 +1076,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         # trigger the entity issue state activity task for adding issues
         entity_issue_state_activity_task.delay(
             issue_cycle_data=[
-                {
-                    "issue_id": str(cycle_issue.issue_id),
-                    "cycle_id": str(new_cycle_id),
-                }
+                {"issue_id": str(cycle_issue.issue_id), "cycle_id": str(new_cycle_id)}
                 for cycle_issue in cycle_issues
             ],
             user_id=str(self.request.user.id),
@@ -1318,8 +1309,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
 
         if not cycle:
             return Response(
-                {"error": "Cycle not found"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
         if not cycle.start_date or not cycle.end_date:

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { ETeamspaceEntityScope, EPageAccess } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -32,13 +32,11 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
   // plane web hooks
   const { getTeamspaceMemberIds } = useTeamspaces();
   const {
-    getTeamspacePagesScope,
     getTeamspacePagesFilters,
     updateFilters: updateTeamspaceFilters,
     createPage,
   } = usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
-  const teamspacePagesScope = getTeamspacePagesScope(teamspaceId);
   const filters = getTeamspacePagesFilters(teamspaceId);
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
@@ -98,7 +96,7 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
           memberIds={teamspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>
-      {isEditingAllowed && teamspacePagesScope === ETeamspaceEntityScope.TEAM && (
+      {isEditingAllowed && (
         <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>

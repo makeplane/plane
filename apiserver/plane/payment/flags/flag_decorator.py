@@ -13,8 +13,8 @@ from rest_framework.response import Response
 
 # Module imports
 from .provider import FlagProvider
+from plane.utils.cache import cache_function_result
 from plane.db.models.user import User
-
 
 class ErrorCodes(Enum):
     PAYMENT_REQUIRED = 1999
@@ -54,8 +54,8 @@ def check_feature_flag(feature_key, default_value=False):
 
     return decorator
 
-
-def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=False):
+@cache_function_result(timeout=300, key_prefix="workspace_feature_flag")
+def check_workspace_feature_flag(feature_key, slug, user_id=None, default_value=False) -> bool:
     """Function to check workspace feature flag"""
     # Function to generate cache key
     openfeature.api.set_provider(FlagProvider())

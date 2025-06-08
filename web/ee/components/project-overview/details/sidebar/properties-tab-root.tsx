@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
@@ -38,7 +38,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getProjectById, updateProject } = useProject();
-  const { workspaceProjectsPermissions } = useUserPermissions();
+  const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { getUserDetails } = useMember();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -59,10 +59,12 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
     isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
     useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
 
-  const isEditingAllowed =
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] &&
-    workspaceProjectsPermissions[workspaceSlug][project.id] >= EUserProjectRoles.ADMIN;
+  const isEditingAllowed = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug,
+    projectId
+  );
 
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {

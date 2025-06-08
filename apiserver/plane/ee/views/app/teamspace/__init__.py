@@ -22,3 +22,4 @@ from .page import (
 from .issue import TeamspaceIssueEndpoint, TeamspaceUserPropertiesEndpoint
 from .activity import TeamspaceActivityEndpoint
 from .comment import TeamspaceCommentEndpoint, TeamspaceCommentReactionEndpoint
+from .project import AddTeamspaceProjectEndpoint

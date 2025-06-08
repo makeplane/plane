@@ -5,7 +5,7 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EStatisticsLegend, ETeamspaceAnalyticsDataKeys, ETeamspaceAnalyticsValueKeys, ETeamspaceEntityScope } from "@plane/constants";
+import { EStatisticsLegend, ETeamspaceAnalyticsDataKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
 import { TLoader, TTeamspaceRelations, TTeamspaceStatistics, TTeamspaceProgressSummary } from "@plane/types";
 // plane web imports
 import { TeamspaceAnalyticsService } from "@/plane-web/services/teamspace/teamspace-analytics.service";
@@ -13,7 +13,6 @@ import { RootStore } from "@/plane-web/store/root.store";
 import { TStatisticsFilter, TTeamspaceProgressChart, TWorkloadFilter } from "@/plane-web/types/teamspace";
 
 const DEFAULT_TEAM_STATISTICS_FILTER: TStatisticsFilter = {
-  scope: ETeamspaceEntityScope.PROJECT,
   data_key: ETeamspaceAnalyticsDataKeys.PROJECTS,
   value_key: ETeamspaceAnalyticsValueKeys.ISSUES,
   issue_type: [],
@@ -49,7 +48,11 @@ export interface ITeamspaceAnalyticsStore {
   // helper action
   initTeamspaceProgressFilter: (teamspaceId: string) => void;
   initTeamspaceStatisticsFilter: (teamspaceId: string) => void;
-  updateTeamspaceProgressFilter: (workspaceSlug: string, teamspaceId: string, payload: Partial<TWorkloadFilter>) => Promise<void>;
+  updateTeamspaceProgressFilter: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    payload: Partial<TWorkloadFilter>
+  ) => Promise<void>;
   updateTeamspaceStatisticsFilter: <T extends keyof TStatisticsFilter>(
     workspaceSlug: string,
     teamspaceId: string,
@@ -59,7 +62,11 @@ export interface ITeamspaceAnalyticsStore {
   clearTeamspaceStatisticsFilter: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   fetchTeamspaceAnalytics: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   // actions
-  fetchTeamspaceProgressChartDetails: (workspaceSlug: string, teamspaceId: string, filter?: TWorkloadFilter) => Promise<void>;
+  fetchTeamspaceProgressChartDetails: (
+    workspaceSlug: string,
+    teamspaceId: string,
+    filter?: TWorkloadFilter
+  ) => Promise<void>;
   fetchTeamspaceProgressSummary: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   fetchTeamspaceRelations: (workspaceSlug: string, teamspaceId: string) => Promise<void>;
   fetchTeamspaceStatistics: (workspaceSlug: string, teamspaceId: string, filter?: TStatisticsFilter) => Promise<void>;
@@ -125,7 +132,9 @@ export class TeamspaceAnalyticsStore implements ITeamspaceAnalyticsStore {
    * @param teamspaceId
    * @returns TLoader | undefined
    */
-  getTeamspaceProgressSummaryLoader = computedFn((teamspaceId: string) => this.teamspaceProgressSummaryLoader[teamspaceId]);
+  getTeamspaceProgressSummaryLoader = computedFn(
+    (teamspaceId: string) => this.teamspaceProgressSummaryLoader[teamspaceId]
+  );
 
   /**
    * Get teamspace relations loader
@@ -214,7 +223,11 @@ export class TeamspaceAnalyticsStore implements ITeamspaceAnalyticsStore {
    * @param teamspaceId
    * @param payload
    */
-  updateTeamspaceProgressFilter = async (workspaceSlug: string, teamspaceId: string, payload: Partial<TWorkloadFilter>) => {
+  updateTeamspaceProgressFilter = async (
+    workspaceSlug: string,
+    teamspaceId: string,
+    payload: Partial<TWorkloadFilter>
+  ) => {
     const filterBeforeUpdate = cloneDeep(this.getTeamspaceProgressFilter(teamspaceId));
     try {
       // optimistic update
@@ -303,7 +316,11 @@ export class TeamspaceAnalyticsStore implements ITeamspaceAnalyticsStore {
       // get the teamspace progress filter
       const params = filter || this.getTeamspaceProgressFilter(teamspaceId);
       // Fetch teamspace progress
-      const response = await this.teamspaceAnalyticsService.getTeamspaceProgressChart(workspaceSlug, teamspaceId, params);
+      const response = await this.teamspaceAnalyticsService.getTeamspaceProgressChart(
+        workspaceSlug,
+        teamspaceId,
+        params
+      );
       // Update teamspace progress store
       runInAction(() => {
         set(this.teamspaceProgressChartMap, teamspaceId, response);

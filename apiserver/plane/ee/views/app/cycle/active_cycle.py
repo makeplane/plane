@@ -12,8 +12,6 @@ from plane.ee.serializers import WorkspaceActiveCycleSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
-# Third party imports
-
 
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
@@ -32,8 +30,6 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             Cycle.objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__role__gt=5,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
             )
@@ -65,6 +61,7 @@ class WorkspaceActiveCycleEndpoint(BaseAPIView):
             .annotate(is_favorite=Exists(favorite_subquery))
             .order_by("-is_favorite", "name")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
 
         return self.paginate(

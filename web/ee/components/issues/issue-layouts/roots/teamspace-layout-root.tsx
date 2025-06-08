@@ -1,12 +1,12 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EIssueLayoutTypes, EIssuesStoreType, ETeamspaceEntityScope } from "@plane/constants";
-import { Spinner, Tabs } from "@plane/ui";
+import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/constants";
+import { Spinner } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import {
@@ -22,7 +22,6 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // plane web imports
 import { TeamspaceAppliedFiltersRoot } from "@/plane-web/components/issues/filters/applied-filters/roots";
-import { getTeamspaceEntityScopeLabel } from "@/plane-web/helpers/teamspace-helper";
 
 const TeamspaceWorkItemLayout: FC<{ activeLayout: EIssueLayoutTypes | undefined }> = ({ activeLayout }) => {
   switch (activeLayout) {
@@ -79,26 +78,6 @@ export const TeamspaceLayoutRoot: FC = observer(() => {
   // derived values
   const issueLoader = issues?.getIssueLoader();
 
-  const TEAM_ISSUES_TABS = useMemo(
-    () => [
-      {
-        key: ETeamspaceEntityScope.TEAM,
-        label: getTeamspaceEntityScopeLabel(ETeamspaceEntityScope.TEAM),
-        content: <TeamspaceWorkItemLayoutContent issueLoader={issueLoader || ""} />,
-        onClick: () => issuesFilter?.updateTeamScope(teamspaceId!.toString(), ETeamspaceEntityScope.TEAM),
-        disabled: issueLoader === "init-loader",
-      },
-      {
-        key: ETeamspaceEntityScope.PROJECT,
-        label: getTeamspaceEntityScopeLabel(ETeamspaceEntityScope.PROJECT),
-        content: <TeamspaceWorkItemLayoutContent issueLoader={issueLoader || ""} />,
-        onClick: () => issuesFilter?.updateTeamScope(teamspaceId!.toString(), ETeamspaceEntityScope.PROJECT),
-        disabled: issueLoader === "init-loader",
-      },
-    ],
-    [teamspaceId, issueLoader, issuesFilter]
-  );
-
   if (!workspaceSlug || !teamspaceId) return <></>;
 
   if (isLoading && !issuesFilter?.getIssueFilters(teamspaceId?.toString()))
@@ -111,17 +90,8 @@ export const TeamspaceLayoutRoot: FC = observer(() => {
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.TEAM}>
       <div className="relative flex h-full w-full flex-col overflow-hidden">
-        <Tabs
-          tabs={TEAM_ISSUES_TABS}
-          defaultTab={issuesFilter.getTeamspaceScope(teamspaceId?.toString())}
-          size="sm"
-          containerClassName="gap-0"
-          tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 divide-x divide-custom-border-200"
-          tabListClassName="my-2 max-w-36"
-          tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
-          storeInLocalStorage={false}
-          actions={<TeamspaceAppliedFiltersRoot />}
-        />
+        <TeamspaceAppliedFiltersRoot />
+        <TeamspaceWorkItemLayoutContent issueLoader={issueLoader || ""} />
         <IssuePeekOverview />
       </div>
     </IssuesStoreContext.Provider>

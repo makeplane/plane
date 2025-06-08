@@ -2,12 +2,9 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
 import { IProjectView, TTeamspaceView } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { ProjectViewForm } from "@/components/views";
 // plan web hooks
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 // local components
@@ -70,21 +67,12 @@ export const CreateUpdateTeamspaceViewModal: FC<Props> = observer((props) => {
   if (!isOpen) return null;
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
-      {data && data.id && !data.is_team_view ? (
-        <ProjectViewForm
-          data={data}
-          handleClose={handleClose}
-          handleFormSubmit={handleFormSubmit}
-          preLoadedData={preLoadedData}
-        />
-      ) : (
-        <TeamspaceViewForm
-          data={data}
-          handleClose={handleClose}
-          handleFormSubmit={handleFormSubmit}
-          preLoadedData={preLoadedData}
-        />
-      )}
+      <TeamspaceViewForm
+        data={data}
+        handleClose={handleClose}
+        handleFormSubmit={handleFormSubmit}
+        preLoadedData={preLoadedData}
+      />
     </ModalCore>
   );
 });

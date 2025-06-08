@@ -26,7 +26,8 @@
     "project_updates": "Pembaruan Proyek",
     "overview": "Ikhtisar",
     "workflows": "Alur Kerja",
-    "templates": "Templat"
+    "templates": "Templat",
+    "members_and_teamspaces": "Anggota & Teamspaces"
   },
   "updates": {
     "add_update": "Tambahkan update",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Mulai dengan menghubungkan proyek ke ruang tim ini.",
-        "description": "Ruang Tim menghubungkan proyek yang anggota tim berada di dalamnya, sehingga Anda dapat melihat hanya pekerjaan mereka, kontribusi mereka terhadap kemajuan dalam proyek tersebut, dan metrik kerja khusus tim."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Anda belum menautkan ruang tim apa pun.",
+          "description": "Pemilik ruang tim dan proyek dapat mengelola akses ke proyek."
+        }
+      },
+      "primary_button": {
+        "text": "Tautkan ruang tim"
+      },
+      "secondary_button": {
+        "text": "Pelajari lebih lanjut"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nama ruang tim",
+          "members": "Anggota",
+          "accountType": "Tipe akun"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Hapus ruang tim"
+            },
+            "confirm": {
+              "title": "Hapus {teamspaceName} dari {projectName}",
+              "description": "Saat Anda menghapus ruang tim ini dari proyek tertaut, anggota di sini akan kehilangan akses ke proyek tertaut."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Tidak ada ruang tim yang cocok ditemukan"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Anda menautkan ruang tim ke proyek ini.} other {Anda menautkan # ruang tim ke proyek ini.}}",
+            "description": "{additionalCount, plural, =0 {Ruang tim {firstTeamspaceName} sekarang tertaut ke proyek ini.} other {Ruang tim {firstTeamspaceName} dan {additionalCount} lainnya sekarang tertaut ke proyek ini.}}"
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Anda menghapus ruang tim itu dari proyek ini.",
+            "description": "Ruang tim {teamspaceName} telah dihapus dari {projectName}."
+          },
+          "error": {
+            "title": "Itu tidak berhasil.",
+            "description": "Coba lagi atau muat ulang halaman ini sebelum mencoba lagi."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Cari ruang tim",
+        "info": {
+          "title": "Menambahkan ruang tim memberikan akses ke proyek ini untuk semua anggota ruang tim.",
+          "link": "Pelajari lebih lanjut"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Anda tidak memiliki ruang tim untuk ditautkan.",
+            "description": "Anda tidak berada dalam ruang tim yang dapat Anda tautkan atau Anda telah menautkan semua ruang tim yang tersedia."
+          },
+          "no_results": {
+            "title": "Itu tidak cocok dengan ruang tim Anda.",
+            "description": "Coba istilah lain atau pastikan Anda memiliki ruang tim untuk ditautkan."
+          }
+        },
+        "primary_button": {
+          "text": "Tautkan ruang tim yang dipilih"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Buat tampilan"
         }
       },
-      "project_view": {
-        "title": "Tidak ada proyek tertaut Anda yang memiliki tampilan publik.",
-        "description": "Tampilan publik dalam proyek tertaut akan otomatis muncul di sini. Untuk melihat tampilan publik dari proyek tertaut di sini, pastikan proyek tersebut memiliki tampilan publik yang dapat diakses oleh semua anggota proyek."
-      },
       "filter": {
         "title": "Tidak ada tampilan yang cocok",
         "description": "Tidak ada tampilan yang cocok dengan kriteria pencarian. \n Buat tampilan baru sebagai gantinya."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Buat halaman tim pertama Anda"
         }
-      },
-      "project_page": {
-        "title": "Tidak ada proyek tertaut Anda yang memiliki halaman publik.",
-        "description": "Halaman publik dalam proyek tertaut akan otomatis muncul di sini. Jika Anda berharap melihat halaman publik di sini, pastikan proyek tertaut Anda memiliki halaman publik yang tersedia untuk semua anggota proyek."
       },
       "filter": {
         "title": "Tidak ada halaman yang cocok",

@@ -47,7 +47,6 @@ class TeamspaceMemberSerializer(BaseSerializer):
 
 
 class TeamspaceViewSerializer(BaseSerializer):
-    is_team_view = serializers.BooleanField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     anchor = serializers.CharField(read_only=True)
     team = serializers.UUIDField(read_only=True)
@@ -91,7 +90,6 @@ class TeamspacePageSerializer(BaseSerializer):
     )
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
-    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     anchor = serializers.CharField(read_only=True)
     team = serializers.UUIDField(read_only=True)
 
@@ -116,7 +114,6 @@ class TeamspacePageSerializer(BaseSerializer):
             "view_props",
             "logo_props",
             "label_ids",
-            "project_ids",
             "anchor",
             "team",
         ]

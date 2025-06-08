@@ -26,7 +26,8 @@
     "project_updates": "Proje Güncellemeleri",
     "overview": "Genel Bakış",
     "workflows": "İş Akışları",
-    "templates": "Şablonlar"
+    "templates": "Şablonlar",
+    "members_and_teamspaces": "Üyeler ve Takım Alanları"
   },
   "updates": {
     "add_update": "Güncelleme Ekle",
@@ -201,10 +202,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Projeleri bu takım alanına bağlayarak başlayın.",
-        "description": "Takım Alanları, ekip üyelerinin bulunduğu projeleri bağlar, böylece yalnızca onların çalışmalarını, bu projelerdeki ilerlemeye katkılarını ve ekibe özel iş metriklerini görebilirsiniz."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Henüz hiç takım alanı bağlamadınız.",
+          "description": "Takım alanı ve proje sahipleri projelere erişimi yönetebilir."
+        }
+      },
+      "primary_button": {
+        "text": "Takım alanı bağla"
+      },
+      "secondary_button": {
+        "text": "Daha fazla bilgi"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Takım alanı adı",
+          "members": "Üyeler",
+          "accountType": "Hesap türü"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Takım alanını kaldır"
+            },
+            "confirm": {
+              "title": "{teamspaceName} takım alanını {projectName} projesinden kaldır",
+              "description": "Bu takım alanını bağlı bir projeden kaldırdığınızda, buradaki üyeler bağlı projeye erişimlerini kaybedecekler."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Eşleşen takım alanı bulunamadı"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bu projeye bir takım alanı bağladınız.} other {Bu projeye # takım alanı bağladınız.}}",
+            "description": "{additionalCount, plural, =0 {{firstTeamspaceName} takım alanı artık bu projeye bağlı.} other {{firstTeamspaceName} takım alanı ve {additionalCount} tanesi daha artık bu projeye bağlı.}}"
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bu takım alanını projeden kaldırdınız.",
+            "description": "{teamspaceName} takım alanı {projectName} projesinden kaldırıldı."
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Takım alanlarında ara",
+        "info": {
+          "title": "Bir takım alanı eklemek, tüm takım alanı üyelerine bu projeye erişim sağlar.",
+          "link": "Daha fazla bilgi"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bağlayabileceğiniz hiç takım alanınız yok.",
+            "description": "Ya bağlayabileceğiniz bir takım alanında değilsiniz ya da tüm mevcut takım alanlarını zaten bağladınız."
+          },
+          "no_results": {
+            "title": "Bu, takım alanlarınızdan hiçbiriyle eşleşmiyor.",
+            "description": "Başka bir terim deneyin veya bağlayabileceğiniz takım alanlarınız olduğundan emin olun."
+          }
+        },
+        "primary_button": {
+          "text": "Seçili takım alan(lar)ını bağla"
+        }
       }
     }
   },
@@ -251,10 +325,6 @@
           "text": "Bir görünüm oluştur"
         }
       },
-      "project_view": {
-        "title": "Bağlı projelerinizden hiçbirinin herkese açık görünümü yok.",
-        "description": "Bağlı projelerdeki herkese açık görünümler otomatik olarak burada görünecektir. Bağlı projelerden herkese açık görünümleri burada görmek için, bu projelerin tüm proje üyelerinin erişebileceği herkese açık görünümlere sahip olduğundan emin olun."
-      },
       "filter": {
         "title": "Eşleşen görünüm yok",
         "description": "Arama kriterlerine uygun görünüm yok. \n Bunun yerine yeni bir görünüm oluşturun."
@@ -269,10 +339,6 @@
         "primary_button": {
           "text": "İlk takım sayfanızı oluşturun"
         }
-      },
-      "project_page": {
-        "title": "Bağlı projelerinizden hiçbirinin herkese açık sayfası yok.",
-        "description": "Bağlı projelerdeki herkese açık sayfalar otomatik olarak burada görünecektir. Burada herkese açık sayfalar görmeyi bekliyorsanız, bağlı projelerinizin tüm proje üyelerinin erişebileceği herkese açık sayfalara sahip olduğundan emin olun."
       },
       "filter": {
         "title": "Eşleşen sayfa yok",

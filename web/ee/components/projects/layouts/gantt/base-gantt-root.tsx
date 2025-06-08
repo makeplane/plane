@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { GanttChartRoot, IBlockUpdateData, IBlockUpdateDependencyData } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 // hooks
@@ -20,8 +20,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
   // store hooks
   const { getFilteredProjectsByLayout } = useProjectFilter();
   const { workspaceSlug } = useParams();
-
-  const { workspaceProjectsPermissions } = useUserPermissions();
+  const { allowPermissions } = useUserPermissions();
   const { updateProject } = useProject();
 
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.TIMELINE);
@@ -46,9 +45,7 @@ export const BaseGanttRoot: React.FC = observer(() => {
   };
 
   const isAllowed = (projectId: string) =>
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] &&
-    workspaceProjectsPermissions[workspaceSlug.toString()][projectId] >= EUserProjectRoles.ADMIN;
+    allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug.toString(), projectId);
 
   return (
     <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE}>

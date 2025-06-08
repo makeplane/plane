@@ -5,7 +5,6 @@ export enum ETeamspaceScope {
 
 export enum ETeamspaceNavigationItem {
   OVERVIEW = "overview",
-  PROJECTS = "projects",
   ISSUES = "issues",
   CYCLES = "cycles",
   VIEWS = "views",

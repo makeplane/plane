@@ -26,7 +26,8 @@
     "project_updates": "Aktualizace projektu",
     "overview": "Přehled",
     "workflows": "Workflow",
-    "templates": "Šablony"
+    "templates": "Šablony",
+    "members_and_teamspaces": "Členové a týmové prostory"
   },
   "updates": {
     "progress": {
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Začněte propojením projektů s tímto týmovým prostorem.",
-        "description": "Týmové prostory propojují projekty, ve kterých jsou členové týmu, takže můžete vidět pouze jejich práci, jejich příspěvek k pokroku v těchto projektech a metriky práce specifické pro tým."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatím jste nepropojili žádné týmové prostory.",
+          "description": "Vlastníci týmového prostoru a projektu mohou spravovat přístup k projektům."
+        }
+      },
+      "primary_button": {
+        "text": "Propojit týmový prostor"
+      },
+      "secondary_button": {
+        "text": "Zjistit více"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Název týmového prostoru",
+          "members": "Členové",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstranit týmový prostor"
+            },
+            "confirm": {
+              "title": "Odstranit {teamspaceName} z {projectName}",
+              "description": "Když odstraníte tento týmový prostor z propojeného projektu, členové zde ztratí přístup k propojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nebyly nalezeny žádné odpovídající týmové prostory"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Propojili jste týmový prostor s tímto projektem.} other {Propojili jste # týmových prostorů s tímto projektem.}}",
+            "description": "{additionalCount, plural, =0 {Týmový prostor {firstTeamspaceName} je nyní propojen s tímto projektem.} other {Týmový prostor {firstTeamspaceName} a {additionalCount} dalších je nyní propojeno s tímto projektem.}}"
+          },
+          "error": {
+            "title": "To se nepodařilo.",
+            "description": "Zkuste to znovu nebo obnovte tuto stránku před dalším pokusem."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstranili jste tento týmový prostor z projektu.",
+            "description": "Týmový prostor {teamspaceName} byl odstraněn z {projectName}."
+          },
+          "error": {
+            "title": "To se nepodařilo.",
+            "description": "Zkuste to znovu nebo obnovte tuto stránku před dalším pokusem."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hledat týmové prostory",
+        "info": {
+          "title": "Přidání týmového prostoru poskytne všem členům týmového prostoru přístup k tomuto projektu.",
+          "link": "Zjistit více"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žádné týmové prostory k propojení.",
+            "description": "Buď nejste v týmovém prostoru, který můžete propojit, nebo jste již propojili všechny dostupné týmové prostory."
+          },
+          "no_results": {
+            "title": "To neodpovídá žádnému z vašich týmových prostorů.",
+            "description": "Zkuste jiný výraz nebo se ujistěte, že máte týmové prostory k propojení."
+          }
+        },
+        "primary_button": {
+          "text": "Propojit vybrané týmové prostory"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Vytvořit pohled"
         }
       },
-      "project_view": {
-        "title": "Žádné z vašich propojených projektů nemají veřejné pohledy.",
-        "description": "Veřejné pohledy v propojených projektech se zde automaticky zobrazí. Abyste viděli veřejné pohledy z propojených projektů zde, ujistěte se, že tyto projekty mají veřejné pohledy přístupné všem členům projektu."
-      },
       "filter": {
         "title": "Žádné shodné pohledy",
         "description": "Žádné pohledy neodpovídají kritériím vyhledávání. \n Vytvořte nový pohled místo toho."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Vytvořit svou první týmovou stránku"
         }
-      },
-      "project_page": {
-        "title": "Žádné z vašich propojených projektů nemají veřejné stránky.",
-        "description": "Veřejné stránky v propojených projektech se zde automaticky zobrazí. Pokud očekáváte, že zde uvidíte veřejné stránky, ujistěte se, že vaše propojené projekty mají veřejné stránky dostupné všem členům projektu."
       },
       "filter": {
         "title": "Žádné shodné stránky",

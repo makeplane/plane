@@ -26,7 +26,8 @@
     "project_updates": "專案更新",
     "overview": "概覽",
     "workflows": "工作流程",
-    "templates": "模板"
+    "templates": "模板",
+    "members_and_teamspaces": "成員和團隊空間"
   },
   "updates": {
     "add_update": "新增更新",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "首先將專案連結到此團隊空間。",
-        "description": "團隊空間連結團隊成員所在的專案，因此您可以只查看他們的工作、他們對這些專案進度的貢獻以及團隊特定的工作指標。"
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "您尚未連結任何團隊空間。",
+          "description": "團隊空間和專案所有者可以管理專案的訪問權限。"
+        }
+      },
+      "primary_button": {
+        "text": "連結團隊空間"
+      },
+      "secondary_button": {
+        "text": "了解更多"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "團隊空間名稱",
+          "members": "成員",
+          "accountType": "帳戶類型"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "移除團隊空間"
+            },
+            "confirm": {
+              "title": "從 {projectName} 移除 {teamspaceName}",
+              "description": "當您從連結的專案中移除此團隊空間時，此處的成員將失去對連結專案的訪問權限。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "未找到匹配的團隊空間"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {您已將一個團隊空間連結到此專案。} other {您已將 # 個團隊空間連結到此專案。}}",
+            "description": "{additionalCount, plural, =0 {團隊空間 {firstTeamspaceName} 現在已連結到此專案。} other {團隊空間 {firstTeamspaceName} 和其他 {additionalCount} 個團隊空間現在已連結到此專案。}}"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "您已從此專案中移除該團隊空間。",
+            "description": "團隊空間 {teamspaceName} 已從 {projectName} 中移除。"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "請重試或重新載入頁面後再試一次。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "搜尋團隊空間",
+        "info": {
+          "title": "新增團隊空間將授予所有團隊空間成員對此專案的訪問權限。",
+          "link": "了解更多"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "您沒有任何可連結的團隊空間。",
+            "description": "您可能不在可以連結的團隊空間中，或者您已經連結了所有可用的團隊空間。"
+          },
+          "no_results": {
+            "title": "沒有匹配您的團隊空間。",
+            "description": "請嘗試其他搜尋詞或確保您有可連結的團隊空間。"
+          }
+        },
+        "primary_button": {
+          "text": "連結選定的團隊空間"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "創建視圖"
         }
       },
-      "project_view": {
-        "title": "您的連結專案沒有任何公開視圖。",
-        "description": "連結專案中的公開視圖將自動顯示在此處。要在此處查看連結專案的公開視圖，請確保這些專案有所有專案成員都可訪問的公開視圖。"
-      },
       "filter": {
         "title": "沒有匹配的視圖",
         "description": "沒有視圖符合搜索條件。\n 創建一個新視圖代替。"
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "創建您的第一個團隊頁面"
         }
-      },
-      "project_page": {
-        "title": "您的連結專案沒有公開頁面。",
-        "description": "連結專案中的公開頁面將自動顯示在此處。如果您希望在此處看到公開頁面，請確保您的連結專案有所有專案成員都可用的公開頁面。"
       },
       "filter": {
         "title": "沒有匹配的頁面",

@@ -413,7 +413,7 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
 
 
 class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
-    def project_tree(self, team_space_id, project_ids, scope, filters):
+    def project_tree(self, team_space_id, project_ids, filters):
         # Get team space issues queryset
         issues_queryset = Issue.issue_objects.filter(project_id__in=project_ids)
         # Get all team member ids
@@ -421,15 +421,12 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
-        # Get issue filter based on scope
-        if scope == "teams":
-            issue_filter = {
-                "id__in": IssueAssignee.objects.filter(
-                    assignee_id__in=team_member_ids
-                ).values_list("issue_id", flat=True)
-            }
-        else:
-            issue_filter = {}
+        # Generate issue filter
+        issue_filter = {
+            "id__in": IssueAssignee.objects.filter(
+                assignee_id__in=team_member_ids
+            ).values_list("issue_id", flat=True)
+        }
 
         issue_map = (
             issues_queryset.filter(**issue_filter)
@@ -441,7 +438,7 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         )
         return Response(issue_map, status=status.HTTP_200_OK)
 
-    def member_tree(self, team_space_id, project_ids, scope, filters):
+    def member_tree(self, team_space_id, project_ids, filters):
         # Get all team member ids
         team_member_ids = TeamspaceMember.objects.filter(
             team_space_id=team_space_id
@@ -453,14 +450,11 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
             .values_list("id", flat=True)
         )
 
-        # Get assignee filter based on scope
-        if scope == "teams":
-            assignee_filter = {
-                "assignee_id__in": team_member_ids,
-                "issue__in": issue_ids,
-            }
-        else:
-            assignee_filter = {"issue__in": issue_ids}
+        # Generate assignee filter
+        assignee_filter = {
+            "assignee_id__in": team_member_ids,
+            "issue__in": issue_ids,
+        }
 
         # Get the issue map:
         issue_map = (
@@ -480,12 +474,11 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         ).values_list("project_id", flat=True)
 
         # Get the tab
-        scope = request.GET.get("scope", "projects")
         data_key = request.GET.get("data_key", "projects")
         filters = issue_filters(request.query_params, "GET")
 
         # Get the tree map based on the data_key
         if data_key == "projects":
-            return self.project_tree(team_space_id, project_ids, scope, filters)
+            return self.project_tree(team_space_id, project_ids, filters)
         else:
-            return self.member_tree(team_space_id, project_ids, scope, filters)
+            return self.member_tree(team_space_id, project_ids, filters)

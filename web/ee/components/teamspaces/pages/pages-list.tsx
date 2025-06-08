@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ETeamspaceEntityScope, EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -34,7 +34,6 @@ export const TeamspacePagesList = observer((props: Props) => {
   // plane web hooks
   const {
     getTeamspacePagesLoader,
-    getTeamspacePagesScope,
     getTeamspacePageIds,
     getFilteredTeamspacePageIds,
     getTeamspacePagesFilters,
@@ -42,7 +41,6 @@ export const TeamspacePagesList = observer((props: Props) => {
   } = usePageStore(EPageStoreType.TEAMSPACE);
   // derived values
   const teamspacePagesLoader = getTeamspacePagesLoader(teamspaceId);
-  const teamspacePagesScope = getTeamspacePagesScope(teamspaceId);
   const teamspacePageIds = getTeamspacePageIds(teamspaceId);
   const filteredTeamspacePageIds = getFilteredTeamspacePageIds(teamspaceId);
   const teamspacePagesFilters = getTeamspacePagesFilters(teamspaceId);
@@ -119,26 +117,16 @@ export const TeamspacePagesList = observer((props: Props) => {
           </ListLayout>
         </div>
       ) : (
-        <>
-          {teamspacePagesScope === ETeamspaceEntityScope.PROJECT ? (
-            <DetailedEmptyState
-              title={t("teamspace_pages.empty_state.project_page.title")}
-              description={t("teamspace_pages.empty_state.project_page.description")}
-              assetPath={generalPageResolvedPath}
-            />
-          ) : (
-            <DetailedEmptyState
-              title={t("teamspace_pages.empty_state.team_page.title")}
-              description={t("teamspace_pages.empty_state.team_page.description")}
-              assetPath={generalPageResolvedPath}
-              primaryButton={{
-                text: t("teamspace_pages.empty_state.team_page.primary_button.text"),
-                onClick: handleCreatePage,
-                disabled: !hasWorkspaceMemberLevelPermissions,
-              }}
-            />
-          )}
-        </>
+        <DetailedEmptyState
+          title={t("teamspace_pages.empty_state.team_page.title")}
+          description={t("teamspace_pages.empty_state.team_page.description")}
+          assetPath={generalPageResolvedPath}
+          primaryButton={{
+            text: t("teamspace_pages.empty_state.team_page.primary_button.text"),
+            onClick: handleCreatePage,
+            disabled: !hasWorkspaceMemberLevelPermissions,
+          }}
+        />
       )}
     </>
   );

@@ -1,6 +1,4 @@
 import { action, makeObservable, runInAction } from "mobx";
-// plane imports
-import { ETeamspaceEntityScope } from "@plane/constants";
 // types
 import {
   TIssue,
@@ -38,7 +36,12 @@ export interface ITeamIssues extends IBaseIssuesStore {
     groupId?: string,
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, teamspaceId: string) => Promise<TIssue>;
+  createIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TIssue>,
+    teamspaceId: string
+  ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
@@ -73,8 +76,8 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
     this.teamspaceWorkItemsService = new TeamspaceWorkItemsService();
   }
 
-  fetchParentStats = async () => { };
-  updateParentStats = () => { };
+  fetchParentStats = async () => {};
+  updateParentStats = () => {};
 
   /**
    * This method is called to fetch the first issues of pagination
@@ -100,7 +103,13 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
       });
 
       // get params from pagination options
-      const params = this.teamspaceWorkItemFilterStore?.getFilterParams(options, teamspaceId, undefined, undefined, undefined);
+      const params = this.teamspaceWorkItemFilterStore?.getFilterParams(
+        options,
+        teamspaceId,
+        undefined,
+        undefined,
+        undefined
+      );
       // call the fetch issues API with the params
       const response = await this.teamspaceWorkItemsService.getWorkItems(workspaceSlug, teamspaceId, params, {
         signal: this.controller.signal,
@@ -163,7 +172,11 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
    * @param loadType
    * @returns
    */
-  fetchIssuesWithExistingPagination = async (workspaceSlug: string, teamspaceId: string, loadType: TLoader = "mutation") => {
+  fetchIssuesWithExistingPagination = async (
+    workspaceSlug: string,
+    teamspaceId: string,
+    loadType: TLoader = "mutation"
+  ) => {
     if (!this.paginationOptions) return;
     return await this.fetchIssues(workspaceSlug, teamspaceId, loadType, this.paginationOptions, true);
   };
@@ -176,15 +189,19 @@ export class TeamIssues extends BaseIssuesStore implements ITeamIssues {
    * @param teamspaceId
    * @returns
    */
-  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, teamspaceId: string) => {
-    const currentScope = this.teamspaceWorkItemFilterStore.getTeamspaceScope(teamspaceId);
-    const teamspaceProjectIds = this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceProjectIds(teamspaceId);
-    const teamspaceMemberIds = this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceMemberIds(teamspaceId);
+  override createIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TIssue>,
+    teamspaceId: string
+  ) => {
+    const teamspaceProjectIds =
+      this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceProjectIds(teamspaceId);
+    const teamspaceMemberIds =
+      this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceMemberIds(teamspaceId);
     const shouldUpdateList =
       teamspaceProjectIds?.includes(projectId) &&
-      (currentScope === ETeamspaceEntityScope.TEAM
-        ? data.assignee_ids?.some((assigneeId) => teamspaceMemberIds?.includes(assigneeId))
-        : true);
+      data.assignee_ids?.some((assigneeId) => teamspaceMemberIds?.includes(assigneeId));
 
     return await super.createIssue(workspaceSlug, projectId, data, undefined, shouldUpdateList);
   };

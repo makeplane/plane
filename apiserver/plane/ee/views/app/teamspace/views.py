@@ -14,7 +14,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Module imports
 from plane.db.models import IssueView, Workspace, UserFavorite
-from plane.ee.models import TeamspaceView, TeamspaceProject
+from plane.ee.models import TeamspaceView
 from .base import TeamspaceBaseEndpoint
 from plane.ee.permissions import TeamspacePermission
 from plane.ee.serializers import TeamspaceViewSerializer
@@ -42,13 +42,6 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
                 IssueView.objects.filter(pk=pk, workspace__slug=slug)
                 .annotate(is_favorite=Exists(subquery))
                 .annotate(
-                    is_team_view=Exists(
-                        TeamspaceView.objects.filter(
-                            view_id=OuterRef("pk"), team_space_id=team_space_id
-                        )
-                    )
-                )
-                .annotate(
                     team=TeamspaceView.objects.filter(
                         view_id=OuterRef("pk"), team_space_id=team_space_id
                     ).values("team_space_id")
@@ -62,56 +55,12 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
             serializer = TeamspaceViewSerializer(issue_view)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # Get all the views of the team space
-        scope = request.GET.get("scope", "teams")
-        # Check if the user has access to the workspace
-        if scope == "projects":
-            project_ids = TeamspaceProject.objects.filter(
-                team_space_id=team_space_id
-            ).values_list("project_id", flat=True)
-            issue_views = (
-                IssueView.objects.filter(
-                    workspace__slug=slug, project_id__in=project_ids, access=1
-                )
-                .annotate(
-                    is_favorite=Exists(
-                        UserFavorite.objects.filter(
-                            user=self.request.user,
-                            entity_identifier=OuterRef("pk"),
-                            entity_type="view",
-                            workspace__slug=self.kwargs.get("slug"),
-                        )
-                    )
-                )
-                .annotate(
-                    is_team_view=Exists(
-                        TeamspaceView.objects.filter(
-                            view_id=OuterRef("pk"), team_space_id=team_space_id
-                        )
-                    )
-                )
-                .annotate(
-                    team=TeamspaceView.objects.filter(
-                        view_id=OuterRef("pk"), team_space_id=team_space_id
-                    ).values("team_space_id")
-                )
-            )
-            serializer = TeamspaceViewSerializer(issue_views, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
         # Get all the views that are part of the team space
         team_space_views = TeamspaceView.objects.filter(
             workspace__slug=slug, team_space_id=team_space_id
         ).values_list("view_id", flat=True)
         team_issue_views = (
             IssueView.objects.filter(pk__in=team_space_views, workspace__slug=slug)
-            .annotate(
-                is_team_view=Exists(
-                    TeamspaceView.objects.filter(
-                        view_id=OuterRef("pk"), team_space_id=team_space_id
-                    )
-                )
-            )
             .annotate(
                 is_favorite=Exists(
                     UserFavorite.objects.filter(
@@ -172,13 +121,6 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
                     pk=serializer.data.get("id"), workspace__slug=slug
                 )
                 .annotate(is_favorite=Exists(subquery))
-                .annotate(
-                    is_team_view=Exists(
-                        TeamspaceView.objects.filter(
-                            view_id=OuterRef("pk"), team_space_id=team_space_id
-                        )
-                    )
-                )
                 .annotate(
                     team=TeamspaceView.objects.filter(
                         view_id=OuterRef("pk"), team_space_id=team_space_id

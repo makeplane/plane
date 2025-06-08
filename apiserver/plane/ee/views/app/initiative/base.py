@@ -40,6 +40,13 @@ class InitiativeEndpoint(BaseAPIView):
     serializer_class = InitiativeSerializer
 
     def get_queryset(self):
+        project_ids = Project.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_projectfeature__is_epic_enabled=True,
+        ).accessible_to(self.request.user.id, self.kwargs.get("slug")).values_list(
+            "id", flat=True
+        )
+
         return (
             Initiative.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .annotate(
@@ -61,14 +68,7 @@ class InitiativeEndpoint(BaseAPIView):
                             initiative_id=OuterRef("pk"),
                             workspace__slug=self.kwargs.get("slug"),
                         )
-                        .filter(epic__project__deleted_at__isnull=True)
-                        .filter(
-                            epic__project__project_projectmember__member=self.request.user
-                        )
-                        .filter(epic__project__project_projectmember__is_active=True)
-                        .filter(
-                            epic__project__project_projectfeature__is_epic_enabled=True
-                        )
+                        .filter(epic__project_id__in=project_ids)
                         .values("initiative_id")
                         .annotate(epic_ids=ArrayAgg("epic_id", distinct=True))
                         .values("epic_ids")
@@ -511,9 +511,8 @@ class InitiativeEpicAnalytics(BaseAPIView):
         # fetch all the issues in which user is part of
         issues = Issue.objects.filter(
             workspace__slug=slug,
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-        )
+        ).accessible_to(request.user.id, slug)
+
         result = []
         for epic_id in initiative_epic:
             # get all the issues of the particular epic

@@ -115,7 +115,7 @@ class ProjectLiteSerializer(BaseSerializer):
 class ProjectListSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
-    member_role = serializers.IntegerField(read_only=True)
+    member_role = serializers.SerializerMethodField()
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
@@ -138,6 +138,24 @@ class ProjectListSerializer(DynamicBaseSerializer):
                 if member.is_active and (member.member and not member.member.is_bot)
             ]
         return []
+
+    def get_member_role(self, obj):
+        project_members = getattr(obj, "members_list", None)
+        current_user_id = (
+            self.context["request"].user.id if self.context.get("request") else None
+        )
+        # calculate the current member role
+        if project_members is not None and current_user_id:
+            current_member = next(
+                (
+                    member
+                    for member in project_members
+                    if member.member_id == current_user_id
+                ),
+                None,
+            )
+            return current_member.role if current_member else None
+        return None
 
     def get_initiative_ids(self, obj):
         if obj.initiatives.all():
@@ -164,9 +182,6 @@ class ProjectDetailSerializer(BaseSerializer):
 
 
 class ProjectMemberSerializer(BaseSerializer):
-    workspace = WorkspaceLiteSerializer(read_only=True)
-    project = ProjectLiteSerializer(read_only=True)
-    member = UserLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMember

@@ -26,7 +26,8 @@
     "project_updates": "Actualizări proiect",
     "overview": "Prezentare generală",
     "workflows": "Fluxuri de lucru",
-    "templates": "Șabloane"
+    "templates": "Șabloane",
+    "members_and_teamspaces": "Membri și spații de echipă"
   },
   "updates": {
     "add_update": "Adaugă actualizare",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Începe prin conectarea proiectelor la acest spațiu de echipă.",
-        "description": "Spațiile de echipă conectează proiectele în care se află membrii echipei, astfel încât să poți vedea doar munca lor, contribuția lor la progresul în acele proiecte și metrici de lucru specifice echipei."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Nu ai conectat încă niciun spațiu de echipă.",
+          "description": "Proprietarii spațiului de echipă și ai proiectului pot gestiona accesul la proiecte."
+        }
+      },
+      "primary_button": {
+        "text": "Conectează un spațiu de echipă"
+      },
+      "secondary_button": {
+        "text": "Află mai multe"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Numele spațiului de echipă",
+          "members": "Membri",
+          "accountType": "Tip de cont"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Elimină spațiul de echipă"
+            },
+            "confirm": {
+              "title": "Elimină {teamspaceName} din {projectName}",
+              "description": "Când elimini acest spațiu de echipă dintr-un proiect conectat, membrii de aici își vor pierde accesul la proiectul conectat."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Nu s-au găsit spații de echipă potrivite"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Ai conectat un spațiu de echipă la acest proiect.} other {Ai conectat # spații de echipă la acest proiect.}}",
+            "description": "{additionalCount, plural, =0 {Spațiul de echipă {firstTeamspaceName} este acum conectat la acest proiect.} other {Spațiul de echipă {firstTeamspaceName} și încă {additionalCount} sunt acum conectate la acest proiect.}}"
+          },
+          "error": {
+            "title": "Nu a mers.",
+            "description": "Încearcă din nou sau reîncarcă această pagină înainte de a încerca din nou."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Ai eliminat acel spațiu de echipă din acest proiect.",
+            "description": "Spațiul de echipă {teamspaceName} a fost eliminat din {projectName}."
+          },
+          "error": {
+            "title": "Nu a mers.",
+            "description": "Încearcă din nou sau reîncarcă această pagină înainte de a încerca din nou."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Caută spații de echipă",
+        "info": {
+          "title": "Adăugarea unui spațiu de echipă oferă tuturor membrilor spațiului de echipă acces la acest proiect.",
+          "link": "Află mai multe"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nu ai niciun spațiu de echipă de conectat.",
+            "description": "Fie nu ești într-un spațiu de echipă pe care îl poți conecta, fie ai conectat deja toate spațiile de echipă disponibile."
+          },
+          "no_results": {
+            "title": "Nu se potrivește cu niciunul dintre spațiile tale de echipă.",
+            "description": "Încearcă un alt termen sau asigură-te că ai spații de echipă de conectat."
+          }
+        },
+        "primary_button": {
+          "text": "Conectează spațiile de echipă selectate"
+        }
       }
     }
   },
@@ -235,10 +309,6 @@
           "text": "Creează o vizualizare"
         }
       },
-      "project_view": {
-        "title": "Niciunul dintre proiectele tale conectate nu are vizualizări publice.",
-        "description": "Vizualizările publice din proiectele conectate vor apărea automat aici. Pentru a vedea vizualizări publice din proiectele conectate aici, asigură-te că acele proiecte au vizualizări publice accesibile tuturor membrilor proiectului."
-      },
       "filter": {
         "title": "Nicio vizualizare care să se potrivească",
         "description": "Nicio vizualizare nu corespunde criteriilor de căutare. \n Creează o nouă vizualizare în schimb."
@@ -253,10 +323,6 @@
         "primary_button": {
           "text": "Creează prima ta pagină de echipă"
         }
-      },
-      "project_page": {
-        "title": "Niciunul dintre proiectele tale conectate nu are pagini publice.",
-        "description": "Paginile publice din proiectele conectate vor apărea automat aici. Dacă te aștepți să vezi pagini publice aici, asigură-te că proiectele tale conectate au pagini publice disponibile tuturor membrilor proiectului."
       },
       "filter": {
         "title": "Nicio pagină care să se potrivească",

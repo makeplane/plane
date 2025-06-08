@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Rss, BriefcaseIcon, FileText, Layers, Loader as Spinner } from "lucide-react";
+import { Rss, FileText, Layers, Loader as Spinner } from "lucide-react";
 // plane imports
 import { ETeamspaceNavigationItem, EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 // ui
@@ -29,25 +29,24 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 import { TeamspaceWorkItemListHeaderActions } from "./issues";
 import { TeamOverviewHeaderActions } from "./overview";
 import { TeamspacePagesListHeaderActions } from "./pages-list";
-import { TeamspaceProjectListHeaderActions } from "./projects";
 import { TeamspaceViewsListHeaderActions } from "./views-list";
 
-type TTeamDetailHeaderProps = {
+type TTeamspaceDetailHeaderProps = {
   selectedNavigationKey: ETeamspaceNavigationItem;
 };
 
-export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
+export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProps) => {
   const { selectedNavigationKey } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug, teamspaceId } = useParams();
   // hooks
-  const { loader, isUserMemberOfTeamspace, getTeamspaceById } = useTeamspaces();
+  const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById } = useTeamspaces();
   // hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const isTeamspaceMember = isUserMemberOfTeamspace(teamspaceId?.toString());
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId?.toString());
   const hasAdminLevelPermissions = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -66,12 +65,6 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
         title: "Overview",
         icon: Rss,
         action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}`),
-      },
-      {
-        key: ETeamspaceNavigationItem.PROJECTS,
-        title: "Projects",
-        icon: BriefcaseIcon,
-        action: () => router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects`),
       },
       {
         key: ETeamspaceNavigationItem.ISSUES,
@@ -108,14 +101,6 @@ export const TeamDetailHeader = observer((props: TTeamDetailHeaderProps) => {
           ETeamspaceNavigationItem.OVERVIEW,
           <TeamOverviewHeaderActions
             key={ETeamspaceNavigationItem.OVERVIEW}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasAdminLevelPermissions}
-          />,
-        ],
-        [
-          ETeamspaceNavigationItem.PROJECTS,
-          <TeamspaceProjectListHeaderActions
-            key={ETeamspaceNavigationItem.PROJECTS}
             teamspaceId={teamspaceId?.toString()}
             isEditingAllowed={hasAdminLevelPermissions}
           />,

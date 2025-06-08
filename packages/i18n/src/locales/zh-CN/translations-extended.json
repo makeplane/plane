@@ -25,7 +25,8 @@
     "epics": "史诗",
     "project_updates": "项目更新",
     "overview": "概览",
-    "workflows": "工作流"
+    "workflows": "工作流",
+    "members_and_teamspaces": "成员和团队空间"
   },
   "updates": {
     "add_update": "添加更新",
@@ -184,10 +185,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "首先将项目链接到此团队空间。",
-        "description": "团队空间链接团队成员所在的项目，因此您可以只查看他们的工作、他们在这些项目中的进度贡献以及团队特定的工作指标。"
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "您还没有链接任何团队空间。",
+          "description": "团队空间和项目所有者可以管理项目访问权限。"
+        }
+      },
+      "primary_button": {
+        "text": "链接团队空间"
+      },
+      "secondary_button": {
+        "text": "了解更多"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "团队空间名称",
+          "members": "成员",
+          "accountType": "账户类型"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "移除团队空间"
+            },
+            "confirm": {
+              "title": "从{projectName}中移除{teamspaceName}",
+              "description": "当您从链接项目中移除此团队空间时，此处的成员将失去对链接项目的访问权限。"
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "未找到匹配的团队空间"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {您已将团队空间链接到此项目。} other {您已将#个团队空间链接到此项目。}}",
+            "description": "{additionalCount, plural, =0 {团队空间{firstTeamspaceName}现已链接到此项目。} other {团队空间{firstTeamspaceName}和其他{additionalCount}个团队空间现已链接到此项目。}}"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "请重试或刷新页面后重试。"
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "您已从该项目中移除该团队空间。",
+            "description": "团队空间{teamspaceName}已从{projectName}中移除。"
+          },
+          "error": {
+            "title": "操作未成功。",
+            "description": "请重试或刷新页面后重试。"
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "搜索团队空间",
+        "info": {
+          "title": "添加团队空间将授予所有团队成员对此项目的访问权限。",
+          "link": "了解更多"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "您没有可链接的团队空间。",
+            "description": "要么您不在可以链接的团队空间中，要么您已经链接了所有可用的团队空间。"
+          },
+          "no_results": {
+            "title": "未找到匹配的团队空间。",
+            "description": "尝试其他搜索词或确保您有可链接的团队空间。"
+          }
+        },
+        "primary_button": {
+          "text": "链接选中的团队空间"
+        }
       }
     }
   },
@@ -234,10 +308,6 @@
           "text": "创建视图"
         }
       },
-      "project_view": {
-        "title": "您的链接项目中没有任何公共视图。",
-        "description": "链接项目中的公共视图将自动显示在此处。要在此处查看链接项目的公共视图，请确保这些项目具有对所有项目成员可访问的公共视图。"
-      },
       "filter": {
         "title": "没有匹配的视图",
         "description": "没有符合搜索条件的视图。\n 创建一个新视图。"
@@ -252,10 +322,6 @@
         "primary_button": {
           "text": "创建您的第一个团队页面"
         }
-      },
-      "project_page": {
-        "title": "您的链接项目中没有公共页面。",
-        "description": "链接项目中的公共页面将自动显示在此处。如果您期望在此处看到公共页面，请确保您的链接项目具有对所有项目成员可用的公共页面。"
       },
       "filter": {
         "title": "没有匹配的页面",

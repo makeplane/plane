@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { useUserPermissions } from "@/hooks/store";
 import { IProjectDisplayProperties, SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
 import { TProject } from "@/plane-web/types/projects";
@@ -20,12 +20,16 @@ export const ProjectColumn = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   // refs
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
-  const { workspaceProjectsPermissions } = useUserPermissions();
+  // store hooks
+  const { allowPermissions } = useUserPermissions();
+  // derived values
   const { Column } = SPREADSHEET_PROPERTY_DETAILS[property];
-  const isEditingAllowed =
-    workspaceProjectsPermissions &&
-    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] &&
-    workspaceProjectsPermissions[workspaceSlug?.toString()][projectDetails.id] >= EUserProjectRoles.ADMIN;
+  const isEditingAllowed = allowPermissions(
+    [EUserProjectRoles.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectDetails.id
+  );
 
   return (
     <td

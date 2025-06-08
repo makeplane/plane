@@ -16,7 +16,8 @@
     "project_updates": "Project Updates",
     "overview": "Overview",
     "workflows": "Workflows",
-    "templates": "Templates"
+    "templates": "Templates",
+    "members_and_teamspaces": "Members & Teamspaces"
   },
   "issue": {
     "relation": {
@@ -212,10 +213,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Start by linking projects to this teamspace.",
-        "description": "Teamspaces link projects that team members are in, so you can see only their work, their contribution to progress in those projects, and team-specific work metrics."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "You haven’t linked any teamspaces yet.",
+          "description": "Teamspace and project owners can manage access to projects."
+        }
+      },
+      "primary_button": {
+        "text": "Add teamspace"
+      },
+      "secondary_button": {
+        "text": "Learn more"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Teamspace name",
+          "members": "Members",
+          "accountType": "Account type"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Remove teamspace"
+            },
+            "confirm": {
+              "title": "Remove {teamspaceName} from {projectName}",
+              "description": "When you remove this teamspace from a linked project, members here will lose access to the linked project."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No matching teamspaces found"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {You linked a teamspace to this project.} other {You linked # teamspaces to this project.}}",
+            "description": "{additionalCount, plural, =0 {Teamspace {firstTeamspaceName} is now linked to this project.} other {Teamspace {firstTeamspaceName} and {additionalCount} more are now linked to this project.}}"
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "You removed that teamspace from this project.",
+            "description": "Teamspace {teamspaceName} was removed from {projectName}."
+          },
+          "error": {
+            "title": "That didn’t go through.",
+            "description": "Try that again or reload this page before trying again."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Search for teamspaces",
+        "info": {
+          "title": "Adding a teamspace grants all teamspace members access to this project.",
+          "link": "Learn more"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "You don’t have any teamspaces to link.",
+            "description": "Either you aren’t in a teamspace that you can link or you have already linked all available teamspaces."
+          },
+          "no_results": {
+            "title": "That doesn’t match any of your teamspaces.",
+            "description": "Try another term or make sure you have teamspaces to link."
+          }
+        },
+        "primary_button": {
+          "text": "Link selected teamspace(s)"
+        }
       }
     }
   },
@@ -262,10 +336,6 @@
           "text": "Create a view"
         }
       },
-      "project_view": {
-        "title": "None of your linked projects have any public views.",
-        "description": "Public views in linked projects will automatically show up here. To see public views from linked projects here, make sure those projects have public views accessible to all project members."
-      },
       "filter": {
         "title": "No matching views",
         "description": "No views match the search criteria. \n Create a new view instead."
@@ -280,10 +350,6 @@
         "primary_button": {
           "text": "Create your first team page"
         }
-      },
-      "project_page": {
-        "title": "None of your linked projects have public pages.",
-        "description": "Public pages in linked projects will automatically show up here. If you expect to see public pages here, make sure your linked projects have public pages available to all project members."
       },
       "filter": {
         "title": "No matching pages",

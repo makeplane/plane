@@ -109,9 +109,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    */
   get canCurrentUserEditPage() {
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     return (
       this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
     );
@@ -122,9 +121,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    */
   get canCurrentUserDuplicatePage() {
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     return (
       this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
     );
@@ -149,9 +147,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    */
   get canCurrentUserArchivePage() {
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
     return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
@@ -161,9 +158,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    */
   get canCurrentUserDeletePage() {
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
     return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
@@ -173,9 +169,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    */
   get canCurrentUserFavoritePage() {
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
     return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
@@ -194,7 +189,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     const { workspaceSlug } = this.rootStore.router;
 
     const isOwner = this.isCurrentUserOwner;
-    const currentUserRole = this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug?.toString() || "")?.role;
+    const currentUserRole = workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;

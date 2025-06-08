@@ -26,7 +26,8 @@
     "project_updates": "Aktualizácie projektov",
     "overview": "Prehľad",
     "workflows": "Vorkflou",
-    "templates": "Šablóny"
+    "templates": "Šablóny",
+    "members_and_teamspaces": "Členovia a tímspejse"
   },
   "updates": {
     "add_update": "Pridať aktualizáciu",
@@ -185,10 +186,83 @@
     }
   },
   "teamspace_projects": {
-    "empty_state": {
-      "general": {
-        "title": "Začnite prepojením projektov s týmto tímspejsom.",
-        "description": "Tímspejsy prepájajú projekty, v ktorých sú členovia tímu, takže môžete vidieť iba ich prácu, ich prínos k pokroku v týchto projektoch a metriky práce špecifické pre tím."
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Zatiaľ ste neprepojili žiadne tímspejsy.",
+          "description": "Vlastníci tímspejsu a projektu môžu spravovať prístup k projektom."
+        }
+      },
+      "primary_button": {
+        "text": "Prepojiť tímspejs"
+      },
+      "secondary_button": {
+        "text": "Dozvedieť sa viac"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Názov tímspejsu",
+          "members": "Členovia",
+          "accountType": "Typ účtu"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Odstrániť tímspejs"
+            },
+            "confirm": {
+              "title": "Odstrániť {teamspaceName} z {projectName}",
+              "description": "Keď odstránite tento tímspejs z prepojeného projektu, členovia tu stratia prístup k prepojenému projektu."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Neboli nájdené žiadne zodpovedajúce tímspejsy"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Prepojili ste tímspejs s týmto projektom.} other {Prepojili ste # tímspejsov s týmto projektom.}}",
+            "description": "{additionalCount, plural, =0 {Tímspejs {firstTeamspaceName} je teraz prepojený s týmto projektom.} other {Tímspejs {firstTeamspaceName} a {additionalCount} ďalších je teraz prepojených s týmto projektom.}}"
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Odstránili ste tento tímspejs z tohto projektu.",
+            "description": "Tímspejs {teamspaceName} bol odstránený z {projectName}."
+          },
+          "error": {
+            "title": "To sa nepodarilo.",
+            "description": "Skúste to znova alebo obnovte túto stránku pred opätovným pokusom."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Hľadať tímspejsy",
+        "info": {
+          "title": "Pridanie tímspejsu poskytuje všetkým členom tímspejsu prístup k tomuto projektu.",
+          "link": "Dozvedieť sa viac"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Nemáte žiadne tímspejsy na prepojenie.",
+            "description": "Buď nie ste v tímspejse, ktorý môžete prepojiť, alebo ste už prepojili všetky dostupné tímspejsy."
+          },
+          "no_results": {
+            "title": "To nezodpovedá žiadnemu z vašich tímspejsov.",
+            "description": "Skúste iný výraz alebo sa uistite, že máte tímspejsy na prepojenie."
+          }
+        },
+        "primary_button": {
+          "text": "Prepojiť vybrané tímspejsy"
+        }
       }
     }
   },

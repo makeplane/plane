@@ -48,10 +48,18 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
             .values_list("project_id", flat=True)
         )
 
+        # Get work items for team space
+        team_member_ids = TeamspaceMember.objects.filter(
+                team_space_id=team_space_id
+            ).values_list("member_id", flat=True)
+        issue_ids = IssueAssignee.objects.filter(
+                workspace__slug=slug, assignee_id__in=team_member_ids
+            ).values_list("issue_id", flat=True)
+
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.issue_objects.filter(workspace__slug=slug, id__in=issue_ids)
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related(
@@ -88,17 +96,6 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
             )
             .filter(project_id__in=accessible_project_ids)
         )
-
-        # Get the issues scope
-        scope = request.GET.get("scope", "projects")
-        if scope == "teams":
-            team_member_ids = TeamspaceMember.objects.filter(
-                team_space_id=team_space_id
-            ).values_list("member_id", flat=True)
-            issue_ids = IssueAssignee.objects.filter(
-                workspace__slug=slug, assignee_id__in=team_member_ids
-            ).values_list("issue_id", flat=True)
-            issue_queryset = issue_queryset.filter(pk__in=issue_ids)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
