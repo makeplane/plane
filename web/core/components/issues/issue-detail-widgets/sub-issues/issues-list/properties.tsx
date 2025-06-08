@@ -1,11 +1,10 @@
 // plane imports
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
-import { CalendarClock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // components
-import { PriorityDropdown, MemberDropdown, StateDropdown, DateDropdown } from "@/components/dropdowns";
+import { PriorityDropdown, MemberDropdown, StateDropdown, DateRangeDropdown } from "@/components/dropdowns";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
@@ -35,6 +34,22 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
+  };
+
+  const handleStartDate = (date: Date | null) => {
+    if (issue.project_id) {
+      updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+        start_date: date ? renderFormattedPayloadDate(date) : null,
+      });
+    }
+  };
+
+  const handleTargetDate = (date: Date | null) => {
+    if (issue.project_id) {
+      updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+        target_date: date ? renderFormattedPayloadDate(date) : null,
+      });
+    }
   };
 
   if (!displayProperties) return <></>;
@@ -88,29 +103,32 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
         </div>
       </WithDisplayPropertiesHOC>
 
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-        <div className="h-5 flex-shrink-0" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={issue.target_date ?? null}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(
-                workspaceSlug,
-                issue.project_id,
-                parentIssueId,
-                issueId,
-                {
-                  target_date: val ? renderFormattedPayloadDate(val) : null,
-                },
-                { ...issue }
-              )
-            }
-            maxDate={maxDate}
-            placeholder={t("common.order_by.due_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            optionsClassName="z-30"
+      {/* merged dates */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey={["start_date", "due_date"]}
+        shouldRenderProperty={(properties) => !!(properties.start_date || properties.due_date)}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateRangeDropdown
+            value={{
+              from: getDate(issue.start_date) || undefined,
+              to: getDate(issue.target_date) || undefined,
+            }}
+            onSelect={(range) => {
+              handleStartDate(range?.from ?? null);
+              handleTargetDate(range?.to ?? null);
+            }}
+            hideIcon={{
+              from: false,
+            }}
+            isClearable
+            mergeDates
+            buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             disabled={!disabled}
+            showTooltip
+            customTooltipHeading="Date Range"
+            renderPlaceholder={false}
           />
         </div>
       </WithDisplayPropertiesHOC>
