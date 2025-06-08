@@ -43,260 +43,210 @@ SPECTACULAR_SETTINGS = {
     # API Tag Definitions
     # ========================================================================
     "TAGS": [
-        # Core Project Management
+        # System Features
         {
-            "name": "Projects",
+            "name": "Assets",
             "description": (
-                "**Project Management & Organization**\n\n"
-                "Create, manage, and configure software development projects. These endpoints handle the core project lifecycle including "
-                "setup, configuration, team management, and project-level settings. Essential for organizing work into distinct "
-                "development initiatives with proper access controls and collaboration features.\n\n"
-                "*Core Capabilities:*\n"
-                "- Project creation, updates, and deletion (CRUD operations)\n"
-                "- Project configuration and settings management\n"
-                "- Team collaboration and workspace organization\n"
-                "- Project visibility and access control\n"
-                "- Project templates and initialization\n\n"
-                "*Common Use Cases:* Setting up new development projects, configuring project workflows, "
-                "managing project teams, organizing project hierarchies."
-            ),
-        },
-        # Work Item Management
-        {
-            "name": "Work Items",
-            "description": (
-                "**Work Item Lifecycle Management**\n\n"
-                "Manage issues, tasks, bugs, user stories, and other work items throughout their complete lifecycle. "
-                "These are the primary entities that represent work to be done in software development projects. "
-                "Supports agile workflows, task tracking, bug reporting, and feature development processes.\n\n"
-                "*Core Capabilities:*\n"
-                "- Create, read, update, delete work items (full CRUD)\n"
-                "- Assign work items to team members and set priorities\n"
-                "- Track status progression through workflow states\n"
-                "- Bulk operations for managing multiple items\n"
-                "- Work item relationships and dependencies\n"
-                "- Due dates, estimates, and time tracking\n\n"
-                "*Common Use Cases:* Bug tracking, feature development, user story management, "
-                "task assignment, sprint planning, backlog management, issue triage."
-            ),
-        },
-        {
-            "name": "Work Item Links",
-            "description": (
-                "**External Resource Integration & References**\n\n"
-                "Connect work items to external resources, documentation, repositories, and third-party systems. "
-                "Essential for maintaining traceability between development work and external dependencies, "
-                "documentation, design files, or related systems. Supports rich link metadata and validation.\n\n"
-                "*Core Capabilities:*\n"
-                "- Add, update, and remove external URL references\n"
-                "- Link validation and metadata extraction\n"
-                "- Reference tracking and relationship mapping\n"
-                "- Integration with external tools and services\n"
-                "- Link categorization and tagging\n"
-                "- Access tracking and usage analytics\n\n"
-                "*Common Use Cases:* Documentation linking, repository connections, design file references, "
-                "external tool integration, dependency tracking, specification linking."
-            ),
-        },
-        {
-            "name": "Work Item Comments",
-            "description": (
-                "**Collaborative Discussions & Communication**\n\n"
-                "Enable team collaboration through structured comment systems on work items. "
-                "Supports rich discussions, code reviews, decision tracking, and team communication. "
-                "Essential for maintaining context and team alignment on development work.\n\n"
-                "*Core Capabilities:*\n"
-                "- Threaded comment conversations and replies\n"
-                "- Rich text formatting with markdown support\n"
-                "- User mentions and notification triggers\n"
-                "- Comment editing, deletion, and history tracking\n"
-                "- File attachments and code snippets in comments\n"
-                "- Comment reactions and acknowledgments\n\n"
-                "*Common Use Cases:* Code review discussions, requirement clarifications, "
-                "progress updates, decision documentation, team communication, knowledge sharing."
-            ),
-        },
-        {
-            "name": "Work Item Activity",
-            "description": (
-                "**Activity Monitoring & Search Intelligence**\n\n"
-                "Comprehensive activity tracking and powerful search capabilities for work items. "
-                "Maintains detailed audit trails, change histories, and enables intelligent discovery of work items. "
-                "Critical for project transparency, compliance, and efficient information retrieval.\n\n"
-                "*Core Capabilities:*\n"
-                "- Complete activity logs and change history tracking\n"
-                "- Advanced search with filters, sorting, and faceted navigation\n"
-                "- Real-time activity feeds and notifications\n"
-                "- Audit trail maintenance and compliance reporting\n"
-                "- Cross-project search and discovery\n"
-                "- Activity analytics and usage insights\n\n"
-                "*Common Use Cases:* Compliance auditing, change tracking, work item discovery, "
-                "progress monitoring, team activity analysis, project reporting."
-            ),
-        },
-        {
-            "name": "Work Item Attachments",
-            "description": (
-                "**Work Item File Attachments & Media**\n\n"
-                "Manage file attachments directly associated with specific work items including screenshots, "
-                "logs, design mockups, test cases, and supporting documentation. Provides secure file handling "
-                "with version control and access management for development artifacts.\n\n"
-                "*Core Capabilities:*\n"
-                "- Multi-format file upload and attachment (images, documents, logs)\n"
-                "- Secure file storage with access controls\n"
-                "- File previews and thumbnail generation\n"
-                "- Version tracking and file history\n"
-                "- Bulk attachment operations\n"
-                "- Integration with work item lifecycle\n\n"
-                "*Common Use Cases:* Bug report screenshots, design mockups, test evidence, "
-                "log files, specification documents, code snippets, wireframes."
+                "**File Upload & Presigned URLs**\n\n"
+                "Generate presigned URLs for direct file uploads to cloud storage. Handle user avatars, "
+                "cover images, and generic project assets with secure upload workflows.\n\n"
+                "*Key Features:*\n"
+                "- Generate presigned URLs for S3 uploads\n"
+                "- Support for user avatars and cover images\n"
+                "- Generic asset upload for projects\n"
+                "- File validation and size limits\n\n"
+                "*Use Cases:* User profile images, project file uploads, secure direct-to-cloud uploads."
             ),
         },
         # Project Organization
         {
             "name": "Cycles",
             "description": (
-                "**Agile Sprint & Iteration Management**\n\n"
-                "Organize development work into time-boxed iterations (sprints/cycles) following agile methodologies. "
-                "Essential for scrum teams, sprint planning, velocity tracking, and iterative development processes. "
-                "Provides structure for delivering software in regular, predictable intervals.\n\n"
-                "*Core Capabilities:*\n"
-                "- Sprint/cycle creation, planning, and management\n"
-                "- Work item assignment to development cycles\n"
-                "- Burndown charts and velocity tracking\n"
-                "- Cycle analytics, reporting, and retrospectives\n"
-                "- Automated cycle transitions and status updates\n"
-                "- Capacity planning and workload distribution\n\n"
-                "*Common Use Cases:* Sprint planning, agile development, iterative delivery, "
-                "team velocity tracking, release planning, scrum ceremonies."
+                "**Sprint & Development Cycles**\n\n"
+                "Create and manage development cycles (sprints) to organize work into time-boxed iterations. "
+                "Track progress, assign work items, and monitor team velocity.\n\n"
+                "*Key Features:*\n"
+                "- Create and configure development cycles\n"
+                "- Assign work items to cycles\n"
+                "- Track cycle progress and completion\n"
+                "- Generate cycle analytics and reports\n\n"
+                "*Use Cases:* Sprint planning, iterative development, progress tracking, team velocity."
             ),
         },
+        # System Features
         {
-            "name": "Modules",
+            "name": "Intake",
             "description": (
-                "**Feature Modules & Product Roadmaps**\n\n"
-                "Organize work items into logical feature modules and product roadmaps for strategic planning. "
-                "Essential for product management, feature development tracking, and long-term roadmap visualization. "
-                "Enables hierarchical organization of product initiatives and cross-project coordination.\n\n"
-                "*Core Capabilities:*\n"
-                "- Hierarchical module structure and feature grouping\n"
-                "- Product roadmap creation and visualization\n"
-                "- Cross-module progress tracking and reporting\n"
-                "- Feature dependency management and planning\n"
-                "- Module-based work item organization\n"
-                "- Strategic milestone tracking and delivery planning\n\n"
-                "*Common Use Cases:* Product roadmap planning, feature module organization, "
-                "release planning, strategic initiative tracking, cross-team coordination, product portfolio management."
+                "**Work Item Intake Queue**\n\n"
+                "Manage incoming work items through a dedicated intake queue for triage and review. "
+                "Submit, update, and process work items before they enter the main project workflow.\n\n"
+                "*Key Features:*\n"
+                "- Submit work items to intake queue\n"
+                "- Review and triage incoming work items\n"
+                "- Update intake work item status and properties\n"
+                "- Accept, reject, or modify work items before approval\n\n"
+                "*Use Cases:* Work item triage, external submissions, quality review, approval workflows."
             ),
         },
-        {
-            "name": "States",
-            "description": (
-                "**Workflow States & Process Automation**\n\n"
-                "Define and manage custom workflow states for work items with configurable transitions and automation rules. "
-                "Essential for implementing team-specific processes, enforcing workflow compliance, and automating "
-                "state transitions. Supports different workflow patterns for various project types and methodologies.\n\n"
-                "*Core Capabilities:*\n"
-                "- Custom workflow state definition and configuration\n"
-                "- State transition rules and validation logic\n"
-                "- Automated workflow triggers and actions\n"
-                "- Workflow analytics and bottleneck identification\n"
-                "- Role-based state transition permissions\n"
-                "- Multi-project workflow templates and standardization\n\n"
-                "*Common Use Cases:* Custom development workflows, approval processes, quality gates, "
-                "status tracking, process standardization, workflow optimization, compliance enforcement."
-            ),
-        },
+        # Project Organization
         {
             "name": "Labels",
             "description": (
-                "**Taxonomies & Classification System**\n\n"
-                "Flexible labeling and tagging system for categorizing and organizing work items across multiple dimensions. "
-                "Enables custom taxonomies, priority classification, component grouping, and advanced filtering. "
-                "Essential for information architecture and efficient work item discovery.\n\n"
-                "*Core Capabilities:*\n"
-                "- Custom label creation with color coding and icons\n"
-                "- Hierarchical label structures and nested categories\n"
-                "- Multi-dimensional tagging and classification\n"
-                "- Advanced filtering, search, and faceted navigation\n"
-                "- Label templates and standardization across projects\n"
-                "- Label analytics and usage tracking\n\n"
-                "*Common Use Cases:* Priority classification, component tagging, feature categorization, "
-                "bug classification, skill tagging, team organization, content filtering."
+                "**Labels & Tags**\n\n"
+                "Create and manage labels to categorize and organize work items. Use color-coded labels "
+                "for easy identification, filtering, and project organization.\n\n"
+                "*Key Features:*\n"
+                "- Create custom labels with colors and descriptions\n"
+                "- Apply labels to work items for categorization\n"
+                "- Filter and search by labels\n"
+                "- Organize labels across projects\n\n"
+                "*Use Cases:* Priority marking, feature categorization, bug classification, team organization."
             ),
         },
         # Team & User Management
         {
             "name": "Members",
             "description": (
-                "**Team Collaboration & Access Control**\n\n"
-                "Comprehensive team member management with role-based access control and permission systems. "
-                "Essential for managing project teams, controlling access to sensitive information, and tracking "
-                "team participation across projects. Supports flexible role hierarchies and delegation.\n\n"
-                "*Core Capabilities:*\n"
-                "- Role-based access control and permission management\n"
-                "- Team member invitation and onboarding workflows\n"
-                "- Project-level and workspace-level access controls\n"
-                "- Member activity tracking and participation analytics\n"
-                "- Team hierarchy and reporting relationships\n"
-                "- Guest access and external collaboration controls\n\n"
-                "*Common Use Cases:* Team onboarding, access control, permission management, "
-                "external collaboration, role assignment, security compliance, team analytics."
+                "**Team Member Management**\n\n"
+                "Manage team members, roles, and permissions within projects and workspaces. "
+                "Control access levels and track member participation.\n\n"
+                "*Key Features:*\n"
+                "- Invite and manage team members\n"
+                "- Assign roles and permissions\n"
+                "- Control project and workspace access\n"
+                "- Track member activity and participation\n\n"
+                "*Use Cases:* Team setup, access control, role management, collaboration."
             ),
         },
+        # Project Organization
+        {
+            "name": "Modules",
+            "description": (
+                "**Feature Modules**\n\n"
+                "Group related work items into modules for better organization and tracking. "
+                "Plan features, track progress, and manage deliverables at a higher level.\n\n"
+                "*Key Features:*\n"
+                "- Create and organize feature modules\n"
+                "- Group work items by module\n"
+                "- Track module progress and completion\n"
+                "- Manage module leads and assignments\n\n"
+                "*Use Cases:* Feature planning, release organization, progress tracking, team coordination."
+            ),
+        },
+        # Core Project Management
+        {
+            "name": "Projects",
+            "description": (
+                "**Project Management**\n\n"
+                "Create and manage projects to organize your development work. Configure project settings, "
+                "manage team access, and control project visibility.\n\n"
+                "*Key Features:*\n"
+                "- Create, update, and delete projects\n"
+                "- Configure project settings and preferences\n"
+                "- Manage team access and permissions\n"
+                "- Control project visibility and sharing\n\n"
+                "*Use Cases:* Project setup, team collaboration, access control, project configuration."
+            ),
+        },
+        # Project Organization
+        {
+            "name": "States",
+            "description": (
+                "**Workflow States**\n\n"
+                "Define custom workflow states for work items to match your team's process. "
+                "Configure state transitions and track work item progress through different stages.\n\n"
+                "*Key Features:*\n"
+                "- Create custom workflow states\n"
+                "- Configure state transitions and rules\n"
+                "- Track work item progress through states\n"
+                "- Set state-based permissions and automation\n\n"
+                "*Use Cases:* Custom workflows, status tracking, process automation, progress monitoring."
+            ),
+        },
+        # Team & User Management
         {
             "name": "Users",
             "description": (
-                "**User Identity & Profile Management**\n\n"
-                "Comprehensive user account management including profiles, preferences, authentication, and personalization. "
-                "Handles user lifecycle from registration through active participation, supporting both internal team members "
-                "and external collaborators with customizable user experiences.\n\n"
-                "*Core Capabilities:*\n"
-                "- User profile creation, updates, and customization\n"
-                "- Preference management and personalization settings\n"
-                "- Authentication, authorization, and session management\n"
-                "- User activity tracking and engagement analytics\n"
-                "- Avatar management and visual identity\n"
-                "- Multi-workspace user management and context switching\n\n"
-                "*Common Use Cases:* User onboarding, profile management, preference configuration, "
-                "identity verification, personalization, user analytics, cross-workspace access."
+                "**Current User Information**\n\n"
+                "Get information about the currently authenticated user including profile details "
+                "and account settings.\n\n"
+                "*Key Features:*\n"
+                "- Retrieve current user profile\n"
+                "- Access user account information\n"
+                "- View user preferences and settings\n"
+                "- Get authentication context\n\n"
+                "*Use Cases:* Profile display, user context, account information, authentication status."
             ),
         },
-        # System Features
+        # Work Item Management
         {
-            "name": "Assets",
+            "name": "Work Item Activity",
             "description": (
-                "**Digital Asset & File Management System**\n\n"
-                "Comprehensive file upload, storage, and delivery system for project assets including images, documents, "
-                "videos, and other media files. Provides secure asset management with optimized delivery, version control, "
-                "and integration with work items and project documentation.\n\n"
-                "*Core Capabilities:*\n"
-                "- Multi-format file upload and storage (images, documents, videos)\n"
-                "- CDN-powered delivery and performance optimization\n"
-                "- Asset organization, tagging, and metadata management\n"
-                "- Secure access controls and permission management\n"
-                "- Asset usage analytics and tracking\n"
-                "- Integration with work items and comments\n\n"
-                "*Common Use Cases:* Design asset management, documentation storage, "
-                "project media libraries, user avatars, file attachments, resource sharing."
+                "**Activity History & Search**\n\n"
+                "View activity history and search for work items across the workspace. "
+                "Get detailed activity logs and find work items using text search.\n\n"
+                "*Key Features:*\n"
+                "- View work item activity history\n"
+                "- Search work items across workspace\n"
+                "- Track changes and modifications\n"
+                "- Filter search results by project\n\n"
+                "*Use Cases:* Activity tracking, work item discovery, change history, workspace search."
             ),
         },
         {
-            "name": "Intake",
+            "name": "Work Item Attachments",
             "description": (
-                "**Work Item Intake & Automated Triage**\n\n"
-                "Sophisticated intake management system for processing and triaging incoming work items from various sources. "
-                "Automates initial classification, priority assessment, and routing to appropriate teams. Essential for "
-                "managing high-volume work intake and ensuring consistent processing standards.\n\n"
-                "*Core Capabilities:*\n"
-                "- Multi-channel work item intake and collection\n"
-                "- Automated triage workflows and classification rules\n"
-                "- Priority assessment and severity scoring\n"
-                "- Intelligent routing and team assignment\n"
-                "- Intake form customization and validation\n"
-                "- SLA tracking and escalation management\n\n"
-                "*Common Use Cases:* Bug report intake, feature request processing, support ticket triage, "
-                "customer feedback collection, automated routing, quality gate enforcement."
+                "**Work Item File Attachments**\n\n"
+                "Generate presigned URLs for uploading files directly to specific work items. "
+                "Upload and manage attachments associated with work items.\n\n"
+                "*Key Features:*\n"
+                "- Generate presigned URLs for work item attachments\n"
+                "- Upload files directly to work items\n"
+                "- Retrieve and manage attachment metadata\n"
+                "- Delete attachments from work items\n\n"
+                "*Use Cases:* Screenshots, error logs, design files, supporting documents."
+            ),
+        },
+        {
+            "name": "Work Item Comments",
+            "description": (
+                "**Comments & Discussions**\n\n"
+                "Add comments and discussions to work items for team collaboration. "
+                "Support threaded conversations, mentions, and rich text formatting.\n\n"
+                "*Key Features:*\n"
+                "- Add comments to work items\n"
+                "- Thread conversations and replies\n"
+                "- Mention users and trigger notifications\n"
+                "- Rich text and markdown support\n\n"
+                "*Use Cases:* Team discussions, progress updates, code reviews, decision tracking."
+            ),
+        },
+        {
+            "name": "Work Item Links",
+            "description": (
+                "**External Links & References**\n\n"
+                "Link work items to external resources like documentation, repositories, or design files. "
+                "Maintain connections between work items and external systems.\n\n"
+                "*Key Features:*\n"
+                "- Add external URL links to work items\n"
+                "- Validate and preview linked resources\n"
+                "- Organize links by type and category\n"
+                "- Track link usage and access\n\n"
+                "*Use Cases:* Documentation links, repository connections, design references, external tools."
+            ),
+        },
+        {
+            "name": "Work Items",
+            "description": (
+                "**Work Items & Tasks**\n\n"
+                "Create and manage work items like tasks, bugs, features, and user stories. "
+                "The core entities for tracking work in your projects.\n\n"
+                "*Key Features:*\n"
+                "- Create, update, and manage work items\n"
+                "- Assign to team members and set priorities\n"
+                "- Track progress through workflow states\n"
+                "- Set due dates, estimates, and relationships\n\n"
+                "*Use Cases:* Bug tracking, task management, feature development, sprint planning."
             ),
         },
     ],
