@@ -1679,6 +1679,10 @@ class IssueSearchEndpoint(BaseAPIView):
                 description="Issue search results",
                 response=IssueSearchSerializer,
             ),
+            400: OpenApiResponse(description="Bad request - invalid search parameters"),
+            401: OpenApiResponse(description="Unauthorized"),
+            403: OpenApiResponse(description="Forbidden"),
+            404: OpenApiResponse(description="Workspace not found"),
         },
     )
     def get(self, request, slug):

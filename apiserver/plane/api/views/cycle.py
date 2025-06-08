@@ -702,6 +702,12 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="get_cycle_issues",
         summary="List or retrieve cycle issues",
+        responses={
+            200: OpenApiResponse(
+                description="Cycle issues",
+                response=CycleIssueSerializer,
+            ),
+        },
     )
     def get(self, request, slug, project_id, cycle_id, issue_id=None):
         """List or retrieve cycle issues
@@ -875,6 +881,9 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="delete_cycle_issue",
         summary="Delete cycle issue",
+        responses={
+            204: OpenApiResponse(description="Cycle issue deleted"),
+        },
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         """Remove cycle issue
