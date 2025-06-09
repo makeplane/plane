@@ -40,7 +40,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
 
   const isButtonDisabled = email.length === 0 || Boolean(emailError?.email) || isSubmitting;
 
-  const [isFocused, setIsFocused] = useState(true)
+  const [isFocused, setIsFocused] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -54,9 +54,12 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
             !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
           )}
-          tabIndex={-1}
-          onFocus={() => {setIsFocused(true)}}
-          onBlur={() => {setIsFocused(false)}}
+          onFocus={() => {
+            setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+          }}
         >
           <Input
             id="email"
@@ -70,13 +73,14 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             autoFocus
             ref={inputRef}
           />
-            {email.length > 0 && (
+          {email.length > 0 && (
             <XCircle
               className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs"
               onClick={() => {
                 setEmail("");
                 inputRef.current?.focus();
               }}
+              tabIndex={-1}
             />
           )}
         </div>
