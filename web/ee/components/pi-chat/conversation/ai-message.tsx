@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Markdown from "react-markdown";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
@@ -6,10 +7,9 @@ import { cn } from "@plane/utils";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
+import { FeedbackModal } from "../input/feedback-modal";
 import { ReasoningBlock } from "./reasoning";
 import { Thinking } from "./thinking";
-import { FeedbackModal } from "../input/feedback-modal";
-import { useState } from "react";
 
 type TProps = {
   id: string;
@@ -64,7 +64,7 @@ export const AiMessage = observer((props: TProps) => {
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
         {!isPiThinking && !isLoading && (
-          <div>
+          <div className="flex flex-col gap-4">
             {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
             <Markdown className="pi-chat-root [&>*:first-child]:mt-0">{handleMessage()}</Markdown>
           </div>
