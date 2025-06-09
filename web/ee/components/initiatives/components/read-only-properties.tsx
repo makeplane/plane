@@ -1,9 +1,10 @@
 "use client";
 import { observer } from "mobx-react";
-import { ArrowRight, Briefcase, CalendarCheck2, CalendarDays } from "lucide-react";
+import { Briefcase, CalendarDays } from "lucide-react";
 // plane imports
 import { Avatar, EpicIcon } from "@plane/ui";
-import { cn, renderFormattedDate } from "@plane/utils";
+// core components
+import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -36,15 +37,8 @@ export const ReadOnlyBlockProperties = observer((props: Props) => {
       {/* dates */}
       {startDate && endDate && (
         <PropertyBlockWrapper>
-          <span className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow")}>
-            {<CalendarDays className="h-3 w-3 flex-shrink-0" />}
-            {renderFormattedDate(startDate)}
-          </span>
-          <ArrowRight className="h-3 w-3 flex-shrink-0" />
-          <span className={cn("h-full flex items-center justify-center gap-1 rounded-sm flex-grow")}>
-            {!initiative.end_date && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-            {renderFormattedDate(endDate)}
-          </span>
+          <CalendarDays className="h-3 w-3 flex-shrink-0" />
+          <MergedDateDisplay startDate={initiative.start_date} endDate={initiative.end_date} className="flex-grow" />
         </PropertyBlockWrapper>
       )}
 

@@ -1,13 +1,14 @@
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, Users } from "lucide-react";
+import { Users } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 // helpers
 import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -19,7 +20,6 @@ import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // local imports
 import { StateDropdown, PriorityDropdown } from "../dropdowns";
 import MembersDropdown from "../dropdowns/members-dropdown";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   project: TProject;
@@ -174,46 +174,31 @@ const Attributes: React.FC<Props> = observer((props) => {
       )}
       {displayProperties["date"] && (
         <div className="h-5 my-auto flex gap-2" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={project.start_date || null}
-            onChange={(val) => {
+          <DateRangeDropdown
+            value={{
+              from: getDate(project.start_date) || undefined,
+              to: getDate(project.target_date) || undefined,
+            }}
+            onSelect={(range) => {
               handleUpdateProject({
-                start_date: val ? renderFormattedPayloadDate(val) : null,
-                target_date: project.target_date,
+                start_date: range?.from ? renderFormattedPayloadDate(range.from) : null,
+                target_date: range?.to ? renderFormattedPayloadDate(range.to) : null,
               });
             }}
-            placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            hideIcon={{
+              from: false,
+            }}
+            isClearable
+            mergeDates
             buttonVariant={project.start_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
             showTooltip
-            maxDate={getDate(project.target_date)}
             disabled={!isEditingAllowed || isArchived}
+            renderPlaceholder={false}
           />
         </div>
       )}
-      {displayProperties["date"] && (
-        <div className="h-5 my-auto flex gap-2" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={project.target_date || null}
-            onChange={(val) => {
-              handleUpdateProject({
-                start_date: project.start_date,
-                target_date: val ? renderFormattedPayloadDate(val) : null,
-              });
-            }}
-            placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={project.target_date ? "border-with-text" : "border-without-text"}
-            buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-custom-text-300 rounded text-xs`}
-            optionsClassName="z-10"
-            showTooltip
-            minDate={getDate(project.start_date)}
-            disabled={!isEditingAllowed || isArchived}
-          />
-        </div>
-      )}
+
       {cta}
     </div>
   );
