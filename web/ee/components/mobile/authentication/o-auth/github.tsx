@@ -11,16 +11,19 @@ import githubDarkModeImage from "/public/logos/github-dark.svg";
 
 export type TGitHubAuthButton = {
   title: string;
+  invitationId?: string;
 };
 
 export const GitHubAuthButton: FC<TGitHubAuthButton> = (props) => {
   // props
-  const { title } = props;
+  const { title, invitationId } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/mobile/github/`);
+    let url = `${API_BASE_URL}/auth/mobile/github/`;
+    if (invitationId) url += `?invitation_id=${invitationId}`;
+    window.location.assign(url);
   };
 
   return (

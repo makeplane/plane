@@ -1,11 +1,10 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-import { observer } from "mobx-react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import { EAuthSteps } from "@/helpers/authentication.helper";
+import { EAuthSteps, EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
@@ -13,6 +12,8 @@ import useTimer from "@/hooks/use-timer";
 import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthUniqueCodeForm = {
+  authMode: EAuthModes;
+  invitationId: string | undefined;
   email: string;
   handleEmail: (value: string) => void;
   handleAuthStep: (value: EAuthSteps) => void;
@@ -31,8 +32,8 @@ const defaultFormValues: TFormValues = {
 
 const defaultResetTimerValue = 5;
 
-export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer((props) => {
-  const { email, handleEmail, handleAuthStep, generateEmailUniqueCode } = props;
+export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) => {
+  const { authMode, invitationId, email, handleEmail, handleAuthStep, generateEmailUniqueCode } = props;
   // ref
   const authFormRef = useRef<HTMLFormElement>(null);
   // hooks
@@ -53,6 +54,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
     }
   }, [csrfPromise]);
 
+  // handlers
   const handleFormChange = (key: keyof TFormValues, value: string) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -88,7 +90,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
       ref={authFormRef}
       className="mt-5 space-y-4"
       method="POST"
-      action={`${API_BASE_URL}/auth/mobile/magic-sign-in/`}
+      action={`${API_BASE_URL}/auth/mobile/${authMode === EAuthModes.SIGN_UP ? "magic-sign-up" : "magic-sign-in"}/`}
       onSubmit={async (event) => {
         event.preventDefault(); // Prevent form from submitting by default
         setIsSubmitting(true);
@@ -98,7 +100,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
     >
       <input type="hidden" name="csrfmiddlewaretoken" />
       <input type="hidden" value={formData.email} name="email" />
-
+      <input type="hidden" value={invitationId} name="invitation_id" />
       <div className="space-y-1">
         <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
           Email
@@ -172,4 +174,4 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = observer(
       </div>
     </form>
   );
-});
+};

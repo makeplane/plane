@@ -3,3 +3,8 @@ from .dashboard import (
     DashboardQuickFilterSerializer,
     WidgetSerializer,
 )
+
+from .mobile import (
+    MobileWorkspaceLiteSerializer,
+    MobileInvitationDetailsSerializer,
+)

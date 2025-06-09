@@ -31,11 +31,8 @@ class OauthAdapter(Adapter):
         client_secret=None,
         code=None,
         callback=None,
-        is_mobile=False,
     ):
-        super().__init__(
-            request=request, provider=provider, callback=callback, is_mobile=is_mobile
-        )
+        super().__init__(request=request, provider=provider, callback=callback)
         self.client_id = client_id
         self.scope = scope
         self.redirect_uri = redirect_uri

@@ -10,16 +10,19 @@ import GoogleLogo from "/public/logos/google-logo.svg";
 
 export type TGoogleAuthButton = {
   title: string;
+  invitationId?: string;
 };
 
 export const GoogleAuthButton: FC<TGoogleAuthButton> = (props) => {
   // props
-  const { title } = props;
+  const { title, invitationId } = props;
   // hooks
   const { resolvedTheme } = useTheme();
 
   const handleSignIn = () => {
-    window.location.assign(`${API_BASE_URL}/auth/mobile/google/`);
+    let url = `${API_BASE_URL}/auth/mobile/google/`;
+    if (invitationId) url += `?invitation_id=${invitationId}`;
+    window.location.assign(url);
   };
 
   return (

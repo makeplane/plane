@@ -5,3 +5,7 @@ export * from "./forms";
 export * from "./o-auth";
 
 export * from "./terms-and-conditions";
+
+export * from "./header";
+
+export * from "./wrappers";

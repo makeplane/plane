@@ -1,17 +1,11 @@
 "use client";
 
 import { FC, FormEvent, useMemo, useRef, useState } from "react";
-import { observer } from "mobx-react";
 import { CircleAlert, XCircle } from "lucide-react";
 import { IEmailCheckData } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import {
-  authErrorHandler,
-  EAuthenticationErrorCodes,
-  EAuthSteps,
-  TAuthErrorInfo,
-} from "@/helpers/authentication.helper";
+import { authErrorHandler, EAuthModes, EAuthSteps, TAuthErrorInfo } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // plane web services
@@ -21,12 +15,20 @@ type TMobileAuthEmailValidationForm = {
   email: string;
   handleEmail: (value: string) => void;
   handleAuthStep: (value: EAuthSteps) => void;
+  handleAuthMode: (value: EAuthModes) => void;
   handleErrorInfo: (value: TAuthErrorInfo | undefined) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
 
-export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> = observer((props) => {
-  const { email: defaultEmail, handleEmail, handleAuthStep, handleErrorInfo, generateEmailUniqueCode } = props;
+export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> = (props) => {
+  const {
+    email: defaultEmail,
+    handleEmail,
+    handleAuthStep,
+    handleAuthMode,
+    handleErrorInfo,
+    generateEmailUniqueCode,
+  } = props;
   // ref
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -79,20 +81,20 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
     await mobileAuthService
       .emailCheck(payload)
       .then(async (response) => {
+        // setting auth mode
         if (response.existing) {
-          if (response.status === "MAGIC_CODE") {
-            handleAuthStep(EAuthSteps.UNIQUE_CODE);
-            // generating unique code
-            generateEmailUniqueCode(email);
-          } else if (response.status === "CREDENTIAL") {
-            handleAuthStep(EAuthSteps.PASSWORD);
-          }
+          handleAuthMode(EAuthModes.SIGN_IN);
         } else {
-          handleEmail("");
-          setEmail("");
-          handleAuthStep(EAuthSteps.EMAIL);
-          const errorhandler = authErrorHandler(EAuthenticationErrorCodes.USER_DOES_NOT_EXIST, undefined);
-          if (errorhandler?.type) handleErrorInfo(errorhandler);
+          handleAuthMode(EAuthModes.SIGN_UP);
+        }
+
+        // setting auth step
+        if (response.status === "MAGIC_CODE") {
+          handleAuthStep(EAuthSteps.UNIQUE_CODE);
+          // generating unique code
+          generateEmailUniqueCode(email);
+        } else if (response.status === "CREDENTIAL") {
+          handleAuthStep(EAuthSteps.PASSWORD);
         }
       })
       .catch((error) => {
@@ -155,4 +157,4 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       </form>
     </div>
   );
-});
+};

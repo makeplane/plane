@@ -22,11 +22,10 @@ from plane.utils.ip_address import get_client_ip
 class Adapter:
     """Common interface for all auth providers"""
 
-    def __init__(self, request, provider, callback=None, is_mobile=False):
+    def __init__(self, request, provider, callback=None):
         self.request = request
         self.provider = provider
         self.callback = callback
-        self.is_mobile = is_mobile
         self.token_data = None
         self.user_data = None
 
@@ -133,13 +132,6 @@ class Adapter:
 
         # Check if sign up case or login
         is_signup = not bool(user)
-
-        # check if the user is authenticated via mobile
-        if is_signup and self.is_mobile:
-            raise AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["MOBILE_SIGNUP_DISABLED"],
-                error_message="MOBILE_SIGNUP_DISABLED",
-            )
 
         # If user is not present, create a new user
         if not user:

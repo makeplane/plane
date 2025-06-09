@@ -64,3 +64,4 @@ export * from "./etl";
 export * from "./payment-extended";
 export * from "./activity-extended";
 export * from "./analytics";
+export * from "./mobile";

@@ -34,7 +34,6 @@ class GitHubOAuthProvider(OauthAdapter):
         state=None,
         callback=None,
         redirect_uri=None,
-        is_mobile=False,
     ):
         GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_ORGANIZATION_ID = (
             get_configuration_value(
@@ -101,7 +100,6 @@ class GitHubOAuthProvider(OauthAdapter):
             client_secret,
             code,
             callback=callback,
-            is_mobile=is_mobile,
         )
 
     def set_token_data(self):

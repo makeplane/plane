@@ -22,6 +22,7 @@ from .oauth import urlpatterns as oauth_patterns
 from .template import urlpatterns as template_patterns
 from .search import urlpatterns as search_patterns
 from .customer import urlpatterns as customer_property_patterns
+from .mobile import urlpatterns as mobile_patterns
 
 urlpatterns = [
     *ai_patterns,
@@ -50,4 +51,5 @@ urlpatterns = [
     *template_patterns,
     *search_patterns,
     *customer_property_patterns,
+    *mobile_patterns,
 ]

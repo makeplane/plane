@@ -38,6 +38,7 @@ class MobileGoogleOauthInitiateEndpoint(View):
             return HttpResponseRedirect(url)
 
         try:
+            invitation_id = request.GET.get("invitation_id")
             scheme = (
                 "https"
                 if settings.IS_HEROKU
@@ -54,6 +55,7 @@ class MobileGoogleOauthInitiateEndpoint(View):
                 request=request, state=state, redirect_uri=redirect_uri
             )
             request.session["state"] = state
+            request.session["invitation_id"] = invitation_id
             auth_url = provider.get_auth_url()
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
@@ -69,12 +71,18 @@ class MobileGoogleCallbackEndpoint(View):
         code = request.GET.get("code")
         state = request.GET.get("state")
         base_host = request.session.get("host")
+        invitation_id = request.session.get("invitation_id")
+
+        response_payload_params = {}
+        if invitation_id:
+            response_payload_params["invitation_id"] = invitation_id
 
         # validating the session state is matching or not
         if state != request.session.get("state", ""):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
+                payload=response_payload_params,
             )
             params = exc.get_error_dict()
             url = urljoin(base_host, "m/auth/?" + urlencode(params))
@@ -85,6 +93,7 @@ class MobileGoogleCallbackEndpoint(View):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GOOGLE_OAUTH_PROVIDER_ERROR"],
                 error_message="GOOGLE_OAUTH_PROVIDER_ERROR",
+                payload=response_payload_params,
             )
             params = exc.get_error_dict()
             url = urljoin(base_host, "m/auth/?" + urlencode(params))
@@ -105,7 +114,6 @@ class MobileGoogleCallbackEndpoint(View):
                 request=request,
                 code=code,
                 callback=post_user_auth_workflow,
-                is_mobile=True,
                 redirect_uri=redirect_uri,
             )
 

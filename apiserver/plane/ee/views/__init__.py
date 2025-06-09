@@ -125,3 +125,7 @@ from plane.ee.views.app.page.live import (
 from plane.ee.views.app.search.base import EnhancedGlobalSearchEndpoint
 
 from plane.ee.views.app.workspace.asset import WorkspaceBulkAssetEndpoint
+
+
+# mobile views and endpoints
+from plane.ee.views.app.mobile import MobileWorkspaceInvitationEndpoint

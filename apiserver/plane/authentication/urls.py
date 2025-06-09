@@ -49,7 +49,9 @@ from .views import (
     MobileEmailCheckEndpoint,
     MobileMagicGenerateEndpoint,
     MobileSignInAuthEndpoint,
+    MobileSignUpAuthEndpoint,
     MobileMagicSignInEndpoint,
+    MobileMagicSignUpEndpoint,
     MobileSessionTokenCheckEndpoint,
     MobileSignOutAuthEndpoint,
     MobileSessionTokenEndpoint,
@@ -174,9 +176,19 @@ urlpatterns = [
     ),
     path("mobile/sign-in/", MobileSignInAuthEndpoint.as_view(), name="mobile-sign-in"),
     path(
+        "mobile/sign-up/",
+        MobileSignUpAuthEndpoint.as_view(),
+        name="mobile-sign-up",
+    ),
+    path(
         "mobile/magic-sign-in/",
         MobileMagicSignInEndpoint.as_view(),
         name="mobile-magic-sign-in",
+    ),
+    path(
+        "mobile/magic-sign-up/",
+        MobileMagicSignUpEndpoint.as_view(),
+        name="mobile-magic-sign-up",
     ),
     path(
         "mobile/token-check/",

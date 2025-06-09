@@ -30,7 +30,6 @@ class GoogleOAuthProvider(OauthAdapter):
         state=None,
         callback=None,
         redirect_uri=None,
-        is_mobile=False,
     ):
         (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET) = get_configuration_value(
             [
@@ -93,7 +92,6 @@ class GoogleOAuthProvider(OauthAdapter):
             client_secret,
             code,
             callback=callback,
-            is_mobile=is_mobile,
         )
 
     def set_token_data(self):
