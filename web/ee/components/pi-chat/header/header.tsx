@@ -34,11 +34,11 @@ export const Header = observer((props: THeaderProps) => {
     <div className="flex justify-between h-8">
       {/* Breadcrumb */}
 
-      <button className="flex rounded gap-1">
+      <div className="flex rounded gap-1">
         <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
         <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4o)</span>
         <BetaBadge />
-      </button>
+      </div>
       {/* Actions */}
       {!isSidePanelOpen && (
         <div className="flex gap-2">

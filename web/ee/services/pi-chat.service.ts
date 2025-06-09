@@ -88,7 +88,7 @@ export class PiChatService extends APIService {
     return this.post(`/api/v1/chat/get-chat-history-object/`, { chat_id: chatId })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error;
       });
   }
 

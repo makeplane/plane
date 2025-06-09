@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/utils";
+import { NotAuthorizedView } from "@/components/auth-screens";
 import { useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -27,6 +28,7 @@ export const PiChatBase = observer((props: TProps) => {
     isPiThinking,
     isUserTyping,
     activeChat,
+    isAuthorized,
     fetchUserThreads,
     geUserThreads,
     fetchChatById,
@@ -121,39 +123,42 @@ export const PiChatBase = observer((props: TProps) => {
           models={models}
           activeModel={activeModel}
           setActiveModel={setActiveModel}
-          isNewChat={activeChat?.dialogue?.length === 0}
+          isNewChat={activeChat?.dialogue?.length === 0 && isAuthorized}
         />
-        <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
-          <div className={cn("flex-1 my-auto flex flex-co h-full py-8")}>
-            {/* Current conversation  */}
-            {currentUser && activeChat?.dialogue?.length > 0 && !isLoading && (
-              <Messages
-                isPiThinking={isPiThinking}
-                activeChat={activeChat}
-                currentUser={currentUser}
-                isUserTyping={isUserTyping}
+        {isAuthorized ? (
+          <div className="relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
+            <div className={cn("flex-1 my-auto flex flex-co h-full py-8")}>
+              {/* Current conversation  */}
+              {currentUser && activeChat?.dialogue?.length > 0 && !isLoading && (
+                <Messages
+                  isPiTyping={isPiTyping}
+                  activeChat={activeChat}
+                  currentUser={currentUser}
+                  isUserTyping={isUserTyping}
+                  isFullScreen={isFullScreen}
+                  isLoading={isLoading}
+                />
+              )}
+              {/* New conversation */}
+              {isLoading && !isNewChat && currentUser ? (
+                <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} /> // loading
+              ) : (
+                activeChat?.dialogue?.length === 0 && (
+                  <NewConversation currentUser={currentUser} templates={templates} isFullScreen={isFullScreen} />
+                )
+              )}
+
+              {/* Chat Input */}
+              <InputBox
                 isFullScreen={isFullScreen}
-                isLoading={isLoading}
+                activeChatId={activeChatId}
+                className="flex flex-col absolute bottom-3 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0"
               />
-            )}
-
-            {/* New conversation */}
-            {isLoading && !isNewChat && currentUser ? (
-              <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} /> // loading
-            ) : (
-              activeChat?.dialogue?.length === 0 && (
-                <NewConversation currentUser={currentUser} templates={templates} isFullScreen={isFullScreen} />
-              )
-            )}
-
-            {/* Chat Input */}
-            <InputBox
-              isFullScreen={isFullScreen}
-              activeChatId={activeChatId}
-              className="flex flex-col absolute bottom-3 bg-pi-50 left-1/2 transform -translate-x-1/2 w-full px-2 md:px-0"
-            />
+            </div>
           </div>
-        </div>
+        ) : (
+          <NotAuthorizedView className="bg-transparent" />
+        )}
       </div>
       {/* History */}
       {isFullScreen && (
@@ -163,7 +168,8 @@ export const PiChatBase = observer((props: TProps) => {
           toggleSidePanel={toggleSidePanel}
           initPiChat={initPiChat}
           isMobile={isMobile}
-          isNewChat={activeChat?.dialogue?.length === 0}
+          isNewChat={activeChat?.dialogue?.length === 0 && isAuthorized}
+          activeChatId={activeChatId}
         />
       )}
     </div>

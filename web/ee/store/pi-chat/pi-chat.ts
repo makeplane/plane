@@ -33,6 +33,7 @@ export interface IPiChatStore {
   threads: Record<string, TUserThreads[]>; // user -> threads
   activeModel: TAiModels | undefined;
   models: TAiModels[];
+  isAuthorized: boolean;
   // computed fn
   geUserThreads: (userId: string) => TUserThreads[];
   currentFocus: TFocus;
@@ -61,6 +62,7 @@ export class PiChatStore implements IPiChatStore {
   isUserTyping = false;
   models: TAiModels[] = [];
   activeModel: TAiModels | undefined = undefined;
+  isAuthorized = true;
   activeChat: TChatHistory = {
     chat_id: "",
     dialogue: [],
@@ -90,6 +92,7 @@ export class PiChatStore implements IPiChatStore {
       models: observable,
       activeModel: observable,
       isInWorkspaceContext: observable,
+      isAuthorized: observable,
       // computed
       currentFocus: computed,
       // actions
@@ -158,6 +161,7 @@ export class PiChatStore implements IPiChatStore {
       this.isNewChat = true;
       this.isLoading = false;
     }
+    this.isAuthorized = true;
     // Set Focus
     if (isEmpty(this.focus[this.activeChatId]) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
       this.setFocus(this.activeChatId, "workspace_id", this.rootStore.workspaceRoot.currentWorkspace?.id);
@@ -314,16 +318,20 @@ export class PiChatStore implements IPiChatStore {
         this.isLoading = true;
       });
       const response = await this.piChatService.getChatById(chatId);
-
       runInAction(() => {
         this.activeChat = response.results;
         this.isLoading = false;
         this.isNewChat = response.results.dialogue.length === 0;
       });
-    } catch (e) {
+    } catch (e: any) {
       runInAction(() => {
+        if (e?.status === 403) {
+          this.isAuthorized = false;
+          this.isNewChat = false;
+        } else {
+          this.isNewChat = true;
+        }
         this.isLoading = false;
-        this.isNewChat = true;
       });
     }
   };
