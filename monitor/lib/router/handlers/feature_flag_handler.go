@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/gofiber/fiber/v2"
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
@@ -10,6 +9,9 @@ import (
 	"github.com/makeplane/plane-ee/monitor/pkg/db"
 )
 
+/*
+This endpoint will give the feature flags from the database, it won't make any calls to the prime server.
+*/
 func GetFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		var payload prime_api.GetFlagsPayload
@@ -28,13 +30,13 @@ func GetFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(*fib
 		*/
 		switch {
 		case payload.WorkspaceSlug != "" && payload.UserID != "" && payload.FeatureKey != "":
-			return handleUserFeatureFlag(ctx, payload, key)
+			return handleUserFeatureFlag(ctx, api, payload, key)
 		case payload.WorkspaceSlug != "" && payload.UserID != "":
-			return handleUserAllFeatureFlags(ctx, payload, key)
+			return handleUserAllFeatureFlags(ctx, api, payload, key)
 		case payload.WorkspaceSlug != "" && payload.FeatureKey != "":
-			return handleWorkspaceFeatureFlag(ctx, payload, key)
+			return handleWorkspaceFeatureFlag(ctx, api, payload, key)
 		case payload.WorkspaceSlug != "":
-			return handleWorkspaceAllFeatureFlags(ctx, payload, key)
+			return handleWorkspaceAllFeatureFlags(ctx, api, payload, key)
 		default:
 			ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"error": "Invalid request parameters",
@@ -44,7 +46,7 @@ func GetFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(*fib
 	}
 }
 
-func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, key string) error {
+func handleUserFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, payload prime_api.GetFlagsPayload, key string) error {
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
@@ -88,7 +90,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 	}
 
 	// Taking precondition that APP_VERSION will be verfied at the time of startup
-	APP_VERSION := os.Getenv("APP_VERSION")
+	APP_VERSION := api.AppVersion()
 
 	var flags db.Flags
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
@@ -135,7 +137,7 @@ func handleUserFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, ke
 	return nil
 }
 
-func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, key string) error {
+func handleUserAllFeatureFlags(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, payload prime_api.GetFlagsPayload, key string) error {
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
@@ -172,7 +174,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 		return nil
 	}
 
-	APP_VERSION := os.Getenv("APP_VERSION")
+	APP_VERSION := api.AppVersion()
 
 	var flags db.Flags
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
@@ -205,7 +207,7 @@ func handleUserAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload
 	return nil
 }
 
-func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, key string) error {
+func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, payload prime_api.GetFlagsPayload, key string) error {
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
@@ -217,7 +219,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayloa
 		return nil
 	}
 
-	APP_VERSION := os.Getenv("APP_VERSION")
+	APP_VERSION := api.AppVersion()
 
 	var flags db.Flags
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)
@@ -264,7 +266,7 @@ func handleWorkspaceFeatureFlag(ctx *fiber.Ctx, payload prime_api.GetFlagsPayloa
 	return nil
 }
 
-func handleWorkspaceAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPayload, key string) error {
+func handleWorkspaceAllFeatureFlags(ctx *fiber.Ctx, api prime_api.IPrimeMonitorApi, payload prime_api.GetFlagsPayload, key string) error {
 	var license db.License
 	record := db.Db.Model(&db.License{}).Where("workspace_slug = ?", payload.WorkspaceSlug).First(&license)
 	if record.Error != nil {
@@ -274,7 +276,7 @@ func handleWorkspaceAllFeatureFlags(ctx *fiber.Ctx, payload prime_api.GetFlagsPa
 		return nil
 	}
 
-	APP_VERSION := os.Getenv("APP_VERSION")
+	APP_VERSION := api.AppVersion()
 
 	var flags db.Flags
 	record = db.Db.Model(&db.Flags{}).Where("license_id = ? AND version = ?", license.ID, APP_VERSION).First(&flags)

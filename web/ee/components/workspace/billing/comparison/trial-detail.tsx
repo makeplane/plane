@@ -19,13 +19,13 @@ type TTrialDetailsProps = {
 export const TrialDetails: FC<TTrialDetailsProps> = observer((props) => {
   const { subscriptionType, trialLoader, upgradeLoader, isProductsAPILoading, handleTrial } = props;
   // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();
   // derived values
   const planName = getSubscriptionName(subscriptionType);
   const currentSubscription = subscriptionDetail?.product;
   const isSelfManaged = !!subscriptionDetail?.is_self_managed;
   const isTrialAllowed = !!subscriptionDetail?.is_trial_allowed;
-  const isOnTrialPeriod = !!subscriptionDetail?.is_on_trial && currentSubscription === subscriptionType;
+  const isOnTrialPeriod = getIsInTrialPeriod(false) && currentSubscription === subscriptionType;
   const isTrialEnded = !!subscriptionDetail?.is_trial_ended && currentSubscription === subscriptionType;
 
   if (isSelfManaged) return null;

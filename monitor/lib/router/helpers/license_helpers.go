@@ -1,4 +1,4 @@
-package handlers
+package router_helpers
 
 import (
 	"context"
@@ -42,11 +42,21 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 		MembersList:   workspaceMembers,
 	})
 
+	verificationThreshhold := LICENSE_VERIFICATION_FAILED_THRESHOLD
+
+	shouldDeactivate := false
+	// If the license is airgapped, we need to check the current period end date
+	if api.IsAirgapped() && license.CurrentPeriodEndDate != nil {
+		shouldDeactivate = time.Since(*license.CurrentPeriodEndDate) > 0
+	} else {
+		shouldDeactivate = license.LastVerifiedAt != nil && time.Since(*license.LastVerifiedAt) > verificationThreshhold
+	}
+
 	if err != nil {
 		// The license sync failed, we need to check the last verified date
 		if license.LastVerifiedAt != nil && license.ProductType != "FREE" {
 			// Check if the last verified date is greater than 14 days
-			if time.Since(*license.LastVerifiedAt) > LICENSE_VERIFICATION_FAILED_THRESHOLD {
+			if shouldDeactivate {
 				// Deactivate the license
 				newLicense := &db.License{
 					ID:                     license.ID,
@@ -102,6 +112,20 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 					MemberList:       []prime_api.WorkspaceMember{},
 				}, nil
 			}
+		}
+		// if the license is airgapped, we need to return nil, nil, nil
+		if api.IsAirgapped() {
+			return license, &prime_api.WorkspaceActivationResponse{
+				Product:          license.Product,
+				ProductType:      license.ProductType,
+				WorkspaceSlug:    license.WorkspaceSlug,
+				Seats:            license.Seats,
+				FreeSeats:        license.FreeSeats,
+				Interval:         license.Interval,
+				IsOfflinePayment: license.IsOfflinePayment,
+				IsCancelled:      license.IsCancelled,
+				MemberList:       []prime_api.WorkspaceMember{},
+			}, nil
 		}
 		return nil, nil, fmt.Errorf(F2_LICENSE_VERFICATION_FAILED, license.LicenseKey, license.WorkspaceSlug)
 	}
@@ -225,7 +249,7 @@ func RefreshFeatureFlags(ctx context.Context, api prime_api.IPrimeMonitorApi, li
 	return nil
 }
 
-func convertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActivationResponse) (*db.License, error) {
+func ConvertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActivationResponse) (*db.License, error) {
 	workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
 	instanceUUID, _ := uuid.Parse(data.InstanceID)
 
@@ -271,7 +295,7 @@ func convertWorkspaceActivationResponseToLicense(data *prime_api.WorkspaceActiva
 	return license, nil
 }
 
-func convertLicenseToWorkspaceActivationPayload(license *db.License, userLicenses []db.UserLicense) (*prime_api.WorkspaceActivationPayload, error) {
+func ConvertLicenseToWorkspaceActivationPayload(license *db.License, userLicenses []db.UserLicense) (*prime_api.WorkspaceActivationPayload, error) {
 	// Convert WorkspaceID to string
 	workspaceIDStr := license.WorkspaceID.String()
 

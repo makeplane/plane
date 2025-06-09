@@ -598,3 +598,5 @@ MOBILE_USER_DELETE_ADMIN_EMAILS = os.environ.get("MOBILE_USER_DELETE_ADMIN_EMAIL
 
 # Intake Email Domain
 INTAKE_EMAIL_DOMAIN = os.environ.get("INTAKE_EMAIL_DOMAIN", "example.com")
+
+IS_AIRGAPPED = os.environ.get("IS_AIRGAPPED", "0") == "1"

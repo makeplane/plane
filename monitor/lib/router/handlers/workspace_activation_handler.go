@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
+	router_helpers "github.com/makeplane/plane-ee/monitor/lib/router/helpers"
 	"github.com/makeplane/plane-ee/monitor/pkg/db"
 	"gorm.io/gorm"
 )
@@ -61,7 +62,7 @@ func InitializeFreeWorkspace(api prime_api.IPrimeMonitorApi, key string) func(*f
 			}
 		}
 
-		license, _ := convertWorkspaceActivationResponseToLicense(data)
+		license, _ := router_helpers.ConvertWorkspaceActivationResponseToLicense(data)
 		db.Db.Create(license)
 
 		// Send the workspace activation message back to the client
@@ -143,8 +144,8 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 				IsOfflinePayment:       workspaceLicense.IsOfflinePayment,
 				IsCancelled:            workspaceLicense.IsCancelled,
 				Subscription:           workspaceLicense.Subscription,
-				CurrentPeriodEndDate:   time.Time{},
-				TrialEndDate:           time.Time{},
+				CurrentPeriodEndDate:   *workspaceLicense.CurrentPeriodEndDate,
+				TrialEndDate:           *workspaceLicense.TrialEndDate,
 				HasAddedPayment:        workspaceLicense.HasAddedPaymentMethod,
 				HasActivatedFree:       workspaceLicense.HasActivatedFreeTrial,
 				MemberList:             payload.MembersList,
@@ -155,7 +156,7 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 			isSynced = false
 		} else {
 			// Update the existing license from the recieved data
-			updateLicense, _ := convertWorkspaceActivationResponseToLicense(data)
+			updateLicense, _ := router_helpers.ConvertWorkspaceActivationResponseToLicense(data)
 			updateLicense.ID = workspaceLicense.ID
 
 			if err := db.Db.Transaction(func(tx *gorm.DB) error {
@@ -170,7 +171,7 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 				}
 
 				if updateLicense.ProductType != "FREE" {
-					if err := RefreshFeatureFlags(context.Background(), api, *updateLicense, tx); err != nil {
+					if err := router_helpers.RefreshFeatureFlags(context.Background(), api, *updateLicense, tx); err != nil {
 						return err
 					}
 				}
@@ -374,17 +375,26 @@ func GetManualSyncHandler(api prime_api.IPrimeMonitorApi, key string) func(*fibe
 		}
 
 		err := db.Db.Transaction(func(tx *gorm.DB) error {
-			updatedLicense, activationReponse, err := RefreshLicense(context.Background(), api, license, tx)
+			updatedLicense, activationReponse, err := router_helpers.RefreshLicense(context.Background(), api, license, tx)
 			if err != nil {
+				fmt.Println("Failed to refresh the license", err)
 				return err
 			}
 
-			if err := RefreshLicenseUsers(context.Background(), updatedLicense, *activationReponse, tx); err != nil {
+			if api.IsAirgapped() {
+				return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+					"message": "Workspace synchronized successfully",
+				})
+			}
+
+			if err := router_helpers.RefreshLicenseUsers(context.Background(), updatedLicense, *activationReponse, tx); err != nil {
+				fmt.Println("Failed to refresh the license users", err)
 				return err
 			}
 
 			if updatedLicense.ProductType != "FREE" {
-				if err := RefreshFeatureFlags(context.Background(), api, *updatedLicense, tx); err != nil {
+				if err := router_helpers.RefreshFeatureFlags(context.Background(), api, *updatedLicense, tx); err != nil {
+					fmt.Println("Failed to refresh the feature flags", err)
 					return err
 				}
 			}
@@ -404,6 +414,7 @@ func GetManualSyncHandler(api prime_api.IPrimeMonitorApi, key string) func(*fibe
 	}
 }
 
+// Not going to be used for the airgapped instances, as we are using the airgapped activation handler
 func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(*fiber.Ctx) error {
 	return func(ctx *fiber.Ctx) error {
 		// Get the data from the request and forward the request to the API
@@ -427,7 +438,7 @@ func GetActivateFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) f
 		}
 
 		workspaceUUID, _ := uuid.Parse(data.WorkspaceID)
-		license, _ := convertWorkspaceActivationResponseToLicense(data)
+		license, _ := router_helpers.ConvertWorkspaceActivationResponseToLicense(data)
 
 		// Remove the existing license for the workspace
 		db.Db.Where("workspace_id = ?", workspaceUUID).Delete(&db.License{})
@@ -600,7 +611,7 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 			}
 
 			// Create the payload for reactivating the license
-			reactivatePayload, err := convertLicenseToWorkspaceActivationPayload(&license, members)
+			reactivatePayload, err := router_helpers.ConvertLicenseToWorkspaceActivationPayload(&license, members)
 			if err != nil {
 				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"error": "Failed to convert the license to workspace activation payload",
@@ -621,7 +632,7 @@ func DeactivateLicense(api prime_api.IPrimeMonitorApi, key string) func(*fiber.C
 			})
 		}
 
-		freeLicense, err := convertWorkspaceActivationResponseToLicense(freeLicensePayload)
+		freeLicense, err := router_helpers.ConvertWorkspaceActivationResponseToLicense(freeLicensePayload)
 
 		if err != nil {
 			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{

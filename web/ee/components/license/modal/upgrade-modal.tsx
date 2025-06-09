@@ -38,7 +38,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   // router
   const { workspaceSlug } = useParams();
   // hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();
   const { toggleLicenseActivationModal } = useSelfHostedSubscription();
   // states
   const [upgradeLoaderType, setUpgradeLoaderType] = useState<EProductSubscriptionEnum | undefined>(undefined);
@@ -55,7 +55,7 @@ export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((pro
   // derived values
   const isSelfHosted = subscriptionDetail?.is_self_managed;
   const isTrialAllowed = subscriptionDetail?.is_trial_allowed;
-  const isOnTrial = subscriptionDetail?.is_on_trial;
+  const isOnTrial = getIsInTrialPeriod(false);
   const isTrialEnded = subscriptionDetail?.is_trial_ended;
   const currentPlan = subscriptionDetail?.product;
   // product details

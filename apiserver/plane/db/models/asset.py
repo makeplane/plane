@@ -54,6 +54,7 @@ class FileAsset(BaseModel):
         WORKITEM_TEMPLATE_DESCRIPTION = "WORKITEM_TEMPLATE_DESCRIPTION"
         PAGE_TEMPLATE_DESCRIPTION = "PAGE_TEMPLATE_DESCRIPTION"
         TEMPLATE_ATTACHMENT = "TEMPLATE_ATTACHMENT"
+        LICENSE_FILE = "LICENSE_FILE"
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)

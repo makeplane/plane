@@ -23,6 +23,7 @@ export const CloudEditionBadge = observer(() => {
   const { captureEvent } = useEventTracker();
   const {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
+    getIsInTrialPeriod,
     togglePaidPlanModal,
     handleSuccessModalToggle,
   } = useWorkspaceSubscription();
@@ -30,7 +31,7 @@ export const CloudEditionBadge = observer(() => {
   const currentSubscription = subscriptionDetail?.product;
   const remainingTrialDays = subscriptionDetail?.remaining_trial_days;
   const showPaymentButton = !!subscriptionDetail?.show_payment_button;
-  const isOnTrial = !!subscriptionDetail?.is_on_trial;
+  const isOnTrial = getIsInTrialPeriod(false);
 
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");

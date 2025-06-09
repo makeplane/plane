@@ -8,6 +8,8 @@ import {
   // enterprise
   TInstanceEnterpriseAuthenticationKeys,
 } from "./";
+// extended
+import { IInstanceConfigExtended } from "./base-extended";
 
 type TProductType = "plane-ce" | "plane-one";
 
@@ -42,7 +44,7 @@ export interface IInstance {
   workspaces_exist: boolean;
 }
 
-export interface IInstanceConfig {
+export interface IInstanceConfig extends IInstanceConfigExtended {
   enable_signup: boolean;
   is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;

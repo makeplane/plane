@@ -53,14 +53,14 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
     handleUpgrade,
   } = props;
   // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, getIsInTrialPeriod } = useWorkspaceSubscription();
 
   // subscription details
   const subscriptionName = getSubscriptionName(subscriptionType);
   const currentPlan = subscriptionDetail?.product;
   const isSelfHosted = !!subscriptionDetail?.is_self_managed;
   const canStartTrial = !!subscriptionDetail?.is_trial_allowed;
-  const isInTrial = !!subscriptionDetail?.is_on_trial;
+  const isInTrial = getIsInTrialPeriod(false);
   const hasTrialEnded = !!subscriptionDetail?.is_trial_ended;
   const shouldShowTrialDetails = !isSelfHosted && (canStartTrial || isInTrial || hasTrialEnded);
 

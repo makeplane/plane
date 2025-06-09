@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/pkg/db"
+	"gorm.io/gorm"
 )
 
 type WorkspaceProductResponse struct {
@@ -62,21 +63,35 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 		license := db.License{}
 		record := db.Db.Model(&db.License{}).Where("workspace_id = ? AND workspace_slug = ?", workspaceId, payload.WorkspaceSlug).First(&license)
 
+		isAirgapped := api.IsAirgapped()
+
 		if record.Error != nil {
 			// If the record is not found, create a free workspace on the prime server
 			/**
 			We are trying to hit this endpoint in the case when we don't know the product of the license we initiate the free workspace with prime the prime returns us with the
 			license details and the product type according to which we proceed with creating users and fetching the feature flags.
 			*/
-			data, err := api.ActivateFreeWorkspace(prime_api.WorkspaceActivationPayload{
-				WorkspaceSlug: payload.WorkspaceSlug,
-				WorkspaceID:   workspaceId,
-				MembersList:   payload.MembersList,
-				OwnerEmail:    payload.OwnerEmail,
-			})
+
+			var data *prime_api.WorkspaceActivationResponse
+			var apiError *prime_api.APIError
+
+			if isAirgapped {
+				data, apiError = api.SyncWorkspace(prime_api.WorkspaceSyncPayload{
+					WorkspaceSlug: payload.WorkspaceSlug,
+					WorkspaceID:   workspaceId,
+					MembersList:   payload.MembersList,
+				})
+			} else {
+				data, apiError = api.ActivateFreeWorkspace(prime_api.WorkspaceActivationPayload{
+					WorkspaceSlug: payload.WorkspaceSlug,
+					WorkspaceID:   workspaceId,
+					MembersList:   payload.MembersList,
+					OwnerEmail:    payload.OwnerEmail,
+				})
+			}
 
 			// If the workspace could not be created, return a free workspace
-			if err != nil {
+			if apiError != nil {
 				now := time.Now()
 				// Send the response back to the client
 				ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
@@ -95,7 +110,7 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 				})
 				// Return the error
 				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"error": err.Error,
+					"error": apiError.Error,
 				})
 			}
 
@@ -124,12 +139,12 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 				LastPaymentFailedCount: data.LastPaymentFailedCount,
 			}
 			// Save the license record to the database
-			db.Db.Create(license)
 
-			// Fetch the feature flags if the product is not free
+			members := make([]db.UserLicense, 0)
+			var flagData *db.Flags
+
 			if data.ProductType != "FREE" {
 				// Create the members for the workspace
-				members := make([]db.UserLicense, 0)
 				for _, member := range data.MemberList {
 					userUUID, _ := uuid.Parse(member.UserId)
 					members = append(members, db.UserLicense{
@@ -140,17 +155,28 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 						IsActive:  member.IsActive,
 					})
 				}
-				db.Db.CreateInBatches(members, 100)
+				var flags *prime_api.FlagDataResponse
 
-				flags, err := api.GetFeatureFlags(data.LicenceKey)
-
-				if err != nil {
-					return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-						"error": err.Error,
-					})
+				if isAirgapped {
+					flags = &prime_api.FlagDataResponse{
+						Version: data.Flags.Version,
+						EncyptedData: prime_api.EncyptedFlagData{
+							AesKey:     data.Flags.AesKey,
+							Nonce:      data.Flags.Nonce,
+							CipherText: data.Flags.CipherText,
+							Tag:        data.Flags.Tag,
+						},
+					}
+				} else {
+					flags, apiError = api.GetFeatureFlags(data.LicenceKey)
+					if apiError != nil {
+						return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+							"error": apiError.Error,
+						})
+					}
 				}
 
-				flagData := &db.Flags{
+				flagData = &db.Flags{
 					LicenseID:  license.ID,
 					Version:    flags.Version,
 					AesKey:     flags.EncyptedData.AesKey,
@@ -158,8 +184,22 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 					CipherText: flags.EncyptedData.CipherText,
 					Tag:        flags.EncyptedData.Tag,
 				}
-				db.Db.Create(flagData)
+			}
 
+			err := db.Db.Transaction(func(tx *gorm.DB) error {
+				tx.Create(license)
+				tx.CreateInBatches(members, 100)
+				tx.Create(flagData)
+				return nil
+			})
+
+			if err != nil {
+				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"error": err.Error(),
+				})
+			}
+
+			if data.ProductType != "FREE" {
 				// Send the workspace activation message back to the client
 				return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 					"message": "License activated successfully for the workspace",
@@ -167,6 +207,8 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 					"license": license,
 				})
 			}
+
+			// Fetch the feature flags if the product is not free
 
 			// Send the response back to the client
 			ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{

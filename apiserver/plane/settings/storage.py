@@ -185,3 +185,40 @@ class S3Storage(S3Boto3Storage):
             return None
 
         return response
+
+    def upload_file(
+        self,
+        file_obj,
+        object_name: str,
+        content_type: str = None,
+        extra_args: dict = {},
+    ) -> bool:
+        """Upload a file directly to S3"""
+        try:
+            if content_type:
+                extra_args["ContentType"] = content_type
+
+            self.s3_client.upload_fileobj(
+                file_obj,
+                self.aws_storage_bucket_name,
+                object_name,
+                ExtraArgs=extra_args,
+            )
+            return True
+        except ClientError as e:
+            log_exception(e)
+            return False
+
+    def delete_files(self, object_names):
+        """Delete an S3 object"""
+        try:
+            self.s3_client.delete_objects(
+                Bucket=self.aws_storage_bucket_name,
+                Delete={
+                    "Objects": [{"Key": object_name} for object_name in object_names]
+                },
+            )
+            return True
+        except ClientError as e:
+            log_exception(e)
+            return False

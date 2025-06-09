@@ -25,6 +25,7 @@ type License struct {
 	HasAddedPaymentMethod  bool       `json:"has_added_payment_method" gorm:"not null;default:false"`
 	HasActivatedFreeTrial  bool       `json:"has_activated_free_trial" gorm:"not null;default:false"`
 	Subscription           string     `json:"subscription" gorm:"not null"`
+	IsAirgapped            bool       `json:"is_airgapped" gorm:"not null;default:false"`
 	LastVerifiedAt         *time.Time `json:"last_verified_at"`
 	LastPaymentFailedDate  *time.Time `json:"last_payment_failed_date"`
 	LastPaymentFailedCount int        `json:"last_payment_failed_count" gorm:"not null;default:0"`
@@ -34,7 +35,10 @@ type License struct {
 }
 
 func (license *License) BeforeCreate(scope *gorm.DB) error {
-	license.ID = uuid.New()
+	// If the license id is not set, generate a new uuid
+	if license.ID == uuid.Nil {
+		license.ID = uuid.New()
+	}
 	return nil
 }
 
@@ -52,7 +56,10 @@ type UserLicense struct {
 }
 
 func (userLicense *UserLicense) BeforeCreate(scope *gorm.DB) error {
-	userLicense.ID = uuid.New()
+	// If the user license id is not set, generate a new uuid
+	if userLicense.ID == uuid.Nil {
+		userLicense.ID = uuid.New()
+	}
 	return nil
 }
 
@@ -71,6 +78,9 @@ type Flags struct {
 }
 
 func (flags *Flags) BeforeCreate(scope *gorm.DB) error {
-	flags.ID = uuid.New()
+	// If the flags id is not set, generate a new uuid
+	if flags.ID == uuid.Nil {
+		flags.ID = uuid.New()
+	}
 	return nil
 }

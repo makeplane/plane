@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	primelogger "github.com/makeplane/plane-ee/monitor/lib/logger"
+	"github.com/makeplane/plane-ee/monitor/lib/router/airgapped_handlers.go"
 	"github.com/makeplane/plane-ee/monitor/lib/router/handlers"
 )
 
@@ -25,6 +26,7 @@ func RegisterFeatureFlags(router *fiber.Router, plogger *primelogger.Handler, ap
 	}))
 
 	(*router).Mount("/", ffController)
+	addAirgappedActivation(ffController, api, key)
 	addFreeWorkspace(ffController, api, key)
 	addActivateRoutes(ffController, api, key)
 	addFeatureFlagRoutes(ffController, api, key)
@@ -38,6 +40,10 @@ func RegisterFeatureFlags(router *fiber.Router, plogger *primelogger.Handler, ap
 
 func addFreeWorkspace(routes fiber.Router, api *prime_api.IPrimeMonitorApi, key string) {
 	routes.Post("/licenses/initialize/", handlers.InitializeFreeWorkspace(*api, key))
+}
+
+func addAirgappedActivation(routes fiber.Router, api *prime_api.IPrimeMonitorApi, key string) {
+	routes.Post("/licenses/activate/upload/", airgapped_handlers.GetAirgappedActivationHandler(*api, key))
 }
 
 func addActivateRoutes(controller *fiber.App, api *prime_api.IPrimeMonitorApi, key string) {
