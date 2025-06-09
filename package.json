@@ -25,5 +25,8 @@
     "turbo": "^2.1.1"
   },
   "packageManager": "yarn@1.22.22",
-  "name": "plane"
+  "name": "plane",
+  "dependencies": {
+    "esbuild": "^0.25.0"
+  }
 }

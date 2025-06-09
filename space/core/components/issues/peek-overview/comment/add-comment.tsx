@@ -6,6 +6,7 @@ import { useForm, Controller } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
@@ -16,7 +17,6 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // types
 import { Comment } from "@/types/issue";
-import { useTranslation } from "@plane/i18n";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
