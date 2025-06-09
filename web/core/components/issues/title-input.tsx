@@ -7,7 +7,7 @@ import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { TextArea } from "@plane/ui";
 // types
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
 import { TIssueOperations } from "./issue-detail";
 // hooks

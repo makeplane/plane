@@ -11,8 +11,7 @@ import {
   TPaginationData,
   TLoader,
 } from "@plane/types";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 //

@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
+// plane imports
 import {
   EUserPermissions,
   EUserPermissionsLevel,
@@ -8,8 +9,10 @@ import {
   PROFILE_SETTINGS_CATEGORIES,
   PROFILE_SETTINGS_CATEGORY,
 } from "@plane/constants";
+import { getFileURL } from "@plane/utils";
+// components
 import { SettingsSidebar } from "@/components/settings";
-import { getFileURL } from "@/helpers/file.helper";
+// hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 const ICONS = {

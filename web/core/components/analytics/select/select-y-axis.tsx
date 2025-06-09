@@ -3,14 +3,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Briefcase } from "lucide-react";
+import { ChartYAxisMetric, EEstimateSystem } from "@plane/constants";
 // plane package imports
-import { ChartYAxisMetric } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-
 type Props = {
   value: ChartYAxisMetric;
   onChange: (val: ChartYAxisMetric | null) => void;

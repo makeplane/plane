@@ -7,10 +7,10 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

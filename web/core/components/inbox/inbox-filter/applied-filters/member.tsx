@@ -8,7 +8,7 @@ import { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Tag } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useProjectInbox } from "@/hooks/store";
 

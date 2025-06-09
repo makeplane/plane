@@ -136,3 +136,16 @@ export type TPublicCycle = {
   name: string;
   status: string;
 };
+
+export type TProgressChartData = {
+  date: string;
+  scope: number;
+  completed: number;
+  backlog: number;
+  started: number;
+  unstarted: number;
+  cancelled: number;
+  pending: number;
+  ideal: number;
+  actual: number;
+}[];

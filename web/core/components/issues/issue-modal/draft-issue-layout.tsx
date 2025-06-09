@@ -10,9 +10,9 @@ import type { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { isEmptyHtmlString } from "@plane/utils";
 import { ConfirmIssueDiscard } from "@/components/issues";
 // helpers
-import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";

@@ -4,7 +4,9 @@ import { endOfMonth, endOfWeek, endOfYear, startOfMonth, startOfWeek, startOfYea
 import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@plane/constants";
 import { TIssuesListTypes } from "@plane/types";
 // constants
-import { renderFormattedDate, renderFormattedPayloadDate } from "./date-time.helper";
+import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
+
+// -------------------- DEPRECATED --------------------
 
 /**
  * @description returns date range based on the duration filter

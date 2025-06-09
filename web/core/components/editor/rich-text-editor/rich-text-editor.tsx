@@ -3,9 +3,9 @@ import React, { forwardRef } from "react";
 import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks

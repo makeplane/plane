@@ -13,11 +13,10 @@ import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader } from "@plane/ui";
+import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
 // helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEditorAsset, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

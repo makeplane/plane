@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
 import { PanelRight } from "lucide-react";
-// plane constants
+// plane imports
 import {
   EIssueLayoutTypes,
   EIssuesStoreType,
@@ -15,23 +15,20 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
-// types
 import {
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "@plane/types";
-// ui
 import { Breadcrumbs, Button, DiceIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
 import { ModuleQuickActions } from "@/components/modules";
-import { cn } from "@/helpers/common.helper";
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import {
   useEventTracker,

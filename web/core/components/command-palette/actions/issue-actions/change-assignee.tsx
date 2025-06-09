@@ -10,7 +10,7 @@ import { TIssue } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 

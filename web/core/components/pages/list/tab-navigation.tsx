@@ -3,7 +3,7 @@ import Link from "next/link";
 // types
 import { TPageNavigationTabs } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type TPageTabNavigation = {
   workspaceSlug: string;

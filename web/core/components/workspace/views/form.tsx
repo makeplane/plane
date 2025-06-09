@@ -12,9 +12,9 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 import { AccessController } from "@/plane-web/components/views/access-controller";

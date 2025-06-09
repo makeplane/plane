@@ -9,7 +9,7 @@ import { IEmailCheckData } from "@plane/types";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";
 
 type TAuthEmailForm = {

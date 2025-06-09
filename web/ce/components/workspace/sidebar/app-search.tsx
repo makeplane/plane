@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useCommandPalette } from "@/hooks/store";
 

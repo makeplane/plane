@@ -5,8 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 // hooks
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { useUserPermissions } from "@/hooks/store";
 
 // components

@@ -1,9 +1,9 @@
 import React, { RefObject } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { IGanttBlock } from "@/components/gantt-chart";
+import type { IGanttBlock } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 //  Plane-web
 import { LeftDependencyDraggable, RightDependencyDraggable } from "@/plane-web/components/gantt-chart";
 //

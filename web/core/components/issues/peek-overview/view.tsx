@@ -5,6 +5,7 @@ import { EIssueServiceType } from "@plane/constants";
 // types
 import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -18,7 +19,6 @@ import {
   IssueDetailWidgets,
 } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";

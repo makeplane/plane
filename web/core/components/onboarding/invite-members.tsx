@@ -28,7 +28,7 @@ import { IUser, IWorkspace } from "@plane/types";
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
+import { getUserRole } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // services

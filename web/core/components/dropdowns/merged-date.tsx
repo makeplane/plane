@@ -1,8 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // helpers
-import { formatDateRange } from "@plane/utils";
-import { getDate } from "@/helpers/date-time.helper";
+import { formatDateRange, getDate } from "@plane/utils";
 
 type Props = {
   startDate: Date | string | null | undefined;

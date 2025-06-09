@@ -4,10 +4,10 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
 // components
+import { cn } from "@plane/utils";
 import { ModuleDropdown } from "@/components/dropdowns";
 // ui
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { useIssueDetail } from "@/hooks/store";
 // types
 import type { TIssueOperations } from "./root";

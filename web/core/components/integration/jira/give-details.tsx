@@ -10,7 +10,7 @@ import { IJiraImporterForm } from "@plane/types";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "@/helpers/string.helper";
+import { checkEmailValidity } from "@plane/utils";
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 // types
 
