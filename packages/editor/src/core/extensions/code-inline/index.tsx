@@ -1,4 +1,6 @@
 import { Mark, markInputRule, markPasteRule, mergeAttributes } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface CodeOptions {
   HTMLAttributes: Record<string, any>;
@@ -6,7 +8,7 @@ export interface CodeOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    code: {
+    [CORE_EXTENSIONS.CODE_INLINE]: {
       /**
        * Set a code mark
        */
@@ -27,7 +29,7 @@ export const inputRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))$/;
 const pasteRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))/g;
 
 export const CustomCodeInlineExtension = Mark.create<CodeOptions>({
-  name: "code",
+  name: CORE_EXTENSIONS.CODE_INLINE,
 
   addOptions() {
     return {

@@ -25,17 +25,7 @@ export const IssueAttachmentActivity: FC<TIssueAttachmentActivity> = observer((p
       ends={ends}
     >
       <>
-        {activity.verb === "created" ? `uploaded a new ` : `removed an attachment`}
-        {activity.verb === "created" && (
-          <a
-            href={`${activity.new_value}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
-          >
-            attachment
-          </a>
-        )}
+        {activity.verb === "created" ? `uploaded a new attachment` : `removed an attachment`}
         {showIssue && (activity.verb === "created" ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}.
       </>

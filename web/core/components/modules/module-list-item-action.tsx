@@ -158,6 +158,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
             target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
           });
         }}
+        mergeDates
         placeholder={{
           from: t("start_date"),
           to: t("end_date"),

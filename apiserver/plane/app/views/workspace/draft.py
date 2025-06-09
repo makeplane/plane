@@ -38,6 +38,7 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 from plane.utils.host import base_host
 
+
 class WorkspaceDraftIssueViewSet(BaseViewSet):
     model = DraftIssue
 

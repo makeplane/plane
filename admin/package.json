@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
+    "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
@@ -30,7 +31,7 @@
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "next": "^14.2.28",
+    "next": "^14.2.29",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.38",
     "react": "^18.3.1",

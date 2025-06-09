@@ -3,6 +3,7 @@
 import { Fragment, Ref, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // icons
 import { ChevronDown, CirclePlus, LogOut, Mails, Settings } from "lucide-react";
@@ -25,21 +26,18 @@ import { WorkspaceLogo } from "../logo";
 import SidebarDropdownItem from "./dropdown-item";
 
 export const SidebarDropdown = observer(() => {
-  const { t } = useTranslation();
-
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser } = useUser();
-  const {
-    // updateCurrentUser,
-    // isUserInstanceAdmin,
-    signOut,
-  } = useUser();
+  const { signOut } = useUser();
   const { updateUserProfile } = useUserProfile();
-  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
-
-  const isUserInstanceAdmin = false;
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
+  // derived values
+  const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+  const isUserInstanceAdmin = false;
+  // translation
+  const { t } = useTranslation();
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -87,6 +85,7 @@ export const SidebarDropdown = observer(() => {
                 "group/menu-button flex items-center justify-between gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none",
                 { "flex-grow": !sidebarCollapsed }
               )}
+              aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
             >
               <div className="flex-grow flex items-center gap-2 truncate">
                 <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
@@ -190,7 +189,11 @@ export const SidebarDropdown = observer(() => {
         )}
       </Menu>
       <Menu as="div" className="relative flex-shrink-0">
-        <Menu.Button className="grid place-items-center outline-none" ref={setReferenceElement}>
+        <Menu.Button
+          className="grid place-items-center outline-none"
+          ref={setReferenceElement}
+          aria-label={t("aria_labels.projects_sidebar.open_user_menu")}
+        >
           <Avatar
             name={currentUser?.display_name}
             src={getFileURL(currentUser?.avatar_url ?? "")}
@@ -217,7 +220,7 @@ export const SidebarDropdown = observer(() => {
           >
             <div className="flex flex-col gap-2.5 pb-2">
               <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-              <Link href="/profile">
+              <Link href={`/${workspaceSlug}/settings/account`}>
                 <Menu.Item as="div">
                   <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                     <Settings className="h-4 w-4 stroke-[1.5]" />

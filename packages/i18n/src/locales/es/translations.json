@@ -750,7 +750,8 @@
         "message": "Algo salió mal. Por favor, inténtalo de nuevo."
       },
       "required": "Este campo es obligatorio",
-      "entity_required": "{entity} es obligatorio"
+      "entity_required": "{entity} es obligatorio",
+      "restricted_entity": "{entity} está restringido"
     },
     "update_link": "Actualizar enlace",
     "attach": "Adjuntar",
@@ -850,6 +851,7 @@
     "live": "En vivo",
     "change_history": "Historial de cambios",
     "coming_soon": "Próximamente",
+    "member": "Miembro",
     "members": "Miembros",
     "you": "Tú",
     "upgrade_cta": {
@@ -867,7 +869,19 @@
     "view": "Ver",
     "deactivated_user": "Usuario desactivado",
     "apply": "Aplicar",
-    "applying": "Aplicando"
+    "applying": "Aplicando",
+    "users": "Usuarios",
+    "admins": "Administradores",
+    "guests": "Invitados",
+    "on_track": "En camino",
+    "off_track": "Fuera de camino",
+    "timeline": "Cronograma",
+    "completion": "Finalización",
+    "upcoming": "Próximo",
+    "completed": "Completado",
+    "in_progress": "En progreso",
+    "planned": "Planificado",
+    "paused": "Pausado"
   },
   "chart": {
     "x_axis": "Eje X",
@@ -1082,7 +1096,9 @@
     "select": {
       "error": "Por favor selecciona al menos un elemento de trabajo",
       "empty": "No hay elementos de trabajo seleccionados",
-      "add_selected": "Agregar elementos seleccionados"
+      "add_selected": "Agregar elementos seleccionados",
+      "select_all": "Seleccionar todo",
+      "deselect_all": "Deseleccionar todo"
     },
     "open_in_full_screen": "Abrir elemento de trabajo en pantalla completa"
   },
@@ -1110,6 +1126,18 @@
     "remove": {
       "success": "Sub-elemento eliminado correctamente",
       "error": "Error al eliminar el sub-elemento"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "No tienes sub-elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los sub-elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      },
+      "list_filters": {
+        "title": "No tienes elementos de trabajo que coincidan con los filtros que has aplicado.",
+        "description": "Para ver todos los elementos de trabajo, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      }
     }
   },
   "view": {
@@ -1303,19 +1331,6 @@
       "custom": "Análisis Personalizado"
     },
     "empty_state": {
-      "general": {
-        "title": "Rastrea el progreso, cargas de trabajo y asignaciones. Identifica tendencias, elimina bloqueos y mueve el trabajo más rápido",
-        "description": "Observa el alcance versus la demanda, estimaciones y el aumento del alcance. Obtén el rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
-        "primary_button": {
-          "text": "Inicia tu primer proyecto",
-          "comic": {
-            "title": "El análisis funciona mejor con Ciclos + Módulos",
-            "description": "Primero, organiza tus elementos de trabajo en Ciclos y, si puedes, agrupa los elementos de trabajo que abarcan más de un ciclo en Módulos. Revisa ambos en la navegación izquierda."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
         "title": "Aún no hay datos"
@@ -1331,21 +1346,22 @@
     },
     "created_vs_resolved": "Creado vs Resuelto",
     "customized_insights": "Información personalizada",
-    "backlog_work_items": "Elementos de trabajo en backlog",
+    "backlog_work_items": "{entity} en backlog",
     "active_projects": "Proyectos activos",
     "trend_on_charts": "Tendencia en gráficos",
     "all_projects": "Todos los proyectos",
     "summary_of_projects": "Resumen de proyectos",
     "project_insights": "Información del proyecto",
-    "started_work_items": "Elementos de trabajo iniciados",
-    "total_work_items": "Total de elementos de trabajo",
+    "started_work_items": "{entity} iniciados",
+    "total_work_items": "Total de {entity}",
     "total_projects": "Total de proyectos",
     "total_admins": "Total de administradores",
     "total_users": "Total de usuarios",
     "total_intake": "Ingreso total",
-    "un_started_work_items": "Elementos de trabajo no iniciados",
+    "un_started_work_items": "{entity} no iniciados",
     "total_guests": "Total de invitados",
-    "completed_work_items": "Elementos de trabajo completados"
+    "completed_work_items": "{entity} completados",
+    "total": "Total de {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyecto} other {Proyectos}}",
@@ -2448,5 +2464,9 @@
     "last_edited_by": "Última edición por",
     "previously_edited_by": "Editado anteriormente por",
     "edited_by": "Editado por"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane no se inició. Esto podría deberse a que uno o más servicios de Plane fallaron al iniciar.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Selecciona View Logs desde setup.sh y los logs de Docker para estar seguro."
   }
 }

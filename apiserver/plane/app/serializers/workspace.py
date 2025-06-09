@@ -25,10 +25,12 @@ from plane.db.models import (
     WorkspaceUserPreference,
 )
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.url import contains_url
 
 # Django imports
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+import re
 
 
 class WorkSpaceSerializer(DynamicBaseSerializer):
@@ -36,10 +38,21 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True)
 
+    def validate_name(self, value):
+        # Check if the name contains a URL
+        if contains_url(value):
+            raise serializers.ValidationError("Name must not contain URLs")
+        return value
+
     def validate_slug(self, value):
         # Check if the slug is restricted
         if value in RESTRICTED_WORKSPACE_SLUGS:
             raise serializers.ValidationError("Slug is not valid")
+        # Slug should only contain alphanumeric characters, hyphens, and underscores
+        if not re.match(r"^[a-zA-Z0-9_-]+$", value):
+            raise serializers.ValidationError(
+                "Slug can only contain letters, numbers, hyphens (-), and underscores (_)"
+            )
         return value
 
     class Meta:
@@ -148,7 +161,6 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
         return value
 
-
     def create(self, validated_data):
         # Filtering the WorkspaceUserLink with the given url to check if the link already exists.
 
@@ -157,7 +169,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         workspace_user_link = WorkspaceUserLink.objects.filter(
             url=url,
             workspace_id=validated_data.get("workspace_id"),
-            owner_id=validated_data.get("owner_id")
+            owner_id=validated_data.get("owner_id"),
         )
 
         if workspace_user_link.exists():
@@ -173,10 +185,8 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
         url = validated_data.get("url")
 
         workspace_user_link = WorkspaceUserLink.objects.filter(
-                url=url,
-                workspace_id=instance.workspace_id,
-                owner=instance.owner
-            )
+            url=url, workspace_id=instance.workspace_id, owner=instance.owner
+        )
 
         if workspace_user_link.exclude(pk=instance.id).exists():
             raise serializers.ValidationError(
@@ -184,6 +194,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()

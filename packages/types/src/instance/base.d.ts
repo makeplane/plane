@@ -49,7 +49,7 @@ export interface IInstanceConfig {
   posthog_api_key: string | undefined;
   posthog_host: string | undefined;
   has_unsplash_configured: boolean;
-  has_openai_configured: boolean;
+  has_llm_configured: boolean;
   file_size_limit: number | undefined;
   is_smtp_configured: boolean;
   app_base_url: string | undefined;

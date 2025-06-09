@@ -3,9 +3,11 @@ import csv
 import io
 import json
 import zipfile
-
+from typing import List
 import boto3
 from botocore.client import Config
+from uuid import UUID
+from datetime import datetime, date
 
 # Third party imports
 from celery import shared_task
@@ -20,21 +22,30 @@ from django.db.models import F, Prefetch
 from collections import defaultdict
 
 # Module imports
-from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User
+from plane.db.models import ExporterHistory, Issue, FileAsset, Label, User, IssueComment
 from plane.utils.exception_logger import log_exception
 
 
-def dateTimeConverter(time):
+def dateTimeConverter(time: datetime) -> str | None:
+    """
+    Convert a datetime object to a formatted string.
+    """
     if time:
         return time.strftime("%a, %d %b %Y %I:%M:%S %Z%z")
 
 
-def dateConverter(time):
+def dateConverter(time: date) -> str | None:
+    """
+    Convert a date object to a formatted string.
+    """
     if time:
         return time.strftime("%a, %d %b %Y")
 
 
-def create_csv_file(data):
+def create_csv_file(data: List[List[str]]) -> str:
+    """
+    Create a CSV file from the provided data.
+    """
     csv_buffer = io.StringIO()
     csv_writer = csv.writer(csv_buffer, delimiter=",", quoting=csv.QUOTE_ALL)
 
@@ -45,11 +56,17 @@ def create_csv_file(data):
     return csv_buffer.getvalue()
 
 
-def create_json_file(data):
+def create_json_file(data: List[dict]) -> str:
+    """
+    Create a JSON file from the provided data.
+    """
     return json.dumps(data)
 
 
-def create_xlsx_file(data):
+def create_xlsx_file(data: List[List[str]]) -> bytes:
+    """
+    Create an XLSX file from the provided data.
+    """
     workbook = Workbook()
     sheet = workbook.active
 
@@ -62,7 +79,10 @@ def create_xlsx_file(data):
     return xlsx_buffer.getvalue()
 
 
-def create_zip_file(files):
+def create_zip_file(files: List[tuple[str, str | bytes]]) -> io.BytesIO:
+    """
+    Create a ZIP file from the provided files.
+    """
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
         for filename, file_content in files:
@@ -72,7 +92,13 @@ def create_zip_file(files):
     return zip_buffer
 
 
-def upload_to_s3(zip_file, workspace_id, token_id, slug):
+# TODO: Change the upload_to_s3 function to use the new storage method with entry in file asset table
+def upload_to_s3(
+    zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: str
+) -> None:
+    """
+    Upload a ZIP file to S3 and generate a presigned URL.
+    """
     file_name = (
         f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
     )
@@ -154,7 +180,10 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
     exporter_instance.save(update_fields=["status", "url", "key"])
 
 
-def generate_table_row(issue):
+def generate_table_row(issue: dict) -> List[str]:
+    """
+    Generate a table row from an issue dictionary.
+    """
     return [
         f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
         issue["project_name"],
@@ -166,22 +195,24 @@ def generate_table_row(issue):
         issue["priority"],
         issue["created_by"],
         ", ".join(issue["labels"]) if issue["labels"] else "",
-        issue.get("cycle_name", ""),
-        issue.get("cycle_start_date", ""),
-        issue.get("cycle_end_date", ""),
+        issue["cycle_name"],
+        issue["cycle_start_date"],
+        issue["cycle_end_date"],
         ", ".join(issue.get("module_name", "")) if issue.get("module_name") else "",
         dateTimeConverter(issue["created_at"]),
         dateTimeConverter(issue["updated_at"]),
         dateTimeConverter(issue["completed_at"]),
         dateTimeConverter(issue["archived_at"]),
-        ", ".join(
-            [
-                f"{comment['comment']} ({comment['created_at']} by {comment['created_by']})"
-                for comment in issue["comments"]
-            ]
-        )
-        if issue["comments"]
-        else "",
+        (
+            ", ".join(
+                [
+                    f"{comment['comment']} ({comment['created_at']} by {comment['created_by']})"
+                    for comment in issue["comments"]
+                ]
+            )
+            if issue["comments"]
+            else ""
+        ),
         issue["estimate"] if issue["estimate"] else "",
         ", ".join(issue["link"]) if issue["link"] else "",
         ", ".join(issue["assignees"]) if issue["assignees"] else "",
@@ -191,7 +222,10 @@ def generate_table_row(issue):
     ]
 
 
-def generate_json_row(issue):
+def generate_json_row(issue: dict) -> dict:
+    """
+    Generate a JSON row from an issue dictionary.
+    """
     return {
         "ID": f"""{issue["project_identifier"]}-{issue["sequence_id"]}""",
         "Project": issue["project_name"],
@@ -221,7 +255,10 @@ def generate_json_row(issue):
     }
 
 
-def update_json_row(rows, row):
+def update_json_row(rows: List[dict], row: dict) -> None:
+    """
+    Update the json row with the new assignee and label.
+    """
     matched_index = next(
         (
             index
@@ -250,7 +287,10 @@ def update_json_row(rows, row):
         rows.append(row)
 
 
-def update_table_row(rows, row):
+def update_table_row(rows: List[List[str]], row: List[str]) -> None:
+    """
+    Update the table row with the new assignee and label.
+    """
     matched_index = next(
         (index for index, existing_row in enumerate(rows) if existing_row[0] == row[0]),
         None,
@@ -272,20 +312,32 @@ def update_table_row(rows, row):
         rows.append(row)
 
 
-def generate_csv(header, project_id, issues, files):
+def generate_csv(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
     """
     Generate CSV export for all the passed issues.
     """
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
-
         update_table_row(rows, row)
     csv_file = create_csv_file(rows)
     files.append((f"{project_id}.csv", csv_file))
 
 
-def generate_json(header, project_id, issues, files):
+def generate_json(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
+    """
+    Generate JSON export for all the passed issues.
+    """
     rows = []
     for issue in issues:
         row = generate_json_row(issue)
@@ -294,7 +346,15 @@ def generate_json(header, project_id, issues, files):
     files.append((f"{project_id}.json", json_file))
 
 
-def generate_xlsx(header, project_id, issues, files):
+def generate_xlsx(
+    header: List[str],
+    project_id: str,
+    issues: List[dict],
+    files: List[tuple[str, str | bytes]],
+) -> None:
+    """
+    Generate XLSX export for all the passed issues.
+    """
     rows = [header]
     for issue in issues:
         row = generate_table_row(issue)
@@ -304,13 +364,36 @@ def generate_xlsx(header, project_id, issues, files):
     files.append((f"{project_id}.xlsx", xlsx_file))
 
 
+def get_created_by(obj: Issue | IssueComment) -> str:
+    """
+    Get the created by user for the given object.
+    """
+    if obj.created_by:
+        return f"{obj.created_by.first_name} {obj.created_by.last_name}"
+    return ""
+
+
 @shared_task
-def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, slug):
+def issue_export_task(
+    provider: str,
+    workspace_id: UUID,
+    project_ids: List[str],
+    token_id: str,
+    multiple: bool,
+    slug: str,
+):
+    """
+    Export issues from the workspace.
+    provider (str): The provider to export the issues to csv | json | xlsx.
+    token_id (str): The export object token id.
+    multiple (bool): Whether to export the issues to multiple files per project.
+    """
     try:
         exporter_instance = ExporterHistory.objects.get(token=token_id)
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
+        # Base query to get the issues
         workspace_issues = (
             Issue.objects.filter(
                 workspace__id=workspace_id,
@@ -348,16 +431,21 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             )
         )
 
+        # Get the attachments for the issues
         file_assets = FileAsset.objects.filter(
-            issue_id__in=workspace_issues.values_list("id", flat=True)
+            issue_id__in=workspace_issues.values_list("id", flat=True),
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
         ).annotate(work_item_id=F("issue_id"), asset_id=F("id"))
 
+        # Create a dictionary to store the attachments for the issues
         attachment_dict = defaultdict(list)
         for asset in file_assets:
             attachment_dict[asset.work_item_id].append(asset.asset_id)
 
+        # Create a list to store the issues data
         issues_data = []
 
+        # Iterate over the issues
         for issue in workspace_issues:
             attachments = attachment_dict.get(issue.id, [])
 
@@ -380,18 +468,18 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 "module_name": [
                     module.module.name for module in issue.issue_module.all()
                 ],
-                "created_by": f"{issue.created_by.first_name} {issue.created_by.last_name}",
+                "created_by": get_created_by(issue),
                 "labels": [label.name for label in issue.label_details],
                 "comments": [
                     {
                         "comment": comment.comment_stripped,
                         "created_at": dateConverter(comment.created_at),
-                        "created_by": f"{comment.created_by.first_name} {comment.created_by.last_name}",
+                        "created_by": get_created_by(comment),
                     }
                     for comment in issue.issue_comments.all()
                 ],
-                "estimate": issue.estimate_point.estimate.name
-                if issue.estimate_point
+                "estimate": issue.estimate_point.value
+                if issue.estimate_point and issue.estimate_point.value
                 else "",
                 "link": [link.url for link in issue.issue_link.all()],
                 "assignees": [
@@ -406,14 +494,17 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
                 ],
             }
 
-            # Get prefetched cycles and modules
-            cycles = list(issue.issue_cycle.all())
-
-            # Update cycle data
-            for cycle in cycles:
+            # Get Cycles data for the issue
+            cycle = issue.issue_cycle.last()
+            if cycle:
+                # Update cycle data
                 issue_data["cycle_name"] = cycle.cycle.name
                 issue_data["cycle_start_date"] = dateConverter(cycle.cycle.start_date)
                 issue_data["cycle_end_date"] = dateConverter(cycle.cycle.end_date)
+            else:
+                issue_data["cycle_name"] = ""
+                issue_data["cycle_start_date"] = ""
+                issue_data["cycle_end_date"] = ""
 
             issues_data.append(issue_data)
 
@@ -446,6 +537,7 @@ def issue_export_task(provider, workspace_id, project_ids, token_id, multiple, s
             "Attachment Links",
         ]
 
+        # Map the provider to the function
         EXPORTER_MAPPER = {
             "csv": generate_csv,
             "json": generate_json,
