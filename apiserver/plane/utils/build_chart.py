@@ -154,6 +154,24 @@ def build_simple_chart_response(
     ]
 
 
+def order_by_priority(data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    priority_order = ["urgent", "high", "medium", "low", "none"]
+    ordered_data = []
+
+    # First add the ordered priorities
+    for priority in priority_order:
+        priority_data = next((item for item in data if item["key"] == priority), None)
+        if priority_data:
+            ordered_data.append(priority_data)
+
+    # Then add any remaining values
+    for item in data:
+        if item["key"] not in priority_order:
+            ordered_data.append(item)
+
+    return ordered_data
+
+
 def build_analytics_chart(
     queryset: QuerySet[Issue],
     x_axis: str,
@@ -195,10 +213,16 @@ def build_analytics_chart(
             group_name_field,
             aggregate_func,
         )
+        # Apply priority ordering for grouped response
+        if id_field == "priority":
+            response = order_by_priority(response)
     else:
         response = build_simple_chart_response(
             queryset, id_field, name_field, aggregate_func
         )
+        # Apply priority ordering for simple response
+        if id_field == "priority":
+            response = order_by_priority(response)
         schema = {}
 
     return {"data": response, "schema": schema}
