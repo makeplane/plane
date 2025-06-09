@@ -22,7 +22,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
 
   if (!workspaceSlug) return <></>;
   return (
-    <Header className="my-auto">
+    <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
         {isSidebarToggleVisible() && (
           <div className="block bg-custom-sidebar-background-100 md:hidden">
