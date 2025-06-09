@@ -11,7 +11,6 @@ from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.throttling import ScopedRateThrottle
 
 # Module imports
 from ..base import BaseAPIView
@@ -20,6 +19,7 @@ from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.app.throttles.asset import AssetRateThrottle
 
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
@@ -722,8 +722,7 @@ class AssetCheckEndpoint(BaseAPIView):
 
 class DuplicateAssetEndpoint(BaseAPIView):
 
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "image_duplicate"
+    throttle_classes = [AssetRateThrottle]
 
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
@@ -759,16 +758,10 @@ class DuplicateAssetEndpoint(BaseAPIView):
         return {}
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
-    def post(self, request, slug):
+    def post(self, request, slug, asset_id):
         project_id = request.data.get("project_id", None)
-        asset_ids = request.data.get("asset_ids", None)
         entity_id = request.data.get("entity_id", None)
         entity_type = request.data.get("entity_type", None)
-
-        if not asset_ids:
-            return Response(
-                {"error": "asset_ids is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
 
         workspace = Workspace.objects.get(slug=slug)
         if project_id:
@@ -777,38 +770,30 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 return Response(
                     {"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND
                 )
-        duplicated_assets = {}
 
         storage = S3Storage()
-        original_assets = FileAsset.objects.filter(
-            workspace=workspace, id__in=asset_ids
+        original_asset = FileAsset.objects.filter(
+            workspace=workspace, id=asset_id
+        ).first()
+        # for original_asset in original_assets:
+        destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
+        duplicated_asset = FileAsset.objects.create(
+            attributes={
+                "name": original_asset.attributes.get("name"),
+                "type": original_asset.attributes.get("type"),
+                "size": original_asset.attributes.get("size"),
+            },
+            asset=destination_key,
+            size=original_asset.size,
+            workspace=workspace,
+            created_by_id=request.user.id,
+            entity_type=entity_type,
+            project_id=project_id if project_id else None,
+            storage_metadata=original_asset.storage_metadata,
+            **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_id),
         )
-        for original_asset in original_assets:
-            destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
-            duplicated_asset = FileAsset.objects.create(
-                attributes={
-                    "name": original_asset.attributes.get("name"),
-                    "type": original_asset.attributes.get("type"),
-                    "size": original_asset.attributes.get("size"),
-                },
-                asset=destination_key,
-                size=original_asset.size,
-                workspace=workspace,
-                created_by_id=request.user.id,
-                entity_type=entity_type,
-                project_id=project_id if project_id else None,
-                storage_metadata=original_asset.storage_metadata,
-                **self.get_entity_id_field(
-                    entity_type=entity_type, entity_id=entity_id
-                ),
-            )
-            storage.copy_object(original_asset.asset, destination_key)
-            duplicated_assets[str(original_asset.id)] = str(duplicated_asset.id)
+        storage.copy_object(original_asset.asset, destination_key)
+        # Update the is_uploaded field for all newly created assets
+        FileAsset.objects.filter(id=duplicated_asset.id).update(is_uploaded=True)
 
-        if duplicated_assets:
-            # Update the is_uploaded field for all newly created assets
-            FileAsset.objects.filter(id__in=duplicated_assets.values()).update(
-                is_uploaded=True
-            )
-
-        return Response(duplicated_assets, status=status.HTTP_200_OK)
+        return Response(duplicated_asset.id, status=status.HTTP_200_OK)
