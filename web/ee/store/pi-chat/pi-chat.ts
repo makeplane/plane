@@ -44,7 +44,7 @@ export interface IPiChatStore {
   getTemplates: () => Promise<TTemplate[]>;
   fetchUserThreads: (userId: string) => void;
   searchCallback: (workspace: string, query: string) => Promise<IFormattedValue>;
-  sendFeedback: (message_index: number, feedback: EFeedback) => Promise<void>;
+  sendFeedback: (message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
   setFocus: (chatId: string, entityType: string, entityIdentifier: string) => void;
   startChatWithTemplate: (template: TTemplate, userId: string) => Promise<void>;
   fetchModels: () => Promise<void>;
@@ -376,13 +376,18 @@ export class PiChatStore implements IPiChatStore {
     return response.results;
   };
 
-  sendFeedback = async (message_index: number, feedback: EFeedback) => {
+  sendFeedback = async (message_index: number, feedback: EFeedback, feedbackMessage?: string) => {
     const initialState = this.activeChat.dialogue[message_index].feedback;
     runInAction(() => {
       set(this.activeChat.dialogue[message_index], "feedback", feedback);
     });
     try {
-      const response = await this.piChatService.postFeedback({ message_index, chat_id: this.activeChatId, feedback });
+      const response = await this.piChatService.postFeedback({
+        message_index,
+        chat_id: this.activeChatId,
+        feedback,
+        feedback_message: feedbackMessage,
+      });
       return response;
     } catch (e) {
       runInAction(() => {

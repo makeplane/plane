@@ -36,6 +36,7 @@ export type TFeedback = {
   chat_id: string;
   message_index: number;
   feedback: EFeedback;
+  feedback_message?: string;
 };
 
 export type TFocus = {
