@@ -177,7 +177,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
       original_role: projectMember.original_role,
       member: {
         ...userDetails,
-        joining_date: projectMember.created_at,
+        joining_date: projectMember.created_at ?? undefined,
       },
       created_at: projectMember.created_at,
     };
