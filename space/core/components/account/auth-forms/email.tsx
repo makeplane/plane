@@ -74,14 +74,17 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             ref={inputRef}
           />
           {email.length > 0 && (
-            <XCircle
-              className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs"
+            <button
+              type="button"
+              aria-label="Clear email"
               onClick={() => {
                 setEmail("");
                 inputRef.current?.focus();
               }}
               tabIndex={-1}
-            />
+            >
+              <XCircle className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
+            </button>
           )}
         </div>
         {emailError?.email && !isFocused && (
