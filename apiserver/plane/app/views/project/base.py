@@ -343,7 +343,7 @@ class ProjectViewSet(BaseViewSet):
                 return Response(
                     {
                         "name": "The project name is already taken",
-                        "code": "PROJECT_ALREADY_EXIST",
+                        "code": "PROJECT_NAME_ALREADY_EXIST",
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
