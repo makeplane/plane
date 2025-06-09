@@ -1,7 +1,6 @@
 "use client";
 
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -17,13 +16,13 @@ import {
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
-// ui
 import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
+import { renderSafeFormattedDate } from "@plane/utils";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { getDate, renderSafeFormattedDate } from "@/helpers/date-time.helper";
+import { getDate } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { generateQueryParams } from "@/helpers/router.helper";
@@ -64,7 +63,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
+  const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -77,7 +76,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // form
-  const { control, reset, getValues } = useForm({
+  const { reset } = useForm({
     defaultValues,
   });
 

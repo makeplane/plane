@@ -475,38 +475,3 @@ export const checkDateCriteria = (dateToCheck: Date | null, filterDate: Date, ty
 
   return type === "after" ? normalizedCheck >= normalizedFilter : normalizedCheck <= normalizedFilter;
 };
-
-/**
- * @returns {string} safely formatted date or fallback text
- * @description Safely formats a date using renderFormattedPayloadDate and date-fns format, with fallback for invalid dates
- * @param {Date | string | undefined | null} date
- * @param {string} formatToken (optional) // default "MMM dd, yyyy"
- * @param {string} fallback (optional) // default "Invalid date"
- * @example renderSafeFormattedDate("2024-01-01") // "Jan 01, 2024"
- * @example renderSafeFormattedDate(null) // "Invalid date"
- * @example renderSafeFormattedDate("2024-01-01", "MM/dd/yyyy", "N/A") // "01/01/2024"
- */
-export const renderSafeFormattedDate = (
-  date: Date | string | undefined | null,
-  formatToken: string = "MMM dd, yyyy",
-  fallback: string = "Invalid date"
-): string => {
-  if (!date) return fallback;
-
-  // Use renderFormattedPayloadDate to get a properly formatted payload date
-  const payloadDate = renderFormattedPayloadDate(date);
-
-  // If renderFormattedPayloadDate returns undefined/null, return fallback
-  if (!payloadDate) return fallback;
-
-  try {
-    // Parse and format the payload date
-    const parsedDate = getDate(payloadDate);
-    if (!parsedDate || !isValid(parsedDate)) return fallback;
-
-    return format(parsedDate, formatToken);
-  } catch (error) {
-    // Return fallback if any error occurs during formatting
-    return fallback;
-  }
-};
