@@ -1,11 +1,8 @@
 // plane imports
-import { FileService } from "@plane/services";
-import { TDocumentPayload } from "@plane/types";
+import { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
 import { TEditorAssetType } from "@plane/types/src/enums";
 // local imports
 import { convertHTMLDocumentToAllFormats } from "./yjs-utils";
-
-const fileService = new FileService();
 
 /**
  * @description function to extract all image assets from HTML content
@@ -61,15 +58,15 @@ export const getEditorContentWithReplacedImageAssets = async (props: {
   entityType: TEditorAssetType;
   projectId: string | undefined;
   variant: "rich" | "document";
-  workspaceSlug: string;
+  duplicateAssetService: (params: TDuplicateAssetData) => Promise<TDuplicateAssetResponse>;
 }): Promise<TDocumentPayload> => {
-  const { descriptionHTML, entityId, entityType, projectId, variant, workspaceSlug } = props;
+  const { descriptionHTML, entityId, entityType, projectId, variant, duplicateAssetService } = props;
   let replacedDescription = descriptionHTML;
   // step 1: extract image assets from the description
   const imageAssets = extractImageAssetsFromHTMLContent(descriptionHTML);
   if (imageAssets.length !== 0) {
     // step 2: duplicate the image assets
-    const duplicateAssetsResponse = await fileService.duplicateAssets(workspaceSlug, {
+    const duplicateAssetsResponse = await duplicateAssetService({
       entity_id: entityId,
       entity_type: entityType,
       project_id: projectId,
