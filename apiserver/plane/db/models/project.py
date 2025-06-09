@@ -122,6 +122,9 @@ class Project(BaseModel):
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    # external_id for imports
+    external_source = models.CharField(max_length=255, null=True, blank=True)
+    external_id = models.CharField(max_length=255, blank=True, null=True)
 
     @property
     def cover_image_url(self):

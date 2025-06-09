@@ -69,14 +69,14 @@ chmod +x setup.sh
 docker compose -f docker-compose-local.yml up
 ```
 
-5. Start web apps:
+4. Start web apps:
 
 ```bash
 yarn dev
 ```
 
-6. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
-7. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
+5. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
+6. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
 
 That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
 

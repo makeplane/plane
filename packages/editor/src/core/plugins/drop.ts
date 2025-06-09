@@ -6,7 +6,7 @@ import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/con
 import { TEditorCommands, TExtensions } from "@/types";
 
 type Props = {
-  disabledExtensions: TExtensions[];
+  disabledExtensions?: TExtensions[];
   editor: Editor;
 };
 
@@ -83,7 +83,7 @@ export const DropHandlerPlugin = (props: Props): Plugin => {
 };
 
 type InsertFilesSafelyArgs = {
-  disabledExtensions: TExtensions[];
+  disabledExtensions?: TExtensions[];
   editor: Editor;
   event: "insert" | "drop";
   files: File[];
@@ -111,7 +111,7 @@ export const insertFilesSafely = async (args: InsertFilesSafelyArgs) => {
         else if (ACCEPTED_ATTACHMENT_MIME_TYPES.includes(file.type)) fileType = "attachment";
       }
       // insert file depending on the type at the current position
-      if (fileType === "image" && !disabledExtensions.includes("image")) {
+      if (fileType === "image" && !disabledExtensions?.includes("image")) {
         editor.commands.insertImageComponent({
           file,
           pos,

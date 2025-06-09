@@ -867,7 +867,19 @@
     "view": "查看",
     "deactivated_user": "已停用用户",
     "apply": "应用",
-    "applying": "应用中"
+    "applying": "应用中",
+    "users": "用户",
+    "admins": "管理员",
+    "guests": "访客",
+    "on_track": "进展顺利",
+    "off_track": "偏离轨道",
+    "timeline": "时间轴",
+    "completion": "完成",
+    "upcoming": "即将发生",
+    "completed": "已完成",
+    "in_progress": "进行中",
+    "planned": "已计划",
+    "paused": "暂停"
   },
   "chart": {
     "x_axis": "X轴",
@@ -1317,19 +1329,6 @@
       "custom": "自定义分析"
     },
     "empty_state": {
-      "general": {
-        "title": "跟踪进度、工作量和分配。发现趋势、消除障碍并加快工作进度",
-        "description": "查看范围与需求、估算和范围蔓延。获取团队成员和团队的表现，确保您的项目按时运行。",
-        "primary_button": {
-          "text": "开始您的第一个项目",
-          "comic": {
-            "title": "分析在周期 + 模块中效果最佳",
-            "description": "首先，将您的工作项限定在周期中，如果可能的话，将跨越多个周期的工作项分组到模块中。在左侧导航栏中查看这两项。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "分配给您的工作项将按状态分类显示在此处。",
         "title": "暂无数据"
@@ -1345,21 +1344,22 @@
     },
     "created_vs_resolved": "已创建 vs 已解决",
     "customized_insights": "自定义洞察",
-    "backlog_work_items": "待办工作项",
+    "backlog_work_items": "待办的{entity}",
     "active_projects": "活跃项目",
     "trend_on_charts": "图表趋势",
     "all_projects": "所有项目",
     "summary_of_projects": "项目概览",
     "project_insights": "项目洞察",
-    "started_work_items": "已开始的工作项",
-    "total_work_items": "工作项总数",
+    "started_work_items": "已开始的{entity}",
+    "total_work_items": "{entity}总数",
     "total_projects": "项目总数",
     "total_admins": "管理员总数",
     "total_users": "用户总数",
     "total_intake": "总收入",
-    "un_started_work_items": "未开始的工作项",
+    "un_started_work_items": "未开始的{entity}",
     "total_guests": "访客总数",
-    "completed_work_items": "已完成的工作项"
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}总数"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
