@@ -51,9 +51,8 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip

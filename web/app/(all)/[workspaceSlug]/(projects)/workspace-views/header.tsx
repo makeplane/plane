@@ -103,9 +103,10 @@ export const GlobalIssuesHeader = observer(() => {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
         </Header.LeftItem>

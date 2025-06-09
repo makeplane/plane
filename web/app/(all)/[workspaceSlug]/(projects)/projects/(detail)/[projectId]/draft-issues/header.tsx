@@ -95,9 +95,8 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
           <Breadcrumbs isLoading={loader === "init-loader"}>
             <ProjectBreadcrumb />
 
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   label="Draft work items"
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}

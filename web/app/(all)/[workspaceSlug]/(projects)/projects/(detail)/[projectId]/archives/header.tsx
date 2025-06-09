@@ -67,9 +67,8 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
             <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                   label="Archives"
@@ -78,9 +77,8 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
               }
             />
             {activeTabBreadcrumbDetail && (
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink
                     label={activeTabBreadcrumbDetail.label}
                     icon={<activeTabBreadcrumbDetail.icon className="h-4 w-4 text-custom-text-300" />}

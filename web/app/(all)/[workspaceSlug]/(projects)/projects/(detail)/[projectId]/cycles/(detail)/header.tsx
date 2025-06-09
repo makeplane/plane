@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
 import { PanelRight } from "lucide-react";
@@ -14,7 +13,9 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
+  EProjectFeatureKey,
 } from "@plane/constants";
+import { usePlatformOS } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -25,10 +26,10 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, Header, BreadcrumbNavigationSearchDropdown, Tooltip } from "@plane/ui";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
@@ -48,9 +49,8 @@ import {
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   // refs
@@ -171,63 +171,45 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <span>
-                    <span className="hidden md:block">
-                      <ProjectBreadcrumb />
-                    </span>
-                    <Link
-                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      className="block pl-2 text-custom-text-300 md:hidden"
-                    >
-                      ...
-                    </Link>
-                  </span>
-                }
+              <CommonProjectBreadcrumbs
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={projectId?.toString()}
+                featureKey={EProjectFeatureKey.CYCLES}
               />
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    label={t("common.cycles")}
-                    href={`/${workspaceSlug}/projects/${projectId}/cycles`}
-                    icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
-                  />
-                }
-              />
-              <Breadcrumbs.BreadcrumbItem
-                type="component"
+              <Breadcrumbs.Item
                 component={
-                  <CustomSearchSelect
-                    options={switcherOptions}
-                    value={cycleId}
+                  <BreadcrumbNavigationSearchDropdown
+                    selectedItem={cycleId}
+                    navigationItems={switcherOptions}
                     onChange={(value: string) => {
+                      console.log("value", value);
                       router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
                     }}
-                    label={
-                      <div className="flex items-center gap-1">
-                        <SwitcherLabel name={cycleDetails?.name} LabelIcon={ContrastIcon} />
-                        {workItemsCount && workItemsCount > 0 ? (
-                          <Tooltip
-                            isMobile={isMobile}
-                            tooltipContent={`There are ${workItemsCount} ${
-                              workItemsCount > 1 ? "work items" : "work item"
-                            } in this cycle`}
-                            position="bottom"
-                          >
-                            <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
-                              {workItemsCount}
-                            </span>
-                          </Tooltip>
-                        ) : null}
-                      </div>
+                    title={cycleDetails?.name}
+                    icon={
+                      <Breadcrumbs.Icon>
+                        <ContrastIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      </Breadcrumbs.Icon>
                     }
+                    isLast
                   />
                 }
+                isLast
               />
             </Breadcrumbs>
+            {workItemsCount && workItemsCount > 0 ? (
+              <Tooltip
+                isMobile={isMobile}
+                tooltipContent={`There are ${workItemsCount} ${
+                  workItemsCount > 1 ? "work items" : "work item"
+                } in this cycle`}
+                position="bottom"
+              >
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                  {workItemsCount}
+                </span>
+              </Tooltip>
+            ) : null}
           </div>
         </Header.LeftItem>
         <Header.RightItem className="items-center">
