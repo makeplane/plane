@@ -27,6 +27,7 @@ export interface IPiChatStore {
   activeChatId: string;
   activeChat: TChatHistory;
   focus: Record<string, TFocus>;
+  isPiThinking: boolean;
   isPiTyping: boolean;
   isUserTyping: boolean;
   threads: Record<string, TUserThreads[]>; // user -> threads
@@ -55,6 +56,7 @@ export class PiChatStore implements IPiChatStore {
   isInWorkspaceContext = true;
   isNewChat: boolean = true;
   isLoading: boolean = false;
+  isPiThinking = false;
   isPiTyping = false;
   isUserTyping = false;
   models: TAiModels[] = [];
@@ -78,6 +80,7 @@ export class PiChatStore implements IPiChatStore {
       //observables
       isLoading: observable,
       isNewChat: observable,
+      isPiThinking: observable,
       isPiTyping: observable,
       isUserTyping: observable,
       activeChatId: observable,
@@ -182,6 +185,7 @@ export class PiChatStore implements IPiChatStore {
     try {
       // Optimistically update conversation with user query
       runInAction(() => {
+        this.isPiThinking = true;
         this.isPiTyping = true;
         this.activeChat = {
           ...this.activeChat,
@@ -216,9 +220,8 @@ export class PiChatStore implements IPiChatStore {
             }
           : {},
       };
-      payload = this.currentFocus
-        ? { ...payload, [this.currentFocus.entityType]: this.currentFocus.entityIdentifier }
-        : payload;
+      if (this.currentFocus)
+        payload = { ...payload, [this.currentFocus.entityType]: this.currentFocus.entityIdentifier };
 
       // Api call here
       const response = await fetch(`${PI_BASE_URL}/api/v1/chat/get-answer/`, {
@@ -236,16 +239,23 @@ export class PiChatStore implements IPiChatStore {
       const reader = response?.body?.pipeThrough(new TextDecoderStream()).getReader();
 
       let latestAiMessage = "";
+      let latestAiReasoning = "";
+      let isReasoning = false;
 
       while (true) {
         const { done, value } = await (reader?.read() as Promise<ReadableStreamReadResult<string>>);
-        if (this.isPiTyping) this.isPiTyping = false;
+        if (this.isPiThinking) this.isPiThinking = false;
         if (done) break;
         if (value.startsWith("title: ")) continue; // Use this title value and remove the api call to get title in the future
-
-        latestAiMessage += value.replaceAll("data: ", "");
-        newDialogue.answer = latestAiMessage;
-
+        if (value.startsWith("reasoning: ")) isReasoning = true;
+        if (value.startsWith("data: ")) isReasoning = false;
+        if (isReasoning) {
+          latestAiReasoning += value.replaceAll("reasoning: ", "");
+          newDialogue.reasoning = latestAiReasoning;
+        } else {
+          latestAiMessage += value.replaceAll("data: ", "");
+          newDialogue.answer = latestAiMessage;
+        }
         // Update the store with the latest ai message
         runInAction(() => {
           this.activeChat = {
@@ -255,8 +265,10 @@ export class PiChatStore implements IPiChatStore {
         });
       }
 
+      this.isPiTyping = false;
       // Call the title api if its a new chat
       if (isNewChat) {
+        this.isNewChat = false;
         const title = await this.piChatService.getTitle(this.activeChatId);
         runInAction(() => {
           set(this.threads, userId, [
@@ -269,7 +281,6 @@ export class PiChatStore implements IPiChatStore {
           ]);
         });
       }
-
       // Todo: Optimistically update the chat history
       return latestAiMessage;
     } catch (e) {
@@ -279,6 +290,7 @@ export class PiChatStore implements IPiChatStore {
           ...this.activeChat,
           dialogue: [...dialogueHistory, newDialogue],
         };
+        this.isPiThinking = false;
         this.isPiTyping = false;
         this.isUserTyping = false;
       });

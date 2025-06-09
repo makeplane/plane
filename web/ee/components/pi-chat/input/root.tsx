@@ -1,9 +1,10 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, isCommentEmpty } from "@plane/utils";
 import { generateQueryParams } from "@/helpers/router.helper";
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -24,14 +25,16 @@ type TProps = {
   shouldRedirect?: boolean;
 };
 
-export const InputBox = (props: TProps) => {
-  const { isFullScreen, className, activeChatId, shouldRedirect = false } = props;
+export const InputBox = observer((props: TProps) => {
+  const { className, activeChatId, shouldRedirect = false } = props;
+  // router
   const router = useAppRouter();
   // store hooks
   const { getAnswer, searchCallback, isPiTyping } = usePiChat();
   const { data: currentUser } = useUser();
   const { workspaceSlug } = useParams();
-
+  //ref
+  const isPiTypingRef = useRef(false);
   // query params
   const pathName = usePathname();
   const searchParams = useSearchParams();
@@ -51,11 +54,12 @@ export const InputBox = (props: TProps) => {
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
-      if (!currentUser) return;
+      if (!currentUser || isPiTypingRef.current) return;
       e?.preventDefault();
       if (!router_chat_id) handleRedirect(shouldRedirect ? `/${workspaceSlug}/pi-chat` : pathName);
       const query = editorCommands.current?.getHTML();
-      if (!query) return;
+      if (!query || isCommentEmpty(query)) return;
+
       getAnswer(query, currentUser?.id);
       editorCommands.current?.clear();
     },
@@ -108,6 +112,10 @@ export const InputBox = (props: TProps) => {
     return parsedResponse;
   };
 
+  useEffect(() => {
+    isPiTypingRef.current = isPiTyping;
+  }, [isPiTyping]);
+
   return (
     <form className={className}>
       <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">
@@ -138,4 +146,4 @@ export const InputBox = (props: TProps) => {
       </div>
     </form>
   );
-};
+});

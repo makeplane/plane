@@ -6,17 +6,20 @@ import { cn } from "@plane/utils";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { EFeedback } from "@/plane-web/types";
+import { ReasoningBlock } from "./reasoning";
 import { Thinking } from "./thinking";
 
 type TProps = {
   id: string;
   message?: string;
-  isPiTyping?: boolean;
+  reasoning?: string;
+  isPiThinking?: boolean;
   isLoading?: boolean;
   feedback?: EFeedback;
+  isLatest?: boolean;
 };
 export const AiMessage = observer((props: TProps) => {
-  const { message = "", isPiTyping = false, id, isLoading = false, feedback } = props;
+  const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
   const { sendFeedback } = usePiChat();
 
   const handleCopyLink = () => {
@@ -55,10 +58,15 @@ export const AiMessage = observer((props: TProps) => {
       </div>
       <div className="flex flex-col text-base break-words w-full">
         {/* Message */}
-        {!isPiTyping && !isLoading && <Markdown className="pi-chat-root">{handleMessage()}</Markdown>}
+        {!isPiThinking && !isLoading && (
+          <div>
+            {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
+            <Markdown className="pi-chat-root [&>*:first-child]:mt-0">{handleMessage()}</Markdown>
+          </div>
+        )}
 
         {/* Typing */}
-        {isPiTyping && <Thinking />}
+        {isPiThinking && <Thinking />}
 
         {isLoading && (
           <Loader>
@@ -66,7 +74,7 @@ export const AiMessage = observer((props: TProps) => {
           </Loader>
         )}
         {/* Action bar */}
-        {!isPiTyping && !isLoading && (
+        {!isPiThinking && !isLoading && (
           <div className="flex gap-4 mt-6">
             {/* Copy */}
             <Tooltip tooltipContent="Copy to clipboard" position="bottom" className="mb-4">

@@ -54,6 +54,7 @@ export type TDialogue = {
   answer?: string;
   llm?: string;
   feedback?: EFeedback;
+  reasoning?: string;
 };
 
 export type TChatHistory = {
