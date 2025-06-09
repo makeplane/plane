@@ -469,5 +469,6 @@
   "assigned_to": "Atribuído a",
   "due_by": "Devido até",
   "blocked_by": "Bloqueado por",
-  "sub_issues": "Subproblemas"
+  "sub_issues": "Subproblemas",
+  "business_type": "Tipo de Negócio"
 }
