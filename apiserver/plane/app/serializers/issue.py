@@ -37,7 +37,11 @@ from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
     ProjectMember,
+    IssueType,
 )
+from plane.ee.models import Customer
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -56,6 +60,7 @@ class IssueFlatSerializer(BaseSerializer):
             "sequence_id",
             "sort_order",
             "is_draft",
+            "type_id",
         ]
 
 
@@ -74,6 +79,9 @@ class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
         source="state", queryset=State.objects.all(), required=False, allow_null=True
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
@@ -137,8 +145,21 @@ class IssueCreateSerializer(BaseSerializer):
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
+        issue_type = validated_data.pop("type", None)
+
+        if not issue_type:
+            # Get default issue type
+            issue_type = IssueType.objects.filter(
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+                is_default=True,
+            ).first()
+            issue_type = issue_type
+
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        issue = Issue.objects.create(
+            **validated_data, project_id=project_id, type=issue_type
+        )
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -332,7 +353,11 @@ class IssueRelationSerializer(BaseSerializer):
         source="related_issue.sequence_id", read_only=True
     )
     name = serializers.CharField(source="related_issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="related_issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(
+        source="related_issue.type.is_epic", read_only=True
+    )
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
     priority = serializers.CharField(source="related_issue.priority", read_only=True)
     assignee_ids = serializers.ListField(
@@ -349,6 +374,8 @@ class IssueRelationSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
+            "type_id",
+            "is_epic",
             "state_id",
             "priority",
             "assignee_ids",
@@ -374,7 +401,9 @@ class RelatedIssueSerializer(BaseSerializer):
     )
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
+    type_id = serializers.UUIDField(source="issue.type.id", read_only=True)
     relation_type = serializers.CharField(read_only=True)
+    is_epic = serializers.BooleanField(source="issue.type.is_epic", read_only=True)
     state_id = serializers.UUIDField(source="issue.state.id", read_only=True)
     priority = serializers.CharField(source="issue.priority", read_only=True)
     assignee_ids = serializers.ListField(
@@ -391,6 +420,8 @@ class RelatedIssueSerializer(BaseSerializer):
             "sequence_id",
             "relation_type",
             "name",
+            "type_id",
+            "is_epic",
             "state_id",
             "priority",
             "assignee_ids",
@@ -675,8 +706,26 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
             "created_at",
             "label_ids",
             "created_by",
+            "type_id",
         ]
         read_only_fields = fields
+
+
+class CustomerSerializer(DynamicBaseSerializer):
+    class Meta:
+        model = Customer
+        fields = [
+            "id",
+            "name",
+            "email",
+            "website_url",
+            "domain",
+            "contract_status",
+            "stage",
+            "employees",
+            "revenue",
+            "created_by",
+        ]
 
 
 class IssueSerializer(DynamicBaseSerializer):
@@ -721,24 +770,52 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "type_id",
         ]
         read_only_fields = fields
 
 
 class IssueLiteSerializer(DynamicBaseSerializer):
+    is_epic = serializers.SerializerMethodField()
+
+    def get_is_epic(self, obj):
+        if hasattr(obj, "type") and obj.type:
+            return obj.type.is_epic
+        return False
+
     class Meta:
         model = Issue
-        fields = ["id", "sequence_id", "project_id"]
+        fields = ["id", "sequence_id", "project_id", "type_id", "is_epic"]
         read_only_fields = fields
 
 
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    is_epic = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + ["description_html", "is_subscribed"]
+        fields = IssueSerializer.Meta.fields + [
+            "description_html",
+            "is_subscribed",
+            "is_epic",
+        ]
         read_only_fields = fields
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
+
+        # Check if the user has access to the customer request count
+        if slug and user_id:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
+            ):
+                self.fields["customer_request_ids"] = serializers.ListField(
+                    read_only=True
+                )
+                self.fields["initiative_ids"] = serializers.ListField(read_only=True)
 
 
 class IssuePublicSerializer(BaseSerializer):

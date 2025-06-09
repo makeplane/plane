@@ -1,5 +1,5 @@
 import { TIssue } from "@plane/types";
-import { rootStore } from "@/lib/store-context";
+import { rootStore, store } from "@/lib/store-context";
 import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";
 import { ARRAY_FIELDS, PRIORITY_MAP } from "./constants";
@@ -54,6 +54,10 @@ export const deleteIssueFromLocal = async (issue_id: any) => {
 // @todo: Update deletes the issue description from local. Implement a separate update.
 export const updateIssue = async (issue: TIssue & { is_local_update: number }) => {
   if (document.hidden || !rootStore.user.localDBEnabled || !persistence.db) return;
+
+  // Check if the issue is an epic, and do not add it to local db
+  const isEpic = issue.is_epic || (issue.type_id && store.issueTypes.getIssueTypeById(issue.type_id)?.is_epic);
+  if (isEpic) return;
 
   const issue_id = issue.id;
   // delete the issue and its meta data

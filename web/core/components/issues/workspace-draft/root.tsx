@@ -9,8 +9,6 @@ import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants/src
 import { useTranslation } from "@plane/i18n";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-// constants
-
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks

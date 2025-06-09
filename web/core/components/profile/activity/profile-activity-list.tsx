@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
 // hooks
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextReadOnlyEditor } from "@/components/editor";
 import { ActivitySettingsLoader } from "@/components/ui";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
@@ -14,7 +14,7 @@ import { USER_ACTIVITY } from "@/constants/fetch-keys";
 import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -31,7 +31,7 @@ type Props = {
 export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser } = useUserProfile();
 
   const { data: userProfileActivity } = useSWR(
     USER_ACTIVITY({
