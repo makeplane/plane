@@ -56,7 +56,6 @@ class PublishedTemplateEndpoint(BaseAPIView):
     def get_queryset(self) -> QuerySet[Template]:
         queryset = self.model.objects.filter(
             is_published=True,
-            is_verified=True,
             template_type=Template.TemplateType.PROJECT,
         ).prefetch_related("attachments", "categories")
 
@@ -96,7 +95,6 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
     def get_queryset(self) -> QuerySet[Template]:
         queryset = self.model.objects.filter(
             is_published=True,
-            is_verified=True,
             template_type=Template.TemplateType.PROJECT,
         )
         return queryset
