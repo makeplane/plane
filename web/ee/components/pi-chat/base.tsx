@@ -131,7 +131,7 @@ export const PiChatBase = observer((props: TProps) => {
               {/* Current conversation  */}
               {currentUser && activeChat?.dialogue?.length > 0 && !isLoading && (
                 <Messages
-                  isPiTyping={isPiTyping}
+                  isPiThinking={isPiThinking}
                   activeChat={activeChat}
                   currentUser={currentUser}
                   isUserTyping={isUserTyping}
