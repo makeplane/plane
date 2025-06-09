@@ -27,7 +27,7 @@ def user_data():
         "email": "test@plane.so",
         "password": "test-password",
         "first_name": "Test",
-        "last_name": "User"
+        "last_name": "User",
     }
 
 
@@ -37,7 +37,7 @@ def create_user(db, user_data):
     user = User.objects.create(
         email=user_data["email"],
         first_name=user_data["first_name"],
-        last_name=user_data["last_name"]
+        last_name=user_data["last_name"],
     )
     user.set_password(user_data["password"])
     user.save()
