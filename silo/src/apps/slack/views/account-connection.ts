@@ -22,7 +22,7 @@ export const getAccountConnectionBlocks = (details: TSlackConnectionDetails) => 
             emoji: true,
           },
           style: "primary",
-          url: `${env.APP_BASE_URL}/profile/connections?workspaceId=${details.workspaceConnection.workspace_id}`,
+          url: `${env.APP_BASE_URL}/${details.workspaceConnection.workspace_slug}/settings/account/connections?workspaceId=${details.workspaceConnection.workspace_id}`,
         },
       ],
     },

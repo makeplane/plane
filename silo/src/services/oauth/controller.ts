@@ -118,7 +118,7 @@ export class OAuthController {
       let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/${provider.toLowerCase()}/`;
 
       if (authState.profile_redirect) {
-        redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+        redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/account/connections/?workspaceId=${authState.workspace_id}`;
       }
 
       if (userRedirectUri) {

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validate as uuidValidate } from 'uuid';
+import { validate as uuidValidate } from "uuid";
 import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS, E_SILO_ERROR_CODES } from "@plane/etl/core";
 import {
   E_SLACK_ENTITY_TYPE,
@@ -9,7 +9,13 @@ import {
   TSlackCommandPayload,
   TSlackPayload,
 } from "@plane/etl/slack";
-import { E_PLANE_WEBHOOK_ACTION, E_PLANE_WEBHOOK_EVENT, ExIssue, PlaneWebhookData, PlaneWebhookPayloadBase } from "@plane/sdk";
+import {
+  E_PLANE_WEBHOOK_ACTION,
+  E_PLANE_WEBHOOK_EVENT,
+  ExIssue,
+  PlaneWebhookData,
+  PlaneWebhookPayloadBase,
+} from "@plane/sdk";
 import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
@@ -234,7 +240,7 @@ export default class SlackController {
 
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
     if (authState.profileRedirect) {
-      redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspaceId}`;
+      redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/account/connections/?workspaceId=${authState.workspaceId}`;
     }
 
     try {
@@ -256,7 +262,6 @@ export default class SlackController {
         // Create a workspace connection for the authenticated team
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
       }
-
 
       if (!response.authed_user) {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
@@ -601,7 +606,7 @@ export default class SlackController {
         payload: payload,
       });
 
-      const isUUID = (id: string | null) => id && uuidValidate(id)
+      const isUUID = (id: string | null) => id && uuidValidate(id);
 
       if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
         integrationTaskManager.registerTask(
@@ -661,7 +666,12 @@ export default class SlackController {
             },
             Number(env.DEDUP_INTERVAL)
           );
-        } else if (payload.activity.field && !payload.activity.field.includes("_id") && !isUUID(payload.activity.old_value) && !isUUID(payload.activity.new_value)) {
+        } else if (
+          payload.activity.field &&
+          !payload.activity.field.includes("_id") &&
+          !isUUID(payload.activity.old_value) &&
+          !isUUID(payload.activity.new_value)
+        ) {
           const [entityConnection] = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
             workspace_id: workspace,
             project_id: project,

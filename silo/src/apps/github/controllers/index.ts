@@ -406,7 +406,7 @@ export default class GithubController {
     let redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/github/`;
 
     if (authState.profile_redirect) {
-      redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+      redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/account/connections/?workspaceId=${authState.workspace_id}`;
     }
 
     try {
@@ -521,7 +521,7 @@ export default class GithubController {
 
     try {
       if (authState.profile_redirect) {
-        redirectUri = `${env.APP_BASE_URL}/profile/connections/?workspaceId=${authState.workspace_id}`;
+        redirectUri = `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/account/connections/?workspaceId=${authState.workspace_id}`;
       }
 
       const githubState: GithubPlaneOAuthState = {
