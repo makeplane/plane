@@ -369,7 +369,7 @@ class GenericAssetEndpoint(BaseAPIView):
             404: ASSET_NOT_FOUND_RESPONSE,
         },
     )
-    def get(self, request, slug, asset_id=None):
+    def get(self, request, slug, asset_id):
         """Get presigned URL for asset download.
 
         Generate a presigned URL for downloading a generic asset.
@@ -378,13 +378,6 @@ class GenericAssetEndpoint(BaseAPIView):
         try:
             # Get the workspace
             workspace = Workspace.objects.get(slug=slug)
-
-            # If asset_id is not provided, return 400
-            if not asset_id:
-                return Response(
-                    {"error": "Asset ID is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             # Get the asset
             asset = FileAsset.objects.get(

@@ -261,4 +261,8 @@ SPECTACULAR_SETTINGS = {
     # ========================================================================
     "COMPONENT_NO_READ_ONLY_REQUIRED": True,
     "COMPONENT_SPLIT_REQUEST": True,
+    "ENUM_NAME_OVERRIDES": {
+        "ModuleStatusEnum": "plane.db.models.module.ModuleStatus",
+        "IntakeIssueStatusEnum": "plane.db.models.intake.IntakeIssueStatus",
+    },
 }

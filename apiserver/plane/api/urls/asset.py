@@ -29,7 +29,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/assets/",
-        GenericAssetEndpoint.as_view(http_method_names=["get", "post"]),
+        GenericAssetEndpoint.as_view(http_method_names=["post"]),
         name="generic-asset",
     ),
     path(
