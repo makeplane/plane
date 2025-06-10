@@ -2,9 +2,9 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
+import { EMobileAuthSteps, EMobileAuthModes, TMobileAuthSteps, TMobileAuthModes } from "@plane/constants";
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import { EAuthSteps, EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import useTimer from "@/hooks/use-timer";
@@ -12,11 +12,11 @@ import useTimer from "@/hooks/use-timer";
 import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthUniqueCodeForm = {
-  authMode: EAuthModes;
+  authMode: TMobileAuthModes;
   invitationId: string | undefined;
   email: string;
   handleEmail: (value: string) => void;
-  handleAuthStep: (value: EAuthSteps) => void;
+  handleAuthStep: (value: TMobileAuthSteps) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
 
@@ -82,7 +82,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
 
   const handleEmailClear = () => {
     handleEmail("");
-    handleAuthStep(EAuthSteps.EMAIL);
+    handleAuthStep(EMobileAuthSteps.EMAIL);
   };
 
   return (
@@ -90,7 +90,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
       ref={authFormRef}
       className="mt-5 space-y-4"
       method="POST"
-      action={`${API_BASE_URL}/auth/mobile/${authMode === EAuthModes.SIGN_UP ? "magic-sign-up" : "magic-sign-in"}/`}
+      action={`${API_BASE_URL}/auth/mobile/${authMode === EMobileAuthModes.SIGN_UP ? "magic-sign-up" : "magic-sign-in"}/`}
       onSubmit={async (event) => {
         event.preventDefault(); // Prevent form from submitting by default
         setIsSubmitting(true);

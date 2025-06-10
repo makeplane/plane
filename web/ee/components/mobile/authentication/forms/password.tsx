@@ -2,20 +2,20 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
+import { EMobileAuthSteps, EMobileAuthModes, TMobileAuthSteps, TMobileAuthModes } from "@plane/constants";
 import { TMobileCSRFToken } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import { EAuthSteps, EAuthModes } from "@/helpers/authentication.helper";
 import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import mobileAuthService from "@/plane-web/services/mobile.service";
 
 type TMobileAuthPasswordForm = {
-  authMode: EAuthModes;
+  authMode: TMobileAuthModes;
   invitationId: string | undefined;
   email: string;
   handleEmail: (value: string) => void;
-  handleAuthStep: (value: EAuthSteps) => void;
+  handleAuthStep: (value: TMobileAuthSteps) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
   isSMTPConfigured: boolean;
 };
@@ -65,11 +65,11 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
 
   const handleEmailClear = () => {
     handleEmail("");
-    handleAuthStep(EAuthSteps.EMAIL);
+    handleAuthStep(EMobileAuthSteps.EMAIL);
   };
 
   const redirectToUniqueCodeSignIn = () => {
-    handleAuthStep(EAuthSteps.UNIQUE_CODE);
+    handleAuthStep(EMobileAuthSteps.UNIQUE_CODE);
     // generate unique code
     generateEmailUniqueCode(email);
   };
@@ -79,7 +79,7 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
       ref={authFormRef}
       className="mt-5 space-y-4"
       method="POST"
-      action={`${API_BASE_URL}/auth/mobile/${authMode === EAuthModes.SIGN_UP ? "sign-up" : "sign-in"}/`}
+      action={`${API_BASE_URL}/auth/mobile/${authMode === EMobileAuthModes.SIGN_UP ? "sign-up" : "sign-in"}/`}
       onSubmit={async (event) => {
         event.preventDefault(); // Prevent form from submitting by default
         setIsSubmitting(true);

@@ -2,45 +2,44 @@
 
 import { FC } from "react";
 import Image from "next/image";
+import { EMobileAuthModes, EMobileAuthSteps, TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
 import { TMobileWorkspaceInvitation } from "@plane/types";
-// helpers
-import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
 // assets
 import planeLogo from "@/public/plane-logos/blue-without-text.png";
 
 const AUTH_SIGNUP_HEADER_CONTENT_OPTIONS = {
-  [EAuthSteps.EMAIL]: {
+  [EMobileAuthSteps.EMAIL]: {
     title: "sign up",
     description: "",
   },
-  [EAuthSteps.UNIQUE_CODE]: {
+  [EMobileAuthSteps.UNIQUE_CODE]: {
     title: "Sign up",
     description: "Sign up using a unique code sent to the email address above.",
   },
-  [EAuthSteps.PASSWORD]: {
+  [EMobileAuthSteps.PASSWORD]: {
     title: "Sign up",
     description: "Sign up using an email-password combination.",
   },
 };
 
 const AUTH_LOGIN_HEADER_CONTENT_OPTIONS = {
-  [EAuthSteps.EMAIL]: {
+  [EMobileAuthSteps.EMAIL]: {
     title: "Log in or sign up",
     description: "",
   },
-  [EAuthSteps.UNIQUE_CODE]: {
+  [EMobileAuthSteps.UNIQUE_CODE]: {
     title: "Log in or sign up",
     description: "Log in using a unique code sent to the email address above.",
   },
-  [EAuthSteps.PASSWORD]: {
+  [EMobileAuthSteps.PASSWORD]: {
     title: "Log in or sign up",
     description: "Use your email-password combination to log in.",
   },
 };
 
 type TMobileAuthHeader = {
-  authMode: EAuthModes;
-  authStep: EAuthSteps;
+  authMode: TMobileAuthModes;
+  authStep: TMobileAuthSteps;
   invitationDetails: TMobileWorkspaceInvitation | undefined;
 };
 
@@ -50,7 +49,7 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
 
   // derived values
   const content =
-    authMode === EAuthModes.SIGN_UP
+    authMode === EMobileAuthModes.SIGN_UP
       ? AUTH_SIGNUP_HEADER_CONTENT_OPTIONS[authStep]
       : AUTH_LOGIN_HEADER_CONTENT_OPTIONS[authStep];
   const isInvitation = invitationDetails?.id || undefined;

@@ -2,10 +2,17 @@
 
 import { FC, FormEvent, useMemo, useRef, useState } from "react";
 import { CircleAlert, XCircle } from "lucide-react";
+import {
+  EMobileAuthSteps,
+  EMobileAuthModes,
+  TMobileAuthSteps,
+  TMobileAuthModes,
+  TMobileAuthErrorInfo,
+} from "@plane/constants";
 import { IEmailCheckData } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
 // helpers
-import { authErrorHandler, EAuthModes, EAuthSteps, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
 import { cn } from "@/helpers/common.helper";
 import { checkEmailValidity } from "@/helpers/string.helper";
 // plane web services
@@ -14,9 +21,9 @@ import mobileAuthService from "@/plane-web/services/mobile.service";
 type TMobileAuthEmailValidationForm = {
   email: string;
   handleEmail: (value: string) => void;
-  handleAuthStep: (value: EAuthSteps) => void;
-  handleAuthMode: (value: EAuthModes) => void;
-  handleErrorInfo: (value: TAuthErrorInfo | undefined) => void;
+  handleAuthStep: (value: TMobileAuthSteps) => void;
+  handleAuthMode: (value: TMobileAuthModes) => void;
+  handleErrorInfo: (value: TMobileAuthErrorInfo | undefined) => void;
   generateEmailUniqueCode: (email: string) => Promise<{ code: string } | undefined>;
 };
 
@@ -83,18 +90,18 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
       .then(async (response) => {
         // setting auth mode
         if (response.existing) {
-          handleAuthMode(EAuthModes.SIGN_IN);
+          handleAuthMode(EMobileAuthModes.SIGN_IN);
         } else {
-          handleAuthMode(EAuthModes.SIGN_UP);
+          handleAuthMode(EMobileAuthModes.SIGN_UP);
         }
 
         // setting auth step
         if (response.status === "MAGIC_CODE") {
-          handleAuthStep(EAuthSteps.UNIQUE_CODE);
+          handleAuthStep(EMobileAuthSteps.UNIQUE_CODE);
           // generating unique code
           generateEmailUniqueCode(email);
         } else if (response.status === "CREDENTIAL") {
-          handleAuthStep(EAuthSteps.PASSWORD);
+          handleAuthStep(EMobileAuthSteps.PASSWORD);
         }
       })
       .catch((error) => {

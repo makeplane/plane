@@ -2,20 +2,21 @@
 
 import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
-// components
-import { AuthBanner } from "@/components/account";
-// helpers
 import {
-  authErrorHandler,
-  EAuthenticationErrorCodes,
-  EAuthSteps,
-  EAuthModes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-} from "@/helpers/authentication.helper";
+  EMobileAuthSteps,
+  EMobileAuthModes,
+  EMobileErrorAlertType,
+  TMobileAuthSteps,
+  TMobileAuthModes,
+  TMobileAuthErrorInfo,
+  EMobileAuthErrorCodes,
+  TMobileAuthErrorCodes,
+} from "@plane/constants";
+import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
+import { mobileAuthErrorHandler } from "@plane/utils";
 // plane web components
 import {
+  MobileAuthBanner,
   MobileTermsAndConditions,
   MobileAuthEmailValidationForm,
   MobileAuthUniqueCodeForm,
@@ -28,23 +29,23 @@ import {
 import mobileAuthService from "@/plane-web/services/mobile.service";
 
 const UNIQUE_CODE_ERROR_CODES = [
-  EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
-  EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
-  EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
-  EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
+  EMobileAuthErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
+  EMobileAuthErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
+  EMobileAuthErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
+  EMobileAuthErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
 ];
 
-const PASSWORD_ERROR_CODES = [EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN];
+const PASSWORD_ERROR_CODES = [EMobileAuthErrorCodes.AUTHENTICATION_FAILED_SIGN_IN];
 
 // oauth error codes
 const OAUTH_ERROR_CODES = [
-  EAuthenticationErrorCodes.OAUTH_NOT_CONFIGURED,
-  EAuthenticationErrorCodes.GOOGLE_NOT_CONFIGURED,
-  EAuthenticationErrorCodes.GITHUB_NOT_CONFIGURED,
-  EAuthenticationErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
-  EAuthenticationErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
-  EAuthenticationErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
-  EAuthenticationErrorCodes.MOBILE_SIGNUP_DISABLED,
+  EMobileAuthErrorCodes.OAUTH_NOT_CONFIGURED,
+  EMobileAuthErrorCodes.GOOGLE_NOT_CONFIGURED,
+  EMobileAuthErrorCodes.GITHUB_NOT_CONFIGURED,
+  EMobileAuthErrorCodes.GOOGLE_OAUTH_PROVIDER_ERROR,
+  EMobileAuthErrorCodes.GITHUB_OAUTH_PROVIDER_ERROR,
+  EMobileAuthErrorCodes.GITLAB_OAUTH_PROVIDER_ERROR,
+  EMobileAuthErrorCodes.MOBILE_SIGNUP_DISABLED,
 ];
 
 type TAuthRoot = {
@@ -62,13 +63,13 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
   const errorMessageParam = searchParams.get("error_message");
   const sessionToken = searchParams.get("token");
   // states
-  const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_IN);
+  const [authMode, setAuthMode] = useState<TMobileAuthModes>(EMobileAuthModes.SIGN_IN);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
-  const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
-  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  const [authStep, setAuthStep] = useState<TMobileAuthSteps>(EMobileAuthSteps.EMAIL);
+  const [errorInfo, setErrorInfo] = useState<TMobileAuthErrorInfo | undefined>(undefined);
   const [invitationDetails, setInvitationDetails] = useState<TMobileWorkspaceInvitation | undefined>(undefined);
 
-  const handleErrorInfo = (value: TAuthErrorInfo | undefined) => {
+  const handleErrorInfo = (value: TMobileAuthErrorInfo | undefined) => {
     setErrorInfo(value);
   };
 
@@ -83,7 +84,7 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
+        const errorhandler = mobileAuthErrorHandler(error?.error_code.toString());
         if (errorhandler?.type) setErrorInfo(errorhandler);
         throw error;
       });
@@ -92,12 +93,12 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
   // validating and defining the errors
   useEffect(() => {
     if (!errorCodeParam) return;
-    const errorhandler = authErrorHandler(errorCodeParam?.toString() as EAuthenticationErrorCodes);
+    const errorhandler = mobileAuthErrorHandler(errorCodeParam?.toString() as TMobileAuthErrorCodes);
     if (!errorhandler) return;
     // password handler
-    if (PASSWORD_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EAuthSteps.PASSWORD);
+    if (PASSWORD_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EMobileAuthSteps.PASSWORD);
     // unique code handler
-    if (UNIQUE_CODE_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EAuthSteps.UNIQUE_CODE);
+    if (UNIQUE_CODE_ERROR_CODES.includes(errorhandler.code)) setAuthStep(EMobileAuthSteps.UNIQUE_CODE);
     // oauth signup handler
     if (OAUTH_ERROR_CODES.includes(errorhandler.code)) setErrorInfo(errorhandler);
     setErrorInfo(errorhandler);
@@ -120,13 +121,13 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
         <MobileAuthHeader invitationDetails={invitationDetails} authMode={authMode} authStep={authStep} />
 
         {/* alert banner */}
-        {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
-          <AuthBanner bannerData={errorInfo} handleBannerData={handleErrorInfo} />
+        {errorInfo && errorInfo?.type === EMobileErrorAlertType.BANNER_ALERT && (
+          <MobileAuthBanner bannerData={errorInfo} handleBannerData={handleErrorInfo} />
         )}
 
         {/* auth content */}
         <div>
-          {authStep === EAuthSteps.EMAIL && (
+          {authStep === EMobileAuthSteps.EMAIL && (
             <MobileAuthEmailValidationForm
               email={email}
               handleEmail={(value) => setEmail(value)}
@@ -136,7 +137,7 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
               generateEmailUniqueCode={generateEmailUniqueCode}
             />
           )}
-          {authStep === EAuthSteps.UNIQUE_CODE && (
+          {authStep === EMobileAuthSteps.UNIQUE_CODE && (
             <MobileAuthUniqueCodeForm
               authMode={authMode}
               invitationId={invitationIdParam}
@@ -146,7 +147,7 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
               generateEmailUniqueCode={generateEmailUniqueCode}
             />
           )}
-          {authStep === EAuthSteps.PASSWORD && (
+          {authStep === EMobileAuthSteps.PASSWORD && (
             <MobileAuthPasswordForm
               authMode={authMode}
               invitationId={invitationIdParam}
