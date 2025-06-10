@@ -1,5 +1,6 @@
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
 import { TChartData } from "./charts";
+import { Row } from "@tanstack/react-table";
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
@@ -58,3 +59,9 @@ export interface IAnalyticsParams {
   y_axis: ChartYAxisMetric;
   group_by?: ChartXAxisProperty;
 }
+
+export type ExportConfig<T> = {
+  key: string;
+  value: (row: Row<T>) => string | number;
+  label?: string;
+};
