@@ -40,7 +40,8 @@ export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => 
           </span>
           <p className="text-xs">
             {t("description_versions.last_edited_by")}{" "}
-            <span className="font-medium">{lastUpdatedByUserDisplayName}</span> {calculateTimeAgo(lastUpdatedAt)}
+            <span className="font-medium">{lastUpdatedByUserDisplayName ?? t("common.deactivated_user")}</span>{" "}
+            {calculateTimeAgo(lastUpdatedAt)}
           </p>
         </div>
       }

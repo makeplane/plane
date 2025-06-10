@@ -211,31 +211,17 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
               <Disclosure.Panel className="space-y-4">
                 {/* progress burndown chart */}
                 <div>
-                  <div className="relative flex items-center gap-2">
-                    <div className="flex items-center justify-center gap-1 text-xs">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                      <span>{t("ideal")}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 text-xs">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                      <span>{t("current")}</span>
-                    </div>
-                  </div>
                   {moduleStartDate && moduleEndDate && completionChartDistributionData && (
                     <Fragment>
                       {plotType === "points" ? (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalEstimatePoints}
                           plotTitle={"points"}
                         />
                       ) : (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalIssues}
                           plotTitle={"work items"}
                         />

@@ -15,6 +15,7 @@ import {
 import { useProject, useProjectEstimates } from "@/hooks/store";
 // plane web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";
+import { SettingsHeading } from "../settings";
 
 type TEstimateRoot = {
   workspaceSlug: string;
@@ -46,9 +47,11 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
       ) : (
         <div className="space-y-2">
           {/* header */}
-          <div className="flex flex-col items-start border-b border-custom-border-100 pb-3.5">
-            <h3 className="text-xl font-medium leading-normal">{t("common.estimates")}</h3>
-          </div>
+
+          <SettingsHeading
+            title={t("project_settings.estimates.heading")}
+            description={t("project_settings.estimates.description")}
+          />
 
           {/* current active estimate section */}
           {currentActiveEstimateId ? (
@@ -57,7 +60,7 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
               <div className="relative border-b border-custom-border-200 pb-4 flex justify-between items-center gap-3">
                 <div className="space-y-1">
                   <h3 className="text-lg font-medium text-custom-text-100">{t("project_settings.estimates.title")}</h3>
-                  <p className="text-sm text-custom-text-200">{t("project_settings.estimates.description")}</p>
+                  <p className="text-sm text-custom-text-200">{t("project_settings.estimates.enable_description")}</p>
                 </div>
                 <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
               </div>

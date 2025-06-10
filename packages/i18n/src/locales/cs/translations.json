@@ -848,6 +848,7 @@
     "live": "Živě",
     "change_history": "Historie změn",
     "coming_soon": "Již brzy",
+    "member": "Člen",
     "members": "Členové",
     "you": "Vy",
     "upgrade_cta": {
@@ -865,7 +866,19 @@
     "view": "Pohled",
     "deactivated_user": "Deaktivovaný uživatel",
     "apply": "Použít",
-    "applying": "Používání"
+    "applying": "Používání",
+    "users": "Uživatelé",
+    "admins": "Administrátoři",
+    "guests": "Hosté",
+    "on_track": "Na správné cestě",
+    "off_track": "Mimo plán",
+    "timeline": "Časová osa",
+    "completion": "Dokončení",
+    "upcoming": "Nadcházející",
+    "completed": "Dokončeno",
+    "in_progress": "Probíhá",
+    "planned": "Plánováno",
+    "paused": "Pozastaveno"
   },
   "chart": {
     "x_axis": "Osa X",
@@ -1080,7 +1093,9 @@
     "select": {
       "error": "Vyberte alespoň jednu pracovní položku",
       "empty": "Nevybrány žádné pracovní položky",
-      "add_selected": "Přidat vybrané pracovní položky"
+      "add_selected": "Přidat vybrané pracovní položky",
+      "select_all": "Vybrat vše",
+      "deselect_all": "Zrušit výběr všeho"
     },
     "open_in_full_screen": "Otevřít pracovní položku na celou obrazovku"
   },
@@ -1313,19 +1328,6 @@
       "custom": "Vlastní analytika"
     },
     "empty_state": {
-      "general": {
-        "title": "Sledujte pokrok, vytížení a alokace. Identifikujte trendy, odstraňte překážky a zrychlete práci",
-        "description": "Sledujte rozsah vs. poptávku, odhady a rozsah. Zjistěte výkonnost členů a týmů, zajistěte včasné dokončení projektů.",
-        "primary_button": {
-          "text": "Začněte první projekt",
-          "comic": {
-            "title": "Analytika funguje nejlépe s Cykly + Moduly",
-            "description": "Nejprve časově ohraničte práci do Cyklů a seskupte položky přesahující cyklus do Modulů. Najdete je v levém menu."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí.",
         "title": "Zatím žádná data"
@@ -1341,21 +1343,22 @@
     },
     "created_vs_resolved": "Vytvořeno vs Vyřešeno",
     "customized_insights": "Přizpůsobené přehledy",
-    "backlog_work_items": "Pracovní položky v backlogu",
+    "backlog_work_items": "Backlog {entity}",
     "active_projects": "Aktivní projekty",
     "trend_on_charts": "Trend na grafech",
     "all_projects": "Všechny projekty",
     "summary_of_projects": "Souhrn projektů",
     "project_insights": "Přehled projektu",
-    "started_work_items": "Zahájené pracovní položky",
-    "total_work_items": "Celkový počet pracovních položek",
+    "started_work_items": "Zahájené {entity}",
+    "total_work_items": "Celkový počet {entity}",
     "total_projects": "Celkový počet projektů",
     "total_admins": "Celkový počet administrátorů",
     "total_users": "Celkový počet uživatelů",
     "total_intake": "Celkový příjem",
-    "un_started_work_items": "Nezahájené pracovní položky",
+    "un_started_work_items": "Nezahájené {entity}",
     "total_guests": "Celkový počet hostů",
-    "completed_work_items": "Dokončené pracovní položky"
+    "completed_work_items": "Dokončené {entity}",
+    "total": "Celkový počet {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
@@ -2459,5 +2462,9 @@
     "last_edited_by": "Naposledy upraveno uživatelem",
     "previously_edited_by": "Dříve upraveno uživatelem",
     "edited_by": "Upraveno uživatelem"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane se nespustil. To může být způsobeno tím, že se jeden nebo více služeb Plane nepodařilo spustit.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logů, abyste si byli jisti."
   }
 }

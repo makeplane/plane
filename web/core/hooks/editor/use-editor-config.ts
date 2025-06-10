@@ -29,6 +29,10 @@ export const useEditorConfig = () => {
       const { projectId, workspaceId, workspaceSlug } = args;
 
       return {
+        checkIfAssetExists: async (assetId: string) => {
+          const res = await fileService.checkIfAssetExists(workspaceSlug, assetId);
+          return res?.exists ?? false;
+        },
         getAssetSrc: async (path) => {
           if (!path) return "";
           if (path?.startsWith("http")) {

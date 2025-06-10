@@ -6,8 +6,10 @@ import { EProductSubscriptionEnum } from "@plane/constants";
 import { IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// helpers
+// components
 import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
+// local imports
+import { DiscountInfo } from "./discount-info";
 
 export type TCheckoutParams = {
   planVariant: EProductSubscriptionEnum;
@@ -56,8 +58,13 @@ export const PlanCheckoutButton: FC<Props> = observer((props) => {
             </Loader>
           ) : (
             <span className="animate-fade-in">
-              {price.currency}
-              {price.price}
+              <DiscountInfo
+                currency={price.currency}
+                frequency={price.recurring}
+                price={price.price}
+                subscriptionType={planVariant}
+                className="mr-1.5"
+              />
             </span>
           )}
         </div>

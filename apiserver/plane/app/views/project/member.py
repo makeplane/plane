@@ -168,6 +168,8 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             member__is_bot=False,
             is_active=True,
+            member__member_workspace__workspace__slug=slug,
+            member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(
@@ -313,7 +315,11 @@ class UserProjectRolesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         project_members = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=request.user.id, is_active=True
+            workspace__slug=slug,
+            member_id=request.user.id,
+            is_active=True,
+            member__member_workspace__workspace__slug=slug,
+            member__member_workspace__is_active=True,
         ).values("project_id", "role")
 
         project_members = {

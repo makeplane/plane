@@ -849,6 +849,7 @@
     "live": "En direct",
     "change_history": "Historique des modifications",
     "coming_soon": "À venir",
+    "member": "Membre",
     "members": "Membres",
     "you": "Vous",
     "upgrade_cta": {
@@ -866,7 +867,19 @@
     "view": "Afficher",
     "deactivated_user": "Utilisateur désactivé",
     "apply": "Appliquer",
-    "applying": "Application"
+    "applying": "Application",
+    "users": "Utilisateurs",
+    "admins": "Administrateurs",
+    "guests": "Invités",
+    "on_track": "Sur la bonne voie",
+    "off_track": "Hors de la bonne voie",
+    "timeline": "Chronologie",
+    "completion": "Achèvement",
+    "upcoming": "À venir",
+    "completed": "Terminé",
+    "in_progress": "En cours",
+    "planned": "Planifié",
+    "paused": "En pause"
   },
   "chart": {
     "x_axis": "Axe X",
@@ -1081,7 +1094,9 @@
     "select": {
       "error": "Veuillez sélectionner au moins un élément de travail",
       "empty": "Aucun élément de travail sélectionné",
-      "add_selected": "Ajouter les éléments de travail sélectionnés"
+      "add_selected": "Ajouter les éléments de travail sélectionnés",
+      "select_all": "Sélectionner tout",
+      "deselect_all": "Tout désélectionner"
     },
     "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
   },
@@ -1314,19 +1329,6 @@
       "custom": "Analytique Personnalisée"
     },
     "empty_state": {
-      "general": {
-        "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, supprimez les blocages et accélérez le travail",
-        "description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres de l'équipe et équipes, et assurez-vous que votre projet se déroule dans les délais.",
-        "primary_button": {
-          "text": "Commencez votre premier projet",
-          "comic": {
-            "title": "L'analytique fonctionne mieux avec les Cycles + Modules",
-            "description": "D'abord, planifiez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments de travail qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
         "title": "Pas encore de données"
@@ -1342,21 +1344,22 @@
     },
     "created_vs_resolved": "Créé vs Résolu",
     "customized_insights": "Informations personnalisées",
-    "backlog_work_items": "Éléments de travail en backlog",
+    "backlog_work_items": "{entity} en backlog",
     "active_projects": "Projets actifs",
     "trend_on_charts": "Tendance sur les graphiques",
     "all_projects": "Tous les projets",
     "summary_of_projects": "Résumé des projets",
     "project_insights": "Aperçus du projet",
-    "started_work_items": "Éléments de travail commencés",
-    "total_work_items": "Total des éléments de travail",
+    "started_work_items": "{entity} commencés",
+    "total_work_items": "Total des {entity}",
     "total_projects": "Total des projets",
     "total_admins": "Total des administrateurs",
     "total_users": "Nombre total d'utilisateurs",
     "total_intake": "Revenu total",
-    "un_started_work_items": "Éléments de travail non commencés",
+    "un_started_work_items": "{entity} non commencés",
     "total_guests": "Nombre total d'invités",
-    "completed_work_items": "Éléments de travail terminés"
+    "completed_work_items": "{entity} terminés",
+    "total": "Total des {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",
@@ -2459,5 +2462,9 @@
     "last_edited_by": "Dernière modification par",
     "previously_edited_by": "Précédemment modifié par",
     "edited_by": "Modifié par"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
   }
 }

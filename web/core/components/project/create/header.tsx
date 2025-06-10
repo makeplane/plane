@@ -40,7 +40,6 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           alt={t("project_cover_image_alt")}
         />
       )}
-
       <div className="absolute left-2.5 top-2.5">
         <ProjectTemplateSelect handleModalClose={handleClose} />
       </div>

@@ -848,6 +848,7 @@
     "live": "În direct",
     "change_history": "Istoric modificări",
     "coming_soon": "În curând",
+    "member": "Membru",
     "members": "Membri",
     "you": "Tu",
     "upgrade_cta": {
@@ -865,7 +866,19 @@
     "view": "Vizualizează",
     "deactivated_user": "Utilizator dezactivat",
     "apply": "Aplică",
-    "applying": "Aplicând"
+    "applying": "Aplicând",
+    "users": "Utilizatori",
+    "admins": "Administratori",
+    "guests": "Invitați",
+    "on_track": "Pe drumul cel bun",
+    "off_track": "În afara traiectoriei",
+    "timeline": "Cronologie",
+    "completion": "Finalizare",
+    "upcoming": "Viitor",
+    "completed": "Finalizat",
+    "in_progress": "În desfășurare",
+    "planned": "Planificat",
+    "paused": "Pauzat"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -1080,7 +1093,9 @@
     "select": {
       "error": "Selectează cel puțin o activitate",
       "empty": "Nicio activitate selectată",
-      "add_selected": "Adaugă activitățile selectate"
+      "add_selected": "Adaugă activitățile selectate",
+      "select_all": "Selectează tot",
+      "deselect_all": "Deselează tot"
     },
     "open_in_full_screen": "Deschide activitatea pe tot ecranul"
   },
@@ -1313,19 +1328,6 @@
       "custom": "Analitice personalizate"
     },
     "empty_state": {
-      "general": {
-        "title": "Urmărește progresul, activitățile și alocările. Observă tendințele, elimină blocajele și accelerează munca",
-        "description": "Vezi raportul dintre activitățile asumate și cerere, estimările și eventualele extinderi neplanificate ale activităților asumate. Obține performanța pe membri și echipe și asigură-te că proiectul tău se încadrează în timp.",
-        "primary_button": {
-          "text": "Începe primul tău proiect",
-          "comic": {
-            "title": "Statisticile funcționează cel mai bine cu Cicluri + Module",
-            "description": "Mai întâi, încadrează-ți activitățile în Cicluri și, dacă poți, grupează-le pe cele care se întind pe mai multe cicluri în Module. Le găsești în meniul din stânga."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
         "title": "Nu există date încă"
@@ -1341,21 +1343,22 @@
     },
     "created_vs_resolved": "Creat vs Rezolvat",
     "customized_insights": "Perspective personalizate",
-    "backlog_work_items": "Elemente de lucru din backlog",
+    "backlog_work_items": "{entity} din backlog",
     "active_projects": "Proiecte active",
     "trend_on_charts": "Tendință în grafice",
     "all_projects": "Toate proiectele",
     "summary_of_projects": "Sumarul proiectelor",
     "project_insights": "Informații despre proiect",
-    "started_work_items": "Elemente de lucru începute",
-    "total_work_items": "Totalul elementelor de lucru",
+    "started_work_items": "{entity} începute",
+    "total_work_items": "Totalul {entity}",
     "total_projects": "Total proiecte",
     "total_admins": "Total administratori",
     "total_users": "Total utilizatori",
     "total_intake": "Venit total",
-    "un_started_work_items": "Elemente de lucru neîncepute",
+    "un_started_work_items": "{entity} neîncepute",
     "total_guests": "Total invitați",
-    "completed_work_items": "Elemente de lucru finalizate"
+    "completed_work_items": "{entity} finalizate",
+    "total": "Totalul {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",
@@ -2453,5 +2456,9 @@
     "last_edited_by": "Ultima editare de către",
     "previously_edited_by": "Editat anterior de către",
     "edited_by": "Editat de"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Plane au eșuat să pornească.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Alegeți View Logs din setup.sh și logurile Docker pentru a fi siguri."
   }
 }

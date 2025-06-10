@@ -24,12 +24,6 @@ const nextConfig = {
       "lucide-react",
       "date-fns",
       "@headlessui/react",
-      "@nivo/core",
-      "@nivo/bar",
-      "@nivo/line",
-      "@nivo/pie",
-      "@nivo/calendar",
-      "@nivo/scatterplot",
       "react-color",
       "react-day-picker",
       "react-dropzone",
@@ -54,6 +48,16 @@ const nextConfig = {
   ],
   async redirects() {
     return [
+      {
+        source: "/:workspaceSlug/projects/:projectId/settings/:path*",
+        destination: "/:workspaceSlug/settings/projects/:projectId/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:workspaceSlug/settings/api-tokens",
+        destination: "/:workspaceSlug/settings/account/api-tokens",
+        permanent: true,
+      },
       {
         source: "/:workspaceSlug/projects/:projectId/inbox",
         destination: "/:workspaceSlug/projects/:projectId/intake",

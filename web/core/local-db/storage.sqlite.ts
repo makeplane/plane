@@ -19,7 +19,7 @@ import { sanitizeWorkItemQueries } from "./utils/query-sanitizer.ts";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
-const DB_VERSION = 1.1;
+const DB_VERSION = 1.3;
 const PAGE_SIZE = 500;
 const BATCH_SIZE = 50;
 

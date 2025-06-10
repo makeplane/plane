@@ -849,6 +849,7 @@
     "live": "ライブ",
     "change_history": "変更履歴",
     "coming_soon": "近日公開",
+    "member": "メンバー",
     "members": "メンバー",
     "you": "あなた",
     "upgrade_cta": {
@@ -866,7 +867,19 @@
     "view": "ビュー",
     "deactivated_user": "無効化されたユーザー",
     "apply": "適用",
-    "applying": "適用中"
+    "applying": "適用中",
+    "users": "ユーザー",
+    "admins": "管理者",
+    "guests": "ゲスト",
+    "on_track": "順調",
+    "off_track": "遅れ",
+    "timeline": "タイムライン",
+    "completion": "完了",
+    "upcoming": "今後の予定",
+    "completed": "完了",
+    "in_progress": "進行中",
+    "planned": "計画済み",
+    "paused": "一時停止"
   },
   "chart": {
     "x_axis": "エックス アクシス",
@@ -1081,7 +1094,9 @@
     "select": {
       "error": "少なくとも1つの作業項目を選択してください",
       "empty": "作業項目が選択されていません",
-      "add_selected": "選択した作業項目を追加"
+      "add_selected": "選択した作業項目を追加",
+      "select_all": "すべて選択",
+      "deselect_all": "すべての選択を解除"
     },
     "open_in_full_screen": "作業項目をフルスクリーンで開く"
   },
@@ -1314,19 +1329,6 @@
       "custom": "カスタムアナリティクス"
     },
     "empty_state": {
-      "general": {
-        "title": "進捗、ワークロード、割り当てを追跡。傾向を把握し、ブロッカーを解消して、作業をより速く進めましょう",
-        "description": "スコープと需要、見積もり、スコープクリープを確認できます。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが予定通りに進むようにします。",
-        "primary_button": {
-          "text": "最初のプロジェクトを開始",
-          "comic": {
-            "title": "アナリティクスはサイクル + モジュールで最も効果を発揮",
-            "description": "まず、作業項目をサイクルでタイムボックス化し、可能であれば、複数のサイクルにまたがる作業項目をモジュールにグループ化します。左のナビゲーションで両方を確認してください。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。",
         "title": "まだデータがありません"
@@ -1342,21 +1344,22 @@
     },
     "created_vs_resolved": "作成 vs 解決",
     "customized_insights": "カスタマイズされたインサイト",
-    "backlog_work_items": "バックログの作業項目",
+    "backlog_work_items": "バックログの{entity}",
     "active_projects": "アクティブなプロジェクト",
     "trend_on_charts": "グラフの傾向",
     "all_projects": "すべてのプロジェクト",
     "summary_of_projects": "プロジェクトの概要",
     "project_insights": "プロジェクトのインサイト",
-    "started_work_items": "開始された作業項目",
-    "total_work_items": "作業項目の合計",
+    "started_work_items": "開始された{entity}",
+    "total_work_items": "{entity}の合計",
     "total_projects": "プロジェクト合計",
     "total_admins": "管理者の合計",
     "total_users": "ユーザー総数",
     "total_intake": "総収入",
-    "un_started_work_items": "未開始の作業項目",
+    "un_started_work_items": "未開始の{entity}",
     "total_guests": "ゲストの合計",
-    "completed_work_items": "完了した作業項目"
+    "completed_work_items": "完了した{entity}",
+    "total": "{entity}の合計"
   },
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
@@ -2459,5 +2462,9 @@
     "last_edited_by": "最終編集者",
     "previously_edited_by": "以前の編集者",
     "edited_by": "編集者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   }
 }

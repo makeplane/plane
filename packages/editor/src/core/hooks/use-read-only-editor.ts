@@ -12,6 +12,7 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
+import { CORE_EDITOR_META } from "@/constants/meta";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -45,6 +46,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+    parseOptions: { preserveWhitespace: true },
     editorProps: {
       ...CoreReadOnlyEditorProps({
         editorClassName,
@@ -70,15 +72,15 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (initialValue === null || initialValue === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: "full" });
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: true });
   }, [editor, initialValue]);
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: (emitUpdate = false) => {
-      editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
+      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
     setEditorValue: (content: string, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: "full" });
+      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
     getMarkDown: (): string => {
       const markdownOutput = editor?.storage.markdown.getMarkdown();

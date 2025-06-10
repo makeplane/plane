@@ -1,4 +1,4 @@
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
@@ -181,3 +181,10 @@ export type TPublicIssuesResponse = {
   extra_stats: null;
   results: TPublicIssueResponseResults;
 };
+
+export interface IWorkItemPeekOverview {
+  embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
+  is_draft?: boolean;
+  storeType?: EIssuesStoreType;
+}

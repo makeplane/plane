@@ -850,6 +850,7 @@
     "live": "即時",
     "change_history": "變更歷史記錄",
     "coming_soon": "即將推出",
+    "member": "成員",
     "members": "成員",
     "you": "您",
     "upgrade_cta": {
@@ -867,7 +868,19 @@
     "view": "檢視",
     "deactivated_user": "已停用用戶",
     "apply": "應用",
-    "applying": "應用中"
+    "applying": "應用中",
+    "users": "使用者",
+    "admins": "管理員",
+    "guests": "訪客",
+    "on_track": "進展順利",
+    "off_track": "偏離軌道",
+    "timeline": "時間軸",
+    "completion": "完成",
+    "upcoming": "即將發生",
+    "completed": "已完成",
+    "in_progress": "進行中",
+    "planned": "已計劃",
+    "paused": "暫停"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -1082,7 +1095,9 @@
     "select": {
       "error": "請至少選擇一個工作事項",
       "empty": "未選擇工作事項",
-      "add_selected": "新增已選取的工作事項"
+      "add_selected": "新增已選取的工作事項",
+      "select_all": "全選",
+      "deselect_all": "取消全選"
     },
     "open_in_full_screen": "以全螢幕開啟工作事項"
   },
@@ -1315,19 +1330,6 @@
       "custom": "自訂分析"
     },
     "empty_state": {
-      "general": {
-        "title": "追蹤進度、工作量和分配。發現趨勢、移除阻礙，加快工作進展",
-        "description": "檢視範圍與需求、評估和範圍擴展。取得團隊成員和團隊的績效，確保您的專案按時進行。",
-        "primary_button": {
-          "text": "開始您的第一個專案",
-          "comic": {
-            "title": "分析最適合搭配週期 + 模組使用",
-            "description": "首先，將您的工作事項時間區段到週期中，如果可以的話，將跨週期的工作事項分組到模組中。請檢視左側導覽列中的兩個功能。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "指派給您的工作項目將依狀態分類顯示在此處。",
         "title": "尚無資料"
@@ -1343,21 +1345,22 @@
     },
     "created_vs_resolved": "已建立 vs 已解決",
     "customized_insights": "自訂化洞察",
-    "backlog_work_items": "待辦工作項目",
+    "backlog_work_items": "待辦的{entity}",
     "active_projects": "啟用中的專案",
     "trend_on_charts": "圖表趨勢",
     "all_projects": "所有專案",
     "summary_of_projects": "專案摘要",
     "project_insights": "專案洞察",
-    "started_work_items": "已開始的工作項目",
-    "total_work_items": "工作項目總數",
+    "started_work_items": "已開始的{entity}",
+    "total_work_items": "{entity}總數",
     "total_projects": "專案總數",
     "total_admins": "管理員總數",
     "total_users": "使用者總數",
     "total_intake": "總收入",
-    "un_started_work_items": "未開始的工作項目",
+    "un_started_work_items": "未開始的{entity}",
     "total_guests": "訪客總數",
-    "completed_work_items": "已完成的工作項目"
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}總數"
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -2461,5 +2464,10 @@
     "last_edited_by": "最後編輯者",
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
+  },
+
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
   }
 }
