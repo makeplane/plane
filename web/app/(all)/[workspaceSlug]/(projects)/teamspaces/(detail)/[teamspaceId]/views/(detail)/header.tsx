@@ -28,15 +28,18 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useCommandPalette, useIssues, useLabel, useMember, useUserPermissions } from "@/hooks/store";
-// plane web constants
-// plane web hooks
-import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
+// plane web imports
+import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
+import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   // router
-  const { workspaceSlug, teamspaceId, viewId } = useParams();
-    // plane hooks
-    const { t } = useTranslation();
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -47,14 +50,15 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
   const {
     workspace: { workspaceMemberIds },
   } = useMember();
-  const { loader, getTeamspaceById } = useTeamspaces();
+  const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
   const { getTeamspaceViewsLoader, getViewById } = useTeamspaceViews();
   // derived values
-  const teamspaceViewLoader = getTeamspaceViewsLoader(teamspaceId?.toString());
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
+  const teamspaceViewLoader = teamspaceId ? getTeamspaceViewsLoader(teamspaceId) : undefined;
+  const teamspace = teamspaceId ? getTeamspaceById(teamspaceId) : undefined;
   const view = teamspace && viewId ? getViewById(teamspace.id, viewId.toString()) : null;
   const activeLayout = issueFilters?.displayFilters?.layout;
   const publishLink = getPublishViewLink(view?.anchor);
+  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
   // permissions
   const canUserCreateIssue = allowPermissions(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
@@ -268,8 +272,11 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
           <></>
         )}
         {canUserCreateIssue ? (
-          <Button onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW)} size="sm">
-            {t("issue.add")}
+          <Button
+            onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds)}
+            size="sm"
+          >
+            <div className="hidden sm:block">Add</div> work item
           </Button>
         ) : (
           <></>

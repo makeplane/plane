@@ -22,26 +22,33 @@ import {
   THandleTemplateChangeProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
-// plane web hooks
-import { useLabel, useMember, useModule, useProjectState } from "@/hooks/store";
+// hooks
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUser } from "@/hooks/store/user/user-user";
+// plane web imports
 import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
-// plane web services
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
+// local imports
 import { ConversionToastActionItems } from "../conversion-toast-action-items";
 
 const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
-  const { children, templateId, dataForPreload } = props;
+  const { children, templateId, dataForPreload, allowedProjectIds } = props;
   // states
   const [workItemTemplateId, setWorkItemTemplateId] = useState<string | null>(templateId ?? null);
   const [isApplyingTemplate, setIsApplyingTemplate] = useState<boolean>(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
-  // store hooks
+  // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { projectsWithCreatePermissions } = useUser();
   const { getProjectStateIds, getAvailableWorkItemCreationStateIds, fetchProjectStates } = useProjectState();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
   const { getModulesFetchStatusByProjectId, getProjectModuleIds, fetchModules } = useModule();
@@ -60,6 +67,9 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     fetchAllPropertiesAndOptions,
   } = useIssueTypes();
   const { fetchPropertyActivities } = useIssuePropertiesActivity();
+  // derived values
+  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
     // get active issue types for the project
@@ -347,6 +357,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
   return (
     <IssueModalContext.Provider
       value={{
+        allowedProjectIds: allowedProjectIds ?? projectIdsWithCreatePermissions,
         workItemTemplateId,
         setWorkItemTemplateId,
         isApplyingTemplate,

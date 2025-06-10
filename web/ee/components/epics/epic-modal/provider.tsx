@@ -14,6 +14,8 @@ import {
   TCreateUpdatePropertyValuesProps,
   TPropertyValuesValidationProps,
 } from "@/components/issues";
+// hooks
+import { useUser } from "@/hooks/store/user/user-user";
 // plane web components
 import { ConversionToastActionItems } from "@/plane-web/components/issues";
 // plane web hooks
@@ -36,11 +38,16 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
   const [issuePropertyValues, setIssuePropertyValues] = useState<TIssuePropertyValues>({});
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { projectsWithCreatePermissions } = useUser();
   // plane web hooks
   const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId, convertWorkItem } =
     useIssueTypes();
   const { fetchPropertyActivities } = useIssuePropertiesActivity();
-  const { t } = useTranslation();
+  // derived values
+  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
     // get active issue types for the project
@@ -166,6 +173,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
   return (
     <IssueModalContext.Provider
       value={{
+        allowedProjectIds: projectIdsWithCreatePermissions,
         workItemTemplateId,
         setWorkItemTemplateId,
         isApplyingTemplate,

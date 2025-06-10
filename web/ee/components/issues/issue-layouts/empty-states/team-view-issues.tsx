@@ -11,10 +11,14 @@ import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 export const TeamViewEmptyState: React.FC = observer(() => {
   // router
-  const { workspaceSlug, teamspaceId, viewId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -22,7 +26,9 @@ export const TeamViewEmptyState: React.FC = observer(() => {
   const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.TEAM_VIEW);
   const { allowPermissions } = useUserPermissions();
+  const { getTeamspaceProjectIds } = useTeamspaces();
   // derived values
+  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
   const userFilters = issuesFilter?.issueFilters?.filters;
   const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
   const issueFilterCount = size(
@@ -44,19 +50,19 @@ export const TeamViewEmptyState: React.FC = observer(() => {
   });
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !teamspaceId) return;
+    if (!workspaceSlug || !teamspaceId || !viewId) return;
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = [];
     });
     issuesFilter.updateFilters(
-      workspaceSlug.toString(),
-      teamspaceId.toString(),
+      workspaceSlug,
+      teamspaceId,
       EIssueFilterType.FILTERS,
       {
         ...newFilters,
       },
-      viewId.toString()
+      viewId
     );
   };
 
@@ -87,7 +93,7 @@ export const TeamViewEmptyState: React.FC = observer(() => {
               description={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.description")}
               onClick={() => {
                 setTrackElement("Teamspace view work items empty state");
-                toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW);
+                toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds);
               }}
               disabled={!hasWorkspaceMemberLevelPermissions}
             />

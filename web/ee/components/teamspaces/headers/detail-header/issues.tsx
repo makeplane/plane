@@ -6,8 +6,9 @@ import { EIssuesStoreType } from "@plane/constants";
 import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { TeamHeaderFilters } from "@/plane-web/components/teamspaces/issues/filters";
+import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
 type TeamspaceWorkItemListHeaderActionsProps = {
   teamspaceId: string;
@@ -20,6 +21,9 @@ export const TeamspaceWorkItemListHeaderActions = observer((props: TeamspaceWork
   const { workspaceSlug } = useParams();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
+  const { getTeamspaceProjectIds } = useTeamspaces();
+  // derived values
+  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
 
   if (!workspaceSlug) return;
 
@@ -31,7 +35,7 @@ export const TeamspaceWorkItemListHeaderActions = observer((props: TeamspaceWork
       {isEditingAllowed ? (
         <Button
           onClick={() => {
-            toggleCreateIssueModal(true, EIssuesStoreType.TEAM);
+            toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
           }}
           size="sm"
         >
