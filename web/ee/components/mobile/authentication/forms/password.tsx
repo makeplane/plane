@@ -2,11 +2,10 @@
 
 import { FC, useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
-import { EMobileAuthSteps, EMobileAuthModes, TMobileAuthSteps, TMobileAuthModes } from "@plane/constants";
+// plane imports
+import { EMobileAuthSteps, EMobileAuthModes, TMobileAuthSteps, TMobileAuthModes, API_BASE_URL } from "@plane/constants";
 import { TMobileCSRFToken } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import mobileAuthService from "@/plane-web/services/mobile.service";
 
