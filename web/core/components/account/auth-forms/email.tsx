@@ -55,7 +55,6 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             `relative flex items-center rounded-md bg-onboarding-background-200 border`,
             !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
           )}
-          tabIndex={-1}
           onFocus={() => {
             setIsFocused(true);
           }}
@@ -84,6 +83,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
               }}
               className="absolute right-3 size-5 grid place-items-center"
               aria-label={t("aria_labels.auth_forms.clear_email")}
+              tabIndex={-1}
             >
               <XCircle className="size-5 stroke-custom-text-400" />
             </button>
