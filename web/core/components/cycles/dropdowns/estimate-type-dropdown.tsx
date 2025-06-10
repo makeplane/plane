@@ -4,6 +4,7 @@ import { TCycleEstimateType } from "@plane/types";
 import { EEstimateSystem } from "@plane/types/src/enums";
 import { CustomSelect } from "@plane/ui";
 import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { cycleEstimateOptions } from "../analytics-sidebar";
 
 type TProps = {
@@ -37,6 +38,6 @@ export const EstimateTypeDropdown = observer((props: TProps) => {
       </CustomSelect>
     </div>
   ) : showDefault ? (
-    <span className="capitalize">{value}</span>
+    <span className="capitalize">{`${ESTIMATE_TYPE[value]}s`}</span>
   ) : null;
 });

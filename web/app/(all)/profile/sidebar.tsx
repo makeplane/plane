@@ -16,6 +16,7 @@ import {
   Settings2,
   CirclePlus,
   Mails,
+  Blocks,
 } from "lucide-react";
 // plane imports
 import { PROFILE_ACTION_LINKS } from "@plane/constants";
@@ -29,7 +30,7 @@ import { SidebarNavItem } from "@/components/sidebar";
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useAppTheme, useUser, useUserSettings, useWorkspace } from "@/hooks/store";
+import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 const WORKSPACE_ACTION_LINKS = [
@@ -47,17 +48,20 @@ const WORKSPACE_ACTION_LINKS = [
   },
 ];
 
-export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
+const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size?: number; className?: string }) => {
   const icons = {
     profile: CircleUser,
     security: KeyRound,
     activity: Activity,
-    appearance: Settings2,
+    preferences: Settings2,
     notifications: Bell,
+    connections: Blocks,
+    "api-tokens": KeyRound,
   };
 
   if (type === undefined) return null;
   const Icon = icons[type as keyof typeof icons];
+  if (!Icon) return null;
   return <Icon size={size} className={className} />;
 };
 export const ProfileLayoutSidebar = observer(() => {
@@ -68,7 +72,7 @@ export const ProfileLayoutSidebar = observer(() => {
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: currentUser, signOut } = useUser();
-  const { data: currentUserSettings } = useUserSettings();
+  // const { currentUserSettings } = useUser();
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -76,9 +80,10 @@ export const ProfileLayoutSidebar = observer(() => {
   const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
+  // FIXME:
   const redirectWorkspaceSlug =
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    // currentUserSettings?.workspace?.last_workspace_slug ||
+    // currentUserSettings?.workspace?.fallback_workspace_slug ||
     "";
 
   const ref = useRef<HTMLDivElement>(null);

@@ -10,14 +10,17 @@ from plane.db.models import (
     ProjectMember,
     ProjectMemberInvite,
     ProjectIdentifier,
-    DeployBoard,
     ProjectPublicMember,
 )
+from plane.ee.models.initiative import InitiativeProject
 
 
 class ProjectSerializer(BaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
+    initiative_ids = serializers.ListField(
+        child=serializers.UUIDField(), required=False, write_only=True
+    )
 
     class Meta:
         model = Project
@@ -44,7 +47,26 @@ class ProjectSerializer(BaseSerializer):
         return project
 
     def update(self, instance, validated_data):
+        initiative_ids = validated_data.pop("initiative_ids", [])
+
         identifier = validated_data.get("identifier", "").strip().upper()
+        workspace_id = self.context["workspace_id"]
+
+        if initiative_ids:
+            InitiativeProject.objects.filter(project_id=instance.id).delete()
+
+            InitiativeProject.objects.bulk_create(
+                [
+                    InitiativeProject(
+                        project_id=instance.id,
+                        initiative_id=initiative_id,
+                        workspace_id=workspace_id,
+                        created_by_id=self.context["user_id"],
+                    )
+                    for initiative_id in initiative_ids
+                ],
+                batch_size=10,
+            )
 
         # If identifier is not passed update the project and return
         if identifier == "":
@@ -67,6 +89,7 @@ class ProjectSerializer(BaseSerializer):
         # If found check if the project_id to be updated and identifier project id is same
         if project_identifier.project_id == instance.id:
             # If same pass update
+
             project = super().update(instance, validated_data)
             return project
 
@@ -92,10 +115,17 @@ class ProjectLiteSerializer(BaseSerializer):
 class ProjectListSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
-    member_role = serializers.IntegerField(read_only=True)
+    member_role = serializers.SerializerMethodField()
     anchor = serializers.CharField(read_only=True)
     members = serializers.SerializerMethodField()
     cover_image_url = serializers.CharField(read_only=True)
+    # EE: project_grouping starts
+    state_id = serializers.UUIDField(read_only=True)
+    priority = serializers.CharField(read_only=True)
+    start_date = serializers.DateTimeField(read_only=True)
+    target_date = serializers.DateTimeField(read_only=True)
+    initiative_ids = serializers.SerializerMethodField(read_only=True)
+    # EE: project_grouping ends
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
 
     def get_members(self, obj):
@@ -105,8 +135,31 @@ class ProjectListSerializer(DynamicBaseSerializer):
             return [
                 member.member_id
                 for member in project_members
-                if member.is_active and not member.member.is_bot
+                if member.is_active and (member.member and not member.member.is_bot)
             ]
+        return []
+
+    def get_member_role(self, obj):
+        project_members = getattr(obj, "members_list", None)
+        current_user_id = (
+            self.context["request"].user.id if self.context.get("request") else None
+        )
+        # calculate the current member role
+        if project_members is not None and current_user_id:
+            current_member = next(
+                (
+                    member
+                    for member in project_members
+                    if member.member_id == current_user_id
+                ),
+                None,
+            )
+            return current_member.role if current_member else None
+        return None
+
+    def get_initiative_ids(self, obj):
+        if obj.initiatives.all():
+            return [initiative.initiative_id for initiative in obj.initiatives.all()]
         return []
 
     class Meta:
@@ -129,9 +182,6 @@ class ProjectDetailSerializer(BaseSerializer):
 
 
 class ProjectMemberSerializer(BaseSerializer):
-    workspace = WorkspaceLiteSerializer(read_only=True)
-    project = ProjectLiteSerializer(read_only=True)
-    member = UserLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMember
@@ -148,8 +198,8 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer): 
-    original_role = serializers.IntegerField(source='role', read_only=True)
+class ProjectMemberRoleSerializer(DynamicBaseSerializer):
+    original_role = serializers.IntegerField(source="role", read_only=True)
 
     class Meta:
         model = ProjectMember
@@ -180,16 +230,6 @@ class ProjectMemberLiteSerializer(BaseSerializer):
         model = ProjectMember
         fields = ["member", "id", "is_subscribed"]
         read_only_fields = fields
-
-
-class DeployBoardSerializer(BaseSerializer):
-    project_details = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-
-    class Meta:
-        model = DeployBoard
-        fields = "__all__"
-        read_only_fields = ["workspace", "project", "anchor"]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):

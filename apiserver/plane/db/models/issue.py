@@ -1,5 +1,7 @@
 # Python import
+import uuid
 from uuid import uuid4
+import hashlib
 
 # Django imports
 from django.conf import settings
@@ -10,10 +12,11 @@ from django.db import models, transaction, connection
 from django.utils import timezone
 from django.db.models import Q
 from django import apps
+from django.db import connection
 
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.mixins import SoftDeletionManager
+from plane.db.models.project import ProjectManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
@@ -71,6 +74,7 @@ def get_default_display_properties():
         "due_date": True,
         "estimate": True,
         "key": True,
+        "issue_type": True,
         "labels": True,
         "link": True,
         "priority": True,
@@ -78,11 +82,13 @@ def get_default_display_properties():
         "state": True,
         "sub_issue_count": True,
         "updated_on": True,
+        "customer_count": True,
+        "customer_request_count": True,
     }
 
 
 # TODO: Handle identifiers for Bulk Inserts - nk
-class IssueManager(SoftDeletionManager):
+class IssueManager(ProjectManager):
     def get_queryset(self):
         return (
             super()
@@ -93,6 +99,7 @@ class IssueManager(SoftDeletionManager):
                 | models.Q(issue_intake__status=2)
                 | models.Q(issue_intake__isnull=True)
             )
+            .filter(Q(type__is_epic=False) | Q(type__isnull=True))
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
             .exclude(archived_at__isnull=False)

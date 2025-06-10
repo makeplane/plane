@@ -46,6 +46,69 @@ export type TSlashCommandSection = {
   items: ISlashCommandItem[];
 };
 
+// Fuzzy search utility function
+const fuzzySearch = (query: string, text: string): { match: boolean; score: number } => {
+  if (!query) return { match: true, score: 0 };
+
+  const queryLower = query.toLowerCase().trim();
+  const textLower = text.toLowerCase();
+
+  // Direct match gets highest score
+  if (textLower.includes(queryLower)) {
+    return {
+      match: true,
+      score: 1000 - textLower.indexOf(queryLower) * 0.1, // Earlier matches score higher
+    };
+  }
+
+  // For multi-word queries, check if all words appear
+  const queryWords = queryLower.split(/\s+/);
+  if (queryWords.length > 1) {
+    const allWordsMatch = queryWords.every((word) => textLower.includes(word));
+    if (allWordsMatch) {
+      return { match: true, score: 800 }; // High score but not as high as exact match
+    }
+
+    // Check how many words match
+    const matchingWords = queryWords.filter((word) => textLower.includes(word)).length;
+    const matchRatio = matchingWords / queryWords.length;
+
+    // If more than half the words match, consider it a partial match
+    if (matchRatio > 0.5) {
+      return { match: true, score: 500 * matchRatio };
+    }
+  }
+
+  // Character-by-character fuzzy matching
+  let score = 0;
+  let queryIndex = 0;
+  let lastMatchIndex = -1;
+
+  // Check for characters appearing in sequence
+  for (let i = 0; i < textLower.length; i++) {
+    if (queryIndex >= queryLower.length) break;
+
+    if (textLower[i] === queryLower[queryIndex]) {
+      // Consecutive matches get bonus points
+      if (lastMatchIndex === i - 1) {
+        score += 5;
+      } else {
+        score += 1;
+      }
+
+      lastMatchIndex = i;
+      queryIndex++;
+    }
+  }
+
+  // If we matched all query characters
+  if (queryIndex === queryLower.length) {
+    return { match: true, score };
+  }
+
+  return { match: false, score: 0 };
+};
+
 export const getSlashCommandFilteredSections =
   (args: TExtensionProps) =>
   ({ query }: { query: string }): TSlashCommandSection[] => {
@@ -301,19 +364,44 @@ export const getSlashCommandFilteredSections =
       }
     });
 
-    const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => ({
-      ...section,
-      items: section.items.filter((item) => {
-        if (typeof query !== "string") return;
+    const filteredSlashSections = SLASH_COMMAND_SECTIONS.map((section) => {
+      // Get items with fuzzy search scores
+      const scoredItems = section.items
+        .map((item) => {
+          if (!query) return { item, score: 0, match: true };
 
-        const lowercaseQuery = query.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(lowercaseQuery) ||
-          item.description.toLowerCase().includes(lowercaseQuery) ||
-          item.searchTerms.some((t) => t.includes(lowercaseQuery))
-        );
-      }),
-    }));
+          const titleMatch = fuzzySearch(query, item.title);
+          const descMatch = fuzzySearch(query, item.description);
+
+          // Check search terms
+          let termScore = 0;
+          let termMatch = false;
+          for (const term of item.searchTerms) {
+            const result = fuzzySearch(query, term);
+            if (result.match) {
+              termMatch = true;
+              termScore = Math.max(termScore, result.score);
+            }
+          }
+
+          // Use the best match from title, description or search terms
+          const match = titleMatch.match || descMatch.match || termMatch;
+          const score = Math.max(
+            titleMatch.score * 2, // Title matches are more important
+            descMatch.score,
+            termScore * 1.5 // Search term matches are also important
+          );
+
+          return { item, score, match };
+        })
+        .filter(({ match }) => match)
+        .sort((a, b) => b.score - a.score); // Sort by score, highest first
+
+      return {
+        ...section,
+        items: scoredItems.map(({ item }) => item),
+      };
+    });
 
     return filteredSlashSections.filter((s) => s.items.length !== 0);
   };
