@@ -27,8 +27,9 @@ class MagicCodeProvider(CredentialAdapter):
         callback: Optional[Callable] = None,
         invitation_id: Optional[str] = None,
     ):
+        exception_email = str(self.key).replace("magic_", "", 1)
         self.exception_payload = {
-            "email": key,
+            "email": exception_email,
         }
         if invitation_id:
             self.exception_payload["invitation_id"] = invitation_id
