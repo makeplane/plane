@@ -9,7 +9,7 @@ export const PageNavigationPaneTabsList = () => {
   const { t } = useTranslation();
 
   return (
-    <Tab.List className="relative flex items-center p-[2px] rounded-md bg-custom-background-80">
+    <Tab.List className="relative flex items-center p-[2px] rounded-md bg-custom-background-80 mx-3.5">
       {({ selectedIndex }) => (
         <>
           {PAGE_NAVIGATION_PANE_TABS_LIST.map((tab) => (

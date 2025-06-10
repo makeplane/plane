@@ -25,7 +25,11 @@ import {
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM, PageNavigationPaneRoot } from "../navigation-pane";
+import {
+  PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
+  PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
+  PageNavigationPaneRoot,
+} from "../navigation-pane";
 
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
@@ -51,7 +55,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
-  const [isVersionsOverlayOpen, setIsVersionsOverlayOpen] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // router
@@ -86,27 +89,10 @@ export const PageRoot = observer((props: TPageRootProps) => {
     }, 0);
   }, [isContentEditable, setEditorRef]);
 
-  const version = searchParams.get("version");
-  useEffect(() => {
-    if (!version) {
-      setIsVersionsOverlayOpen(false);
-      return;
-    }
-    setIsVersionsOverlayOpen(true);
-  }, [version]);
-
-  const handleCloseVersionsOverlay = useCallback(() => {
-    const updatedRoute = updateQueryParams({
-      paramsToRemove: ["version"],
-    });
-    router.push(updatedRoute);
-  }, [router, updateQueryParams]);
-
   const handleRestoreVersion = useCallback(async (descriptionHTML: string) => {
     editorRef.current?.clearEditor();
     editorRef.current?.setEditorValue(descriptionHTML);
   }, []);
-  const currentVersionDescription = editorRef.current?.getDocument().html;
 
   // reset editor ref on unmount
   useEffect(
@@ -131,7 +117,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
 
   const handleCloseNavigationPane = useCallback(() => {
     const updatedRoute = updateQueryParams({
-      paramsToRemove: [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM],
+      paramsToRemove: [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM, PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
     });
     router.push(updatedRoute);
   }, [router, updateQueryParams]);
@@ -140,14 +126,9 @@ export const PageRoot = observer((props: TPageRootProps) => {
     <div className="relative size-full overflow-hidden flex transition-all duration-300 ease-in-out">
       <div className="size-full flex flex-col overflow-hidden">
         <PageVersionsOverlay
-          activeVersion={version}
-          currentVersionDescription={currentVersionDescription ?? null}
           editorComponent={PagesVersionEditor}
-          fetchAllVersions={handlers.fetchAllVersions}
           fetchVersionDetails={handlers.fetchVersionDetails}
           handleRestore={handleRestoreVersion}
-          isOpen={isVersionsOverlayOpen}
-          onClose={handleCloseVersionsOverlay}
           pageId={page.id ?? ""}
           restoreEnabled={isContentEditable}
         />
@@ -172,6 +153,10 @@ export const PageRoot = observer((props: TPageRootProps) => {
         handleClose={handleCloseNavigationPane}
         isNavigationPaneOpen={isValidNavigationPaneTab}
         page={page}
+        versionHistory={{
+          fetchAllVersions: handlers.fetchAllVersions,
+          fetchVersionDetails: handlers.fetchVersionDetails,
+        }}
       />
     </div>
   );

@@ -12,8 +12,8 @@ export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
   const { editorRef } = page;
 
   return (
-    <div>
-      <PageContentBrowser editorRef={editorRef} />
+    <div className="mt-3 space-y-1">
+      <PageContentBrowser className="mt-0" editorRef={editorRef} />
     </div>
   );
 };

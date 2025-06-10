@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TriangleAlert } from "lucide-react";
+import { EyeIcon, TriangleAlert } from "lucide-react";
 // plane types
 import { TPageVersion } from "@plane/types";
 // plane ui
@@ -13,7 +13,6 @@ import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.he
 
 type Props = {
   activeVersion: string | null;
-  currentVersionDescription: string | null;
   editorComponent: React.FC<TVersionEditorProps>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleClose: () => void;
@@ -23,16 +22,8 @@ type Props = {
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const {
-    activeVersion,
-    currentVersionDescription,
-    editorComponent,
-    fetchVersionDetails,
-    handleClose,
-    handleRestore,
-    pageId,
-    restoreEnabled,
-  } = props;
+  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } =
+    props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -42,11 +33,9 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     error: versionDetailsError,
     mutate: mutateVersionDetails,
   } = useSWR(
-    pageId && activeVersion && activeVersion !== "current" ? `PAGE_VERSION_${activeVersion}` : null,
-    pageId && activeVersion && activeVersion !== "current" ? () => fetchVersionDetails(pageId, activeVersion) : null
+    pageId && activeVersion ? `PAGE_VERSION_${activeVersion}` : null,
+    pageId && activeVersion ? () => fetchVersionDetails(pageId, activeVersion) : null
   );
-
-  const isCurrentVersionActive = activeVersion === "current";
 
   const handleRestoreVersion = async () => {
     if (!restoreEnabled) return;
@@ -96,14 +85,18 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
       ) : (
         <>
           <div className="min-h-14 py-3 px-5 border-b border-custom-border-200 flex items-center justify-between gap-2">
-            <h6 className="text-base font-medium">
-              {isCurrentVersionActive
-                ? "Current version"
-                : versionDetails
+            <div className="flex items-center gap-4">
+              <h6 className="text-base font-medium">
+                {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
-            </h6>
-            {!isCurrentVersionActive && restoreEnabled && (
+              </h6>
+              <span className="flex-shrink-0 flex items-center gap-1 text-xs font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded">
+                <EyeIcon className="flex-shrink-0 size-3" />
+                View only
+              </span>
+            </div>
+            {restoreEnabled && (
               <Button
                 variant="primary"
                 size="sm"
@@ -116,12 +109,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <VersionEditor
-              activeVersion={activeVersion}
-              currentVersionDescription={currentVersionDescription}
-              isCurrentVersionActive={isCurrentVersionActive}
-              versionDetails={versionDetails}
-            />
+            <VersionEditor activeVersion={activeVersion} versionDetails={versionDetails} />
           </div>
         </>
       )}
