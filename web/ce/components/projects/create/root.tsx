@@ -18,11 +18,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 
-const ERROR_MESSAGES = {
-  PROJECT_NAME_ALREADY_EXIST: "project_name_already_taken",
-  PROJECT_IDENTIFIER_ALREADY_EXIST: "project_identifier_already_taken",
-} as const;
-
 export type TCreateProjectFormProps = {
   setToFavorite?: boolean;
   workspaceSlug: string;
@@ -60,32 +55,6 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     });
   };
 
-  const handleError = (err: any) => {
-    if (err?.code) {
-      // check if the error code is a known error
-      const errorMessage = ERROR_MESSAGES[err?.code as keyof typeof ERROR_MESSAGES];
-      // if the error is a known error, show the error message
-      if (errorMessage) {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: t(errorMessage),
-        });
-        return;
-      }
-    }
-
-    if (err?.data) {
-      Object.keys(err?.data ?? {}).map((key) => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("error"),
-          message: err.data[key],
-        });
-      });
-    }
-  };
-
   const onSubmit = async (formData: Partial<TProject>) => {
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
@@ -119,7 +88,29 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         }
         handleNextStep(res.id);
       })
-      .catch((err) => handleError(err));
+      .catch((err) => {
+        if (err?.data.code === "PROJECT_NAME_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("project_name_already_taken"),
+          });
+        } else if (err?.data.code === "PROJECT_IDENTIFIER_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("project_identifier_already_taken"),
+          });
+        } else {
+          Object.keys(err?.data ?? {}).map((key) => {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("error"),
+              message: err.data[key],
+            });
+          });
+        }
+      });
   };
 
   const handleClose = () => {
