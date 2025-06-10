@@ -45,16 +45,18 @@ class PageQuerySet(SoftDeletionQuerySet):
                 team_space_id__in=teamspace_ids
             ).values_list("project_id", flat=True)
 
-            return self.filter(Q(projects__id__in=teamspace_project_ids) | base_query)
+            return self.filter(
+                Q(projects__id__in=teamspace_project_ids) | Q(base_query),
+            )
 
-        return self.filter(base_query)
+        return self.filter(base_query, deleted_at__isnull=True)
 
 
 class PageManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return PageQuerySet(self.model, using=self._db)
+        return PageQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
@@ -104,7 +106,6 @@ class Page(BaseModel):
     objects = PageManager()
     external_id = models.CharField(max_length=255, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
-
 
     class Meta:
         verbose_name = "Page"

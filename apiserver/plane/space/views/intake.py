@@ -220,7 +220,11 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             issue,
             data=issue_data,
             partial=True,
-            context={"project_id": project_deploy_board.project_id},
+            context={
+                "project_id": project_deploy_board.project_id,
+                "user_id": request.user.id,
+                "slug": project_deploy_board.workspace.slug,
+            },
         )
 
         if issue_serializer.is_valid():

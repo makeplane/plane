@@ -71,7 +71,10 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+
 
 class IssueListEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -328,7 +331,9 @@ class IssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             issue_queryset = issue_queryset.filter(created_by=request.user)
 
@@ -431,6 +436,8 @@ class IssueViewSet(BaseViewSet):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "user_id": request.user.id,
+                "slug": slug,
             },
         )
         if request.data.get("state_id"):
@@ -664,7 +671,9 @@ class IssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -764,7 +773,14 @@ class IssueViewSet(BaseViewSet):
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         serializer = IssueCreateSerializer(
-            issue, data=request.data, partial=True, context={"project_id": project_id}
+            issue,
+            data=request.data,
+            partial=True,
+            context={
+                "project_id": project_id,
+                "user_id": request.user.id,
+                "slug": slug,
+            },
         )
         if serializer.is_valid():
             serializer.save()
@@ -1086,7 +1102,13 @@ class IssuePaginatedViewSet(BaseViewSet):
             role=5,
             is_active=True,
         )
-        if project_member.exists() and not project.guest_view_all_features and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id):
+        if (
+            project_member.exists()
+            and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
+        ):
             base_queryset = base_queryset.filter(created_by=request.user)
             queryset = queryset.filter(created_by=request.user)
 

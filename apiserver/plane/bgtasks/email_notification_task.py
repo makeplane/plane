@@ -207,7 +207,7 @@ def send_email_notification(
             if issue.type and issue.type.is_epic:
                 entity_type = "epic"
             else:
-                entity_type = "issue"
+                entity_type = "work-item"
 
             template_data = []
             total_changes = 0

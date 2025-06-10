@@ -47,7 +47,10 @@ from plane.utils.host import base_host
 from plane.db.models.intake import SourceType
 from plane.ee.models import IntakeSetting
 from plane.ee.utils.workflow import WorkflowStateManager
-from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+
 
 class IntakeViewSet(BaseViewSet):
     serializer_class = IntakeSerializer
@@ -233,7 +236,9 @@ class IntakeIssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             intake_issue = intake_issue.filter(created_by=request.user)
         return self.paginate(
@@ -285,6 +290,8 @@ class IntakeIssueViewSet(BaseViewSet):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "user_id": request.user.id,
+                "slug": slug,
             },
         )
         # EE start
@@ -454,7 +461,14 @@ class IntakeIssueViewSet(BaseViewSet):
             )
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True, context={"project_id": project_id}
+                issue,
+                data=issue_data,
+                partial=True,
+                context={
+                    "project_id": project_id,
+                    "user_id": request.user.id,
+                    "slug": slug,
+                },
             )
 
             if issue_serializer.is_valid():
@@ -623,7 +637,9 @@ class IntakeIssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not intake_issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -684,7 +700,9 @@ class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
             ).exists()
             and not project.guest_view_all_features
             and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

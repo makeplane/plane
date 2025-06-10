@@ -2,15 +2,18 @@
 import pytz
 from typing import Optional, Any
 from uuid import UUID
+
 # Django imports
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+
 # Module imports
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
 
@@ -206,7 +209,9 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
                 team_space_id__in=teamspace_ids
             ).values_list("project_id", flat=True)
 
-            return self.filter(Q(project_id__in=teamspace_project_ids) | base_query)
+            return self.filter(
+                Q(project_id__in=teamspace_project_ids) | Q(base_query),
+            )
 
         return self.filter(base_query)
 
@@ -215,7 +220,9 @@ class WorkspaceManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return WorkspaceQuerySet(self.model, using=self._db)
+        return WorkspaceQuerySet(self.model, using=self._db).filter(
+            deleted_at__isnull=True
+        )
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)

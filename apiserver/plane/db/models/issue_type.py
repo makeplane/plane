@@ -10,6 +10,7 @@ from .project import ProjectBaseModel
 from .base import BaseModel
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
+
 class IssueTypeQuerySet(SoftDeletionQuerySet):
     """QuerySet for project related models that handles accessibility"""
 
@@ -37,7 +38,8 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
             ).values_list("project_id", flat=True)
 
             return self.filter(
-                Q(project_issue_types__project_id__in=teamspace_project_ids) | base_query
+                Q(project_issue_types__project_id__in=teamspace_project_ids)
+                | Q(base_query),
             )
 
         return self.filter(base_query)
@@ -47,7 +49,9 @@ class IssueTypeManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return IssueTypeQuerySet(self.model, using=self._db)
+        return IssueTypeQuerySet(self.model, using=self._db).filter(
+            deleted_at__isnull=True
+        )
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)

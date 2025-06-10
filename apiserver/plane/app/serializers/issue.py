@@ -39,7 +39,7 @@ from plane.db.models import (
     ProjectMember,
     IssueType,
 )
-from plane.ee.models import Customer
+from plane.ee.models import Customer, TeamspaceProject, TeamspaceMember
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -128,12 +128,39 @@ class IssueCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         if attrs.get("assignee_ids", []):
-            attrs["assignee_ids"] = ProjectMember.objects.filter(
-                project_id=self.context["project_id"],
-                role__gte=15,
-                is_active=True,
-                member_id__in=attrs["assignee_ids"],
-            ).values_list("member_id", flat=True)
+            assignee_ids = attrs["assignee_ids"]
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.TEAMSPACES,
+                user_id=self.context["user_id"],
+                slug=self.context["slug"],
+            ):
+                # Then get all the teamspace members for the project with project member
+                teamspace_ids = TeamspaceProject.objects.filter(
+                    project_id=self.context["project_id"],
+                ).values_list("team_space_id", flat=True)
+
+                # Then get all the teamspace members for the project with project member
+                attrs["assignee_ids"] = list(
+                    TeamspaceMember.objects.filter(
+                        team_space_id__in=teamspace_ids,
+                        member_id__in=assignee_ids,
+                    ).values_list("member_id", flat=True)
+                ) + list(
+                    ProjectMember.objects.filter(
+                        project_id=self.context["project_id"],
+                        role__gte=15,
+                        is_active=True,
+                        member_id__in=assignee_ids,
+                    ).values_list("member_id", flat=True)
+                )
+
+            else:
+                attrs["assignee_ids"] = ProjectMember.objects.filter(
+                    project_id=self.context["project_id"],
+                    role__gte=15,
+                    is_active=True,
+                    member_id__in=assignee_ids,
+                ).values_list("member_id", flat=True)
 
         return attrs
 

@@ -122,6 +122,7 @@ class IntakePublishedIssueEndpoint(BaseAPIView):
                     "workspace_id": deploy_board.workspace_id,
                     "default_assignee_id": deploy_board.project.default_assignee_id,
                     "created_by_id": api_token.user_id,
+                    "slug": deploy_board.workspace.slug,
                 },
             )
 

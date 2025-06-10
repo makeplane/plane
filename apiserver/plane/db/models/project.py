@@ -83,16 +83,21 @@ class ProjectBaseQuerySet(SoftDeletionQuerySet):
                 team_space_id__in=teamspace_ids
             ).values_list("project_id", flat=True)
 
-            return self.filter(Q(id__in=teamspace_project_ids) | base_query)
+            return self.filter(
+                Q(id__in=teamspace_project_ids) | Q(base_query),
+                deleted_at__isnull=True,
+            )
 
-        return self.filter(base_query)
+        return self.filter(base_query, deleted_at__isnull=True)
 
 
 class ProjectBaseManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return ProjectBaseQuerySet(self.model, using=self._db)
+        return ProjectBaseQuerySet(self.model, using=self._db).filter(
+            deleted_at__isnull=True
+        )
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
@@ -245,8 +250,9 @@ class ProjectQuerySet(SoftDeletionQuerySet):
                 team_space_id__in=teamspace_ids
             ).values_list("project_id", flat=True)
 
-
-            return self.filter(Q(project_id__in=teamspace_project_ids) | base_query)
+            return self.filter(
+                Q(project_id__in=teamspace_project_ids) | Q(base_query),
+            )
 
         return self.filter(base_query)
 
@@ -255,7 +261,9 @@ class ProjectManager(SoftDeletionManager):
     """Manager for project related models that handles accessibility"""
 
     def get_queryset(self):
-        return ProjectQuerySet(self.model, using=self._db)
+        return ProjectQuerySet(self.model, using=self._db).filter(
+            deleted_at__isnull=True
+        )
 
     def accessible_to(self, user_id: UUID, slug: str):
         return self.get_queryset().accessible_to(user_id, slug)
