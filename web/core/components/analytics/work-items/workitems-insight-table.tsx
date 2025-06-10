@@ -184,23 +184,6 @@ const WorkItemsInsightTable = observer(() => {
     ],
     [columnsLabels, getProjectById, isPeekView, t]
   );
-
-  // const exportCSV = useCallback(
-  //   (rows: Row<AnalyticsTableDataMap["work-items"]>[]) => {
-  //     const rowData = rows.map((row) => {
-  //       const headers = columns.map((col) => col.meta?.export?.key).filter((v) => v != undefined);
-  //       const cells = headers.reduce((acc, header) => {
-  //         const cell = columns.find((col) => col.meta?.export?.key === header)?.meta?.export?.value(row);
-  //         return { ...acc, [header]: cell };
-  //       }, {});
-  //       return cells;
-  //     });
-  //     const csv = generateCsv(csvConfig(workspaceSlug))(rowData);
-  //     download(csvConfig(workspaceSlug))(csv);
-  //   },
-  //   [columns, workspaceSlug]
-  // );
-
   return (
     <InsightTable<"work-items">
       analyticsType="work-items"
