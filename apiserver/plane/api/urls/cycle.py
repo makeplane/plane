@@ -42,7 +42,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-cycles/",
-        CycleArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["post"]),
+        CycleArchiveUnarchiveAPIEndpoint.as_view(http_method_names=["get"]),
         name="cycle-archive-unarchive",
     ),
     path(

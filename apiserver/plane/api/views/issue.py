@@ -177,11 +177,9 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             )
 
 
-class IssueAPIEndpoint(BaseAPIView):
+class IssueListCreateAPIEndpoint(BaseAPIView):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to issue.
-
+    This viewset provides `list` and `create` on issue level
     """
 
     model = Issue
@@ -209,8 +207,8 @@ class IssueAPIEndpoint(BaseAPIView):
         ).distinct()
 
     @work_item_docs(
-        operation_id="get_work_item",
-        summary="List or retrieve work items",
+        operation_id="list_work_items",
+        summary="List work items",
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
@@ -219,10 +217,10 @@ class IssueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
-    def get(self, request, slug, project_id, pk=None):
-        """List or retrieve work items
+    def get(self, request, slug, project_id):
+        """List work items
 
-        Retrieve a paginated list of all work items in a project, or get details of a specific work item.
+        Retrieve a paginated list of all work items in a project.
         Supports filtering, ordering, and field selection through query parameters.
         """
 
@@ -236,18 +234,6 @@ class IssueAPIEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
-            )
-
-        if pk:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(workspace__slug=slug, project_id=project_id, pk=pk)
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
@@ -441,8 +427,177 @@ class IssueAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class IssueDetailAPIEndpoint(BaseAPIView):
+    """Issue Detail Endpoint"""
+
+    model = Issue
+    webhook_event = "issue"
+    permission_classes = [ProjectEntityPermission]
+    serializer_class = IssueSerializer
+
+    def get_queryset(self):
+        return (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        ).distinct()
+
     @work_item_docs(
-        operation_id="update_work_item",
+        operation_id="retrieve_work_item",
+        summary="Retrieve work item",
+        responses={
+            200: OpenApiResponse(
+                description="List of issues or issue details",
+                response=IssueSerializer,
+            ),
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
+    def get(self, request, slug, project_id, pk):
+        """Retrieve work item
+
+        Retrieve details of a specific work item.
+        Supports filtering, ordering, and field selection through query parameters.
+        """
+
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            issue = Issue.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
+        if pk:
+            issue = Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            ).get(workspace__slug=slug, project_id=project_id, pk=pk)
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = (
+            self.get_queryset()
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order if order_by_param == "priority" else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
+
+        return self.paginate(
+            request=request,
+            queryset=(issue_queryset),
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+    @work_item_docs(
+        operation_id="put_work_item",
         summary="Update or create work item",
         request=IssueSerializer,
         responses={
@@ -571,7 +726,7 @@ class IssueAPIEndpoint(BaseAPIView):
             )
 
     @work_item_docs(
-        operation_id="patch_work_item",
+        operation_id="update_work_item",
         summary="Partially update work item",
         request=IssueSerializer,
         responses={
@@ -587,7 +742,7 @@ class IssueAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def patch(self, request, slug, project_id, pk=None):
+    def patch(self, request, slug, project_id, pk):
         """Update work item
 
         Partially update an existing work item with the provided fields.
@@ -648,7 +803,7 @@ class IssueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Work Item not found"),
         },
     )
-    def delete(self, request, slug, project_id, pk=None):
+    def delete(self, request, slug, project_id, pk):
         """Delete work item
 
         Permanently delete an existing work item from the project.
@@ -684,12 +839,8 @@ class IssueAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class LabelAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to the labels.
-
-    """
+class LabelListCreateAPIEndpoint(BaseAPIView):
+    """Label List and Create Endpoint"""
 
     serializer_class = LabelSerializer
     model = Label
@@ -779,6 +930,36 @@ class LabelAPIEndpoint(BaseAPIView):
             )
 
     @label_docs(
+        operation_id="list_labels",
+        responses={
+            200: OpenApiResponse(
+                description="Labels",
+                response=LabelSerializer,
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List labels
+
+        Retrieve all labels in the project.
+        """
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda labels: LabelSerializer(
+                labels, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+
+class LabelDetailAPIEndpoint(BaseAPIView):
+    """Label Detail Endpoint"""
+
+    serializer_class = LabelSerializer
+    model = Label
+    permission_classes = [ProjectMemberPermission]
+
+    @label_docs(
         operation_id="get_labels",
         responses={
             200: OpenApiResponse(
@@ -787,22 +968,13 @@ class LabelAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def get(self, request, slug, project_id, pk=None):
-        """List or retrieve labels
+    def get(self, request, slug, project_id, pk):
+        """Retrieve label
 
-        Retrieve all labels in the project or get details of a specific label.
-        Returns paginated results when listing all labels.
+        Retrieve details of a specific label.
         """
-        if pk is None:
-            return self.paginate(
-                request=request,
-                queryset=(self.get_queryset()),
-                on_results=lambda labels: LabelSerializer(
-                    labels, many=True, fields=self.fields, expand=self.expand
-                ).data,
-            )
         label = self.get_queryset().get(pk=pk)
-        serializer = LabelSerializer(label, fields=self.fields, expand=self.expand)
+        serializer = LabelSerializer(label)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @label_docs(
@@ -821,7 +993,7 @@ class LabelAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def patch(self, request, slug, project_id, pk=None):
+    def patch(self, request, slug, project_id, pk):
         """Update label
 
         Partially update an existing label's properties like name, color, or description.
@@ -862,7 +1034,7 @@ class LabelAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Label not found"),
         },
     )
-    def delete(self, request, slug, project_id, pk=None):
+    def delete(self, request, slug, project_id, pk):
         """Delete label
 
         Permanently remove a label from the project.
@@ -873,17 +1045,12 @@ class LabelAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueLinkAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to the links of the particular issue.
+class IssueLinkListCreateAPIEndpoint(BaseAPIView):
+    """Issue Link List and Create Endpoint"""
 
-    """
-
-    permission_classes = [ProjectEntityPermission]
-
-    model = IssueLink
     serializer_class = IssueLinkSerializer
+    model = IssueLink
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -900,7 +1067,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         )
 
     @issue_link_docs(
-        operation_id="get_issue_links",
+        operation_id="list_issue_links",
         responses={
             200: OpenApiResponse(
                 description="Issue links",
@@ -909,29 +1076,18 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
-    def get(self, request, slug, project_id, issue_id, pk=None):
-        """List or retrieve issue links
+    def get(self, request, slug, project_id, issue_id):
+        """List issue links
 
-        Retrieve all links associated with an issue or get details of a specific link.
-        Returns paginated results when listing all links.
+        Retrieve all links associated with an issue.
         """
-        if pk is None:
-            issue_links = self.get_queryset()
-            serializer = IssueLinkSerializer(
-                issue_links, fields=self.fields, expand=self.expand
-            )
-            return self.paginate(
-                request=request,
-                queryset=(self.get_queryset()),
-                on_results=lambda issue_links: IssueLinkSerializer(
-                    issue_links, many=True, fields=self.fields, expand=self.expand
-                ).data,
-            )
-        issue_link = self.get_queryset().get(pk=pk)
-        serializer = IssueLinkSerializer(
-            issue_link, fields=self.fields, expand=self.expand
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda issue_links: IssueLinkSerializer(
+                issue_links, many=True, fields=self.fields, expand=self.expand
+            ).data,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @issue_link_docs(
         operation_id="create_issue_link",
@@ -970,6 +1126,62 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             serializer = IssueLinkSerializer(link)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class IssueLinkDetailAPIEndpoint(BaseAPIView):
+    """Issue Link Detail Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+
+    model = IssueLink
+    serializer_class = IssueLinkSerializer
+
+    def get_queryset(self):
+        return (
+            IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @issue_link_docs(
+        operation_id="retrieve_issue_link",
+        responses={
+            200: OpenApiResponse(
+                description="Issue link",
+                response=IssueLinkSerializer,
+            ),
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
+    def get(self, request, slug, project_id, issue_id, pk):
+        """Retrieve issue link
+
+        Retrieve details of a specific issue link.
+        """
+        if pk is None:
+            issue_links = self.get_queryset()
+            serializer = IssueLinkSerializer(
+                issue_links, fields=self.fields, expand=self.expand
+            )
+            return self.paginate(
+                request=request,
+                queryset=(self.get_queryset()),
+                on_results=lambda issue_links: IssueLinkSerializer(
+                    issue_links, many=True, fields=self.fields, expand=self.expand
+                ).data,
+            )
+        issue_link = self.get_queryset().get(pk=pk)
+        serializer = IssueLinkSerializer(
+            issue_link, fields=self.fields, expand=self.expand
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @issue_link_docs(
         operation_id="update_issue_link",
@@ -1044,12 +1256,8 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to comments of the particular issue.
-
-    """
+class IssueCommentListCreateAPIEndpoint(BaseAPIView):
+    """Issue Comment List and Create Endpoint"""
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
@@ -1082,7 +1290,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         )
 
     @issue_comment_docs(
-        operation_id="get_issue_comments",
+        operation_id="list_issue_comments",
         responses={
             200: OpenApiResponse(
                 description="Issue comments",
@@ -1091,23 +1299,16 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
-    def get(self, request, slug, project_id, issue_id, pk=None):
-        """List or retrieve issue comments
+    def get(self, request, slug, project_id, issue_id):
+        """List issue comments
 
-        Retrieve all comments for an issue or get details of a specific comment.
-        Returns paginated results when listing all comments.
+        Retrieve all comments for an issue.
         """
-        if pk:
-            issue_comment = self.get_queryset().get(pk=pk)
-            serializer = IssueCommentSerializer(
-                issue_comment, fields=self.fields, expand=self.expand
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda issue_comment: IssueCommentSerializer(
-                issue_comment, many=True, fields=self.fields, expand=self.expand
+            on_results=lambda issue_comments: IssueCommentSerializer(
+                issue_comments, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
@@ -1183,6 +1384,61 @@ class IssueCommentAPIEndpoint(BaseAPIView):
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class IssueCommentDetailAPIEndpoint(BaseAPIView):
+    """Issue Comment Detail Endpoint"""
+
+    serializer_class = IssueCommentSerializer
+    model = IssueComment
+    webhook_event = "issue_comment"
+    permission_classes = [ProjectLitePermission]
+
+    def get_queryset(self):
+        return (
+            IssueComment.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .select_related("workspace", "project", "issue", "actor")
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=self.kwargs.get("project_id"),
+                        member_id=self.request.user.id,
+                        is_active=True,
+                    )
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @issue_comment_docs(
+        operation_id="retrieve_issue_comment",
+        responses={
+            200: OpenApiResponse(
+                description="Issue comments",
+                response=IssueCommentSerializer,
+            ),
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
+    def get(self, request, slug, project_id, issue_id, pk):
+        """Retrieve issue comment
+
+        Retrieve details of a specific comment.
+        """
+        issue_comment = self.get_queryset().get(pk=pk)
+        serializer = IssueCommentSerializer(
+            issue_comment, fields=self.fields, expand=self.expand
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @issue_comment_docs(
         operation_id="update_issue_comment",
@@ -1285,11 +1541,12 @@ class IssueCommentAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueActivityAPIEndpoint(BaseAPIView):
+class IssueActivityListAPIEndpoint(BaseAPIView):
+
     permission_classes = [ProjectEntityPermission]
 
     @issue_activity_docs(
-        operation_id="get_issue_activities",
+        operation_id="list_issue_activities",
         responses={
             200: OpenApiResponse(
                 description="Issue activities",
@@ -1298,10 +1555,10 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
-    def get(self, request, slug, project_id, issue_id, pk=None):
-        """List or retrieve issue activities
+    def get(self, request, slug, project_id, issue_id):
+        """List issue activities
 
-        Retrieve chronological activity logs for an issue or get details of a specific activity.
+        Retrieve chronological activity logs for an issue.
         Excludes comment, vote, reaction, and draft activities.
         """
         issue_activities = (
@@ -1317,10 +1574,48 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))
 
-        if pk:
-            issue_activities = issue_activities.get(pk=pk)
-            serializer = IssueActivitySerializer(issue_activities)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=(issue_activities),
+            on_results=lambda issue_activity: IssueActivitySerializer(
+                issue_activity, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+
+class IssueActivityDetailAPIEndpoint(BaseAPIView):
+    """Issue Activity Detail Endpoint"""
+
+    permission_classes = [ProjectEntityPermission]
+
+    @issue_activity_docs(
+        operation_id="retrieve_issue_activity",
+        responses={
+            200: OpenApiResponse(
+                description="Issue activities",
+                response=IssueActivitySerializer,
+            ),
+            404: OpenApiResponse(description="Issue not found"),
+        },
+    )
+    def get(self, request, slug, project_id, issue_id, pk):
+        """Retrieve issue activity
+
+        Retrieve details of a specific activity.
+        Excludes comment, vote, reaction, and draft activities.
+        """
+        issue_activities = (
+            IssueActivity.objects.filter(
+                issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            )
+            .filter(
+                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .select_related("actor", "workspace", "issue", "project")
+        ).order_by(request.GET.get("order_by", "created_at"))
 
         return self.paginate(
             request=request,
@@ -1331,10 +1626,12 @@ class IssueActivityAPIEndpoint(BaseAPIView):
         )
 
 
-class IssueAttachmentEndpoint(BaseAPIView):
+class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
+    """Issue Attachment List and Create Endpoint"""
+
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [ProjectEntityPermission]
     model = FileAsset
+    permission_classes = [ProjectEntityPermission]
 
     @issue_attachment_docs(
         operation_id="create_issue_attachment",
@@ -1496,6 +1793,41 @@ class IssueAttachmentEndpoint(BaseAPIView):
         )
 
     @issue_attachment_docs(
+        operation_id="list_issue_attachments",
+        responses={
+            200: OpenApiResponse(
+                description="Issue attachment",
+                response=IssueAttachmentSerializer,
+            ),
+            404: OpenApiResponse(description="Issue attachment not found"),
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """List issue attachments
+
+        List all attachments for an issue.
+        """
+        # Get all the attachments
+        issue_attachments = FileAsset.objects.filter(
+            issue_id=issue_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_uploaded=True,
+        )
+        # Serialize the attachments
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
+    """Issue Attachment Detail Endpoint"""
+
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [ProjectEntityPermission]
+    model = FileAsset
+
+    @issue_attachment_docs(
         operation_id="delete_issue_attachment",
         responses={
             204: OpenApiResponse(description="Issue attachment deleted successfully"),
@@ -1534,7 +1866,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @issue_attachment_docs(
-        operation_id="get_issue_attachment",
+        operation_id="retrieve_issue_attachment",
         responses={
             200: OpenApiResponse(
                 description="Issue attachment",
@@ -1543,44 +1875,30 @@ class IssueAttachmentEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue attachment not found"),
         },
     )
-    def get(self, request, slug, project_id, issue_id, pk=None):
-        """List or download issue attachments
+    def get(self, request, slug, project_id, issue_id, pk):
+        """Retrieve issue attachment
 
-        List all attachments for an issue or generate download URL for a specific attachment.
-        Returns presigned URL for secure file access.
+        Retrieve details of a specific attachment.
         """
-        if pk:
-            # Get the asset
-            asset = FileAsset.objects.get(
-                id=pk, workspace__slug=slug, project_id=project_id
-            )
-
-            # Check if the asset is uploaded
-            if not asset.is_uploaded:
-                return Response(
-                    {"error": "The asset is not uploaded.", "status": False},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            storage = S3Storage(request=request)
-            presigned_url = storage.generate_presigned_url(
-                object_name=asset.asset.name,
-                disposition="attachment",
-                filename=asset.attributes.get("name"),
-            )
-            return HttpResponseRedirect(presigned_url)
-
-        # Get all the attachments
-        issue_attachments = FileAsset.objects.filter(
-            issue_id=issue_id,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            workspace__slug=slug,
-            project_id=project_id,
-            is_uploaded=True,
+        # Get the asset
+        asset = FileAsset.objects.get(
+            id=pk, workspace__slug=slug, project_id=project_id
         )
-        # Serialize the attachments
-        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The asset is not uploaded.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        storage = S3Storage(request=request)
+        presigned_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
+        return HttpResponseRedirect(presigned_url)
 
     @issue_attachment_docs(
         operation_id="upload_issue_attachment",

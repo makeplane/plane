@@ -11,12 +11,18 @@ from .state import (
 
 from .issue import (
     WorkspaceIssueAPIEndpoint,
-    IssueAPIEndpoint,
-    LabelAPIEndpoint,
-    IssueLinkAPIEndpoint,
-    IssueCommentAPIEndpoint,
-    IssueActivityAPIEndpoint,
-    IssueAttachmentEndpoint,
+    IssueListCreateAPIEndpoint,
+    IssueDetailAPIEndpoint,
+    LabelListCreateAPIEndpoint,
+    LabelDetailAPIEndpoint,
+    IssueLinkListCreateAPIEndpoint,
+    IssueLinkDetailAPIEndpoint,
+    IssueCommentListCreateAPIEndpoint,
+    IssueCommentDetailAPIEndpoint,
+    IssueActivityListAPIEndpoint,
+    IssueActivityDetailAPIEndpoint,
+    IssueAttachmentListCreateAPIEndpoint,
+    IssueAttachmentDetailAPIEndpoint,
     IssueSearchEndpoint,
 )
 

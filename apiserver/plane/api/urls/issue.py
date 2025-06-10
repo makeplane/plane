@@ -1,13 +1,19 @@
 from django.urls import path
 
 from plane.api.views import (
-    IssueAPIEndpoint,
-    LabelAPIEndpoint,
-    IssueLinkAPIEndpoint,
-    IssueCommentAPIEndpoint,
-    IssueActivityAPIEndpoint,
+    IssueListCreateAPIEndpoint,
+    IssueDetailAPIEndpoint,
+    LabelListCreateAPIEndpoint,
+    LabelDetailAPIEndpoint,
+    IssueLinkListCreateAPIEndpoint,
+    IssueLinkDetailAPIEndpoint,
+    IssueCommentListCreateAPIEndpoint,
+    IssueCommentDetailAPIEndpoint,
+    IssueActivityListAPIEndpoint,
+    IssueActivityDetailAPIEndpoint,
+    IssueAttachmentListCreateAPIEndpoint,
+    IssueAttachmentDetailAPIEndpoint,
     WorkspaceIssueAPIEndpoint,
-    IssueAttachmentEndpoint,
     IssueSearchEndpoint,
 )
 
@@ -24,62 +30,66 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
-        IssueAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        IssueListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
-        IssueAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        IssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
-        LabelAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        LabelListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
-        LabelAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        LabelDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
-        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        IssueLinkListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
-        IssueLinkAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        IssueLinkDetailAPIEndpoint.as_view(
+            http_method_names=["get", "patch", "delete"]
+        ),
         name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
-        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        IssueCommentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="comment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
-        IssueCommentAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        IssueCommentDetailAPIEndpoint.as_view(
+            http_method_names=["get", "patch", "delete"]
+        ),
         name="comment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/",
-        IssueActivityAPIEndpoint.as_view(http_method_names=["get"]),
+        IssueActivityListAPIEndpoint.as_view(http_method_names=["get"]),
         name="activity",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/<uuid:pk>/",
-        IssueActivityAPIEndpoint.as_view(http_method_names=["get"]),
+        IssueActivityDetailAPIEndpoint.as_view(http_method_names=["get"]),
         name="activity",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
-        IssueAttachmentEndpoint.as_view(http_method_names=["get", "post"]),
+        IssueAttachmentListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="attachment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentEndpoint.as_view(http_method_names=["get", "delete"]),
+        IssueAttachmentDetailAPIEndpoint.as_view(http_method_names=["get", "delete"]),
         name="issue-attachment",
     ),
 ]
