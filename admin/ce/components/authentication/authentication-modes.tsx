@@ -10,14 +10,12 @@ import {
 } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
-import {
-  AuthenticationMethodCard,
-  EmailCodesConfiguration,
-  GithubConfiguration,
-  GitlabConfiguration,
-  GoogleConfiguration,
-  PasswordLoginConfiguration,
-} from "@/components/authentication";
+import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
+import { GithubConfiguration } from "@/components/authentication/github-config";
+import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
+import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // plane admin components
 import { UpgradeButton } from "@/plane-admin/components/common";
 // assets

@@ -33,7 +33,7 @@ const helpOptions = [
   },
 ];
 
-export const HelpSection: FC = observer(() => {
+export const AdminSidebarHelpSection: FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store

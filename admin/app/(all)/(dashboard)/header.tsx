@@ -3,16 +3,27 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// mobx
-// ui
-import { Settings } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 // icons
 import { Breadcrumbs } from "@plane/ui";
 // components
-import { SidebarHamburgerToggle } from "@/components/admin-sidebar";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+// hooks
+import { useTheme } from "@/hooks/store";
 
-export const InstanceHeader: FC = observer(() => {
+export const HamburgerToggle: FC = observer(() => {
+  const { isSidebarCollapsed, toggleSidebar } = useTheme();
+  return (
+    <div
+      className="w-7 h-7 rounded flex justify-center items-center bg-custom-background-80 transition-all hover:bg-custom-background-90 cursor-pointer group md:hidden"
+      onClick={() => toggleSidebar(!isSidebarCollapsed)}
+    >
+      <Menu size={14} className="text-custom-text-200 group-hover:text-custom-text-100 transition-all" />
+    </div>
+  );
+});
+
+export const AdminHeader: FC = observer(() => {
   const pathName = usePathname();
 
   const getHeaderTitle = (pathName: string) => {
@@ -63,7 +74,7 @@ export const InstanceHeader: FC = observer(() => {
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-sidebar-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
-        <SidebarHamburgerToggle />
+        <HamburgerToggle />
         {breadcrumbItems.length >= 0 && (
           <div>
             <Breadcrumbs>

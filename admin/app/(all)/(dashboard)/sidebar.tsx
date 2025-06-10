@@ -7,11 +7,11 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useTheme } from "@/hooks/store";
 // components
-import { HelpSection } from "./help-section";
-import { SidebarDropdown } from "./sidebar-dropdown";
-import { SidebarMenu } from "./sidebar-menu";
+import { AdminSidebarDropdown } from "./sidebar-dropdown";
+import { AdminSidebarHelpSection } from "./sidebar-help-section";
+import { AdminSidebarMenu } from "./sidebar-menu";
 
-export const InstanceSidebar: FC = observer(() => {
+export const AdminSidebar: FC = observer(() => {
   // store
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
 
@@ -49,9 +49,9 @@ export const InstanceSidebar: FC = observer(() => {
       `}
     >
       <div ref={ref} className="flex h-full w-full flex-1 flex-col">
-        <SidebarDropdown />
-        <SidebarMenu />
-        <HelpSection />
+        <AdminSidebarDropdown />
+        <AdminSidebarMenu />
+        <AdminSidebarHelpSection />
       </div>
     </div>
   );

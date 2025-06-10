@@ -7,13 +7,11 @@ import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/cons
 import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
-import {
-  EmailCodesConfiguration,
-  GithubConfiguration,
-  GitlabConfiguration,
-  GoogleConfiguration,
-  PasswordLoginConfiguration,
-} from "@/components/authentication";
+import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
+import { GithubConfiguration } from "@/components/authentication/github-config";
+import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
+import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // images
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";

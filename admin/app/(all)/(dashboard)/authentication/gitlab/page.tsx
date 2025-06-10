@@ -6,8 +6,7 @@ import Image from "next/image";
 import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 // components
-import { AuthenticationMethodCard } from "@/components/authentication";
-import { PageHeader } from "@/components/common";
+import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
@@ -57,7 +56,6 @@ const InstanceGitlabAuthenticationPage = observer(() => {
   };
   return (
     <>
-      <PageHeader title="GitLab Authentication - Plane Web" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard

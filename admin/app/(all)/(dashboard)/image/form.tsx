@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ControllerInput } from "@/components/common";
+import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 

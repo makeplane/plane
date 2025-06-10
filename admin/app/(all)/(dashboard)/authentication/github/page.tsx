@@ -9,8 +9,7 @@ import useSWR from "swr";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
-import { AuthenticationMethodCard } from "@/components/authentication";
-import { PageHeader } from "@/components/common";
+import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
@@ -61,9 +60,11 @@ const InstanceGithubAuthenticationPage = observer(() => {
         setIsSubmitting(false);
       });
   };
+
+  const isGithubEnabled = enableGithubConfig === "1";
+
   return (
     <>
-      <PageHeader title="GitHub Authentication - Plane Web" />
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
@@ -79,11 +80,9 @@ const InstanceGithubAuthenticationPage = observer(() => {
             }
             config={
               <ToggleSwitch
-                value={Boolean(parseInt(enableGithubConfig))}
+                value={isGithubEnabled}
                 onChange={() => {
-                  Boolean(parseInt(enableGithubConfig)) === true
-                    ? updateConfig("IS_GITHUB_ENABLED", "0")
-                    : updateConfig("IS_GITHUB_ENABLED", "1");
+                  updateConfig("IS_GITHUB_ENABLED", isGithubEnabled ? "0" : "1");
                 }}
                 size="sm"
                 disabled={isSubmitting || !formattedConfig}

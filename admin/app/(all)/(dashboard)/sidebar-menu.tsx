@@ -49,7 +49,7 @@ const INSTANCE_ADMIN_LINKS = [
   },
 ];
 
-export const SidebarMenu = observer(() => {
+export const AdminSidebarMenu = observer(() => {
   // store hooks
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // router

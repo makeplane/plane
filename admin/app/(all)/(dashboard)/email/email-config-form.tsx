@@ -7,7 +7,7 @@ import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from
 // ui
 import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { ControllerInput, TControllerInputFormField } from "@/components/common";
+import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components

@@ -8,7 +8,7 @@ import { API_BASE_URL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/const
 import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
-import { Banner } from "@/components/common";
+import { Banner } from "@/components/common/banner";
 // local components
 import { AuthBanner } from "./auth-banner";
 import { authErrorHandler } from "./auth-helpers";

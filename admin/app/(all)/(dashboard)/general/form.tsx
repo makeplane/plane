@@ -8,7 +8,7 @@ import { IInstance, IInstanceAdmin } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
-import { ControllerInput } from "@/components/common";
+import { ControllerInput } from "@/components/common/controller-input";
 import { useInstance } from "@/hooks/store";
 import { IntercomConfig } from "./intercom";
 // hooks
