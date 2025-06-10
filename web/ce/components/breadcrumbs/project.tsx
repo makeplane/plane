@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Briefcase } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
@@ -13,12 +12,21 @@ import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TProject } from "@/plane-web/types";
 
-export const ProjectBreadcrumb = observer(() => {
+type TProjectBreadcrumbProps = {
+  workspaceSlug: string;
+  projectId: string;
+  handleOnClick?: () => void;
+};
+
+export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
+  const { workspaceSlug, projectId, handleOnClick } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams() as { workspaceSlug: string };
   // store hooks
-  const { currentProjectDetails, joinedProjectIds, getPartialProjectById } = useProject();
+  const { joinedProjectIds, getPartialProjectById } = useProject();
+  const currentProjectDetails = getPartialProjectById(projectId);
+
+  // store hooks
 
   if (!currentProjectDetails) return null;
 
@@ -54,7 +62,8 @@ export const ProjectBreadcrumb = observer(() => {
             title={currentProjectDetails?.name}
             icon={renderIcon(currentProjectDetails)}
             handleOnClick={() => {
-              router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues`);
+              if (handleOnClick) handleOnClick();
+              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues`);
             }}
           />
         }

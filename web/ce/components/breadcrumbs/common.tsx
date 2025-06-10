@@ -18,7 +18,7 @@ export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (prop
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
   return (
     <>
-      <ProjectBreadcrumb />
+      <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
       {featureKey && (
         <ProjectFeatureBreadcrumb
           workspaceSlug={workspaceSlug?.toString()}
