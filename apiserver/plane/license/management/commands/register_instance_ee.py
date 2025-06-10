@@ -86,9 +86,7 @@ class Command(BaseCommand):
             instance.latest_version = data.get(
                 "latest_version", instance.latest_version
             )
-            instance.current_version = data.get(
-                "user_version", instance.current_version
-            )
+            instance.current_version = data.get("user_version", app_version)
             instance.edition = InstanceEdition.PLANE_COMMERCIAL.value
             instance.last_checked_at = timezone.now()
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"

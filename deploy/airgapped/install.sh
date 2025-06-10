@@ -186,6 +186,10 @@ if [[ "$INSTALLATION_TYPE" == "Upgrade" ]] && [[ -f "$SETUP_DIR/plane.env.backup
         value=""
     fi
 
+    if [[ "$key" == "APP_RELEASE_VERSION" ]]; then
+      continue
+    fi
+
     # echo "$key=$value"
     update_env "$SETUP_DIR/plane.env" "$key" "$value"
   done < "$SETUP_DIR/plane.env.backup"
