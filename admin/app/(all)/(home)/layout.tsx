@@ -12,8 +12,6 @@ import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-l
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme();
 
-  console.log("resolvedTheme", resolvedTheme);
-
   const patternBackground = resolvedTheme === "light" ? PlaneBackgroundPattern : PlaneBackgroundPatternDark;
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 

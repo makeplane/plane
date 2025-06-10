@@ -57,6 +57,7 @@ export class UserStore implements IUserStore {
     try {
       if (this.currentUser === undefined) this.isLoading = true;
       const currentUser = await this.userService.adminDetails();
+      console.log("currentUser: ", currentUser);
       if (currentUser) {
         await this.store.instance.fetchInstanceAdmins();
         runInAction(() => {

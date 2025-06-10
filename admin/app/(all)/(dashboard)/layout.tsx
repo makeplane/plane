@@ -37,16 +37,20 @@ const AdminLayout: FC<TAdminLayout> = (props) => {
     );
   }
 
-  return (
-    <div className="relative flex h-screen w-screen overflow-hidden">
-      <AdminSidebar />
-      <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-        <AdminHeader />
-        <div className="h-full w-full overflow-hidden">{children}</div>
-      </main>
-      <NewUserPopup />
-    </div>
-  );
+  if (isUserLoggedIn) {
+    return (
+      <div className="relative flex h-screen w-screen overflow-hidden">
+        <AdminSidebar />
+        <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+          <AdminHeader />
+          <div className="h-full w-full overflow-hidden">{children}</div>
+        </main>
+        <NewUserPopup />
+      </div>
+    );
+  }
+
+  return <></>;
 };
 
 export default observer(AdminLayout);
