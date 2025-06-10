@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+
 	prime_api "github.com/makeplane/plane-ee/monitor/lib/api"
 	"github.com/makeplane/plane-ee/monitor/lib/logger"
 	"github.com/makeplane/plane-ee/monitor/pkg/constants"
@@ -18,6 +19,7 @@ var CmdLogger = logger.NewHandler(nil)
 var MACHINE_SIGNATURE = ""
 var APP_DOMAIN = ""
 var APP_VERSION = ""
+var API_HOSTNAME = ""
 var INSTANCE_ID = ""
 var PORT = "8080"
 var HOST = "https://prime.plane.so"
@@ -28,6 +30,27 @@ var rootCmd = &cobra.Command{
 	Use:   descriptors.PRIME_MONITOR_USAGE,
 	Short: descriptors.PRIME_MONITOR_USAGE_DESC,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Let's check for the port
+		if port := os.Getenv(constants.PORT); port != "" {
+			PORT = port
+		}
+
+		if appVersion := os.Getenv(constants.APP_VERSION); appVersion == "" {
+			return fmt.Errorf(error_msgs.APP_VERSION_ABSENT)
+		} else {
+			APP_VERSION = appVersion
+		}
+
+		// Let's not check for anything in the case the system is in airgapped mode
+		if cmd.Name() == "start-airgapped" {
+			if apiHostname := os.Getenv(constants.API_HOSTNAME); apiHostname == "" {
+				return fmt.Errorf(error_msgs.API_HOSTNAME_ABSENT)
+			} else {
+				API_HOSTNAME = apiHostname
+			}
+			return nil
+		}
+
 		if host := os.Getenv(constants.PRIME_HOST); host != "" {
 			HOST = host
 		}
@@ -36,12 +59,6 @@ var rootCmd = &cobra.Command{
 			return fmt.Errorf(error_msgs.APP_DOMAIN_ABSENT)
 		} else {
 			APP_DOMAIN = appDomain
-		}
-
-		if appVersion := os.Getenv(constants.APP_VERSION); appVersion == "" {
-			return fmt.Errorf(error_msgs.APP_VERSION_ABSENT)
-		} else {
-			APP_VERSION = appVersion
 		}
 
 		if port := os.Getenv(constants.PORT); port != "" {

@@ -8,7 +8,12 @@ from .payment import (
     PaymentLinkEndpoint,
     WorkspaceFreeTrialEndpoint,
 )
-from .license_activate import WorkspaceLicenseEndpoint, LicenseDeActivateEndpoint
+from .license_activate import (
+    WorkspaceLicenseEndpoint,
+    LicenseDeActivateEndpoint,
+    LicenseActivateUploadEndpoint,
+    LicenseFileFetchEndpoint,
+)
 from .subscription import (
     SubscriptionEndpoint,
     UpgradeSubscriptionEndpoint,

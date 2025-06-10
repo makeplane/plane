@@ -4,6 +4,7 @@ import os
 
 # Django imports
 from django.utils import timezone
+from django.conf import settings
 
 # Third party imports
 from rest_framework.response import Response
@@ -25,6 +26,9 @@ class CheckUpdateEndpoint(BaseAPIView):
         prime_host = os.environ.get("PRIME_HOST", False)
         license_key = os.environ.get("LICENSE_KEY", False)
         machine_signature = os.environ.get("MACHINE_SIGNATURE", False)
+
+        if settings.IS_AIRGAPPED:
+            return {}
 
         response = requests.get(
             f"{prime_host}/api/v2/instances/me/",

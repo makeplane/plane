@@ -21,11 +21,13 @@ type Props = {
 export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
   const { isOpen, data, onClose } = props;
   // store hooks
-  const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
+  const { getIsInTrialPeriod } = useWorkspaceSubscription();
+  // derived values
+  const isInTrialPeriod = getIsInTrialPeriod(false);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={() => onClose()} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      {currentWorkspaceSubscribedPlanDetail?.is_on_trial ? (
+      {isInTrialPeriod ? (
         <CancelTrial setActiveSubscriptionModal={onClose} />
       ) : (
         <DeleteWorkspaceForm data={data} onClose={onClose} />

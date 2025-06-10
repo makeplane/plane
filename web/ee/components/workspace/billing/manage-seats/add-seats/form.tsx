@@ -30,7 +30,11 @@ export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // mobx store
-  const { currentWorkspaceSubscribedPlanDetail: subscribedPlan, updateSubscribedPlan } = useWorkspaceSubscription();
+  const {
+    currentWorkspaceSubscribedPlanDetail: subscribedPlan,
+    getIsInTrialPeriod,
+    updateSubscribedPlan,
+  } = useWorkspaceSubscription();
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("SELECT_SEATS");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -40,7 +44,7 @@ export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
   const [error, setError] = useState<string>("");
   // derived values
   const isSelfHosted = subscribedPlan?.is_self_managed;
-  const isOnTrial = subscribedPlan?.is_on_trial;
+  const isOnTrial = getIsInTrialPeriod(false);
   const planeName = subscribedPlan?.product ? getSubscriptionName(subscribedPlan?.product) : "";
 
   useEffect(() => {
@@ -178,14 +182,14 @@ export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
           error={error}
           setError={setError}
           handleSeatChange={handleSeatChange}
-          isLoading={!!isOnTrial ? isSubmitting : isFetchingProrationPreview}
+          isLoading={isOnTrial ? isSubmitting : isFetchingProrationPreview}
           handleNextStep={handleNextStep}
           handleClose={handleClose}
           onPreviousStep={onPreviousStep ? handleOnPreviousStep : undefined}
           planeName={planeName}
           purchasedSeats={subscribedPlan?.purchased_seats || 0}
           isSelfHosted={!!isSelfHosted}
-          isOnTrial={!!isOnTrial}
+          isOnTrial={isOnTrial}
         />
       ) : (
         prorationPreview && (
