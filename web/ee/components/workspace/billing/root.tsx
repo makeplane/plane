@@ -65,6 +65,7 @@ export const BillingRoot = observer(() => {
   );
   // derived values
   const isSelfManaged = subscriptionDetail?.is_self_managed;
+  const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
   const planCardVariantStyle =
     subscriptionDetail?.product && subscriptionDetail?.product !== EProductSubscriptionEnum.FREE
       ? getBillingAndPlansCardVariantStyle(subscriptionDetail?.product)
@@ -82,6 +83,7 @@ export const BillingRoot = observer(() => {
   const handleTrial = async (trialParams: TUpgradeParams): Promise<void> => {
     const { selectedSubscriptionType, selectedProductId, selectedPriceId } = trialParams;
     if (isSelfManaged) return; // Self-hosted workspaces can't have trials
+    if (isOfflinePayment) return; // Offline payments can't have trials
     if (!selectedProductId || !selectedPriceId) {
       setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Missing product or price ID" });
       return;
@@ -120,6 +122,10 @@ export const BillingRoot = observer(() => {
     const { selectedSubscriptionType, selectedProductId, selectedPriceId, isActive } = upgradeParams;
     if (!isActive) {
       window.open("https://plane.so/talk-to-sales", "_blank");
+      return;
+    }
+    if (isOfflinePayment) {
+      window.open("mailto:support@plane.so", "_blank");
       return;
     }
     if (!selectedProductId || !selectedPriceId) {

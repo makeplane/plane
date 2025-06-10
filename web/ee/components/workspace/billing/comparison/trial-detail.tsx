@@ -24,11 +24,12 @@ export const TrialDetails: FC<TTrialDetailsProps> = observer((props) => {
   const planName = getSubscriptionName(subscriptionType);
   const currentSubscription = subscriptionDetail?.product;
   const isSelfManaged = !!subscriptionDetail?.is_self_managed;
+  const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
   const isTrialAllowed = !!subscriptionDetail?.is_trial_allowed;
   const isOnTrialPeriod = getIsInTrialPeriod(false) && currentSubscription === subscriptionType;
   const isTrialEnded = !!subscriptionDetail?.is_trial_ended && currentSubscription === subscriptionType;
 
-  if (isSelfManaged) return null;
+  if (isSelfManaged || isOfflinePayment) return null;
   if (!subscriptionDetail || isProductsAPILoading) return null;
 
   if (isTrialAllowed) {

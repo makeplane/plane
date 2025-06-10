@@ -31,6 +31,7 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
   const currentPlan = subscriptionDetail?.product ?? EProductSubscriptionEnum.FREE;
   const subscriptionName = getSubscriptionName(subscriptionType);
   const isOnTrialPeriod = getIsInTrialPeriod(true);
+  const isOfflinePayment = !!subscriptionDetail?.is_offline_payment;
   const showCurrentSubscriptionButton = currentPlan === subscriptionType && !isOnTrialPeriod;
   const isHigherTierPlan = EProductSubscriptionTier[subscriptionType] >= EProductSubscriptionTier[currentPlan];
   // If the workspace is on trial, allow upgrade if the user has not added a payment method
@@ -61,6 +62,9 @@ export const SubscriptionButton: FC<TSubscriptionButtonProps> = observer((props)
     const getButtonText = () => {
       if (!currentProduct?.is_active) {
         return t("common.upgrade_cta.talk_to_sales");
+      }
+      if (isOfflinePayment) {
+        return t("message_support");
       }
       if (upgradeLoader === subscriptionType) {
         return "Redirecting to Stripe";
