@@ -44,17 +44,13 @@ from plane.utils.openapi import (
 )
 
 
-class ModuleAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to module.
+class ModuleListCreateAPIEndpoint(BaseAPIView):
+    """Module List and Create Endpoint"""
 
-    """
-
-    model = Module
-    permission_classes = [ProjectEntityPermission]
     serializer_class = ModuleSerializer
+    model = Module
     webhook_event = "module"
+    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         return (
@@ -211,6 +207,125 @@ class ModuleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @module_docs(
+        operation_id="list_modules",
+        summary="List modules",
+        responses={
+            200: OpenApiResponse(description="Module", response=ModuleSerializer),
+            404: OpenApiResponse(description="Module not found"),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List or retrieve modules
+
+        Retrieve all modules in a project or get details of a specific module.
+        Returns paginated results with module statistics and member information.
+        """
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset().filter(archived_at__isnull=True)),
+            on_results=lambda modules: ModuleSerializer(
+                modules, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
+
+
+class ModuleDetailAPIEndpoint(BaseAPIView):
+    """Module Detail Endpoint"""
+
+    model = Module
+    permission_classes = [ProjectEntityPermission]
+    serializer_class = ModuleSerializer
+    webhook_event = "module"
+
+    def get_queryset(self):
+        return (
+            Module.objects.filter(project_id=self.kwargs.get("project_id"))
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("lead")
+            .prefetch_related("members")
+            .prefetch_related(
+                Prefetch(
+                    "link_module",
+                    queryset=ModuleLink.objects.select_related("module", "created_by"),
+                )
+            )
+            .annotate(
+                total_issues=Count(
+                    "issue_module",
+                    filter=Q(
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="completed",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="cancelled",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="started",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="unstarted",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_module__issue__state__group",
+                    filter=Q(
+                        issue_module__issue__state__group="backlog",
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                    distinct=True,
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+    @module_docs(
         operation_id="update_module",
         summary="Update module",
         request=ModuleUpdateSerializer,
@@ -284,32 +399,21 @@ class ModuleAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @module_docs(
-        operation_id="get_module",
-        summary="List or retrieve modules",
+        operation_id="retrieve_module",
+        summary="Retrieve module",
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
             404: OpenApiResponse(description="Module not found"),
         },
     )
-    def get(self, request, slug, project_id, pk=None):
-        """List or retrieve modules
+    def get(self, request, slug, project_id, pk):
+        """Retrieve module
 
-        Retrieve all modules in a project or get details of a specific module.
-        Returns paginated results with module statistics and member information.
+        Retrieve details of a specific module.
         """
-        if pk:
-            queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-            data = ModuleSerializer(
-                queryset, fields=self.fields, expand=self.expand
-            ).data
-            return Response(data, status=status.HTTP_200_OK)
-        return self.paginate(
-            request=request,
-            queryset=(self.get_queryset().filter(archived_at__isnull=True)),
-            on_results=lambda modules: ModuleSerializer(
-                modules, many=True, fields=self.fields, expand=self.expand
-            ).data,
-        )
+        queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+        data = ModuleSerializer(queryset, fields=self.fields, expand=self.expand).data
+        return Response(data, status=status.HTTP_200_OK)
 
     @module_docs(
         operation_id="delete_module",
@@ -370,18 +474,12 @@ class ModuleAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to module issues.
-
-    """
+class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
+    """Module Issue List and Create Endpoint"""
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"
-    bulk = True
-
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
@@ -411,7 +509,9 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         )
 
     @module_issue_docs(
-        operation_id="get_module_issues",
+        operation_id="list_module_issues",
+        summary="List module issues",
+        request={},
         responses={
             200: OpenApiResponse(description="Module issues", response=IssueSerializer),
             404: OpenApiResponse(description="Module not found"),
@@ -470,6 +570,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
     @module_issue_docs(
         operation_id="add_module_issues",
+        summary="Add Issues to Module",
         request=ModuleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
@@ -562,6 +663,108 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
         return Response(
             ModuleIssueSerializer(self.get_queryset(), many=True).data,
             status=status.HTTP_200_OK,
+        )
+
+
+class ModuleIssueDetailAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions related to module issues.
+
+    """
+
+    serializer_class = ModuleIssueSerializer
+    model = ModuleIssue
+    webhook_event = "module_issue"
+    bulk = True
+
+    permission_classes = [ProjectEntityPermission]
+
+    def get_queryset(self):
+        return (
+            ModuleIssue.objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(module_id=self.kwargs.get("module_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(project__archived_at__isnull=True)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("module")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
+            .prefetch_related("module__members")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @module_issue_docs(
+        operation_id="retrieve_module_issue",
+        summary="Retrieve module issue",
+        responses={
+            200: OpenApiResponse(description="Module issues", response=IssueSerializer),
+            404: OpenApiResponse(description="Module not found"),
+        },
+    )
+    def get(self, request, slug, project_id, module_id, issue_id):
+        """List module issues
+
+        Retrieve all issues assigned to a module with detailed information.
+        Returns paginated results including assignees, labels, and attachments.
+        """
+        order_by = request.GET.get("order_by", "created_at")
+        issues = (
+            Issue.issue_objects.filter(
+                issue_module__module_id=module_id,
+                issue_module__deleted_at__isnull=True,
+                pk=issue_id,
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(bridge_id=F("issue_module__id"))
+            .filter(project_id=project_id)
+            .filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .order_by(order_by)
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+        return self.paginate(
+            request=request,
+            queryset=(issues),
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand
+            ).data,
         )
 
     @module_issue_docs(
@@ -691,8 +894,9 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         )
 
     @module_docs(
-        operation_id="get_archived_modules",
+        operation_id="list_archived_modules",
         summary="List archived modules",
+        request={},
         responses={
             200: OpenApiResponse(
                 description="Archived modules", response=ModuleSerializer
@@ -700,11 +904,11 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Project not found"),
         },
     )
-    def get(self, request, slug, project_id, pk):
+    def get(self, request, slug, project_id):
         """List archived modules
 
         Retrieve all modules that have been archived in the project.
-        Returns paginated results with module statistics and completion data.
+        Returns paginated results with module statistics.
         """
         return self.paginate(
             request=request,

@@ -1,8 +1,10 @@
 from django.urls import path
 
 from plane.api.views.cycle import (
-    CycleAPIEndpoint,
-    CycleIssueAPIEndpoint,
+    CycleListCreateAPIEndpoint,
+    CycleDetailAPIEndpoint,
+    CycleIssueListCreateAPIEndpoint,
+    CycleIssueDetailAPIEndpoint,
     TransferCycleIssueAPIEndpoint,
     CycleArchiveUnarchiveAPIEndpoint,
 )
@@ -10,22 +12,22 @@ from plane.api.views.cycle import (
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/",
-        CycleAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        CycleListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="cycles",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:pk>/",
-        CycleAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        CycleDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="cycles",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/",
-        CycleIssueAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        CycleIssueListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="cycle-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:issue_id>/",
-        CycleIssueAPIEndpoint.as_view(http_method_names=["get", "delete"]),
+        CycleIssueDetailAPIEndpoint.as_view(http_method_names=["get", "delete"]),
         name="cycle-issues",
     ),
     path(

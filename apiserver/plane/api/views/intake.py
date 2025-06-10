@@ -32,19 +32,12 @@ from plane.utils.openapi import (
 )
 
 
-class IntakeIssueAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to intake issues.
-
-    """
-
-    permission_classes = [ProjectLitePermission]
+class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
+    """Intake List and Create Endpoint"""
 
     serializer_class = IntakeIssueSerializer
-    model = IntakeIssue
-
-    filterset_fields = ["status"]
+    model = Intake
+    permission_classes = [ProjectLitePermission]
 
     def get_queryset(self):
         intake = Intake.objects.filter(
@@ -71,26 +64,20 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
         )
 
     @intake_docs(
-        operation_id="get_intake_issues",
-        summary="List or retrieve intake issues",
+        operation_id="get_intake_issues_list",
+        summary="List intake issues",
         responses={
             200: OpenApiResponse(
                 description="Intake issues", response=IntakeIssueSerializer
             ),
         },
     )
-    def get(self, request, slug, project_id, issue_id=None):
-        """List or retrieve intake issues
+    def get(self, request, slug, project_id):
+        """List intake issues
 
-        Retrieve all issues in the project's intake queue or get details of a specific intake issue.
+        Retrieve all issues in the project's intake queue.
         Returns paginated results when listing all intake issues.
         """
-        if issue_id:
-            intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
-            intake_issue_data = IntakeIssueSerializer(
-                intake_issue_queryset, fields=self.fields, expand=self.expand
-            ).data
-            return Response(intake_issue_data, status=status.HTTP_200_OK)
         issue_queryset = self.get_queryset()
         return self.paginate(
             request=request,
@@ -181,6 +168,61 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
 
         serializer = IntakeIssueSerializer(intake_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IntakeIssueDetailAPIEndpoint(BaseAPIView):
+    """Intake Issue API Endpoint"""
+
+    permission_classes = [ProjectLitePermission]
+
+    serializer_class = IntakeIssueSerializer
+    model = IntakeIssue
+
+    filterset_fields = ["status"]
+
+    def get_queryset(self):
+        intake = Intake.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        ).first()
+
+        project = Project.objects.get(
+            workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
+        )
+
+        if intake is None and not project.intake_view:
+            return IntakeIssue.objects.none()
+
+        return (
+            IntakeIssue.objects.filter(
+                Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
+                workspace__slug=self.kwargs.get("slug"),
+                project_id=self.kwargs.get("project_id"),
+                intake_id=intake.id,
+            )
+            .select_related("issue", "workspace", "project")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+        )
+
+    @intake_docs(
+        operation_id="retrieve_intake_issue",
+        summary="Retrieve intake issue",
+        responses={
+            200: OpenApiResponse(
+                description="Intake issue", response=IntakeIssueSerializer
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, issue_id):
+        """Retrieve intake issue
+
+        Retrieve details of a specific intake issue.
+        """
+        intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
+        intake_issue_data = IntakeIssueSerializer(
+            intake_issue_queryset, fields=self.fields, expand=self.expand
+        ).data
+        return Response(intake_issue_data, status=status.HTTP_200_OK)
 
     @intake_docs(
         operation_id="update_intake_issue",

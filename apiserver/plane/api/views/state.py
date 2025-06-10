@@ -16,7 +16,9 @@ from plane.utils.openapi import (
 )
 
 
-class StateAPIEndpoint(BaseAPIView):
+class StateListCreateAPIEndpoint(BaseAPIView):
+    """State List and Create Endpoint"""
+
     serializer_class = StateSerializer
     model = State
     permission_classes = [ProjectEntityPermission]
@@ -102,8 +104,8 @@ class StateAPIEndpoint(BaseAPIView):
             )
 
     @state_docs(
-        operation_id="get_state",
-        summary="List or retrieve states",
+        operation_id="list_states",
+        summary="List states",
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -111,19 +113,12 @@ class StateAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def get(self, request, slug, project_id, state_id=None):
-        """List or retrieve states
+    def get(self, request, slug, project_id):
+        """List states
 
-        Retrieve all workflow states for a project or get details of a specific state.
+        Retrieve all workflow states for a project.
         Returns paginated results when listing all states.
         """
-        if state_id:
-            serializer = StateSerializer(
-                self.get_queryset().get(pk=state_id),
-                fields=self.fields,
-                expand=self.expand,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -131,6 +126,52 @@ class StateAPIEndpoint(BaseAPIView):
                 states, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
+
+
+class StateDetailAPIEndpoint(BaseAPIView):
+    """State Detail Endpoint"""
+
+    serializer_class = StateSerializer
+    model = State
+    permission_classes = [ProjectEntityPermission]
+
+    def get_queryset(self):
+        return (
+            State.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(is_triage=False)
+            .filter(project__archived_at__isnull=True)
+            .select_related("project")
+            .select_related("workspace")
+            .distinct()
+        )
+
+    @state_docs(
+        operation_id="retrieve_state",
+        summary="Retrieve state",
+        responses={
+            200: OpenApiResponse(
+                description="State retrieved",
+                response=StateSerializer,
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, state_id):
+        """Retrieve state
+
+        Retrieve details of a specific state.
+        Returns paginated results when listing all states.
+        """
+        serializer = StateSerializer(
+            self.get_queryset().get(pk=state_id),
+            fields=self.fields,
+            expand=self.expand,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @state_docs(
         operation_id="delete_state",
@@ -183,7 +224,7 @@ class StateAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def patch(self, request, slug, project_id, state_id=None):
+    def patch(self, request, slug, project_id, state_id):
         """Update state
 
         Partially update an existing workflow state's properties like name, color, or group.

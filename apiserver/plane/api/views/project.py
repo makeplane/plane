@@ -39,13 +39,12 @@ from plane.app.permissions import ProjectBasePermission
 from plane.utils.openapi.decorators import project_docs
 
 
-class ProjectAPIEndpoint(BaseAPIView):
-    """Project Endpoints to create, update, list, retrieve and delete endpoint"""
+class ProjectListCreateAPIEndpoint(BaseAPIView):
+    """Project List and Create Endpoint"""
 
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
-
     permission_classes = [ProjectBasePermission]
 
     def get_queryset(self):
@@ -121,42 +120,38 @@ class ProjectAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Project not found"),
         },
     )
-    def get(self, request, slug, pk=None):
-        """List or retrieve projects
+    def get(self, request, slug):
+        """List projects
 
         Retrieve all projects in a workspace or get details of a specific project.
         Returns projects ordered by user's custom sort order with member information.
         """
-        if pk is None:
-            sort_order_query = ProjectMember.objects.filter(
-                member=request.user,
-                project_id=OuterRef("pk"),
-                workspace__slug=self.kwargs.get("slug"),
-                is_active=True,
-            ).values("sort_order")
-            projects = (
-                self.get_queryset()
-                .annotate(sort_order=Subquery(sort_order_query))
-                .prefetch_related(
-                    Prefetch(
-                        "project_projectmember",
-                        queryset=ProjectMember.objects.filter(
-                            workspace__slug=slug, is_active=True
-                        ).select_related("member"),
-                    )
+        sort_order_query = ProjectMember.objects.filter(
+            member=request.user,
+            project_id=OuterRef("pk"),
+            workspace__slug=self.kwargs.get("slug"),
+            is_active=True,
+        ).values("sort_order")
+        projects = (
+            self.get_queryset()
+            .annotate(sort_order=Subquery(sort_order_query))
+            .prefetch_related(
+                Prefetch(
+                    "project_projectmember",
+                    queryset=ProjectMember.objects.filter(
+                        workspace__slug=slug, is_active=True
+                    ).select_related("member"),
                 )
-                .order_by(request.GET.get("order_by", "sort_order"))
             )
-            return self.paginate(
-                request=request,
-                queryset=(projects),
-                on_results=lambda projects: ProjectSerializer(
-                    projects, many=True, fields=self.fields, expand=self.expand
-                ).data,
-            )
-        project = self.get_queryset().get(workspace__slug=slug, pk=pk)
-        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            .order_by(request.GET.get("order_by", "sort_order"))
+        )
+        return self.paginate(
+            request=request,
+            queryset=(projects),
+            on_results=lambda projects: ProjectSerializer(
+                projects, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )
 
     @project_docs(
         operation_id="create_project",
@@ -288,6 +283,36 @@ class ProjectAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
+
+class ProjectDetailAPIEndpoint(BaseAPIView):
+    """Project Endpoints to  update, retrieve and delete endpoint"""
+
+    serializer_class = ProjectSerializer
+    model = Project
+    webhook_event = "project"
+
+    permission_classes = [ProjectBasePermission]
+
+    @project_docs(
+        operation_id="retrieve_project",
+        summary="Retrieve project",
+        responses={
+            200: OpenApiResponse(
+                description="Project details",
+                response=ProjectSerializer,
+            ),
+            404: OpenApiResponse(description="Project not found"),
+        },
+    )
+    def get(self, request, slug, pk):
+        """Retrieve project
+
+        Retrieve details of a specific project.
+        """
+        project = self.get_queryset().get(workspace__slug=slug, pk=pk)
+        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @project_docs(
         operation_id="update_project",
         summary="Update project",
@@ -406,6 +431,8 @@ class ProjectAPIEndpoint(BaseAPIView):
 
 
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Project Archive and Unarchive Endpoint"""
+
     permission_classes = [ProjectBasePermission]
 
     @project_docs(

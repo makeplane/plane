@@ -1,30 +1,32 @@
 from django.urls import path
 
 from plane.api.views import (
-    ModuleAPIEndpoint,
-    ModuleIssueAPIEndpoint,
+    ModuleListCreateAPIEndpoint,
+    ModuleDetailAPIEndpoint,
+    ModuleIssueListCreateAPIEndpoint,
+    ModuleIssueDetailAPIEndpoint,
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/",
-        ModuleAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        ModuleListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="modules",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:pk>/",
-        ModuleAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        ModuleDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="modules",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/",
-        ModuleIssueAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        ModuleIssueListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="module-issues",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:issue_id>/",
-        ModuleIssueAPIEndpoint.as_view(http_method_names=["delete"]),
+        ModuleIssueDetailAPIEndpoint.as_view(http_method_names=["delete"]),
         name="module-issues",
     ),
     path(

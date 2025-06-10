@@ -53,12 +53,8 @@ from drf_spectacular.utils import OpenApiResponse
 from plane.utils.openapi.decorators import cycle_docs
 
 
-class CycleAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to cycle.
-
-    """
+class CycleListCreateAPIEndpoint(BaseAPIView):
+    """Cycle List and Create Endpoint"""
 
     serializer_class = CycleSerializer
     model = Cycle
@@ -146,8 +142,8 @@ class CycleAPIEndpoint(BaseAPIView):
         )
 
     @cycle_docs(
-        operation_id="get_cycles",
-        summary="List or retrieve cycles",
+        operation_id="list_cycles",
+        summary="List cycles",
         responses={
             200: OpenApiResponse(
                 description="Cycles",
@@ -155,22 +151,13 @@ class CycleAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def get(self, request, slug, project_id, pk=None):
-        """List or retrieve cycles
+    def get(self, request, slug, project_id):
+        """List cycles
 
-        Retrieve all cycles in a project or get details of a specific cycle.
+        Retrieve all cycles in a project.
         Supports filtering by cycle status like current, upcoming, completed, or draft.
         """
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
-        if pk:
-            queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-            data = CycleSerializer(
-                queryset,
-                fields=self.fields,
-                expand=self.expand,
-                context={"project": project},
-            ).data
-            return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
 
@@ -334,6 +321,123 @@ class CycleAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+class CycleDetailAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `retrieve`, `update` and `destroy` actions related to cycle.
+    """
+
+    serializer_class = CycleSerializer
+    model = Cycle
+    webhook_event = "cycle"
+    permission_classes = [ProjectEntityPermission]
+
+    def get_queryset(self):
+        return (
+            Cycle.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("owned_by")
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @cycle_docs(
+        operation_id="retrieve_cycle",
+        summary="Retrieve cycle",
+        responses={
+            200: OpenApiResponse(
+                description="Cycles",
+                response=CycleSerializer,
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, pk):
+        """List or retrieve cycles
+
+        Retrieve all cycles in a project or get details of a specific cycle.
+        Supports filtering by cycle status like current, upcoming, completed, or draft.
+        """
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
+        queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+        data = CycleSerializer(
+            queryset,
+            fields=self.fields,
+            expand=self.expand,
+            context={"project": project},
+        ).data
+        return Response(data, status=status.HTTP_200_OK)
+
     @cycle_docs(
         operation_id="update_cycle",
         summary="Update cycle",
@@ -476,6 +580,8 @@ class CycleAPIEndpoint(BaseAPIView):
 
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Cycle Archive and Unarchive Endpoint"""
+
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
@@ -583,7 +689,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         )
 
     @cycle_docs(
-        operation_id="get_archived_cycles",
+        operation_id="list_archived_cycles",
         summary="List archived cycles",
         request={},
         responses={
@@ -662,17 +768,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`,
-    and `destroy` actions related to cycle issues.
-
-    """
+class CycleIssueListCreateAPIEndpoint(BaseAPIView):
+    """Cycle Issue List and Create Endpoint"""
 
     serializer_class = CycleIssueSerializer
     model = CycleIssue
     webhook_event = "cycle_issue"
-    bulk = True
     permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
@@ -700,8 +801,9 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         )
 
     @cycle_docs(
-        operation_id="get_cycle_issues",
-        summary="List or retrieve cycle issues",
+        operation_id="list_cycle_issues",
+        summary="List cycle issues",
+        request={},
         responses={
             200: OpenApiResponse(
                 description="Cycle issues",
@@ -709,25 +811,12 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             ),
         },
     )
-    def get(self, request, slug, project_id, cycle_id, issue_id=None):
+    def get(self, request, slug, project_id, cycle_id):
         """List or retrieve cycle issues
 
         Retrieve all issues assigned to a cycle or get details of a specific cycle issue.
         Returns paginated results with issue details, assignees, and labels.
         """
-        # Get
-        if issue_id:
-            cycle_issue = CycleIssue.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                cycle_id=cycle_id,
-                issue_id=issue_id,
-            )
-            serializer = CycleIssueSerializer(
-                cycle_issue, fields=self.fields, expand=self.expand
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
         # List
         order_by = request.GET.get("order_by", "created_at")
         issues = (
@@ -777,7 +866,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="add_cycle_issues",
-        summary="Add cycle issues",
+        summary="Add Issues to Cycle",
         request=CycleIssueRequestSerializer,
         responses={
             200: OpenApiResponse(
@@ -877,6 +966,71 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             CycleIssueSerializer(self.get_queryset(), many=True).data,
             status=status.HTTP_200_OK,
         )
+
+
+class CycleIssueDetailAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `list`, `create`,
+    and `destroy` actions related to cycle issues.
+
+    """
+
+    serializer_class = CycleIssueSerializer
+    model = CycleIssue
+    webhook_event = "cycle_issue"
+    bulk = True
+    permission_classes = [ProjectEntityPermission]
+
+    def get_queryset(self):
+        return (
+            CycleIssue.objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(cycle_id=self.kwargs.get("cycle_id"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("cycle")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @cycle_docs(
+        operation_id="retrieve_cycle_issue",
+        summary="Retrieve cycle issue",
+        responses={
+            200: OpenApiResponse(
+                description="Cycle issues",
+                response=CycleIssueSerializer,
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, cycle_id, issue_id):
+        """Retrieve cycle issue
+
+        Retrieve details of a specific cycle issue.
+        Returns paginated results with issue details, assignees, and labels.
+        """
+        cycle_issue = CycleIssue.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            cycle_id=cycle_id,
+            issue_id=issue_id,
+        )
+        serializer = CycleIssueSerializer(
+            cycle_issue, fields=self.fields, expand=self.expand
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @cycle_docs(
         operation_id="delete_cycle_issue",
