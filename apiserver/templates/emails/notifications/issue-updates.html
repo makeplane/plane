@@ -180,7 +180,87 @@
                   {% endif %} 
                 </tr>
               </table>
-              {% endif %} 
+              {% endif %} {% if update.changes.relates_to.new_value %} <!-- Relates to changed --> 
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin: 0;margin-bottom:15px; padding: 0; display:inline-block">
+                 <td align="center" valign="middle" style="padding:0; text-align: center; display:inline-block">
+                    <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png" width="12" height="12" border="0" style="margin:0px; padding:0px;margin-right:5px;" />
+                 </td>
+                 <td align="center" valign="middle" style="padding:0; text-align: center;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; margin: 0px; display: inline-block;">
+                    Relates to:
+                    </span>
+                 </td>
+                 {% if update.changes.relates_to.new_value.0 %} 
+                 <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for relates_to in update.changes.relates_to.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; display: inline-block;" > {{ relates_to }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.relates_to.new_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.relates_to.new_value|length|add:"-2" }} more </span> </td>
+                 {% endif %} {% if update.changes.relates_to.old_value.0 %} 
+                 <td style="padding-left: 8px;"> {% for relates_to in update.changes.relates_to.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; display:inline-block;" > {{ relates_to }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.relates_to.old_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.relates_to.old_value|length|add:"-2" }} more </span> </td>
+                 {% endif %}
+              </table>
+              {% endif %}{% if update.changes.parent.new_value %} <!-- Parent changed --> 
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin: 0;margin-bottom:15px; padding: 0; display:inline-block">
+                 <td align="center" valign="middle" style="padding:0; text-align: center; display:inline-block">
+                    <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png" width="12" height="12" border="0" style="margin:0px; padding:0px;margin-right:5px;" />
+                 </td>
+                 <td align="center" valign="middle" style="padding:0; text-align: center;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; margin: 0px; display: inline-block;">
+                    Parent:
+                    </span>
+                 </td>
+                 {% if update.changes.parent.new_value.0 %} 
+                 <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for parent in update.changes.parent.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; display: inline-block;" > {{ parent }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.parent.new_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.parent.new_value|length|add:"-2" }} more </span> </td>
+                 {% endif %} {% if update.changes.parent.old_value.0 %} 
+                 <td style="padding-left: 8px;"> {% for parent in update.changes.parent.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; display:inline-block;" > {{ parent }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.parent.old_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.parent.old_value|length|add:"-2" }} more </span> </td>
+                 {% endif %}
+              </table>
+              {% endif %}{% if update.changes.blocked_by.new_value %} <!-- Blocked by changed --> 
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin: 0; margin-bottom:15px; padding: 0; display:inline-block">
+                 <td align="center" valign="middle" style="padding:0; text-align: center; display:inline-block">
+                    <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png" width="12" height="12" border="0" style="margin:0px; padding:0px;margin-right:5px;" />
+                 </td>
+                 <td align="center" valign="middle" style="padding:0; text-align: center;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; margin: 0px; display: inline-block;">
+                    Blocked by:
+                    </span>
+                 </td>
+                 {% if update.changes.blocked_by.new_value.0 %} 
+                 <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for blocked_by in update.changes.blocked_by.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; display: inline-block;" > {{ blocked_by }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.blocked_by.new_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-left: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.blocked_by.new_value|length|add:"-2" }} more </span> </td>
+                 {% endif %} {% if update.changes.blocked_by.old_value.0 %} 
+                 <td style="padding-left: 8px;"> {% for blocked_by in update.changes.blocked_by.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; display:inline-block;" > {{ blocked_by }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.blocked_by.old_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 5px; padding-top: 0px; display: inline-block;" > +{{ update.changes.blocked_by.old_value|length|add:"-2" }} more </span> </td>
+                 {% endif %}
+              </table>
+              {% endif %}{% if update.changes.estimate_point.new_value %} <!-- Estimate point changed --> 
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin: 0;margin-bottom:15px; padding: 0; display:inline-block">
+                 <td align="center" valign="middle" style="padding:0; text-align: center; display:inline-block">
+                    <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png" width="12" height="12" border="0" style="margin:0px; padding:0px;margin-right:5px;" />
+                 </td>
+                 <td align="center" valign="middle" style="padding:0; text-align: center;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; margin: 0px; display: inline-block;">
+                    Estimates:
+                    </span>
+                 </td>
+                 {% if update.changes.estimate_point.new_value.0 %} 
+                 <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for estimate_point in update.changes.estimate_point.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; display: inline-block;" > {{ estimate_point }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.estimate_point.new_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; display: inline-block;" > +{{ update.changes.estimate_point.new_value|length|add:"-2" }} more </span> </td>
+                 {% endif %} {% if update.changes.estimate_point.old_value.0 %} 
+                 <td style="padding-left: 8px;"> {% for estimate_point in update.changes.estimate_point.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; display:inline-block;" > {{ estimate_point }} </span> {% endfor %} </td>
+                 {% endif %} {% if update.changes.estimate_point.old_value.2 %} 
+                 <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; display: inline-block;" > +{{ update.changes.estimate_point.old_value|length|add:"-2" }} more </span> </td>
+                 {% endif %}
+              </table>
+              {% endif %}
             </div>
           </div>
           {% endif %} <!-- Outer update Box end --> {% endfor %} {% if comments.0 %} <!-- Comments outer update Box --> 
