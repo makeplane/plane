@@ -87,6 +87,63 @@ func RefreshLicense(ctx context.Context, api prime_api.IPrimeMonitorApi, license
 		MembersList:   workspaceMembers,
 	})
 
+	if err != nil && api.IsAirgapped() {
+		// If the license is airgapped, we need to create a new free license
+		newLicense := &db.License{
+			ID:                     license.ID,
+			LicenseKey:             license.LicenseKey,
+			InstanceID:             license.InstanceID,
+			WorkspaceID:            license.WorkspaceID,
+			Product:                "Plane Free",
+			ProductType:            "FREE",
+			WorkspaceSlug:          license.WorkspaceSlug,
+			Seats:                  0,
+			FreeSeats:              12,
+			Interval:               "MONTHLY",
+			IsOfflinePayment:       false,
+			IsCancelled:            false,
+			Subscription:           "",
+			CurrentPeriodEndDate:   nil,
+			TrialEndDate:           nil,
+			HasAddedPaymentMethod:  false,
+			HasActivatedFreeTrial:  false,
+			LastVerifiedAt:         license.LastVerifiedAt,
+			LastPaymentFailedDate:  nil,
+			LastPaymentFailedCount: 0,
+		}
+
+		// Update the license in the database
+		// Update the existing license with the new data present
+		if err := tx.Delete(&license).Error; err != nil {
+			return nil, nil, err
+		}
+
+		if err := tx.Create(newLicense).Error; err != nil {
+			return nil, nil, err
+		}
+		// Delete the existing members
+		if err := tx.Where("license_id = ?", license.ID).Delete(&db.UserLicense{}).Error; err != nil {
+			return nil, nil, err
+		}
+
+		// Delete the existing flags
+		if err := tx.Where("license_id = ?", license.ID).Delete(&db.Flags{}).Error; err != nil {
+			return nil, nil, err
+		}
+
+		return newLicense, &prime_api.WorkspaceActivationResponse{
+			Product:          "Plane Free",
+			ProductType:      "FREE",
+			WorkspaceSlug:    license.WorkspaceSlug,
+			Seats:            0,
+			FreeSeats:        12,
+			Interval:         "MONTHLY",
+			IsOfflinePayment: false,
+			IsCancelled:      false,
+			MemberList:       []prime_api.WorkspaceMember{},
+		}, nil
+	}
+
 	verificationThreshhold := LICENSE_VERIFICATION_FAILED_THRESHOLD
 
 	shouldDeactivate := false
