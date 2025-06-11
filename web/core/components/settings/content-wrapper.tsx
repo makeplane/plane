@@ -16,7 +16,7 @@ export const SettingsContentWrapper = observer((props: TProps) => {
         "md:px-16": size === "lg",
       })}
     >
-      <div className="pb-20 w-full">{children}</div>
+      <div className="pb-10 w-full">{children}</div>
     </div>
   );
 });

@@ -867,7 +867,19 @@
     "view": "Xem",
     "deactivated_user": "Người dùng bị vô hiệu hóa",
     "apply": "Áp dụng",
-    "applying": "Đang áp dụng"
+    "applying": "Đang áp dụng",
+    "users": "Người dùng",
+    "admins": "Quản trị viên",
+    "guests": "Khách",
+    "on_track": "Đúng tiến độ",
+    "off_track": "Chệch hướng",
+    "timeline": "Dòng thời gian",
+    "completion": "Hoàn thành",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang tiến hành",
+    "planned": "Đã lên kế hoạch",
+    "paused": "Tạm dừng"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1317,19 +1329,6 @@
       "custom": "Phân tích tùy chỉnh"
     },
     "empty_state": {
-      "general": {
-        "title": "Theo dõi tiến độ, khối lượng công việc và phân công. Khám phá xu hướng, loại bỏ rào cản và đẩy nhanh công việc",
-        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Nhận hiệu suất của thành viên nhóm và nhóm, đảm bảo dự án của bạn đúng tiến độ.",
-        "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
-          "comic": {
-            "title": "Phân tích hoạt động tốt nhất trong chu kỳ + mô-đun",
-            "description": "Đầu tiên, giới hạn mục công việc của bạn trong chu kỳ và nếu có thể, nhóm mục công việc kéo dài nhiều chu kỳ thành mô-đun. Xem cả hai trong thanh điều hướng bên trái."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
         "title": "Chưa có dữ liệu"
@@ -1345,21 +1344,22 @@
     },
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
     "customized_insights": "Thông tin chi tiết tùy chỉnh",
-    "backlog_work_items": "Các hạng mục công việc tồn đọng",
+    "backlog_work_items": "{entity} tồn đọng",
     "active_projects": "Dự án đang hoạt động",
     "trend_on_charts": "Xu hướng trên biểu đồ",
     "all_projects": "Tất cả dự án",
     "summary_of_projects": "Tóm tắt dự án",
     "project_insights": "Thông tin chi tiết dự án",
-    "started_work_items": "Hạng mục công việc đã bắt đầu",
-    "total_work_items": "Tổng số hạng mục công việc",
+    "started_work_items": "{entity} đã bắt đầu",
+    "total_work_items": "Tổng số {entity}",
     "total_projects": "Tổng số dự án",
     "total_admins": "Tổng số quản trị viên",
     "total_users": "Tổng số người dùng",
     "total_intake": "Tổng thu",
-    "un_started_work_items": "Hạng mục công việc chưa bắt đầu",
+    "un_started_work_items": "{entity} chưa bắt đầu",
     "total_guests": "Tổng số khách",
-    "completed_work_items": "Hạng mục công việc đã hoàn thành"
+    "completed_work_items": "{entity} đã hoàn thành",
+    "total": "Tổng số {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -2461,5 +2461,9 @@
     "last_edited_by": "Chỉnh sửa lần cuối bởi",
     "previously_edited_by": "Trước đây được chỉnh sửa bởi",
     "edited_by": "Được chỉnh sửa bởi"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Chọn View Logs từ setup.sh và log Docker để chắc chắn."
   }
 }

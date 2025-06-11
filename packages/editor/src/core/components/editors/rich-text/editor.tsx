@@ -3,12 +3,20 @@ import { forwardRef, useCallback } from "react";
 import { EditorWrapper } from "@/components/editors";
 import { EditorBubbleMenu } from "@/components/menus";
 // extensions
-import { SideMenuExtension, SlashCommands } from "@/extensions";
+import { SideMenuExtension } from "@/extensions";
+// plane editor imports
+import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text/extensions";
 // types
 import { EditorRefApi, IRichTextEditor } from "@/types";
 
 const RichTextEditor = (props: IRichTextEditor) => {
-  const { disabledExtensions, dragDropEnabled, bubbleMenuEnabled = true, extensions: externalExtensions = [] } = props;
+  const {
+    disabledExtensions,
+    dragDropEnabled,
+    fileHandler,
+    bubbleMenuEnabled = true,
+    extensions: externalExtensions = [],
+  } = props;
 
   const getExtensions = useCallback(() => {
     const extensions = [
@@ -17,17 +25,14 @@ const RichTextEditor = (props: IRichTextEditor) => {
         aiEnabled: false,
         dragDropEnabled: !!dragDropEnabled,
       }),
+      ...RichTextEditorAdditionalExtensions({
+        disabledExtensions,
+        fileHandler,
+      }),
     ];
-    if (!disabledExtensions?.includes("slash-commands")) {
-      extensions.push(
-        SlashCommands({
-          disabledExtensions,
-        })
-      );
-    }
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>

@@ -65,22 +65,10 @@ export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
       </div>
       <div className="py-4">
         <div>
-          <div className="relative flex items-center gap-2">
-            <div className="flex items-center justify-center gap-1 text-xs">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-              <span>{t("ideal")}</span>
-            </div>
-            <div className="flex items-center justify-center gap-1 text-xs">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-              <span>{t("current")}</span>
-            </div>
-          </div>
           {cycleStartDate && cycleEndDate && completionChartDistributionData ? (
             <Fragment>
               <ProgressChart
                 distribution={completionChartDistributionData}
-                startDate={cycleStartDate}
-                endDate={cycleEndDate}
                 totalIssues={estimateType === "points" ? totalEstimatePoints : totalIssues}
                 plotTitle={estimateType === "points" ? t("points") : t("work_items")}
               />
