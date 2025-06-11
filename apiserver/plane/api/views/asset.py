@@ -8,6 +8,7 @@ from django.conf import settings
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest, OpenApiTypes
 
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -68,7 +69,32 @@ class UserAssetEndpoint(BaseAPIView):
     @asset_docs(
         operation_id="create_user_asset_upload",
         summary="Generate presigned URL for user asset upload",
-        request=UserAssetUploadSerializer,
+        description="Generate presigned URL for user asset upload",
+        request=OpenApiRequest(
+            request=UserAssetUploadSerializer,
+            examples=[
+                OpenApiExample(
+                    "User Avatar Upload",
+                    value={
+                        "name": "profile.jpg",
+                        "type": "image/jpeg",
+                        "size": 1024000,
+                        "entity_type": "USER_AVATAR",
+                    },
+                    description="Example request for uploading a user avatar",
+                ),
+                OpenApiExample(
+                    "User Cover Upload",
+                    value={
+                        "name": "cover.jpg",
+                        "type": "image/jpeg",
+                        "size": 1024000,
+                        "entity_type": "USER_COVER",
+                    },
+                    description="Example request for uploading a user cover",
+                ),
+            ],
+        ),
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
             400: VALIDATION_ERROR_RESPONSE,
@@ -145,8 +171,25 @@ class UserAssetEndpoint(BaseAPIView):
     @asset_docs(
         operation_id="update_user_asset",
         summary="Mark user asset as uploaded",
+        description="Mark user asset as uploaded",
         parameters=[ASSET_ID_PARAMETER],
-        request=AssetUpdateSerializer,
+        request=OpenApiRequest(
+            request=AssetUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "Update Asset Attributes",
+                    value={
+                        "attributes": {
+                            "name": "updated_profile.jpg",
+                            "type": "image/jpeg",
+                            "size": 1024000,
+                        },
+                        "entity_type": "USER_AVATAR",
+                    },
+                    description="Example request for updating asset attributes",
+                ),
+            ],
+        ),
         responses={
             204: ASSET_UPDATED_RESPONSE,
             404: NOT_FOUND_RESPONSE,
@@ -362,6 +405,7 @@ class GenericAssetEndpoint(BaseAPIView):
     @asset_docs(
         operation_id="get_generic_asset",
         summary="Get presigned URL for asset download",
+        description="Get presigned URL for asset download",
         parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
             200: ASSET_DOWNLOAD_SUCCESS_RESPONSE,
@@ -423,8 +467,25 @@ class GenericAssetEndpoint(BaseAPIView):
     @asset_docs(
         operation_id="create_generic_asset_upload",
         summary="Generate presigned URL for generic asset upload",
+        description="Generate presigned URL for generic asset upload",
         parameters=[WORKSPACE_SLUG_PARAMETER],
-        request=GenericAssetUploadSerializer,
+        request=OpenApiRequest(
+            request=GenericAssetUploadSerializer,
+            examples=[
+                OpenApiExample(
+                    "GenericAssetUploadSerializer",
+                    value={
+                        "name": "image.jpg",
+                        "type": "image/jpeg",
+                        "size": 1024000,
+                        "project_id": "123e4567-e89b-12d3-a456-426614174000",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for uploading a generic asset",
+                ),
+            ],
+        ),
         responses={
             200: GENERIC_ASSET_UPLOAD_SUCCESS_RESPONSE,
             400: GENERIC_ASSET_VALIDATION_ERROR_RESPONSE,
@@ -519,7 +580,16 @@ class GenericAssetEndpoint(BaseAPIView):
         operation_id="update_generic_asset",
         summary="Update generic asset after upload completion",
         parameters=[WORKSPACE_SLUG_PARAMETER, ASSET_ID_PARAMETER],
-        request=GenericAssetUpdateSerializer,
+        request=OpenApiRequest(
+            request=GenericAssetUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "GenericAssetUpdateSerializer",
+                    value={"is_uploaded": True},
+                    description="Example request for updating a generic asset",
+                )
+            ],
+        ),
         responses={
             204: ASSET_UPDATED_RESPONSE,
             404: ASSET_NOT_FOUND_RESPONSE,

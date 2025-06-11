@@ -23,6 +23,7 @@ from django.db import models
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import (
@@ -251,7 +252,23 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="create_cycle",
         summary="Create cycle",
-        request=CycleCreateSerializer,
+        request=OpenApiRequest(
+            request=CycleCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "CycleCreateSerializer",
+                    value={
+                        "name": "Cycle 1",
+                        "description": "Cycle 1 description",
+                        "start_date": "2021-01-01",
+                        "end_date": "2021-01-31",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating a cycle",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Cycle created",
@@ -441,7 +458,23 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="update_cycle",
         summary="Update cycle",
-        request=CycleUpdateSerializer,
+        request=OpenApiRequest(
+            request=CycleUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "CycleUpdateSerializer",
+                    value={
+                        "name": "Cycle 1",
+                        "description": "Cycle 1 description",
+                        "start_date": "2021-01-01",
+                        "end_date": "2021-01-31",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for updating a cycle",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Cycle updated",
@@ -867,7 +900,21 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="add_cycle_issues",
         summary="Add Issues to Cycle",
-        request=CycleIssueRequestSerializer,
+        request=OpenApiRequest(
+            request=CycleIssueRequestSerializer,
+            examples=[
+                OpenApiExample(
+                    "CycleIssueRequestSerializer",
+                    value={
+                        "issues": [
+                            "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+                            "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
+                        ],
+                    },
+                    description="Example request for adding cycle issues",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Cycle issues added",
@@ -1081,7 +1128,18 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="transfer_cycle_issues",
         summary="Transfer cycle issues",
-        request=TransferCycleIssueRequestSerializer,
+        request=OpenApiRequest(
+            request=TransferCycleIssueRequestSerializer,
+            examples=[
+                OpenApiExample(
+                    "TransferCycleIssueRequestSerializer",
+                    value={
+                        "new_cycle_id": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
+                    },
+                    description="Example request for transferring cycle issues",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Issues transferred successfully",

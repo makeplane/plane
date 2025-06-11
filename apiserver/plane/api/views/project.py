@@ -11,7 +11,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
 
 
 # Module imports
@@ -156,7 +156,21 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="create_project",
         summary="Create project",
-        request=ProjectCreateSerializer,
+        request=OpenApiRequest(
+            request=ProjectCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "ProjectCreateSerializer",
+                    value={
+                        "name": "New Project",
+                        "description": "New project description",
+                        "identifier": "new-project",
+                        "project_lead": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
+                    },
+                    description="Example request for creating a project",
+                ),
+            ],
+        ),
         responses={
             201: ProjectSerializer,
             404: OpenApiResponse(description="Workspace not found"),
@@ -316,7 +330,21 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="update_project",
         summary="Update project",
-        request=ProjectUpdateSerializer,
+        request=OpenApiRequest(
+            request=ProjectUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "ProjectUpdateSerializer",
+                    value={
+                        "name": "Updated Project",
+                        "description": "Updated project description",
+                        "identifier": "updated-project",
+                        "project_lead": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
+                    },
+                    description="Example request for updating a project",
+                ),
+            ],
+        ),
         responses={
             200: ProjectSerializer,
             404: OpenApiResponse(description="Project not found"),

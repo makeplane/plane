@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import (
@@ -143,7 +143,23 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="create_module",
         summary="Create module",
-        request=ModuleCreateSerializer,
+        request=OpenApiRequest(
+            request=ModuleCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "ModuleCreateSerializer",
+                    value={
+                        "name": "New Module",
+                        "description": "New module description",
+                        "start_date": "2021-01-01",
+                        "end_date": "2021-01-31",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating a module",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Module created", response=ModuleSerializer
@@ -328,7 +344,23 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="update_module",
         summary="Update module",
-        request=ModuleUpdateSerializer,
+        request=OpenApiRequest(
+            request=ModuleUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "ModuleUpdateSerializer",
+                    value={
+                        "name": "Updated Module",
+                        "description": "Updated module description",
+                        "start_date": "2021-01-01",
+                        "end_date": "2021-01-31",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for updating a module",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Module updated successfully", response=ModuleSerializer
@@ -571,7 +603,21 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
     @module_issue_docs(
         operation_id="add_module_issues",
         summary="Add Issues to Module",
-        request=ModuleIssueRequestSerializer,
+        request=OpenApiRequest(
+            request=ModuleIssueRequestSerializer,
+            examples=[
+                OpenApiExample(
+                    "ModuleIssueRequestSerializer",
+                    value={
+                        "issues": [
+                            "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+                            "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
+                        ],
+                    },
+                    description="Example request for adding module issues",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Module issues added", response=ModuleIssueSerializer

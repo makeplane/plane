@@ -4,7 +4,7 @@ from django.db import IntegrityError
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import StateSerializer
@@ -41,7 +41,22 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="create_state",
         summary="Create state",
-        request=StateSerializer,
+        request=OpenApiRequest(
+            request=StateSerializer,
+            examples=[
+                OpenApiExample(
+                    "StateCreateSerializer",
+                    value={
+                        "name": "New State",
+                        "color": "#ff0000",
+                        "group": "backlog",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating a state",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="State created",
@@ -212,7 +227,22 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="update_state",
         summary="Update state",
-        request=StateSerializer,
+        request=OpenApiRequest(
+            request=StateSerializer,
+            examples=[
+                OpenApiExample(
+                    "StateUpdateSerializer",
+                    value={
+                        "name": "Updated State",
+                        "color": "#00ff00",
+                        "group": "backlog",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for updating a state",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="State updated",

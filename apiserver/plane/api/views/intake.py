@@ -12,7 +12,7 @@ from django.contrib.postgres.fields import ArrayField
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import (
@@ -90,7 +90,22 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="create_intake_issue",
         summary="Create intake issue",
-        request=IntakeIssueCreateSerializer,
+        request=OpenApiRequest(
+            request=IntakeIssueCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IntakeIssueCreateSerializer",
+                    value={
+                        "issue": {
+                            "name": "New Issue",
+                            "description": "New issue description",
+                            "priority": "medium",
+                        }
+                    },
+                    description="Example request for creating an intake issue",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Intake issue created", response=IntakeIssueSerializer
@@ -227,7 +242,23 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="update_intake_issue",
         summary="Update intake issue",
-        request=IntakeIssueUpdateSerializer,
+        request=OpenApiRequest(
+            request=IntakeIssueUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IntakeIssueUpdateSerializer",
+                    value={
+                        "status": 1,
+                        "issue": {
+                            "name": "Updated Issue",
+                            "description": "Updated issue description",
+                            "priority": "high",
+                        },
+                    },
+                    description="Example request for updating an intake issue",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Intake issue updated", response=IntakeIssueSerializer

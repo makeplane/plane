@@ -33,6 +33,7 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
     OpenApiExample,
+    OpenApiRequest,
 )
 from drf_spectacular.types import OpenApiTypes
 
@@ -339,7 +340,25 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="create_work_item",
         summary="Create work item",
-        request=IssueSerializer,
+        request=OpenApiRequest(
+            request=IssueSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueCreateSerializer",
+                    value={
+                        "name": "New Issue",
+                        "description": "New issue description",
+                        "priority": "medium",
+                        "state": "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+                        "assignees": ["0ec6cfa4-e906-4aad-9390-2df0303a41cd"],
+                        "labels": ["0ec6cfa4-e906-4aad-9390-2df0303a41ce"],
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating a work item",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Work Item created successfully", response=IssueSerializer
@@ -729,7 +748,23 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="update_work_item",
         summary="Partially update work item",
-        request=IssueSerializer,
+        request=OpenApiRequest(
+            request=IssueSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueUpdateSerializer",
+                    value={
+                        "name": "Updated Issue",
+                        "description": "Updated issue description",
+                        "priority": "medium",
+                        "state": "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
+                        "assignees": ["0ec6cfa4-e906-4aad-9390-2df0303a41cd"],
+                        "labels": ["0ec6cfa4-e906-4aad-9390-2df0303a41ce"],
+                    },
+                    description="Example request for updating a work item",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Work Item patched successfully", response=IssueSerializer
@@ -865,7 +900,22 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="create_label",
-        request=LabelCreateUpdateSerializer,
+        request=OpenApiRequest(
+            request=LabelCreateUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "LabelCreateUpdateSerializer",
+                    value={
+                        "name": "New Label",
+                        "color": "#ff0000",
+                        "description": "New label description",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating a label",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Label created successfully", response=LabelSerializer
@@ -980,7 +1030,22 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="update_label",
-        request=LabelCreateUpdateSerializer,
+        request=OpenApiRequest(
+            request=LabelCreateUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "LabelCreateUpdateSerializer",
+                    value={
+                        "name": "Updated Label",
+                        "color": "#00ff00",
+                        "description": "Updated label description",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for updating a label",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Label updated successfully", response=LabelSerializer
@@ -1092,7 +1157,19 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="create_issue_link",
-        request=IssueLinkCreateSerializer,
+        request=OpenApiRequest(
+            request=IssueLinkCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueLinkCreateSerializer",
+                    value={
+                        "url": "https://example.com",
+                        "title": "Example Link",
+                    },
+                    description="Example request for creating an issue link",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Issue link created successfully",
@@ -1188,7 +1265,19 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="update_issue_link",
-        request=IssueLinkUpdateSerializer,
+        request=OpenApiRequest(
+            request=IssueLinkUpdateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueLinkUpdateSerializer",
+                    value={
+                        "url": "https://example.com",
+                        "title": "Updated Link",
+                    },
+                    description="Example request for updating an issue link",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Issue link updated successfully",
@@ -1320,7 +1409,20 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="create_issue_comment",
-        request=IssueCommentCreateSerializer,
+        request=OpenApiRequest(
+            request=IssueCommentCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueCommentCreateSerializer",
+                    value={
+                        "content": "New comment content",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for creating an issue comment",
+                ),
+            ],
+        ),
         responses={
             201: OpenApiResponse(
                 description="Issue comment created successfully",
@@ -1448,7 +1550,20 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="update_issue_comment",
-        request=IssueCommentCreateSerializer,
+        request=OpenApiRequest(
+            request=IssueCommentCreateSerializer,
+            examples=[
+                OpenApiExample(
+                    "IssueCommentCreateSerializer",
+                    value={
+                        "content": "Updated comment content",
+                        "external_id": "1234567890",
+                        "external_source": "github",
+                    },
+                    description="Example request for updating an issue comment",
+                ),
+            ],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Issue comment updated successfully",
