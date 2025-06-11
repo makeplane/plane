@@ -67,9 +67,8 @@ export const InstanceHeader: FC = observer(() => {
         {breadcrumbItems.length >= 0 && (
           <div>
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink
                     href="/general/"
                     label="Settings"
@@ -80,10 +79,9 @@ export const InstanceHeader: FC = observer(() => {
               {breadcrumbItems.map(
                 (item) =>
                   item.title && (
-                    <Breadcrumbs.BreadcrumbItem
+                    <Breadcrumbs.Item
                       key={item.title}
-                      type="text"
-                      link={<BreadcrumbLink href={item.href} label={item.title} />}
+                      component={<BreadcrumbLink href={item.href} label={item.title} />}
                     />
                   )
               )}

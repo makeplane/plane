@@ -1,44 +1,73 @@
 "use client";
 
-import { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import Link from "next/link";
-import { Tooltip } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   label?: string | ReactNode;
   href?: string;
-  icon?: React.ReactNode | undefined;
+  icon?: React.ReactNode;
   disableTooltip?: boolean;
+  isLast?: boolean;
 };
 
-export const BreadcrumbLink: React.FC<Props> = (props) => {
-  const { href, label, icon, disableTooltip = false } = props;
-  const { isMobile } = usePlatformOS();
+const IconWrapper = React.memo(({ icon }: { icon: React.ReactNode }) => (
+  <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>
+));
+
+IconWrapper.displayName = "IconWrapper";
+
+const LabelWrapper = React.memo(({ label }: { label: ReactNode }) => (
+  <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
+));
+
+LabelWrapper.displayName = "LabelWrapper";
+
+const BreadcrumbContent = React.memo(({ icon, label }: { icon?: React.ReactNode; label?: ReactNode }) => {
+  if (!icon && !label) return null;
+
   return (
-    <Tooltip tooltipContent={label} position="bottom" isMobile={isMobile} disabled={disableTooltip}>
-      <li className="flex items-center space-x-2" tabIndex={-1}>
-        <div className="flex flex-wrap items-center gap-2.5">
-          {href ? (
-            <Link
-              className="flex items-center gap-1 text-sm font-medium text-custom-text-300 hover:text-custom-text-100"
-              href={href}
-            >
-              {icon && (
-                <div className="flex h-5 w-5 items-center justify-start overflow-hidden !text-[1rem]">{icon}</div>
-              )}
-              {label && (
-                <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
-              )}
-            </Link>
-          ) : (
-            <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
-              {icon && <div className="flex h-5 w-5 items-center justify-start overflow-hidden">{icon}</div>}
-              <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
-            </div>
-          )}
-        </div>
-      </li>
-    </Tooltip>
+    <>
+      {icon && <IconWrapper icon={icon} />}
+      {label && <LabelWrapper label={label} />}
+    </>
   );
-};
+});
+
+BreadcrumbContent.displayName = "BreadcrumbContent";
+
+const ItemWrapper = React.memo(({ children, ...props }: React.ComponentProps<typeof Breadcrumbs.ItemWrapper>) => (
+  <Breadcrumbs.ItemWrapper {...props}>{children}</Breadcrumbs.ItemWrapper>
+));
+
+ItemWrapper.displayName = "ItemWrapper";
+
+export const BreadcrumbLink = React.memo(({ href, label, icon, disableTooltip = false, isLast = false }: Props) => {
+  const { isMobile } = usePlatformOS();
+
+  const itemWrapperProps = useMemo(
+    () => ({
+      label: label?.toString(),
+      disableTooltip: isMobile || disableTooltip,
+      type: (href && href !== "" ? "link" : "text") as "link" | "text",
+      isLast,
+    }),
+    [href, label, isMobile, disableTooltip, isLast]
+  );
+
+  const content = useMemo(() => <BreadcrumbContent icon={icon} label={label} />, [icon, label]);
+
+  if (href) {
+    return (
+      <Link href={href}>
+        <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>
+      </Link>
+    );
+  }
+
+  return <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>;
+});
+
+BreadcrumbLink.displayName = "BreadcrumbLink";
