@@ -98,8 +98,8 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     serializer_class = IssueSerializer
 
     @property
-    def project__identifier(self):
-        return self.kwargs.get("project__identifier", None)
+    def project_identifier(self):
+        return self.kwargs.get("project_identifier", None)
 
     def get_queryset(self):
         return (
@@ -110,7 +110,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project__identifier=self.kwargs.get("project__identifier"))
+            .filter(project__identifier=self.kwargs.get("project_identifier"))
             .select_related("project")
             .select_related("workspace")
             .select_related("state")
@@ -133,14 +133,14 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 location=OpenApiParameter.PATH,
             ),
             OpenApiParameter(
-                name="project__identifier",
+                name="project_identifier",
                 description="Project identifier",
                 required=True,
                 type=OpenApiTypes.STR,
                 location=OpenApiParameter.PATH,
             ),
             OpenApiParameter(
-                name="issue__identifier",
+                name="issue_identifier",
                 description="Issue sequence ID",
                 required=True,
                 type=OpenApiTypes.INT,
@@ -155,13 +155,13 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Work item not found"),
         },
     )
-    def get(self, request, slug, project__identifier=None, issue__identifier=None):
+    def get(self, request, slug, project_identifier=None, issue_identifier=None):
         """Retrieve work item by identifiers
 
         Retrieve a specific work item using workspace slug, project identifier, and issue identifier.
         This endpoint provides workspace-level access to work items.
         """
-        if issue__identifier and project__identifier:
+        if issue_identifier and project_identifier:
             issue = Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
                 .order_by()
@@ -169,8 +169,8 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
                 .values("count")
             ).get(
                 workspace__slug=slug,
-                project__identifier=project__identifier,
-                sequence_id=issue__identifier,
+                project__identifier=project_identifier,
+                sequence_id=issue_identifier,
             )
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
@@ -1548,7 +1548,6 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
 
 class IssueActivityListAPIEndpoint(BaseAPIView):
-
     permission_classes = [ProjectEntityPermission]
 
     @issue_activity_docs(

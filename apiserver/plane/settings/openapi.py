@@ -20,6 +20,10 @@ SPECTACULAR_SETTINGS = {
         "email": "support@plane.so",
     },
     "VERSION": "0.0.1",
+    "LICENSE": {
+        "name": "GNU AGPLv3",
+        "url": "https://github.com/makeplane/plane/blob/preview/LICENSE.txt",
+    },
     # ========================================================================
     # Schema Generation Settings
     # ========================================================================

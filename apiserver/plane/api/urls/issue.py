@@ -24,7 +24,7 @@ urlpatterns = [
         name="issue-search",
     ),
     path(
-        "workspaces/<str:slug>/issues/<str:project__identifier>-<str:issue__identifier>/",
+        "workspaces/<str:slug>/issues/<str:project_identifier>-<str:issue_identifier>/",
         WorkspaceIssueAPIEndpoint.as_view(http_method_names=["get"]),
         name="issue-by-identifier",
     ),
