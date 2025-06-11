@@ -47,17 +47,19 @@ const WORKSPACE_ACTION_LINKS = [
   },
 ];
 
-export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
+const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size?: number; className?: string }) => {
   const icons = {
     profile: CircleUser,
     security: KeyRound,
     activity: Activity,
-    appearance: Settings2,
+    preferences: Settings2,
     notifications: Bell,
+    "api-tokens": KeyRound,
   };
 
   if (type === undefined) return null;
   const Icon = icons[type as keyof typeof icons];
+  if (!Icon) return null;
   return <Icon size={size} className={className} />;
 };
 export const ProfileLayoutSidebar = observer(() => {
