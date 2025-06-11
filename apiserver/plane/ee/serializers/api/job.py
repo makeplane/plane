@@ -23,7 +23,10 @@ class ImportJobAPISerializer(BaseSerializer):
         source="workspace", queryset=Workspace.objects.all()
     )
     project_id = serializers.PrimaryKeyRelatedField(
-        source="project", queryset=Project.objects.all()
+        source="project",
+        queryset=Project.objects.all(),
+        required=False,
+        allow_null=True,
     )
     initiator_id = serializers.PrimaryKeyRelatedField(
         source="initiator", queryset=User.objects.all()

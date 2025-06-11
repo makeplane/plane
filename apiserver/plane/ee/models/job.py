@@ -10,6 +10,7 @@ class ImportReport(BaseModel):
     total_batch_count = models.IntegerField(default=0)
     imported_batch_count = models.IntegerField(default=0)
     errored_batch_count = models.IntegerField(default=0)
+    completed_batch_count = models.IntegerField(default=0)
     # issues information
     total_issue_count = models.IntegerField(default=0)
     imported_issue_count = models.IntegerField(default=0)
@@ -31,6 +32,7 @@ class ImportReport(BaseModel):
 
 class ImportJob(BaseModel):
     class JobStatus(TextChoices):
+        PROGRESSING = "PROGRESSING", "Progressing"
         CREATED = "CREATED", "Created"
         QUEUED = "QUEUED", "Queued"
         INITIATED = "INITIATED", "Initiated"
@@ -51,7 +53,7 @@ class ImportJob(BaseModel):
         related_name="jobs",
     )
     project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="jobs"
+        "db.Project", on_delete=models.CASCADE, null=True, related_name="jobs"
     )
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, related_name="jobs"
