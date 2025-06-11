@@ -579,6 +579,7 @@ class GenericAssetEndpoint(BaseAPIView):
     @asset_docs(
         operation_id="update_generic_asset",
         summary="Update generic asset after upload completion",
+        description="Update generic asset after upload completion",
         parameters=[WORKSPACE_SLUG_PARAMETER, ASSET_ID_PARAMETER],
         request=OpenApiRequest(
             request=GenericAssetUpdateSerializer,

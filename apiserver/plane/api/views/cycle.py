@@ -145,6 +145,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="list_cycles",
         summary="List cycles",
+        description="Retrieve all cycles in a project. Supports filtering by cycle status like current, upcoming, completed, or draft.",
         responses={
             200: OpenApiResponse(
                 description="Cycles",
@@ -252,6 +253,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="create_cycle",
         summary="Create cycle",
+        description="Create a new development cycle with specified name, description, and date range. Supports external ID tracking for integration purposes.",
         request=OpenApiRequest(
             request=CycleCreateSerializer,
             examples=[
@@ -432,6 +434,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="retrieve_cycle",
         summary="Retrieve cycle",
+        description="Retrieve details of a specific cycle by its ID. Supports cycle status filtering.",
         responses={
             200: OpenApiResponse(
                 description="Cycles",
@@ -458,6 +461,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="update_cycle",
         summary="Update cycle",
+        description="Modify an existing cycle's properties like name, description, or date range. Completed cycles can only have their sort order changed.",
         request=OpenApiRequest(
             request=CycleUpdateSerializer,
             examples=[
@@ -557,6 +561,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="delete_cycle",
         summary="Delete cycle",
+        description="Permanently remove a cycle and all its associated issue relationships",
         responses={
             204: OpenApiResponse(description="Cycle deleted"),
         },
@@ -723,6 +728,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
 
     @cycle_docs(
         operation_id="list_archived_cycles",
+        description="Retrieve all cycles that have been archived in the project.",
         summary="List archived cycles",
         request={},
         responses={
@@ -749,6 +755,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="archive_cycle",
         summary="Archive cycle",
+        description="Move a completed cycle to archived status for historical tracking. Only cycles that have ended can be archived.",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle archived"),
@@ -782,6 +789,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="unarchive_cycle",
         summary="Unarchive cycle",
+        description="Restore an archived cycle to active status, making it available for regular use.",
         request={},
         responses={
             204: OpenApiResponse(description="Cycle unarchived"),
@@ -836,6 +844,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="list_cycle_issues",
         summary="List cycle issues",
+        description="Retrieve all issues assigned to a cycle.",
         request={},
         responses={
             200: OpenApiResponse(
@@ -900,6 +909,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="add_cycle_issues",
         summary="Add Issues to Cycle",
+        description="Assign multiple issues to a cycle. Automatically handles bulk creation and updates with activity tracking.",
         request=OpenApiRequest(
             request=CycleIssueRequestSerializer,
             examples=[
@@ -1055,6 +1065,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="retrieve_cycle_issue",
         summary="Retrieve cycle issue",
+        description="Retrieve details of a specific cycle issue.",
         responses={
             200: OpenApiResponse(
                 description="Cycle issues",
@@ -1082,6 +1093,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="delete_cycle_issue",
         summary="Delete cycle issue",
+        description="Remove an issue from a cycle while keeping the issue in the project.",
         responses={
             204: OpenApiResponse(description="Cycle issue deleted"),
         },
@@ -1128,6 +1140,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="transfer_cycle_issues",
         summary="Transfer cycle issues",
+        description="Move incomplete issues from the current cycle to a new target cycle. Captures progress snapshot and transfers only unfinished work items.",
         request=OpenApiRequest(
             request=TransferCycleIssueRequestSerializer,
             examples=[

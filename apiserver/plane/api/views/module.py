@@ -143,6 +143,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="create_module",
         summary="Create module",
+        description="Create a new project module with specified name, description, and timeline.",
         request=OpenApiRequest(
             request=ModuleCreateSerializer,
             examples=[
@@ -225,6 +226,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="list_modules",
         summary="List modules",
+        description="Retrieve all modules in a project.",
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
             404: OpenApiResponse(description="Module not found"),
@@ -344,6 +346,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="update_module",
         summary="Update module",
+        description="Modify an existing module's properties like name, description, status, or timeline.",
         request=OpenApiRequest(
             request=ModuleUpdateSerializer,
             examples=[
@@ -433,6 +436,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="retrieve_module",
         summary="Retrieve module",
+        description="Retrieve details of a specific module.",
         responses={
             200: OpenApiResponse(description="Module", response=ModuleSerializer),
             404: OpenApiResponse(description="Module not found"),
@@ -450,6 +454,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="delete_module",
         summary="Delete module",
+        description="Permanently remove a module and all its associated issue relationships.",
         responses={
             204: OpenApiResponse(description="Module deleted successfully"),
             403: OpenApiResponse(description="Only admin or creator can delete"),
@@ -543,6 +548,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
     @module_issue_docs(
         operation_id="list_module_issues",
         summary="List module issues",
+        description="Retrieve all issues assigned to a module with detailed information.",
         request={},
         responses={
             200: OpenApiResponse(description="Module issues", response=IssueSerializer),
@@ -603,6 +609,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
     @module_issue_docs(
         operation_id="add_module_issues",
         summary="Add Issues to Module",
+        description="Assign multiple issues to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",
         request=OpenApiRequest(
             request=ModuleIssueRequestSerializer,
             examples=[
@@ -755,6 +762,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     @module_issue_docs(
         operation_id="retrieve_module_issue",
         summary="Retrieve module issue",
+        description="Retrieve details of a specific module issue.",
         responses={
             200: OpenApiResponse(description="Module issues", response=IssueSerializer),
             404: OpenApiResponse(description="Module not found"),
@@ -815,6 +823,8 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
 
     @module_issue_docs(
         operation_id="delete_module_issue",
+        summary="Delete module issue",
+        description="Remove an issue from a module while keeping the issue in the project.",
         responses={
             204: OpenApiResponse(description="Module issue deleted"),
             404: OpenApiResponse(description="Module issue not found"),
@@ -942,6 +952,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="list_archived_modules",
         summary="List archived modules",
+        description="Retrieve all modules that have been archived in the project.",
         request={},
         responses={
             200: OpenApiResponse(
@@ -967,6 +978,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="archive_module",
         summary="Archive module",
+        description="Move a module to archived status for historical tracking.",
         request={},
         responses={
             204: OpenApiResponse(description="Module archived"),
@@ -1001,6 +1013,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @module_docs(
         operation_id="unarchive_module",
         summary="Unarchive module",
+        description="Restore an archived module to active status, making it available for regular use.",
         responses={
             204: OpenApiResponse(description="Module unarchived"),
             404: OpenApiResponse(description="Module not found"),

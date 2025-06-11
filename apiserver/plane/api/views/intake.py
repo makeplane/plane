@@ -66,6 +66,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="get_intake_issues_list",
         summary="List intake issues",
+        description="Retrieve all issues in the project's intake queue. Returns paginated results when listing all intake issues.",
         responses={
             200: OpenApiResponse(
                 description="Intake issues", response=IntakeIssueSerializer
@@ -90,6 +91,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="create_intake_issue",
         summary="Create intake issue",
+        description="Submit a new issue to the project's intake queue for review and triage. Automatically creates the issue with default triage state and tracks activity.",
         request=OpenApiRequest(
             request=IntakeIssueCreateSerializer,
             examples=[
@@ -222,6 +224,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="retrieve_intake_issue",
         summary="Retrieve intake issue",
+        description="Retrieve details of a specific intake issue.",
         responses={
             200: OpenApiResponse(
                 description="Intake issue", response=IntakeIssueSerializer
@@ -242,6 +245,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="update_intake_issue",
         summary="Update intake issue",
+        description="Modify an existing intake issue's properties or status for triage processing. Supports status changes like accept, reject, or mark as duplicate.",
         request=OpenApiRequest(
             request=IntakeIssueUpdateSerializer,
             examples=[
@@ -440,6 +444,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="delete_intake_issue",
         summary="Delete intake issue",
+        description="Permanently remove an intake issue from the triage queue. Also deletes the underlying issue if it hasn't been accepted yet.",
         responses={
             204: OpenApiResponse(description="Intake issue deleted"),
         },

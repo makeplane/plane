@@ -124,6 +124,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="get_workspace_work_item",
         summary="Retrieve work item by identifiers",
+        description="Retrieve a specific work item using workspace slug, project identifier, and issue identifier.",
         tags=["Work Items"],
         parameters=[
             OpenApiParameter(
@@ -211,6 +212,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="list_work_items",
         summary="List work items",
+        description="Retrieve a paginated list of all work items in a project. Supports filtering, ordering, and field selection through query parameters.",
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
@@ -340,6 +342,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="create_work_item",
         summary="Create work item",
+        description="Create a new work item in the specified project with the provided details.",
         request=OpenApiRequest(
             request=IssueSerializer,
             examples=[
@@ -478,6 +481,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="retrieve_work_item",
         summary="Retrieve work item",
+        description="Retrieve details of a specific work item.",
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
@@ -748,6 +752,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="update_work_item",
         summary="Partially update work item",
+        description="Partially update an existing work item with the provided fields. Supports external ID validation to prevent conflicts.",
         request=OpenApiRequest(
             request=IssueSerializer,
             examples=[
@@ -833,6 +838,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="delete_work_item",
         summary="Delete work item",
+        description="Permanently delete an existing work item from the project. Only admins or the item creator can perform this action.",
         responses={
             204: OpenApiResponse(description="Work Item deleted successfully"),
             403: OpenApiResponse(description="Only admin or creator can delete"),
@@ -900,6 +906,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="create_label",
+        description="Create a new label in the specified project with name, color, and description.",
         request=OpenApiRequest(
             request=LabelCreateUpdateSerializer,
             examples=[
@@ -982,6 +989,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="list_labels",
+        description="Retrieve all labels in a project. Supports filtering by name and color.",
         responses={
             200: OpenApiResponse(
                 description="Labels",
@@ -1012,6 +1020,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="get_labels",
+        description="Retrieve details of a specific label.",
         responses={
             200: OpenApiResponse(
                 description="Labels",
@@ -1030,6 +1039,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="update_label",
+        description="Partially update an existing label's properties like name, color, or description.",
         request=OpenApiRequest(
             request=LabelCreateUpdateSerializer,
             examples=[
@@ -1095,6 +1105,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="delete_label",
+        description="Permanently remove a label from the project. This action cannot be undone.",
         responses={
             204: OpenApiResponse(description="Label deleted successfully"),
             404: OpenApiResponse(description="Label not found"),
@@ -1134,6 +1145,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="list_issue_links",
+        description="Retrieve all links associated with an issue. Supports filtering by URL, title, and metadata.",
         responses={
             200: OpenApiResponse(
                 description="Issue links",
@@ -1157,6 +1169,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="create_issue_link",
+        description="Add a new external link to an issue with URL, title, and metadata.",
         request=OpenApiRequest(
             request=IssueLinkCreateSerializer,
             examples=[
@@ -1232,6 +1245,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="retrieve_issue_link",
+        description="Retrieve details of a specific issue link.",
         responses={
             200: OpenApiResponse(
                 description="Issue link",
@@ -1265,6 +1279,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="update_issue_link",
+        description="Modify the URL, title, or metadata of an existing issue link.",
         request=OpenApiRequest(
             request=IssueLinkUpdateSerializer,
             examples=[
@@ -1321,6 +1336,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="delete_issue_link",
+        description="Permanently remove an external link from an issue.",
         responses={
             204: OpenApiResponse(description="Issue link deleted successfully"),
             404: OpenApiResponse(description="Issue link not found"),
@@ -1386,6 +1402,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="list_issue_comments",
+        description="Retrieve all comments for an issue.",
         responses={
             200: OpenApiResponse(
                 description="Issue comments",
@@ -1409,6 +1426,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="create_issue_comment",
+        description="Add a new comment to an issue with HTML content.",
         request=OpenApiRequest(
             request=IssueCommentCreateSerializer,
             examples=[
@@ -1529,6 +1547,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="retrieve_issue_comment",
+        description="Retrieve details of a specific comment.",
         responses={
             200: OpenApiResponse(
                 description="Issue comments",
@@ -1550,6 +1569,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="update_issue_comment",
+        description="Modify the content of an existing comment on an issue.",
         request=OpenApiRequest(
             request=IssueCommentCreateSerializer,
             examples=[
@@ -1632,6 +1652,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
 
     @issue_comment_docs(
         operation_id="delete_issue_comment",
+        description="Permanently remove a comment from an issue. Records deletion activity for audit purposes.",
         responses={
             204: OpenApiResponse(description="Issue comment deleted successfully"),
             404: OpenApiResponse(description="Issue comment not found"),
@@ -1667,6 +1688,7 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
 
     @issue_activity_docs(
         operation_id="list_issue_activities",
+        description="Retrieve all activities for an issue. Supports filtering by activity type and date range.",
         responses={
             200: OpenApiResponse(
                 description="Issue activities",
@@ -1710,6 +1732,7 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
 
     @issue_activity_docs(
         operation_id="retrieve_issue_activity",
+        description="Retrieve details of a specific activity.",
         responses={
             200: OpenApiResponse(
                 description="Issue activities",
@@ -1755,6 +1778,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="create_issue_attachment",
+        description="Generate presigned URL for uploading file attachments to an issue.",
         request=IssueAttachmentUploadSerializer,
         responses={
             200: OpenApiResponse(
@@ -1914,6 +1938,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="list_issue_attachments",
+        description="Retrieve all attachments for an issue.",
         responses={
             200: OpenApiResponse(
                 description="Issue attachment",
@@ -1949,6 +1974,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="delete_issue_attachment",
+        description="Permanently remove an attachment from an issue. Records deletion activity for audit purposes.",
         responses={
             204: OpenApiResponse(description="Issue attachment deleted successfully"),
             404: OpenApiResponse(description="Issue attachment not found"),
@@ -1987,6 +2013,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="retrieve_issue_attachment",
+        description="Retrieve details of a specific attachment.",
         responses={
             200: OpenApiResponse(
                 description="Issue attachment",
@@ -2022,6 +2049,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="upload_issue_attachment",
+        description="Mark an attachment as uploaded after successful file transfer to storage.",
         request={
             "application/json": {
                 "type": "object",
@@ -2075,6 +2103,7 @@ class IssueSearchEndpoint(BaseAPIView):
     @extend_schema(
         operation_id="search_issues",
         tags=["Work Items"],
+        description="Perform semantic search across issue names, sequence IDs, and project identifiers.",
         parameters=[
             OpenApiParameter(
                 name="slug",

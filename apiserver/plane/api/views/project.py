@@ -112,6 +112,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="list_projects",
         summary="List or retrieve projects",
+        description="Retrieve all projects in a workspace or get details of a specific project.",
         responses={
             200: OpenApiResponse(
                 description="List of projects or project details",
@@ -156,6 +157,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="create_project",
         summary="Create project",
+        description="Create a new project in the workspace with default states and member assignments.",
         request=OpenApiRequest(
             request=ProjectCreateSerializer,
             examples=[
@@ -310,6 +312,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="retrieve_project",
         summary="Retrieve project",
+        description="Retrieve details of a specific project.",
         responses={
             200: OpenApiResponse(
                 description="Project details",
@@ -330,6 +333,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="update_project",
         summary="Update project",
+        description="Partially update an existing project's properties like name, description, or settings.",
         request=OpenApiRequest(
             request=ProjectUpdateSerializer,
             examples=[
@@ -426,6 +430,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="delete_project",
         summary="Delete project",
+        description="Permanently remove a project and all its associated data from the workspace.",
         responses={
             204: OpenApiResponse(description="Project deleted"),
         },
@@ -466,6 +471,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="archive_project",
         summary="Archive project",
+        description="Move a project to archived status, hiding it from active project lists.",
         request={},
         responses={
             204: OpenApiResponse(description="Project archived"),
@@ -486,6 +492,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @project_docs(
         operation_id="unarchive_project",
         summary="Unarchive project",
+        description="Restore an archived project to active status, making it available in regular workflows.",
         request={},
         responses={
             204: OpenApiResponse(description="Project unarchived"),

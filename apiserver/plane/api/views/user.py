@@ -16,6 +16,7 @@ class UserEndpoint(BaseAPIView):
     @user_docs(
         operation_id="get_current_user",
         summary="Get current user",
+        description="Retrieve the authenticated user's profile information including basic details.",
         responses={200: UserLiteSerializer},
     )
     def get(self, request):

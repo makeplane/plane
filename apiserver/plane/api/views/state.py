@@ -41,6 +41,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="create_state",
         summary="Create state",
+        description="Create a new workflow state for a project with specified name, color, and group.",
         request=OpenApiRequest(
             request=StateSerializer,
             examples=[
@@ -121,6 +122,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="list_states",
         summary="List states",
+        description="Retrieve all workflow states for a project.",
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -168,6 +170,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="retrieve_state",
         summary="Retrieve state",
+        description="Retrieve details of a specific state.",
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
@@ -191,6 +194,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="delete_state",
         summary="Delete state",
+        description="Permanently remove a workflow state from a project. Default states and states with existing issues cannot be deleted.",
         responses={
             204: OpenApiResponse(description="State deleted"),
             400: OpenApiResponse(description="State cannot be deleted"),
@@ -227,6 +231,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="update_state",
         summary="Update state",
+        description="Partially update an existing workflow state's properties like name, color, or group.",
         request=OpenApiRequest(
             request=StateSerializer,
             examples=[
