@@ -112,20 +112,6 @@ export const TeamsOverviewSidebarProperties = observer((props: TTeamsOverviewSid
         value: teamspaceEntities?.linked_entities.cycles,
         href: `/${workspaceSlug}/teamspaces/${teamspaceId}/cycles`,
       },
-      {
-        key: "views",
-        label: "Views",
-        icon: Layers,
-        value: teamspaceEntities?.linked_entities.views,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/views`,
-      },
-      {
-        key: "pages",
-        label: "Pages",
-        icon: FileText,
-        value: teamspaceEntities?.linked_entities.pages,
-        href: `/${workspaceSlug}/teamspaces/${teamspaceId}/pages`,
-      },
     ],
     [teamspaceId, teamspaceEntities, workspaceSlug]
   );

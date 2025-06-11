@@ -50,27 +50,12 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
             project_id__in=project_ids, workspace__slug=slug
         ).count()
 
-        pages_count = Page.objects.filter(
-            projects__in=project_ids, workspace__slug=slug, access=0
-        ).count()
-
-        views_count = IssueView.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug, access=1
-        ).count()
-
         return Response(
             {
                 "linked_entities": {
-                    "projects": project_ids.count(),
                     "issues": issue_count,
                     "cycles": cycles_count,
-                    "pages": pages_count,
-                    "views": views_count,
-                    "total": project_ids.count()
-                    + issue_count
-                    + cycles_count
-                    + pages_count
-                    + views_count,
+                    "total": issue_count + cycles_count,
                 },
                 "team_entities": {
                     "pages": team_page_count,

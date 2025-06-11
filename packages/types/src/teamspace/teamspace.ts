@@ -36,11 +36,8 @@ export type TTeamspaceMember = {
 
 export type TTeamspaceEntities = {
   linked_entities: {
-    projects: number;
     issues: number;
     cycles: number;
-    pages: number;
-    views: number;
     total: number;
   };
   team_entities: {

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import difference from "lodash/difference";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
@@ -6,6 +7,7 @@ import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore, TeamsIcon } from "@plane/ui";
+import { truncateText } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
@@ -46,7 +48,9 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
     [projectIds, getProjectById]
   );
   const areSelectedProjectsChanged = xor(selectedProjectIds, selectedProjectIdsProp).length > 0;
-  const isButtonDisabled = !areSelectedProjectsChanged || !isConfirmationChecked;
+  const newProjectAdditions = difference(selectedProjectIds, selectedProjectIdsProp);
+  const hasNewProjectAdditions = newProjectAdditions.length > 0;
+  const isButtonDisabled = !areSelectedProjectsChanged || (hasNewProjectAdditions && !isConfirmationChecked);
   const filteredProjectIds = projectIds.filter((id) => {
     const project = projectDetailsMap.get(id);
     const projectQuery = `${project?.identifier} ${project?.name}`.toLowerCase();
@@ -91,7 +95,7 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
         ) : (
           <TeamsIcon className="size-4 text-custom-text-300" />
         )}
-        {teamspace.name}
+        <span className="max-w-[280px] truncate">{teamspace.name}</span>
       </>
     );
   };
@@ -101,7 +105,7 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
-        <div className="px-4 py-3">
+        <div className="px-4 pt-3 pb-2">
           <h3 className="flex items-center gap-1.5 text-lg font-semibold text-custom-text-200 pb-2">
             Link projects to {renderTeamspaceDetails()}
           </h3>
@@ -117,14 +121,14 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
           </div>
         </div>
         {selectedProjectIds.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2 px-4">
+          <div className="flex flex-wrap gap-2 py-2 px-4">
             {selectedProjectIds.map((projectId) => {
               const projectDetails = projectDetailsMap.get(projectId);
               if (!projectDetails) return null;
               return (
                 <div
                   key={projectDetails.id}
-                  className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer"
+                  className="group flex items-center gap-1.5 bg-custom-background-80 px-2 py-1 rounded cursor-pointer"
                   onClick={() => {
                     handleSelectedProjectChange(selectedProjectIds.filter((id) => id !== projectDetails.id));
                   }}
@@ -141,7 +145,7 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
         )}
         <Combobox.Options
           static
-          className="py-2 vertical-scrollbar scrollbar-sm max-h-80 scroll-py-2 overflow-y-auto transition-[height] duration-200 ease-in-out"
+          className="pb-2 vertical-scrollbar scrollbar-sm max-h-80 scroll-py-2 overflow-y-auto transition-[height] duration-200 ease-in-out"
         >
           {filteredProjectIds.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
@@ -189,12 +193,29 @@ export const LinkProjectModal: React.FC<Props> = observer((props) => {
             </ul>
           )}
         </Combobox.Options>
-        <div className="flex items-center gap-2 px-4 py-3 text-sm text-custom-text-200 bg-custom-background-90">
-          <Checkbox checked={isConfirmationChecked} onChange={(e) => setIsConfirmationChecked(e.target.checked)} />
-          <p>
-            Grant the <span className="font-semibold">{teamspace?.name}</span> teamspace access to the selected projects
-            above.
-          </p>
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out",
+            hasNewProjectAdditions
+              ? "max-h-20 opacity-100 transform translate-y-0"
+              : "max-h-0 opacity-0 transform -translate-y-2"
+          )}
+        >
+          <div
+            className="flex items-start gap-2 px-4 py-3 text-sm text-custom-text-200 bg-custom-background-90 cursor-pointer"
+            onClick={() => setIsConfirmationChecked(!isConfirmationChecked)}
+          >
+            <Checkbox
+              checked={isConfirmationChecked}
+              className={cn("flex-shrink-0 mt-[1px]", {
+                "bg-custom-background-100": !isConfirmationChecked,
+              })}
+            />
+            <p className="select-none">
+              Grant the <span className="font-semibold">{truncateText(teamspace?.name || "", 100)}</span> teamspace
+              access to the selected projects above
+            </p>
+          </div>
         </div>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
