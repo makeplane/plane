@@ -139,13 +139,14 @@ class IssueCreateSerializer(BaseSerializer):
                     project_id=self.context["project_id"],
                 ).values_list("team_space_id", flat=True)
 
-                # Then get all the teamspace members for the project with project member
-                attrs["assignee_ids"] = list(
+                teamspace_member_ids = list(
                     TeamspaceMember.objects.filter(
                         team_space_id__in=teamspace_ids,
                         member_id__in=assignee_ids,
                     ).values_list("member_id", flat=True)
-                ) + list(
+                )
+
+                project_member_ids = list(
                     ProjectMember.objects.filter(
                         project_id=self.context["project_id"],
                         role__gte=15,
@@ -153,6 +154,9 @@ class IssueCreateSerializer(BaseSerializer):
                         member_id__in=assignee_ids,
                     ).values_list("member_id", flat=True)
                 )
+
+                # Then get all the teamspace members for the project with project member
+                attrs["assignee_ids"] = list(set(teamspace_member_ids + project_member_ids))
 
             else:
                 attrs["assignee_ids"] = ProjectMember.objects.filter(
@@ -163,6 +167,39 @@ class IssueCreateSerializer(BaseSerializer):
                 ).values_list("member_id", flat=True)
 
         return attrs
+
+    def _is_valid_assignee(self, assignee_id, project_id):
+        """
+        Check if an assignee is valid for the project.
+        Returns True if the assignee is either a project member or teamspace member (if enabled).
+        """
+        # Check if assignee is a valid project member
+        is_project_member = ProjectMember.objects.filter(
+            member_id=assignee_id,
+            project_id=project_id,
+            role__gte=15,
+            is_active=True,
+        ).exists()
+        
+        if is_project_member:
+            return True
+        
+        # Check teamspace membership if feature is enabled
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            user_id=self.context["user_id"],
+            slug=self.context["slug"],
+        ):
+            teamspace_ids = TeamspaceProject.objects.filter(
+                project_id=project_id,
+            ).values_list("team_space_id", flat=True)
+            
+            return TeamspaceMember.objects.filter(
+                member_id=assignee_id,
+                team_space_id__in=teamspace_ids,
+            ).exists()
+        
+        return False
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -211,15 +248,9 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
         else:
-            # Then assign it to default assignee, if it is a valid assignee
-            if (
-                default_assignee_id is not None
-                and ProjectMember.objects.filter(
-                    member_id=default_assignee_id,
-                    project_id=project_id,
-                    role__gte=15,
-                    is_active=True,
-                ).exists()
+            # Assign to default assignee if valid
+            if default_assignee_id is not None and self._is_valid_assignee(
+                default_assignee_id, project_id
             ):
                 try:
                     IssueAssignee.objects.create(
