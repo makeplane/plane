@@ -54,7 +54,9 @@ export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcru
                 icon: item.icon as FC<ISvgIcons>,
               }))}
             handleOnClick={() => {
-              router.push(`/${workspaceSlug}/projects/${projectId}/${featureKey}/`);
+              router.push(
+                `/${workspaceSlug}/projects/${projectId}/${featureKey === EProjectFeatureKey.WORK_ITEMS ? "issues" : featureKey}/`
+              );
             }}
             isLast={isLast}
           />

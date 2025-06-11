@@ -4,6 +4,7 @@ import { cn } from "../../helpers";
 import { Tooltip } from "../tooltip";
 
 type BreadcrumbsProps = {
+  className?: string;
   children: React.ReactNode;
   onBack?: () => void;
   isLoading?: boolean;
@@ -18,7 +19,7 @@ export const BreadcrumbItemLoader = () => (
   </div>
 );
 
-const Breadcrumbs = ({ children, onBack, isLoading = false }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ className, children, onBack, isLoading = false }: BreadcrumbsProps) => {
   const [isSmallScreen, setIsSmallScreen] = React.useState(false);
 
   React.useEffect(() => {
@@ -34,7 +35,7 @@ const Breadcrumbs = ({ children, onBack, isLoading = false }: BreadcrumbsProps) 
   const childrenArray = React.Children.toArray(children);
 
   return (
-    <div className="flex items-center overflow-hidden gap-0.5 flex-grow">
+    <div className={cn("flex items-center overflow-hidden gap-0.5 flex-grow", className)}>
       {!isSmallScreen && (
         <>
           {childrenArray.map((child, index) => {

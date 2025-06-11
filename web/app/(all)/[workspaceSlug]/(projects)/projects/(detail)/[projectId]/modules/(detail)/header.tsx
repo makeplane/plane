@@ -176,7 +176,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                     selectedItem={moduleId?.toString() ?? ""}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
-                      router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
+                      router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
                     icon={<DiceIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
