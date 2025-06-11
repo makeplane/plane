@@ -6,6 +6,7 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import {
   EditorReadOnlyRefApi,
   EditorRefApi,
+  EditorTitleRefApi,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -18,6 +19,7 @@ import {
 export type TServerHandler = {
   onConnect?: () => void;
   onServerError?: () => void;
+  onServerSynced?: () => void;
 };
 
 type TCollaborativeEditorHookProps = {
@@ -34,13 +36,17 @@ type TCollaborativeEditorHookProps = {
 };
 
 export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
+  isSmoothCursorEnabled: boolean;
   onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   mentionHandler: TMentionHandler;
+  onChange?: (description_json: object, description_html: string) => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+  updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
 };
 
 export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {

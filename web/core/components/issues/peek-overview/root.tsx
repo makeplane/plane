@@ -14,7 +14,7 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IWorkItemPeekOverview } from "@plane/types";
+import { IWorkItemPeekOverview, TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
