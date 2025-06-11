@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { InfoIcon, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 // ui
-import { Avatar, CustomMenu, LeadIcon, setPromiseToast, Tooltip } from "@plane/ui";
+import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";
 import { getFileURL } from "@/helpers/file.helper";
@@ -62,16 +62,7 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
 
   return (
     <div className="relative flex flex-col w-full h-full gap-y-2 pt-2 px-6">
-      <div className="flex items-center gap-1.5 text-sm font-semibold">
-        <span>Members</span>
-        <Tooltip
-          position="right"
-          tooltipContent="Members in this teamspace can't be removed from linked projects without removing them from this teamspace first."
-          className="max-w-64"
-        >
-          <InfoIcon className="size-3 text-custom-text-300 hover:text-custom-text-200 outline-none cursor-help" />
-        </Tooltip>
-      </div>
+      <div className="flex items-center gap-1.5 text-sm font-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
         <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />
         {members &&

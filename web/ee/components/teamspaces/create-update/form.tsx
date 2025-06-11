@@ -136,47 +136,45 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
             {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
           </div>
         </div>
-        {(!formData.id || (formData.id && formData.description_html)) && (
-          <RichTextEditor
-            id="teamspace-modal-editor"
-            initialValue={
-              !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
+        <RichTextEditor
+          id="teamspace-modal-editor"
+          initialValue={
+            !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
+          }
+          workspaceSlug={workspaceSlug.toString()}
+          workspaceId={currentWorkspace.id}
+          dragDropEnabled={false}
+          onChange={(description_json: object, description_html: string) => {
+            handleFormDataChange("description_json", description_json);
+            handleFormDataChange("description_html", description_html);
+          }}
+          placeholder={(isFocused, value) =>
+            isEditorEmpty(value)
+              ? "Include a helpful description for members you add to this teamspace."
+              : t(getDescriptionPlaceholderI18n(isFocused, value))
+          }
+          searchMentionCallback={searchEntity}
+          editorClassName="text-xs"
+          containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+          tabIndex={2}
+          uploadFile={async (blockId, file) => {
+            try {
+              const { asset_id } = await uploadEditorAsset({
+                blockId,
+                data: {
+                  entity_identifier: teamDetail?.id ?? "",
+                  entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
+                },
+                file,
+                workspaceSlug: workspaceSlug.toString(),
+              });
+              return asset_id;
+            } catch (error) {
+              console.log("Error in uploading work item asset:", error);
+              throw new Error("Asset upload failed. Please try again later.");
             }
-            workspaceSlug={workspaceSlug.toString()}
-            workspaceId={currentWorkspace.id}
-            dragDropEnabled={false}
-            onChange={(description_json: object, description_html: string) => {
-              handleFormDataChange("description_json", description_json);
-              handleFormDataChange("description_html", description_html);
-            }}
-            placeholder={(isFocused, value) =>
-              isEditorEmpty(value)
-                ? "Include a helpful description for members you add to this teamspace."
-                : t(getDescriptionPlaceholderI18n(isFocused, value))
-            }
-            searchMentionCallback={searchEntity}
-            editorClassName="text-xs"
-            containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
-            tabIndex={2}
-            uploadFile={async (blockId, file) => {
-              try {
-                const { asset_id } = await uploadEditorAsset({
-                  blockId,
-                  data: {
-                    entity_identifier: teamDetail?.id ?? "",
-                    entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
-                  },
-                  file,
-                  workspaceSlug: workspaceSlug.toString(),
-                });
-                return asset_id;
-              } catch (error) {
-                console.log("Error in uploading work item asset:", error);
-                throw new Error("Asset upload failed. Please try again later.");
-              }
-            }}
-          />
-        )}
+          }}
+        />
         <div className="space-y-0.5">
           <p className="text-sm text-custom-text-300">Team lead</p>
           <MemberDropdown
