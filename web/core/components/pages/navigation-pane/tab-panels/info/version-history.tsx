@@ -25,46 +25,50 @@ type Props = {
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
-const VersionHistoryItem = observer(
-  (props: { getVersionLink: (versionID: string) => string; isVersionActive: boolean; version: TPageVersion }) => {
-    const { getVersionLink, isVersionActive, version } = props;
-    // store hooks
-    const { getUserDetails } = useMember();
-    // derived values
-    const versionCreator = getUserDetails(version.created_by);
-    // translation
-    const { t } = useTranslation();
+type VersionHistoryItemProps = {
+  getVersionLink: (versionID: string) => string;
+  isVersionActive: boolean;
+  version: TPageVersion;
+};
 
-    return (
-      <li className="relative flex items-center gap-x-4 text-xs font-medium">
-        {/* timeline icon */}
-        <div className="relative size-6 flex-none grid place-items-center">
-          <div className="size-2 rounded-full bg-custom-background-80" />
-        </div>
-        {/* end timeline icon */}
-        <Link
-          href={getVersionLink(version.id)}
-          className={cn("block flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
-            "bg-custom-background-80 hover:bg-custom-background-80": isVersionActive,
-          })}
-        >
-          <p className="text-custom-text-300">
-            {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
-          </p>
-          <p className="mt-1 flex items-center gap-1">
-            <Avatar
-              size="sm"
-              src={getFileURL(versionCreator?.avatar_url ?? "")}
-              name={versionCreator?.display_name}
-              className="flex-shrink-0"
-            />
-            <span>{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
-          </p>
-        </Link>
-      </li>
-    );
-  }
-);
+const VersionHistoryItem = observer((props: VersionHistoryItemProps) => {
+  const { getVersionLink, isVersionActive, version } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
+  // derived values
+  const versionCreator = getUserDetails(version.created_by);
+  // translation
+  const { t } = useTranslation();
+
+  return (
+    <li className="relative flex items-center gap-x-4 text-xs font-medium">
+      {/* timeline icon */}
+      <div className="relative size-6 flex-none grid place-items-center">
+        <div className="size-2 rounded-full bg-custom-background-80" />
+      </div>
+      {/* end timeline icon */}
+      <Link
+        href={getVersionLink(version.id)}
+        className={cn("block flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
+          "bg-custom-background-80 hover:bg-custom-background-80": isVersionActive,
+        })}
+      >
+        <p className="text-custom-text-300">
+          {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
+        </p>
+        <p className="mt-1 flex items-center gap-1">
+          <Avatar
+            size="sm"
+            src={getFileURL(versionCreator?.avatar_url ?? "")}
+            name={versionCreator?.display_name}
+            className="flex-shrink-0"
+          />
+          <span>{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
+        </p>
+      </Link>
+    </li>
+  );
+});
 
 export const PageNavigationPaneInfoTabVersionHistory: React.FC<Props> = observer((props) => {
   const { page, versionHistory } = props;

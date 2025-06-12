@@ -48,6 +48,7 @@ type Props = {
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
   handlers: TEditorBodyHandlers;
+  isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
@@ -60,6 +61,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     handleConnectionStatus,
     handleEditorReady,
     handlers,
+    isNavigationPaneOpen,
     page,
     webhookConnectionParams,
     workspaceSlug,
@@ -169,18 +171,20 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       >
         <div id="page-content-container" className="relative w-full flex-shrink-0">
           {/* table of content */}
-          <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
-            <div className="sticky top-[72px]">
-              <div className="group/page-toc relative px-page-x">
-                <div className="cursor-pointer max-h-[50vh] overflow-hidden">
-                  <PageContentBrowser editorRef={editorRef} showOutline />
-                </div>
-                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                  <PageContentBrowser editorRef={editorRef} />
+          {!isNavigationPaneOpen && (
+            <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+              <div className="sticky top-[72px]">
+                <div className="group/page-toc relative px-page-x">
+                  <div className="cursor-pointer max-h-[50vh] overflow-hidden">
+                    <PageContentBrowser editorRef={editorRef} showOutline />
+                  </div>
+                  <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                    <PageContentBrowser editorRef={editorRef} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
           <div className="page-header-container group/page-header">
             <div className={blockWidthClassName}>
               <PageEditorHeaderRoot page={page} />

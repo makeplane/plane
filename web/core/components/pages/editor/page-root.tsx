@@ -144,6 +144,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
           handleConnectionStatus={setHasConnectionFailed}
           handleEditorReady={handleEditorReady}
           handlers={handlers}
+          isNavigationPaneOpen={isValidNavigationPaneTab}
           page={page}
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}

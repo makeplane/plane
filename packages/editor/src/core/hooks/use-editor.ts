@@ -8,25 +8,19 @@ import * as Y from "yjs";
 import { getEditorMenuItems } from "@/components/menus";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
+import { getAllEditorAssets } from "@/helpers/assets";
 import { getParagraphCount } from "@/helpers/common";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
-import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
+import { scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import type {
-  TDocumentEventsServer,
-  EditorRefApi,
-  TEditorCommands,
-  TFileHandler,
-  TExtensions,
-  TMentionHandler,
-} from "@/types";
-import { CORE_EDITOR_META } from "@/constants/meta";
+import type { EditorRefApi, TEditorCommands, TFileHandler, TExtensions, TMentionHandler } from "@/types";
 
 export interface CustomEditorProps {
   editable: boolean;
@@ -144,7 +138,7 @@ export const useEditor = (props: CustomEditorProps) => {
     forwardedRef,
     () => ({
       blur: () => editor?.commands.blur(),
-      scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
+      scrollToNodeViaDOMCoordinates(behavior, pos) {
         const resolvedPos = pos ?? editor?.state.selection.from;
         if (!editor || !resolvedPos) return;
         scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
@@ -153,10 +147,10 @@ export const useEditor = (props: CustomEditorProps) => {
       clearEditor: (emitUpdate = false) => {
         editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
       },
-      setEditorValue: (content: string, emitUpdate = false) => {
+      setEditorValue: (content, emitUpdate = false) => {
         editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
       },
-      setEditorValueAtCursorPosition: (content: string) => {
+      setEditorValueAtCursorPosition: (content) => {
         if (editor?.state.selection) {
           insertContentAtSavedSelection(editor, content);
         }
@@ -184,36 +178,53 @@ export const useEditor = (props: CustomEditorProps) => {
 
         return item.isActive(props);
       },
-      onHeadingChange: (callback: (headings: IMarking[]) => void) => {
-        // Subscribe to update event emitted from headers extension
-        editor?.on("update", () => {
+      onHeadingChange: (callback) => {
+        const handleHeadingChange = () => {
+          if (!editor) return;
           const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
           if (headings) {
             callback(headings);
           }
-        });
+        };
+
+        // Subscribe to update event emitted from headers extension
+        editor?.on("update", handleHeadingChange);
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
         // method
         return () => {
-          editor?.off("update");
+          editor?.off("update", handleHeadingChange);
+        };
+      },
+      onAssetChange: (callback) => {
+        const handleAssetChange = () => {
+          if (!editor) return;
+          const assets = getAllEditorAssets(editor);
+          callback(assets);
+        };
+
+        // Subscribe to update assets
+        editor?.on("update", handleAssetChange);
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editor?.off("update", handleAssetChange);
         };
       },
       getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
-      onStateChange: (callback: () => void) => {
+      onStateChange: (callback) => {
         // Subscribe to editor state changes
-        editor?.on("transaction", () => {
-          callback();
-        });
+        editor?.on("transaction", callback);
 
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
         // method
         return () => {
-          editor?.off("transaction");
+          editor?.off("transaction", callback);
         };
       },
-      getMarkDown: (): string => {
+      getMarkDown: () => {
         const markdownOutput = editor?.storage.markdown.getMarkdown();
         return markdownOutput;
       },
@@ -228,13 +239,13 @@ export const useEditor = (props: CustomEditorProps) => {
           json: documentJSON,
         };
       },
-      scrollSummary: (marking: IMarking): void => {
+      scrollSummary: (marking) => {
         if (!editor) return;
         scrollSummary(editor, marking);
       },
       isEditorReadyToDiscard: () =>
         !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
-      setFocusAtPosition: (position: number) => {
+      setFocusAtPosition: (position) => {
         if (!editor || editor.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
           return;
@@ -294,7 +305,7 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
-      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
+      emitRealTimeUpdate: (message) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     }),
     [editor]

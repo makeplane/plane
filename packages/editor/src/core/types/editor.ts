@@ -2,10 +2,14 @@ import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
 // plane types
 import { TWebhookConnectionQueryParams } from "@plane/types";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extension types
 import { TTextAlign } from "@/extensions";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
+// plane editor imports
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import {
   TAIHandler,
@@ -75,6 +79,15 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
+export type TEditorAsset = {
+  id: string;
+  name: string;
+  scrollId: string;
+  size: number;
+  src: string;
+  type: keyof typeof CORE_EXTENSIONS | keyof typeof ADDITIONAL_EXTENSIONS;
+};
+
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
@@ -91,6 +104,7 @@ export type EditorReadOnlyRefApi = {
     paragraphs: number;
     words: number;
   };
+  onAssetChange: (callback: (assets: TEditorAsset[]) => void) => () => void;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {

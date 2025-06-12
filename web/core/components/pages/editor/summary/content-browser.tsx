@@ -7,13 +7,14 @@ import { OutlineHeading1, OutlineHeading2, OutlineHeading3, THeadingComponentPro
 
 type Props = {
   className?: string;
+  emptyState?: React.ReactNode;
   editorRef: EditorRefApi | null;
   setSidePeekVisible?: (sidePeekState: boolean) => void;
   showOutline?: boolean;
 };
 
 export const PageContentBrowser: React.FC<Props> = (props) => {
-  const { className, editorRef, setSidePeekVisible, showOutline = false } = props;
+  const { className, editorRef, emptyState, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
 
@@ -41,6 +42,8 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     2: OutlineHeading2,
     3: OutlineHeading3,
   };
+
+  if (headings.length === 0) return emptyState ?? null;
 
   return (
     <div

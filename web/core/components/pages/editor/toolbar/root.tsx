@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { PanelRight } from "lucide-react";
 // components
 import { PageToolbar } from "@/components/pages";
 // helpers
@@ -11,11 +12,13 @@ import { PageCollaboratorsList } from "@/plane-web/components/pages/header/colla
 import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
+  handleOpenNavigationPane: () => void;
+  isNavigationPaneOpen: boolean;
   page: TPageInstance;
 };
 
 export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
-  const { page } = props;
+  const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
   // derived values
   const { isContentEditable, editorRef } = page;
   // page filters
@@ -24,25 +27,51 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
   const shouldHideToolbar = !isStickyToolbarEnabled || !isContentEditable;
 
   return (
-    <div
-      id="page-toolbar-container"
-      className={cn("max-h-[52px] transition-all ease-linear duration-300 overflow-auto", {
-        "max-h-0 overflow-hidden": shouldHideToolbar,
-      })}
-    >
+    <>
       <div
-        className={cn(
-          "hidden md:flex items-center relative min-h-[52px] page-toolbar-content px-page-x transition-all duration-200 ease-in-out",
-          {
-            "wide-layout": isFullWidth,
-          }
-        )}
+        id="page-toolbar-container"
+        className={cn("max-h-[52px] transition-all ease-linear duration-300 overflow-auto", {
+          "max-h-0 overflow-hidden": shouldHideToolbar,
+        })}
       >
-        <div className="max-w-full w-full flex items-center justify-between">
-          {editorRef && <PageToolbar editorRef={editorRef} />}
-          <PageCollaboratorsList page={page} />
+        <div
+          className={cn(
+            "hidden md:flex items-center relative min-h-[52px] page-toolbar-content px-page-x transition-all duration-200 ease-in-out",
+            {
+              "wide-layout": isFullWidth,
+            }
+          )}
+        >
+          <div className="max-w-full w-full flex items-center justify-between">
+            {editorRef && <PageToolbar editorRef={editorRef} />}
+            <div className="flex items-center gap-2">
+              <PageCollaboratorsList page={page} />
+              {!isNavigationPaneOpen && (
+                <button
+                  type="button"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+                  onClick={handleOpenNavigationPane}
+                >
+                  <PanelRight className="size-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+      {shouldHideToolbar && (
+        <div className="absolute z-10 top-0 right-0 h-[52px] px-page-x flex items-center">
+          {!isNavigationPaneOpen && (
+            <button
+              type="button"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
+              onClick={handleOpenNavigationPane}
+            >
+              <PanelRight className="size-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+    </>
   );
 });

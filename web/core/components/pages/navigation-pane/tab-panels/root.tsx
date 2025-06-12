@@ -25,7 +25,7 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
         <Tab.Panel
           key={tab.key}
           as="div"
-          className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm"
+          className="size-full p-3.5 pt-0 overflow-y-auto vertical-scrollbar scrollbar-sm outline-none"
         >
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}

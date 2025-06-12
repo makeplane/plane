@@ -3,16 +3,18 @@ import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
 import { useImperativeHandle, MutableRefObject, useEffect } from "react";
 import * as Y from "yjs";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
+import { getAllEditorAssets } from "@/helpers/assets";
 import { getParagraphCount } from "@/helpers/common";
 import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
 import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
-import { CORE_EDITOR_META } from "@/constants/meta";
 
 interface CustomReadOnlyEditorProps {
   disabledExtensions: TExtensions[];
@@ -79,10 +81,10 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     clearEditor: (emitUpdate = false) => {
       editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
-    setEditorValue: (content: string, emitUpdate = false) => {
+    setEditorValue: (content, emitUpdate = false) => {
       editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
-    getMarkDown: (): string => {
+    getMarkDown: () => {
       const markdownOutput = editor?.storage.markdown.getMarkdown();
       return markdownOutput;
     },
@@ -97,7 +99,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
         json: documentJSON,
       };
     },
-    scrollSummary: (marking: IMarking): void => {
+    scrollSummary: (marking) => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
@@ -106,6 +108,22 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       paragraphs: getParagraphCount(editor.state),
       words: editor.storage?.characterCount?.words?.() ?? 0,
     }),
+    onAssetChange: (callback) => {
+      const handleAssetChange = () => {
+        if (!editor) return;
+        const assets = getAllEditorAssets(editor);
+        callback(assets);
+      };
+
+      // Subscribe to update assets
+      editor?.on("update", handleAssetChange);
+      // Return a function to unsubscribe to the continuous transactions of
+      // the editor on unmounting the component that has subscribed to this
+      // method
+      return () => {
+        editor?.off("update", handleAssetChange);
+      };
+    },
   }));
 
   if (!editor) {

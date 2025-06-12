@@ -222,6 +222,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   return (
     <div
+      id={`image-block-${node.attrs.id}`}
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
       onMouseDown={handleImageMouseDown}
