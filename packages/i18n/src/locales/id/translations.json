@@ -874,13 +874,15 @@
     "guests": "Tamu",
     "on_track": "Sesuai Jalur",
     "off_track": "Menyimpang",
+    "at_risk": "Dalam risiko",
     "timeline": "Linimasa",
     "completion": "Penyelesaian",
     "upcoming": "Mendatang",
     "completed": "Selesai",
     "in_progress": "Sedang berlangsung",
     "planned": "Direncanakan",
-    "paused": "Dijedaikan"
+    "paused": "Dijedaikan",
+    "no_of": "Jumlah {entity}"
   },
   "chart": {
     "x_axis": "Sumbu-X",
