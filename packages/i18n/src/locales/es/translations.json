@@ -877,13 +877,15 @@
     "guests": "Invitados",
     "on_track": "En camino",
     "off_track": "Fuera de camino",
+    "at_risk": "En riesgo",
     "timeline": "Cronograma",
     "completion": "Finalización",
     "upcoming": "Próximo",
     "completed": "Completado",
     "in_progress": "En progreso",
     "planned": "Planificado",
-    "paused": "Pausado"
+    "paused": "Pausado",
+    "no_of": "N.º de {entity}"
   },
   "chart": {
     "x_axis": "Eje X",

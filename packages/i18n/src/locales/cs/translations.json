@@ -874,13 +874,15 @@
     "guests": "Hosté",
     "on_track": "Na správné cestě",
     "off_track": "Mimo plán",
+    "at_risk": "V ohrožení",
     "timeline": "Časová osa",
     "completion": "Dokončení",
     "upcoming": "Nadcházející",
     "completed": "Dokončeno",
     "in_progress": "Probíhá",
     "planned": "Plánováno",
-    "paused": "Pozastaveno"
+    "paused": "Pozastaveno",
+    "no_of": "Počet {entity}"
   },
   "chart": {
     "x_axis": "Osa X",

@@ -875,13 +875,15 @@
     "guests": "访客",
     "on_track": "进展顺利",
     "off_track": "偏离轨道",
+    "at_risk": "有风险",
     "timeline": "时间轴",
     "completion": "完成",
     "upcoming": "即将发生",
     "completed": "已完成",
     "in_progress": "进行中",
     "planned": "已计划",
-    "paused": "暂停"
+    "paused": "暂停",
+    "no_of": "{entity} 的数量"
   },
   "chart": {
     "x_axis": "X轴",
