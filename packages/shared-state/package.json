@@ -14,7 +14,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
+    "@plane/eslint-config": "workspace:*",
     "@types/node": "^22.5.4",
     "typescript": "^5.3.3"
   }

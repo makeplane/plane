@@ -15,7 +15,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
+    "@plane/eslint-config": "workspace:*",
     "@types/node": "^22.5.4",
     "typescript": "^5.3.3"
   }
