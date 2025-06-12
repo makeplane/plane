@@ -874,14 +874,14 @@
     "guests": "Гости",
     "on_track": "По плану",
     "off_track": "Отклонение от плана",
+    "at_risk": "Под угрозой",
     "timeline": "Хронология",
     "completion": "Завершение",
     "upcoming": "Предстоящие",
     "completed": "Завершено",
     "in_progress": "В процессе",
     "planned": "Запланировано",
-    "paused": "На паузе",
-    "at_risk": "Под угрозой"
+    "paused": "На паузе"
   },
   "chart": {
     "x_axis": "Ось X",

@@ -874,14 +874,14 @@
     "guests": "게스트",
     "on_track": "계획대로 진행 중",
     "off_track": "계획 이탈",
+    "at_risk": "위험",
     "timeline": "타임라인",
     "completion": "완료",
     "upcoming": "예정된",
     "completed": "완료됨",
     "in_progress": "진행 중",
     "planned": "계획된",
-    "paused": "일시 중지됨",
-    "at_risk": "위험"
+    "paused": "일시 중지됨"
   },
   "chart": {
     "x_axis": "X축",

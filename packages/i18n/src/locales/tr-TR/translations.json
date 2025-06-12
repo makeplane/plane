@@ -875,14 +875,14 @@
     "guests": "Misafirler",
     "on_track": "Yolunda",
     "off_track": "Yolunda değil",
+    "at_risk": "Risk altında",
     "timeline": "Zaman çizelgesi",
     "completion": "Tamamlama",
     "upcoming": "Yaklaşan",
     "completed": "Tamamlandı",
     "in_progress": "Devam ediyor",
     "planned": "Planlandı",
-    "paused": "Durduruldu",
-    "at_risk": "Risk altında"
+    "paused": "Durduruldu"
   },
   "chart": {
     "x_axis": "X ekseni",

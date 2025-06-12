@@ -874,14 +874,14 @@
     "guests": "Convidados",
     "on_track": "No caminho certo",
     "off_track": "Fora do caminho",
+    "at_risk": "Em risco",
     "timeline": "Linha do tempo",
     "completion": "Conclusão",
     "upcoming": "Próximo",
     "completed": "Concluído",
     "in_progress": "Em andamento",
     "planned": "Planejado",
-    "paused": "Pausado",
-    "at_risk": "Em risco"
+    "paused": "Pausado"
   },
   "chart": {
     "x_axis": "Eixo X",

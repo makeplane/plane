@@ -874,14 +874,14 @@
     "guests": "Goście",
     "on_track": "Na dobrej drodze",
     "off_track": "Poza planem",
+    "at_risk": "W zagrożeniu",
     "timeline": "Oś czasu",
     "completion": "Zakończenie",
     "upcoming": "Nadchodzące",
     "completed": "Zakończone",
     "in_progress": "W trakcie",
     "planned": "Zaplanowane",
-    "paused": "Wstrzymane",
-    "at_risk": "Zagrożone"
+    "paused": "Wstrzymane"
   },
   "chart": {
     "x_axis": "Oś X",

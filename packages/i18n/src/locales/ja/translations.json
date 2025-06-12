@@ -873,14 +873,14 @@
     "guests": "ゲスト",
     "on_track": "順調",
     "off_track": "遅れ",
+    "at_risk": "リスクあり",
     "timeline": "タイムライン",
     "completion": "完了",
     "upcoming": "今後の予定",
     "completed": "完了",
     "in_progress": "進行中",
     "planned": "計画済み",
-    "paused": "一時停止",
-    "at_risk": "リスクあり"
+    "paused": "一時停止"
   },
   "chart": {
     "x_axis": "エックス アクシス",
