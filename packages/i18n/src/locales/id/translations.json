@@ -879,7 +879,8 @@
     "completed": "Selesai",
     "in_progress": "Sedang berlangsung",
     "planned": "Direncanakan",
-    "paused": "Dijedaikan"
+    "paused": "Dijedaikan",
+    "no_of": "Jumlah {entity}"
   },
   "chart": {
     "x_axis": "Sumbu-X",

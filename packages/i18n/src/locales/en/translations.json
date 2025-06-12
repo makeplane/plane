@@ -341,7 +341,6 @@
   "bot": "Bot",
   "settings_description": "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
   "back_to_workspace": "Back to workspace",
-  "no_of": "No. of {entity}",
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -723,7 +722,8 @@
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
     "applying": "Applying",
-    "overview": "Overview"
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
   "chart": {
     "x_axis": "X-axis",
