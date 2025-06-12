@@ -107,7 +107,7 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
                 angle: -90,
                 position: "bottom",
                 offset: -24,
-                dx: yAxis.dx || -16,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
