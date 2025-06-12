@@ -4,7 +4,8 @@ FROM python:3.12.5-alpine AS backend
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV INSTANCE_CHANGELOG_URL https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+ENV INSTANCE_CHANGELOG_URL https://sites.plane.so/pages/f366114e9aba4cbfbe4265b8f2b74f65
+
 
 RUN apk --no-cache add \
     "bash~=5.2" \
@@ -21,7 +22,8 @@ RUN apk --no-cache add \
     "make" \
     "postgresql-dev" \
     "libc-dev" \
-    "linux-headers"
+    "linux-headers" \
+    "xmlsec-dev"
 
 WORKDIR /code
 

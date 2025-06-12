@@ -1,7 +1,5 @@
 import { Extensions } from "@tiptap/core";
 import { forwardRef, MutableRefObject } from "react";
-// plane imports
-import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -12,6 +10,10 @@ import { WorkItemEmbedExtension } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
+// plane web types
+import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
 // types
 import {
   EditorReadOnlyRefApi,
@@ -28,7 +30,7 @@ interface IDocumentReadOnlyEditor {
   containerClassName: string;
   displayConfig?: TDisplayConfig;
   editorClassName?: string;
-  embedHandler: any;
+  embedHandler: TReadOnlyEmbedConfig;
   fileHandler: TReadOnlyFileHandler;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
@@ -59,6 +61,14 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     );
   }
 
+  if (embedHandler?.page) {
+    extensions.push(
+      PageEmbedReadOnlyExtension({
+        widgetCallback: embedHandler.page.widgetCallback,
+      })
+    );
+  }
+
   const editor = useReadOnlyEditor({
     disabledExtensions,
     editorClassName,
@@ -81,7 +91,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       bubbleMenuEnabled={false}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={cn(editorContainerClassName, "document-editor")}
+      editorContainerClassName={editorContainerClassName}
       id={id}
     />
   );

@@ -1,7 +1,6 @@
-export type TBaseActivity<
-  TFieldKey extends string = string,
-  TVerbKey extends string = string,
-> = {
+import { TBaseActivityVerbsExtended } from "./activity-extended";
+
+export type TBaseActivity<TFieldKey extends string = string, TVerbKey extends string = string> = {
   id: string;
   field: TFieldKey | undefined;
   epoch: number;
@@ -19,18 +18,15 @@ export type TBaseActivity<
   updated_at: string;
 };
 
-export type TWorkspaceBaseActivity<
-  K extends string = string,
-  V extends string = string,
-> = TBaseActivity<K, V> & {
+export type TWorkspaceBaseActivity<K extends string = string, V extends string = string> = TBaseActivity<K, V> & {
   workspace: string;
 };
 
-export type TProjectBaseActivity<
-  K extends string = string,
-  V extends string = string,
-> = TWorkspaceBaseActivity<K, V> & {
+export type TProjectBaseActivity<K extends string = string, V extends string = string> = TWorkspaceBaseActivity<
+  K,
+  V
+> & {
   project: string;
 };
 
-export type TBaseActivityVerbs = "created" | "updated" | "deleted";
+export type TBaseActivityVerbs = "created" | "updated" | "deleted" | TBaseActivityVerbsExtended;

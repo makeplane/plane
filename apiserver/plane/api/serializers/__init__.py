@@ -16,3 +16,4 @@ from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer
 from .module import ModuleSerializer, ModuleIssueSerializer, ModuleLiteSerializer
 from .intake import IntakeIssueSerializer
 from .estimate import EstimatePointSerializer
+from .issue_type import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer

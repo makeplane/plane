@@ -197,6 +197,24 @@ export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] 
 
 /**
  * @description this function returns whether a comment is empty or not by checking for the following conditions-
+ * 1. If editor content is undefined
+ * 2. If editor content is an empty string
+ * 3. If editor content is "<p></p>"
+ * @param {string | undefined} comment
+ * @returns {boolean}
+ */
+export const isEditorContentEmpty = (content: string | undefined): boolean => {
+  // return true if editor content is undefined
+  if (!content) return true;
+  return (
+    content?.trim() === "" ||
+    content === "<p></p>" ||
+    isEmptyHtmlString(content ?? "", ["img", "mention-component", "image-component", "issue-embed-component"])
+  );
+};
+
+/**
+ * @description this function returns whether a comment is empty or not by checking for the following conditions-
  * 1. If comment is undefined
  * 2. If comment is an empty string
  * 3. If comment is "<p></p>"

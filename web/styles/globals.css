@@ -255,6 +255,18 @@
     --color-toast-warning-border: 255, 247, 194;
     --color-toast-info-border: 210, 222, 255;
     --color-toast-loading-border: 224, 225, 230;
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="light-contrast"] {
@@ -270,6 +282,18 @@
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
   }
 
   [data-theme="dark"],
@@ -384,6 +408,18 @@
     --color-toast-warning-border: 79, 52, 34;
     --color-toast-info-border: 58, 91, 199;
     --color-toast-loading-border: 96, 100, 108;
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="dark-contrast"] {
@@ -398,6 +434,18 @@
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
     --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 202, 201, 252;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 231, 231, 255;
+    --color-pi-900: 245, 245, 255;
+    --color-pi-950: 249, 249, 255;
   }
 
   [data-theme="light"],
@@ -924,7 +972,7 @@ div.web-view-spinner div.bar12 {
 }
 
 .animate-text-slide-in {
-  animation: textSlideIn 400ms ease-out forwards;
+  animation: textSlideIn 600ms ease-out forwards;
 }
 
 .animate-text-fade-out {
@@ -932,7 +980,7 @@ div.web-view-spinner div.bar12 {
 }
 
 .animate-lock-icon {
-  animation: lockIconAnimation 600ms ease-out forwards;
+  animation: lockIconAnimation 1000ms ease-out forwards;
 }
 
 .animate-unlock-icon {
@@ -941,6 +989,338 @@ div.web-view-spinner div.bar12 {
 
 .animate-fade-out {
   animation: fadeOut 500ms ease-in 100ms forwards;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
+}
+
+/* Desktop application */
+html.todesktop body {
+  height: 100vh;
+  width: 100%;
+  padding: 8px;
+  padding-top: 36px;
+}
+
+html.todesktop .app-container {
+  height: 100%;
+  width: 100%;
+  overflow: unset;
+  contain: layout style size;
+  contain-intrinsic-size: 100%;
+  position: relative; /* Ensure it's the containing block */
+  border: 1px solid rgb(var(--color-border-200));
+  border-radius: 6px;
+}
+
+html.todesktop .header {
+  -webkit-app-region: drag;
+}
+
+html.todesktop .header button {
+  -webkit-app-region: no-drag;
+}
+
+.pi-chat-root {
+  * {
+    margin: revert;
+    font-size: revert;
+    font-weight: revert;
+    color: revert;
+    text-decoration: revert;
+    text-indent: revert;
+    border-collapse: revert;
+  }
+  li,
+  ui {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 0.9rem;
+  }
+  table,
+  tr,
+  td,
+  th {
+    border-width: revert;
+  }
+  pre {
+    width: 100%;
+    overflow-x: auto;
+    background-color: rgb(var(--color-background-80));
+    border-radius: 10px;
+    padding: 20px;
+    font-family: inherit;
+  }
+}
+
+/* react-grid-layout */
+.react-grid-item {
+  .react-resizable-handle {
+    position: absolute;
+    height: 8px !important;
+    width: 8px !important;
+    background: rgba(var(--color-border-400)) !important;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+
+    &.react-resizable-handle-nw {
+      top: 2px !important;
+      left: 2px !important;
+      transform: translate(-50%, -50%) !important;
+      cursor: nwse-resize !important;
+    }
+    &.react-resizable-handle-ne {
+      top: 2px !important;
+      right: 2px !important;
+      transform: translate(50%, -50%) !important;
+      cursor: nesw-resize !important;
+    }
+    &.react-resizable-handle-se {
+      bottom: 2px !important;
+      right: 2px !important;
+      transform: translate(50%, 50%) !important;
+      cursor: nwse-resize !important;
+    }
+    &.react-resizable-handle-sw {
+      bottom: 2px !important;
+      left: 2px !important;
+      transform: translate(-50%, 50%) !important;
+      cursor: nesw-resize !important;
+    }
+
+    &::after {
+      display: none !important;
+    }
+  }
+
+  &:hover {
+    .react-resizable-handle {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    &:not(.resizing) .dashboard-widget-item:not(.selected):not(.disabled) {
+      border-color: rgba(var(--color-border-400)) !important;
+    }
+  }
+
+  &.resizing {
+    .react-resizable-handle {
+      opacity: 1;
+      pointer-events: all;
+      background: rgba(var(--color-primary-100)) !important;
+    }
+
+    .dashboard-widget-item {
+      border-color: rgba(var(--color-primary-100)) !important;
+    }
+  }
+
+  .dashboard-widget-item.selected ~ .react-resizable-handle {
+    opacity: 1;
+    pointer-events: all;
+    background: rgba(var(--color-primary-100)) !important;
+  }
+}
+
+.react-grid-placeholder {
+  background: rgba(var(--color-primary-100), 0.3) !important;
+  border-radius: 4px;
+  transition: 0.2s all ease;
+}
+/* end react-grid-layout */
+
+input.hide-arrows {
+  &[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+input[type="color"].custom-color-picker {
+  appearance: none;
+  --moz-appearance: none;
+  --webkit-appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: 0;
+    border-radius: 0;
+  }
+
+  &::-moz-color-swatch,
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
+  &::-moz-focus-inner {
+    padding: 0;
+  }
+}
+
+.is-dragging:not(:has(.is-dragging)) {
+  background-color: rgba(var(--color-primary-100), 0.2);
+}
+
+@layer utilities {
+  @keyframes quickFadeIn {
+    0% {
+      opacity: 0.5;
+      transform: translateX(-5px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-quickFadeIn {
+    animation: quickFadeIn 0.2s var(--ease-out-circ) forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes editorFadeIn {
+  from {
+    opacity: 0.8;
+    margin-top: 20px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+@keyframes fadeTransition {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulseSoft {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse-subtle {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0);
+  }
+
+  100% {
+    transform: scale(0.85);
+    opacity: 0.9;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms var(--ease-out-quad) forwards;
+}
+
+.animate-fade-transition {
+  animation: fadeTransition 200ms var(--ease-out-cubic) forwards;
+}
+
+.animate-editorFadeIn {
+  animation: editorFadeIn 0.3s var(--ease-out-cubic) forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulseSoft 1.5s var(--ease-in-out-quad) infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms var(--ease-out-quad) forwards;
+}
+
+.animate-fade-transition {
+  animation: fadeTransition 200ms var(--ease-out-cubic) forwards;
+}
+
+:root {
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
 
 @keyframes highlight {

@@ -25,6 +25,7 @@ from plane.db.models import (
     Project,
     CycleIssue,
     UserRecentVisit,
+    DeployBoard,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -37,7 +38,7 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
-
+from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
 
 class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -152,10 +153,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
@@ -223,7 +220,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
 
     @method_decorator(gzip_page)
     @allow_permission(
@@ -260,8 +259,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             |
             # For other roles (role < 5), show all issues
             Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
         )
 
         # Issue queryset
@@ -371,23 +368,32 @@ class IssueViewViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
-        return self.filter_queryset(
+        queryset = self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
             )
             .filter(Q(owned_by=self.request.user) | Q(access=1))
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
+            .annotate(
+                anchor=DeployBoard.objects.filter(
+                    entity_name="view",
+                    entity_identifier=OuterRef("pk"),
+                    project_id=self.kwargs.get("project_id"),
+                    workspace__slug=self.kwargs.get("slug"),
+                ).values("anchor")
+            )
             .order_by("-is_favorite", "name")
             .distinct()
+            .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
+
+        return queryset
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
@@ -402,6 +408,7 @@ class IssueViewViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
@@ -429,6 +436,7 @@ class IssueViewViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue_view.owned_by == request.user
+            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -503,6 +511,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_name="view",
             ).delete(soft=False)
+            # Delete the view from the deploy board
+            DeployBoard.objects.filter(
+                entity_name="view",
+                entity_identifier=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},
