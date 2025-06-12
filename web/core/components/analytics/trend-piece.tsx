@@ -51,8 +51,8 @@ const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtra
 
 const TrendPiece = (props: Props) => {
   const { percentage, className, trendIconVisible = true, size = "sm", variant = "simple" } = props;
-  const isOnTrack = percentage > 66;
-  const isOffTrack = percentage > 33 && percentage < 66;
+  const isOnTrack = percentage >= 66;
+  const isOffTrack = percentage >= 33 && percentage < 66;
   const config = sizeConfig[size];
 
   return (
@@ -65,7 +65,13 @@ const TrendPiece = (props: Props) => {
       )}
     >
       {trendIconVisible &&
-        (isOffTrack ? <TrendingDown className={config.icon} /> : <TrendingUp className={config.icon} />)}
+        (isOnTrack ? (
+          <TrendingUp className={config.icon} />
+        ) : isOffTrack ? (
+          <TrendingDown className={config.icon} />
+        ) : (
+          <TrendingDown className={config.icon} />
+        ))}
       {Math.round(Math.abs(percentage))}%
     </div>
   );
