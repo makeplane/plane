@@ -617,6 +617,7 @@
     "click_to_add_description": "Click to add description",
     "on_track": "On-Track",
     "off_track": "Off-Track",
+    "at_risk": "At risk",
     "timeline": "Timeline",
     "completion": "Completion",
     "upcoming": "Upcoming",
@@ -721,7 +722,8 @@
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
     "applying": "Applying",
-    "overview": "Overview"
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
   "chart": {
     "x_axis": "X-axis",

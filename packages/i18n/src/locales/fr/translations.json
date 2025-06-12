@@ -873,13 +873,15 @@
     "guests": "Invités",
     "on_track": "Sur la bonne voie",
     "off_track": "Hors de la bonne voie",
+    "at_risk": "À risque",
     "timeline": "Chronologie",
     "completion": "Achèvement",
     "upcoming": "À venir",
     "completed": "Terminé",
     "in_progress": "En cours",
     "planned": "Planifié",
-    "paused": "En pause"
+    "paused": "En pause",
+    "no_of": "Nº de {entity}"
   },
   "chart": {
     "x_axis": "Axe X",
