@@ -12,7 +12,6 @@ from plane.db.models import (
     IssueLink,
     FileAsset,
     Workspace,
-    ProjectMember,
     IssueAssignee,
 )
 from plane.ee.models import TeamspaceProject, TeamspaceUserProperty, TeamspaceMember
@@ -34,20 +33,9 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
 
     def get(self, request, slug, team_space_id):
         # Get projects where user has access in the team space
-        accessible_project_ids = (
-            ProjectMember.objects.filter(
-                project_id__in=TeamspaceProject.objects.filter(
-                    team_space_id=team_space_id, workspace__slug=slug
-                ).values_list("project_id", flat=True),
-                member=request.user,
-                workspace__slug=slug,
-            )
-            .filter(
-                Q(role__in=[15, 20]) | Q(role=5, project__guest_view_all_features=True)
-            )
-            .values_list("project_id", flat=True)
-        )
-
+        accessible_project_ids = TeamspaceProject.objects.filter(
+            team_space_id=team_space_id, workspace__slug=slug
+        ).values_list("project_id", flat=True)
         # Get work items for team space
         team_member_ids = TeamspaceMember.objects.filter(
                 team_space_id=team_space_id
