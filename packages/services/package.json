@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
     "axios": "^1.8.3"
   }
 }

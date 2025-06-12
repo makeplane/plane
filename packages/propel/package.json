@@ -14,12 +14,16 @@
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
+    "@plane/utils": "workspace:*",
+    "@plane/ui": "workspace:*",
     "@radix-ui/react-slot": "^1.1.1",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
-    "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react": "^18.3.1",
     "recharts": "^2.15.1",
     "tailwindcss-animate": "^1.0.7"
   },
