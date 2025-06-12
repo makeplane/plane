@@ -9,7 +9,7 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
-    "@plane/constants": "*",
+    "@plane/constants": "workspace:*",
     "axios": "^1.8.3"
   }
 }
