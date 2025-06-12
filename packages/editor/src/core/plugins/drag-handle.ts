@@ -171,7 +171,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;
@@ -417,7 +417,7 @@ const handleNodeSelection = (
     }
 
     const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
+    const { dom, text } = view.serializeForClipboard(slice);
 
     if (event instanceof DragEvent && event.dataTransfer) {
       event.dataTransfer.clearData();

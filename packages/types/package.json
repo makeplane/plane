@@ -4,5 +4,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "types": "./src/index.d.ts",
-  "main": "./src/index.d.ts"
+  "main": "./src/index.d.ts",
+  "dependencies": {
+    "@plane/constants": "workspace:*"
+  }
 }
