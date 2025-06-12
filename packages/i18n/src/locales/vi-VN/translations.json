@@ -873,6 +873,7 @@
     "guests": "Khách",
     "on_track": "Đúng tiến độ",
     "off_track": "Chệch hướng",
+    "at_risk": "Có nguy cơ",
     "timeline": "Dòng thời gian",
     "completion": "Hoàn thành",
     "upcoming": "Sắp tới",
@@ -880,7 +881,6 @@
     "in_progress": "Đang tiến hành",
     "planned": "Đã lên kế hoạch",
     "paused": "Tạm dừng",
-    "at_risk": "Có nguy cơ",
     "no_of": "Số lượng {entity}"
   },
   "chart": {
