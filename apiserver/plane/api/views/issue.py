@@ -1433,7 +1433,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 OpenApiExample(
                     "IssueCommentCreateSerializer",
                     value={
-                        "content": "New comment content",
+                        "comment_html": "<p>New comment content</p>",
                         "external_id": "1234567890",
                         "external_source": "github",
                     },
@@ -1576,7 +1576,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 OpenApiExample(
                     "IssueCommentCreateSerializer",
                     value={
-                        "content": "Updated comment content",
+                        "comment_html": "<p>New comment content</p>",
                         "external_id": "1234567890",
                         "external_source": "github",
                     },

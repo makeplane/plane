@@ -309,6 +309,68 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 
     permission_classes = [ProjectBasePermission]
 
+    def get_queryset(self):
+        return (
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+            .select_related(
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
+            )
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        member=self.request.user,
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                        is_active=True,
+                    )
+                )
+            )
+            .annotate(
+                total_members=ProjectMember.objects.filter(
+                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                total_modules=Module.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                    is_active=True,
+                ).values("role")
+            )
+            .annotate(
+                is_deployed=Exists(
+                    DeployBoard.objects.filter(
+                        project_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
     @project_docs(
         operation_id="retrieve_project",
         summary="Retrieve project",
