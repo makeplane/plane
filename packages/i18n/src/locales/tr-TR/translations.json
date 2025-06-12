@@ -881,7 +881,8 @@
     "completed": "Tamamlandı",
     "in_progress": "Devam ediyor",
     "planned": "Planlandı",
-    "paused": "Durduruldu"
+    "paused": "Durduruldu",
+    "at_risk": "Risk altında"
   },
   "chart": {
     "x_axis": "X ekseni",

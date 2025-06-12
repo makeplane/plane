@@ -880,7 +880,8 @@
     "completed": "已完成",
     "in_progress": "進行中",
     "planned": "已計劃",
-    "paused": "暫停"
+    "paused": "暫停",
+    "at_risk": "有風險"
   },
   "chart": {
     "x_axis": "X 軸",

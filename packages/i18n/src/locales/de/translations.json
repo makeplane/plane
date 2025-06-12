@@ -878,7 +878,8 @@
     "completed": "Abgeschlossen",
     "in_progress": "In Bearbeitung",
     "planned": "Geplant",
-    "paused": "Pausiert"
+    "paused": "Pausiert",
+    "at_risk": "Gefährdet"
   },
   "chart": {
     "x_axis": "X-Achse",

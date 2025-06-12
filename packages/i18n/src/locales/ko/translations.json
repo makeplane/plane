@@ -880,7 +880,8 @@
     "completed": "완료됨",
     "in_progress": "진행 중",
     "planned": "계획된",
-    "paused": "일시 중지됨"
+    "paused": "일시 중지됨",
+    "at_risk": "위험"
   },
   "chart": {
     "x_axis": "X축",

@@ -880,7 +880,8 @@
     "completed": "Завершено",
     "in_progress": "В процессе",
     "planned": "Запланировано",
-    "paused": "На паузе"
+    "paused": "На паузе",
+    "at_risk": "Под угрозой"
   },
   "chart": {
     "x_axis": "Ось X",

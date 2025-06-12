@@ -880,7 +880,8 @@
     "completed": "Dokončené",
     "in_progress": "Prebieha",
     "planned": "Plánované",
-    "paused": "Pozastavené"
+    "paused": "Pozastavené",
+    "at_risk": "V ohrození"
   },
   "chart": {
     "x_axis": "Os X",

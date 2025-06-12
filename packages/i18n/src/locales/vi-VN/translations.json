@@ -879,7 +879,8 @@
     "completed": "Đã hoàn thành",
     "in_progress": "Đang tiến hành",
     "planned": "Đã lên kế hoạch",
-    "paused": "Tạm dừng"
+    "paused": "Tạm dừng",
+    "at_risk": "Có nguy cơ"
   },
   "chart": {
     "x_axis": "Trục X",

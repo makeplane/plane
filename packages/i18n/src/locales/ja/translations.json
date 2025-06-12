@@ -879,7 +879,8 @@
     "completed": "完了",
     "in_progress": "進行中",
     "planned": "計画済み",
-    "paused": "一時停止"
+    "paused": "一時停止",
+    "at_risk": "リスクあり"
   },
   "chart": {
     "x_axis": "エックス アクシス",

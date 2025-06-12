@@ -878,7 +878,8 @@
     "completed": "Finalizat",
     "in_progress": "În desfășurare",
     "planned": "Planificat",
-    "paused": "Pauzat"
+    "paused": "Pauzat",
+    "at_risk": "În pericol"
   },
   "chart": {
     "x_axis": "axa-X",

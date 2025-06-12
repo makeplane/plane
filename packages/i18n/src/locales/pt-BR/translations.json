@@ -880,7 +880,8 @@
     "completed": "Concluído",
     "in_progress": "Em andamento",
     "planned": "Planejado",
-    "paused": "Pausado"
+    "paused": "Pausado",
+    "at_risk": "Em risco"
   },
   "chart": {
     "x_axis": "Eixo X",

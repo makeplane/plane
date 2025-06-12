@@ -880,7 +880,8 @@
     "completed": "Zakończone",
     "in_progress": "W trakcie",
     "planned": "Zaplanowane",
-    "paused": "Wstrzymane"
+    "paused": "Wstrzymane",
+    "at_risk": "Zagrożone"
   },
   "chart": {
     "x_axis": "Oś X",

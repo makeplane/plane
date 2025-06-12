@@ -878,7 +878,8 @@
     "completed": "Dokončeno",
     "in_progress": "Probíhá",
     "planned": "Plánováno",
-    "paused": "Pozastaveno"
+    "paused": "Pozastaveno",
+    "at_risk": "Ohroženo"
   },
   "chart": {
     "x_axis": "Osa X",

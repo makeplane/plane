@@ -879,7 +879,8 @@
     "completed": "已完成",
     "in_progress": "进行中",
     "planned": "已计划",
-    "paused": "暂停"
+    "paused": "暂停",
+    "at_risk": "有风险"
   },
   "chart": {
     "x_axis": "X轴",
