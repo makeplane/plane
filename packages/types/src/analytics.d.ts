@@ -21,12 +21,6 @@ export interface IAnalyticsResponseFields {
   filter_count: number;
 }
 
-export interface IAnalyticsRadarEntity {
-  key: string;
-  name: string;
-  count: number;
-}
-
 // chart types
 
 export interface IChartResponse {
@@ -44,7 +38,7 @@ export interface WorkItemInsightColumns {
   backlog_work_items: number;
   un_started_work_items: number;
   started_work_items: number;
-  // because of the peek view, we will display the name of the project instead of project__name
+  // incase of peek view, we will display the display_name instead of project__name
   display_name?: string;
   avatar_url?: string;
   assignee_id?: string;

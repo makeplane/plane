@@ -27,7 +27,6 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
     margin,
     xAxis,
     yAxis,
-
     className,
     tickCount = {
       x: undefined,
@@ -35,6 +34,7 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
     },
     legend,
     showTooltip = true,
+    customTooltipContent,
   } = props;
   // states
   const [activePoint, setActivePoint] = useState<string | null>(null);
@@ -107,7 +107,7 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
                 angle: -90,
                 position: "bottom",
                 offset: -24,
-                dx: -16,
+                dx: yAxis.dx || -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
@@ -133,17 +133,21 @@ export const ScatterChart = React.memo(<K extends string, T extends string>(prop
               wrapperStyle={{
                 pointerEvents: "auto",
               }}
-              content={({ active, label, payload }) => (
-                <CustomTooltip
-                  active={active}
-                  activeKey={activePoint}
-                  label={label}
-                  payload={payload}
-                  itemKeys={itemKeys}
-                  itemLabels={itemLabels}
-                  itemDotColors={itemDotColors}
-                />
-              )}
+              content={({ active, label, payload }) =>
+                customTooltipContent ? (
+                  customTooltipContent({ active, label, payload })
+                ) : (
+                  <CustomTooltip
+                    active={active}
+                    activeKey={activePoint}
+                    label={label}
+                    payload={payload}
+                    itemKeys={itemKeys}
+                    itemLabels={itemLabels}
+                    itemDotColors={itemDotColors}
+                  />
+                )
+              }
             />
           )}
           {renderPoints}
