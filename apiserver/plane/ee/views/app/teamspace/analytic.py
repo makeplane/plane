@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import Cycle, Issue, IssueView, Page, IssueRelation, IssueAssignee
+from plane.db.models import Cycle, Issue, IssueRelation, IssueAssignee
 from plane.ee.models import (
     TeamspacePage,
     TeamspaceProject,
@@ -42,8 +42,14 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("project_id", flat=True)
 
+        team_member_ids = TeamspaceMember.objects.filter(
+            team_space_id=team_space_id
+        ).values_list("member_id", flat=True)
+
         issue_count = Issue.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
+            project_id__in=project_ids,
+            workspace__slug=slug,
+            assignees__id__in=team_member_ids,
         ).count()
 
         cycles_count = Cycle.objects.filter(

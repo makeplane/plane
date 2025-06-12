@@ -234,7 +234,7 @@ export const TeamspaceViewForm: React.FC<Props> = observer((props) => {
                       })
                     }
                     value={displayFilters.layout}
-                    disabledLayouts={[EIssueLayoutTypes.SPREADSHEET]}
+                    disabledLayouts={[EIssueLayoutTypes.GANTT]}
                   />
                   {/* filters dropdown */}
                   <Controller

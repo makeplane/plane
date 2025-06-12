@@ -54,7 +54,7 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
       });
     });
 
-  const handleOpenInNewTab = () => window.open(`/${viewDetailLink}`, "_blank");
+  const handleOpenInNewTab = () => window.open(viewDetailLink, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
     {

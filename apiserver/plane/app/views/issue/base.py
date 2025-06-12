@@ -51,7 +51,7 @@ from plane.db.models import (
     ModuleIssue,
     Cycle,
 )
-from plane.ee.models import EntityIssueStateActivity
+from plane.ee.models import EntityIssueStateActivity, TeamspaceProject, TeamspaceMember
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -1528,18 +1528,32 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Check if the user is a member of the project
-        if not ProjectMember.objects.filter(
+        has_issue_access = ProjectMember.objects.filter(
             workspace__slug=slug,
             project_id=project.id,
             member=request.user,
             is_active=True,
-        ).exists():
+        ).exists()
+
+        # Check if the user is a member of the team space
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            slug=slug,
+            user_id=request.user.id,
+        ):
+            teamspace_ids = TeamspaceProject.objects.filter(
+                workspace__slug=slug, project_id=project.id
+            ).values_list("team_space_id", flat=True)
+
+            if TeamspaceMember.objects.filter(
+                member=request.user, team_space_id__in=teamspace_ids
+            ).exists():
+                has_issue_access = True
+
+        # Check if the user has access to the issue if not return 403
+        if not has_issue_access:
             return Response(
-                {
-                    "error": "You are not allowed to view this issue",
-                    "type": project.network,
-                },
+                {"error": "You are not allowed to view this issue"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
