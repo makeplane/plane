@@ -1,116 +1,116 @@
 "use client";
 
-import { FC, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import useSWR from "swr";
 // plane imports
-import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
+import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
-import { CountChip } from "@/components/common";
-import {
-  NotificationsLoader,
-  NotificationEmptyState,
-  NotificationSidebarHeader,
-  AppliedFilters,
-} from "@/components/workspace-notifications";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { getNumberCount } from "@/helpers/string.helper";
+import { cn } from "@plane/utils";
+import { LogoSpinner } from "@/components/common";
+import { SimpleEmptyState } from "@/components/empty-state";
+import { InboxContentRoot } from "@/components/inbox";
 // hooks
-import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
-import { NotificationCardListRoot } from "@/plane-web/components/workspace-notifications";
-export const NotificationsSidebarRoot: FC = observer(() => {
-  const { workspaceSlug } = useParams();
+import { useUserPermissions, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
+import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
+
+type NotificationsRootProps = {
+  workspaceSlug?: string;
+};
+
+export const NotificationsRoot = observer(({ workspaceSlug }: NotificationsRootProps) => {
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
-  const { getWorkspaceBySlug } = useWorkspace();
+  const { currentWorkspace } = useWorkspace();
   const {
     currentSelectedNotificationId,
-    unreadNotificationsCount,
-    loader,
+    setCurrentSelectedNotificationId,
+    notificationLiteByNotificationId,
     notificationIdsByWorkspaceId,
-    currentNotificationTab,
-    setCurrentNotificationTab,
+    getNotifications,
   } = useWorkspaceNotifications();
-
-  const { t } = useTranslation();
+  const { fetchUserProjectInfo } = useUserPermissions();
+  const { isWorkItem, PeekOverviewComponent, setPeekWorkItem } = useNotificationPreview();
   // derived values
-  const workspace = workspaceSlug ? getWorkspaceBySlug(workspaceSlug.toString()) : undefined;
-  const notificationIds = workspace ? notificationIdsByWorkspaceId(workspace.id) : undefined;
+  const { workspace_slug, project_id, issue_id, is_inbox_issue } =
+    notificationLiteByNotificationId(currentSelectedNotificationId);
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
-  const handleTabClick = useCallback(
-    (tabValue: TNotificationTab) => {
-      if (currentNotificationTab !== tabValue) {
-        setCurrentNotificationTab(tabValue);
-      }
-    },
-    [currentNotificationTab, setCurrentNotificationTab]
+  // fetching workspace work item properties
+  useWorkspaceIssueProperties(workspaceSlug);
+
+  // fetch workspace notifications
+  const notificationMutation =
+    currentWorkspace && notificationIdsByWorkspaceId(currentWorkspace.id)
+      ? ENotificationLoader.MUTATION_LOADER
+      : ENotificationLoader.INIT_LOADER;
+  const notificationLoader =
+    currentWorkspace && notificationIdsByWorkspaceId(currentWorkspace.id)
+      ? ENotificationQueryParamType.CURRENT
+      : ENotificationQueryParamType.INIT;
+  useSWR(
+    currentWorkspace?.slug ? `WORKSPACE_NOTIFICATION_${currentWorkspace?.slug}` : null,
+    currentWorkspace?.slug
+      ? () => getNotifications(currentWorkspace?.slug, notificationMutation, notificationLoader)
+      : null
   );
 
-  if (!workspaceSlug || !workspace) return <></>;
+  // fetching user project member info
+  const { isLoading: projectMemberInfoLoader } = useSWR(
+    workspace_slug && project_id && is_inbox_issue
+      ? `PROJECT_MEMBER_PERMISSION_INFO_${workspace_slug}_${project_id}`
+      : null,
+    workspace_slug && project_id && is_inbox_issue ? () => fetchUserProjectInfo(workspace_slug, project_id) : null
+  );
+
+  const embedRemoveCurrentNotification = useCallback(
+    () => setCurrentSelectedNotificationId(undefined),
+    [setCurrentSelectedNotificationId]
+  );
+
+  // clearing up the selected notifications when unmounting the page
+  useEffect(
+    () => () => {
+      setPeekWorkItem(undefined);
+    },
+    [setCurrentSelectedNotificationId, setPeekWorkItem]
+  );
 
   return (
-    <div
-      className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all overflow-hidden",
-        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
-      )}
-    >
-      <div className="relative w-full h-full overflow-hidden flex flex-col">
-        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
-          <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
-        </Row>
-
-        <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
-          {NOTIFICATION_TABS.map((tab) => (
-            <div
-              key={tab.value}
-              className="h-full px-3 relative cursor-pointer"
-              onClick={() => handleTabClick(tab.value)}
-            >
-              <div
-                className={cn(
-                  `relative h-full flex justify-center items-center gap-1 text-sm transition-all`,
-                  currentNotificationTab === tab.value
-                    ? "text-custom-primary-100"
-                    : "text-custom-text-100 hover:text-custom-text-200"
-                )}
-              >
-                <div className="font-medium">{t(tab.i18n_label)}</div>
-                {tab.count(unreadNotificationsCount) > 0 && (
-                  <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
-                )}
-              </div>
-              {currentNotificationTab === tab.value && (
-                <div className="border absolute bottom-0 right-0 left-0 rounded-t-md border-custom-primary-100" />
+    <div className={cn("w-full h-full overflow-hidden ", isWorkItem && "overflow-y-auto")}>
+      {!currentSelectedNotificationId ? (
+        <div className="w-full h-screen flex justify-center items-center">
+          <SimpleEmptyState title={t("notification.empty_state.detail.title")} assetPath={resolvedPath} />
+        </div>
+      ) : (
+        <>
+          {is_inbox_issue === true && workspace_slug && project_id && issue_id ? (
+            <>
+              {projectMemberInfoLoader ? (
+                <div className="w-full h-full flex justify-center items-center">
+                  <LogoSpinner />
+                </div>
+              ) : (
+                <InboxContentRoot
+                  setIsMobileSidebar={() => {}}
+                  isMobileSidebar={false}
+                  workspaceSlug={workspace_slug}
+                  projectId={project_id}
+                  inboxIssueId={issue_id}
+                  isNotificationEmbed
+                  embedRemoveCurrentNotification={embedRemoveCurrentNotification}
+                />
               )}
-            </div>
-          ))}
-        </Header>
-
-        {/* applied filters */}
-        <AppliedFilters workspaceSlug={workspaceSlug.toString()} />
-
-        {/* rendering notifications */}
-        {loader === "init-loader" ? (
-          <div className="relative w-full h-full overflow-hidden">
-            <NotificationsLoader />
-          </div>
-        ) : (
-          <>
-            {notificationIds && notificationIds.length > 0 ? (
-              <ContentWrapper variant={ERowVariant.HUGGING}>
-                <NotificationCardListRoot workspaceSlug={workspaceSlug.toString()} workspaceId={workspace?.id} />
-              </ContentWrapper>
-            ) : (
-              <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
-              </div>
-            )}
-          </>
-        )}
-      </div>
+            </>
+          ) : (
+            <PeekOverviewComponent embedIssue embedRemoveCurrentNotification={embedRemoveCurrentNotification} />
+          )}
+        </>
+      )}
     </div>
   );
 });

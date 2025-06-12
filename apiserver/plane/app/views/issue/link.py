@@ -45,7 +45,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title(
+            crawl_work_item_link_title.delay(
                 serializer.data.get("id"), serializer.data.get("url")
             )
             issue_activity.delay(
@@ -78,7 +78,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title(
+            crawl_work_item_link_title.delay(
                 serializer.data.get("id"), serializer.data.get("url")
             )
 

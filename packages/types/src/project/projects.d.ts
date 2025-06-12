@@ -85,15 +85,16 @@ export interface IProjectMemberLite {
 export type TProjectMembership = {
   member: string;
   role: TUserPermissions | EUserProjectRoles;
-  created_at: string;
 } & (
   | {
       id: string;
       original_role: EUserProjectRoles;
+      created_at: string;
     }
   | {
       id: null;
       original_role: null;
+      created_at: null;
     }
 );
 
