@@ -11,11 +11,11 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
-    "@plane/utils": "*",
+    "@plane/utils": "workspace:*",
     "intl-messageformat": "^10.7.11"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
+    "@plane/eslint-config": "workspace:*",
     "@types/node": "^22.5.4",
     "typescript": "^5.3.3"
   }
