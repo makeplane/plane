@@ -39,7 +39,6 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
   // states
   const [searchFilter, setSearchFilter] = useState<TSearchFilterKeys>(ESearchFilterKeys.ALL);
   const [searchResults, setSearchResults] = useState<TSearchQueryResponse>();
-  const [isFirstSearch, setIsFirstSearch] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
@@ -97,17 +96,12 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
       setIsSearching(false);
       return;
     }
-    if (isFirstSearch) {
-      performSearch(query);
-      setIsFirstSearch(false);
-    } else {
-      debouncedSearchQuery(query);
-    }
+    debouncedSearchQuery(query);
 
     return () => {
       debouncedSearchQuery.cancel();
     };
-  }, [query, debouncedSearchQuery, isFirstSearch, performSearch]);
+  }, [query, debouncedSearchQuery, performSearch]);
 
   const filteredSearchResults = useMemo(() => {
     if (!flattenedSearchResults) return [];
