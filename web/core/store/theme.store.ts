@@ -3,6 +3,7 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 export interface IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined;
+  sidebarPeek: boolean | undefined;
   extendedSidebarCollapsed: boolean | undefined;
   extendedProjectSidebarCollapsed: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
@@ -13,6 +14,7 @@ export interface IThemeStore {
   projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
   toggleSidebar: (collapsed?: boolean) => void;
+  toggleSidebarPeek: (peek?: boolean) => void;
   toggleExtendedSidebar: (collapsed?: boolean) => void;
   toggleExtendedProjectSidebar: (collapsed?: boolean) => void;
   toggleProfileSidebar: (collapsed?: boolean) => void;
@@ -26,7 +28,8 @@ export interface IThemeStore {
 export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
-  extendedSidebarCollapsed: boolean | undefined = true;
+  sidebarPeek: boolean | undefined = undefined;
+  extendedSidebarCollapsed: boolean | undefined = undefined;
   extendedProjectSidebarCollapsed: boolean | undefined = undefined;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
@@ -39,6 +42,7 @@ export class ThemeStore implements IThemeStore {
     makeObservable(this, {
       // observable
       sidebarCollapsed: observable.ref,
+      sidebarPeek: observable.ref,
       extendedSidebarCollapsed: observable.ref,
       extendedProjectSidebarCollapsed: observable.ref,
       profileSidebarCollapsed: observable.ref,
@@ -49,6 +53,7 @@ export class ThemeStore implements IThemeStore {
       projectOverviewSidebarCollapsed: observable.ref,
       // action
       toggleSidebar: action,
+      toggleSidebarPeek: action,
       toggleExtendedSidebar: action,
       toggleExtendedProjectSidebar: action,
       toggleProfileSidebar: action,
@@ -71,6 +76,18 @@ export class ThemeStore implements IThemeStore {
       this.sidebarCollapsed = collapsed;
     }
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
+  };
+
+  /**
+   * Toggle the sidebar peek state
+   * @param peek
+   */
+  toggleSidebarPeek = (peek?: boolean) => {
+    if (peek === undefined) {
+      this.sidebarPeek = !this.sidebarPeek;
+    } else {
+      this.sidebarPeek = peek;
+    }
   };
 
   /**
