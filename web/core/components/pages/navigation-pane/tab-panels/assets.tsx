@@ -96,6 +96,8 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
   // subscribe to asset changes
   useEffect(() => {
     const unsubscribe = editorRef?.onAssetChange(setAssets);
+    // for initial render of this component to get the editor assets
+    setAssets(editorRef?.getAssets() ?? []);
     return () => {
       unsubscribe?.();
     };

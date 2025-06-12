@@ -88,42 +88,46 @@ export type TEditorAsset = {
   type: keyof typeof CORE_EXTENSIONS | keyof typeof ADDITIONAL_EXTENSIONS;
 };
 
+export type TDocumentInfo = {
+  characters: number;
+  paragraphs: number;
+  words: number;
+};
+
 // editor refs
 export type EditorReadOnlyRefApi = {
-  getMarkDown: () => string;
+  clearEditor: (emitUpdate?: boolean) => void;
+  getAssets: () => TEditorAsset[];
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
     json: JSONContent | null;
   };
-  clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
+  getDocumentInfo: () => TDocumentInfo;
+  getHeadings: () => IMarking[];
+  getMarkDown: () => string;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => {
-    characters: number;
-    paragraphs: number;
-    words: number;
-  };
-  onAssetChange: (callback: (assets: TEditorAsset[]) => void) => () => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
-  getCurrentCursorPosition: () => number | undefined;
-  setEditorValueAtCursorPosition: (content: string) => void;
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
-  onStateChange: (callback: () => void) => () => void;
-  setFocusAtPosition: (position: number) => void;
-  isEditorReadyToDiscard: () => boolean;
+  getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
-  setProviderDocument: (value: Uint8Array) => void;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  isEditorReadyToDiscard: () => boolean;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  onAssetChange: (callback: (assets: TEditorAsset[]) => void) => () => void;
+  onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  onStateChange: (callback: () => void) => () => void;
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
+  setFocusAtPosition: (position: number) => void;
+  setProviderDocument: (value: Uint8Array) => void;
 }
 
 // editor props
