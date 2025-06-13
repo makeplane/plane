@@ -9,6 +9,7 @@ export interface IGanttBlock {
   sort_order: number | undefined;
   start_date: string | undefined;
   target_date: string | undefined;
+  project_id: string | undefined;
 }
 
 export interface IBlockUpdateData {
@@ -21,10 +22,19 @@ export interface IBlockUpdateData {
   target_date?: string;
 }
 
+export type IBlockUpdatePayload = IBlockUpdateData & {
+  sort_order?: {
+    destinationIndex: number;
+    newSortOrder: number;
+    sourceIndex: number;
+  };
+};
+
 export interface IBlockUpdateDependencyData {
   id: string;
   start_date?: string;
   target_date?: string;
+  project_id?: string;
 }
 
 export type TGanttViews = "week" | "month" | "quarter";

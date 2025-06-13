@@ -132,53 +132,49 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
   );
 
   fetchFilters = async (workspaceSlug: string, viewId: TWorkspaceFilters) => {
-    try {
-      let filters: IIssueFilterOptions;
-      let displayFilters: IIssueDisplayFilterOptions;
-      let displayProperties: IIssueDisplayProperties;
-      let kanbanFilters: TIssueKanbanFilters = {
-        group_by: [],
-        sub_group_by: [],
-      };
+    let filters: IIssueFilterOptions;
+    let displayFilters: IIssueDisplayFilterOptions;
+    let displayProperties: IIssueDisplayProperties;
+    let kanbanFilters: TIssueKanbanFilters = {
+      group_by: [],
+      sub_group_by: [],
+    };
 
-      const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
+    const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
+    displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+      layout: EIssueLayoutTypes.SPREADSHEET,
+      order_by: "-created_at",
+    });
+    displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    kanbanFilters = {
+      group_by: _filters?.kanban_filters?.group_by || [],
+      sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
+    };
+
+    if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
+      const currentUserId = this.rootIssueStore.currentUserId;
+      filters = this.getComputedFiltersBasedOnViews(currentUserId, viewId as TStaticViewTypes);
+    } else {
+      const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+      filters = this.computedFilters(_filters?.filters);
       displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
         layout: EIssueLayoutTypes.SPREADSHEET,
         order_by: "-created_at",
       });
       displayProperties = this.computedDisplayProperties(_filters?.display_properties);
-      kanbanFilters = {
-        group_by: _filters?.kanban_filters?.group_by || [],
-        sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
-      };
-
-      if (["all-issues", "assigned", "created", "subscribed"].includes(viewId)) {
-        const currentUserId = this.rootIssueStore.currentUserId;
-        filters = this.getComputedFiltersBasedOnViews(currentUserId, viewId as TStaticViewTypes);
-      } else {
-        const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
-        filters = this.computedFilters(_filters?.filters);
-        displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
-          layout: EIssueLayoutTypes.SPREADSHEET,
-          order_by: "-created_at",
-        });
-        displayProperties = this.computedDisplayProperties(_filters?.display_properties);
-      }
-
-      // override existing order by if ordered by manual sort_order
-      if (displayFilters.order_by === "sort_order") {
-        displayFilters.order_by = "-created_at";
-      }
-
-      runInAction(() => {
-        set(this.filters, [viewId, "filters"], filters);
-        set(this.filters, [viewId, "displayFilters"], displayFilters);
-        set(this.filters, [viewId, "displayProperties"], displayProperties);
-        set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
-      });
-    } catch (error) {
-      throw error;
     }
+
+    // override existing order by if ordered by manual sort_order
+    if (displayFilters.order_by === "sort_order") {
+      displayFilters.order_by = "-created_at";
+    }
+
+    runInAction(() => {
+      set(this.filters, [viewId, "filters"], filters);
+      set(this.filters, [viewId, "displayFilters"], displayFilters);
+      set(this.filters, [viewId, "displayProperties"], displayProperties);
+      set(this.filters, [viewId, "kanbanFilters"], kanbanFilters);
+    });
   };
 
   updateFilters = async (
