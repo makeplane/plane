@@ -27,7 +27,7 @@ import {
 // ui
 import { Breadcrumbs, Button, ContrastIcon, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
 // components
-import { WorkItemsModal } from "@/components/analytics-v2/work-items/modal";
+import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";

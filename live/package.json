@@ -1,6 +1,6 @@
 {
   "name": "live",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./src/server.ts",
@@ -58,6 +58,6 @@
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

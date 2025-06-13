@@ -24,7 +24,9 @@ const ProfileSettingsLayout = observer((props: Props) => {
         <div className="hidden md:block">
           <ProfileSidebar />
         </div>
-        <SettingsContentWrapper>{children}</SettingsContentWrapper>
+        <div className="w-full h-full overflow-y-scroll md:pt-page-y">
+          <SettingsContentWrapper>{children}</SettingsContentWrapper>
+        </div>
       </div>
     </>
   );

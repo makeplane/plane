@@ -866,7 +866,21 @@
     "view": "Vizualizează",
     "deactivated_user": "Utilizator dezactivat",
     "apply": "Aplică",
-    "applying": "Aplicând"
+    "applying": "Aplicând",
+    "users": "Utilizatori",
+    "admins": "Administratori",
+    "guests": "Invitați",
+    "on_track": "Pe drumul cel bun",
+    "off_track": "În afara traiectoriei",
+    "at_risk": "În pericol",
+    "timeline": "Cronologie",
+    "completion": "Finalizare",
+    "upcoming": "Viitor",
+    "completed": "Finalizat",
+    "in_progress": "În desfășurare",
+    "planned": "Planificat",
+    "paused": "Pauzat",
+    "no_of": "Nr. de {entity}"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -1316,19 +1330,6 @@
       "custom": "Analitice personalizate"
     },
     "empty_state": {
-      "general": {
-        "title": "Urmărește progresul, activitățile și alocările. Observă tendințele, elimină blocajele și accelerează munca",
-        "description": "Vezi raportul dintre activitățile asumate și cerere, estimările și eventualele extinderi neplanificate ale activităților asumate. Obține performanța pe membri și echipe și asigură-te că proiectul tău se încadrează în timp.",
-        "primary_button": {
-          "text": "Începe primul tău proiect",
-          "comic": {
-            "title": "Statisticile funcționează cel mai bine cu Cicluri + Module",
-            "description": "Mai întâi, încadrează-ți activitățile în Cicluri și, dacă poți, grupează-le pe cele care se întind pe mai multe cicluri în Module. Le găsești în meniul din stânga."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
         "title": "Nu există date încă"
@@ -1344,21 +1345,22 @@
     },
     "created_vs_resolved": "Creat vs Rezolvat",
     "customized_insights": "Perspective personalizate",
-    "backlog_work_items": "Elemente de lucru din backlog",
+    "backlog_work_items": "{entity} din backlog",
     "active_projects": "Proiecte active",
     "trend_on_charts": "Tendință în grafice",
     "all_projects": "Toate proiectele",
     "summary_of_projects": "Sumarul proiectelor",
     "project_insights": "Informații despre proiect",
-    "started_work_items": "Elemente de lucru începute",
-    "total_work_items": "Totalul elementelor de lucru",
+    "started_work_items": "{entity} începute",
+    "total_work_items": "Totalul {entity}",
     "total_projects": "Total proiecte",
     "total_admins": "Total administratori",
     "total_users": "Total utilizatori",
     "total_intake": "Venit total",
-    "un_started_work_items": "Elemente de lucru neîncepute",
+    "un_started_work_items": "{entity} neîncepute",
     "total_guests": "Total invitați",
-    "completed_work_items": "Elemente de lucru finalizate"
+    "completed_work_items": "{entity} finalizate",
+    "total": "Totalul {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",

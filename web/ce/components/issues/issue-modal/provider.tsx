@@ -4,21 +4,29 @@ import { observer } from "mobx-react-lite";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import { IssueModalContext } from "@/components/issues";
+// hooks
+import { useUser } from "@/hooks/store/user/user-user";
 
 export type TIssueModalProviderProps = {
   templateId?: string;
   dataForPreload?: Partial<TIssue>;
+  allowedProjectIds?: string[];
   children: React.ReactNode;
 };
 
 export const IssueModalProvider = observer((props: TIssueModalProviderProps) => {
-  const { children } = props;
+  const { children, allowedProjectIds } = props;
   // states
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
+  // store hooks
+  const { projectsWithCreatePermissions } = useUser();
+  // derived values
+  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 
   return (
     <IssueModalContext.Provider
       value={{
+        allowedProjectIds: allowedProjectIds ?? projectIdsWithCreatePermissions,
         workItemTemplateId: null,
         setWorkItemTemplateId: () => {},
         isApplyingTemplate: false,

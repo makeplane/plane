@@ -108,6 +108,8 @@ from .asset.v2 import (
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
     DuplicateAssetEndpoint,
+    WorkspaceAssetDownloadEndpoint,
+    ProjectAssetDownloadEndpoint,
 )
 from .issue.base import (
     IssueListEndpoint,

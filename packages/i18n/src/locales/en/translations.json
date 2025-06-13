@@ -476,6 +476,9 @@
     "modules": "Modules",
     "labels": "Labels",
     "label": "Label",
+    "admins": "Admins",
+    "users": "Users",
+    "guests": "Guests",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
@@ -612,6 +615,16 @@
     "quarter": "Quarter",
     "press_for_commands": "Press '/' for commands",
     "click_to_add_description": "Click to add description",
+    "on_track": "On-Track",
+    "off_track": "Off-Track",
+    "at_risk": "At risk",
+    "timeline": "Timeline",
+    "completion": "Completion",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "in_progress": "In progress",
+    "planned": "Planned",
+    "paused": "Paused",
     "search": {
       "label": "Search",
       "placeholder": "Type to search",
@@ -709,7 +722,8 @@
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
     "applying": "Applying",
-    "overview": "Overview"
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
   "chart": {
     "x_axis": "X-axis",
@@ -1158,29 +1172,11 @@
       "scope_and_demand": "Scope and Demand",
       "custom": "Custom Analytics"
     },
-    "empty_state": {
-      "general": {
-        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
-        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
-        "primary_button": {
-          "text": "Start your first project",
-          "comic": {
-            "title": "Analytics works best with Cycles + Modules",
-            "description": "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav."
-          }
-        }
-      }
-    },
-    "total_work_items": "Total work items",
-    "started_work_items": "Started work items",
-    "backlog_work_items": "Backlog work items",
-    "un_started_work_items": "Unstarted work items",
-    "completed_work_items": "Completed work items",
-    "total_guests": "Total Guests",
-    "total_intake": "Total Intake",
-    "total_users": "Total Users",
-    "total_admins": "Total Admins",
-    "total_projects": "Total Projects",
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
     "project_insights": "Project Insights",
     "summary_of_projects": "Summary of Projects",
     "all_projects": "All Projects",
@@ -1188,7 +1184,7 @@
     "active_projects": "Active Projects",
     "customized_insights": "Customized Insights",
     "created_vs_resolved": "Created vs Resolved",
-    "empty_state_v2": {
+    "empty_state": {
       "project_insights": {
         "title": "No data yet",
         "description": "Work items assigned to you, broken down by state, will show up here."
@@ -1312,23 +1308,23 @@
     }
   },
   "account_settings": {
-    "profile":{},
-    "preferences":{
+    "profile": {},
+    "preferences": {
       "heading": "Preferences",
       "description": "Customize your app experience the way you work"
     },
-    "notifications":{
+    "notifications": {
       "heading": "Email notifications",
-      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."    
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
     },
-    "security":{
+    "security": {
       "heading": "Security"
     },
-    "api_tokens":{
+    "api_tokens": {
       "heading": "Personal Access Tokens",
       "description": "Generate secure API tokens to integrate your data with external systems and applications."
     },
-    "activity":{
+    "activity": {
       "heading": "Activity",
       "description": "Track your recent actions and changes across all projects and work items."
     }
@@ -1400,7 +1396,7 @@
       },
       "billing_and_plans": {
         "heading": "Billing & Plans",
-        "description":"Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",

@@ -868,7 +868,21 @@
     "view": "보기",
     "deactivated_user": "비활성화된 사용자",
     "apply": "적용",
-    "applying": "적용 중"
+    "applying": "적용 중",
+    "users": "사용자",
+    "admins": "관리자",
+    "guests": "게스트",
+    "on_track": "계획대로 진행 중",
+    "off_track": "계획 이탈",
+    "at_risk": "위험",
+    "timeline": "타임라인",
+    "completion": "완료",
+    "upcoming": "예정된",
+    "completed": "완료됨",
+    "in_progress": "진행 중",
+    "planned": "계획된",
+    "paused": "일시 중지됨",
+    "no_of": "{entity} 수"
   },
   "chart": {
     "x_axis": "X축",
@@ -1318,19 +1332,6 @@
       "custom": "맞춤형 분석"
     },
     "empty_state": {
-      "general": {
-        "title": "진행 상황, 작업량 및 할당을 추적하세요. 트렌드를 파악하고, 차단 요소를 제거하며, 작업을 더 빠르게 진행하세요",
-        "description": "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀원과 팀의 성과를 확인하고 프로젝트가 제시간에 진행되도록 하세요.",
-        "primary_button": {
-          "text": "첫 번째 프로젝트 시작",
-          "comic": {
-            "title": "분석은 주기 + 모듈과 함께 작동합니다",
-            "description": "먼저 작업 항목을 주기로 시간 상자화하고, 주기를 초과하는 작업 항목을 모듈로 그룹화하세요. 왼쪽 탐색에서 둘 다 확인하세요."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다.",
         "title": "아직 데이터가 없습니다"
@@ -1346,21 +1347,22 @@
     },
     "created_vs_resolved": "생성됨 vs 해결됨",
     "customized_insights": "맞춤형 인사이트",
-    "backlog_work_items": "백로그 작업 항목",
+    "backlog_work_items": "백로그 {entity}",
     "active_projects": "활성 프로젝트",
     "trend_on_charts": "차트의 추세",
     "all_projects": "모든 프로젝트",
     "summary_of_projects": "프로젝트 요약",
     "project_insights": "프로젝트 인사이트",
-    "started_work_items": "시작된 작업 항목",
-    "total_work_items": "총 작업 항목",
+    "started_work_items": "시작된 {entity}",
+    "total_work_items": "총 {entity}",
     "total_projects": "총 프로젝트 수",
     "total_admins": "총 관리자 수",
     "total_users": "총 사용자 수",
     "total_intake": "총 수입",
-    "un_started_work_items": "시작되지 않은 작업 항목",
+    "un_started_work_items": "시작되지 않은 {entity}",
     "total_guests": "총 게스트 수",
-    "completed_work_items": "완료된 작업 항목"
+    "completed_work_items": "완료된 {entity}",
+    "total": "총 {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",

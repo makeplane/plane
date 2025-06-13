@@ -13,9 +13,9 @@ import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components
 import { ModuleStatusSelect } from "@/components/modules";
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldRenderProject } from "@/helpers/project.helper";
 import { getTabIndex } from "@/helpers/tab-indices.helper";
-// types
+// hooks
+import { useUser } from "@/hooks/store/user/user-user";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
@@ -37,6 +37,8 @@ const defaultValues: Partial<IModule> = {
 
 export const ModuleForm: React.FC<Props> = (props) => {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  // store hooks
+  const { projectsWithCreatePermissions } = useUser();
   // form info
   const {
     formState: { errors, isSubmitting, dirtyFields },
@@ -93,7 +95,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(project) => shouldRenderProject(project)}
+                    renderCondition={(project) => !!projectsWithCreatePermissions?.[project.id]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>
