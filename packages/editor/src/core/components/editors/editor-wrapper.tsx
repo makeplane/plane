@@ -22,13 +22,16 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
+    editable = true,
     extensions,
     id,
     initialValue,
+    isMobile = false,
     fileHandler,
     forwardedRef,
     mentionHandler,
     onChange,
+    onInitialContentLoad,
     onTransaction,
     handleEditorReady,
     autofocus,
@@ -38,8 +41,8 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   } = props;
 
   const editor = useEditor({
-    editable: true,
     disabledExtensions,
+    editable,
     editorClassName,
     enableHistory: true,
     extensions,
@@ -49,6 +52,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     initialValue,
     mentionHandler,
     onChange,
+    onInitialContentLoad,
     onTransaction,
     handleEditorReady,
     autofocus,
@@ -71,6 +75,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
+      isMobile={isMobile}
     >
       {children?.(editor)}
       <div className="flex flex-col">

@@ -10,20 +10,19 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 export type CustomBaseImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
-  node: NodeViewProps["node"] & {
-    attrs: ImageAttributes;
-  };
+  node: NodeViewProps["node"] & { attrs: ImageAttributes };
   updateAttributes: (attrs: Partial<ImageAttributes>) => void;
   selected: boolean;
+  isMobile: boolean;
 };
 
 export type CustomImageNodeProps = NodeViewProps & CustomBaseImageNodeViewProps;
 
 export const CustomImageNode = (props: CustomImageNodeProps) => {
-  const { getPos, editor, node, updateAttributes, selected } = props;
+  const { getPos, editor, node, updateAttributes, selected, isMobile } = props;
   const { src: imgNodeSrc } = node.attrs;
 
-  const [isUploaded, setIsUploaded] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(!!imgNodeSrc);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
   const [failedToLoadImage, setFailedToLoadImage] = useState(false);
@@ -41,13 +40,13 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (resolvedSrc) {
+    if (resolvedSrc || imgNodeSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [resolvedSrc]);
+  }, [resolvedSrc, imgNodeSrc]);
 
   useEffect(() => {
     const getImageSource = async () => {
@@ -68,6 +67,7 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
             editor={editor}
             src={resolvedSrc}
             getPos={getPos}
+            isMobile={isMobile}
             node={node}
             setEditorContainer={setEditorContainer}
             setFailedToLoadImage={setFailedToLoadImage}
@@ -79,6 +79,7 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
             editor={editor}
             failedToLoadImage={failedToLoadImage}
             getPos={getPos}
+            isMobile={isMobile}
             loadImageFromFileSystem={setImageFromFileSystem}
             maxFileSize={getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE).maxFileSize}
             node={node}

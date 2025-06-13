@@ -12,10 +12,11 @@ type Props = {
     width: string;
     aspectRatio: number;
   };
+  showExternalLink: boolean;
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {
-  const { containerClassName, image } = props;
+  const { containerClassName, image, showExternalLink } = props;
   // state
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
 
@@ -29,6 +30,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
         <ImageFullScreenAction
           image={image}
           isOpen={isFullScreenEnabled}
+          showExternalLink={showExternalLink}
           toggleFullScreenMode={(val) => setIsFullScreenEnabled(val)}
         />
       </div>

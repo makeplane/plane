@@ -14,6 +14,7 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 
 type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
+  isMobile: boolean;
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -25,6 +26,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     editor,
     failedToLoadImage,
     getPos,
+    isMobile,
     loadImageFromFileSystem,
     maxFileSize,
     node,
@@ -45,9 +47,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         if (!imageEntityId) return;
         setIsUploaded(true);
         // Update the node view's src attribute post upload
-        updateAttributes({
-          src: url,
-        });
+        updateAttributes({ src: url });
         imageComponentImageFileMap?.delete(imageEntityId);
 
         const pos = getPos();
@@ -123,12 +123,12 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         uploadFile(meta.file);
       } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
         if (meta.hasOpenedFileInputOnce) return;
-        fileInputRef.current.click();
+        if (!isMobile) fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
         imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
-  }, [meta, uploadFile, imageComponentImageFileMap]);
+  }, [meta, uploadFile, imageComponentImageFileMap, isMobile]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {

@@ -1,8 +1,8 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { DOMSerializer } from "@tiptap/pm/model";
+import { DOMSerializer, MarkType, NodeType } from "@tiptap/pm/model";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect } from "react";
+import { useImperativeHandle, MutableRefObject, useEffect, useCallback, useState } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -42,6 +42,7 @@ export interface CustomEditorProps {
   initialValue?: string;
   mentionHandler: TMentionHandler;
   onChange?: (json: object, html: string) => void;
+  onInitialContentLoad?: (contentHeight: number) => void;
   onTransaction?: () => void;
   autofocus?: boolean;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -67,6 +68,7 @@ export const useEditor = (props: CustomEditorProps) => {
     initialValue,
     mentionHandler,
     onChange,
+    onInitialContentLoad,
     onTransaction,
     placeholder,
     tabIndex,
@@ -75,6 +77,22 @@ export const useEditor = (props: CustomEditorProps) => {
     autofocus = false,
   } = props;
 
+  const [isInitialContentLoaded, setIsInitialContentLoaded] = useState<boolean>(false);
+
+  // Verifies editor initialization with initial content and triggers a callback with the content height
+  const onEditorContentLoad = useCallback(() => {
+    const editorContainer = document.querySelector(".tiptap");
+    if (
+      editorContainer &&
+      '<p class="editor-paragraph-block"></p>' !== editorContainer.innerHTML &&
+      !isInitialContentLoaded &&
+      onInitialContentLoad
+    ) {
+      setIsInitialContentLoaded(true);
+      onInitialContentLoad?.(editorContainer.clientHeight);
+    }
+  }, [onInitialContentLoad, isInitialContentLoaded]);
+
   const editor = useTiptapEditor(
     {
       editable,
@@ -82,12 +100,7 @@ export const useEditor = (props: CustomEditorProps) => {
       shouldRerenderOnTransaction: false,
       autofocus,
       parseOptions: { preserveWhitespace: true },
-      editorProps: {
-        ...CoreEditorProps({
-          editorClassName,
-        }),
-        ...editorProps,
-      },
+      editorProps: { ...CoreEditorProps({ editorClassName }), ...editorProps },
       extensions: [
         ...CoreEditorExtensions({
           editable,
@@ -104,6 +117,7 @@ export const useEditor = (props: CustomEditorProps) => {
       onCreate: () => handleEditorReady?.(true),
       onTransaction: () => {
         onTransaction?.();
+        onEditorContentLoad();
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
@@ -143,12 +157,50 @@ export const useEditor = (props: CustomEditorProps) => {
   useImperativeHandle(
     forwardedRef,
     () => ({
+      undo: () => editor?.commands.undo(),
+      redo: () => editor?.commands.redo(),
       blur: () => editor?.commands.blur(),
-      scrollToNodeViaDOMCoordinates(behavior?: ScrollBehavior, pos?: number) {
+      focus: ({ position, scrollIntoView }) =>
+        editor?.commands.focus(position ?? "start", { scrollIntoView: scrollIntoView ?? false }),
+      scrollToNodeViaDOMCoordinates: ({ pos, behavior = "smooth" }) => {
         const resolvedPos = pos ?? editor?.state.selection.from;
         if (!editor || !resolvedPos) return;
         scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
       },
+      createSelectionAtCursorPosition: () => {
+        if (!editor) return;
+        const { empty } = editor.state.selection;
+
+        // if (empty) return null;
+        if (empty) {
+          // Get the text content and position info
+          const { $from } = editor.state.selection;
+          const textContent = $from.parent.textContent;
+          const posInNode = $from.parentOffset;
+
+          // Find word boundaries
+          let start = posInNode;
+          let end = posInNode;
+
+          // Move start position backwards until we hit a word boundary
+          while (start > 0 && /\w/.test(textContent[start - 1])) {
+            start--;
+          }
+
+          // Move end position forwards until we hit a word boundary
+          while (end < textContent.length && /\w/.test(textContent[end])) {
+            end++;
+          }
+
+          // If we found a word, select it using editor commands
+          if (start !== end) {
+            const from = $from.start() + start;
+            const to = $from.start() + end;
+            editor.commands.setTextSelection({ from, to });
+          }
+        }
+      },
+      getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
       getCurrentCursorPosition: () => editor?.state.selection.from,
       clearEditor: (emitUpdate = false) => {
         editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
@@ -222,11 +274,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const documentHTML = editor?.getHTML() ?? "<p></p>";
         const documentJSON = editor?.getJSON() ?? null;
 
-        return {
-          binary: documentBinary,
-          html: documentHTML,
-          json: documentJSON,
-        };
+        return { binary: documentBinary, html: documentHTML, json: documentJSON };
       },
       scrollSummary: (marking: IMarking): void => {
         if (!editor) return;
@@ -258,6 +306,7 @@ export const useEditor = (props: CustomEditorProps) => {
         const { from, to, empty } = state.selection;
 
         if (empty) return null;
+        if (from === to) return null;
 
         const nodesArray: string[] = [];
         state.doc.nodesBetween(from, to, (node, _pos, parent) => {
@@ -293,6 +342,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const document = provider?.document;
         if (!document) return;
         Y.applyUpdate(document, value);
+      },
+      getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => {
+        if (!editor) return;
+        editor.commands.extendMarkRange("link");
+        return editor.getAttributes(attribute);
       },
       emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
       listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },

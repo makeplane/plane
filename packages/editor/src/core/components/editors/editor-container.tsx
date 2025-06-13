@@ -16,10 +16,11 @@ interface EditorContainerProps {
   editor: Editor;
   editorContainerClassName: string;
   id: string;
+  isMobile: boolean;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, displayConfig, editor, editorContainerClassName, id } = props;
+  const { children, displayConfig, editor, editorContainerClassName, id, isMobile } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -86,17 +87,14 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         onMouseLeave={handleContainerMouseLeave}
         className={cn(
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
-          {
-            "active-editor": editor?.isFocused && editor?.isEditable,
-            "wide-layout": displayConfig.wideLayout,
-          },
+          { "active-editor": editor?.isFocused && editor?.isEditable, "wide-layout": displayConfig.wideLayout },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,
           editorContainerClassName
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        {!isMobile && <LinkViewContainer editor={editor} containerRef={containerRef} />}
       </div>
     </>
   );

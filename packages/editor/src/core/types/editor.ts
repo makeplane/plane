@@ -1,5 +1,7 @@
-import { Extensions, JSONContent } from "@tiptap/core";
+import { Extensions, FocusPosition, JSONContent } from "@tiptap/core";
+import { MarkType, NodeType } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
+import { EditorProps } from "@tiptap/pm/view";
 // plane types
 import { TWebhookConnectionQueryParams } from "@plane/types";
 // extension types
@@ -41,6 +43,7 @@ export type TEditorCommands =
   | "table"
   | "image"
   | "divider"
+  | "link"
   | "issue-embed"
   | "text-color"
   | "background-color"
@@ -49,21 +52,12 @@ export type TEditorCommands =
   | "attachment";
 
 export type TCommandExtraProps = {
-  image: {
-    savedSelection: Selection | null;
-  };
-  attachment: {
-    savedSelection: Selection | null;
-  };
-  "text-color": {
-    color: string | undefined;
-  };
-  "background-color": {
-    color: string | undefined;
-  };
-  "text-align": {
-    alignment: TTextAlign;
-  };
+  image: { savedSelection: Selection | null };
+  attachment: { savedSelection: Selection | null };
+  "text-color": { color: string | undefined };
+  "background-color": { color: string | undefined };
+  "text-align": { alignment: TTextAlign };
+  link: { url: string; text?: string };
 };
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
@@ -78,25 +72,21 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
-  getDocument: () => {
-    binary: Uint8Array | null;
-    html: string;
-    json: JSONContent | null;
-  };
+  getDocument: () => { binary: Uint8Array | null; html: string; json: JSONContent | null };
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => {
-    characters: number;
-    paragraphs: number;
-    words: number;
-  };
+  getDocumentInfo: () => { characters: number; paragraphs: number; words: number };
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  createSelectionAtCursorPosition?: () => void;
+  focus: ({ position, scrollIntoView }: { position?: FocusPosition; scrollIntoView?: boolean }) => void;
+  getCordsFromPos: (pos?: number) => { left: number; right: number; top: number; bottom: number } | undefined;
   getCurrentCursorPosition: () => number | undefined;
+  getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => Record<string, any> | undefined;
+  scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
   isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
@@ -110,6 +100,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getHeadings: () => IMarking[];
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  undo: () => void;
+  redo: () => void;
 }
 
 // editor props
@@ -117,13 +109,17 @@ export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
+  editable?: boolean;
   editorClassName?: string;
+  extensions?: Extensions;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   id: string;
   initialValue: string;
+  isMobile?: boolean;
   mentionHandler: TMentionHandler;
   onChange?: (json: object, html: string) => void;
+  onInitialContentLoad?: (contentHeight: number) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
   autofocus?: boolean;
@@ -133,11 +129,9 @@ export interface IEditorProps {
   value?: string | null;
   bubbleMenuEnabled?: boolean;
 }
-export interface ILiteTextEditor extends IEditorProps {
-  extensions?: Extensions;
-}
+export interface ILiteTextEditor extends IEditorProps {}
 export interface IRichTextEditor extends IEditorProps {
-  extensions?: Extensions;
+  bubbleMenuEnabled?: boolean;
   dragDropEnabled?: boolean;
 }
 
@@ -146,9 +140,14 @@ export interface ICollaborativeDocumentEditor
   aiHandler?: TAIHandler;
   bubbleMenuEnabled?: boolean;
   editable: boolean;
+  editorProps?: EditorProps;
   embedHandler: TEmbedConfig;
   handleEditorReady?: (value: boolean) => void;
   id: string;
+  isDragDropEnabled?: boolean;
+  isMobile?: boolean;
+  loaderClassName?: string;
+  onEditorClick?: () => void;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -165,6 +164,7 @@ export interface IReadOnlyEditorProps {
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
   id: string;
   initialValue: string;
+  isMobile?: boolean;
   mentionHandler: TReadOnlyMentionHandler;
 }
 
@@ -186,17 +186,9 @@ export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
   handleEditorReady?: (value: boolean) => void;
 }
 
-export type TUserDetails = {
-  color: string;
-  id: string;
-  name: string;
-  cookie?: string;
-};
+export type TUserDetails = { color: string; id: string; name: string; cookie?: string };
 
-export type TRealtimeConfig = {
-  url: string;
-  queryParams: TWebhookConnectionQueryParams;
-};
+export type TRealtimeConfig = { url: string; queryParams: TWebhookConnectionQueryParams };
 
 export interface EditorEvents {
   beforeCreate: never;

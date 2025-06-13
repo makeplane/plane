@@ -1,4 +1,5 @@
 @import "@plane/propel/styles/fonts";
+@import url("editor.css");
 
 @tailwind base;
 @tailwind components;

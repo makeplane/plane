@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { CustomImageNode } from "@/extensions/custom-image";
+import { CustomImageNode, CustomImageNodeProps } from "@/extensions/custom-image";
 // helpers
 import { isFileValid } from "@/helpers/file";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
@@ -45,6 +45,7 @@ export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File })
 export const CustomImageExtension = (props: TFileHandler) => {
   const {
     getAssetSrc,
+    isMobile = false,
     upload,
     restore: restoreImageFn,
     validation: { maxFileSize },
@@ -174,7 +175,7 @@ export const CustomImageExtension = (props: TFileHandler) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
+      return ReactNodeViewRenderer((props: CustomImageNodeProps) => <CustomImageNode {...props} isMobile={isMobile} />);
     },
   });
 };

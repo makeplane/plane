@@ -1,5 +1,5 @@
 import { Extensions } from "@tiptap/core";
-import React from "react";
+import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -21,16 +21,21 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
+    extensions: externalExtensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
+    editorProps,
     embedHandler,
     fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
+    isDragDropEnabled = true,
+    isMobile = false,
     mentionHandler,
+    onEditorClick,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -38,27 +43,34 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     user,
   } = props;
 
-  const extensions: Extensions = [];
+  const extensions: Extensions = useMemo(() => {
+    const allExtensions = [...externalExtensions];
 
-  if (embedHandler?.issue) {
-    extensions.push(
-      WorkItemEmbedExtension({
-        widgetCallback: embedHandler.issue.widgetCallback,
-      })
-    );
-  }
+    if (embedHandler?.issue) {
+      allExtensions.push(
+        WorkItemEmbedExtension({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        })
+      );
+    }
+
+    return allExtensions;
+  }, [externalExtensions, embedHandler.issue]);
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     disabledExtensions,
     editable,
     editorClassName,
+    editorProps,
     embedHandler,
     extensions,
     fileHandler,
     forwardedRef,
     handleEditorReady,
     id,
+    isDragDropEnabled,
+    isMobile,
     mentionHandler,
     onTransaction,
     placeholder,
@@ -90,6 +102,8 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
+      isMobile={isMobile}
+      onEditorClick={onEditorClick}
       tabIndex={tabIndex}
     />
   );

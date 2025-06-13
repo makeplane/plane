@@ -30,6 +30,7 @@ interface IDocumentReadOnlyEditor {
   editorClassName?: string;
   embedHandler: any;
   fileHandler: TReadOnlyFileHandler;
+  isMobile: boolean;
   tabIndex?: number;
   handleEditorReady?: (value: boolean) => void;
   mentionHandler: TReadOnlyMentionHandler;
@@ -45,6 +46,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     embedHandler,
     fileHandler,
     id,
+    isMobile,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -83,6 +85,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      isMobile={isMobile}
     />
   );
 };

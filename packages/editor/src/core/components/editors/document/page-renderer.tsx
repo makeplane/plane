@@ -12,11 +12,23 @@ type IPageRenderer = {
   editor: Editor;
   editorContainerClassName: string;
   id: string;
+  isMobile: boolean;
+  onEditorClick?: () => void;
   tabIndex?: number;
 };
 
 export const PageRenderer = (props: IPageRenderer) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
+  const {
+    aiHandler,
+    bubbleMenuEnabled,
+    displayConfig,
+    editor,
+    editorContainerClassName,
+    id,
+    isMobile,
+    onEditorClick,
+    tabIndex,
+  } = props;
 
   return (
     <div className="frame-renderer flex-grow w-full">
@@ -25,9 +37,10 @@ export const PageRenderer = (props: IPageRenderer) => {
         editor={editor}
         editorContainerClassName={editorContainerClassName}
         id={id}
+        isMobile={isMobile}
       >
-        <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-        {editor.isEditable && (
+        <EditorContentWrapper editor={editor} id={id} onClick={onEditorClick} tabIndex={tabIndex} />
+        {editor.isEditable && !isMobile && (
           <div>
             {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
             <BlockMenu editor={editor} />
