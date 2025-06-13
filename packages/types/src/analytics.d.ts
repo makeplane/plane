@@ -4,6 +4,12 @@ import { Row } from "@tanstack/react-table";
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+interface AnalyticsTab {
+  key: "overview" | "work-items";
+  label: string;
+  content: React.FC;
+  isDisabled: boolean;
+}
 export type TAnalyticsFilterParams = {
   project_ids?: string;
   cycle_id?: string;
