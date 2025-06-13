@@ -273,7 +273,7 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     // original data to revert back in case of error
     const isCurrentUser = this.rootStore.user.data?.id === userId;
-    const membershipBeforeUpdate = this.getProjectMembershipByUserId(userId, projectId);
+    const membershipBeforeUpdate = { ...this.getProjectMembershipByUserId(userId, projectId) };
     const permissionBeforeUpdate = isCurrentUser
       ? this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)
       : undefined;
