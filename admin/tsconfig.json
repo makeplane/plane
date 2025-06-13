@@ -8,6 +8,7 @@
     ],
     "baseUrl": ".",
     "paths": {
+      "@/app/*": ["app/*"],
       "@/*": ["core/*"],
       "@/public/*": ["public/*"],
       "@/plane-admin/*": ["ce/*"],
