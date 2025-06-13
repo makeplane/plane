@@ -186,9 +186,17 @@ export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
   handleEditorReady?: (value: boolean) => void;
 }
 
-export type TUserDetails = { color: string; id: string; name: string; cookie?: string };
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+  cookie?: string;
+};
 
-export type TRealtimeConfig = { url: string; queryParams: TWebhookConnectionQueryParams };
+export type TRealtimeConfig = {
+  url: string;
+  queryParams: TWebhookConnectionQueryParams;
+};
 
 export interface EditorEvents {
   beforeCreate: never;

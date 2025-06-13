@@ -4,7 +4,12 @@ import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { cn } from "@plane/utils";
 
 type Props = {
-  image: { src: string; height: string; width: string; aspectRatio: number };
+  image: {
+    src: string;
+    height: string;
+    width: string;
+    aspectRatio: number;
+  };
   isOpen: boolean;
   showExternalLink: boolean;
   toggleFullScreenMode: (val: boolean) => void;

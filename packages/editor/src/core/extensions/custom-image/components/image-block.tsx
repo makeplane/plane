@@ -20,7 +20,11 @@ export type ImageAttributes = {
   id: string | null;
 };
 
-type Size = { width: PixelAttribute<"35%">; height: PixelAttribute<"auto">; aspectRatio: number | null };
+type Size = {
+  width: PixelAttribute<"35%">;
+  height: PixelAttribute<"auto">;
+  aspectRatio: number | null;
+};
 
 const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefined | null, defaultValue?: TDefault) => {
   if (!value || value === defaultValue) {
@@ -224,7 +228,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
       onMouseDown={handleImageMouseDown}
-      style={{ width: size.width, ...(size.aspectRatio && { aspectRatio: size.aspectRatio }) }}
+      style={{
+        width: size.width,
+        ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
+      }}
     >
       {showImageLoader && (
         <div
@@ -276,7 +283,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           "read-only-image": !editor.isEditable,
           "blur-sm opacity-80 loading-image": !resolvedImageSrc,
         })}
-        style={{ width: size.width, ...(size.aspectRatio && { aspectRatio: size.aspectRatio }) }}
+        style={{
+          width: size.width,
+          ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
+        }}
       />
       {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
       {showImageUtils && (
@@ -301,7 +311,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           <div
             className={cn(
               "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
-              { "opacity-100": isResizing, "opacity-0 group-hover/image-component:opacity-100": !isResizing }
+              {
+                "opacity-100": isResizing,
+                "opacity-0 group-hover/image-component:opacity-100": !isResizing,
+              }
             )}
           />
           <div

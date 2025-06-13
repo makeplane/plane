@@ -100,7 +100,10 @@ export const useEditor = (props: CustomEditorProps) => {
       shouldRerenderOnTransaction: false,
       autofocus,
       parseOptions: { preserveWhitespace: true },
-      editorProps: { ...CoreEditorProps({ editorClassName }), ...editorProps },
+      editorProps: {
+        ...CoreEditorProps({ editorClassName }),
+        ...editorProps,
+      },
       extensions: [
         ...CoreEditorExtensions({
           editable,
@@ -274,7 +277,11 @@ export const useEditor = (props: CustomEditorProps) => {
         const documentHTML = editor?.getHTML() ?? "<p></p>";
         const documentJSON = editor?.getJSON() ?? null;
 
-        return { binary: documentBinary, html: documentHTML, json: documentJSON };
+        return {
+          binary: documentBinary,
+          html: documentHTML,
+          json: documentJSON,
+        };
       },
       scrollSummary: (marking: IMarking): void => {
         if (!editor) return;

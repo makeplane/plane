@@ -10,7 +10,9 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 export type CustomBaseImageNodeViewProps = {
   getPos: () => number;
   editor: Editor;
-  node: NodeViewProps["node"] & { attrs: ImageAttributes };
+  node: NodeViewProps["node"] & {
+    attrs: ImageAttributes;
+  };
   updateAttributes: (attrs: Partial<ImageAttributes>) => void;
   selected: boolean;
   isMobile: boolean;
