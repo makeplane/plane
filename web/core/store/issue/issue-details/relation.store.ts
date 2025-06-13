@@ -182,7 +182,7 @@ export class IssueRelationStore implements IIssueRelationStore {
    */
   createCurrentRelation = async (issueId: string, relationType: TIssueRelationTypes, relatedIssueId: string) => {
     const workspaceSlug = this.rootIssueDetailStore.rootIssueStore.workspaceSlug;
-    const projectId = this.rootIssueDetailStore.rootIssueStore.projectId;
+    const projectId = this.rootIssueDetailStore.issue.getIssueById(issueId)?.project_id;
 
     if (!workspaceSlug || !projectId) return;
 
