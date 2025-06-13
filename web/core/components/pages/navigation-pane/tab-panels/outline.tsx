@@ -15,7 +15,9 @@ type Props = {
 export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
   const { page } = props;
   // derived values
-  const { editorRef } = page;
+  const {
+    editor: { editorRef },
+  } = page;
   // asset resolved path
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/outline" });
   // translation

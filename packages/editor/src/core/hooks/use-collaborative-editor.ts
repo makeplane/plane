@@ -13,6 +13,7 @@ import { TCollaborativeEditorProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
   const {
+    onAssetChange,
     onTransaction,
     disabledExtensions,
     editable,
@@ -102,6 +103,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     forwardedRef,
     handleEditorReady,
     mentionHandler,
+    onAssetChange,
     onTransaction,
     placeholder,
     provider,

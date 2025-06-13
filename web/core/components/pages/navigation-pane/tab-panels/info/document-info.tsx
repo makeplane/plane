@@ -22,7 +22,9 @@ export const PageNavigationPaneInfoTabDocumentInfo: React.FC<Props> = observer((
   // states
   const [documentInfo, setDocumentInfo] = useState<TDocumentInfo>(DEFAULT_DOCUMENT_INFO);
   // derived values
-  const { editorRef } = page;
+  const {
+    editor: { editorRef },
+  } = page;
   // translation
   const { t } = useTranslation();
   // subscribe to asset changes

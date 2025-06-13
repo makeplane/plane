@@ -74,7 +74,13 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle, editorRef } = page;
+  const {
+    id: pageId,
+    name: pageTitle,
+    isContentEditable,
+    updateTitle,
+    editor: { editorRef, updateAssetsList },
+  } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
@@ -231,6 +237,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           aiHandler={{
             menu: getAIMenu,
           }}
+          onAssetChange={updateAssetsList}
         />
       </div>
     </Row>

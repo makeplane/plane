@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -65,7 +64,7 @@ const AssetItem = observer((props: AssetItemProps) => {
   return (
     <a
       href={asset.scrollId}
-      className="relative group/asset-item h-12 flex items-center gap-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
+      className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
     >
       <div
         className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
@@ -73,45 +72,38 @@ const AssetItem = observer((props: AssetItemProps) => {
           backgroundImage: `url('${getAssetSrc(asset.src)}')`,
         }}
       />
-      <div className="flex-1 space-y-0.5">
-        <p className="text-sm font-medium">{asset.name}</p>
-        <p className="text-xs text-custom-text-200">{convertBytesToSize(Number(asset.size || 0))}</p>
+      <div className="flex-1 space-y-0.5 truncate">
+        <p className="text-sm font-medium truncate">{asset.name}</p>
+        <div className="flex items-end justify-between gap-2">
+          <p className="shrink-0 text-xs text-custom-text-200">{convertBytesToSize(Number(asset.size || 0))}</p>
+          <a
+            href={getAssetDownloadSrc(asset.src)}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
+          >
+            <Download className="shrink-0 size-3" />
+            <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
+          </a>
+        </div>
       </div>
-      <a
-        href={getAssetDownloadSrc(asset.src)}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="shrink-0 self-end mb-1 mr-1 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-all"
-      >
-        <Download className="shrink-0 size-3" />
-        <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
-      </a>
     </a>
   );
 });
 
-export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
+export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props) => {
   const { page } = props;
-  // states
-  const [assets, setAssets] = useState<TEditorAsset[]>([]);
   // derived values
-  const { editorRef } = page;
+  const {
+    editor: { assetsList },
+  } = page;
   // translation
   const { t } = useTranslation();
-  // subscribe to asset changes
-  useEffect(() => {
-    const unsubscribe = editorRef?.onAssetChange(setAssets);
-    // for initial render of this component to get the editor assets
-    setAssets(editorRef?.getAssets() ?? []);
-    return () => {
-      unsubscribe?.();
-    };
-  }, [editorRef]);
 
   // asset resolved path
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/assets" });
 
-  if (assets.length === 0)
+  if (assetsList.length === 0)
     return (
       <div className="size-full grid place-items-center">
         <div className="flex flex-col items-center gap-y-6 text-center">
@@ -128,7 +120,7 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
 
   return (
     <div className="mt-5 space-y-4">
-      {assets?.map((asset) => <AssetItem key={asset.id} asset={asset} page={page} />)}
+      {assetsList?.map((asset) => <AssetItem key={asset.id} asset={asset} page={page} />)}
     </div>
   );
-};
+});

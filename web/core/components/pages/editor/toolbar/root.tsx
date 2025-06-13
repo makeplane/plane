@@ -24,7 +24,10 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
   // translation
   const { t } = useTranslation();
   // derived values
-  const { isContentEditable, editorRef } = page;
+  const {
+    isContentEditable,
+    editor: { editorRef },
+  } = page;
   // page filters
   const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
   // derived values

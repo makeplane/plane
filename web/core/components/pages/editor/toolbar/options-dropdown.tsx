@@ -30,7 +30,11 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   // store values
-  const { name, isContentEditable, editorRef } = page;
+  const {
+    name,
+    isContentEditable,
+    editor: { editorRef },
+  } = page;
   // page filters
   const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
   // update query params

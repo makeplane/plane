@@ -1,7 +1,7 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
+import { useEditor as useTiptapEditor, Extensions, useEditorState } from "@tiptap/react";
 import { useImperativeHandle, MutableRefObject, useEffect } from "react";
 import * as Y from "yjs";
 // components
@@ -11,7 +11,6 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
-import { getAllEditorAssets } from "@/helpers/assets";
 import { getParagraphCount } from "@/helpers/common";
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
@@ -20,9 +19,9 @@ import { scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import type { EditorRefApi, TEditorCommands, TFileHandler, TExtensions, TMentionHandler } from "@/types";
+import type { EditorRefApi, TEditorCommands, TFileHandler, TExtensions, TMentionHandler, TEditorAsset } from "@/types";
 
-export interface CustomEditorProps {
+interface CustomEditorProps {
   editable: boolean;
   editorClassName: string;
   editorProps?: EditorProps;
@@ -35,6 +34,7 @@ export interface CustomEditorProps {
   id?: string;
   initialValue?: string;
   mentionHandler: TMentionHandler;
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   autofocus?: boolean;
@@ -60,6 +60,7 @@ export const useEditor = (props: CustomEditorProps) => {
     id = "",
     initialValue,
     mentionHandler,
+    onAssetChange,
     onChange,
     onTransaction,
     placeholder,
@@ -134,6 +135,20 @@ export const useEditor = (props: CustomEditorProps) => {
     editor.commands.updateAssetsUploadStatus?.(assetsUploadStatus);
   }, [editor, fileHandler.assetsUploadStatus]);
 
+  // subscribe to assets list changes
+  const assetsList = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      assets: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsList : [],
+    }),
+  });
+  // trigger callback when assets list changes
+  useEffect(() => {
+    const assets = assetsList?.assets;
+    if (!assets || !onAssetChange) return;
+    onAssetChange(assets);
+  }, [assetsList?.assets, onAssetChange]);
+
   useImperativeHandle(
     forwardedRef,
     () => ({
@@ -200,22 +215,6 @@ export const useEditor = (props: CustomEditorProps) => {
         return item.isActive(props);
       },
       listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
-      onAssetChange: (callback) => {
-        const handleAssetChange = () => {
-          if (!editor) return;
-          const assets = getAllEditorAssets(editor);
-          callback(assets);
-        };
-
-        // Subscribe to update assets
-        editor?.on("update", handleAssetChange);
-        // Return a function to unsubscribe to the continuous transactions of
-        // the editor on unmounting the component that has subscribed to this
-        // method
-        return () => {
-          editor?.off("update", handleAssetChange);
-        };
-      },
       onDocumentInfoChange: (callback) => {
         const handleDocumentInfoChange = () => {
           if (!editor) return;

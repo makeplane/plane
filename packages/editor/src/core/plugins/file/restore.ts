@@ -2,6 +2,8 @@ import { Editor } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { CORE_ASSETS_META_DATA_RECORD } from "@/helpers/assets";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
@@ -42,6 +44,13 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
           if (!isAValidNode) return;
           if (pos < 0 || pos > newState.doc.content.size) return;
           if (oldFileSources[nodeType]?.has(node.attrs.src)) return;
+          // update assets list storage value
+          const assetMetaData = CORE_ASSETS_META_DATA_RECORD[nodeType]?.(node.attrs);
+          if (assetMetaData) {
+            editor.commands.updateAssetsList?.({
+              asset: assetMetaData,
+            });
+          }
           // if the src is just a id (private bucket), then we don't need to handle restore from here but
           // only while it fails to load
           if (nodeType === CORE_EXTENSIONS.CUSTOM_IMAGE && !node.attrs.src?.startsWith("http")) return;

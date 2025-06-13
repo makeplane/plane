@@ -60,7 +60,10 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
-  const { isContentEditable, setEditorRef } = page;
+  const {
+    isContentEditable,
+    editor: { setEditorRef },
+  } = page;
   // page fallback
   usePageFallback({
     editorRef,
@@ -74,11 +77,11 @@ export const PageRoot = observer((props: TPageRootProps) => {
   const handleEditorReady = useCallback(
     (status: boolean) => {
       setEditorReady(status);
-      if (editorRef.current && !page.editorRef) {
+      if (editorRef.current && !page.editor.editorRef) {
         setEditorRef(editorRef.current);
       }
     },
-    [page.editorRef, setEditorRef]
+    [page.editor.editorRef, setEditorRef]
   );
 
   useEffect(() => {

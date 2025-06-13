@@ -7,7 +7,6 @@ import { CORE_EDITOR_META } from "@/constants/meta";
 // types
 import { EditorReadOnlyRefApi } from "@/types";
 // local imports
-import { getAllEditorAssets } from "./assets";
 import { getParagraphCount } from "./common";
 import { getExtensionStorage } from "./get-extension-storage";
 import { scrollSummary } from "./scroll-to-node";
@@ -24,7 +23,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorReadOnlyRefApi => {
     clearEditor: (emitUpdate = false) => {
       editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
-    getAssets: () => (editor ? getAllEditorAssets(editor) : []),
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
       const documentHTML = editor?.getHTML() ?? "<p></p>";

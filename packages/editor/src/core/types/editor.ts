@@ -97,7 +97,6 @@ export type TDocumentInfo = {
 // editor refs
 export type EditorReadOnlyRefApi = {
   clearEditor: (emitUpdate?: boolean) => void;
-  getAssets: () => TEditorAsset[];
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
@@ -120,7 +119,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   isEditorReadyToDiscard: () => boolean;
   isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
-  onAssetChange: (callback: (assets: TEditorAsset[]) => void) => () => void;
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
@@ -141,6 +139,7 @@ export interface IEditorProps {
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
