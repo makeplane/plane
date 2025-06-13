@@ -17,6 +17,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import IssueWorkLogSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 
+
 class IssueWorkLogsEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
@@ -86,6 +87,8 @@ class IssueTotalWorkLogEndpoint(BaseAPIView):
             workspace__slug=slug,
         ).accessible_to(request.user.id, slug)
 
-        total_worklog = total_worklog.aggregate(total_worklog=Sum("time_spent"))["total_worklog"] or 0
+        total_worklog = (
+            total_worklog.aggregate(total_worklog=Sum("duration"))["total_worklog"] or 0
+        )
 
         return Response({"total_worklog": total_worklog}, status=status.HTTP_200_OK)
