@@ -164,68 +164,66 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
-    <>
-      <Row
-        className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
-        variant={ERowVariant.HUGGING}
-      >
-        <div id="page-content-container" className="relative w-full flex-shrink-0">
-          {/* table of content */}
-          {!isNavigationPaneOpen && (
-            <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
-              <div className="sticky top-[72px]">
-                <div className="group/page-toc relative px-page-x">
-                  <div className="cursor-pointer max-h-[50vh] overflow-hidden">
-                    <PageContentBrowser editorRef={editorRef} showOutline />
-                  </div>
-                  <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                    <PageContentBrowser editorRef={editorRef} />
-                  </div>
+    <Row
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      variant={ERowVariant.HUGGING}
+    >
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
+        {/* table of content */}
+        {!isNavigationPaneOpen && (
+          <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+            <div className="sticky top-[72px]">
+              <div className="group/page-toc relative px-page-x">
+                <div className="cursor-pointer max-h-[50vh] overflow-hidden">
+                  <PageContentBrowser editorRef={editorRef} showOutline />
+                </div>
+                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                  <PageContentBrowser editorRef={editorRef} />
                 </div>
               </div>
             </div>
-          )}
-          <div className="page-header-container group/page-header">
-            <div className={blockWidthClassName}>
-              <PageEditorHeaderRoot page={page} />
-              <PageEditorTitle
-                editorRef={editorRef}
-                readOnly={!isContentEditable}
-                title={pageTitle}
-                updateTitle={updateTitle}
-              />
-            </div>
           </div>
-          <CollaborativeDocumentEditorWithRef
-            editable={isContentEditable}
-            id={pageId}
-            fileHandler={config.fileHandler}
-            handleEditorReady={handleEditorReady}
-            ref={editorForwardRef}
-            containerClassName="h-full p-0 pb-64"
-            displayConfig={displayConfig}
-            mentionHandler={{
-              searchCallback: async (query) => {
-                const res = await fetchMentions(query);
-                if (!res) throw new Error("Failed in fetching mentions");
-                return res;
-              },
-              renderComponent: (props) => <EditorMentionsRoot {...props} />,
-              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-            }}
-            embedHandler={{
-              issue: issueEmbedProps,
-            }}
-            realtimeConfig={realtimeConfig}
-            serverHandler={serverHandler}
-            user={userConfig}
-            disabledExtensions={disabledExtensions}
-            aiHandler={{
-              menu: getAIMenu,
-            }}
-          />
+        )}
+        <div className="page-header-container group/page-header">
+          <div className={blockWidthClassName}>
+            <PageEditorHeaderRoot page={page} />
+            <PageEditorTitle
+              editorRef={editorRef}
+              readOnly={!isContentEditable}
+              title={pageTitle}
+              updateTitle={updateTitle}
+            />
+          </div>
         </div>
-      </Row>
-    </>
+        <CollaborativeDocumentEditorWithRef
+          editable={isContentEditable}
+          id={pageId}
+          fileHandler={config.fileHandler}
+          handleEditorReady={handleEditorReady}
+          ref={editorForwardRef}
+          containerClassName="h-full p-0 pb-64"
+          displayConfig={displayConfig}
+          mentionHandler={{
+            searchCallback: async (query) => {
+              const res = await fetchMentions(query);
+              if (!res) throw new Error("Failed in fetching mentions");
+              return res;
+            },
+            renderComponent: (props) => <EditorMentionsRoot {...props} />,
+            getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+          }}
+          embedHandler={{
+            issue: issueEmbedProps,
+          }}
+          realtimeConfig={realtimeConfig}
+          serverHandler={serverHandler}
+          user={userConfig}
+          disabledExtensions={disabledExtensions}
+          aiHandler={{
+            menu: getAIMenu,
+          }}
+        />
+      </div>
+    </Row>
   );
 });

@@ -2,6 +2,8 @@ import { Editor } from "@tiptap/core";
 import { Node } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// extensions
+import { getImageBlockId } from "@/extensions/custom-image/components/image-block";
 // plane editor imports
 import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/plane-editor/constants/assets";
 // types
@@ -15,7 +17,7 @@ const ASSETS_META_DATA_RECORD: Partial<Record<CORE_EXTENSIONS, TAssetMetaDataRec
     return {
       id: node.attrs?.id,
       name: `image-${index + 1}`,
-      scrollId: `#image-block-${node.attrs?.id}`,
+      scrollId: `#${getImageBlockId(node.attrs?.id ?? "")}`,
       size: 0,
       src: node.attrs?.src,
       type: "IMAGE",
@@ -26,7 +28,7 @@ const ASSETS_META_DATA_RECORD: Partial<Record<CORE_EXTENSIONS, TAssetMetaDataRec
     return {
       id: node.attrs?.id,
       name: `image-${index + 1}`,
-      scrollId: `#image-block-${node.attrs?.id}`,
+      scrollId: `#${getImageBlockId(node.attrs?.id ?? "")}`,
       size: 0,
       src: node.attrs?.src,
       type: "CUSTOM_IMAGE",
