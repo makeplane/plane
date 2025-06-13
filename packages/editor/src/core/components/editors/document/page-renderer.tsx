@@ -12,7 +12,7 @@ type IPageRenderer = {
   editor: Editor;
   editorContainerClassName: string;
   id: string;
-  isMobile: boolean;
+  isMobile?: boolean;
   onEditorClick?: () => void;
   tabIndex?: number;
 };
@@ -25,7 +25,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     editor,
     editorContainerClassName,
     id,
-    isMobile,
+    isMobile = false,
     onEditorClick,
     tabIndex,
   } = props;
