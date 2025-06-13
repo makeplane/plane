@@ -47,6 +47,13 @@ class Template(WorkspaceBaseModel):
         through="ee.TemplateAttachment",
         blank=True,
     )
+    cover_image_asset = models.ForeignKey(
+        "db.FileAsset",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cover_image_templates",
+    )
     short_description = models.TextField(blank=True, null=True)
     privacy_policy_url = models.URLField(max_length=800, null=True, blank=True)
     terms_of_service_url = models.URLField(max_length=800, null=True, blank=True)
@@ -70,6 +77,14 @@ class Template(WorkspaceBaseModel):
             else strip_tags(self.description_html)
         )
         super(Template, self).save(*args, **kwargs)
+
+    @property
+    def cover_image_url(self):
+        # Return cover image url
+        if self.cover_image_asset:
+            return self.cover_image_asset.asset_url
+
+        return None
 
 
 class TemplateAttachment(BaseModel):

@@ -66,6 +66,8 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     video_url = models.URLField(max_length=800, null=True, blank=True)
     website = models.URLField(max_length=800, null=True, blank=True)
 
+    is_mentionable = models.BooleanField(default=False)
+
     objects = ApplicationManager()
 
     class Meta(AbstractApplication.Meta):

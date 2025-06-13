@@ -3,8 +3,9 @@ from django.conf import settings
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
+from uuid import uuid4
 
-from plane.db.models import User
+from plane.db.models import User, Workspace, FileAsset
 from plane.db.models.api import APIToken
 
 
@@ -42,6 +43,48 @@ def create_user(db, user_data):
     user.set_password(user_data["password"])
     user.save()
     return user
+
+
+@pytest.fixture
+def workspace(db, create_user):
+    """Create and return a workspace instance"""
+    workspace = Workspace.objects.create(
+        name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
+    )
+    return workspace
+
+
+@pytest.fixture
+def file_asset(db, workspace):
+    """Create and return a basic FileAsset instance for testing"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="test_file.txt",
+        attributes={
+            "name": "test_file.txt",
+            "size": 1024,
+            "mime_type": "text/plain",
+        },
+        size=1024,
+    )
+    return file_asset
+
+
+@pytest.fixture
+def cover_image_asset(db, workspace):
+    """Create and return a FileAsset instance specifically for cover images"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="cover_image.jpg",
+        attributes={
+            "name": "cover_image.jpg",
+            "size": 2048,
+            "mime_type": "image/jpeg",
+        },
+        size=2048,
+        entity_type=FileAsset.EntityTypeContext.PROJECT_COVER,
+    )
+    return file_asset
 
 
 @pytest.fixture
