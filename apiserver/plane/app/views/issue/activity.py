@@ -20,6 +20,7 @@ from plane.db.models import IssueActivity, IssueComment, CommentReaction, Intake
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
+
 class IssueActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
@@ -40,6 +41,7 @@ class IssueActivityEndpoint(BaseAPIView):
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
             .accessible_to(request.user.id, slug)
+            .distinct()
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
@@ -59,6 +61,7 @@ class IssueActivityEndpoint(BaseAPIView):
                     queryset=CommentReaction.objects.select_related("actor"),
                 )
             )
+            .distinct()
             .accessible_to(request.user.id, slug)
         )
 
