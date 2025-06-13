@@ -22,6 +22,7 @@ from plane.payment.flags.flag_decorator import (
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import EpicCommentSerializer, EpicActivitySerializer
 
+
 class EpicActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
@@ -43,6 +44,7 @@ class EpicActivityEndpoint(BaseAPIView):
             .filter(**filters)
             .select_related("actor", "workspace", "issue", "project")
             .accessible_to(request.user.id, slug)
+            .distinct()
         ).order_by("created_at")
 
         if not check_workspace_feature_flag(
@@ -66,6 +68,7 @@ class EpicActivityEndpoint(BaseAPIView):
                 )
             )
             .accessible_to(request.user.id, slug)
+            .distinct()
         )
 
         epic_activities = EpicActivitySerializer(epic_activities, many=True).data

@@ -41,6 +41,7 @@ class ProjectActivityEndpoint(BaseAPIView):
             .filter(**filters)
             .select_related("actor", "workspace", "project")
             .accessible_to(request.user.id, slug)
+            .distinct()
         ).order_by("created_at")
 
         project_activities = EpicActivitySerializer(project_activities, many=True).data
