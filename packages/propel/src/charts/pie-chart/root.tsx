@@ -128,7 +128,7 @@ export const PieChart = React.memo(<K extends string, T extends string>(props: T
                 className: "text-custom-background-90/80 cursor-pointer",
               }}
               wrapperStyle={{
-                pointerEvents: "auto",
+                pointerEvents: "none",
               }}
               content={({ active, payload }) => {
                 if (!active || !payload || !payload.length) return null;
