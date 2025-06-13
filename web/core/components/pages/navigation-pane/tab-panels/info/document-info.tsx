@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TDocumentInfo } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { getReadTimeFromWordsCount } from "@plane/utils";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
@@ -22,6 +23,8 @@ export const PageNavigationPaneInfoTabDocumentInfo: React.FC<Props> = observer((
   const [documentInfo, setDocumentInfo] = useState<TDocumentInfo>(DEFAULT_DOCUMENT_INFO);
   // derived values
   const { editorRef } = page;
+  // translation
+  const { t } = useTranslation();
   // subscribe to asset changes
   useEffect(() => {
     const unsubscribe = editorRef?.onDocumentInfoChange(setDocumentInfo);
@@ -42,26 +45,26 @@ export const PageNavigationPaneInfoTabDocumentInfo: React.FC<Props> = observer((
     () => [
       {
         key: "words-count",
-        title: "Words",
+        title: t("page_navigation_pane.tabs.info.document_info.words"),
         info: documentInfo.words,
       },
       {
         key: "characters-count",
-        title: "Characters",
+        title: t("page_navigation_pane.tabs.info.document_info.characters"),
         info: documentInfo.characters,
       },
       {
         key: "paragraphs-count",
-        title: "Paragraphs",
+        title: t("page_navigation_pane.tabs.info.document_info.paragraphs"),
         info: documentInfo.paragraphs,
       },
       {
         key: "read-time",
-        title: "Read time",
+        title: t("page_navigation_pane.tabs.info.document_info.read_time"),
         info: secondsToReadableTime(),
       },
     ],
-    [documentInfo, secondsToReadableTime]
+    [documentInfo, secondsToReadableTime, t]
   );
 
   return (

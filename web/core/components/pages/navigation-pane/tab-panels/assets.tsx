@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
 // plane imports
 import type { TEditorAsset } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { convertBytesToSize } from "@plane/utils";
 // helpers
 import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@/helpers/editor.helper";
@@ -28,6 +29,8 @@ const AssetItem = observer((props: AssetItemProps) => {
   const { workspaceSlug } = useParams();
   // derived values
   const { project_ids } = page;
+  // translation
+  const { t } = useTranslation();
 
   const getAssetSrc = (path: string) => {
     if (!path || !workspaceSlug) return "";
@@ -81,7 +84,7 @@ const AssetItem = observer((props: AssetItemProps) => {
         className="shrink-0 self-end mb-1 mr-1 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-all"
       >
         <Download className="shrink-0 size-3" />
-        <span className="text-xs font-medium">Download</span>
+        <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
       </a>
     </a>
   );
@@ -93,6 +96,8 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
   const [assets, setAssets] = useState<TEditorAsset[]>([]);
   // derived values
   const { editorRef } = page;
+  // translation
+  const { t } = useTranslation();
   // subscribe to asset changes
   useEffect(() => {
     const unsubscribe = editorRef?.onAssetChange(setAssets);
@@ -112,8 +117,10 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
         <div className="flex flex-col items-center gap-y-6 text-center">
           <Image src={resolvedPath} width={160} height={160} alt="An image depicting the assets of a page" />
           <div className="space-y-2.5">
-            <h4 className="text-base font-medium">Missing images</h4>
-            <p className="text-sm text-custom-text-200 font-medium">Add images to see them here.</p>
+            <h4 className="text-base font-medium">{t("page_navigation_pane.tabs.assets.empty_state.title")}</h4>
+            <p className="text-sm text-custom-text-200 font-medium">
+              {t("page_navigation_pane.tabs.assets.empty_state.description")}
+            </p>
           </div>
         </div>
       </div>

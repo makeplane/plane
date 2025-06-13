@@ -77,6 +77,8 @@ export const PageNavigationPaneInfoTabVersionHistory: React.FC<Props> = observer
   const activeVersion = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
   // derived values
   const { id } = page;
+  // translation
+  const { t } = useTranslation();
   // query params
   const { updateQueryParams } = useQueryParams();
   // fetch all versions
@@ -102,7 +104,9 @@ export const PageNavigationPaneInfoTabVersionHistory: React.FC<Props> = observer
 
   return (
     <div>
-      <p className="text-xs font-medium text-custom-text-200">Version history</p>
+      <p className="text-xs font-medium text-custom-text-200">
+        {t("page_navigation_pane.tabs.info.version_history.label")}
+      </p>
       <div className="mt-3">
         <ul role="list" className="relative">
           {/* timeline line */}
@@ -122,7 +126,7 @@ export const PageNavigationPaneInfoTabVersionHistory: React.FC<Props> = observer
                 "bg-custom-background-80 hover:bg-custom-background-80": !activeVersion,
               })}
             >
-              Current version
+              {t("page_navigation_pane.tabs.info.version_history.current_version")}
             </Link>
           </li>
           {versionsList?.map((version) => (

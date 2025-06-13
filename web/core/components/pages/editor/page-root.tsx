@@ -141,6 +141,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
           editorForwardRef={editorRef}
           handleConnectionStatus={setHasConnectionFailed}
           handleEditorReady={handleEditorReady}
+          handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
           isNavigationPaneOpen={isValidNavigationPaneTab}
           page={page}

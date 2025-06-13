@@ -30,7 +30,9 @@ export const PageNavigationPaneInfoTabActorsInfo: React.FC<Props> = observer((pr
   return (
     <div className="space-y-3 mt-4">
       <div>
-        <p className="text-xs font-medium text-custom-text-300">Edited by</p>
+        <p className="text-xs font-medium text-custom-text-300">
+          {t("page_navigation_pane.tabs.info.actors_info.edited_by")}
+        </p>
         <div className="mt-2 flex items-center justify-between gap-2 text-sm font-medium">
           <Link href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`} className="flex items-center gap-1">
             <Avatar
@@ -45,7 +47,9 @@ export const PageNavigationPaneInfoTabActorsInfo: React.FC<Props> = observer((pr
         </div>
       </div>
       <div>
-        <p className="text-xs font-medium text-custom-text-300">{t("common.created_by")}</p>
+        <p className="text-xs font-medium text-custom-text-300">
+          {t("page_navigation_pane.tabs.info.actors_info.created_by")}
+        </p>
         <div className="mt-2 flex items-center justify-between gap-2 text-sm font-medium">
           <Link href={`/${workspaceSlug?.toString()}/profile/${page.created_by}`} className="flex items-center gap-1">
             <Avatar

@@ -1,5 +1,7 @@
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // components
 import { PageToolbar } from "@/components/pages";
 // helpers
@@ -19,6 +21,8 @@ type Props = {
 
 export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
   const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
+  // translation
+  const { t } = useTranslation();
   // derived values
   const { isContentEditable, editorRef } = page;
   // page filters
@@ -66,6 +70,7 @@ export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
               type="button"
               className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
               onClick={handleOpenNavigationPane}
+              aria-label={t("page_navigation_pane.open_button")}
             >
               <PanelRight className="size-3.5" />
             </button>

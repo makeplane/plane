@@ -3,6 +3,9 @@ import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRightCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/ui";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
@@ -39,6 +42,8 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   ) as TPageNavigationPaneTab | null;
   const activeTab: TPageNavigationPaneTab = navigationPaneQueryParam || "outline";
   const selectedIndex = PAGE_NAVIGATION_PANE_TAB_KEYS.indexOf(activeTab);
+  // translation
+  const { t } = useTranslation();
 
   const handleTabChange = useCallback(
     (index: number) => {
@@ -60,13 +65,16 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
       }}
     >
       <div className="mb-3.5 px-3.5">
-        <button
-          type="button"
-          className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
-          onClick={handleClose}
-        >
-          <ArrowRightCircle className="size-3.5" />
-        </button>
+        <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
+          <button
+            type="button"
+            className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+            onClick={handleClose}
+            aria-label={t("page_navigation_pane.close_button")}
+          >
+            <ArrowRightCircle className="size-3.5" />
+          </button>
+        </Tooltip>
       </div>
       <Tab.Group as={React.Fragment} selectedIndex={selectedIndex} onChange={handleTabChange}>
         <PageNavigationPaneTabsList />
