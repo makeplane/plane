@@ -6,7 +6,7 @@ import CustomizedInsights from "./customized-insights";
 import WorkItemsInsightTable from "./workitems-insight-table";
 
 const WorkItems: React.FC = () => (
-  <AnalyticsWrapper title="Work Items">
+  <AnalyticsWrapper i18nTitle="sidebar.work_items">
     <div className="flex flex-col gap-14">
       <TotalInsights analyticsType="work-items" />
       <CreatedVsResolved />
