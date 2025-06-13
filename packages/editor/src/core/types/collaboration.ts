@@ -6,6 +6,7 @@ import { TEmbedConfig } from "@/plane-editor/types";
 import {
   EditorReadOnlyRefApi,
   EditorRefApi,
+  TEditorAsset,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -34,6 +35,7 @@ type TCollaborativeEditorHookProps = {
 };
 
 export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onTransaction?: () => void;
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;

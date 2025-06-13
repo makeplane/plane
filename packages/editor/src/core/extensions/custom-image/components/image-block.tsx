@@ -38,6 +38,8 @@ const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefin
   return value;
 };
 
+export const getImageBlockId = (id: string) => `editor-image-block-${id}`;
+
 type CustomImageBlockProps = CustomBaseImageNodeViewProps & {
   imageFromFileSystem: string | undefined;
   setFailedToLoadImage: (isError: boolean) => void;
@@ -222,6 +224,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   return (
     <div
+      id={getImageBlockId(node.attrs.id ?? "")}
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
       onMouseDown={handleImageMouseDown}

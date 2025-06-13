@@ -17,7 +17,6 @@ import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
 
 const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   const {
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
@@ -31,6 +30,8 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -60,6 +61,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
     onTransaction,
     placeholder,
     realtimeConfig,

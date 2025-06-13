@@ -2,10 +2,14 @@ import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
 // plane types
 import { TWebhookConnectionQueryParams } from "@plane/types";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extension types
 import { TTextAlign } from "@/extensions";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
+// plane editor imports
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import {
   TAIHandler,
@@ -75,41 +79,53 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
+export type TEditorAsset = {
+  id: string;
+  name: string;
+  scrollId: string;
+  size: number;
+  src: string;
+  type: keyof typeof CORE_EXTENSIONS | keyof typeof ADDITIONAL_EXTENSIONS;
+};
+
+export type TDocumentInfo = {
+  characters: number;
+  paragraphs: number;
+  words: number;
+};
+
 // editor refs
 export type EditorReadOnlyRefApi = {
-  getMarkDown: () => string;
+  clearEditor: (emitUpdate?: boolean) => void;
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
     json: JSONContent | null;
   };
-  clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
+  getDocumentInfo: () => TDocumentInfo;
+  getHeadings: () => IMarking[];
+  getMarkDown: () => string;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => {
-    characters: number;
-    paragraphs: number;
-    words: number;
-  };
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
-  getCurrentCursorPosition: () => number | undefined;
-  setEditorValueAtCursorPosition: (content: string) => void;
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
-  onStateChange: (callback: () => void) => () => void;
-  setFocusAtPosition: (position: number) => void;
-  isEditorReadyToDiscard: () => boolean;
+  getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
-  setProviderDocument: (value: Uint8Array) => void;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  isEditorReadyToDiscard: () => boolean;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  onStateChange: (callback: () => void) => () => void;
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
+  setFocusAtPosition: (position: number) => void;
+  setProviderDocument: (value: Uint8Array) => void;
 }
 
 // editor props
@@ -123,6 +139,7 @@ export interface IEditorProps {
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
   onTransaction?: () => void;
   handleEditorReady?: (value: boolean) => void;
