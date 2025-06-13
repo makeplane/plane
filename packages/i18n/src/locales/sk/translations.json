@@ -874,13 +874,15 @@
     "guests": "Hostia",
     "on_track": "Na správnej ceste",
     "off_track": "Mimo plán",
+    "at_risk": "V ohrození",
     "timeline": "Časová os",
     "completion": "Dokončenie",
     "upcoming": "Nadchádzajúce",
     "completed": "Dokončené",
     "in_progress": "Prebieha",
     "planned": "Plánované",
-    "paused": "Pozastavené"
+    "paused": "Pozastavené",
+    "no_of": "Počet {entity}"
   },
   "chart": {
     "x_axis": "Os X",

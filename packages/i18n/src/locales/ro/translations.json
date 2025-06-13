@@ -872,13 +872,15 @@
     "guests": "Invitați",
     "on_track": "Pe drumul cel bun",
     "off_track": "În afara traiectoriei",
+    "at_risk": "În pericol",
     "timeline": "Cronologie",
     "completion": "Finalizare",
     "upcoming": "Viitor",
     "completed": "Finalizat",
     "in_progress": "În desfășurare",
     "planned": "Planificat",
-    "paused": "Pauzat"
+    "paused": "Pauzat",
+    "no_of": "Nr. de {entity}"
   },
   "chart": {
     "x_axis": "axa-X",

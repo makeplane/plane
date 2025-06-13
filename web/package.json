@@ -82,6 +82,6 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }
