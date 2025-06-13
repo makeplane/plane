@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // plane web components
-import { PAGE_NAVIGATION_PANE_TABS_LIST } from "@/plane-web/components/pages/editor/navigation-pane";
+import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
 
 export const PageNavigationPaneTabsList = () => {
   // translation
@@ -12,7 +12,7 @@ export const PageNavigationPaneTabsList = () => {
     <Tab.List className="relative flex items-center p-[2px] rounded-md bg-custom-background-80 mx-3.5">
       {({ selectedIndex }) => (
         <>
-          {PAGE_NAVIGATION_PANE_TABS_LIST.map((tab) => (
+          {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
             <Tab
               key={tab.key}
               type="button"
@@ -25,9 +25,9 @@ export const PageNavigationPaneTabsList = () => {
           <div
             className="absolute top-1/2 -translate-y-1/2 bg-custom-background-90 rounded transition-all duration-500 ease-in-out pointer-events-none"
             style={{
-              left: `calc(${(selectedIndex / PAGE_NAVIGATION_PANE_TABS_LIST.length) * 100}% + 2px)`,
+              left: `calc(${(selectedIndex / ORDERED_PAGE_NAVIGATION_TABS_LIST.length) * 100}% + 2px)`,
               height: "calc(100% - 4px)",
-              width: `calc(${100 / PAGE_NAVIGATION_PANE_TABS_LIST.length}% - 4px)`,
+              width: `calc(${100 / ORDERED_PAGE_NAVIGATION_TABS_LIST.length}% - 4px)`,
             }}
           />
         </>

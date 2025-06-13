@@ -18,14 +18,12 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web import
-import {
-  PAGE_NAVIGATION_PANE_TAB_KEYS,
-  TPageNavigationPaneTab,
-} from "@/plane-web/components/pages/editor/navigation-pane";
+import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import {
+  PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PageNavigationPaneRoot,

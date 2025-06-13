@@ -104,13 +104,13 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = (props) => {
   }, [editorRef]);
 
   // asset resolved path
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/outline" });
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/assets" });
 
   if (assets.length === 0)
     return (
       <div className="size-full grid place-items-center">
         <div className="flex flex-col items-center gap-y-6 text-center">
-          <Image src={resolvedPath} width={160} height={160} alt="An image depicting the outline of a page" />
+          <Image src={resolvedPath} width={160} height={160} alt="An image depicting the assets of a page" />
           <div className="space-y-2.5">
             <h4 className="text-base font-medium">Missing images</h4>
             <p className="text-sm text-custom-text-200 font-medium">Add images to see them here.</p>

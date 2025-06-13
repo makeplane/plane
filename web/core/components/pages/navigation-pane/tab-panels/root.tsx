@@ -3,7 +3,8 @@ import { Tab } from "@headlessui/react";
 // components
 import { TPageRootHandlers } from "@/components/pages/editor";
 // plane web imports
-import { PAGE_NAVIGATION_PANE_TABS_LIST } from "@/plane-web/components/pages/editor/navigation-pane";
+import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
+import { PageNavigationPaneAdditionalTabPanelsRoot } from "@/plane-web/components/pages/navigation-pane/tab-panels/root";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -21,7 +22,7 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
 
   return (
     <Tab.Panels as={React.Fragment}>
-      {PAGE_NAVIGATION_PANE_TABS_LIST.map((tab) => (
+      {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
         <Tab.Panel
           key={tab.key}
           as="div"
@@ -30,6 +31,7 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
           {tab.key === "outline" && <PageNavigationPaneOutlineTabPanel page={page} />}
           {tab.key === "info" && <PageNavigationPaneInfoTabPanel page={page} versionHistory={versionHistory} />}
           {tab.key === "assets" && <PageNavigationPaneAssetsTabPanel page={page} />}
+          <PageNavigationPaneAdditionalTabPanelsRoot activeTab={tab.key} page={page} />
         </Tab.Panel>
       ))}
     </Tab.Panels>

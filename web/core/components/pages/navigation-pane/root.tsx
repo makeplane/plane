@@ -6,17 +6,18 @@ import { Tab } from "@headlessui/react";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
-import {
-  PAGE_NAVIGATION_PANE_TAB_KEYS,
-  TPageNavigationPaneTab,
-} from "@/plane-web/components/pages/editor/navigation-pane";
+import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { TPageRootHandlers } from "../editor";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
-import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "./index";
+import {
+  PAGE_NAVIGATION_PANE_TAB_KEYS,
+  PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
+  PAGE_NAVIGATION_PANE_WIDTH,
+} from "./index";
 
 type Props = {
   handleClose: () => void;
@@ -33,7 +34,6 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   // query params
   const { updateQueryParams } = useQueryParams();
   // derived values
-  const { editorRef } = page;
   const navigationPaneQueryParam = searchParams.get(
     PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM
   ) as TPageNavigationPaneTab | null;
