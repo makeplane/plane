@@ -742,6 +742,7 @@ class WorkspaceAssetDownloadEndpoint(BaseAPIView):
             object_name=asset.asset.name,
             disposition=f"attachment; filename={asset.asset.name}",
         )
+
         return HttpResponseRedirect(signed_url)
 
 
@@ -768,4 +769,5 @@ class ProjectAssetDownloadEndpoint(BaseAPIView):
             object_name=asset.asset.name,
             disposition=f"attachment; filename={asset.asset.name}",
         )
+
         return HttpResponseRedirect(signed_url)
