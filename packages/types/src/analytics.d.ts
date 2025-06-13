@@ -4,8 +4,8 @@ import { Row } from "@tanstack/react-table";
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
-interface AnalyticsTab {
-  key: "overview" | "work-items";
+export interface AnalyticsTab {
+  key: TAnalyticsTabsBase;
   label: string;
   content: React.FC;
   isDisabled: boolean;
