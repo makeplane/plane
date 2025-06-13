@@ -53,6 +53,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     updateAttributes,
     setFailedToLoadImage,
     imageFromFileSystem,
+    isMobile,
     selected,
     getPos,
     editor,
@@ -201,11 +202,13 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const handleImageMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
+      e.preventDefault();
+      if (isMobile) editor.commands.blur();
       const pos = getPos();
       const nodeSelection = NodeSelection.create(editor.state.doc, pos);
       editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
     },
-    [editor, getPos]
+    [editor, getPos, isMobile]
   );
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
@@ -257,10 +260,13 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             if (!imageRef.current) {
               throw new Error("Image reference not found");
             }
-            if (!resolvedImageSrc) {
+            // That's a extra step for mobile since they cannot auto-resolve URLs via img tags like web app can
+            // due to limitations with cross-origin authentication cookies
+            const resolvedSrc = await editor?.commands.getImageSource?.(imgNodeSrc);
+            if (!resolvedSrc) {
               throw new Error("No resolved image source available");
             }
-            imageRef.current.src = resolvedImageSrc;
+            imageRef.current.src = resolvedSrc.toString();
           } catch {
             // if the image failed to even restore, then show the error state
             setFailedToLoadImage(true);
@@ -294,6 +300,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             height: size.height,
             width: size.width,
           }}
+          showExternalLink={!isMobile}
         />
       )}
       {selected && displayedImageSrc === resolvedImageSrc && (

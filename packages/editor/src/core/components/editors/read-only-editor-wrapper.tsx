@@ -20,6 +20,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
     forwardedRef,
     id,
     initialValue,
+    isMobile = false,
     mentionHandler,
   } = props;
 
@@ -45,6 +46,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
+      isMobile={isMobile}
     >
       <div className="flex flex-col">
         <EditorContentWrapper editor={editor} id={id} />

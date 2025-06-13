@@ -11,6 +11,7 @@ type Props = {
     aspectRatio: number;
   };
   isOpen: boolean;
+  showExternalLink: boolean;
   toggleFullScreenMode: (val: boolean) => void;
 };
 
@@ -20,7 +21,7 @@ const ZOOM_SPEED = 0.05;
 const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 export const ImageFullScreenAction: React.FC<Props> = (props) => {
-  const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
+  const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode, showExternalLink } = props;
   const { src, width, aspectRatio } = image;
 
   const [magnification, setMagnification] = useState<number>(1);
@@ -100,6 +101,9 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   );
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (!imgRef.current) return;
 
     const imgWidth = imgRef.current.offsetWidth * magnification;
@@ -226,7 +230,11 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
             <div className="flex items-center">
               <button
                 type="button"
-                onClick={() => handleMagnification("decrease")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleMagnification("decrease");
+                }}
                 className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
                 disabled={magnification <= MIN_ZOOM}
               >
@@ -235,7 +243,11 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
               <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
               <button
                 type="button"
-                onClick={() => handleMagnification("increase")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleMagnification("increase");
+                }}
                 className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
                 disabled={magnification >= MAX_ZOOM}
               >
@@ -252,17 +264,19 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleFullScreenMode(true);
-        }}
-        className="size-5 grid place-items-center hover:bg-black/40 text-white rounded transition-colors"
-      >
-        <Maximize className="size-3" />
-      </button>
+      {showExternalLink && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleFullScreenMode(true);
+          }}
+          className="size-5 grid place-items-center hover:bg-black/40 text-white rounded transition-colors"
+        >
+          <Maximize className="size-3" />
+        </button>
+      )}
     </>
   );
 };

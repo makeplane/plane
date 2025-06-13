@@ -16,10 +16,11 @@ interface EditorContainerProps {
   editor: Editor;
   editorContainerClassName: string;
   id: string;
+  isMobile: boolean;
 }
 
 export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, displayConfig, editor, editorContainerClassName, id } = props;
+  const { children, displayConfig, editor, editorContainerClassName, id, isMobile } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -96,7 +97,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        {!isMobile && <LinkViewContainer editor={editor} containerRef={containerRef} />}
       </div>
     </>
   );
