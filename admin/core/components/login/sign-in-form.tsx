@@ -18,13 +18,15 @@ import { AuthBanner } from "../authentication";
 const authService = new AuthService();
 
 // error codes
-enum EErrorCodes {
-  INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
-  REQUIRED_EMAIL_PASSWORD = "REQUIRED_EMAIL_PASSWORD",
-  INVALID_EMAIL = "INVALID_EMAIL",
-  USER_DOES_NOT_EXIST = "USER_DOES_NOT_EXIST",
-  AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED",
-}
+const EErrorCodes = {
+  INSTANCE_NOT_CONFIGURED: "INSTANCE_NOT_CONFIGURED",
+  REQUIRED_EMAIL_PASSWORD: "REQUIRED_EMAIL_PASSWORD",
+  INVALID_EMAIL: "INVALID_EMAIL",
+  USER_DOES_NOT_EXIST: "USER_DOES_NOT_EXIST",
+  AUTHENTICATION_FAILED: "AUTHENTICATION_FAILED",
+} as const;
+
+type EErrorCodes = typeof EErrorCodes[keyof typeof EErrorCodes];
 
 type TError = {
   type: EErrorCodes | undefined;

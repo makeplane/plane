@@ -16,7 +16,7 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_projects?: number;
-  role: number;
+  role: EUserWorkspaceRoles;
 }
 
 export interface IWorkspaceLite {
@@ -83,7 +83,7 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: TUserPermissions | EUserWorkspaceRoles;
+  role: EUserWorkspaceRoles;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;

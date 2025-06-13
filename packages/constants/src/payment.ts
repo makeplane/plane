@@ -3,13 +3,15 @@ import { IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@p
 /**
  * Enum representing different product subscription types
  */
-export enum EProductSubscriptionEnum {
-  FREE = "FREE",
-  ONE = "ONE",
-  PRO = "PRO",
-  BUSINESS = "BUSINESS",
-  ENTERPRISE = "ENTERPRISE",
-}
+export const EProductSubscriptionEnum = {
+  FREE: "FREE",
+  ONE: "ONE",
+  PRO: "PRO",
+  BUSINESS: "BUSINESS",
+  ENTERPRISE: "ENTERPRISE",
+} as const;
+
+export type EProductSubscriptionEnum = typeof EProductSubscriptionEnum[keyof typeof EProductSubscriptionEnum];
 
 /**
  * Default billing frequency for each product subscription type
@@ -29,7 +31,7 @@ export const SUBSCRIPTION_WITH_BILLING_FREQUENCY = [
   EProductSubscriptionEnum.PRO,
   EProductSubscriptionEnum.BUSINESS,
   EProductSubscriptionEnum.ENTERPRISE,
-];
+] as EProductSubscriptionEnum[];
 
 /**
  * Mapping of product subscription types to their respective payment product details

@@ -87,7 +87,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         false;
 
       if (!isRepeated) {
-        if (currentEstimateType && [EEstimateSystem.TIME, EEstimateSystem.POINTS].includes(currentEstimateType)) {
+        if (currentEstimateType && ([EEstimateSystem.TIME, EEstimateSystem.POINTS] as EEstimateSystem[]).includes(currentEstimateType)) {
           if (estimateInputValue && !isNaN(Number(estimateInputValue))) {
             if (Number(estimateInputValue) <= 0) {
               if (handleEstimatePointError)
@@ -146,7 +146,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
           handleEstimatePointError &&
             handleEstimatePointError(
               estimateInputValue,
-              [EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateType)
+              ([EEstimateSystem.POINTS, EEstimateSystem.TIME] as EEstimateSystem[]).includes(estimateType)
                 ? t("project_settings.estimates.validation.numeric")
                 : t("project_settings.estimates.validation.character")
             );

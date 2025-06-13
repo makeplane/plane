@@ -25,7 +25,7 @@ export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
   EUserPermissions.MEMBER,
   EUserProjectRoles.ADMIN,
   EUserProjectRoles.MEMBER,
-];
+] as (EUserPermissions | EUserProjectRoles)[];
 
 export interface IProjectPageStore {
   // observables

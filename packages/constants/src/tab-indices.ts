@@ -89,16 +89,18 @@ export const PROJECT_PAGE_TAB_INDICES = [
   "submit",
 ];
 
-export enum ETabIndices {
-  ISSUE_FORM = "issue-form",
-  INTAKE_ISSUE_FORM = "intake-issue-form",
-  CREATE_LABEL = "create-label",
-  PROJECT_CREATE = "project-create",
-  PROJECT_CYCLE = "project-cycle",
-  PROJECT_MODULE = "project-module",
-  PROJECT_VIEW = "project-view",
-  PROJECT_PAGE = "project-page",
-}
+export const ETabIndices = {
+  ISSUE_FORM: "issue-form",
+  INTAKE_ISSUE_FORM: "intake-issue-form",
+  CREATE_LABEL: "create-label",
+  PROJECT_CREATE: "project-create",
+  PROJECT_CYCLE: "project-cycle",
+  PROJECT_MODULE: "project-module",
+  PROJECT_VIEW: "project-view",
+  PROJECT_PAGE: "project-page",
+} as const;
+
+export type ETabIndices = typeof ETabIndices[keyof typeof ETabIndices];
 
 export const TAB_INDEX_MAP: Record<ETabIndices, string[]> = {
   [ETabIndices.ISSUE_FORM]: ISSUE_FORM_TAB_INDICES,

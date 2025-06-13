@@ -14,13 +14,13 @@ import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types"
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.TEAM
+  | typeof EIssuesStoreType.TEAM_VIEW
+  | typeof EIssuesStoreType.EPIC;
 
 interface IBaseSpreadsheetRoot {
   QuickActions: FC<IQuickActionProps>;

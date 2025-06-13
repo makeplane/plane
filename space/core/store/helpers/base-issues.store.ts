@@ -27,11 +27,13 @@ import { CoreRootStore } from "../root.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null | "team_project"> | "target_date";
 
-export enum EIssueGroupedAction {
-  ADD = "ADD",
-  DELETE = "DELETE",
-  REORDER = "REORDER",
-}
+export const EIssueGroupedAction = {
+  ADD: "ADD",
+  DELETE: "DELETE",
+  REORDER: "REORDER",
+} as const;
+
+export type EIssueGroupedAction = typeof EIssueGroupedAction[keyof typeof EIssueGroupedAction];
 
 export interface IBaseIssuesStore {
   // observable

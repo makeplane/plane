@@ -107,15 +107,17 @@ export const PREFERENCE_OPTIONS: {
  * @description The start of the week for the user
  * @enum {number}
  */
-export enum EStartOfTheWeek {
-  SUNDAY = 0,
-  MONDAY = 1,
-  TUESDAY = 2,
-  WEDNESDAY = 3,
-  THURSDAY = 4,
-  FRIDAY = 5,
-  SATURDAY = 6,
-}
+export const EStartOfTheWeek = {
+  SUNDAY: 0,
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+} as const;
+
+export type EStartOfTheWeek = typeof EStartOfTheWeek[keyof typeof EStartOfTheWeek];
 
 /**
  * @description The options for the start of the week

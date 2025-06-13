@@ -4,12 +4,16 @@ import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
+// types
+import { EPageAccess, EViewAccess } from "@plane/constants";
+
+type AccessValue = EPageAccess | EViewAccess;
 
 type Props = {
-  onChange: (value: number) => void;
-  value: number;
+  onChange: (value: AccessValue) => void;
+  value: AccessValue;
   accessSpecifiers: {
-    key: number;
+    key: AccessValue;
     i18n_label?: string;
     label?: string;
     icon: LucideIcon;

@@ -22,11 +22,13 @@ import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceService } from "@/plane-web/services";
 // services
 
-enum EOnboardingSteps {
-  PROFILE_SETUP = "PROFILE_SETUP",
-  WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
-  INVITE_MEMBERS = "INVITE_MEMBERS",
-}
+const EOnboardingSteps = {
+  PROFILE_SETUP: "PROFILE_SETUP",
+  WORKSPACE_CREATE_OR_JOIN: "WORKSPACE_CREATE_OR_JOIN",
+  INVITE_MEMBERS: "INVITE_MEMBERS",
+} as const;
+
+type EOnboardingSteps = typeof EOnboardingSteps[keyof typeof EOnboardingSteps];
 
 const workspaceService = new WorkspaceService();
 

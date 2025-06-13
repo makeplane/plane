@@ -17,10 +17,12 @@ import CreateJoinWorkspaceDark from "@/public/onboarding/create-join-workspace-d
 import CreateJoinWorkspace from "@/public/onboarding/create-join-workspace-light.webp";
 import { LogoSpinner } from "../common";
 
-export enum ECreateOrJoinWorkspaceViews {
-  WORKSPACE_CREATE = "WORKSPACE_CREATE",
-  WORKSPACE_JOIN = "WORKSPACE_JOIN",
-}
+export const ECreateOrJoinWorkspaceViews = {
+  WORKSPACE_CREATE: "WORKSPACE_CREATE",
+  WORKSPACE_JOIN: "WORKSPACE_JOIN",
+} as const;
+
+export type ECreateOrJoinWorkspaceViews = typeof ECreateOrJoinWorkspaceViews[keyof typeof ECreateOrJoinWorkspaceViews];
 
 type Props = {
   invitations: IWorkspaceMemberInvitation[];

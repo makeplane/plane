@@ -1,10 +1,12 @@
 import { Placement } from "@popperjs/core";
 import { EmojiClickData, Theme } from "emoji-picker-react";
 
-export enum EmojiIconPickerTypes {
-  EMOJI = "emoji",
-  ICON = "icon",
-}
+export const EmojiIconPickerTypes = {
+  EMOJI: "emoji",
+  ICON: "icon",
+} as const;
+
+export type EmojiIconPickerTypes = typeof EmojiIconPickerTypes[keyof typeof EmojiIconPickerTypes];
 
 export const TABS_LIST = [
   {
@@ -19,11 +21,11 @@ export const TABS_LIST = [
 
 export type TChangeHandlerProps =
   | {
-      type: EmojiIconPickerTypes.EMOJI;
+      type: typeof EmojiIconPickerTypes.EMOJI;
       value: EmojiClickData;
     }
   | {
-      type: EmojiIconPickerTypes.ICON;
+      type: typeof EmojiIconPickerTypes.ICON;
       value: {
         name: string;
         color: string;

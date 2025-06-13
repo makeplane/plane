@@ -1,11 +1,13 @@
 // plane types
 import { TSearchEntities } from "@plane/types";
 
-export enum EMentionComponentAttributeNames {
-  ID = "id",
-  ENTITY_IDENTIFIER = "entity_identifier",
-  ENTITY_NAME = "entity_name",
-}
+export const EMentionComponentAttributeNames = {
+  ID: "id",
+  ENTITY_IDENTIFIER: "entity_identifier",
+  ENTITY_NAME: "entity_name",
+} as const;
+
+export type EMentionComponentAttributeNames = typeof EMentionComponentAttributeNames[keyof typeof EMentionComponentAttributeNames];
 
 export type TMentionComponentAttributes = {
   [EMentionComponentAttributeNames.ID]: string | null;

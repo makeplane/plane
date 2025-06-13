@@ -73,12 +73,12 @@ export const getGroupIssueKeyActions = (
  */
 export const getSubGroupIssueKeyActions = (
   groupActionsArray: {
-    [EIssueGroupedAction.ADD]: string[];
-    [EIssueGroupedAction.DELETE]: string[];
+    ADD: string[];
+    DELETE: string[];
   },
   subGroupActionsArray: {
-    [EIssueGroupedAction.ADD]: string[];
-    [EIssueGroupedAction.DELETE]: string[];
+    ADD: string[];
+    DELETE: string[];
   },
   previousIssueGroupProperties: string[],
   currentIssueGroupProperties: string[],
@@ -89,7 +89,7 @@ export const getSubGroupIssueKeyActions = (
 
   // For every groupId path for issue Id List, that needs to be added,
   // It needs to be added at all the current Issue Properties that on which subGrouping depends on
-  for (const addKey of groupActionsArray[EIssueGroupedAction.ADD]) {
+  for (const addKey of groupActionsArray.ADD) {
     for (const subGroupProperty of currentIssueSubGroupProperties) {
       issueKeyActions[getGroupKey(addKey, subGroupProperty)] = {
         path: [addKey, subGroupProperty],
@@ -100,7 +100,7 @@ export const getSubGroupIssueKeyActions = (
 
   // For every groupId path for issue Id List, that needs to be deleted,
   // It needs to be deleted at all the previous Issue Properties that on which subGrouping depends on
-  for (const deleteKey of groupActionsArray[EIssueGroupedAction.DELETE]) {
+  for (const deleteKey of groupActionsArray.DELETE) {
     for (const subGroupProperty of previousIssueSubGroupProperties) {
       issueKeyActions[getGroupKey(deleteKey, subGroupProperty)] = {
         path: [deleteKey, subGroupProperty],
@@ -111,7 +111,7 @@ export const getSubGroupIssueKeyActions = (
 
   // For every subGroupId path for issue Id List, that needs to be added,
   // It needs to be added at all the current Issue Properties that on which grouping depends on
-  for (const addKey of subGroupActionsArray[EIssueGroupedAction.ADD]) {
+  for (const addKey of subGroupActionsArray.ADD) {
     for (const groupProperty of currentIssueGroupProperties) {
       issueKeyActions[getGroupKey(groupProperty, addKey)] = {
         path: [groupProperty, addKey],
@@ -122,7 +122,7 @@ export const getSubGroupIssueKeyActions = (
 
   // For every subGroupId path for issue Id List, that needs to be deleted,
   // It needs to be deleted at all the previous Issue Properties that on which grouping depends on
-  for (const deleteKey of subGroupActionsArray[EIssueGroupedAction.DELETE]) {
+  for (const deleteKey of subGroupActionsArray.DELETE) {
     for (const groupProperty of previousIssueGroupProperties) {
       issueKeyActions[getGroupKey(groupProperty, deleteKey)] = {
         path: [groupProperty, deleteKey],
@@ -146,8 +146,8 @@ export const getSubGroupIssueKeyActions = (
 export const getDifference = (
   current: string[],
   previous: string[],
-  action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
-): { [EIssueGroupedAction.ADD]: string[]; [EIssueGroupedAction.DELETE]: string[] } => {
+  action?: typeof EIssueGroupedAction.ADD | typeof EIssueGroupedAction.DELETE
+): { ADD: string[]; DELETE: string[] } => {
   const ADD = [];
   const DELETE = [];
 
@@ -164,12 +164,12 @@ export const getDifference = (
   }
 
   // if there are no action provided, return the arrays
-  if (!action) return { [EIssueGroupedAction.ADD]: ADD, [EIssueGroupedAction.DELETE]: DELETE };
+  if (!action) return { ADD, DELETE };
 
   // If there is an action provided, return the values of both arrays under that array
   if (action === EIssueGroupedAction.ADD)
-    return { [EIssueGroupedAction.ADD]: uniq([...ADD]), [EIssueGroupedAction.DELETE]: [] };
-  else return { [EIssueGroupedAction.DELETE]: uniq([...DELETE]), [EIssueGroupedAction.ADD]: [] };
+    return { ADD: uniq([...ADD]), DELETE: [] };
+  else return { DELETE: uniq([...DELETE]), ADD: [] };
 };
 
 /**

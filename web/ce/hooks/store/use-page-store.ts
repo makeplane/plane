@@ -4,9 +4,11 @@ import { StoreContext } from "@/lib/store-context";
 // mobx store
 import { IProjectPageStore } from "@/store/pages/project-page.store";
 
-export enum EPageStoreType {
-  PROJECT = "PROJECT_PAGE",
-}
+export const EPageStoreType = {
+  PROJECT: "PROJECT_PAGE",
+} as const;
+
+export type EPageStoreType = typeof EPageStoreType[keyof typeof EPageStoreType];
 
 export type TReturnType = {
   [EPageStoreType.PROJECT]: IProjectPageStore;

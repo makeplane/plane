@@ -1,13 +1,19 @@
-export enum ETagVariant {
-  OUTLINED = "outlined",
-}
-export enum ETagSize {
-  SM = "sm",
-  LG = "lg",
-}
-export type TTagVariant = ETagVariant.OUTLINED;
+export const ETagVariant = {
+  OUTLINED: "outlined",
+} as const;
 
-export type TTagSize = ETagSize.SM | ETagSize.LG;
+export type ETagVariant = typeof ETagVariant[keyof typeof ETagVariant];
+
+export const ETagSize = {
+  SM: "sm",
+  LG: "lg",
+} as const;
+
+export type ETagSize = typeof ETagSize[keyof typeof ETagSize];
+
+export type TTagVariant = typeof ETagVariant.OUTLINED;
+
+export type TTagSize = typeof ETagSize.SM | typeof ETagSize.LG;
 export interface ITagProperties {
   [key: string]: string;
 }

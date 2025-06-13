@@ -1,7 +1,9 @@
-export enum E_SORT_ORDER {
-  ASC = "asc",
-  DESC = "desc",
-}
+export const E_SORT_ORDER = {
+  ASC: "asc",
+  DESC: "desc",
+} as const;
+
+export type E_SORT_ORDER = typeof E_SORT_ORDER[keyof typeof E_SORT_ORDER];
 export const DATE_AFTER_FILTER_OPTIONS = [
   {
     name: "1 week from now",

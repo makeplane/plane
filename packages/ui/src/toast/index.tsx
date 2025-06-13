@@ -7,22 +7,24 @@ import { CircularBarSpinner } from "../spinners";
 // helper
 import { cn } from "../../helpers";
 
-export enum TOAST_TYPE {
-  SUCCESS = "success",
-  ERROR = "error",
-  INFO = "info",
-  WARNING = "warning",
-  LOADING = "loading",
-}
+export const TOAST_TYPE = {
+  SUCCESS: "success",
+  ERROR: "error",
+  INFO: "info",
+  WARNING: "warning",
+  LOADING: "loading",
+} as const;
+
+export type TOAST_TYPE = (typeof TOAST_TYPE)[keyof typeof TOAST_TYPE];
 
 type SetToastProps =
   | {
-      type: TOAST_TYPE.LOADING;
+      type: typeof TOAST_TYPE.LOADING;
       title?: string;
     }
   | {
       id?: string | number;
-      type: Exclude<TOAST_TYPE, TOAST_TYPE.LOADING>;
+      type: Exclude<TOAST_TYPE, typeof TOAST_TYPE.LOADING>;
       title: string;
       message?: string;
       actionItems?: React.ReactNode;

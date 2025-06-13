@@ -24,10 +24,12 @@ type Props = {
   templateId?: string;
 };
 
-enum EProjectCreationSteps {
-  CREATE_PROJECT = "CREATE_PROJECT",
-  FEATURE_SELECTION = "FEATURE_SELECTION",
-}
+const EProjectCreationSteps = {
+  CREATE_PROJECT: "CREATE_PROJECT",
+  FEATURE_SELECTION: "FEATURE_SELECTION",
+} as const;
+
+type EProjectCreationSteps = typeof EProjectCreationSteps[keyof typeof EProjectCreationSteps];
 
 export const CreateProjectModal: FC<Props> = (props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug, data, templateId } = props;

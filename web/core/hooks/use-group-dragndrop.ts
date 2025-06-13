@@ -10,17 +10,17 @@ import { useIssueDetail, useIssues } from "./store";
 import { useIssuesActions } from "./use-issues-actions";
 
 type DNDStoreType =
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE
-  | EIssuesStoreType.ARCHIVED
-  | EIssuesStoreType.WORKSPACE_DRAFT
-  | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.DRAFT
+  | typeof EIssuesStoreType.PROFILE
+  | typeof EIssuesStoreType.ARCHIVED
+  | typeof EIssuesStoreType.WORKSPACE_DRAFT
+  | typeof EIssuesStoreType.TEAM
+  | typeof EIssuesStoreType.TEAM_VIEW
+  | typeof EIssuesStoreType.EPIC;
 
 export const useGroupIssuesDragNDrop = (
   storeType: DNDStoreType,

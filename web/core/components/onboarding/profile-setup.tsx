@@ -57,11 +57,13 @@ type Props = {
   finishOnboarding: () => Promise<void>;
 };
 
-enum EProfileSetupSteps {
-  ALL = "ALL",
-  USER_DETAILS = "USER_DETAILS",
-  USER_PERSONALIZATION = "USER_PERSONALIZATION",
-}
+const EProfileSetupSteps = {
+  ALL: "ALL",
+  USER_DETAILS: "USER_DETAILS",
+  USER_PERSONALIZATION: "USER_PERSONALIZATION",
+} as const;
+
+type EProfileSetupSteps = typeof EProfileSetupSteps[keyof typeof EProfileSetupSteps];
 
 const USER_ROLE = ["Individual contributor", "Senior Leader", "Manager", "Executive", "Freelancer", "Student"];
 

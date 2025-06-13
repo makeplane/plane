@@ -20,13 +20,15 @@ import githubDarkModeImage from "@/public/logos/github-white.png";
 import GitlabLogo from "@/public/logos/gitlab-logo.svg";
 import GoogleLogo from "@/public/logos/google-logo.svg";
 
-export enum EErrorAlertType {
-  BANNER_ALERT = "BANNER_ALERT",
-  INLINE_FIRST_NAME = "INLINE_FIRST_NAME",
-  INLINE_EMAIL = "INLINE_EMAIL",
-  INLINE_PASSWORD = "INLINE_PASSWORD",
-  INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
-}
+export const EErrorAlertType = {
+  BANNER_ALERT: "BANNER_ALERT",
+  INLINE_FIRST_NAME: "INLINE_FIRST_NAME",
+  INLINE_EMAIL: "INLINE_EMAIL",
+  INLINE_PASSWORD: "INLINE_PASSWORD",
+  INLINE_EMAIL_CODE: "INLINE_EMAIL_CODE",
+} as const;
+
+export type EErrorAlertType = typeof EErrorAlertType[keyof typeof EErrorAlertType];
 
 const errorCodeMessages: {
   [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };

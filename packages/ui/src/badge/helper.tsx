@@ -25,22 +25,19 @@ export interface IBadgeStyling {
   };
 }
 
-// TODO: convert them to objects instead of enums
-enum badgeSizeStyling {
-  sm = `px-2.5 py-1 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-4 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-}
+const badgeSizeStyling = {
+  sm: `px-2.5 py-1 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  md: `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  lg: `px-4 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  xl: `px-5 py-3 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+} as const;
 
-// TODO: convert them to objects instead of enums
-enum badgeIconStyling {
-  sm = "h-3 w-3 flex justify-center items-center overflow-hidden flex-shrink-0",
-  md = "h-3.5 w-3.5 flex justify-center items-center overflow-hidden flex-shrink-0",
-  lg = "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  xl = "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
-}
+const badgeIconStyling = {
+  sm: "h-3 w-3 flex justify-center items-center overflow-hidden flex-shrink-0",
+  md: "h-3.5 w-3.5 flex justify-center items-center overflow-hidden flex-shrink-0",
+  lg: "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
+  xl: "h-4 w-4 flex justify-center items-center overflow-hidden flex-shrink-0",
+} as const;
 
 export const badgeStyling: IBadgeStyling = {
   primary: {

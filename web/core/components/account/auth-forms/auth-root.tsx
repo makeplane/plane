@@ -66,33 +66,33 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       const errorhandler = authErrorHandler(error_code?.toString() as EAuthenticationErrorCodes);
       if (errorhandler) {
         // password error handler
-        if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP].includes(errorhandler.code)) {
+        if (([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_UP] as EAuthenticationErrorCodes[]).includes(errorhandler.code)) {
           setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.PASSWORD);
         }
-        if ([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN].includes(errorhandler.code)) {
+        if (([EAuthenticationErrorCodes.AUTHENTICATION_FAILED_SIGN_IN] as EAuthenticationErrorCodes[]).includes(errorhandler.code)) {
           setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.PASSWORD);
         }
         // magic_code error handler
         if (
-          [
+          ([
             EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
             EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_UP,
             EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
             EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
-          ].includes(errorhandler.code)
+          ] as EAuthenticationErrorCodes[]).includes(errorhandler.code)
         ) {
           setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.UNIQUE_CODE);
         }
         if (
-          [
+          ([
             EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
             EAuthenticationErrorCodes.INVALID_EMAIL_MAGIC_SIGN_IN,
             EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
             EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
-          ].includes(errorhandler.code)
+          ] as EAuthenticationErrorCodes[]).includes(errorhandler.code)
         ) {
           setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.UNIQUE_CODE);

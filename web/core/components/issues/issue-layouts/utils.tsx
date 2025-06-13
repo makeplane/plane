@@ -67,7 +67,7 @@ type TGetColumns = {
 };
 
 export const isWorkspaceLevel = (type: EIssuesStoreType) =>
-  [EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL].includes(type) ? true : false;
+  ([EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL] as EIssuesStoreType[]).includes(type) ? true : false;
 
 type TGetGroupByColumns = {
   groupBy: GroupByColumnTypes | null;

@@ -1,7 +1,9 @@
-export enum EPageAccess {
-  PUBLIC = 0,
-  PRIVATE = 1,
-}
+export const EPageAccess = {
+  PUBLIC: 0,
+  PRIVATE: 1,
+} as const;
+
+export type EPageAccess = typeof EPageAccess[keyof typeof EPageAccess];
 
 export type TCreatePageModal = {
   isOpen: boolean;

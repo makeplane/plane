@@ -4,14 +4,16 @@ import { RecentActivityWidgetLoader } from "./recent-activity";
 
 // types
 
+export const EWidgetKeys = {
+  RECENT_ACTIVITY: "recent_activity",
+  QUICK_LINKS: "quick_links",
+} as const;
+
+export type EWidgetKeys = typeof EWidgetKeys[keyof typeof EWidgetKeys];
+
 type Props = {
   widgetKey: EWidgetKeys;
 };
-
-export enum EWidgetKeys {
-  RECENT_ACTIVITY = "recent_activity",
-  QUICK_LINKS = "quick_links",
-}
 
 export const WidgetLoader: React.FC<Props> = (props) => {
   const { widgetKey } = props;

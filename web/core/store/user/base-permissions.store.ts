@@ -33,7 +33,7 @@ export interface IBaseUserPermissionStore {
   workspaceProjectsPermissions: Record<string, IUserProjectsRole>; // workspaceSlug -> IUserProjectsRole
   // computed helpers
   workspaceInfoBySlug: (workspaceSlug: string) => IWorkspaceMemberMe | undefined;
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => EUserWorkspaceRoles | undefined;
   getProjectRolesByWorkspaceSlug: (workspaceSlug: string) => IUserProjectsRole;
   getProjectRoleByWorkspaceSlugAndProjectId: (workspaceSlug: string, projectId: string) => EUserPermissions | undefined;
   allowPermissions: (
@@ -100,9 +100,9 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @returns { TUserPermissions | EUserWorkspaceRoles | undefined }
    */
   getWorkspaceRoleByWorkspaceSlug = computedFn(
-    (workspaceSlug: string): TUserPermissions | EUserWorkspaceRoles | undefined => {
+    (workspaceSlug: string): EUserWorkspaceRoles | undefined => {
       if (!workspaceSlug) return undefined;
-      return this.workspaceUserInfo[workspaceSlug]?.role as TUserPermissions | EUserWorkspaceRoles | undefined;
+      return this.workspaceUserInfo[workspaceSlug]?.role;
     }
   );
 
@@ -194,7 +194,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
     }
 
     if (typeof currentUserRole === "string") {
-      currentUserRole = parseInt(currentUserRole);
+      currentUserRole = parseInt(currentUserRole) as EUserPermissions;
     }
 
     if (currentUserRole && typeof currentUserRole === "number" && allowPermissions.includes(currentUserRole)) {

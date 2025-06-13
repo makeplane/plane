@@ -56,11 +56,14 @@ import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
-export enum EIssueGroupedAction {
-  ADD = "ADD",
-  DELETE = "DELETE",
-  REORDER = "REORDER",
-}
+export const EIssueGroupedAction = {
+  ADD: "ADD",
+  DELETE: "DELETE",
+  REORDER: "REORDER",
+} as const;
+
+export type EIssueGroupedAction = typeof EIssueGroupedAction[keyof typeof EIssueGroupedAction];
+
 export interface IBaseIssuesStore {
   // observable
   loader: Record<string, TLoader>;
@@ -1273,7 +1276,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   updateIssueList(
     issue?: TIssue,
     issueBeforeUpdate?: TIssue,
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+    action?: typeof EIssueGroupedAction.ADD | typeof EIssueGroupedAction.DELETE
   ) {
     if (!issue && !issueBeforeUpdate) return;
 
@@ -1587,7 +1590,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getUpdateDetails = (
     issue?: Partial<TIssue>,
     issueBeforeUpdate?: Partial<TIssue>,
-    action?: EIssueGroupedAction.ADD | EIssueGroupedAction.DELETE
+    action?: typeof EIssueGroupedAction.ADD | typeof EIssueGroupedAction.DELETE
   ): { path: string[]; action: EIssueGroupedAction }[] => {
     // check the before and after states to return if there needs to be a re-sorting of issueId list if the issue property that orderBy  depends on has changed
     const orderByUpdates = this.getOrderByUpdateDetails(issue, issueBeforeUpdate);
@@ -1649,7 +1652,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getOrderByUpdateDetails(
     issue: Partial<TIssue> | undefined,
     issueBeforeUpdate: Partial<TIssue> | undefined
-  ): { path: string[]; action: EIssueGroupedAction.REORDER }[] {
+  ): { path: string[]; action: typeof EIssueGroupedAction.REORDER }[] {
     // if before and after states of the issue prop on which orderBy depends on then return and empty Array
     if (
       !issue ||
@@ -1664,7 +1667,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
     // if they are grouped then identify the paths based on props on which group by is dependent on
-    const issueKeyActions: { path: string[]; action: EIssueGroupedAction.REORDER }[] = [];
+    const issueKeyActions: { path: string[]; action: typeof EIssueGroupedAction.REORDER }[] = [];
     const groupByValues = this.getArrayStringArray(issue, issueGroupKey);
 
     // if issues are not subGrouped then, provide path from groupByValues

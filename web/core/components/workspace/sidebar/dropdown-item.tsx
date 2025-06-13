@@ -70,7 +70,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
                 {workspace.name}
               </div>
               <div className="text-sm text-custom-text-300 flex gap-2 capitalize w-fit">
-                <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
+                <span>{getUserRole(workspace.role as EUserPermissions)?.toLowerCase() || "guest"}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
@@ -87,7 +87,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
         {workspace.id === activeWorkspace?.id && (
           <>
             <div className="mt-2 mb-1 flex gap-2">
-              {[EUserPermissions.ADMIN, EUserPermissions.MEMBER].includes(workspace?.role) && (
+              {([EUserPermissions.ADMIN, EUserPermissions.MEMBER] as EUserPermissions[]).includes(workspace?.role as EUserPermissions) && (
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
@@ -97,7 +97,7 @@ const SidebarDropdownItem = observer((props: TProps) => {
                   <span className="text-sm font-medium my-auto">{t("settings")}</span>
                 </Link>
               )}
-              {[EUserPermissions.ADMIN].includes(workspace?.role) && (
+              {([EUserPermissions.ADMIN] as EUserPermissions[]).includes(workspace?.role as EUserPermissions) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}

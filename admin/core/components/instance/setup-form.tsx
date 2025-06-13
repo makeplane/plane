@@ -16,14 +16,16 @@ import { Banner, PasswordStrengthMeter } from "@/components/common";
 const authService = new AuthService();
 
 // error codes
-enum EErrorCodes {
-  INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
-  ADMIN_ALREADY_EXIST = "ADMIN_ALREADY_EXIST",
-  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
-  INVALID_EMAIL = "INVALID_EMAIL",
-  INVALID_PASSWORD = "INVALID_PASSWORD",
-  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
-}
+const EErrorCodes = {
+  INSTANCE_NOT_CONFIGURED: "INSTANCE_NOT_CONFIGURED",
+  ADMIN_ALREADY_EXIST: "ADMIN_ALREADY_EXIST",
+  REQUIRED_EMAIL_PASSWORD_FIRST_NAME: "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
+  INVALID_EMAIL: "INVALID_EMAIL",
+  INVALID_PASSWORD: "INVALID_PASSWORD",
+  USER_ALREADY_EXISTS: "USER_ALREADY_EXISTS",
+} as const;
+
+type EErrorCodes = typeof EErrorCodes[keyof typeof EErrorCodes];
 
 type TError = {
   type: EErrorCodes | undefined;
@@ -144,7 +146,7 @@ export const InstanceSetupForm: FC = (props) => {
 
         {errorData.type &&
           errorData?.message &&
-          ![EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD].includes(errorData.type) && (
+          !([EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD] as EErrorCodes[]).includes(errorData.type) && (
             <Banner type="error" message={errorData?.message} />
           )}
 

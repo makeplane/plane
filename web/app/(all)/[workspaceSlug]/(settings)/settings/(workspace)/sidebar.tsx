@@ -52,7 +52,7 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
       isMobile={isMobile}
       categories={WORKSPACE_SETTINGS_CATEGORIES.filter(
         (category) =>
-          isAdmin || ![WORKSPACE_SETTINGS_CATEGORY.FEATURES, WORKSPACE_SETTINGS_CATEGORY.DEVELOPER].includes(category)
+          isAdmin || !([WORKSPACE_SETTINGS_CATEGORY.FEATURES, WORKSPACE_SETTINGS_CATEGORY.DEVELOPER] as WORKSPACE_SETTINGS_CATEGORY[]).includes(category)
       )}
       groupedSettings={GROUPED_WORKSPACE_SETTINGS}
       workspaceSlug={workspaceSlug.toString()}

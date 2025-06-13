@@ -1,23 +1,29 @@
 import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 
-export enum EInboxIssueCurrentTab {
-  OPEN = "open",
-  CLOSED = "closed",
-}
+export const EInboxIssueCurrentTab = {
+  OPEN: "open",
+  CLOSED: "closed",
+} as const;
 
-export enum EInboxIssueStatus {
-  PENDING = -2,
-  DECLINED = -1,
-  SNOOZED = 0,
-  ACCEPTED = 1,
-  DUPLICATE = 2,
-}
+export type EInboxIssueCurrentTab = typeof EInboxIssueCurrentTab[keyof typeof EInboxIssueCurrentTab];
 
-export enum EInboxIssueSource {
-  IN_APP = "IN_APP",
-  FORMS = "FORMS",
-  EMAIL = "EMAIL",
-}
+export const EInboxIssueStatus = {
+  PENDING: -2,
+  DECLINED: -1,
+  SNOOZED: 0,
+  ACCEPTED: 1,
+  DUPLICATE: 2,
+} as const;
+
+export type EInboxIssueStatus = typeof EInboxIssueStatus[keyof typeof EInboxIssueStatus];
+
+export const EInboxIssueSource = {
+  IN_APP: "IN_APP",
+  FORMS: "FORMS",
+  EMAIL: "EMAIL",
+} as const;
+
+export type EInboxIssueSource = typeof EInboxIssueSource[keyof typeof EInboxIssueSource];
 
 export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
 export type TInboxIssueStatus = EInboxIssueStatus;

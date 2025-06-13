@@ -1,31 +1,39 @@
 import { TUnreadNotificationsCount } from "@plane/types";
 
-export enum ENotificationTab {
-  ALL = "all",
-  MENTIONS = "mentions",
-}
+export const ENotificationTab = {
+  ALL: "all",
+  MENTIONS: "mentions",
+} as const;
 
-export enum ENotificationFilterType {
-  CREATED = "created",
-  ASSIGNED = "assigned",
-  SUBSCRIBED = "subscribed",
-}
+export type ENotificationTab = typeof ENotificationTab[keyof typeof ENotificationTab];
 
-export enum ENotificationLoader {
-  INIT_LOADER = "init-loader",
-  MUTATION_LOADER = "mutation-loader",
-  PAGINATION_LOADER = "pagination-loader",
-  REFRESH = "refresh",
-  MARK_ALL_AS_READY = "mark-all-as-read",
-}
+export const ENotificationFilterType = {
+  CREATED: "created",
+  ASSIGNED: "assigned",
+  SUBSCRIBED: "subscribed",
+} as const;
 
-export enum ENotificationQueryParamType {
-  INIT = "init",
-  CURRENT = "current",
-  NEXT = "next",
-}
+export type ENotificationFilterType = typeof ENotificationFilterType[keyof typeof ENotificationFilterType];
 
-export type TNotificationTab = ENotificationTab.ALL | ENotificationTab.MENTIONS;
+export const ENotificationLoader = {
+  INIT_LOADER: "init-loader",
+  MUTATION_LOADER: "mutation-loader",
+  PAGINATION_LOADER: "pagination-loader",
+  REFRESH: "refresh",
+  MARK_ALL_AS_READY: "mark-all-as-read",
+} as const;
+
+export type ENotificationLoader = typeof ENotificationLoader[keyof typeof ENotificationLoader];
+
+export const ENotificationQueryParamType = {
+  INIT: "init",
+  CURRENT: "current",
+  NEXT: "next",
+} as const;
+
+export type ENotificationQueryParamType = typeof ENotificationQueryParamType[keyof typeof ENotificationQueryParamType];
+
+export type TNotificationTab = typeof ENotificationTab.ALL | typeof ENotificationTab.MENTIONS;
 
 export const NOTIFICATION_TABS = [
   {

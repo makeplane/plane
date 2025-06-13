@@ -17,66 +17,78 @@ export type TIssueFilterPriorityObject = {
   icon: string;
 };
 
-export enum EIssueGroupByToServerOptions {
-  "state" = "state_id",
-  "priority" = "priority",
-  "labels" = "labels__id",
-  "state_detail.group" = "state__group",
-  "assignees" = "assignees__id",
-  "cycle" = "cycle_id",
-  "module" = "issue_module__module_id",
-  "target_date" = "target_date",
-  "project" = "project_id",
-  "created_by" = "created_by",
-  "team_project" = "project_id",
-}
+export const EIssueGroupByToServerOptions = {
+  "state": "state_id",
+  "priority": "priority",
+  "labels": "labels__id",
+  "state_detail.group": "state__group",
+  "assignees": "assignees__id",
+  "cycle": "cycle_id",
+  "module": "issue_module__module_id",
+  "target_date": "target_date",
+  "project": "project_id",
+  "created_by": "created_by",
+  "team_project": "project_id",
+} as const;
 
-export enum EIssueGroupBYServerToProperty {
-  "state_id" = "state_id",
-  "priority" = "priority",
-  "labels__id" = "label_ids",
-  "state__group" = "state__group",
-  "assignees__id" = "assignee_ids",
-  "cycle_id" = "cycle_id",
-  "issue_module__module_id" = "module_ids",
-  "target_date" = "target_date",
-  "project_id" = "project_id",
-  "created_by" = "created_by",
-}
+export type EIssueGroupByToServerOptions = typeof EIssueGroupByToServerOptions[keyof typeof EIssueGroupByToServerOptions];
 
-export enum EIssueServiceType {
-  ISSUES = "issues",
-  EPICS = "epics",
-  WORK_ITEMS = "work-items",
-}
+export const EIssueGroupBYServerToProperty = {
+  "state_id": "state_id",
+  "priority": "priority",
+  "labels__id": "label_ids",
+  "state__group": "state__group",
+  "assignees__id": "assignee_ids",
+  "cycle_id": "cycle_id",
+  "issue_module__module_id": "module_ids",
+  "target_date": "target_date",
+  "project_id": "project_id",
+  "created_by": "created_by",
+} as const;
 
-export enum EIssuesStoreType {
-  GLOBAL = "GLOBAL",
-  PROFILE = "PROFILE",
-  TEAM = "TEAM",
-  PROJECT = "PROJECT",
-  CYCLE = "CYCLE",
-  MODULE = "MODULE",
-  TEAM_VIEW = "TEAM_VIEW",
-  PROJECT_VIEW = "PROJECT_VIEW",
-  ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
-  DEFAULT = "DEFAULT",
-  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
-  EPIC = "EPIC",
-}
+export type EIssueGroupBYServerToProperty = typeof EIssueGroupBYServerToProperty[keyof typeof EIssueGroupBYServerToProperty];
 
-export enum EIssueCommentAccessSpecifier {
-  EXTERNAL = "EXTERNAL",
-  INTERNAL = "INTERNAL",
-}
+export const EIssueServiceType = {
+  ISSUES: "issues",
+  EPICS: "epics",
+  WORK_ITEMS: "work-items",
+} as const;
 
-export enum EIssueListRow {
-  HEADER = "HEADER",
-  ISSUE = "ISSUE",
-  NO_ISSUES = "NO_ISSUES",
-  QUICK_ADD = "QUICK_ADD",
-}
+export type EIssueServiceType = typeof EIssueServiceType[keyof typeof EIssueServiceType];
+
+export const EIssuesStoreType = {
+  GLOBAL: "GLOBAL",
+  PROFILE: "PROFILE",
+  TEAM: "TEAM",
+  PROJECT: "PROJECT",
+  CYCLE: "CYCLE",
+  MODULE: "MODULE",
+  TEAM_VIEW: "TEAM_VIEW",
+  PROJECT_VIEW: "PROJECT_VIEW",
+  ARCHIVED: "ARCHIVED",
+  DRAFT: "DRAFT",
+  DEFAULT: "DEFAULT",
+  WORKSPACE_DRAFT: "WORKSPACE_DRAFT",
+  EPIC: "EPIC",
+} as const;
+
+export type EIssuesStoreType = typeof EIssuesStoreType[keyof typeof EIssuesStoreType];
+
+export const EIssueCommentAccessSpecifier = {
+  EXTERNAL: "EXTERNAL",
+  INTERNAL: "INTERNAL",
+} as const;
+
+export type EIssueCommentAccessSpecifier = typeof EIssueCommentAccessSpecifier[keyof typeof EIssueCommentAccessSpecifier];
+
+export const EIssueListRow = {
+  HEADER: "HEADER",
+  ISSUE: "ISSUE",
+  NO_ISSUES: "NO_ISSUES",
+  QUICK_ADD: "QUICK_ADD",
+} as const;
+
+export type EIssueListRow = typeof EIssueListRow[keyof typeof EIssueListRow];
 
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
@@ -114,14 +126,14 @@ export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
 ];
 
 export type TCreateModalStoreTypes =
-  | EIssuesStoreType.TEAM
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.PROFILE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.TEAM
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.TEAM_VIEW
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.PROFILE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.EPIC;
 
 export const ISSUE_GROUP_BY_OPTIONS: {
   key: TIssueGroupByOptions;

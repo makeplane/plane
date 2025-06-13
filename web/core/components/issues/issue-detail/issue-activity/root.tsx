@@ -43,7 +43,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
     "issue_activity_filters",
     defaultActivityFilters
   );
-  const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage("activity_sort_order", E_SORT_ORDER.ASC);
+  const { setValue: setSortOrder, storedValue: sortOrder } = useLocalStorage<E_SORT_ORDER>("activity_sort_order", E_SORT_ORDER.ASC);
   // store hooks
   const {
     issue: { getIssueById },

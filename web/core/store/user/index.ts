@@ -4,7 +4,7 @@ import { action, makeObservable, observable, runInAction, computed } from "mobx"
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { IUser } from "@plane/types";
-import { TUserPermissions } from "@plane/types/src/enums";
+import { TUserPermissions } from "@plane/constants";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // local db
@@ -51,7 +51,7 @@ export interface IUserStore {
   // computed
   localDBEnabled: boolean;
   canPerformAnyCreateAction: boolean;
-  projectsWithCreatePermissions: { [projectId: string]: number } | null;
+  projectsWithCreatePermissions: { [projectId: string]: EUserPermissions } | null;
 }
 
 export class UserStore implements IUserStore {
@@ -263,7 +263,7 @@ export class UserStore implements IUserStore {
    * @description fetches the prjects with write permissions
    * @returns {{[projectId: string]: number} || null}
    */
-  fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
+  fetchProjectsWithCreatePermissions = (): { [key: string]: EUserPermissions } => {
     const { workspaceSlug } = this.store.router;
 
     const allWorkspaceProjectRoles = this.permission.getProjectRolesByWorkspaceSlug(workspaceSlug || "");
@@ -273,7 +273,7 @@ export class UserStore implements IUserStore {
         Object.keys(allWorkspaceProjectRoles)
           .filter((key) => allWorkspaceProjectRoles[key] >= EUserPermissions.MEMBER)
           .reduce(
-            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceProjectRoles[key]), res),
+            (res: { [projectId: string]: EUserPermissions }, key: string) => ((res[key] = allWorkspaceProjectRoles[key] as EUserPermissions), res),
             {}
           )) ||
       null;

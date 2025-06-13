@@ -11,13 +11,15 @@ import {
 /**
  * @description Password strength levels
  */
-export enum PasswordStrength {
-  EMPTY = "empty",
-  WEAK = "weak",
-  FAIR = "fair",
-  GOOD = "good",
-  STRONG = "strong",
-}
+export const PasswordStrength = {
+  EMPTY: "empty",
+  WEAK: "weak",
+  FAIR: "fair",
+  GOOD: "good",
+  STRONG: "strong",
+} as const;
+
+export type PasswordStrength = typeof PasswordStrength[keyof typeof PasswordStrength];
 
 /**
  * @description Password strength criteria type
@@ -373,7 +375,11 @@ export const authErrorHandler = (
     EAuthErrorCodes.ADMIN_USER_ALREADY_EXIST,
     EAuthErrorCodes.ADMIN_USER_DOES_NOT_EXIST,
     EAuthErrorCodes.USER_ACCOUNT_DEACTIVATED,
-  ];
+    EAuthErrorCodes.MAGIC_LINK_LOGIN_DISABLED,
+    EAuthErrorCodes.PASSWORD_LOGIN_DISABLED,
+    EAuthErrorCodes.ADMIN_USER_DEACTIVATED,
+    EAuthErrorCodes.RATE_LIMIT_EXCEEDED,
+  ] as EAuthErrorCodes[];
 
   if (bannerAlertErrorCodes.includes(errorCode))
     return {

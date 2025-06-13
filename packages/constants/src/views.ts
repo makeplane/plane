@@ -1,7 +1,9 @@
-export enum EViewAccess {
-  PRIVATE,
-  PUBLIC,
-}
+export const EViewAccess = {
+  PRIVATE: 0,
+  PUBLIC: 1,
+} as const;
+
+export type EViewAccess = typeof EViewAccess[keyof typeof EViewAccess];
 
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;

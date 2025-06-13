@@ -1,9 +1,12 @@
-export enum EHeaderVariant {
-  PRIMARY = "primary",
-  SECONDARY = "secondary",
-  TERNARY = "ternary",
-}
-export type THeaderVariant = EHeaderVariant.PRIMARY | EHeaderVariant.SECONDARY | EHeaderVariant.TERNARY;
+export const EHeaderVariant = {
+  PRIMARY: "primary",
+  SECONDARY: "secondary",
+  TERNARY: "ternary",
+} as const;
+
+export type EHeaderVariant = typeof EHeaderVariant[keyof typeof EHeaderVariant];
+
+export type THeaderVariant = typeof EHeaderVariant.PRIMARY | typeof EHeaderVariant.SECONDARY | typeof EHeaderVariant.TERNARY;
 
 export interface IHeaderProperties {
   [key: string]: string;

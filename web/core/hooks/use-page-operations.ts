@@ -2,7 +2,7 @@ import { useMemo } from "react";
 // plane imports
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
-import { EPageAccess } from "@plane/types/src/enums";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks

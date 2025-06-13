@@ -18,13 +18,13 @@ import { IQuickActionProps } from "../list/list-view-types";
 import { handleDragDrop } from "./utils";
 
 export type CalendarStoreType =
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.TEAM
+  | typeof EIssuesStoreType.TEAM_VIEW
+  | typeof EIssuesStoreType.EPIC;
 
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;

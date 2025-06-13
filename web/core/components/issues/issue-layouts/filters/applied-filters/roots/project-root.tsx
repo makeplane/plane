@@ -14,7 +14,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 // plane web constants
 
 type TProjectAppliedFiltersRootProps = {
-  storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
+  storeType?: typeof EIssuesStoreType.PROJECT | typeof EIssuesStoreType.EPIC;
 };
 
 export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps> = observer((props) => {

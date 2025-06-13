@@ -118,7 +118,7 @@ export const WORKSPACE_SETTINGS = {
 
 export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
   Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
-);
+) as Record<string, EUserWorkspaceRoles[]>;
 
 export const WORKSPACE_SETTINGS_LINKS: {
   key: string;

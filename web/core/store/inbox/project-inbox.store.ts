@@ -5,7 +5,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TInboxIssue, TInboxIssueCurrentTab } from "@plane/constants";
+import { TInboxIssue, TInboxIssueCurrentTab, EInboxIssueCurrentTab, EInboxIssueStatus } from "@plane/constants";
 import {
   TInboxIssueFilter,
   TInboxIssueSorting,
@@ -13,7 +13,7 @@ import {
   TInboxIssueSortingOrderByQueryParam,
 } from "@plane/types";
 // helpers
-import { EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
+import { EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
@@ -150,11 +150,11 @@ export class ProjectInboxStore implements IProjectInboxStore {
   }
 
   get filteredInboxIssueIds() {
-    let appliedFilters =
-      this.currentTab === EInboxIssueCurrentTab.OPEN
-        ? [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED]
-        : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE];
-    appliedFilters = appliedFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
+    const openFilters = [EInboxIssueStatus.PENDING, EInboxIssueStatus.SNOOZED] as EInboxIssueStatus[];
+    const closedFilters = [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] as EInboxIssueStatus[];
+    
+    const baseFilters = this.currentTab === EInboxIssueCurrentTab.OPEN ? openFilters : closedFilters;
+    const appliedFilters = baseFilters.filter((filter) => this.inboxFilters?.status?.includes(filter));
     const currentTime = new Date().getTime();
 
     return this.currentTab === EInboxIssueCurrentTab.OPEN
@@ -264,8 +264,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
         set(this.filtersMap, [projectId], {
           status:
             tab === EInboxIssueCurrentTab.OPEN
-              ? [EInboxIssueStatus.PENDING]
-              : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE],
+              ? ([EInboxIssueStatus.PENDING] as EInboxIssueStatus[])
+              : ([EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] as EInboxIssueStatus[]),
         });
       });
       this.fetchInboxIssues(workspaceSlug, projectId, "filter-loading");
@@ -300,8 +300,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
       set(this.filtersMap, [projectId], {
         status:
           tab === EInboxIssueCurrentTab.OPEN
-            ? [EInboxIssueStatus.PENDING]
-            : [EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE],
+            ? ([EInboxIssueStatus.PENDING] as EInboxIssueStatus[])
+            : ([EInboxIssueStatus.ACCEPTED, EInboxIssueStatus.DECLINED, EInboxIssueStatus.DUPLICATE] as EInboxIssueStatus[]),
       });
     }
     if (isEmpty(this.inboxSorting)) {

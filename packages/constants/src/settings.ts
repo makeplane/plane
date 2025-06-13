@@ -1,20 +1,26 @@
 import { PROFILE_SETTINGS } from ".";
 import { WORKSPACE_SETTINGS } from "./workspace";
 
-export enum WORKSPACE_SETTINGS_CATEGORY {
-  ADMINISTRATION = "administration",
-  FEATURES = "features",
-  DEVELOPER = "developer",
-}
+export const WORKSPACE_SETTINGS_CATEGORY = {
+  ADMINISTRATION: "administration",
+  FEATURES: "features",
+  DEVELOPER: "developer",
+} as const;
 
-export enum PROFILE_SETTINGS_CATEGORY {
-  YOUR_PROFILE = "your profile",
-  DEVELOPER = "developer",
-}
+export type WORKSPACE_SETTINGS_CATEGORY = typeof WORKSPACE_SETTINGS_CATEGORY[keyof typeof WORKSPACE_SETTINGS_CATEGORY];
 
-export enum PROJECT_SETTINGS_CATEGORY {
-  PROJECTS = "projects",
-}
+export const PROFILE_SETTINGS_CATEGORY = {
+  YOUR_PROFILE: "your profile",
+  DEVELOPER: "developer",
+} as const;
+
+export type PROFILE_SETTINGS_CATEGORY = typeof PROFILE_SETTINGS_CATEGORY[keyof typeof PROFILE_SETTINGS_CATEGORY];
+
+export const PROJECT_SETTINGS_CATEGORY = {
+  PROJECTS: "projects",
+} as const;
+
+export type PROJECT_SETTINGS_CATEGORY = typeof PROJECT_SETTINGS_CATEGORY[keyof typeof PROJECT_SETTINGS_CATEGORY];
 
 export const WORKSPACE_SETTINGS_CATEGORIES = [
   WORKSPACE_SETTINGS_CATEGORY.ADMINISTRATION,

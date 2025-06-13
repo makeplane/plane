@@ -1,11 +1,13 @@
 import zxcvbn from "zxcvbn";
 
-export enum E_PASSWORD_STRENGTH {
-  EMPTY = "empty",
-  LENGTH_NOT_VALID = "length_not_valid",
-  STRENGTH_NOT_VALID = "strength_not_valid",
-  STRENGTH_VALID = "strength_valid",
-}
+export const E_PASSWORD_STRENGTH = {
+  EMPTY: "empty",
+  LENGTH_NOT_VALID: "length_not_valid",
+  STRENGTH_NOT_VALID: "strength_not_valid",
+  STRENGTH_VALID: "strength_valid",
+} as const;
+
+export type E_PASSWORD_STRENGTH = typeof E_PASSWORD_STRENGTH[keyof typeof E_PASSWORD_STRENGTH];
 
 const PASSWORD_MIN_LENGTH = 8;
 // const PASSWORD_NUMBER_REGEX = /\d/;

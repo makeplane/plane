@@ -10,25 +10,29 @@ import { TIssueLayout } from "./layout";
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 
-export enum EServerGroupByToFilterOptions {
-  "state_id" = "state",
-  "priority" = "priority",
-  "labels__id" = "labels",
-  "state__group" = "state_group",
-  "assignees__id" = "assignees",
-  "cycle_id" = "cycle",
-  "issue_module__module_id" = "module",
-  "target_date" = "target_date",
-  "project_id" = "project",
-  "created_by" = "created_by",
-}
+export const EServerGroupByToFilterOptions = {
+  "state_id": "state",
+  "priority": "priority",
+  "labels__id": "labels",
+  "state__group": "state_group",
+  "assignees__id": "assignees",
+  "cycle_id": "cycle",
+  "issue_module__module_id": "module",
+  "target_date": "target_date",
+  "project_id": "project",
+  "created_by": "created_by",
+} as const;
 
-export enum EIssueFilterType {
-  FILTERS = "filters",
-  DISPLAY_FILTERS = "display_filters",
-  DISPLAY_PROPERTIES = "display_properties",
-  KANBAN_FILTERS = "kanban_filters",
-}
+export type EServerGroupByToFilterOptions = typeof EServerGroupByToFilterOptions[keyof typeof EServerGroupByToFilterOptions];
+
+export const EIssueFilterType = {
+  FILTERS: "filters",
+  DISPLAY_FILTERS: "display_filters",
+  DISPLAY_PROPERTIES: "display_properties",
+  KANBAN_FILTERS: "kanban_filters",
+} as const;
+
+export type EIssueFilterType = typeof EIssueFilterType[keyof typeof EIssueFilterType];
 
 export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   [key in TIssueLayout]: Record<"filters", TIssueFilterKeys[]>;
@@ -334,10 +338,12 @@ export const ISSUE_STORE_TO_FILTERS_MAP: Partial<Record<EIssuesStoreType, TFilte
   [EIssuesStoreType.PROJECT]: ISSUE_DISPLAY_FILTERS_BY_PAGE.issues,
 };
 
-export enum EActivityFilterType {
-  ACTIVITY = "ACTIVITY",
-  COMMENT = "COMMENT",
-}
+export const EActivityFilterType = {
+  ACTIVITY: "ACTIVITY",
+  COMMENT: "COMMENT",
+} as const;
+
+export type EActivityFilterType = typeof EActivityFilterType[keyof typeof EActivityFilterType];
 
 export type TActivityFilters = EActivityFilterType;
 

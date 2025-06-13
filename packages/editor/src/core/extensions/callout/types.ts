@@ -1,12 +1,14 @@
-export enum EAttributeNames {
-  ICON_COLOR = "data-icon-color",
-  ICON_NAME = "data-icon-name",
-  EMOJI_UNICODE = "data-emoji-unicode",
-  EMOJI_URL = "data-emoji-url",
-  LOGO_IN_USE = "data-logo-in-use",
-  BACKGROUND = "data-background",
-  BLOCK_TYPE = "data-block-type",
-}
+export const EAttributeNames = {
+  ICON_COLOR: "data-icon-color",
+  ICON_NAME: "data-icon-name",
+  EMOJI_UNICODE: "data-emoji-unicode",
+  EMOJI_URL: "data-emoji-url",
+  LOGO_IN_USE: "data-logo-in-use",
+  BACKGROUND: "data-background",
+  BLOCK_TYPE: "data-block-type",
+} as const;
+
+export type EAttributeNames = typeof EAttributeNames[keyof typeof EAttributeNames];
 
 export type TCalloutBlockIconAttributes = {
   [EAttributeNames.ICON_COLOR]: string | undefined;

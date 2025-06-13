@@ -1,25 +1,31 @@
 import { subDays } from "date-fns";
 import { renderFormattedPayloadDate } from "./date-time.helper";
 
-export enum EInboxIssueCurrentTab {
-  OPEN = "open",
-  CLOSED = "closed",
-}
+export const EInboxIssueCurrentTab = {
+  OPEN: "open",
+  CLOSED: "closed",
+} as const;
 
-export enum EInboxIssueStatus {
-  PENDING = -2,
-  DECLINED = -1,
-  SNOOZED = 0,
-  ACCEPTED = 1,
-  DUPLICATE = 2,
-}
+export type EInboxIssueCurrentTab = typeof EInboxIssueCurrentTab[keyof typeof EInboxIssueCurrentTab];
 
-export enum EPastDurationFilters {
-  TODAY = "today",
-  YESTERDAY = "yesterday",
-  LAST_7_DAYS = "last_7_days",
-  LAST_30_DAYS = "last_30_days",
-}
+export const EInboxIssueStatus = {
+  PENDING: -2,
+  DECLINED: -1,
+  SNOOZED: 0,
+  ACCEPTED: 1,
+  DUPLICATE: 2,
+} as const;
+
+export type EInboxIssueStatus = typeof EInboxIssueStatus[keyof typeof EInboxIssueStatus];
+
+export const EPastDurationFilters = {
+  TODAY: "today",
+  YESTERDAY: "yesterday",
+  LAST_7_DAYS: "last_7_days",
+  LAST_30_DAYS: "last_30_days",
+} as const;
+
+export type EPastDurationFilters = typeof EPastDurationFilters[keyof typeof EPastDurationFilters];
 
 export const getCustomDates = (duration: EPastDurationFilters): string => {
   const today = new Date();

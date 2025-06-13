@@ -12,7 +12,7 @@ type TDiscountInfoProps = {
   subscriptionType: EProductSubscriptionEnum;
 };
 
-const PLANS_WITH_DISCOUNT = [EProductSubscriptionEnum.PRO];
+const PLANS_WITH_DISCOUNT = [EProductSubscriptionEnum.PRO] as EProductSubscriptionEnum[];
 
 const getActualPrice = (frequency: TBillingFrequency, subscriptionType: EProductSubscriptionEnum): number | null => {
   switch (subscriptionType) {

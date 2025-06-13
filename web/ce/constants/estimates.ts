@@ -3,17 +3,21 @@ import { TEstimateSystems } from "@plane/types";
 
 export const MAX_ESTIMATE_POINT_INPUT_LENGTH = 20;
 
-export enum EEstimateSystem {
-  POINTS = "points",
-  CATEGORIES = "categories",
-  TIME = "time",
-}
+export const EEstimateSystem = {
+  POINTS: "points",
+  CATEGORIES: "categories",
+  TIME: "time",
+} as const;
 
-export enum EEstimateUpdateStages {
-  CREATE = "create",
-  EDIT = "edit",
-  SWITCH = "switch",
-}
+export type EEstimateSystem = typeof EEstimateSystem[keyof typeof EEstimateSystem];
+
+export const EEstimateUpdateStages = {
+  CREATE: "create",
+  EDIT: "edit",
+  SWITCH: "switch",
+} as const;
+
+export type EEstimateUpdateStages = typeof EEstimateUpdateStages[keyof typeof EEstimateUpdateStages];
 
 export const estimateCount = {
   min: 2,

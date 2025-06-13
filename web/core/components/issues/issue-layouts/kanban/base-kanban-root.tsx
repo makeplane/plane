@@ -33,15 +33,15 @@ import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 
 export type KanbanStoreType =
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.DRAFT
-  | EIssuesStoreType.PROFILE
-  | EIssuesStoreType.TEAM
-  | EIssuesStoreType.TEAM_VIEW
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.DRAFT
+  | typeof EIssuesStoreType.PROFILE
+  | typeof EIssuesStoreType.TEAM
+  | typeof EIssuesStoreType.TEAM_VIEW
+  | typeof EIssuesStoreType.EPIC;
 
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;

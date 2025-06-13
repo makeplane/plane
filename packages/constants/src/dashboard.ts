@@ -1,14 +1,16 @@
 // types
 import { TIssuesListTypes } from "@plane/types";
 
-export enum EDurationFilters {
-  NONE = "none",
-  TODAY = "today",
-  THIS_WEEK = "this_week",
-  THIS_MONTH = "this_month",
-  THIS_YEAR = "this_year",
-  CUSTOM = "custom",
-}
+export const EDurationFilters = {
+  NONE: "none",
+  TODAY: "today",
+  THIS_WEEK: "this_week",
+  THIS_MONTH: "this_month",
+  THIS_YEAR: "this_year",
+  CUSTOM: "custom",
+} as const;
+
+export type EDurationFilters = typeof EDurationFilters[keyof typeof EDurationFilters];
 
 // filter duration options
 export const DURATION_FILTER_OPTIONS: {

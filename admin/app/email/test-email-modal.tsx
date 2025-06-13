@@ -10,11 +10,13 @@ type Props = {
   handleClose: () => void;
 };
 
-enum ESendEmailSteps {
-  SEND_EMAIL = "SEND_EMAIL",
-  SUCCESS = "SUCCESS",
-  FAILED = "FAILED",
-}
+const ESendEmailSteps = {
+  SEND_EMAIL: "SEND_EMAIL",
+  SUCCESS: "SUCCESS",
+  FAILED: "FAILED",
+} as const;
+
+type ESendEmailSteps = typeof ESendEmailSteps[keyof typeof ESendEmailSteps];
 
 const instanceService = new InstanceService();
 

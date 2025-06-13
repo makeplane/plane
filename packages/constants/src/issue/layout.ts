@@ -5,13 +5,15 @@ export type TIssueLayout =
   | "spreadsheet"
   | "gantt";
 
-export enum EIssueLayoutTypes {
-  LIST = "list",
-  KANBAN = "kanban",
-  CALENDAR = "calendar",
-  GANTT = "gantt_chart",
-  SPREADSHEET = "spreadsheet",
-}
+export const EIssueLayoutTypes = {
+  LIST: "list",
+  KANBAN: "kanban",
+  CALENDAR: "calendar",
+  GANTT: "gantt_chart",
+  SPREADSHEET: "spreadsheet",
+} as const;
+
+export type EIssueLayoutTypes = typeof EIssueLayoutTypes[keyof typeof EIssueLayoutTypes];
 
 export type TIssueLayoutMap = Record<
   EIssueLayoutTypes,

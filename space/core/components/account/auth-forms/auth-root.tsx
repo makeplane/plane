@@ -58,21 +58,21 @@ export const AuthRoot: FC = observer(() => {
           setAuthStep(EAuthSteps.PASSWORD);
         }
         if (
-          [
+          ([
             EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_IN,
             EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_IN,
             EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN,
-          ].includes(errorhandler.code)
+          ] as EAuthenticationErrorCodes[]).includes(errorhandler.code)
         ) {
           setAuthMode(EAuthModes.SIGN_IN);
           setAuthStep(EAuthSteps.UNIQUE_CODE);
         }
         if (
-          [
+          ([
             EAuthenticationErrorCodes.INVALID_MAGIC_CODE_SIGN_UP,
             EAuthenticationErrorCodes.EXPIRED_MAGIC_CODE_SIGN_UP,
             EAuthenticationErrorCodes.EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP,
-          ].includes(errorhandler.code)
+          ] as EAuthenticationErrorCodes[]).includes(errorhandler.code)
         ) {
           setAuthMode(EAuthModes.SIGN_UP);
           setAuthStep(EAuthSteps.UNIQUE_CODE);

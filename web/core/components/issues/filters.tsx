@@ -24,7 +24,7 @@ type Props = {
   projectId: string;
   workspaceSlug: string;
   canUserCreateIssue: boolean | undefined;
-  storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
+  storeType?: typeof EIssuesStoreType.PROJECT | typeof EIssuesStoreType.EPIC;
 };
 const HeaderFilters = observer((props: Props) => {
   const {

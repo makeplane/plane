@@ -25,7 +25,7 @@ export const StartOfWeekPreference = observer((props: { option: { title: string;
           <CustomSelect
             value={userProfile.start_of_the_week}
             label={getStartOfWeekLabel(userProfile.start_of_the_week)}
-            onChange={(val: number) => {
+            onChange={(val: EStartOfTheWeek) => {
               updateUserProfile({ start_of_the_week: val })
                 .then(() => {
                   setToast({

@@ -1,8 +1,10 @@
-export enum EFileError {
-  INVALID_FILE_TYPE = "INVALID_FILE_TYPE",
-  FILE_SIZE_TOO_LARGE = "FILE_SIZE_TOO_LARGE",
-  NO_FILE_SELECTED = "NO_FILE_SELECTED",
-}
+export const EFileError = {
+  INVALID_FILE_TYPE: "INVALID_FILE_TYPE",
+  FILE_SIZE_TOO_LARGE: "FILE_SIZE_TOO_LARGE",
+  NO_FILE_SELECTED: "NO_FILE_SELECTED",
+} as const;
+
+export type EFileError = typeof EFileError[keyof typeof EFileError];
 
 type TArgs = {
   acceptedMimeTypes: string[];

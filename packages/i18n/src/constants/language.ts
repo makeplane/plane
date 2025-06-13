@@ -28,10 +28,12 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
  * Enum for translation file names
  * These are the JSON files that contain translations each category
  */
-export enum ETranslationFiles {
-  TRANSLATIONS = "translations",
-  ACCESSIBILITY = "accessibility",
-  EDITOR = "editor",
-}
+export const ETranslationFiles = {
+  TRANSLATIONS: "translations",
+  ACCESSIBILITY: "accessibility",
+  EDITOR: "editor",
+} as const;
+
+export type ETranslationFiles = typeof ETranslationFiles[keyof typeof ETranslationFiles];
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";

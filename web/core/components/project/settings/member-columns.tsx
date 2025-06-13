@@ -102,18 +102,18 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
   // derived values
   const roleLabel = ROLE[rowData.original_role ?? EUserPermissions.GUEST];
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
-    Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
+  const isRowDataWorkspaceAdmin = ([EUserPermissions.ADMIN] as EUserPermissions[]).includes(
+    (Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST) as EUserPermissions
   );
   const isCurrentUserWorkspaceAdmin = currentUser
-    ? [EUserPermissions.ADMIN].includes(
-        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+    ? ([EUserPermissions.ADMIN] as EUserPermissions[]).includes(
+        (Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST) as EUserPermissions
       )
     : false;
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
   const isCurrentUserProjectAdmin = currentProjectRole
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    ? !([EUserPermissions.MEMBER, EUserPermissions.GUEST] as EUserPermissions[]).includes((Number(currentProjectRole) ?? EUserPermissions.GUEST) as EUserPermissions)
     : false;
 
   // logic
@@ -126,7 +126,7 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuest = ([EUserPermissions.GUEST] as EUserPermissions[]).includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuest || parseInt(key) === EUserPermissions.GUEST)

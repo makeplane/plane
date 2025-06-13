@@ -1,13 +1,17 @@
-export enum EAuthModes {
-  SIGN_IN = "SIGN_IN",
-  SIGN_UP = "SIGN_UP",
-}
+export const EAuthModes = {
+  SIGN_IN: "SIGN_IN",
+  SIGN_UP: "SIGN_UP",
+} as const;
 
-export enum EAuthSteps {
-  EMAIL = "EMAIL",
-  PASSWORD = "PASSWORD",
-  UNIQUE_CODE = "UNIQUE_CODE",
-}
+export type EAuthModes = typeof EAuthModes[keyof typeof EAuthModes];
+
+export const EAuthSteps = {
+  EMAIL: "EMAIL",
+  PASSWORD: "PASSWORD",
+  UNIQUE_CODE: "UNIQUE_CODE",
+} as const;
+
+export type EAuthSteps = typeof EAuthSteps[keyof typeof EAuthSteps];
 
 export interface ICsrfTokenData {
   csrf_token: string;

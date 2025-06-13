@@ -36,11 +36,11 @@ interface IBaseGanttRoot {
 }
 
 export type GanttStoreType =
-  | EIssuesStoreType.PROJECT
-  | EIssuesStoreType.MODULE
-  | EIssuesStoreType.CYCLE
-  | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.EPIC;
+  | typeof EIssuesStoreType.PROJECT
+  | typeof EIssuesStoreType.MODULE
+  | typeof EIssuesStoreType.CYCLE
+  | typeof EIssuesStoreType.PROJECT_VIEW
+  | typeof EIssuesStoreType.EPIC;
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { viewId, isCompletedCycle = false, isEpic = false } = props;

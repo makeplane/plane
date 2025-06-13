@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { EUserPermissions } from "@plane/constants";
 import { WorkspaceLogo } from "@/components/workspace";
 import { getUserRole } from "@/helpers/user.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -22,7 +23,7 @@ export const SettingsSidebarHeader = observer((props: { customHeader?: React.Rea
                 {currentWorkspace.name ?? "Workspace"}
               </div>
               <div className="text-sm text-custom-text-300 capitalize">
-                {getUserRole(currentWorkspace.role)?.toLowerCase() || "guest"}
+                {getUserRole(currentWorkspace.role as EUserPermissions)?.toLowerCase() || "guest"}
               </div>
             </div>
           </div>
