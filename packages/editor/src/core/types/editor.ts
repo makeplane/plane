@@ -52,12 +52,25 @@ export type TEditorCommands =
   | "attachment";
 
 export type TCommandExtraProps = {
-  image: { savedSelection: Selection | null };
-  attachment: { savedSelection: Selection | null };
-  "text-color": { color: string | undefined };
-  "background-color": { color: string | undefined };
-  "text-align": { alignment: TTextAlign };
-  link: { url: string; text?: string };
+  image: {
+    savedSelection: Selection | null;
+  };
+  attachment: {
+    savedSelection: Selection | null;
+  };
+  "text-color": {
+    color: string | undefined;
+  };
+  "background-color": {
+    color: string | undefined;
+  };
+  "text-align": {
+    alignment: TTextAlign;
+  };
+  link: {
+    url: string;
+    text?: string;
+  };
 };
 
 // Create a utility type that maps a command to its extra props or an empty object if none are defined
@@ -72,18 +85,33 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
 // editor refs
 export type EditorReadOnlyRefApi = {
   getMarkDown: () => string;
-  getDocument: () => { binary: Uint8Array | null; html: string; json: JSONContent | null };
+  getDocument: () => {
+    binary: Uint8Array | null;
+    html: string;
+    json: JSONContent | null;
+  };
   clearEditor: (emitUpdate?: boolean) => void;
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => { characters: number; paragraphs: number; words: number };
+  getDocumentInfo: () => {
+    characters: number;
+    paragraphs: number;
+    words: number;
+  };
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
   createSelectionAtCursorPosition?: () => void;
   focus: ({ position, scrollIntoView }: { position?: FocusPosition; scrollIntoView?: boolean }) => void;
-  getCordsFromPos: (pos?: number) => { left: number; right: number; top: number; bottom: number } | undefined;
+  getCordsFromPos: (pos?: number) =>
+    | {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+      }
+    | undefined;
   getCurrentCursorPosition: () => number | undefined;
   getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => Record<string, any> | undefined;
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
