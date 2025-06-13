@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nepodařilo se odstranit projekt z oblíbených. Zkuste to prosím znovu.",
   "project_created_successfully": "Projekt úspěšně vytvořen",
   "project_created_successfully_description": "Projekt byl úspěšně vytvořen. Nyní můžete začít přidávat pracovní položky.",
+  "project_name_already_taken": "Název projektu už je zabraný.",
+  "project_identifier_already_taken": "Identifikátor projektu už je zabraný.",
   "project_cover_image_alt": "Úvodní obrázek projektu",
   "name_is_required": "Název je povinný",
   "title_should_be_less_than_255_characters": "Název by měl být kratší než 255 znaků",

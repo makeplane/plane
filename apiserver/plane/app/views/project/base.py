@@ -341,7 +341,10 @@ class ProjectViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The project name is already taken"},
+                    {
+                        "name": "The project name is already taken",
+                        "code": "PROJECT_NAME_ALREADY_EXIST",
+                    },
                     status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
@@ -350,7 +353,10 @@ class ProjectViewSet(BaseViewSet):
             )
         except serializers.ValidationError:
             return Response(
-                {"identifier": "The project identifier is already taken"},
+                {
+                    "identifier": "The project identifier is already taken",
+                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                },
                 status=status.HTTP_409_CONFLICT,
             )
 

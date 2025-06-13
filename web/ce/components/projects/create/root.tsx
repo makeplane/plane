@@ -49,7 +49,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("error"),
+        title: t("toast.error"),
         message: t("failed_to_remove_project_from_favorites"),
       });
     });
@@ -89,20 +89,27 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         handleNextStep(res.id);
       })
       .catch((err) => {
-        Object.keys(err?.data ?? {}).map((key) => {
+        if (err?.data.code === "PROJECT_NAME_ALREADY_EXIST") {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: t("error"),
-            message: err.data[key],
+            title: t("toast.error"),
+            message: t("project_name_already_taken"),
           });
-          captureProjectEvent({
-            eventName: PROJECT_CREATED,
-            payload: {
-              ...formData,
-              state: "FAILED",
-            },
+        } else if (err?.data.code === "PROJECT_IDENTIFIER_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("project_identifier_already_taken"),
           });
-        });
+        } else {
+          Object.keys(err?.data ?? {}).map((key) => {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("error"),
+              message: err.data[key],
+            });
+          });
+        }
       });
   };
 

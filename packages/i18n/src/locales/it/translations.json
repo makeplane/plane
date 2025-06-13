@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Impossibile rimuovere il progetto dai preferiti. Per favore, riprova.",
   "project_created_successfully": "Progetto creato con successo",
   "project_created_successfully_description": "Progetto creato con successo. Ora puoi iniziare ad aggiungere elementi di lavoro.",
+  "project_name_already_taken": "Il nome del progetto è già stato utilizzato.",
+  "project_identifier_already_taken": "L'identificatore del progetto è già stato utilizzato.",
   "project_cover_image_alt": "Immagine di copertina del progetto",
   "name_is_required": "Il nome è obbligatorio",
   "title_should_be_less_than_255_characters": "Il titolo deve contenere meno di 255 caratteri",
