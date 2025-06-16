@@ -9,7 +9,7 @@ import { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
-import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { useNotionImporter } from "@/plane-web/hooks/store";
 import NotionLogo from "@/public/services/notion.svg";
 import { SyncJobStatus } from "../../common/dashboard";
