@@ -7,11 +7,9 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { TPageVersion } from "@plane/types";
 import { Avatar } from "@plane/ui";
-import { cn, getFileURL, renderFormattedDate } from "@plane/utils";
+import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { TPageRootHandlers } from "@/components/pages/editor";
-// helpers
-import { renderFormattedTime } from "@/helpers/date-time.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useQueryParams } from "@/hooks/use-query-params";

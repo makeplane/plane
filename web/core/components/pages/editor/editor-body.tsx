@@ -183,7 +183,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             <div className="sticky top-[72px]">
               <div className="group/page-toc relative px-page-x">
                 <div
-                  className="cursor-pointer max-h-[50vh] overflow-hidden"
+                  className="!cursor-pointer max-h-[50vh] overflow-hidden"
                   role="button"
                   aria-label={t("page_navigation_pane.outline_floating_button")}
                   onClick={handleOpenNavigationPane}

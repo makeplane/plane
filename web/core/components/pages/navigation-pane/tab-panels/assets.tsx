@@ -5,9 +5,7 @@ import { Download } from "lucide-react";
 // plane imports
 import type { TEditorAsset } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { convertBytesToSize } from "@plane/utils";
-// helpers
-import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@/helpers/editor.helper";
+import { convertBytesToSize, getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // store

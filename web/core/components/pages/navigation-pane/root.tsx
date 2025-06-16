@@ -19,6 +19,7 @@ import { PageNavigationPaneTabsList } from "./tabs-list";
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
   PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM,
+  PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM,
   PAGE_NAVIGATION_PANE_WIDTH,
 } from "./index";
 
@@ -48,8 +49,10 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   const handleTabChange = useCallback(
     (index: number) => {
       const updatedTab = PAGE_NAVIGATION_PANE_TAB_KEYS[index];
+      const isUpdatedTabInfo = updatedTab === "info";
       const updatedRoute = updateQueryParams({
         paramsToAdd: { [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: updatedTab },
+        paramsToRemove: !isUpdatedTabInfo ? [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM] : undefined,
       });
       router.push(updatedRoute);
     },
