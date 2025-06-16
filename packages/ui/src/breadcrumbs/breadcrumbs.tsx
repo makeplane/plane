@@ -67,7 +67,15 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
             <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
           </div>
           <div className="flex items-center gap-2.5 p-1">
-            {isLoading ? <BreadcrumbItemLoader /> : childrenArray[childrenArray.length - 1]}
+            {isLoading ? (
+              <BreadcrumbItemLoader />
+            ) : React.isValidElement(childrenArray[childrenArray.length - 1]) ? (
+              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement, {
+                isLast: true,
+              })
+            ) : (
+              childrenArray[childrenArray.length - 1]
+            )}
           </div>
         </>
       )}
