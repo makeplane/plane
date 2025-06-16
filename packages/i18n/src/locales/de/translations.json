@@ -872,13 +872,15 @@
     "guests": "Gäste",
     "on_track": "Im Plan",
     "off_track": "Außer Plan",
+    "at_risk": "Gefährdet",
     "timeline": "Zeitleiste",
     "completion": "Fertigstellung",
     "upcoming": "Bevorstehend",
     "completed": "Abgeschlossen",
     "in_progress": "In Bearbeitung",
     "planned": "Geplant",
-    "paused": "Pausiert"
+    "paused": "Pausiert",
+    "no_of": "Anzahl {entity}"
   },
   "chart": {
     "x_axis": "X-Achse",
