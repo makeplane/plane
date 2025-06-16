@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Tidak dapat menghapus proyek dari favorit. Silakan coba lagi.",
   "project_created_successfully": "Proyek berhasil dibuat",
   "project_created_successfully_description": "Proyek berhasil dibuat. Anda sekarang dapat mulai menambahkan item kerja ke dalamnya.",
+  "project_name_already_taken": "Nama proyek sudah digunakan",
+  "project_identifier_already_taken": "ID proyek sudah digunakan",
   "project_cover_image_alt": "Gambar sampul proyek",
   "name_is_required": "Nama diperlukan",
   "title_should_be_less_than_255_characters": "Judul harus kurang dari 255 karakter",
