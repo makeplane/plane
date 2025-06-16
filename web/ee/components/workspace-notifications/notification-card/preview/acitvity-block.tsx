@@ -1,7 +1,6 @@
 "use client";
 
 import { FC, ReactElement, ReactNode } from "react";
-// hooks
 import {
   ArrowRightLeft,
   CalendarDays,
@@ -13,24 +12,24 @@ import {
   Triangle,
   Users,
 } from "lucide-react";
+// plane imports
 import { IUserLite } from "@plane/types";
 import {
-  DiceIcon,
-  Tooltip,
-  ContrastIcon,
   ArchiveIcon,
-  Intake,
   Avatar,
+  ContrastIcon,
   CustomersIcon,
+  DiceIcon,
   DoubleCircleIcon,
+  Intake,
+  Tooltip,
 } from "@plane/ui";
-import { getValidKeysFromObject } from "@/helpers/array.helper";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { calculateTimeAgo, getFileURL, getValidKeysFromObject, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
-// helpers
 
 type TIssueActivityBlock = {
   createdAt: string | undefined;

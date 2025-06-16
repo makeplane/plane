@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { TIssueOperations } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";

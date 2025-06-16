@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
 import { Avatar } from "@plane/ui";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate  } from "@plane/utils";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { TProjectUpdatesComment } from "@/plane-web/types";
 import { UpdateQuickActions } from "../quick-actions";

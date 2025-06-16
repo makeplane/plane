@@ -5,7 +5,7 @@ import { ChevronDown, Unplug, ChevronRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomMenu, Loader } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TPersonalAccountInstallationCardProps = {
   providerName: string;

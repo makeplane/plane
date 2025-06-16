@@ -7,7 +7,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // helpers
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch  } from "@plane/utils";
 // plane web constants
 import { EWorklogDownloadLoader, EWorklogDownloadQueryParamType } from "@/plane-web/constants/workspace-worklog";
 // plane web services

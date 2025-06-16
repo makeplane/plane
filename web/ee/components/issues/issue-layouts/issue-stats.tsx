@@ -1,10 +1,9 @@
 "use client";
 
-import React, { FC } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { CircularProgressIndicator } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { getProgress } from "@/helpers/common.helper";
+import { cn, getProgress } from "@plane/utils";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";
 
 type Props = {

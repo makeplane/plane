@@ -1,14 +1,13 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Loader as Spinner, ChevronDown } from "lucide-react";
+import { ChevronDown, Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETeamspaceAnalyticsValueKeys, EProgressDataKeys, EProgressXAxisKeys } from "@plane/constants";
+import { EProgressDataKeys, EProgressXAxisKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
 // plane web imports
-import { renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teamspace";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceAnalytics } from "@/plane-web/hooks/store/teamspaces/use-teamspace-analytics";

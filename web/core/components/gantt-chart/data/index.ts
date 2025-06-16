@@ -1,6 +1,6 @@
 // types
 import { EStartOfTheWeek } from "@plane/constants";
-import { WeekMonthDataType, ChartDataType, TGanttViews } from "../types";
+import type { WeekMonthDataType, ChartDataType, TGanttViews } from "@plane/types";
 
 // constants
 export const generateWeeks = (startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY): WeekMonthDataType[] => [

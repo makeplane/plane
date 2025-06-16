@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 // ce imports
 import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/app-search";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useAppTheme, useInstance } from "@/hooks/store";
 // plane web imports

@@ -23,12 +23,11 @@ import { PROFILE_ACTION_LINKS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, getFileURL } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

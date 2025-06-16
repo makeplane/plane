@@ -3,7 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
-import { GanttChartRoot, IBlockUpdateData, IBlockUpdateDependencyData } from "@/components/gantt-chart";
+import { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
+// components
+import { GanttChartRoot } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
@@ -11,7 +13,7 @@ import { useProject, useUserPermissions } from "@/hooks/store";
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import { TProject } from "@/plane-web/types/projects";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
-//
+// local imports
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectGanttBlock } from "./blocks";
 import { ProjectGanttSidebar } from "./sidebar";
@@ -28,7 +30,9 @@ export const BaseGanttRoot: React.FC = observer(() => {
   const updateProjectBlockStructure = async (project: TProject, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
     const payload = { ...data };
-    updateProject && (await updateProject(workspaceSlug.toString(), project.id, payload as Partial<TProject>));
+    if (updateProject) {
+      await updateProject(workspaceSlug.toString(), project.id, payload as Partial<TProject>);
+    }
   };
 
   const updateBlockDates = async (blockUpdates: IBlockUpdateDependencyData[]) => {
@@ -41,7 +45,9 @@ export const BaseGanttRoot: React.FC = observer(() => {
     if (blockUpdate.start_date) payload.start_date = blockUpdate.start_date;
     if (blockUpdate.target_date) payload.target_date = blockUpdate.target_date;
 
-    updateProject && (await updateProject(workspaceSlug.toString(), blockUpdate.id, payload));
+    if (updateProject) {
+      await updateProject(workspaceSlug.toString(), blockUpdate.id, payload);
+    }
   };
 
   const isAllowed = (projectId: string) =>

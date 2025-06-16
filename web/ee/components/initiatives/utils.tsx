@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 import { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 // PLane-web
 import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";
 

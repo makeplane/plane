@@ -10,8 +10,7 @@ import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types"
 // ui
 import { Button, EpicIcon, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";

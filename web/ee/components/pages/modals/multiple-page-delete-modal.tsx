@@ -9,7 +9,7 @@ import { EditorRefApi } from "@plane/editor";
 // ui
 import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName  } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks

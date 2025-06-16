@@ -3,9 +3,7 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { copyUrlToClipboard } from "@plane/utils";
-// helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 

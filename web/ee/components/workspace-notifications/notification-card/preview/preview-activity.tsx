@@ -4,7 +4,7 @@ import { FC } from "react";
 import { TNotification } from "@plane/types";
 // helpers
 import { NotificationContent } from "@/components/workspace-notifications";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // components
 import { IssueActivityBlock } from "@/plane-web/components/workspace-notifications";
 

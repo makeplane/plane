@@ -2,12 +2,11 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Plus, Shapes } from "lucide-react";
 // ui
-import { ETemplateType, ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, ETemplateType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomSearchSelect, Loader } from "@plane/ui";
 // helpers
-import { getCreateUpdateTemplateSettingsPath } from "@plane/utils";
-import { cn } from "@/helpers/common.helper";
+import { cn, getCreateUpdateTemplateSettingsPath } from "@plane/utils";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProjectTemplates } from "@/plane-web/hooks/store";

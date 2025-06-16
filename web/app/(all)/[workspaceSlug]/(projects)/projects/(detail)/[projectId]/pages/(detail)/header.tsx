@@ -7,11 +7,11 @@ import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
+import { getPageName } from "@plane/utils";
 import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components

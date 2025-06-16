@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters  } from "@plane/utils";
 // plane web types
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeDisplayFilters, TInitiativeFilters } from "@/plane-web/types/initiative";

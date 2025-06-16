@@ -15,6 +15,8 @@ from plane.app.views import (
     # Unlimited Asset Endpoints
     SiloAssetsEndpoint,
     AssetCheckEndpoint,
+    WorkspaceAssetDownloadEndpoint,
+    ProjectAssetDownloadEndpoint,
 )
 
 
@@ -90,6 +92,16 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/check/<uuid:asset_id>/",
         AssetCheckEndpoint.as_view(),
         name="asset-check",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/download/<uuid:asset_id>/",
+        WorkspaceAssetDownloadEndpoint.as_view(),
+        name="workspace-asset-download",
+    ),
+    path(
+        "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/download/<uuid:asset_id>/",
+        ProjectAssetDownloadEndpoint.as_view(),
+        name="project-asset-download",
     ),
     path(
         "assets/silo/workspaces/<str:slug>/",

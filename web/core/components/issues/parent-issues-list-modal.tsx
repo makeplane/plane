@@ -12,11 +12,10 @@ import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
+import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components
 import { IssueSearchModalEmptyState } from "@/components/core";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";

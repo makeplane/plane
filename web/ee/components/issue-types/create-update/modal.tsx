@@ -4,9 +4,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TIssueType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
-import { getRandomBackgroundColor } from "@plane/utils";
 // helpers
-import { getRandomIconName } from "@/helpers/emoji.helper";
+import { getRandomBackgroundColor, getRandomIconName } from "@plane/utils";
 // plane web components
 import { CreateOrUpdateIssueTypeForm } from "@/plane-web/components/issue-types/";
 // plane web

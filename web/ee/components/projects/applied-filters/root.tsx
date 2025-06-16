@@ -3,7 +3,7 @@
 import { X } from "lucide-react";
 // ui
 import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
+import { replaceUnderscoreIfSnakeCase  } from "@plane/utils";
 import { TProjectFilters, TProjectAttributes } from "@/plane-web/types/workspace-project-filters";
 import { EProjectAccess, EProjectPriority } from "@/plane-web/types/workspace-project-states";
 import { AppliedAccessFilters, AppliedMembersFilters, AppliedPriorityFilters, AppliedStateFilters } from "./index";

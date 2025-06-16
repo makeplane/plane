@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Avatar, Tooltip } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 import { useMember, useUser } from "@/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
 

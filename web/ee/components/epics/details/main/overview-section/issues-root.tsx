@@ -13,7 +13,7 @@ import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports

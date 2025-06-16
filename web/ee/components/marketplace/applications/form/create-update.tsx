@@ -11,7 +11,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { RichTextEditor } from "@/components/editor";
 import { SettingsHeading } from "@/components/settings";
-import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
+import { getAssetIdFromUrl, getFileURL  } from "@plane/utils";
 import { useWorkspace, useEditorAsset, useUserProfile } from "@/hooks/store";
 import { AppImageUploadModal } from "@/plane-web/components/common/modal";
 import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";

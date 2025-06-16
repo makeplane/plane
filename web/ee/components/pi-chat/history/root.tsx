@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PanelRightClose } from "lucide-react";
 import { Card } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 import { TUserThreads } from "@/plane-web/types";
 import HistoryList from "./list";
 import { Toolbar } from "./toolbar";

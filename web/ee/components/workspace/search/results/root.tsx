@@ -14,7 +14,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // constants

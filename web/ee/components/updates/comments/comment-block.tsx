@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { TUpdateOperations } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types/src/enums";
 import { Avatar } from "@plane/ui";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate  } from "@plane/utils";
 import { useMember, useUser } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { TProjectUpdatesComment } from "@/plane-web/types";

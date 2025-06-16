@@ -7,7 +7,7 @@ import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search, Crow
 // ui
 import { Button, ContentWrapper } from "@plane/ui";
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";

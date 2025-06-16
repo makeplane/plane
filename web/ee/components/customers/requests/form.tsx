@@ -11,7 +11,7 @@ import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST
 import { ExistingIssuesListModal } from "@/components/core";
 // plane web imports
 import { RichTextEditor } from "@/components/editor";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";

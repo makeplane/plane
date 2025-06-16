@@ -1,11 +1,12 @@
 "use client";
-import React, { FC } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
 import { DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 import {
   DateDropdown,
   EstimateDropdown,
@@ -16,9 +17,6 @@ import {
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { IssueLabel } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember, useProjectEstimates, useProjectState } from "@/hooks/store";
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";

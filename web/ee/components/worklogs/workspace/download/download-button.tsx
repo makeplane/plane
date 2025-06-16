@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { PopoverMenu } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 import { useWorkspaceWorklogDownloads, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 import { TWorklogDownload } from "@/plane-web/types";
 

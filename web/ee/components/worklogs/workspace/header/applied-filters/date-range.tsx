@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate  } from "@plane/utils";
 // plane web components
 import { AppliedFilterGroup, AppliedFilterGroupItem } from "@/plane-web/components/worklogs";
 // plane web hooks

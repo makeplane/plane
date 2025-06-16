@@ -7,10 +7,9 @@ import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { isEditorEmpty } from "@/helpers/editor.helper";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // plane web imports
 import {
   COMMON_ERROR_TEXT_CLASS_NAME,

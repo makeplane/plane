@@ -13,11 +13,11 @@ import {
 } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { Breadcrumbs, EpicIcon, Header, Logo } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // helpers
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

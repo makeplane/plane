@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { usePropertyOptions } from "@/plane-web/hooks/store";
 

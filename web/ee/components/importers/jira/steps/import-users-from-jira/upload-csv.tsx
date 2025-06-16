@@ -6,7 +6,7 @@ import Dropzone, { Accept } from "react-dropzone";
 import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TImportUsersFromJiraUploader = {
   handleValue: (value: string) => void;

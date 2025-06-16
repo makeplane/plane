@@ -5,7 +5,7 @@ import { EIssuePropertyType } from "@plane/constants";
 import { TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
 import { RadioInput } from "@/components/estimates";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane imports
 
 type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {

@@ -5,12 +5,11 @@ import { FC } from "react";
 // ui
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
 import { Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-import { getIconForLink } from "@plane/utils";
+import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // icons
 // types
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+//
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { TLinkOperationsModal } from "./create-update-link-modal";

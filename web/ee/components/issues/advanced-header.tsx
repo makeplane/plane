@@ -6,17 +6,22 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink, RssIcon } from "lucide-react";
 // plane imports
-import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  EUserPermissionsLevel,
+  EUserProjectRoles,
+  SPACE_BASE_PATH,
+  SPACE_BASE_URL,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Header, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

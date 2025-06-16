@@ -43,6 +43,7 @@ export * from "./home";
 export * from "./stickies";
 export * from "./utils";
 export * from "./payment";
+export * from "./analytics";
 // enterprise
 export * from "./intake";
 export * from "./active-cycle";
@@ -63,5 +64,6 @@ export * from "./updates";
 export * from "./etl";
 export * from "./payment-extended";
 export * from "./activity-extended";
+export * from "./layout";
 export * from "./analytics";
 export * from "./mobile";

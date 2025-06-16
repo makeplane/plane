@@ -10,7 +10,7 @@ import { FiltersDropdown } from "@/components/issues";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks

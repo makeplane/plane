@@ -11,7 +11,7 @@ import {
 } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane imports
 
 type TTextValueInputProps = {

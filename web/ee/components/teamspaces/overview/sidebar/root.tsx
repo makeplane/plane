@@ -8,7 +8,7 @@ import { Activity, UsersRound } from "lucide-react";
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
 import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web hooks

@@ -10,7 +10,7 @@ import {
   TIssueIdentifierProps,
 } from "@/ce/components/issues/issue-details/issue-identifier";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components

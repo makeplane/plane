@@ -5,9 +5,7 @@ import { observer } from "mobx-react";
 import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web constants

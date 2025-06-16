@@ -6,8 +6,7 @@ import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
 import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components

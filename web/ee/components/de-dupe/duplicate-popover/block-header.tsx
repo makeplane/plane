@@ -10,7 +10,7 @@ import { ArchiveIcon, Checkbox, Tooltip } from "@plane/ui";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, TIssueOperations } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

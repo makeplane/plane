@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TPropertyActiveCheckboxProps = {
   value: boolean;

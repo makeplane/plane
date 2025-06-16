@@ -1,7 +1,6 @@
 // types
-import { TDocumentPayload, TPage, TPageNavigationTabs, TSubPageDetails } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@plane/constants";
+import { TDocumentPayload, TPage } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";

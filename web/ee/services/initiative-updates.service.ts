@@ -1,7 +1,7 @@
 // plane types
+import { API_BASE_URL  } from "@plane/constants";
 import { TUpdate } from "@plane/types";
 import { EUpdateStatus } from "@plane/types/src/enums";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

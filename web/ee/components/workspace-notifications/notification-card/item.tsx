@@ -7,10 +7,9 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 import { EIssueServiceType } from "@plane/constants";
+import { calculateTimeAgo, convertToEpoch, cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns";
 //helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo, convertToEpoch } from "@/helpers/date-time.helper";
 //store
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 //components

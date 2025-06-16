@@ -1,7 +1,7 @@
 import { EUserProjectRoles } from "@plane/constants";
-import type { IUser, IUserLite, IWorkspace, TLogoProps, TStateGroups } from "..";
-import type { TProjectIssuesSearchParams as TProjectIssuesSearchParamsExtended } from "./project-extended";
+import type { IUser, IUserLite, IWorkspace, TLogoProps, TProjectExtended, TStateGroups } from "..";
 import { TUserPermissions } from "../enums";
+import type { TProjectIssuesSearchParams as TProjectIssuesSearchParamsExtended } from "./project-extended";
 
 export interface IPartialProject {
   id: string;
@@ -142,3 +142,7 @@ export interface ISearchIssueResponse {
   workspace__slug: string;
   type_id: string;
 }
+
+export type TPartialProject = IPartialProject;
+
+export type TProject =  TPartialProject & IProject & TProjectExtended;

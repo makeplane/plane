@@ -2,12 +2,13 @@ import { Metadata, Viewport } from "next";
 import Script from "next/script";
 // styles
 import "@/styles/globals.css";
+// plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// plane web components
+import { cn } from "@plane/utils";
+// plane web imports
 import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
 import { TrialBanner } from "@/plane-web/components/license";
+
 // local
 import { AppProvider } from "./provider";
 

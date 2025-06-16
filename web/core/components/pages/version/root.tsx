@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {

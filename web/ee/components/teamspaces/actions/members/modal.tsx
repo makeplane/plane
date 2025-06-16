@@ -16,7 +16,7 @@ import {
   TOAST_TYPE,
 } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web imports

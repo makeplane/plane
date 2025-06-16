@@ -2,7 +2,7 @@ import concat from "lodash/concat";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction } from "mobx";
 // services
-import { groupReactions } from "@/helpers/emoji.helper";
+import { groupReactions  } from "@plane/utils";
 import { ProjectReactionService } from "@/plane-web/services/project/project_reaction.service";
 // types
 import { TProjectReaction } from "@/plane-web/types";

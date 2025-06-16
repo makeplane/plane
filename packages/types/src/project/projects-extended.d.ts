@@ -1,5 +1,4 @@
 import { EProjectPriority, EProjectStateGroup, EProjectStateLoader } from "@plane/constants";
-import { IProject, IPartialProject } from "@plane/types";
 import { EUpdateStatus } from "../enums";
 
 export type TProjectPriority = EProjectPriority;
@@ -38,8 +37,6 @@ export type TProjectStatesByGroup = {
   [key in TProjectStateGroupKey]: TProjectState[];
 };
 
-export type TPartialProject = IPartialProject;
-
 export type TProjectAttributes = {
   state_id?: string | undefined;
   priority?: TProjectPriority | undefined;
@@ -55,8 +52,7 @@ export type TProjectAttributesResponse = TProjectAttributes & {
   project_id: string;
 };
 
-export type TProject = TPartialProject &
-  IProject &
+export type TProjectExtended =
   TProjectAttributes & {
     description_html?: string | undefined;
     project_name?: string;

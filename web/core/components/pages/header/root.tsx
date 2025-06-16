@@ -5,6 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
+import { calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues";
 import {
   PageAppliedFiltersList,
@@ -14,7 +15,6 @@ import {
   PageTabNavigation,
 } from "@/components/pages";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks

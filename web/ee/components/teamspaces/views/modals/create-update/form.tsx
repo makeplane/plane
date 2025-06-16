@@ -5,18 +5,17 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane imports
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, EViewAccess } from "@plane/constants";
+import { EIssueLayoutTypes, EViewAccess, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // types
-import { TTeamspaceView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TTeamspaceView } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
+import { convertHexEmojiToDecimal, getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 import { Logo } from "@/components/common";
 import { LayoutDropDown } from "@/components/dropdowns/layout";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 

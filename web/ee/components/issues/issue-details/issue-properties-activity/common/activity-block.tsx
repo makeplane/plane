@@ -4,8 +4,7 @@ import { FC, ReactNode, useEffect, useRef } from "react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@plane/utils";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { calculateTimeAgo, cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

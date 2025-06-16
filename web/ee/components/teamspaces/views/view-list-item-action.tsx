@@ -10,7 +10,7 @@ import { Tooltip, FavoriteStar } from "@plane/ui";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "@/components/views";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters  } from "@plane/utils";
 // hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
 // plane web components

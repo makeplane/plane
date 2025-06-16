@@ -5,12 +5,11 @@ import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { cn, getDate, TProjectSanitizationResult } from "@plane/utils";
+import { cn, getDate, TProjectSanitizationResult, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown, MemberDropdown, PriorityDropdown } from "@/components/dropdowns";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web imports
@@ -66,9 +65,7 @@ export const ProjectAttributes = observer((props: TProjectAttributesProps) => {
                 workspaceId={currentWorkspace.id}
                 className="h-full"
                 buttonClassName={cn("h-full", COMMON_BUTTON_CLASS_NAME, {
-                  [COMMON_ERROR_CLASS_NAME]: Boolean(
-                    errors?.project?.state_id || templateInvalidIds?.state_id
-                  ),
+                  [COMMON_ERROR_CLASS_NAME]: Boolean(errors?.project?.state_id || templateInvalidIds?.state_id),
                 })}
                 disabled={false}
                 optionsClassName="z-20"

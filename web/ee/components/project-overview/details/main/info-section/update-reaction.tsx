@@ -6,12 +6,11 @@ import useSWR from "swr";
 import { IUser } from "@plane/types";
 // components
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// helper
+import { cn, formatTextList } from "@plane/utils";
+// components
 import { ReactionSelector } from "@/components/issues";
-import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
-import { formatTextList } from "@/helpers/issue.helper";
 import { useMember } from "@/hooks/store";
 import { useProjectReactions } from "@/plane-web/hooks/store/projects/use-project-reactions";
 

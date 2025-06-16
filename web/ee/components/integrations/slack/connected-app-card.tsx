@@ -6,8 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { TWorkspaceConnection } from "@plane/types";
 import { Button, CustomMenu } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { cn, renderFormattedDate } from "@plane/utils";
 
 type TConnectedAppCardProps = {
   data: TWorkspaceConnection<TSlackConfig, TSlackConnectionData>;

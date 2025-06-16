@@ -2,9 +2,8 @@
 
 import { observer } from "mobx-react";
 // helpers
-import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import { TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { TProgressChartData } from "@/helpers/cycle.helper";
 // local components
 import { useCycle } from "@/hooks/store";
 import ActiveCycleChart from "../active-cycle/cycle-chart/chart";

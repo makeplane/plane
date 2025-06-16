@@ -3,7 +3,7 @@ import useSWR from "swr";
 // types
 import { TDeDupeIssue } from "@plane/types";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
+import { getTextContent  } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 // services

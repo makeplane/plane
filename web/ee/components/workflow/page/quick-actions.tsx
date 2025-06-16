@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useProjectState, useUserPermissions } from "@/hooks/store";
 import { WorkflowChangeHistory } from "./change-history";

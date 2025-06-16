@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import Image from "next/image";
 import { Button } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // silo types
 import { TStepper, TStepperNavigation } from "@/plane-web/silo/types/ui";
 import { useTranslation } from "@plane/i18n";

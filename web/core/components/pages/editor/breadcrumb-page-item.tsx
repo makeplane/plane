@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
-// types
-// ui
+// plane imports
 import { EmojiIconPicker, EmojiIconPickerTypes, Tooltip } from "@plane/ui";
+import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-// helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks

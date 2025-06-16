@@ -6,8 +6,7 @@ import { ETemplateLevel, ETemplateType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomSearchSelect, Loader, Tooltip, TPosition } from "@plane/ui";
 // helpers
-import { getCreateUpdateTemplateSettingsPath } from "@plane/utils";
-import { cn } from "@/helpers/common.helper";
+import { cn, getCreateUpdateTemplateSettingsPath } from "@plane/utils";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkItemTemplates } from "@/plane-web/hooks/store";

@@ -8,10 +8,9 @@ import { TWorkItemTemplateForm } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Input } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { isEditorEmpty } from "@/helpers/editor.helper";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks

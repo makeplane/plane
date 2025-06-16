@@ -9,9 +9,9 @@ import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, getButtonStyling } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ProIcon } from "@/components/common";
 // helper
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

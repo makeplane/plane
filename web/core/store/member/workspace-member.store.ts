@@ -223,7 +223,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
-    const originalProjectMemberData = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    const originalProjectMemberData = { ...this.workspaceMemberMap?.[workspaceSlug]?.[userId] };
     try {
       runInAction(() => {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);

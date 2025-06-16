@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 import type { TPopoverMenuOptions } from "@/plane-web/components/marketplace";
 // helpers
 

@@ -6,7 +6,7 @@ import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } fr
 // components
 import { TSticky } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useUserProfile } from "@/hooks/store";

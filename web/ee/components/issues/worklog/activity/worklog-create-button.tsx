@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 import { Button, Popover } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { WorklogCreate } from "@/plane-web/components/issues/worklog";
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";

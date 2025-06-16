@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import type { EditorTitleRefApi } from "@plane/editor";
+import { EditorTitleRefApi, getEditorContentWithReplacedImageAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { FileService } from "@plane/services";
 import { TPageTemplate } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -12,12 +13,13 @@ import { cn } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { getEditorContentWithReplacedImageAssets } from "@/helpers/editor.helper";
 // plane web hooks
 import { usePageTemplates } from "@/plane-web/hooks/store";
 // store
 import { IBaseTemplateInstance } from "@/plane-web/store/templates";
 import { TPageInstance } from "@/store/pages/base-page";
+
+const fileService = new FileService();
 
 type TTemplateSelectModalProps = {
   isOpen: boolean;
@@ -65,13 +67,14 @@ export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer
     if (!selectedTemplate) return;
     setIsApplyingTemplate(true);
     // duplicate template assets and replace the old assets with the new ones
+    const duplicateAssetService = fileService.duplicateAssets.bind(fileService, workspaceSlug);
     const documentPayload = await getEditorContentWithReplacedImageAssets({
       descriptionHTML: selectedTemplate.template_data.description_html ?? "",
       entityId: page.id,
       entityType: EFileAssetType.PAGE_DESCRIPTION,
       projectId,
       variant: "document",
-      workspaceSlug,
+      duplicateAssetService,
     });
     await page.update({
       logo_props: selectedTemplate.template_data.logo_props,

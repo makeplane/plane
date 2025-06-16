@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import { PAGE_DELETED } from "@plane/constants";
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName  } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks

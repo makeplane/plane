@@ -7,7 +7,7 @@ import { EIssuePropertyType } from "@plane/constants";
 import { EIssuePropertyValueError, IIssueProperty, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TOptionValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;

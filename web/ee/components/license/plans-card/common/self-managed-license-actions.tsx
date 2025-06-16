@@ -6,11 +6,10 @@ import { useParams } from "next/navigation";
 import { CircleAlert, CircleCheck, RefreshCw } from "lucide-react";
 // plane imports
 import { AlertModalCore, Button, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { getSubscriptionName } from "@plane/utils";
-import { cn } from "@/helpers/common.helper";
-// plane web hooks
-import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { cn, getSubscriptionName } from "@plane/utils";
+// hooks
+import { useSelfHostedSubscription } from "@/plane-web/hooks/store/use-self-hosted-subscription";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
 type TSelfManagedLicenseActionsProps = {
   showSyncButton?: boolean;

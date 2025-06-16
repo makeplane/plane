@@ -3,12 +3,11 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-// hooks
-// ui
-// helpers
+// plane imports
+import { IGanttBlock } from "@plane/types";
 import { Logo, Tooltip } from "@plane/ui";
-import { IGanttBlock } from "@/components/gantt-chart";
-import { findTotalDaysInRange, renderFormattedDate } from "@/helpers/date-time.helper";
+import { findTotalDaysInRange, renderFormattedDate } from "@plane/utils";
+// hooks
 import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";

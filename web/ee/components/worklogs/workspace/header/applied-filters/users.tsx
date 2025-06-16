@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components

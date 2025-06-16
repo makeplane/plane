@@ -3,21 +3,16 @@
 import { FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+// plane imports
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TTeamspace } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
 import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
+import { cn, convertHexEmojiToDecimal, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { isEditorEmpty } from "@/helpers/editor.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // store hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web components

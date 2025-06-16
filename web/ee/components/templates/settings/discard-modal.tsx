@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { AlertTriangle } from "lucide-react";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type Props = {
   isOpen: boolean;

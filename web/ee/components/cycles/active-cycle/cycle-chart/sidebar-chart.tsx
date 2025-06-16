@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { TProgressChartData } from "@/helpers/cycle.helper";
+import { TProgressChartData } from "@plane/types";
 import useCycleDetails from "../use-cycle-details";
 import ActiveCycleChart from "./chart";
 

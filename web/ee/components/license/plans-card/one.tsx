@@ -6,7 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 

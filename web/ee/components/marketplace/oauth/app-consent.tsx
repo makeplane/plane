@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace, TUserApplication } from "@plane/types";
 import { Button, CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store";
 import { ApplicationService, OAuthService, TConsentParams } from "@/plane-web/services/marketplace";
 import ConnectSvg from "@/public/marketplace/connect.svg";

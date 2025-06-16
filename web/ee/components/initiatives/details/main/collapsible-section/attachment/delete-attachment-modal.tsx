@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
-import { getFileName } from "@/helpers/attachment.helper";
+import { getFileName  } from "@plane/utils";
 // hooks
 import { useInitiativeAttachments } from "@/plane-web/hooks/store";
 // types

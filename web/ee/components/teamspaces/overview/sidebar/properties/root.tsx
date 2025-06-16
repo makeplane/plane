@@ -10,7 +10,7 @@ import { ContrastIcon, LayersIcon } from "@plane/ui";
 import { MemberDropdown } from "@/components/dropdowns";
 import { Props } from "@/components/icons/types";
 // hooks
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useMember } from "@/hooks/store";
 import { useTeamspaces } from "@/plane-web/hooks/store";

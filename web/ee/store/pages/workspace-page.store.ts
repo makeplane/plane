@@ -5,7 +5,7 @@ import { EPageAccess } from "@plane/constants";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage  } from "@plane/utils";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store

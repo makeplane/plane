@@ -5,9 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { TPublishTemplateFormWithData } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Input, PillInput } from "@plane/ui";
-import { cn } from "@plane/utils";
-// plane web imports
-import { checkEmailValidity, checkURLValidity } from "@/helpers/string.helper";
+import { cn, checkEmailValidity, checkURLValidity } from "@plane/utils";
 import { UploadAppAttachments } from "@/plane-web/components/marketplace/applications/form/upload-attachments";
 import {
   COMMON_ERROR_TEXT_CLASS_NAME,

@@ -6,7 +6,7 @@ import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from 
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TBooleanInputProps = {
   value: string[];

@@ -16,7 +16,7 @@ import {
   TWorkflowChangeHistory,
 } from "@plane/types";
 // helpers
-import { convertStringArrayToBooleanObject } from "@/helpers/array.helper";
+import { convertStringArrayToBooleanObject  } from "@plane/utils";
 // store
 import { IStateStore as ICoreStateStore, StateStore as CoreStateStore } from "@/store/state.store";
 // local imports

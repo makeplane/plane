@@ -9,9 +9,9 @@ import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks

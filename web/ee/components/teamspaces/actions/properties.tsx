@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 // ui
 import { Avatar, AvatarGroup, LeadIcon, Tooltip } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components

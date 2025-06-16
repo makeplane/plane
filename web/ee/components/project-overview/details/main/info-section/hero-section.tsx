@@ -2,14 +2,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { PROJECT_UPDATED, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, PROJECT_UPDATED } from "@plane/constants";
 import { IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
+import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 import { ImagePickerPopover } from "@/components/core";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web imports

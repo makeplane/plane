@@ -15,12 +15,10 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,

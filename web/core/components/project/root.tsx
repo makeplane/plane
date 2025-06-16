@@ -7,10 +7,10 @@ import { useParams, usePathname } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // components
-import { PageHead } from "@/components/core";
+import { calculateTotalFilters } from "@plane/utils";
+import { PageHead } from "@/components/core/page-title";
 import { ProjectAppliedFiltersList, ProjectCardList } from "@/components/project";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useProject, useProjectFilter, useWorkspace } from "@/hooks/store";
 

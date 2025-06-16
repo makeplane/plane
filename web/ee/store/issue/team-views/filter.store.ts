@@ -15,7 +15,7 @@ import {
   IssuePaginationOptions,
 } from "@plane/types";
 // helpers
-import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { handleIssueQueryParamsByLayout  } from "@plane/utils";
 // plane web services
 import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // store

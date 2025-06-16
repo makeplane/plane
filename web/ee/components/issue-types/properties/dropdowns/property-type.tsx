@@ -1,12 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ISSUE_PROPERTY_TYPE_DETAILS, EIssuePropertyType, EIssuePropertyRelationType } from "@plane/constants";
+import { EIssuePropertyRelationType, EIssuePropertyType, ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TOperationMode, TIssuePropertyTypeKeys } from "@plane/types";
+import { TIssueProperty, TIssuePropertyTypeKeys, TOperationMode } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
-import { getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/utils";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn, getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/utils";
 // plane web components
 import { PropertyTypeIcon } from "@/plane-web/components/issue-types/properties";
 

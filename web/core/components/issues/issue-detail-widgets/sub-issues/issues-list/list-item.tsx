@@ -7,11 +7,10 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

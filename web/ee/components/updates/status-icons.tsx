@@ -1,7 +1,6 @@
 import { EUpdateStatus } from "@plane/types/src/enums";
-import { OffTrackIcon, AtRiskIcon, OnTrackIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { generateIconColors } from "@/helpers/color.helper";
+import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
+import { cn, generateIconColors } from "@plane/utils";
 
 export const StatusOptions = {
   [EUpdateStatus.ON_TRACK]: {

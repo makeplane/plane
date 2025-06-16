@@ -15,7 +15,7 @@ import { Logo, TeamsIcon, Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web hooks

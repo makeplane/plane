@@ -5,7 +5,7 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 // helpers
 import { TUpdateReaction } from "@plane/types";
-import { groupReactions } from "@/helpers/emoji.helper";
+import { groupReactions  } from "@plane/utils";
 
 export interface IUpdatesReactionStore {
   // observables

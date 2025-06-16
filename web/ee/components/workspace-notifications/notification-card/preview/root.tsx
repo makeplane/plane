@@ -3,7 +3,7 @@
 import { FC } from "react";
 import orderBy from "lodash/orderBy";
 import { TNotification, TNotificationIssueLite } from "@plane/types";
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch  } from "@plane/utils";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { NotificationPreviewActivity } from "@/plane-web/components/workspace-notifications";
 export type TNotificationCardPreview = {

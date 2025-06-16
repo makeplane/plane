@@ -4,20 +4,19 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 // plane imports
-import { ETabIndices, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { ETabIndices, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
+import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 import {
   DateDropdown,
   EstimateDropdown,
-  PriorityDropdown,
   MemberDropdown,
+  PriorityDropdown,
   StateDropdown,
 } from "@/components/dropdowns";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

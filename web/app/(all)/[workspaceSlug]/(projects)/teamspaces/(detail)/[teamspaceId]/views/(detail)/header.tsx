@@ -21,11 +21,9 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, TeamsIcon, Loader } from "@plane/ui";
 // components
+import { isIssueFilterActive, getPublishViewLink } from "@plane/utils";
 import { BreadcrumbLink, Logo } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useCommandPalette, useIssues, useLabel, useMember, useUserPermissions } from "@/hooks/store";
 // plane web imports

@@ -4,10 +4,9 @@ import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { cn } from "@plane/utils";
 // components
 import { SidebarDropdown, SidebarHelpSection } from "@/components/workspace";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 // plane web components

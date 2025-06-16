@@ -2,22 +2,21 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import {
-  TOAST_TYPE,
-  setToast,
-  setPromiseToast,
-  TContextMenuItem,
-  FavoriteStar,
-  CustomMenu,
   ArchiveIcon,
+  CustomMenu,
+  FavoriteStar,
+  setPromiseToast,
+  setToast,
+  TContextMenuItem,
+  TOAST_TYPE,
 } from "@plane/ui";
-import { cn, copyUrlToClipboard } from "@plane/utils";
+import { cn, copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

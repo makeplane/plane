@@ -8,7 +8,7 @@ import { computedFn } from "mobx-utils";
 // PLane-web
 import { EActivityFilterType } from "@plane/constants";
 import { TIssueCommentReaction, TIssueCommentReactionIdMap, TIssueCommentReactionMap } from "@plane/types";
-import { groupReactions } from "@/helpers/emoji.helper";
+import { groupReactions  } from "@plane/utils";
 import {
   TInitiativeComment,
   TInitiativeReaction,

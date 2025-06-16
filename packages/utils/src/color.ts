@@ -1,13 +1,13 @@
 /**
  * Represents an RGB color with numeric values for red, green, and blue components
- * @typedef {Object} RGB
+ * @typedef {Object} TRgb
  * @property {number} r - Red component (0-255)
  * @property {number} g - Green component (0-255)
  * @property {number} b - Blue component (0-255)
  */
-export type RGB = { r: number; g: number; b: number };
+export type TRgb = { r: number; g: number; b: number };
 
-export type HSL = { h: number; s: number; l: number };
+export type THsl = { h: number; s: number; l: number };
 
 /**
  * @description Validates and clamps color values to RGB range (0-255)
@@ -40,7 +40,7 @@ export const toHex = (value: number) => validateColor(value).toString(16).padSta
  * hexToRgb("#00ff00") // returns { r: 0, g: 255, b: 0 }
  * hexToRgb("#0000ff") // returns { r: 0, g: 0, b: 255 }
  */
-export const hexToRgb = (hex: string): RGB => {
+export const hexToRgb = (hex: string): TRgb => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
   return result
     ? {
@@ -63,7 +63,7 @@ export const hexToRgb = (hex: string): RGB => {
  * rgbToHex({ r: 0, g: 255, b: 0 }) // returns "#00ff00"
  * rgbToHex({ r: 0, g: 0, b: 255 }) // returns "#0000ff"
  */
-export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+export const rgbToHex = ({ r, g, b }: TRgb): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
 /**
  * Converts Hex values to HSL values
@@ -74,7 +74,7 @@ export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${
  * hexToHsl("#00ff00") // returns { h: 120, s: 100, l: 50 }
  * hexToHsl("#0000ff") // returns { h: 240, s: 100, l: 50 }
  */
-export const hexToHsl = (hex: string): HSL => {
+export const hexToHsl = (hex: string): THsl => {
   // return default value for invalid hex
   if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return { h: 0, s: 0, l: 0 };
 
@@ -124,7 +124,7 @@ export const hexToHsl = (hex: string): HSL => {
  * hslToHex({ h: 120, s: 100, l: 50 }) // returns "#00ff00"
  * hslToHex({ h: 240, s: 100, l: 50 }) // returns "#0000ff"
  */
-export const hslToHex = ({ h, s, l }: HSL): string => {
+export const hslToHex = ({ h, s, l }: THsl): string => {
   if (h < 0 || h > 360) return "#000000";
   if (s < 0 || s > 100) return "#000000";
   if (l < 0 || l > 100) return "#000000";
@@ -144,50 +144,11 @@ export const hslToHex = ({ h, s, l }: HSL): string => {
 };
 
 /**
- * @description Generates a deterministic HSL color based on input string
- * @param {string} string - Input string to generate color from
- * @returns {HSL} An object containing the HSL values
- * @example
- * generateRandomColor("hello") // returns consistent HSL color for "hello"
- * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
- */
-export const generateRandomColor = (string: string): HSL => {
-  if (!string)
-    return {
-      h: 0,
-      s: 0,
-      l: 0,
-    };
-
-  string = `${string}`;
-
-  const uniqueId = string.length.toString() + string; // Unique identifier based on string length
-  const combinedString = uniqueId + string;
-
-  const hash = Array.from(combinedString).reduce((acc, char) => {
-    const charCode = char.charCodeAt(0);
-    return (acc << 5) - acc + charCode;
-  }, 0);
-
-  const hue = hash % 360;
-  const saturation = 70; // Higher saturation for pastel colors
-  const lightness = 60; // Mid-range lightness for pastel colors
-
-  return {
-    h: hue,
-    s: saturation,
-    l: lightness,
-  };
-};
-
-export type TRgb = { r: number; g: number; b: number };
-
-/**
  * Calculate relative luminance of a color according to WCAG
  * @param {Object} rgb - RGB color object with r, g, b properties
  * @returns {number} Relative luminance value
  */
-export function getLuminance({ r, g, b }: { r: number; g: number; b: number }) {
+export const getLuminance = ({ r, g, b }: TRgb) => {
   // Convert RGB to sRGB
   const sR = r / 255;
   const sG = g / 255;
@@ -200,7 +161,7 @@ export function getLuminance({ r, g, b }: { r: number; g: number; b: number }) {
 
   // Calculate luminance
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
-}
+};
 
 /**
  * Calculate contrast ratio between two colors
@@ -306,3 +267,33 @@ export function generateIconColors(color: string) {
     background: `rgba(${foregroundColor.r}, ${foregroundColor.g}, ${foregroundColor.b}, 0.25)`,
   };
 }
+
+/**
+ * @description Generates a deterministic HSL color based on input string
+ * @param {string} input - Input string to generate color from
+ * @returns {THsl} An object containing the HSL values
+ * @example
+ * generateRandomColor("hello") // returns consistent HSL color for "hello"
+ * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
+ */
+export const generateRandomColor = (input: string): THsl => {
+  // If input is falsy, generate a random seed string.
+  // The random seed is created by converting a random number to base-36 and taking a substring.
+  const seed = input || Math.random().toString(36).substring(2, 8);
+
+  const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
+  const combinedString = uniqueId + seed;
+
+  // Create a hash value from the combined string.
+  const hash = Array.from(combinedString).reduce((acc, char) => {
+    const charCode = char.charCodeAt(0);
+    return (acc << 5) - acc + charCode;
+  }, 0);
+
+  // Derive the HSL values from the hash.
+  const hue = Math.abs(hash % 360);
+  const saturation = 70; // Maintains a good amount of color
+  const lightness = 70; // Increased lightness for a pastel look
+
+  return { h: hue, s: saturation, l: lightness };
+};

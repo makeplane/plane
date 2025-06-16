@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, PanelRight, SquarePen } from "lucide-react";
 import { BetaBadge, Button, PiChatLogo } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TAiModels } from "@/plane-web/types";
 import { ModelsDropdown } from "./models-dropdown";

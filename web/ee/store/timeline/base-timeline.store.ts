@@ -5,15 +5,15 @@ import uniq from "lodash/uniq";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 //
+import { IBlockUpdateDependencyData } from "@plane/types";
+import { renderFormattedPayloadDate  } from "@plane/utils";
 import {
   BaseTimeLineStore as ExtendableTimelineStore,
   IBaseTimelineStore as IExtendableTimelineStore,
 } from "@/ce/store/timeline/base-timeline.store";
 // components
-import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
 import { getDateFromPositionOnGantt } from "@/components/gantt-chart/views";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // Plane-web
 import { EDependencyPosition } from "@/plane-web/constants";
 import { DependencyDraggingDetails, Relation } from "@/plane-web/types";

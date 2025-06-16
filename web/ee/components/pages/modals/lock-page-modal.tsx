@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EditorRefApi } from "@plane/editor";
 import { ToggleSwitch } from "@plane/ui";
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName  } from "@plane/utils";
 import { usePageOperations } from "@/hooks/use-page-operations";
 import { TPageInstance } from "@/store/pages/base-page";
 import { ConfirmationModal } from "./confirmation-modal";

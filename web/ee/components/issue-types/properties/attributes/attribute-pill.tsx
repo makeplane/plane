@@ -1,4 +1,4 @@
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TAttributePillProps = {
   data: string;

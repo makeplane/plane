@@ -13,7 +13,7 @@ import { Loader } from "@plane/ui";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks

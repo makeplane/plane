@@ -5,15 +5,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // components
-import { DeleteIssueModal } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { DeleteIssueModal } from "@/components/issues";
 // hooks
 import { useEventTracker, useIssues, useProject, useUserPermissions } from "@/hooks/store";
 // plane-web

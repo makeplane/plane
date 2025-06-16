@@ -2,13 +2,12 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, LinkIcon, Copy } from "lucide-react";
+import { Copy, LinkIcon, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { CustomMenu, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helpers
-import { calculateTimeAgoShort } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { calculateTimeAgoShort, copyTextToClipboard } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

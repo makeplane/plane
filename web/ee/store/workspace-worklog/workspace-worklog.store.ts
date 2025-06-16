@@ -9,7 +9,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch  } from "@plane/utils";
 // plane web constants
 import { EWorklogLoader, EWorklogQueryParamType } from "@/plane-web/constants/workspace-worklog";
 // plane web services

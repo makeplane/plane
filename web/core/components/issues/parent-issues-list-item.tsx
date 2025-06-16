@@ -3,10 +3,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket } from "lucide-react";
-// types
+// plane imports
 import { ISearchIssueResponse } from "@plane/types";
-// helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 // hooks

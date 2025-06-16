@@ -5,13 +5,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// ui
+// plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, CustomSearchSelect, Header, InitiativeIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

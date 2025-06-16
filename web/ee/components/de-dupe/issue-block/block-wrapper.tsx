@@ -7,8 +7,7 @@ import { TDeDupeIssue } from "@plane/types";
 // ui
 import { ControlLink } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store";
 

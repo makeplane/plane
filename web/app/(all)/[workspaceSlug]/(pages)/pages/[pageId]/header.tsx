@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { FileText, ChevronRight } from "lucide-react";
-// constants
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { EUserWorkspaceRoles, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 // types
 import { TPage } from "@plane/types";
 // ui
@@ -16,8 +16,6 @@ import { BreadcrumbLink } from "@/components/common";
 import { PageBreadcrumbItem } from "@/components/pages";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
-// helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web components

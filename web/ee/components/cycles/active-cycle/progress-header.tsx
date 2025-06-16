@@ -8,7 +8,7 @@ import { ICycle, TCycleProgress } from "@plane/types";
 import { BetaBadge, ControlLink, Loader, Tooltip } from "@plane/ui";
 import { CycleListItemAction } from "@/components/cycles";
 // helpers
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { findHowManyDaysLeft  } from "@plane/utils";
 import { useAppRouter } from "@/hooks/use-app-router";
 import ProgressDonut from "./progress-donut";
 

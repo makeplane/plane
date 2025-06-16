@@ -7,10 +7,9 @@ import useSWR from "swr";
 // plane imports
 import { EViewAccess } from "@plane/constants";
 import { TViewFilterProps } from "@plane/types";
+import { calculateTotalFilters } from "@plane/utils";
 // constants
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
-// helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web imports
 import { TeamspaceViewsList } from "@/plane-web/components/teamspaces/views";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";

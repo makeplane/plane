@@ -4,7 +4,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // components
 import {
   ProjectStateList,

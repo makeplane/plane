@@ -5,8 +5,7 @@ import { Trash2 } from "lucide-react";
 // ui
 import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

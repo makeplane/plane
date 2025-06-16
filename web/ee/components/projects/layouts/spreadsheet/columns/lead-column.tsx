@@ -3,8 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 import { TProject } from "@/plane-web/types/projects";

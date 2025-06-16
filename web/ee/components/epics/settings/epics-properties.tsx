@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { IssuePropertiesRoot } from "@/plane-web/components/issue-types";
 

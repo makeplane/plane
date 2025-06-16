@@ -10,7 +10,7 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
+import { calculateTotalFilters  } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

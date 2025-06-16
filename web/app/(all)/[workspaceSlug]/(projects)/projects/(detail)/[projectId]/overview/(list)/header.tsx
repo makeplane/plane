@@ -3,12 +3,11 @@
 import { observer } from "mobx-react";
 // icons
 import { Briefcase, RssIcon, Sidebar } from "lucide-react";
-// ui
+// plane imports
 import { Breadcrumbs, Header } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useProject } from "@/hooks/store";
 

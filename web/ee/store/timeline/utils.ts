@@ -1,9 +1,8 @@
 import isNil from "lodash/isNil";
 import set from "lodash/set";
-// Plane
-import { TIssueRelationMap } from "@plane/types";
+// plane imports
+import { ChartDataType, IGanttBlock, TIssueRelationMap } from "@plane/types";
 // components
-import { ChartDataType, IGanttBlock } from "@/components/gantt-chart";
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { getItemPositionWidth } from "@/components/gantt-chart/views";
 // Plane-web

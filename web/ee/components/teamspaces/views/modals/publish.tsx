@@ -6,13 +6,11 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { ExternalLink, Globe2 } from "lucide-react";
-// types
+// plane imports
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { TPublishViewSettings, TTeamspaceView } from "@plane/types";
-// ui
-import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, ModalCore, EModalWidth } from "@plane/ui";
-// helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { Button, EModalWidth, Loader, ModalCore, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { copyTextToClipboard } from "@plane/utils";
 // plane web hooks
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

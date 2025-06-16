@@ -6,8 +6,8 @@ import useSWR from "swr";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// components
 import { cn } from "@plane/utils";
+// components
 import { LogoSpinner } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxContentRoot } from "@/components/inbox";

@@ -4,7 +4,7 @@ import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store";
 

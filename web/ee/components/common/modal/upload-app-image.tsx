@@ -4,12 +4,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
-import { Transition, Dialog } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // services
 import { useWorkspace } from "@/hooks/store";
 import { FileService } from "@/services/file.service";

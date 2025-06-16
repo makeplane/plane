@@ -2,7 +2,7 @@
 import { EViewAccess } from "@plane/constants";
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL  } from "@plane/constants";
 // services
 import { WorkspaceService as CoreWorkspaceService } from "@/services/workspace.service";
 

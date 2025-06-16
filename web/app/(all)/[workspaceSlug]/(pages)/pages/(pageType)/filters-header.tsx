@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 // types
 import { TPageFilterProps } from "@plane/types";
 // components
+import { calculateTotalFilters } from "@plane/utils";
 import { PageAppliedFiltersList } from "@/components/pages";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 

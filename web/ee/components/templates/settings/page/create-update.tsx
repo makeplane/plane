@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { extractImageAssetsFromHTMLContent  } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { PartialDeep, TPageTemplateForm } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -13,7 +14,6 @@ import {
   pageTemplateFormDataToData,
 } from "@plane/utils";
 // hooks
-import { extractImageAssetsFromHTMLContent } from "@/helpers/editor.helper";
 import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

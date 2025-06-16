@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useCustomers } from "@/plane-web/hooks/store";

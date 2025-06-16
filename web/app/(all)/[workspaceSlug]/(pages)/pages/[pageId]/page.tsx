@@ -5,18 +5,16 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane types
+// plane imports
 import { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
 import { getButtonStyling } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { IssuePeekOverview } from "@/components/issues";
 import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";

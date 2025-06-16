@@ -8,11 +8,10 @@ import { IUser, TUpdateOperations } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types/src/enums";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helper
+import { cn, formatTextList } from "@plane/utils";
 import { ReactionSelector } from "@/components/issues";
-import { cn } from "@/helpers/common.helper";
-import { renderEmoji } from "@/helpers/emoji.helper";
+import { renderEmoji  } from "@/helpers/emoji.helper";
 // hooks
-import { formatTextList } from "@/helpers/issue.helper";
 import { useMember } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 

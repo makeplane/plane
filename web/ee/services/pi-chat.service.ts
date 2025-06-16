@@ -1,5 +1,5 @@
-// helpers
-import { PI_BASE_URL } from "@/helpers/common.helper";
+// constants
+import { PI_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 import { TFeedback, TQuery, TSearchQuery, TTemplate, TChatHistory, TUserThreads, TAiModels } from "../types";

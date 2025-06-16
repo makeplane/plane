@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { formatTextList } from "@/helpers/issue.helper";
+import { formatTextList  } from "@plane/utils";
 import { useEditorAsset, useMember, useUser } from "@/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 

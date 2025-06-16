@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { Input } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type Props = {
   type: "text" | "password";

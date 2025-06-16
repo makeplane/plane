@@ -3,14 +3,13 @@ import { observer } from "mobx-react";
 import { Info, MoveRight } from "lucide-react";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Tooltip } from "@plane/ui";
-import { convertMinutesToHoursMinutesString } from "@plane/utils";
+import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimatePoint } from "@/hooks/store";
 // plane web constants
-import { MAX_ESTIMATE_POINT_INPUT_LENGTH, EEstimateSystem } from "@/plane-web/constants/estimates";
+import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
 
 type TEstimatePointItemSwitchPreview = {
   estimateId: string;

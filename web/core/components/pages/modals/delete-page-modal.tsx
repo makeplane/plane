@@ -7,8 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { PAGE_DELETED } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
@@ -26,7 +25,6 @@ type TConfirmPageDeletionProps = {
 
 export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { isOpen, onClose, page, storeType, editorRef } = props;
-  const { workspaceSlug } = useParams();
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks

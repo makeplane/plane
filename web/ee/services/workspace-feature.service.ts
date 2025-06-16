@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL  } from "@plane/constants";
 // plane web types
 import { TWorkspaceFeature, TWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 // services

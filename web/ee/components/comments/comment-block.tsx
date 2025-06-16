@@ -4,9 +4,8 @@ import { observer } from "mobx-react";
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
-import { calculateTimeAgo, cn, getFileURL, renderFormattedDate } from "@plane/utils";
+import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-import { renderFormattedTime } from "@/helpers/date-time.helper";
 import { useMember, useWorkspaceNotifications } from "@/hooks/store";
 
 type TCommentBlock = {

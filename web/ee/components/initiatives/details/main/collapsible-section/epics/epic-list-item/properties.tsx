@@ -10,7 +10,7 @@ import { IIssueDisplayProperties } from "@plane/types";
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

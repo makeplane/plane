@@ -5,7 +5,7 @@ import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 
 type TProps = {
   isOpen: boolean;

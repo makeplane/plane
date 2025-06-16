@@ -13,7 +13,7 @@ import {
   IssueLink,
 } from "@/components/issues/issue-detail/issue-activity/activity/actions";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components

@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+// plane imports
 import { getButtonStyling } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 export type ImportersEmptyStateProps = {
   theme: string;

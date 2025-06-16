@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
 import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks

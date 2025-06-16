@@ -3,10 +3,9 @@ import { observer } from "mobx-react";
 // Plane
 import { Briefcase } from "lucide-react";
 import { CircularProgressIndicator, Logo } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getProgress } from "@plane/utils";
 // hooks
 import { ListItem } from "@/components/core/list";
-import { getProgress } from "@/helpers/common.helper";
 import { useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web

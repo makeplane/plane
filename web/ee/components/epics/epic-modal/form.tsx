@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState, useRef, useEffect } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -8,20 +8,18 @@ import { EIssueServiceType, ETabIndices, EWorkItemTypeEntity } from "@plane/cons
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import type { TIssue, ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+// helpers
+import { cn, getChangedIssuefields, getTabIndex } from "@plane/utils";
 import {
   IssueDescriptionEditor,
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";

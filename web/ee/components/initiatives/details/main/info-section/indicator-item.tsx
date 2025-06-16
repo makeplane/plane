@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // helpers
-import { getProgress } from "@/helpers/common.helper";
+import { getProgress  } from "@plane/utils";
 // hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 

@@ -3,12 +3,11 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane types
+// plane imports
 import { TPageFilterProps } from "@plane/types";
+import { calculateTotalFilters } from "@plane/utils";
 // constants
 import { PageAppliedFiltersList } from "@/components/pages";
-// helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // plane web imports
 import { TeamspacePagesList } from "@/plane-web/components/teamspaces/pages";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";

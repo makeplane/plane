@@ -9,9 +9,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

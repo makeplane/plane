@@ -6,10 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // components
 import { WorkspaceLogo } from "@/components/workspace";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports

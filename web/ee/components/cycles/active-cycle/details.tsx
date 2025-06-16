@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import { TCycleEstimateType, TCyclePlotType, TProgressChartData } from "@plane/types";
 import { Loader, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
+import { cn } from "@plane/utils";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { TProgressChartData } from "@/helpers/cycle.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

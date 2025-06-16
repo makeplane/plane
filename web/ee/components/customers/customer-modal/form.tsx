@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
@@ -7,12 +7,11 @@ import { useTranslation } from "@plane/i18n";
 import { TCustomer, TCustomerPayload } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { cn } from "@plane/utils";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { cn, getTabIndex } from "@plane/utils";
 // store
 import { useCommandPalette } from "@/hooks/store";
 // plane web components
-import { DefaultProperties, CustomerAdditionalProperties } from "@/plane-web/components/customers";
+import { CustomerAdditionalProperties, DefaultProperties } from "@/plane-web/components/customers";
 import { getChangedCustomerFields } from "@/plane-web/helpers/customers.helper";
 import { useCustomerModal } from "@/plane-web/hooks/context/use-customer-modal";
 import { useCustomers } from "@/plane-web/hooks/store";

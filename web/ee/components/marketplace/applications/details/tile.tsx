@@ -7,7 +7,7 @@ import { CircleCheckBig } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { Button } from "@plane/ui";
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 import { ApplicationTileMenuOptions } from "@/plane-web/components/marketplace";
 
 // display app details like name, logo, description

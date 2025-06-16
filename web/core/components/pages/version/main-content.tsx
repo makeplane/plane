@@ -6,10 +6,10 @@ import { TriangleAlert } from "lucide-react";
 import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { TVersionEditorProps } from "@/components/pages";
 // helpers
-import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {

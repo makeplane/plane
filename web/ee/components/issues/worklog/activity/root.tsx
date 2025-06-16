@@ -7,12 +7,12 @@ import { Ellipsis, Timer } from "lucide-react";
 import { TIssueActivityComment } from "@plane/types";
 import { CustomMenu, Popover, Tooltip } from "@plane/ui";
 import {
+  getFileURL,
   calculateTimeAgo,
   convertMinutesToHoursMinutesString,
   renderFormattedDate,
   renderFormattedTime,
-} from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+} from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

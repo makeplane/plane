@@ -8,7 +8,7 @@ import { IWorkspaceIntegration } from "@plane/types";
 // ui
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
-import { truncateText } from "@/helpers/string.helper";
+import { truncateText } from "@plane/utils";
 import { ProjectService } from "@/services/project";
 // types
 

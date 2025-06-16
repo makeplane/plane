@@ -4,8 +4,7 @@ import { X } from "lucide-react";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
+import { capitalizeFirstLetter, renderFormattedDate } from "@plane/utils";
 
 type Props = {
   handleRemove: (val: string) => void;

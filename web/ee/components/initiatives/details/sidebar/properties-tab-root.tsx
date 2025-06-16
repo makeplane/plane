@@ -10,7 +10,7 @@ import { EpicIcon } from "@plane/ui";
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components

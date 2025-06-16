@@ -8,8 +8,8 @@ import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 import {
   EIssueServiceType,
   EIssuesStoreType,
-  EUserProjectRoles,
   EUserPermissionsLevel,
+  EUserProjectRoles,
   EWorkItemConversionType,
 } from "@plane/constants";
 import { TIssue } from "@plane/types";
@@ -22,12 +22,9 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
-// components
-import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // store hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

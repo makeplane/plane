@@ -3,7 +3,7 @@
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // silo types
 import { TStepper, TStepperNavigation } from "@/plane-web/types/importers";
 import ImporterHeader from "../header";

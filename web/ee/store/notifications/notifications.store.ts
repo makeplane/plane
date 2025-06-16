@@ -5,7 +5,7 @@ import { computedFn } from "mobx-utils";
 import { ENotificationLoader } from "@plane/constants";
 import { TNotification } from "@plane/types";
 // helpers
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch  } from "@plane/utils";
 // services
 import inboxService from "@/plane-web/services/inbox.service";
 // store

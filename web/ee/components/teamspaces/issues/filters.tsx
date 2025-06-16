@@ -10,7 +10,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
+import { isIssueFilterActive  } from "@plane/utils";
 // hooks
 import { useLabel, useMember, useIssues } from "@/hooks/store";
 // plane web imports

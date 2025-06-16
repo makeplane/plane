@@ -9,7 +9,7 @@ import { Tooltip } from "@plane/ui";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web constants
 import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services

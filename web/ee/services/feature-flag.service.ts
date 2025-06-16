@@ -1,7 +1,5 @@
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL, E_FEATURE_FLAGS } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 

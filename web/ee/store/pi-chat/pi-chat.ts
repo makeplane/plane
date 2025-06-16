@@ -3,7 +3,9 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
-import { PI_BASE_URL } from "@/helpers/common.helper";
+// plane imports
+import { PI_BASE_URL  } from "@plane/constants";
+// plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";
 import { RootStore } from "@/plane-web/store/root.store";

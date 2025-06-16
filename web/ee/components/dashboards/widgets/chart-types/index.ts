@@ -9,9 +9,8 @@ import {
   WIDGET_X_AXIS_DATE_PROPERTIES,
 } from "@plane/constants";
 import { TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
-import { capitalizeFirstLetter, cn, hexToHsl, hslToHex } from "@plane/utils";
 // helpers
-import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
+import { capitalizeFirstLetter, cn, hexToHsl, hslToHex, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 // plane web store
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 

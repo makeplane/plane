@@ -9,11 +9,11 @@ import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";

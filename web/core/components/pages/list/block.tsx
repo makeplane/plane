@@ -7,12 +7,11 @@ import { ChevronRight, FileText, Loader } from "lucide-react";
 import { TPageNavigationTabs } from "@plane/types";
 // plane imports
 import { Logo, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { ListItem } from "@/components/core/list";
+import { cn, getPageName } from "@plane/utils";
 // components
+import { ListItem } from "@/components/core/list";
 import { BlockItemAction } from "@/components/pages/list";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";

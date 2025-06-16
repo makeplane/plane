@@ -11,10 +11,9 @@ import {
 } from "@plane/constants";
 import { IEmailCheckData } from "@plane/types";
 import { Button, Input, Spinner } from "@plane/ui";
+import { checkEmailValidity, cn } from "@plane/utils";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
-import { cn } from "@/helpers/common.helper";
-import { checkEmailValidity } from "@/helpers/string.helper";
 // plane web services
 import mobileAuthService from "@/plane-web/services/mobile.service";
 

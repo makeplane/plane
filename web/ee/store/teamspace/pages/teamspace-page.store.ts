@@ -4,7 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { TLoader, TPageFilters, TPage } from "@plane/types";
 // plane web services
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage  } from "@plane/utils";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";

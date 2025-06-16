@@ -1,9 +1,8 @@
-// plane internal
+// plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
 import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
 import { SitesFileService } from "@plane/services";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // services
 const sitesFileService = new SitesFileService();
 

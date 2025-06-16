@@ -11,7 +11,7 @@ import { TIssue } from "@plane/types";
 // ce imports
 import { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports

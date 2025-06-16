@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // constants
 import { E_FEATURE_FLAGS } from "@plane/constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // components
 import { UpgradeEmptyStateButton } from "@/plane-web/components/workspace";
 

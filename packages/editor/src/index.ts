@@ -28,6 +28,7 @@ export * from "@/constants/common";
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
 export * from "@/helpers/yjs-utils";
+export * from "@/helpers/parser";
 export * from "@/extensions/table/table";
 
 // components

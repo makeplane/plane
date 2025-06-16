@@ -6,11 +6,10 @@ import { observer } from "mobx-react";
 import { EIssueServiceType } from "@plane/constants";
 import { CircularProgressIndicator, EpicIcon } from "@plane/ui";
 // components
+import { cn, generateWorkItemLink, getProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { cn, getProgress } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

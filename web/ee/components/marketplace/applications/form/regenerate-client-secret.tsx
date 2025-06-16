@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard  } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { RegenerateConfirmModal } from "@/plane-web/components/marketplace";

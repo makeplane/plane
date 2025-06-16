@@ -6,9 +6,7 @@ import { Network } from "lucide-react";
 // plane imports
 import { ACTIVITY_HIGHLIGHT_TIMEOUT } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { cn, renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
 import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

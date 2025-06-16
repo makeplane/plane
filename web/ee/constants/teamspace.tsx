@@ -11,7 +11,7 @@ import {
 import { TCreateUpdateTeamspaceModal, TCreateUpdateTeamspaceViewModal, TTeamspaceActivity } from "@plane/types";
 import { TeamsIcon } from "@plane/ui";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName  } from "@plane/utils";
 // store
 import { store } from "@/lib/store-context";
 // plane web types

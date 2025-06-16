@@ -15,7 +15,7 @@ import {
   IssuePaginationOptions,
 } from "@plane/types";
 // helpers
-import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { handleIssueQueryParamsByLayout  } from "@plane/utils";
 // services
 import { IssueFiltersService } from "@/services/issue_filter.service";
 // store

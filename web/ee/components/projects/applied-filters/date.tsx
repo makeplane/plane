@@ -3,8 +3,7 @@ import { X } from "lucide-react";
 // plane constants
 import { PROJECT_CREATED_AT_FILTER_OPTIONS } from "@plane/constants";
 //helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
+import { capitalizeFirstLetter, renderFormattedDate } from "@plane/utils";
 // constants
 
 type Props = {

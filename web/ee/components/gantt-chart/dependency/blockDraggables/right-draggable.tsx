@@ -2,10 +2,10 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-// Plane
+// plane imports
+import { IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { IGanttBlock } from "@/components/gantt-chart";
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";

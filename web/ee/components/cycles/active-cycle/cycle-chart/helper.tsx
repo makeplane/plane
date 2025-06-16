@@ -1,6 +1,5 @@
 import { startOfToday } from "date-fns";
-import { TCycleProgress } from "@plane/types";
-import { TProgressChartData } from "@/helpers/cycle.helper";
+import { TCycleProgress, TProgressChartData } from "@plane/types";
 
 type TIntersection = { x: number; y: number; line1isHigher: boolean; line1isHigherNext: boolean };
 

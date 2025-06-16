@@ -10,7 +10,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web imports
 import { RichTextEditor } from "@/components/editor";
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
+import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 

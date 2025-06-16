@@ -7,7 +7,7 @@ import { Avatar } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 

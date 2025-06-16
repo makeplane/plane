@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { TTeamspace } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { getRandomEmoji } from "@/helpers/emoji.helper";
+import { getRandomEmoji  } from "@plane/utils";
 // plane web components
 import { CreateOrUpdateTeamForm } from "@/plane-web/components/teamspaces/create-update";
 // plane web

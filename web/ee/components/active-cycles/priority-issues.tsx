@@ -8,14 +8,13 @@ import { EIssuesStoreType } from "@plane/constants";
 // types
 import { IActiveCycle } from "@plane/types";
 // ui
-import { Tooltip, Loader, PriorityIcon } from "@plane/ui";
+import { Loader, PriorityIcon, Tooltip } from "@plane/ui";
 // components
+import { generateWorkItemLink, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 import { StateDropdown } from "@/components/dropdowns";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 // helpers
-import { renderFormattedDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssues, useProject, useProjectState } from "@/hooks/store";
 // plane web components

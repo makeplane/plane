@@ -11,7 +11,7 @@ import { TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plan
 // plane ui
 import { Button, Collapsible } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { CustomerPropertiesEmptyState } from "@/plane-web/components/customers/settings/properties";
 import { IssuePropertyList, TCustomPropertyOperations } from "@/plane-web/components/issue-types";

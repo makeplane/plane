@@ -15,7 +15,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-import { checkDateCriteria, convertToISODateString, parseDateFilter } from "@/helpers/date-time.helper";
+import { checkDateCriteria, convertToISODateString, parseDateFilter } from "@plane/utils";
 import { store } from "@/lib/store-context";
 import { EIssueGroupedAction, ISSUE_GROUP_BY_KEY } from "./base-issues.store";
 

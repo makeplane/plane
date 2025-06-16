@@ -1,7 +1,7 @@
 "use client";
 import React, { FC } from "react";
-// helpers
-import { cn } from "@/helpers/common.helper";
+// plane imports
+import { cn } from "@plane/utils";
 // plane web components
 import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 // local components

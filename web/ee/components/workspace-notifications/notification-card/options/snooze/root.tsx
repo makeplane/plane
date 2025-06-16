@@ -11,7 +11,7 @@ import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { NotificationSnoozeModal } from "@/components/workspace-notifications";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

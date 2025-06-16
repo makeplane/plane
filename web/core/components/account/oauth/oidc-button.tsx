@@ -2,8 +2,8 @@ import { FC } from "react";
 import { useTheme } from "next-themes";
 // icons
 import { Key } from "lucide-react";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
 
 export type OIDCOAuthButtonProps = {
   text: string;

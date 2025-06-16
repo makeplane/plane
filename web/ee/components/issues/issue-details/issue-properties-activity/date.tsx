@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { renderFormattedDate  } from "@plane/utils";
 // plane web components
 import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
 // plane web hooks

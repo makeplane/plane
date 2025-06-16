@@ -13,7 +13,7 @@ import { ComboDropDown, EpicIcon } from "@plane/ui";
 import { DropdownButton } from "@/components/dropdowns/buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
 import { TDropdownProps } from "@/components/dropdowns/types";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web types

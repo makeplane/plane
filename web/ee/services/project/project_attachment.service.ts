@@ -1,8 +1,8 @@
 import { AxiosRequestConfig } from "axios";
 // plane types
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@/helpers/file.helper";
+import { API_BASE_URL  } from "@plane/constants";
+import { generateFileUploadPayload, getFileMetaDataForUpload  } from "@plane/utils";
 // services
 import { TProjectAttachment, TProjectAttachmentUploadResponse } from "@/plane-web/types";
 import { APIService } from "@/services/api.service";

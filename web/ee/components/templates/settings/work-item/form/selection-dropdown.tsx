@@ -6,7 +6,6 @@ import { ChevronRight } from "lucide-react";
 import { ETemplateLevel } from "@plane/constants";
 import { PartialDeep, TWorkItemTemplateForm } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
 import { ProjectDropdown } from "@/components/dropdowns";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

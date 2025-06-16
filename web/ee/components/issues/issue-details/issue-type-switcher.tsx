@@ -9,7 +9,7 @@ import { IssueTypeSwitcher as BaseIssueTypeSwitcher, TIssueTypeSwitcherProps } f
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // store hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components

@@ -7,15 +7,12 @@ import { FileText, ListFilter } from "lucide-react";
 // plane imports
 import { EPageAccess } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
-// ui
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
-// helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks

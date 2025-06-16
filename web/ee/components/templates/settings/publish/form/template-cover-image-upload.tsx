@@ -7,10 +7,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { cn } from "@plane/utils";
-// helpers
-import { getAssetIdFromUrl, getFileURL } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+import { checkURLValidity, cn, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks
 import { useWorkspace } from "@/hooks/store";
 // plane web imports

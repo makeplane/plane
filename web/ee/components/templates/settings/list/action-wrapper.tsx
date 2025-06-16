@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssuesStoreType, ETemplateLevel, ETemplateType } from "@plane/constants";
+import { getEditorContentWithReplacedImageAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { FileService } from "@plane/services";
 import { TPage } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -10,12 +12,12 @@ import { extractPageFormData } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 import { CreateProjectModal } from "@/components/project";
-// helpers
-import { getEditorContentWithReplacedImageAssets } from "@/helpers/editor.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { EPageStoreType, usePageStore, usePageTemplates } from "@/plane-web/hooks/store";
+
+const fileService = new FileService();
 
 type TChildProps = {
   selectedTemplateId: string | null;
@@ -103,13 +105,15 @@ export const TemplateListActionWrapper = observer((props: TTemplateListActionWra
         return;
       }
 
+      // duplicate the assets
+      const duplicateAssetService = fileService.duplicateAssets.bind(fileService, workspaceSlug);
       const documentPayload = await getEditorContentWithReplacedImageAssets({
         descriptionHTML: pageData.description_html ?? "",
         entityId: page.id,
         entityType: EFileAssetType.PAGE_DESCRIPTION,
         projectId: level === ETemplateLevel.PROJECT ? props.projectId : undefined,
         variant: "document",
-        workspaceSlug,
+        duplicateAssetService,
       });
       await page.updateDescription(documentPayload);
 

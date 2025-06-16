@@ -16,8 +16,9 @@ import {
   Tooltip,
   LabelList,
 } from "recharts";
-import { ICycle } from "@plane/types";
-import { TProgressChartData } from "@/helpers/cycle.helper";
+// plane imports
+import { ICycle, TProgressChartData } from "@plane/types";
+// helpers
 import { ESTIMATE_TYPE } from "@/plane-web/constants/cycle";
 import { chartHelper, getColors } from "./helper";
 import { renderScopeLabel } from "./labels";

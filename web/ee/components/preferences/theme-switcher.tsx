@@ -12,7 +12,7 @@ import { setPromiseToast } from "@plane/ui";
 import { CustomThemeSelector, ThemeSwitch } from "@/components/core";
 // helpers
 import { PreferencesSection } from "@/components/preferences/section";
-import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables  } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store";
 

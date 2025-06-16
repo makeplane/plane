@@ -5,14 +5,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
-// types
+// plane imports
 import { TIssue } from "@plane/types";
-// ui
 import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

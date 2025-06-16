@@ -4,15 +4,13 @@ import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// plane ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore, TeamsIcon } from "@plane/ui";
-import { truncateText } from "@plane/utils";
+import { cn, truncateText } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { convertMinutesToHoursAndMinutes } from "@/helpers/date-time.helper";
+import { convertMinutesToHoursAndMinutes  } from "@plane/utils";
 // plane web components
 import { WorklogFormRoot } from "@/plane-web/components/issues/worklog";
 // plane web hooks

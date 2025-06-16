@@ -10,7 +10,7 @@ import { Crown } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets

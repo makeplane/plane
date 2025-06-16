@@ -9,7 +9,7 @@ import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { ListItem } from "@/components/core/list";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
+import { getPageName  } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

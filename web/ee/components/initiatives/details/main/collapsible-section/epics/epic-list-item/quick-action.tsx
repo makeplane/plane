@@ -6,9 +6,7 @@ import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
-import { cn, copyUrlToClipboard } from "@plane/utils";
-// helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // Plane-web

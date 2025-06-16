@@ -10,7 +10,7 @@ import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/ui";
 import { SettingsHeading } from "@/components/settings";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.png";
 import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.png";

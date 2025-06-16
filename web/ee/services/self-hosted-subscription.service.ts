@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
-// helpers
 import { AxiosError } from "axios";
-import { API_BASE_URL } from "@/helpers/common.helper";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
 // plane web types
 import { TSelfHostedSubscription } from "@/plane-web/types/self-hosted-subscription";
 // services

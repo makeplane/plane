@@ -1,7 +1,6 @@
 // types
-import type { IInstanceInfo, IInstanceUpdate, TPage } from "@plane/types";
-// helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { API_BASE_URL } from "@plane/constants";
+import type { IInstanceInfo, IInstanceUpdate } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 
@@ -25,7 +24,6 @@ export class InstanceService extends APIService {
         throw error;
       });
   }
-
 
   async checkForUpdates(): Promise<IInstanceUpdate> {
     return this.get("/api/instances/check-updates/")

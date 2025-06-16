@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type TSyncJobStatusProps = {
   status: TJobStatus;

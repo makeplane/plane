@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // helpers
 import { SpreadsheetStoreType } from "@/components/issues/issue-layouts/spreadsheet/base-spreadsheet-root";
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

@@ -6,12 +6,12 @@ import { FileText } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, CustomSearchSelect, Header, Loader, TeamsIcon } from "@plane/ui";
+import { getPageName  } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
-import { getPageName } from "@/helpers/page.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components

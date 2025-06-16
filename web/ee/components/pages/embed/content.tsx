@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
@@ -6,12 +6,8 @@ import { EPageAccess } from "@plane/constants";
 import { TPageEmbedConfig } from "@plane/editor";
 import { TPage } from "@plane/types";
 import { AlertModalCore, EmptyPageIcon, RestrictedPageIcon } from "@plane/ui";
-// utils
-import { cn } from "@plane/utils";
-// components
+import { cn, getPageName } from "@plane/utils";
 import { Logo } from "@/components/common";
-// helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

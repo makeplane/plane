@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIconPicker } from "@plane/ui";
-import { convertHexEmojiToDecimal } from "@plane/utils";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
+// plane utils
+import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web imports

@@ -4,7 +4,7 @@ import {
   EEstimateUpdateStages,
   estimateCount,
   ESTIMATE_SYSTEMS,
-} from "ce/constants/estimates";
+} from "@plane/constants/src/estimates";
 
 estimateCount.max = 12;
 

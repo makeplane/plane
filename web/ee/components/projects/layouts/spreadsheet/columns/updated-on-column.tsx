@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 // helpers
 import { DateRangeDropdown } from "@/components/dropdowns";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { getDate, renderFormattedPayloadDate  } from "@plane/utils";
 import { TProject } from "@/plane-web/types/projects";
 
 type Props = {

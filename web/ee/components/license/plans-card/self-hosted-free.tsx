@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web components
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 // plane web hooks

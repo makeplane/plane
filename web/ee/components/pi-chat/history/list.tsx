@@ -2,11 +2,9 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// ui
+// plane imports
 import { ControlLink } from "@plane/ui";
-// helpers
-import { cn } from "@plane/utils";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web

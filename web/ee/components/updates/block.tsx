@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { MessageCircle, Rocket } from "lucide-react";
-import { EUserPermissionsLevel, EUserWorkspaceRoles, EUserProjectRoles } from "@plane/constants";
+import { MessageCircle } from "lucide-react";
+import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TUpdate, TUpdateOperations } from "@plane/types";
 import { EUpdateEntityType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { cn } from "@plane/utils";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
+import { cn, renderFormattedDate } from "@plane/utils";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { CommentList } from "./comments/comment-list";

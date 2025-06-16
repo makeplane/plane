@@ -8,7 +8,7 @@ import { IWorkspace } from "@plane/types";
 // ui
 import { Button, Collapsible, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn  } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { DeleteWorkspaceModal } from "./delete-workspace-modal";

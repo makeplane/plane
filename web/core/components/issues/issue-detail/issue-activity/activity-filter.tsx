@@ -5,7 +5,7 @@ import { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, PopoverMenu } from "@plane/ui";
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // constants
 
 type TActivityFilter = {
