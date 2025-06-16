@@ -170,7 +170,7 @@ func GetSyncFeatureFlagHandler(api prime_api.IPrimeMonitorApi, key string) func(
 					return err
 				}
 
-				if updateLicense.ProductType != "FREE" {
+				if updateLicense.ProductType != "FREE" && !api.IsAirgapped() {
 					if err := router_helpers.RefreshFeatureFlags(context.Background(), api, *updateLicense, tx); err != nil {
 						return err
 					}
