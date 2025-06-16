@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Input } from "@plane/ui";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

@@ -9,9 +9,9 @@ import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip, setToast, TOAST_TYPE } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { NotificationSnoozeModal } from "@/components/workspace-notifications";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

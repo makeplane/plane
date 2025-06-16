@@ -13,7 +13,7 @@ import {
   TIssueParams,
   IssuePaginationOptions,
 } from "@plane/types";
-import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { ViewService } from "@/plane-web/services";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";

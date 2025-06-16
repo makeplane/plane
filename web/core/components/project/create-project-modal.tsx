@@ -1,9 +1,8 @@
 import { useEffect, FC, useState } from "react";
-// plane ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
+// plane ui
 // helpers
-import { getAssetIdFromUrl } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
 // plane web components

@@ -1,10 +1,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
+import { getUserRole } from "@plane/utils";
+// components
 import { Logo } from "@/components/common";
-
-import { getUserRole } from "@/helpers/user.helper";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
+// local imports
 import { SettingsSidebar } from "../..";
 import { NavItemChildren } from "./nav-item-children";
 

@@ -1,7 +1,6 @@
 // helpers
-import { STICKIES_PER_PAGE } from "@plane/constants";
+import { STICKIES_PER_PAGE, API_BASE_URL } from "@plane/constants";
 import { TSticky } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 
