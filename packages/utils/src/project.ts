@@ -1,10 +1,9 @@
 import sortBy from "lodash/sortBy";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
 import { TProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
 // local imports
-import { getDate  } from "./datetime";
-import { satisfiesDateFilter  } from "./filter";
+import { getDate } from "./datetime";
+import { satisfiesDateFilter } from "./filter";
 
 /**
  * Updates the sort order of the project.
@@ -45,14 +44,6 @@ export const orderJoinedProjects = (
 
 export const projectIdentifierSanitizer = (identifier: string): string =>
   identifier.replace(/[^ÇŞĞIİÖÜA-Za-z0-9]/g, "");
-
-/**
- * @description Checks if the project should be rendered or not based on the user role
- * @param {TProject} project
- * @returns {boolean}
- */
-export const shouldRenderProject = (project: TProject): boolean =>
-  !!project.member_role && project.member_role >= EUserPermissions.MEMBER;
 
 /**
  * @description filters projects based on the filter

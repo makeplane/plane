@@ -2,7 +2,7 @@
 import { observer } from "mobx-react-lite";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { IInsightField, insightsFields } from "@plane/constants";
+import { IInsightField, ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -80,13 +80,13 @@ const TotalInsights: React.FC<{
       className={cn(
         "grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-10",
         !peekView
-          ? insightsFields[analyticsType]?.length % 5 === 0
+          ? ANALYTICS_INSIGHTS_FIELDS[analyticsType]?.length % 5 === 0
             ? "gap-10 lg:grid-cols-5"
             : "gap-8 lg:grid-cols-4"
           : "grid-cols-2"
       )}
     >
-      {insightsFields[analyticsType]?.map((item) => (
+      {ANALYTICS_INSIGHTS_FIELDS[analyticsType]?.map((item) => (
         <InsightCard
           key={`${analyticsType}-${item.key}`}
           isLoading={isLoading}

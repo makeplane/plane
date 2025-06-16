@@ -47,6 +47,7 @@ export type THandleParentWorkItemDetailsProps = {
 };
 
 export type TIssueModalContext = {
+  allowedProjectIds: string[];
   workItemTemplateId: string | null;
   setWorkItemTemplateId: React.Dispatch<React.SetStateAction<string | null>>;
   isApplyingTemplate: boolean;

@@ -317,10 +317,22 @@ export const getGroupedWorkItemIds = (
     };
   }
 
+  // Get the default key for the group by key
+  const getDefaultGroupKey = (groupByKey: TIssueGroupByOptions) => {
+    switch (groupByKey) {
+      case "state_detail.group":
+        return "state__group";
+      case null:
+        return null;
+      default:
+        return ISSUE_GROUP_BY_KEY[groupByKey];
+    }
+  };
+
   // Group work items
-  const groupKey = ISSUE_GROUP_BY_KEY[groupByKey];
+  const groupKey = getDefaultGroupKey(groupByKey);
   const groupedWorkItems = groupBy(workItems, (item) => {
-    const value = item[groupKey];
+    const value = groupKey ? item[groupKey] : null;
     if (Array.isArray(value)) {
       if (value.length === 0) return "None";
       // Sort & join to build deterministic set-like key

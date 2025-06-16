@@ -874,13 +874,15 @@
     "guests": "Гості",
     "on_track": "У межах графіку",
     "off_track": "Поза графіком",
+    "at_risk": "Під загрозою",
     "timeline": "Хронологія",
     "completion": "Завершення",
     "upcoming": "Майбутнє",
     "completed": "Завершено",
     "in_progress": "В процесі",
     "planned": "Заплановано",
-    "paused": "Призупинено"
+    "paused": "Призупинено",
+    "no_of": "Кількість {entity}"
   },
   "chart": {
     "x_axis": "Вісь X",

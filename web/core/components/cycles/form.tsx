@@ -9,11 +9,12 @@ import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, shouldRenderProject, getTabIndex } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
-// constants
-// helpers
+// hooks
+import { useUser } from "@/hooks/store/user/user-user";
+
 type Props = {
   handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
   handleClose: () => void;
@@ -33,7 +34,10 @@ const defaultValues: Partial<ICycle> = {
 
 export const CycleForm: React.FC<Props> = (props) => {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
+  // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { projectsWithCreatePermissions } = useUser();
   // form data
   const {
     formState: { errors, isSubmitting, dirtyFields },
@@ -72,12 +76,14 @@ export const CycleForm: React.FC<Props> = (props) => {
                   <ProjectDropdown
                     value={value}
                     onChange={(val) => {
-                      onChange(val);
-                      setActiveProject(val);
+                      if (!Array.isArray(val)) {
+                        onChange(val);
+                        setActiveProject(val);
+                      }
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(project) => shouldRenderProject(project)}
+                    renderCondition={(project) => !!projectsWithCreatePermissions?.[project.id]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>

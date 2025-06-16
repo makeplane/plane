@@ -7,12 +7,11 @@ import { Control, Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 // types
 import { TIssue } from "@plane/types";
-import { shouldRenderProject, getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@plane/utils";
 // components
 import { ProjectDropdown } from "@/components/dropdowns";
-// helpers
-// store hooks
-import { useUser } from "@/hooks/store";
+// hooks
+import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueProjectSelectProps = {
@@ -24,8 +23,9 @@ type TIssueProjectSelectProps = {
 export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
   const { isMobile } = usePlatformOS();
+  // context hooks
+  const { allowedProjectIds } = useIssueModal();
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -36,26 +36,22 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
       rules={{
         required: true,
       }}
-      render={({ field: { value, onChange } }) =>
-        projectsWithCreatePermissions && projectsWithCreatePermissions[value!] ? (
-          <div className="h-7">
-            <ProjectDropdown
-              value={value}
-              onChange={(projectId) => {
-                onChange(projectId);
-                handleFormChange();
-              }}
-              multiple={false}
-              buttonVariant="border-with-text"
-              renderCondition={(project) => shouldRenderProject(project)}
-              tabIndex={getIndex("project_id")}
-              disabled={disabled}
-            />
-          </div>
-        ) : (
-          <></>
-        )
-      }
+      render={({ field: { value, onChange } }) => (
+        <div className="h-7">
+          <ProjectDropdown
+            value={value}
+            onChange={(projectId) => {
+              onChange(projectId);
+              handleFormChange();
+            }}
+            multiple={false}
+            buttonVariant="border-with-text"
+            renderCondition={(project) => allowedProjectIds.includes(project.id)}
+            tabIndex={getIndex("project_id")}
+            disabled={disabled}
+          />
+        </div>
+      )}
     />
   );
 });

@@ -871,13 +871,15 @@
     "guests": "Ospiti",
     "on_track": "In linea",
     "off_track": "Fuori rotta",
+    "at_risk": "A rischio",
     "timeline": "Cronologia",
     "completion": "Completamento",
     "upcoming": "In arrivo",
     "completed": "Completato",
     "in_progress": "In corso",
     "planned": "Pianificato",
-    "paused": "In pausa"
+    "paused": "In pausa",
+    "no_of": "N. di {entity}"
   },
   "chart": {
     "x_axis": "Asse X",
