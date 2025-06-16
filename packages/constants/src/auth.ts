@@ -11,7 +11,8 @@ export const SPACE_PASSWORD_CRITERIA = [
   {
     key: "min_8_char",
     label: "Min 8 characters",
-    isCriteriaValid: (password: string) => password.length >= PASSWORD_MIN_LENGTH,
+    isCriteriaValid: (password: string) =>
+      password.length >= PASSWORD_MIN_LENGTH,
   },
   // {
   //   key: "min_1_upper_case",
@@ -66,6 +67,12 @@ export enum EErrorAlertType {
   INLINE_EMAIL_CODE = "INLINE_EMAIL_CODE",
 }
 
+export type TAuthErrorInfo = {
+  type: EErrorAlertType;
+  code: EAuthErrorCodes;
+  title: string;
+  message: any;
+};
 
 export enum EAdminAuthErrorCodes {
   // Admin
@@ -80,6 +87,12 @@ export enum EAdminAuthErrorCodes {
   ADMIN_USER_DEACTIVATED = "5190",
 }
 
+export type TAdminAuthErrorInfo = {
+  type: EErrorAlertType;
+  code: EAdminAuthErrorCodes;
+  title: string;
+  message: any;
+};
 
 export enum EAuthErrorCodes {
   // Global
