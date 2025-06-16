@@ -63,7 +63,7 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
             icon={renderIcon(currentProjectDetails)}
             handleOnClick={() => {
               if (handleOnClick) handleOnClick();
-              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues`);
+              else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
             }}
           />
         }

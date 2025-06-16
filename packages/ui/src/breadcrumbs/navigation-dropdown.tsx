@@ -29,7 +29,7 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
   if (!selectedItem) return null;
 
   const NavigationButton = () => (
-    <Tooltip tooltipContent={selectedItem.title} position="bottom">
+    <Tooltip tooltipContent={selectedItem.title} position="bottom" disabled={isOpen}>
       <button
         onClick={(e) => {
           if (!isLast) {
