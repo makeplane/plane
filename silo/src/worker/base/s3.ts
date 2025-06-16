@@ -12,17 +12,20 @@ import { logger } from '@/logger';
 export let s3Client: S3Client | undefined = undefined;
 
 export const initializeS3Client = async () => {
-  const isSupported = env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.AWS_S3_ENDPOINT_URL && env.AWS_REGION;
+  const isSupported = env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY && env.AWS_REGION;
 
   if (!isSupported) {
-    logger.error("AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_ENDPOINT_URL must be set");
+    logger.error("AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION must be set");
     return;
   }
 
   if (!s3Client) {
+    // Construct endpoint URL if not provided
+    const endpointUrl = env.AWS_S3_ENDPOINT_URL || `https://s3.${env.AWS_REGION}.amazonaws.com`;
+
     s3Client = new S3Client({
       region: env.AWS_REGION,
-      endpoint: env.AWS_S3_ENDPOINT_URL,
+      endpoint: endpointUrl,
       forcePathStyle: true,
       credentials: {
         accessKeyId: env.AWS_ACCESS_KEY_ID as string,
