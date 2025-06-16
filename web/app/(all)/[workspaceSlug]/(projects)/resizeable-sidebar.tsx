@@ -2,7 +2,8 @@
 
 import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useState, useRef } from "react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
+
 
 interface ResizableSidebarProps {
   showPeek?: boolean;
