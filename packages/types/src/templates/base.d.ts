@@ -34,6 +34,8 @@ export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unkn
   contact_email: string | undefined;
   privacy_policy_url: string | undefined;
   terms_of_service_url: string | undefined;
+  cover_image_asset: string | undefined;
+  cover_image_url: string | undefined;
   attachments: string[];
   attachments_urls: string[];
   website: string | undefined;
@@ -60,6 +62,8 @@ export type TPublishTemplateForm<T extends ETemplateType, D extends Record<strin
   | "keywords"
   | "privacy_policy_url"
   | "terms_of_service_url"
+  | "cover_image_asset"
+  | "cover_image_url"
   | "attachments"
   | "attachments_urls"
   | "website"

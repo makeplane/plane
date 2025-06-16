@@ -2144,6 +2144,21 @@
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
             }
           },
+          "cover_image": {
+            "label": "Adăugați o imagine de copertă care va fi afișată în marketplace",
+            "upload_title": "Încarcă imagine de copertă",
+            "upload_placeholder": "Faceți clic pentru a încărca sau trageți și plasați pentru a încărca o imagine de copertă",
+            "drop_here": "Plasați aici",
+            "click_to_upload": "Faceți clic pentru a încărca",
+            "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune. Vă rugăm să încercați din nou.",
+            "upload_and_save": "Încarcă și salvează",
+            "uploading": "Se încarcă",
+            "remove": "Elimină",
+            "removing": "Se elimină",
+            "validation": {
+              "required": "Imaginea de copertă este obligatorie"
+            }
+          },
           "attach_screenshots": {
             "label": "Include documente și capturi de ecran care credeți că vor face vizualizatorii acestui șablon mai interesanți.",
             "validation": {

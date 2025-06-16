@@ -2130,6 +2130,21 @@
               "maxLength": "URL không nên vượt quá 800 ký tự"
             }
           },
+          "cover_image": {
+            "label": "Thêm ảnh bìa sẽ được hiển thị trong marketplace",
+            "upload_title": "Tải lên ảnh bìa",
+            "upload_placeholder": "Nhấp để tải lên hoặc kéo và thả để tải lên ảnh bìa",
+            "drop_here": "Thả vào đây",
+            "click_to_upload": "Nhấp để tải lên",
+            "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước. Vui lòng thử lại.",
+            "upload_and_save": "Tải lên và lưu",
+            "uploading": "Đang tải lên",
+            "remove": "Xóa",
+            "removing": "Đang xóa",
+            "validation": {
+              "required": "Ảnh bìa là bắt buộc"
+            }
+          },
           "attach_screenshots": {
             "label": "Bao gồm tài liệu và hình ảnh mà bạn nghĩ sẽ giúp người xem hiểu rõ hơn về mẫu này.",
             "validation": {

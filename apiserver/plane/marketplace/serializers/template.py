@@ -11,10 +11,10 @@ class TemplateCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "description", "logo_props", "is_active"]
 
 
-
 class PublishedTemplateSerializer(DynamicBaseSerializer):
     attachments = serializers.SerializerMethodField()
     categories = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Template
@@ -30,6 +30,7 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             "keywords",
             "website",
             "company_name",
+            "cover_image_url",
         ]
 
     def get_attachments(self, obj):
@@ -40,6 +41,11 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             {"id": category.id, "name": category.name}
             for category in obj.categories.all()
         ]
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None
 
 
 class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
@@ -58,7 +64,7 @@ class PublishedTemplateDetailSerializer(PublishedTemplateSerializer):
 
 
 class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
-    first_attachment = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Template
@@ -68,9 +74,10 @@ class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
             "company_name",
             "short_description",
             "keywords",
-            "first_attachment",
+            "cover_image_url",
         ]
 
-    def get_first_attachment(self, obj):
-        first_attachment = obj.attachments.first()
-        return first_attachment.asset_url if first_attachment else ""
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None

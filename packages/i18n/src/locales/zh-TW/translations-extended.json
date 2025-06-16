@@ -2147,6 +2147,21 @@
               "maxLength": "URL應少於800個字符"
             }
           },
+          "cover_image": {
+            "label": "添加將在市場中顯示的封面圖片",
+            "upload_title": "上傳封面圖片",
+            "upload_placeholder": "點擊上傳或拖放上傳封面圖片",
+            "drop_here": "拖放到這裡",
+            "click_to_upload": "點擊上傳",
+            "invalid_file_or_exceeds_size_limit": "無效的文件或超出大小限制。請重試。",
+            "upload_and_save": "上傳並保存",
+            "uploading": "上傳中",
+            "remove": "刪除",
+            "removing": "刪除中",
+            "validation": {
+              "required": "封面圖片為必填項"
+            }
+          },
           "attach_screenshots": {
             "label": "包含您認為會讓此模板的查看者感興趣的文檔和圖片。",
             "validation": {

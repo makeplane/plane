@@ -2146,6 +2146,21 @@
               "maxLength": "L'URL doit comporter moins de 800 caractères"
             }
           },
+          "cover_image": {
+            "label": "Ajoutez une image de couverture qui sera affichée dans le Marketplace",
+            "upload_title": "Télécharger l'image de couverture",
+            "upload_placeholder": "Cliquez pour télécharger ou faites glisser et déposez pour télécharger une image de couverture",
+            "drop_here": "Déposer ici",
+            "click_to_upload": "Cliquer pour télécharger",
+            "invalid_file_or_exceeds_size_limit": "Fichier invalide ou dépasse la taille limite. Veuillez réessayer.",
+            "upload_and_save": "Télécharger et enregistrer",
+            "uploading": "Téléchargement",
+            "remove": "Supprimer",
+            "removing": "Suppression",
+            "validation": {
+              "required": "L'image de couverture est requise"
+            }
+          },
           "attach_screenshots": {
             "label": "Incluez des documents et des images que vous pensez rendront les utilisateurs de ce modèle plus intéressés.",
             "validation": {

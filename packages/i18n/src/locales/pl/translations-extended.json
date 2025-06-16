@@ -2147,6 +2147,21 @@
               "maxLength": "Adres URL powinien mieć mniej niż 800 znaków"
             }
           },
+          "cover_image": {
+            "label": "Dodaj obraz okładki, który będzie wyświetlany w sklepie",
+            "upload_title": "Prześlij obraz okładki",
+            "upload_placeholder": "Kliknij, aby przesłać lub przeciągnij i upuść, aby przesłać obraz okładki",
+            "drop_here": "Upuść tutaj",
+            "click_to_upload": "Kliknij, aby przesłać",
+            "invalid_file_or_exceeds_size_limit": "Nieprawidłowy plik lub przekroczono limit rozmiaru. Spróbuj ponownie.",
+            "upload_and_save": "Prześlij i zapisz",
+            "uploading": "Przesyłanie",
+            "remove": "Usuń",
+            "removing": "Usuwanie",
+            "validation": {
+              "required": "Obraz okładki jest wymagany"
+            }
+          },
           "attach_screenshots": {
             "label": "Dołącz dokumenty i obrazy, które uważasz, że sprawią, że widzowie tego szablonu będą lepiej zrozumieli jego potencjał.",
             "validation": {

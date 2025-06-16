@@ -16,6 +16,7 @@ import {
 } from "@/plane-web/components/templates/settings/common";
 // local imports
 import { TemplateCategoriesDropdown } from "./template-categories-dropdown";
+import { TemplateCoverImageUpload } from "./template-cover-image-upload";
 
 const COMMON_DROPDOWN_CONTAINER_CLASSNAME =
   "bg-custom-background-100 border-[0.5px] border-custom-border-200 rounded-md px-2 py-1 h-8 w-full";
@@ -308,6 +309,28 @@ export const TemplateAdditionalDetails = observer(() => {
           <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.terms_of_service_url.message}</span>
         )}
       </div>
+      {/* Cover Image */}
+      <div className="space-y-1.5">
+        <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>{t("templates.settings.form.publish.cover_image.label")}</h3>
+        <Controller
+          name="cover_image_url"
+          control={control}
+          rules={{
+            required: t("templates.settings.form.publish.cover_image.validation.required"),
+          }}
+          render={({ field: { value, onChange } }) => (
+            <TemplateCoverImageUpload
+              initialValue={value ?? null}
+              onImageUpload={onChange}
+              hasError={Boolean(errors.cover_image_url)}
+            />
+          )}
+        />
+        {errors?.cover_image_url && typeof errors.cover_image_url.message === "string" && (
+          <span className={COMMON_ERROR_TEXT_CLASS_NAME}>{errors.cover_image_url.message}</span>
+        )}
+      </div>
+      {/* Attach Screenshots */}
       <div className="space-y-1.5">
         <h3 className={COMMON_LABEL_TEXT_CLASS_NAME}>
           {t("templates.settings.form.publish.attach_screenshots.label")}

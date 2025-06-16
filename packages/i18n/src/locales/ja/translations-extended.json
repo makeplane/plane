@@ -2146,6 +2146,21 @@
               "maxLength": "URLは800文字未満にしてください"
             }
           },
+          "cover_image": {
+            "label": "マーケットプレイスに表示されるカバー画像を追加",
+            "upload_title": "カバー画像をアップロード",
+            "upload_placeholder": "クリックしてアップロードするか、ドラッグ＆ドロップでカバー画像をアップロード",
+            "drop_here": "ここにドロップ",
+            "click_to_upload": "クリックしてアップロード",
+            "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズ制限を超えています。もう一度お試しください。",
+            "upload_and_save": "アップロードして保存",
+            "uploading": "アップロード中",
+            "remove": "削除",
+            "removing": "削除中",
+            "validation": {
+              "required": "カバー画像は必須です"
+            }
+          },
           "attach_screenshots": {
             "label": "ビューアーにこのテンプレートを理解させるためのドキュメントと画像を含めます。",
             "validation": {

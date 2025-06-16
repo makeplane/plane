@@ -2259,6 +2259,21 @@
               "maxLength": "URL should be less than 800 characters"
             }
           },
+          "cover_image": {
+            "label": "Add a cover image that will be displayed in the marketplace",
+            "upload_title": "Upload cover image",
+            "upload_placeholder": "Click to upload or drag and drop to upload a cover image",
+            "drop_here": "Drop here",
+            "click_to_upload": "Click to upload",
+            "invalid_file_or_exceeds_size_limit": "Invalid file or exceeds size limit. Please try again.",
+            "upload_and_save": "Upload and save",
+            "uploading": "Uploading",
+            "remove": "Remove",
+            "removing": "Removing",
+            "validation": {
+              "required": "Cover image is required"
+            }
+          },
           "attach_screenshots": {
             "label": "Include pictures you think will make viewers of this template.",
             "validation": {

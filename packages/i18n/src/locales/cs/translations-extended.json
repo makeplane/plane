@@ -2147,6 +2147,21 @@
               "maxLength": "URL by měla být kratší než 800 znaků"
             }
           },
+          "cover_image": {
+            "label": "Přidejte obrázek, který bude zobrazen na Marketplace",
+            "upload_title": "Nahrát obrázek",
+            "upload_placeholder": "Klikněte pro nahrání nebo přetáhněte a upustěte obrázek",
+            "drop_here": "Sem",
+            "click_to_upload": "Klikněte pro nahrání",
+            "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překročen limit velikosti. Zkuste to znovu.",
+            "upload_and_save": "Nahrát a uložit",
+            "uploading": "Nahrávání",
+            "remove": "Odstranit",
+            "removing": "Odstraňování",
+            "validation": {
+              "required": "Obrázek je povinný"
+            }
+          },
           "attach_screenshots": {
             "label": "Připojte dokumenty a obrázky, které si myslíte, že vypadnou při zobrazení této šablony.",
             "validation": {

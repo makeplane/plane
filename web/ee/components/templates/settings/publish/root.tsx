@@ -41,6 +41,8 @@ export const PublishTemplate = observer(<T extends TBaseTemplateWithData>(props:
         // Process URLs and attachments in a more structured way
         const processedData = {
           ...data,
+          // Process cover image asset
+          cover_image_asset: data.cover_image_url ? getAssetIdFromUrl(data.cover_image_url) : undefined,
           // Process attachments if they exist
           attachments: data.attachments_urls?.map((attachment) => getAssetIdFromUrl(attachment)) || [],
           // Ensure URLs have http protocol

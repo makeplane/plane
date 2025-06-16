@@ -2147,6 +2147,21 @@
               "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
             }
           },
+          "cover_image": {
+            "label": "Fügen Sie ein Cover-Bild hinzu, das im Marketplace angezeigt wird",
+            "upload_title": "Cover-Bild hochladen",
+            "upload_placeholder": "Klicken Sie, um ein Cover-Bild hochzuladen, oder ziehen Sie es hierher",
+            "drop_here": "Hier ablegen",
+            "click_to_upload": "Klicken Sie, um ein Cover-Bild hochzuladen",
+            "invalid_file_or_exceeds_size_limit": "Ungültige Datei oder Überschreitung der Größe. Bitte versuchen Sie es erneut.",
+            "upload_and_save": "Hochladen und speichern",
+            "uploading": "Hochladen",
+            "remove": "Entfernen",
+            "removing": "Entfernen",
+            "validation": {
+              "required": "Cover-Bild ist erforderlich"
+            }
+          },
           "attach_screenshots": {
             "label": "Dokumente und Bilder einfügen, die Sie denken, dass die Anzeigende dieser Vorlage hilfreich sein können.",
             "validation": {

@@ -92,6 +92,25 @@ export const PillInput = React.forwardRef<HTMLInputElement, PillInputProps>((pro
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text");
+
+    // Split the pasted text by commas, newlines, or spaces
+    const potentialPills = pastedText.split(/[,\n\s]+/).filter((text) => text.trim());
+
+    // Add each non-empty piece as a pill
+    const newPills = [...value];
+    potentialPills.forEach((pill) => {
+      const trimmedPill = pill.trim();
+      if (trimmedPill && !newPills.includes(trimmedPill)) {
+        newPills.push(trimmedPill);
+      }
+    });
+
+    onChange(newPills);
+  };
+
   const handleContainerClick = () => {
     inputRef.current?.focus();
   };
@@ -152,6 +171,7 @@ export const PillInput = React.forwardRef<HTMLInputElement, PillInputProps>((pro
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
+          onPaste={handlePaste}
           placeholder={value.length === 0 ? placeholder : ""}
           className="flex-1 border-none bg-transparent outline-none placeholder-custom-text-400 min-w-[120px]"
           autoComplete={autoComplete}

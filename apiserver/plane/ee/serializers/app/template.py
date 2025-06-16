@@ -137,6 +137,7 @@ class ProjectTemplateDataSerializer(BaseSerializer):
 class TemplateDataSerializer(BaseSerializer):
     template_data = serializers.SerializerMethodField()
     attachments_urls = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
     attachments = serializers.PrimaryKeyRelatedField(
         queryset=FileAsset.objects.all(), many=True, required=False
     )
@@ -173,6 +174,8 @@ class TemplateDataSerializer(BaseSerializer):
             "video_url",
             "company_name",
             "supported_languages",
+            "cover_image_asset",
+            "cover_image_url",
         ]
 
     def get_template_data(self, obj):
@@ -190,6 +193,11 @@ class TemplateDataSerializer(BaseSerializer):
 
     def get_attachments_urls(self, obj):
         return [attachment.asset_url for attachment in obj.attachments.all()]
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image_asset:
+            return obj.cover_image_asset.asset_url
+        return None
 
 
 class TemplateCategorySerializer(BaseSerializer):

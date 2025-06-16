@@ -2140,6 +2140,21 @@
               "maxLength": "URL powinien mieć mniej niż 800 znaków"
             }
           },
+          "cover_image": {
+            "label": "Adicione uma imagem de capa que será exibida no marketplace",
+            "upload_title": "Enviar imagem de capa",
+            "upload_placeholder": "Clique para enviar ou arraste e solte para enviar uma imagem de capa",
+            "drop_here": "Solte aqui",
+            "click_to_upload": "Clique para enviar",
+            "invalid_file_or_exceeds_size_limit": "Arquivo inválido ou excede o limite de tamanho. Por favor, tente novamente.",
+            "upload_and_save": "Enviar e salvar",
+            "uploading": "Enviando",
+            "remove": "Remover",
+            "removing": "Removendo",
+            "validation": {
+              "required": "A imagem de capa é obrigatória"
+            }
+          },
           "attach_screenshots": {
             "label": "Dołącz dokumenty i obrazy, które uważasz, że sprawią, że widzowie tego szablonu będą zainteresowani.",
             "validation": {

@@ -2155,6 +2155,21 @@
               "maxLength": "URL by nemala presiahnuť 800 znakov"
             }
           },
+          "cover_image": {
+            "label": "Pridajte obrázok na obálku, ktorý sa zobrazí na trhu",
+            "upload_title": "Nahrať obrázok na obálku",
+            "upload_placeholder": "Kliknite na nahranie alebo pretiahnite a pustite pre nahranie obrázka na obálku",
+            "drop_here": "Pustiť sem",
+            "click_to_upload": "Kliknite na nahranie",
+            "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo prekročený limit veľkosti. Prosím, skúste znova.",
+            "upload_and_save": "Nahrať a uložiť",
+            "uploading": "Nahrávanie",
+            "remove": "Odstrániť",
+            "removing": "Odstraňovanie",
+            "validation": {
+              "required": "Obrázok na obálku je povinný"
+            }
+          },
           "attach_screenshots": {
             "label": "Zahrňte dokumenty a obrázky, ktoré si myslíte, že urobia prezeračov tejto šablóny.",
             "validation": {

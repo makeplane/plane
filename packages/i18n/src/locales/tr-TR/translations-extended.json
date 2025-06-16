@@ -2206,6 +2206,21 @@
               "maxLength": "URL 800 karakterden az olmalıdır"
             }
           },
+          "cover_image": {
+            "label": "Pazaryerinde görüntülenecek bir kapak resmi ekleyin",
+            "upload_title": "Kapak resmi yükle",
+            "upload_placeholder": "Kapak resmi yüklemek için tıklayın veya sürükleyip bırakın",
+            "drop_here": "Buraya bırakın",
+            "click_to_upload": "Yüklemek için tıklayın",
+            "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor. Lütfen tekrar deneyin.",
+            "upload_and_save": "Yükle ve kaydet",
+            "uploading": "Yükleniyor",
+            "remove": "Kaldır",
+            "removing": "Kaldırılıyor",
+            "validation": {
+              "required": "Kapak resmi gereklidir"
+            }
+          },
           "attach_screenshots": {
             "label": "Bu şablonun görüntüleyicilerini etkileyeceğini düşündüğünüz belgeleri ve resimleri ekleyin.",
             "validation": {

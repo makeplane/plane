@@ -2144,6 +2144,21 @@
               "maxLength": "URL harus kurang dari 800 karakter"
             }
           },
+          "cover_image": {
+            "label": "Tambahkan gambar cover yang akan ditampilkan di marketplace",
+            "upload_title": "Unggah gambar cover",
+            "upload_placeholder": "Klik untuk mengunggah atau seret dan lepas untuk mengunggah gambar cover",
+            "drop_here": "Letakkan di sini",
+            "click_to_upload": "Klik untuk mengunggah",
+            "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran. Silakan coba lagi.",
+            "upload_and_save": "Unggah dan simpan",
+            "uploading": "Mengunggah",
+            "remove": "Hapus",
+            "removing": "Menghapus",
+            "validation": {
+              "required": "Gambar cover diperlukan"
+            }
+          },
           "attach_screenshots": {
             "label": "Sertakan dokumen dan gambar yang Anda pikir akan membuat pengguna template.",
             "validation": {

@@ -63,6 +63,12 @@ export const PublishTemplateLoader = () => (
         <Loader.Item height="36px" />
       </div>
 
+      {/* Cover Image */}
+      <div className="space-y-2">
+        <Loader.Item height="18px" width="120px" />
+        <Loader.Item height="216px" />
+      </div>
+
       {/* File Upload Section */}
       <div className="space-y-2">
         <Loader.Item height="18px" width="360px" />

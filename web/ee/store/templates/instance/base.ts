@@ -49,6 +49,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   keywords: T["keywords"];
   privacy_policy_url: T["privacy_policy_url"];
   terms_of_service_url: T["terms_of_service_url"];
+  cover_image_asset: T["cover_image_asset"];
+  cover_image_url: T["cover_image_url"];
   attachments: T["attachments"];
   attachments_urls: T["attachments_urls"];
   website: T["website"];
@@ -80,6 +82,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
     this.keywords = baseTemplateData.keywords;
     this.privacy_policy_url = baseTemplateData.privacy_policy_url;
     this.terms_of_service_url = baseTemplateData.terms_of_service_url;
+    this.cover_image_asset = baseTemplateData.cover_image_asset;
+    this.cover_image_url = baseTemplateData.cover_image_url;
     this.attachments = baseTemplateData.attachments;
     this.attachments_urls = baseTemplateData.attachments_urls;
     this.website = baseTemplateData.website;
@@ -109,6 +113,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       contact_email: observable.ref,
       privacy_policy_url: observable.ref,
       terms_of_service_url: observable.ref,
+      cover_image_asset: observable.ref,
+      cover_image_url: observable.ref,
       attachments: observable,
       attachments_urls: observable,
       website: observable.ref,
@@ -146,6 +152,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       keywords: this.keywords,
       privacy_policy_url: this.privacy_policy_url,
       terms_of_service_url: this.terms_of_service_url,
+      cover_image_asset: this.cover_image_asset,
+      cover_image_url: this.cover_image_url,
       attachments: this.attachments,
       attachments_urls: this.attachments_urls,
       website: this.website,
@@ -174,6 +182,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       keywords: this.keywords,
       privacy_policy_url: this.privacy_policy_url,
       terms_of_service_url: this.terms_of_service_url,
+      cover_image_asset: this.cover_image_asset,
+      cover_image_url: this.cover_image_url,
       attachments: this.attachments,
       attachments_urls: this.attachments_urls,
       website: this.website,

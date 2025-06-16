@@ -2145,6 +2145,21 @@
               "maxLength": "La URL debe tener menos de 800 caracteres"
             }
           },
+          "cover_image": {
+            "label": "Añade una imagen de portada que se mostrará en el Marketplace",
+            "upload_title": "Subir imagen de portada",
+            "upload_placeholder": "Haz clic para subir o arrastra y suelta para subir una imagen de portada",
+            "drop_here": "Soltar aquí",
+            "click_to_upload": "Haz clic para subir",
+            "invalid_file_or_exceeds_size_limit": "Archivo no válido o excede el límite de tamaño. Por favor, inténtalo de nuevo.",
+            "upload_and_save": "Subir y guardar",
+            "uploading": "Subiendo",
+            "remove": "Eliminar",
+            "removing": "Eliminando",
+            "validation": {
+              "required": "La imagen de portada es obligatoria"
+            }
+          },
           "attach_screenshots": {
             "label": "Incluye documentos y capturas de pantalla que creas que harán que los usuarios de esta plantilla vean lo que puedes hacer con ella.",
             "validation": {

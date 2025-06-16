@@ -2145,6 +2145,21 @@
               "maxLength": "URL deve contenere meno di 800 caratteri"
             }
           },
+          "cover_image": {
+            "label": "Aggiungi un'immagine di copertina che verrà visualizzata nel marketplace",
+            "upload_title": "Carica immagine di copertina",
+            "upload_placeholder": "Clicca per caricare o trascina e rilascia per caricare un'immagine di copertina",
+            "drop_here": "Rilascia qui",
+            "click_to_upload": "Clicca per caricare",
+            "invalid_file_or_exceeds_size_limit": "File non valido o supera il limite di dimensione. Per favore riprova.",
+            "upload_and_save": "Carica e salva",
+            "uploading": "Caricamento",
+            "remove": "Rimuovi",
+            "removing": "Rimozione",
+            "validation": {
+              "required": "L'immagine di copertina è obbligatoria"
+            }
+          },
           "attach_screenshots": {
             "label": "Includi documenti e immagini che pensi aiuti a comprendere meglio questo modello.",
             "validation": {

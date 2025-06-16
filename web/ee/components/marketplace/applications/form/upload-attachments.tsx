@@ -153,7 +153,7 @@ export const UploadAppAttachments: React.FC<Props> = observer((props) => {
           )}
           {...getRootProps()}
         >
-          <ImageUp className="size-7 text-custom-text-400" />
+          <ImageUp className="size-5 text-custom-text-400" />
           <div className="text-sm font-medium text-custom-text-300 group-hover:text-custom-text-200">
             Drag and drop to upload external files
           </div>

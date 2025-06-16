@@ -2147,6 +2147,21 @@
               "maxLength": "URL은 800자 미만이어야 합니다"
             }
           },
+          "cover_image": {
+            "label": "마켓플레이스에 표시될 커버 이미지 추가",
+            "upload_title": "커버 이미지 업로드",
+            "upload_placeholder": "클릭하여 업로드하거나 드래그 앤 드롭으로 커버 이미지 업로드",
+            "drop_here": "여기에 놓기",
+            "click_to_upload": "클릭하여 업로드",
+            "invalid_file_or_exceeds_size_limit": "유효하지 않은 파일이거나 크기 제한을 초과했습니다. 다시 시도해 주세요.",
+            "upload_and_save": "업로드 및 저장",
+            "uploading": "업로드 중",
+            "remove": "제거",
+            "removing": "제거 중",
+            "validation": {
+              "required": "커버 이미지가 필요합니다"
+            }
+          },
           "attach_screenshots": {
             "label": "이 템플릿의 뷰어에게 도움이 될 것으로 생각되는 문서와 사진을 포함하세요.",
             "validation": {
