@@ -42,7 +42,6 @@ export const GlobalIssuesHeader = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
   const viewDetails = getViewDetailsById(globalViewId.toString());
 
-
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !globalViewId) return;
@@ -100,7 +99,7 @@ export const GlobalIssuesHeader = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
       updateFilters(
         workspaceSlug.toString(),
         undefined,
@@ -114,7 +113,10 @@ export const GlobalIssuesHeader = observer(() => {
 
   const isLocked = viewDetails?.is_locked;
 
-  const currentLayoutFilters = useMemo(() => ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues[activeLayout], [activeLayout]);
+  const currentLayoutFilters = useMemo(() => {
+    const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
+    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues[layout];
+  }, [activeLayout]);
 
   return (
     <>

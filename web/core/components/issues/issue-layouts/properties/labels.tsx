@@ -82,7 +82,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     }
   }, [isOpen, isMobile]);
 
-
   let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
@@ -139,8 +138,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     ),
     [fullWidth, disabled, noLabelBorder, isMobile, projectLabels, value]
   );
-
-  if (!value) return null;
 
   const LabelItem = useCallback(
     ({ label }: { label: IIssueLabel }) => (

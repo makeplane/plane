@@ -104,7 +104,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           message: "Error while updating work item dates, Please try again Later",
         });
       }),
-    [issues]
+    [issues, projectId, workspaceSlug]
   );
 
   const quickAdd =

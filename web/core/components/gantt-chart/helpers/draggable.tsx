@@ -38,7 +38,9 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
   return (
     <div className="group w-full z-[5] relative inline-flex h-full cursor-pointer items-center font-medium transition-all">
       {/* left resize drag handle */}
-      {enableDependency && <LeftDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />}
+      {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) && (
+        <LeftDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      )}
       <LeftResizable
         enableBlockLeftResize={enableBlockLeftResize}
         handleBlockDrag={handleBlockDrag}
@@ -60,7 +62,9 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
         isMoving={isMoving}
         position={block.position}
       />
-      {enableDependency && <RightDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />}
+      {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) && (
+        <RightDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      )}
     </div>
   );
 });
