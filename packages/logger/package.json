@@ -25,20 +25,6 @@
     "@plane/eslint-config": "*",
     "@types/node": "^22.5.4",
     "tsup": "8.4.0",
-    "typescript": "^5.3.3"
-  },
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "dts": true,
-    "splitting": false,
-    "sourcemap": true,
-    "clean": true,
-    "minify": false
+    "typescript": "5.8.3"
   }
 }

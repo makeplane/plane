@@ -97,13 +97,6 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
-    "typescript": "5.3.3"
-  },
-  "resolutions": {
-    "nanoid": "^3.3.8",
-    "@todesktop/client-util/nanoid": "^3.3.8"
-  },
-  "peerDependencies": {
-    "nanoid": "^3.3.8"
+    "typescript": "5.8.3"
   }
 }

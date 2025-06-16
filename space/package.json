@@ -65,6 +65,6 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }
