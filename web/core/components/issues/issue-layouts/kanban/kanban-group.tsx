@@ -20,11 +20,11 @@ import {
   TIssueOrderByOptions,
 } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "@/components/issues";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "project_created_successfully": "Projet créé avec succès",
   "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à ajouter des éléments de travail.",
+  "project_name_already_taken": "Le nom du projet est déjà pris.",
+  "project_identifier_already_taken": "L’identifiant du projet est déjà pris.",
   "project_cover_image_alt": "Image de couverture du projet",
   "name_is_required": "Le nom est requis",
   "title_should_be_less_than_255_characters": "Le titre doit faire moins de 255 caractères",
@@ -873,13 +875,15 @@
     "guests": "Invités",
     "on_track": "Sur la bonne voie",
     "off_track": "Hors de la bonne voie",
+    "at_risk": "À risque",
     "timeline": "Chronologie",
     "completion": "Achèvement",
     "upcoming": "À venir",
     "completed": "Terminé",
     "in_progress": "En cours",
     "planned": "Planifié",
-    "paused": "En pause"
+    "paused": "En pause",
+    "no_of": "Nº de {entity}"
   },
   "chart": {
     "x_axis": "Axe X",

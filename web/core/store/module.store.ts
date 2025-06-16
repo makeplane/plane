@@ -6,9 +6,8 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
+import { DistributionUpdates, updateDistribution, orderModules, shouldFilterModule } from "@plane/utils";
 // helpers
-import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
-import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
 import { syncIssuesWithDeletedModules } from "@/local-db/utils/load-workspace";
 import { ModuleService } from "@/services/module.service";

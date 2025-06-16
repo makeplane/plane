@@ -122,7 +122,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
                 angle: -90,
                 position: "bottom",
                 offset: -24,
-                dx: -16,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }

@@ -5,7 +5,7 @@ import { IIssueDisplayProperties } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 

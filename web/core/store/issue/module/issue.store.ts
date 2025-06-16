@@ -9,7 +9,7 @@ import {
   TBulkOperationsPayload,
 } from "@plane/types";
 // helpers
-import { getDistributionPathsPostUpdate } from "@/helpers/distribution-update.helper";
+import { getDistributionPathsPostUpdate } from "@plane/utils";
 import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
 //
 import { IIssueRootStore } from "../root.store";

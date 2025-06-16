@@ -5,7 +5,7 @@ import { usePathname, useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { useProject, useUserPermissions, useUserSettings } from "@/hooks/store";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";

@@ -1,13 +1,12 @@
 // plane imports
 import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { PriorityDropdown, MemberDropdown, StateDropdown, DateRangeDropdown } from "@/components/dropdowns";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 
 type Props = {
   workspaceSlug: string;
@@ -28,8 +27,6 @@ type Props = {
 
 export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => {
   const { workspaceSlug, parentIssueId, issueId, disabled, updateSubIssue, displayProperties, issue } = props;
-  // hooks
-  const { t } = useTranslation();
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();

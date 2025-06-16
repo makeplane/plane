@@ -26,24 +26,20 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
 
   return (
     <div className="">
-      {data ? (
-        <DataTable
-          columns={columns}
-          data={data}
-          searchPlaceholder={`${data.length} ${headerText}`}
-          actions={(table: Table<AnalyticsTableDataMap[T]>) => (
-            <Button
-              variant="accent-primary"
-              prependIcon={<Download className="h-3.5 w-3.5" />}
-              onClick={() => onExport?.(table.getFilteredRowModel().rows)}
-            >
-              <div>{t("exporter.csv.short_description")}</div>
-            </Button>
-          )}
-        />
-      ) : (
-        <div>{t("common.no_data_yet")}</div>
-      )}
+      <DataTable
+        columns={columns}
+        data={data || []}
+        searchPlaceholder={`${data?.length || 0} ${headerText}`}
+        actions={(table: Table<AnalyticsTableDataMap[T]>) => (
+          <Button
+            variant="accent-primary"
+            prependIcon={<Download className="h-3.5 w-3.5" />}
+            onClick={() => onExport?.(table.getFilteredRowModel().rows)}
+          >
+            <div>{t("exporter.csv.short_description")}</div>
+          </Button>
+        )}
+      />
     </div>
   );
 };

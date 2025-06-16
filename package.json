@@ -27,6 +27,7 @@
     "turbo": "^2.5.4"
   },
   "resolutions": {
+    "brace-expansion": "2.0.2",
     "nanoid": "3.3.8",
     "esbuild": "0.25.0",
     "@babel/helpers": "7.26.10",

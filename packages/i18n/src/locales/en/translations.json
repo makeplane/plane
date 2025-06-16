@@ -153,6 +153,8 @@
   "failed_to_remove_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "project_created_successfully": "Project created successfully",
   "project_created_successfully_description": "Project created successfully. You can now start adding work items to it.",
+  "project_name_already_taken": "The project name is already taken.",
+  "project_identifier_already_taken": "The project identifier is already taken.",
   "project_cover_image_alt": "Project cover image",
   "name_is_required": "Name is required",
   "title_should_be_less_than_255_characters": "Title should be less than 255 characters",
@@ -617,6 +619,7 @@
     "click_to_add_description": "Click to add description",
     "on_track": "On-Track",
     "off_track": "Off-Track",
+    "at_risk": "At risk",
     "timeline": "Timeline",
     "completion": "Completion",
     "upcoming": "Upcoming",
@@ -721,7 +724,8 @@
     "deactivated_user": "Deactivated user",
     "apply": "Apply",
     "applying": "Applying",
-    "overview": "Overview"
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
   "chart": {
     "x_axis": "X-axis",

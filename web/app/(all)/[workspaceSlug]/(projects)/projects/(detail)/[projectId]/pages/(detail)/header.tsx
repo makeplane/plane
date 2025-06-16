@@ -8,10 +8,10 @@ import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
+import { getPageName } from "@plane/utils";
 import { PageAccessIcon, SwitcherIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components

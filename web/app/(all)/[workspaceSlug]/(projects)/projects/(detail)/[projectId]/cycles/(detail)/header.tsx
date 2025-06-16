@@ -5,51 +5,46 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { PanelRight } from "lucide-react";
-// plane constants
+// plane imports
 import {
-  EIssueLayoutTypes,
   EIssueFilterType,
+  EIssueLayoutTypes,
   EIssuesStoreType,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
 import {
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "@plane/types";
-// ui
-import { Breadcrumbs, Button, ContrastIcon, Header, BreadcrumbNavigationSearchDropdown, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header, Tooltip } from "@plane/ui";
+import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import {
-  useEventTracker,
+  useCommandPalette,
   useCycle,
+  useEventTracker,
+  useIssues,
   useLabel,
   useMember,
   useProject,
   useProjectState,
-  useIssues,
-  useCommandPalette,
   useUserPermissions,
 } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
-// plane web
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
