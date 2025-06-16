@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane
-import type { TGroupedIssues, TLoader, TPaginationData } from "@plane/types";
+import type { TGroupedIssues, TLoader, TPaginationData, ICalendarWeek } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -18,7 +18,6 @@ import { IIssue } from "@/types/issue";
 //
 import { CalendarHeader } from "./header";
 import { CalendarIssueBlocks } from "./issue-blocks";
-import { ICalendarWeek } from "./types";
 import { CalendarWeekDays } from "./week-days";
 import { CalendarWeekHeader } from "./week-header";
 

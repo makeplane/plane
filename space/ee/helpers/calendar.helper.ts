@@ -1,29 +1,6 @@
-<<<<<<<< HEAD:packages/utils/src/calendar.ts
-// plane imports
 import { EStartOfTheWeek } from "@plane/constants";
-import { ICalendarDate, ICalendarPayload  } from "@plane/types";
-// local imports
-import { getWeekNumberOfDate, renderFormattedPayloadDate  } from "./datetime";
-========
-import { ICalendarDate, ICalendarPayload } from "../types";
-import { renderFormattedPayloadDate } from "./date-time.helper";
-
-/**
- * @returns {number} week number of date
- * @description Returns week number of date
- * @param {Date} date
- * @example getWeekNumber(new Date("2023-09-01")) // 35
- */
-export const getWeekNumberOfDate = (date: Date): number => {
-  const currentDate = date;
-  // Adjust the starting day to Sunday (0) instead of Monday (1)
-  const startDate = new Date(currentDate.getFullYear(), 0, 1);
-  // Calculate the number of days between currentDate and startDate
-  const days = Math.floor((currentDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
-  // Adjust the calculation for weekNumber
-  const weekNumber = Math.ceil((days + 1) / 7);
-  return weekNumber;
-};
+import { ICalendarDate, ICalendarPayload } from "@plane/types";
+import { getWeekNumberOfDate, renderFormattedPayloadDate } from "@plane/utils";
 
 export const formatDate = (date: Date, format: string): string => {
   const day = date.getDate();
@@ -61,7 +38,6 @@ export const formatDate = (date: Date, format: string): string => {
 
   return formattedDate;
 };
->>>>>>>> 98fee2ac1d34e72653d20075d6b482cc8312182c:space/ee/helpers/calendar.helper.ts
 
 /**
  * @returns {ICalendarPayload} calendar payload to render the calendar
@@ -115,7 +91,6 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
 
   return calendarData;
 };
-<<<<<<<< HEAD:packages/utils/src/calendar.ts
 
 /**
  * Returns a new array sorted by the startOfWeek.
@@ -127,10 +102,9 @@ export const getOrderedDays = <T>(
   items: T[],
   getDayIndex: (item: T) => number,
   startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
-): T[] => [...items].sort((a, b) => {
+): T[] =>
+  [...items].sort((a, b) => {
     const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
     const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;
     return dayA - dayB;
-  })
-========
->>>>>>>> 98fee2ac1d34e72653d20075d6b482cc8312182c:space/ee/helpers/calendar.helper.ts
+  });
