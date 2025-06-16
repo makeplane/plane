@@ -21,7 +21,7 @@ import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import useLocalStorage from "@/hooks/use-local-storage";

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
   "project_created_successfully": "Dự án đã được tạo thành công",
   "project_created_successfully_description": "Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
+  "project_name_already_taken": "Tên dự án đã được sử dụng.",
+  "project_identifier_already_taken": "ID dự án đã được sử dụng.",
   "project_cover_image_alt": "Ảnh bìa dự án",
   "name_is_required": "Tên là bắt buộc",
   "title_should_be_less_than_255_characters": "Tiêu đề phải ít hơn 255 ký tự",

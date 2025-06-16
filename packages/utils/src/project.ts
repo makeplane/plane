@@ -1,11 +1,9 @@
 import sortBy from "lodash/sortBy";
-// types
-import { TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
-import { satisfiesDateFilter } from "@/helpers/filter.helper";
-// plane web imports
-import { TProject } from "@/plane-web/types";
+// plane imports
+import { TProject, TProjectDisplayFilters, TProjectFilters, TProjectOrderByOptions } from "@plane/types";
+// local imports
+import { getDate } from "./datetime";
+import { satisfiesDateFilter } from "./filter";
 
 /**
  * Updates the sort order of the project.

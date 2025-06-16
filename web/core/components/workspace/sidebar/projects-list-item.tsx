@@ -19,10 +19,10 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
+import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

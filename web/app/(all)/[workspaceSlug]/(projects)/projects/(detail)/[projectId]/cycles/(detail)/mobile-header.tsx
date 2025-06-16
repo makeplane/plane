@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
-// plane constants
+// plane imports
 import {
   EIssueLayoutTypes,
   EIssueFilterType,
@@ -12,17 +12,14 @@ import {
   ISSUE_LAYOUTS,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
+import { isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutIcon } from "@/components/issues";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 

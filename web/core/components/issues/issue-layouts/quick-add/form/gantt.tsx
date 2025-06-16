@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { TQuickAddIssueForm } from "../root";
 
 export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {

@@ -7,12 +7,11 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
+import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { CycleFiltersSelection } from "@/components/cycles";
 import { FiltersDropdown } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycleFilter } from "@/hooks/store";
 

@@ -6,7 +6,7 @@ import { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUserSea
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // plane web constants
 import { EDITOR_MENTION_TYPES } from "@/plane-web/constants/editor";
 // plane web hooks

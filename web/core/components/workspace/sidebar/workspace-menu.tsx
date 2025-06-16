@@ -9,6 +9,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { ContrastIcon } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";

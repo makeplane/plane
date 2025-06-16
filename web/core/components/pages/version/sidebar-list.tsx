@@ -7,9 +7,9 @@ import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, Loader } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { PlaneVersionsSidebarListItem } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 

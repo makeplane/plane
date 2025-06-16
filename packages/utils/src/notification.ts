@@ -1,4 +1,4 @@
-import { stripAndTruncateHTML } from "./string.helper";
+import { stripAndTruncateHTML } from "./string";
 
 export const sanitizeCommentForNotification = (mentionContent: string | undefined) =>
   mentionContent

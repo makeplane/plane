@@ -4,12 +4,10 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Avatar, Row } from "@plane/ui";
+import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useNotification, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 import { NotificationContent } from "./content";

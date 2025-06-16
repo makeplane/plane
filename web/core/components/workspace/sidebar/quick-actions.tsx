@@ -7,10 +7,10 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

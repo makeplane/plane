@@ -4,8 +4,7 @@ import { observer } from "mobx-react";
 // helpers
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
+import { cn, findHowManyDaysLeft } from "@plane/utils";
 // store
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { ICON_PROPERTIES, InboxStatusIcon } from "./inbox-status-icon";
