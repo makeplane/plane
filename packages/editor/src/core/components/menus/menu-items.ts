@@ -22,6 +22,7 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
+  LinkIcon,
 } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -210,7 +211,7 @@ export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
       if (props.url) setLinkEditor(editor, props.url, props.text);
       else unsetLinkEditor(editor);
     },
-    icon: MinusSquare,
+    icon: LinkIcon,
   }) as const;
 
 export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => ({

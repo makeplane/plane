@@ -4,12 +4,12 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
-import { CustomImageNode, CustomImageExtensionStorage } from "@/extensions/custom-image";
+import { CustomImageNode, CustomImageExtensionStorage, CustomImageNodeProps } from "@/extensions/custom-image";
 // types
 import { TReadOnlyFileHandler } from "@/types";
 
 export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
-  const { getAssetSrc, restore: restoreImageFn } = props;
+  const { getAssetSrc, restore: restoreImageFn, isMobile = false } = props;
 
   return BaseImageExtension.extend<Record<string, unknown>, CustomImageExtensionStorage>({
     name: CORE_EXTENSIONS.CUSTOM_IMAGE,
@@ -73,7 +73,7 @@ export const CustomReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
+      return ReactNodeViewRenderer((props: CustomImageNodeProps) => <CustomImageNode {...props} isMobile={isMobile} />);
     },
   });
 };

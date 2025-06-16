@@ -154,6 +154,7 @@ export const setLinkEditor = (editor: Editor, url: string, text?: string) => {
 
     editor.commands.setTextSelection({ from: previousFrom, to: previousFrom + text.length });
   }
+  editor.chain().focus().setLink({ href: url }).run();
 };
 
 export const toggleTextColor = (color: string | undefined, editor: Editor, range?: Range) => {
