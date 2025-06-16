@@ -9,9 +9,9 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { TSticky } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // constants
+import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { ColorPalette } from "./color-palette";
 
 type Props = {

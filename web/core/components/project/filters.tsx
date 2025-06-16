@@ -6,13 +6,12 @@ import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { TProjectFilters } from "@plane/types";
+import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
-import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
 

@@ -2,13 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-import { CODE_VERIFIED } from "@plane/constants";
+import { CODE_VERIFIED, API_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, Spinner } from "@plane/ui";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";

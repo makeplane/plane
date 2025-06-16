@@ -58,3 +58,5 @@ export const isComplete = <T>(obj: CompleteOrEmpty<T>): obj is T => {
   // Check if it has any own properties
   return Object.keys(obj).length > 0;
 };
+
+export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;

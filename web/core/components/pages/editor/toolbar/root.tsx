@@ -3,9 +3,9 @@ import { PanelRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
+import { cn } from "@plane/utils";
 import { PageToolbar } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web components

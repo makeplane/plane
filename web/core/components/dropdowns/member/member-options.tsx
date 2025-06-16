@@ -12,9 +12,8 @@ import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Avatar } from "@plane/ui";
+import { cn, getFileURL } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

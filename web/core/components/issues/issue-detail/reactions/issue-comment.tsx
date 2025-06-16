@@ -5,10 +5,9 @@ import { observer } from "mobx-react";
 import { IUser } from "@plane/types";
 // components
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, formatTextList } from "@plane/utils";
 // helper
-import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
-import { formatTextList } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 // types

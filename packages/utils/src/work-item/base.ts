@@ -1,12 +1,19 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import isEmpty from "lodash/isEmpty";
 import { v4 as uuidv4 } from "uuid";
-// plane constants
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, STATE_GROUPS } from "@plane/constants";
-// types
+// plane imports
+import {
+  EIssueLayoutTypes,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  STATE_GROUPS,
+  TIssuePriorities,
+  ISSUE_PRIORITY_FILTERS,
+  TIssueFilterPriorityObject,
+} from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  IGanttBlock,
   TGroupedIssues,
   TIssue,
   TIssueGroupByOptions,
@@ -16,11 +23,10 @@ import {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { IGanttBlock } from "@/components/gantt-chart";
-// helpers
-import { orderArrayBy } from "@/helpers/array.helper";
-import { getDate } from "@/helpers/date-time.helper";
-import { isEditorEmpty } from "@/helpers/editor.helper";
+// local imports
+import { orderArrayBy } from "../array";
+import { getDate } from "../datetime";
+import { isEditorEmpty } from "../editor";
 
 type THandleIssuesMutation = (
   formData: Partial<TIssue>,
@@ -171,6 +177,7 @@ export const shouldHighlightIssueDueDate = (
   // if the issue is overdue, highlight the due date
   return targetDateDistance <= 0;
 };
+
 export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   data: block,
   id: block?.id,
@@ -332,4 +339,14 @@ export const generateWorkItemLink = ({
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
+};
+
+export const getIssuePriorityFilters = (priorityKey: TIssuePriorities): TIssueFilterPriorityObject | undefined => {
+  const currentIssuePriority: TIssueFilterPriorityObject | undefined =
+    ISSUE_PRIORITY_FILTERS && ISSUE_PRIORITY_FILTERS.length > 0
+      ? ISSUE_PRIORITY_FILTERS.find((_priority) => _priority.key === priorityKey)
+      : undefined;
+
+  if (currentIssuePriority) return currentIssuePriority;
+  return undefined;
 };

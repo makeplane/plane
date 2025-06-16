@@ -69,10 +69,11 @@ export enum EErrorAlertType {
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
-  code: EAdminAuthErrorCodes;
+  code: EAuthErrorCodes;
   title: string;
-  message: any;
+  message: React.ReactNode;
 };
+
 
 export enum EAdminAuthErrorCodes {
   // Admin
@@ -86,6 +87,13 @@ export enum EAdminAuthErrorCodes {
   ADMIN_USER_DOES_NOT_EXIST = "5185",
   ADMIN_USER_DEACTIVATED = "5190",
 }
+
+export type TAdminAuthErrorInfo = {
+  type: EErrorAlertType;
+  code: EAdminAuthErrorCodes;
+  title: string;
+  message: React.ReactNode;
+};
 
 export enum EAuthErrorCodes {
   // Global

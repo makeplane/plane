@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nie udało się usunąć projektu z ulubionych. Spróbuj ponownie.",
   "project_created_successfully": "Projekt utworzono pomyślnie",
   "project_created_successfully_description": "Projekt został pomyślnie utworzony. Teraz możesz dodawać elementy pracy.",
+  "project_name_already_taken": "Nazwa projektu jest już zajęta.",
+  "project_identifier_already_taken": "Identyfikator projektu jest już zajęty.",
   "project_cover_image_alt": "Obraz w tle projektu",
   "name_is_required": "Nazwa jest wymagana",
   "title_should_be_less_than_255_characters": "Nazwa musi mieć mniej niż 255 znaków",

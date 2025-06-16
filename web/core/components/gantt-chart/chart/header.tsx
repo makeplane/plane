@@ -2,16 +2,16 @@ import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane
+import type { TGanttViews } from "@plane/types";
 import { Row } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { GANTT_BREADCRUMBS_HEIGHT } from "../constants";
-import { TGanttViews } from "../types";
 
 type Props = {
   blockIds: string[];

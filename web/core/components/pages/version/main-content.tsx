@@ -7,9 +7,9 @@ import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { TVersionEditorProps } from "@/components/pages";
 // helpers
-import { renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
 
 type Props = {
   activeVersion: string | null;

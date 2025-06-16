@@ -7,9 +7,9 @@ import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
+import { copyTextToClipboard } from "@plane/utils";
 import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";

@@ -11,7 +11,7 @@ export interface IInsightField {
   };
 }
 
-export const insightsFields: Record<TAnalyticsTabsBase, IInsightField[]> = {
+export const ANALYTICS_INSIGHTS_FIELDS: Record<TAnalyticsTabsBase, IInsightField[]> = {
   overview: [
     {
       key: "total_users",

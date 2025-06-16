@@ -3,13 +3,13 @@
 import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // components
+import { cn } from "@plane/utils";
 import {
   NotificationItemReadOption,
   NotificationItemArchiveOption,
   NotificationItemSnoozeOption,
 } from "@/components/workspace-notifications";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useNotification } from "@/hooks/store";
 

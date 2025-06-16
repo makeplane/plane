@@ -1,11 +1,10 @@
 "use client";
 
-// ui
 import Link from "next/link";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
-import { API_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // layouts
@@ -18,10 +17,6 @@ const authService = new AuthService();
 
 export default function CustomErrorComponent() {
   const router = useAppRouter();
-
-  const handleRefresh = () => {
-    window.location.reload();
-  };
 
   const handleSignOut = async () => {
     await authService

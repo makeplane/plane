@@ -1,12 +1,11 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-// plane types
+// plane imports
 import { TPageVersion } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { PageVersionsMainContent, TVersionEditorProps } from "@/components/pages";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // local imports
