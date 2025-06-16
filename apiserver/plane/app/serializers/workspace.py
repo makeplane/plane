@@ -217,7 +217,7 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
         return project.identifier if project else None
 
     def get_assignees(self, obj):
-        return [str(assignee.id) for assignee in obj.assignees.all().distinct()]
+        return obj.assignees.values_list("id", flat=True).distinct()
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
