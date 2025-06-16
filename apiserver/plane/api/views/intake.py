@@ -29,6 +29,21 @@ from .base import BaseAPIView
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
     intake_docs,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    ISSUE_ID_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    INTAKE_ISSUE_CREATE_EXAMPLE,
+    INTAKE_ISSUE_UPDATE_EXAMPLE,
+    # Response Examples
+    INTAKE_ISSUE_EXAMPLE,
+    INVALID_REQUEST_RESPONSE,
+    DELETED_RESPONSE,
 )
 
 
@@ -67,9 +82,20 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="get_intake_issues_list",
         summary="List intake issues",
         description="Retrieve all issues in the project's intake queue. Returns paginated results when listing all intake issues.",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Intake issues", response=IntakeIssueSerializer
+            200: create_paginated_response(
+                IntakeIssueSerializer,
+                "PaginatedIntakeIssueResponse",
+                "Paginated list of intake issues",
+                "Paginated Intake Issues",
             ),
         },
     )
@@ -92,27 +118,21 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="create_intake_issue",
         summary="Create intake issue",
         description="Submit a new issue to the project's intake queue for review and triage. Automatically creates the issue with default triage state and tracks activity.",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IntakeIssueCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IntakeIssueCreateSerializer",
-                    value={
-                        "issue": {
-                            "name": "New Issue",
-                            "description": "New issue description",
-                            "priority": "medium",
-                        }
-                    },
-                    description="Example request for creating an intake issue",
-                ),
-            ],
+            examples=[INTAKE_ISSUE_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
-                description="Intake issue created", response=IntakeIssueSerializer
+                description="Intake issue created",
+                response=IntakeIssueSerializer,
+                examples=[INTAKE_ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request"),
+            400: INVALID_REQUEST_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -225,9 +245,16 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_intake_issue",
         summary="Retrieve intake issue",
         description="Retrieve details of a specific intake issue.",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
-                description="Intake issue", response=IntakeIssueSerializer
+                description="Intake issue",
+                response=IntakeIssueSerializer,
+                examples=[INTAKE_ISSUE_EXAMPLE],
             ),
         },
     )
@@ -246,28 +273,22 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         operation_id="update_intake_issue",
         summary="Update intake issue",
         description="Modify an existing intake issue's properties or status for triage processing. Supports status changes like accept, reject, or mark as duplicate.",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IntakeIssueUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IntakeIssueUpdateSerializer",
-                    value={
-                        "status": 1,
-                        "issue": {
-                            "name": "Updated Issue",
-                            "description": "Updated issue description",
-                            "priority": "high",
-                        },
-                    },
-                    description="Example request for updating an intake issue",
-                ),
-            ],
+            examples=[INTAKE_ISSUE_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
-                description="Intake issue updated", response=IntakeIssueSerializer
+                description="Intake issue updated",
+                response=IntakeIssueSerializer,
+                examples=[INTAKE_ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request"),
+            400: INVALID_REQUEST_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, issue_id):
@@ -445,8 +466,13 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_intake_issue",
         summary="Delete intake issue",
         description="Permanently remove an intake issue from the triage queue. Also deletes the underlying issue if it hasn't been accepted yet.",
+        parameters=[
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Intake issue deleted"),
+            204: DELETED_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, issue_id):

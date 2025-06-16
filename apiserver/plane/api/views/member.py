@@ -12,8 +12,14 @@ from plane.api.serializers import UserLiteSerializer
 from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
 from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
 from plane.utils.openapi import (
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_ID_PARAMETER,
     UNAUTHORIZED_RESPONSE,
     FORBIDDEN_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    WORKSPACE_MEMBER_EXAMPLE,
+    PROJECT_MEMBER_EXAMPLE,
 )
 
 
@@ -27,6 +33,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         summary="List workspace members",
         description="Retrieve all users who are members of the specified workspace.",
         tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER],
         responses={
             200: OpenApiResponse(
                 description="List of workspace members with their roles",
@@ -47,10 +54,11 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
                         ]
                     },
                 },
+                examples=[WORKSPACE_MEMBER_EXAMPLE],
             ),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Workspace not found"),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
     # Get all the users that are present inside the workspace
@@ -90,14 +98,16 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         summary="List project members",
         description="Retrieve all users who are members of the specified project.",
         tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={
             200: OpenApiResponse(
                 description="List of project members with their roles",
                 response=UserLiteSerializer,
+                examples=[PROJECT_MEMBER_EXAMPLE],
             ),
             401: UNAUTHORIZED_RESPONSE,
             403: FORBIDDEN_RESPONSE,
-            404: OpenApiResponse(description="Project not found"),
+            404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
     # Get all the users that are present inside the workspace

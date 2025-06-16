@@ -83,6 +83,65 @@ from plane.utils.openapi import (
     issue_comment_docs,
     issue_activity_docs,
     issue_attachment_docs,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_IDENTIFIER_PARAMETER,
+    ISSUE_IDENTIFIER_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    ISSUE_ID_PARAMETER,
+    LABEL_ID_PARAMETER,
+    COMMENT_ID_PARAMETER,
+    LINK_ID_PARAMETER,
+    ATTACHMENT_ID_PARAMETER,
+    ACTIVITY_ID_PARAMETER,
+    PROJECT_ID_QUERY_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    EXTERNAL_ID_PARAMETER,
+    EXTERNAL_SOURCE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    SEARCH_PARAMETER,
+    SEARCH_PARAMETER_REQUIRED,
+    LIMIT_PARAMETER,
+    WORKSPACE_SEARCH_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    ISSUE_CREATE_EXAMPLE,
+    ISSUE_UPDATE_EXAMPLE,
+    ISSUE_UPSERT_EXAMPLE,
+    LABEL_CREATE_EXAMPLE,
+    LABEL_UPDATE_EXAMPLE,
+    ISSUE_LINK_CREATE_EXAMPLE,
+    ISSUE_LINK_UPDATE_EXAMPLE,
+    ISSUE_COMMENT_CREATE_EXAMPLE,
+    ISSUE_COMMENT_UPDATE_EXAMPLE,
+    ISSUE_ATTACHMENT_UPLOAD_EXAMPLE,
+    ATTACHMENT_UPLOAD_CONFIRM_EXAMPLE,
+    # Response Examples
+    ISSUE_EXAMPLE,
+    LABEL_EXAMPLE,
+    ISSUE_LINK_EXAMPLE,
+    ISSUE_COMMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE,
+    ISSUE_SEARCH_EXAMPLE,
+    WORK_ITEM_NOT_FOUND_RESPONSE,
+    ISSUE_NOT_FOUND_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
+    DELETED_RESPONSE,
+    ADMIN_ONLY_RESPONSE,
+    LABEL_NOT_FOUND_RESPONSE,
+    LABEL_NAME_EXISTS_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
+    LINK_NOT_FOUND_RESPONSE,
+    COMMENT_NOT_FOUND_RESPONSE,
+    ATTACHMENT_NOT_FOUND_RESPONSE,
+    BAD_SEARCH_REQUEST_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
@@ -127,34 +186,17 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
         description="Retrieve a specific work item using workspace slug, project identifier, and issue identifier.",
         tags=["Work Items"],
         parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="project_identifier",
-                description="Project identifier",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="issue_identifier",
-                description="Issue sequence ID",
-                required=True,
-                type=OpenApiTypes.INT,
-                location=OpenApiParameter.PATH,
-            ),
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_IDENTIFIER_PARAMETER,
+            ISSUE_IDENTIFIER_PARAMETER,
         ],
         responses={
             200: OpenApiResponse(
                 description="Work item details",
                 response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Work item not found"),
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_identifier=None, issue_identifier=None):
@@ -213,12 +255,24 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_work_items",
         summary="List work items",
         description="Retrieve a paginated list of all work items in a project. Supports filtering, ordering, and field selection through query parameters.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            EXTERNAL_ID_PARAMETER,
+            EXTERNAL_SOURCE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="List of issues or issue details",
-                response=IssueSerializer,
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedWorkItemResponse",
+                "Paginated list of work items",
+                "Paginated Work Items",
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id):
@@ -345,34 +399,17 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         description="Create a new work item in the specified project with the provided details.",
         request=OpenApiRequest(
             request=IssueSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueCreateSerializer",
-                    value={
-                        "name": "New Issue",
-                        "description": "New issue description",
-                        "priority": "medium",
-                        "state": "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
-                        "assignees": ["0ec6cfa4-e906-4aad-9390-2df0303a41cd"],
-                        "labels": ["0ec6cfa4-e906-4aad-9390-2df0303a41ce"],
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating a work item",
-                ),
-            ],
+            examples=[ISSUE_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
-                description="Work Item created successfully", response=IssueSerializer
+                description="Work Item created successfully",
+                response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(
-                description="Invalid request data", response=IssueSerializer
-            ),
-            404: OpenApiResponse(description="Project not found"),
-            409: OpenApiResponse(
-                description="Issue with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -482,12 +519,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_work_item",
         summary="Retrieve work item",
         description="Retrieve details of a specific work item.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+            EXTERNAL_ID_PARAMETER,
+            EXTERNAL_SOURCE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
                 response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, pk):
@@ -623,15 +670,24 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     @work_item_docs(
         operation_id="put_work_item",
         summary="Update or create work item",
-        request=IssueSerializer,
+        description="Update an existing work item identified by external ID and source, or create a new one if it doesn't exist. Requires external_id and external_source parameters for identification.",
+        request=OpenApiRequest(
+            request=IssueSerializer,
+            examples=[ISSUE_UPSERT_EXAMPLE],
+        ),
         responses={
             200: OpenApiResponse(
-                description="Work Item updated successfully", response=IssueSerializer
+                description="Work Item updated successfully",
+                response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(
-                description="Invalid request data", response=IssueSerializer
+            201: OpenApiResponse(
+                description="Work Item created successfully",
+                response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Work Item not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
     def put(self, request, slug, project_id):
@@ -753,34 +809,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         operation_id="update_work_item",
         summary="Partially update work item",
         description="Partially update an existing work item with the provided fields. Supports external ID validation to prevent conflicts.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IssueSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueUpdateSerializer",
-                    value={
-                        "name": "Updated Issue",
-                        "description": "Updated issue description",
-                        "priority": "medium",
-                        "state": "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
-                        "assignees": ["0ec6cfa4-e906-4aad-9390-2df0303a41cd"],
-                        "labels": ["0ec6cfa4-e906-4aad-9390-2df0303a41ce"],
-                    },
-                    description="Example request for updating a work item",
-                ),
-            ],
+            examples=[ISSUE_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
-                description="Work Item patched successfully", response=IssueSerializer
+                description="Work Item patched successfully",
+                response=IssueSerializer,
+                examples=[ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(
-                description="Invalid request data", response=IssueSerializer
-            ),
-            404: OpenApiResponse(description="Work Item not found"),
-            409: OpenApiResponse(
-                description="Issue with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, pk):
@@ -839,10 +883,13 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_work_item",
         summary="Delete work item",
         description="Permanently delete an existing work item from the project. Only admins or the item creator can perform this action.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Work Item deleted successfully"),
-            403: OpenApiResponse(description="Only admin or creator can delete"),
-            404: OpenApiResponse(description="Work Item not found"),
+            204: DELETED_RESPONSE,
+            403: ADMIN_ONLY_RESPONSE,
+            404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, pk):
@@ -909,30 +956,16 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
         description="Create a new label in the specified project with name, color, and description.",
         request=OpenApiRequest(
             request=LabelCreateUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "LabelCreateUpdateSerializer",
-                    value={
-                        "name": "New Label",
-                        "color": "#ff0000",
-                        "description": "New label description",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating a label",
-                ),
-            ],
+            examples=[LABEL_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
-                description="Label created successfully", response=LabelSerializer
+                description="Label created successfully",
+                response=LabelSerializer,
+                examples=[LABEL_EXAMPLE],
             ),
-            400: OpenApiResponse(
-                description="Invalid request data", response=LabelSerializer
-            ),
-            409: OpenApiResponse(
-                description="Label with same name/external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            409: LABEL_NAME_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -990,11 +1023,22 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
     @label_docs(
         operation_id="list_labels",
         description="Retrieve all labels in a project. Supports filtering by name and color.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Labels",
-                response=LabelSerializer,
+            200: create_paginated_response(
+                LabelSerializer,
+                "PaginatedLabelResponse",
+                "Paginated list of labels",
+                "Paginated Labels",
             ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id):
@@ -1021,11 +1065,16 @@ class LabelDetailAPIEndpoint(BaseAPIView):
     @label_docs(
         operation_id="get_labels",
         description="Retrieve details of a specific label.",
+        parameters=[
+            LABEL_ID_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="Labels",
                 response=LabelSerializer,
+                examples=[LABEL_EXAMPLE],
             ),
+            404: LABEL_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, pk):
@@ -1040,33 +1089,22 @@ class LabelDetailAPIEndpoint(BaseAPIView):
     @label_docs(
         operation_id="update_label",
         description="Partially update an existing label's properties like name, color, or description.",
+        parameters=[
+            LABEL_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=LabelCreateUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "LabelCreateUpdateSerializer",
-                    value={
-                        "name": "Updated Label",
-                        "color": "#00ff00",
-                        "description": "Updated label description",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for updating a label",
-                ),
-            ],
+            examples=[LABEL_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
-                description="Label updated successfully", response=LabelSerializer
+                description="Label updated successfully",
+                response=LabelSerializer,
+                examples=[LABEL_EXAMPLE],
             ),
-            400: OpenApiResponse(
-                description="Invalid request data", response=LabelSerializer
-            ),
-            404: OpenApiResponse(description="Label not found"),
-            409: OpenApiResponse(
-                description="Label with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: LABEL_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, pk):
@@ -1106,9 +1144,12 @@ class LabelDetailAPIEndpoint(BaseAPIView):
     @label_docs(
         operation_id="delete_label",
         description="Permanently remove a label from the project. This action cannot be undone.",
+        parameters=[
+            LABEL_ID_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Label deleted successfully"),
-            404: OpenApiResponse(description="Label not found"),
+            204: DELETED_RESPONSE,
+            404: LABEL_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, pk):
@@ -1146,12 +1187,23 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
     @issue_link_docs(
         operation_id="list_issue_links",
         description="Retrieve all links associated with an issue. Supports filtering by URL, title, and metadata.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue links",
-                response=IssueLinkSerializer,
+            200: create_paginated_response(
+                IssueLinkSerializer,
+                "PaginatedIssueLinkResponse",
+                "Paginated list of issue links",
+                "Paginated Issue Links",
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id):
@@ -1170,26 +1222,21 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
     @issue_link_docs(
         operation_id="create_issue_link",
         description="Add a new external link to an issue with URL, title, and metadata.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IssueLinkCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueLinkCreateSerializer",
-                    value={
-                        "url": "https://example.com",
-                        "title": "Example Link",
-                    },
-                    description="Example request for creating an issue link",
-                ),
-            ],
+            examples=[ISSUE_LINK_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
                 description="Issue link created successfully",
                 response=IssueLinkSerializer,
+                examples=[ISSUE_LINK_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, issue_id):
@@ -1246,10 +1293,20 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
     @issue_link_docs(
         operation_id="retrieve_issue_link",
         description="Retrieve details of a specific issue link.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            LINK_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue link",
-                response=IssueLinkSerializer,
+            200: create_paginated_response(
+                IssueLinkSerializer,
+                "PaginatedIssueLinkDetailResponse",
+                "Issue link details or paginated list",
+                "Issue Link Details",
             ),
             404: OpenApiResponse(description="Issue not found"),
         },
@@ -1280,26 +1337,22 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
     @issue_link_docs(
         operation_id="update_issue_link",
         description="Modify the URL, title, or metadata of an existing issue link.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            LINK_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IssueLinkUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueLinkUpdateSerializer",
-                    value={
-                        "url": "https://example.com",
-                        "title": "Updated Link",
-                    },
-                    description="Example request for updating an issue link",
-                ),
-            ],
+            examples=[ISSUE_LINK_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="Issue link updated successfully",
                 response=IssueLinkSerializer,
+                examples=[ISSUE_LINK_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            404: OpenApiResponse(description="Issue link not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: LINK_NOT_FOUND_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
@@ -1337,6 +1390,10 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
     @issue_link_docs(
         operation_id="delete_issue_link",
         description="Permanently remove an external link from an issue.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            LINK_ID_PARAMETER,
+        ],
         responses={
             204: OpenApiResponse(description="Issue link deleted successfully"),
             404: OpenApiResponse(description="Issue link not found"),
@@ -1403,10 +1460,20 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
     @issue_comment_docs(
         operation_id="list_issue_comments",
         description="Retrieve all comments for an issue.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue comments",
-                response=IssueCommentSerializer,
+            200: create_paginated_response(
+                IssueCommentSerializer,
+                "PaginatedIssueCommentResponse",
+                "Paginated list of issue comments",
+                "Paginated Issue Comments",
             ),
             404: OpenApiResponse(description="Issue not found"),
         },
@@ -1427,30 +1494,22 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
     @issue_comment_docs(
         operation_id="create_issue_comment",
         description="Add a new comment to an issue with HTML content.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IssueCommentCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueCommentCreateSerializer",
-                    value={
-                        "comment_html": "<p>New comment content</p>",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating an issue comment",
-                ),
-            ],
+            examples=[ISSUE_COMMENT_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
                 description="Issue comment created successfully",
                 response=IssueCommentSerializer,
+                examples=[ISSUE_COMMENT_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            404: OpenApiResponse(description="Issue not found"),
-            409: OpenApiResponse(
-                description="Comment with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, issue_id):
@@ -1548,12 +1607,18 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     @issue_comment_docs(
         operation_id="retrieve_issue_comment",
         description="Retrieve details of a specific comment.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            COMMENT_ID_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="Issue comments",
                 response=IssueCommentSerializer,
+                examples=[ISSUE_COMMENT_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id, pk):
@@ -1570,30 +1635,23 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     @issue_comment_docs(
         operation_id="update_issue_comment",
         description="Modify the content of an existing comment on an issue.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            COMMENT_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=IssueCommentCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "IssueCommentCreateSerializer",
-                    value={
-                        "comment_html": "<p>New comment content</p>",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for updating an issue comment",
-                ),
-            ],
+            examples=[ISSUE_COMMENT_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="Issue comment updated successfully",
                 response=IssueCommentSerializer,
+                examples=[ISSUE_COMMENT_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            404: OpenApiResponse(description="Issue comment not found"),
-            409: OpenApiResponse(
-                description="Comment with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: COMMENT_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
@@ -1653,9 +1711,13 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     @issue_comment_docs(
         operation_id="delete_issue_comment",
         description="Permanently remove a comment from an issue. Records deletion activity for audit purposes.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            COMMENT_ID_PARAMETER,
+        ],
         responses={
             204: OpenApiResponse(description="Issue comment deleted successfully"),
-            404: OpenApiResponse(description="Issue comment not found"),
+            404: COMMENT_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, issue_id, pk):
@@ -1689,12 +1751,23 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
     @issue_activity_docs(
         operation_id="list_issue_activities",
         description="Retrieve all activities for an issue. Supports filtering by activity type and date range.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue activities",
-                response=IssueActivitySerializer,
+            200: create_paginated_response(
+                IssueActivitySerializer,
+                "PaginatedIssueActivityResponse",
+                "Paginated list of issue activities",
+                "Paginated Issue Activities",
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id):
@@ -1733,12 +1806,24 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
     @issue_activity_docs(
         operation_id="retrieve_issue_activity",
         description="Retrieve details of a specific activity.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+            ACTIVITY_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue activities",
-                response=IssueActivitySerializer,
+            200: create_paginated_response(
+                IssueActivitySerializer,
+                "PaginatedIssueActivityDetailResponse",
+                "Paginated list of issue activities",
+                "Issue Activity Details",
             ),
-            404: OpenApiResponse(description="Issue not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id, pk):
@@ -1779,7 +1864,13 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
     @issue_attachment_docs(
         operation_id="create_issue_attachment",
         description="Generate presigned URL for uploading file attachments to an issue.",
-        request=IssueAttachmentUploadSerializer,
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request=IssueAttachmentUploadSerializer,
+            examples=[ISSUE_ATTACHMENT_UPLOAD_EXAMPLE],
+        ),
         responses={
             200: OpenApiResponse(
                 description="Presigned download URL generated successfully",
@@ -1939,12 +2030,17 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
     @issue_attachment_docs(
         operation_id="list_issue_attachments",
         description="Retrieve all attachments for an issue.",
+        parameters=[
+            ISSUE_ID_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="Issue attachment",
                 response=IssueAttachmentSerializer,
+                examples=[ISSUE_ATTACHMENT_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Issue attachment not found"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id):
@@ -1975,9 +2071,12 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     @issue_attachment_docs(
         operation_id="delete_issue_attachment",
         description="Permanently remove an attachment from an issue. Records deletion activity for audit purposes.",
+        parameters=[
+            ATTACHMENT_ID_PARAMETER,
+        ],
         responses={
             204: OpenApiResponse(description="Issue attachment deleted successfully"),
-            404: OpenApiResponse(description="Issue attachment not found"),
+            404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, issue_id, pk):
@@ -2013,13 +2112,34 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
     @issue_attachment_docs(
         operation_id="retrieve_issue_attachment",
-        description="Retrieve details of a specific attachment.",
+        description="Download attachment file. Returns a redirect to the presigned download URL.",
+        parameters=[
+            ATTACHMENT_ID_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Issue attachment",
-                response=IssueAttachmentSerializer,
+            302: OpenApiResponse(
+                description="Redirect to presigned download URL",
             ),
-            404: OpenApiResponse(description="Issue attachment not found"),
+            400: OpenApiResponse(
+                description="Asset not uploaded",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string",
+                            "description": "Error message",
+                            "example": "The asset is not uploaded.",
+                        },
+                        "status": {
+                            "type": "boolean",
+                            "description": "Request status",
+                            "example": False,
+                        },
+                    },
+                },
+                examples=[ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE],
+            ),
+            404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, issue_id, pk):
@@ -2050,15 +2170,27 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     @issue_attachment_docs(
         operation_id="upload_issue_attachment",
         description="Mark an attachment as uploaded after successful file transfer to storage.",
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {"file": {"type": "string", "format": "binary"}},
-            }
-        },
+        parameters=[
+            ATTACHMENT_ID_PARAMETER,
+        ],
+        request=OpenApiRequest(
+            request={
+                "application/json": {
+                    "type": "object",
+                    "properties": {
+                        "is_uploaded": {
+                            "type": "boolean",
+                            "description": "Mark attachment as uploaded",
+                        }
+                    },
+                }
+            },
+            examples=[ATTACHMENT_UPLOAD_CONFIRM_EXAMPLE],
+        ),
         responses={
-            200: OpenApiResponse(description="Issue attachment uploaded successfully"),
-            404: OpenApiResponse(description="Issue attachment not found"),
+            204: OpenApiResponse(description="Issue attachment uploaded successfully"),
+            400: INVALID_REQUEST_RESPONSE,
+            404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, issue_id, pk):
@@ -2105,51 +2237,22 @@ class IssueSearchEndpoint(BaseAPIView):
         tags=["Work Items"],
         description="Perform semantic search across issue names, sequence IDs, and project identifiers.",
         parameters=[
-            OpenApiParameter(
-                name="slug",
-                description="Workspace slug",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH,
-            ),
-            OpenApiParameter(
-                name="search",
-                description="Search query",
-                required=True,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY,
-            ),
-            OpenApiParameter(
-                name="limit",
-                description="Limit",
-                required=False,
-                type=OpenApiTypes.INT,
-                location=OpenApiParameter.QUERY,
-            ),
-            OpenApiParameter(
-                name="workspace_search",
-                description="Workspace search",
-                required=False,
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY,
-            ),
-            OpenApiParameter(
-                name="project_id",
-                description="Project ID",
-                required=False,
-                type=OpenApiTypes.UUID,
-                location=OpenApiParameter.QUERY,
-            ),
+            WORKSPACE_SLUG_PARAMETER,
+            SEARCH_PARAMETER_REQUIRED,
+            LIMIT_PARAMETER,
+            WORKSPACE_SEARCH_PARAMETER,
+            PROJECT_ID_QUERY_PARAMETER,
         ],
         responses={
             200: OpenApiResponse(
                 description="Issue search results",
                 response=IssueSearchSerializer,
+                examples=[ISSUE_SEARCH_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Bad request - invalid search parameters"),
-            401: OpenApiResponse(description="Unauthorized"),
-            403: OpenApiResponse(description="Forbidden"),
-            404: OpenApiResponse(description="Workspace not found"),
+            400: BAD_SEARCH_REQUEST_RESPONSE,
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug):

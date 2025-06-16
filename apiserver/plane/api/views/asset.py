@@ -35,6 +35,7 @@ from plane.utils.openapi import (
     VALIDATION_ERROR_RESPONSE,
     ASSET_NOT_FOUND_RESPONSE,
     NOT_FOUND_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
     asset_docs,
 )
 
@@ -98,6 +99,7 @@ class UserAssetEndpoint(BaseAPIView):
         responses={
             200: PRESIGNED_URL_SUCCESS_RESPONSE,
             400: VALIDATION_ERROR_RESPONSE,
+            401: UNAUTHORIZED_RESPONSE,
         },
     )
     def post(self, request):

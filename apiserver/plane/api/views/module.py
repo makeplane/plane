@@ -41,6 +41,35 @@ from plane.utils.host import base_host
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    MODULE_ID_PARAMETER,
+    MODULE_PK_PARAMETER,
+    ISSUE_ID_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    MODULE_CREATE_EXAMPLE,
+    MODULE_UPDATE_EXAMPLE,
+    MODULE_ISSUE_REQUEST_EXAMPLE,
+    # Response Examples
+    MODULE_EXAMPLE,
+    MODULE_ISSUE_EXAMPLE,
+    INVALID_REQUEST_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
+    MODULE_NOT_FOUND_RESPONSE,
+    DELETED_RESPONSE,
+    ADMIN_ONLY_RESPONSE,
+    REQUIRED_FIELDS_RESPONSE,
+    MODULE_ISSUE_NOT_FOUND_RESPONSE,
+    ARCHIVED_RESPONSE,
+    CANNOT_ARCHIVE_RESPONSE,
+    UNARCHIVED_RESPONSE,
 )
 
 
@@ -146,30 +175,17 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         description="Create a new project module with specified name, description, and timeline.",
         request=OpenApiRequest(
             request=ModuleCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "ModuleCreateSerializer",
-                    value={
-                        "name": "New Module",
-                        "description": "New module description",
-                        "start_date": "2021-01-01",
-                        "end_date": "2021-01-31",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating a module",
-                ),
-            ],
+            examples=[MODULE_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
-                description="Module created", response=ModuleSerializer
+                description="Module created",
+                response=ModuleSerializer,
+                examples=[MODULE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request"),
-            404: OpenApiResponse(description="Project not found"),
-            409: OpenApiResponse(
-                description="Module with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -227,8 +243,20 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_modules",
         summary="List modules",
         description="Retrieve all modules in a project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(description="Module", response=ModuleSerializer),
+            200: create_paginated_response(
+                ModuleSerializer,
+                "PaginatedModuleResponse",
+                "Paginated list of modules",
+                "Paginated Modules",
+            ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -347,29 +375,23 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         operation_id="update_module",
         summary="Update module",
         description="Modify an existing module's properties like name, description, status, or timeline.",
+        parameters=[
+            MODULE_PK_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=ModuleUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "ModuleUpdateSerializer",
-                    value={
-                        "name": "Updated Module",
-                        "description": "Updated module description",
-                        "start_date": "2021-01-01",
-                        "end_date": "2021-01-31",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for updating a module",
-                ),
-            ],
+            examples=[MODULE_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
-                description="Module updated successfully", response=ModuleSerializer
+                description="Module updated successfully",
+                response=ModuleSerializer,
+                examples=[MODULE_EXAMPLE],
             ),
             400: OpenApiResponse(
-                description="Invalid request data", response=ModuleSerializer
+                description="Invalid request data",
+                response=ModuleSerializer,
+                examples=[MODULE_UPDATE_EXAMPLE],
             ),
             404: OpenApiResponse(description="Module not found"),
             409: OpenApiResponse(
@@ -437,8 +459,15 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_module",
         summary="Retrieve module",
         description="Retrieve details of a specific module.",
+        parameters=[
+            MODULE_PK_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(description="Module", response=ModuleSerializer),
+            200: OpenApiResponse(
+                description="Module",
+                response=ModuleSerializer,
+                examples=[MODULE_EXAMPLE],
+            ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -455,10 +484,13 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_module",
         summary="Delete module",
         description="Permanently remove a module and all its associated issue relationships.",
+        parameters=[
+            MODULE_PK_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Module deleted successfully"),
-            403: OpenApiResponse(description="Only admin or creator can delete"),
-            404: OpenApiResponse(description="Module not found"),
+            204: DELETED_RESPONSE,
+            403: ADMIN_ONLY_RESPONSE,
+            404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, pk):
@@ -549,9 +581,22 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_module_issues",
         summary="List module issues",
         description="Retrieve all issues assigned to a module with detailed information.",
+        parameters=[
+            MODULE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         request={},
         responses={
-            200: OpenApiResponse(description="Module issues", response=IssueSerializer),
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedModuleIssueResponse",
+                "Paginated list of module issues",
+                "Paginated Module Issues",
+            ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -610,27 +655,21 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="add_module_issues",
         summary="Add Issues to Module",
         description="Assign multiple issues to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",
+        parameters=[
+            MODULE_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=ModuleIssueRequestSerializer,
-            examples=[
-                OpenApiExample(
-                    "ModuleIssueRequestSerializer",
-                    value={
-                        "issues": [
-                            "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
-                            "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
-                        ],
-                    },
-                    description="Example request for adding module issues",
-                ),
-            ],
+            examples=[MODULE_ISSUE_REQUEST_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
-                description="Module issues added", response=ModuleIssueSerializer
+                description="Module issues added",
+                response=ModuleIssueSerializer,
+                examples=[MODULE_ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Issues are required"),
-            404: OpenApiResponse(description="Module not found"),
+            400: REQUIRED_FIELDS_RESPONSE,
+            404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, module_id):
@@ -763,8 +802,22 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_module_issue",
         summary="Retrieve module issue",
         description="Retrieve details of a specific module issue.",
+        parameters=[
+            MODULE_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(description="Module issues", response=IssueSerializer),
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedModuleIssueDetailResponse",
+                "Paginated list of module issue details",
+                "Module Issue Details",
+            ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
@@ -825,9 +878,13 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_module_issue",
         summary="Delete module issue",
         description="Remove an issue from a module while keeping the issue in the project.",
+        parameters=[
+            MODULE_ID_PARAMETER,
+            ISSUE_ID_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Module issue deleted"),
-            404: OpenApiResponse(description="Module issue not found"),
+            204: DELETED_RESPONSE,
+            404: MODULE_ISSUE_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, module_id, issue_id):
@@ -953,10 +1010,20 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="list_archived_modules",
         summary="List archived modules",
         description="Retrieve all modules that have been archived in the project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         request={},
         responses={
-            200: OpenApiResponse(
-                description="Archived modules", response=ModuleSerializer
+            200: create_paginated_response(
+                ModuleSerializer,
+                "PaginatedArchivedModuleResponse",
+                "Paginated list of archived modules",
+                "Paginated Archived Modules",
             ),
             404: OpenApiResponse(description="Project not found"),
         },
@@ -979,13 +1046,14 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="archive_module",
         summary="Archive module",
         description="Move a module to archived status for historical tracking.",
+        parameters=[
+            MODULE_PK_PARAMETER,
+        ],
         request={},
         responses={
-            204: OpenApiResponse(description="Module archived"),
-            400: OpenApiResponse(
-                description="Only completed or cancelled modules can be archived"
-            ),
-            404: OpenApiResponse(description="Module not found"),
+            204: ARCHIVED_RESPONSE,
+            400: CANNOT_ARCHIVE_RESPONSE,
+            404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, pk):
@@ -1014,9 +1082,12 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="unarchive_module",
         summary="Unarchive module",
         description="Restore an archived module to active status, making it available for regular use.",
+        parameters=[
+            MODULE_PK_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Module unarchived"),
-            404: OpenApiResponse(description="Module not found"),
+            204: UNARCHIVED_RESPONSE,
+            404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, pk):
