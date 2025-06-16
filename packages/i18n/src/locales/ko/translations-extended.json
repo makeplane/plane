@@ -1225,6 +1225,27 @@
       "description_configure_csv": "CSV 파일을 업로드하고 플레인 필드에 매핑할 필드를 구성하세요."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "클릭업 데이터를 플레인 프로젝트로 임포트하세요.",
+    "select_service_space": "{serviceName} 스페이스 선택",
+    "select_service_folder": "{serviceName} 폴더 선택",
+    "selected": "선택됨",
+    "users": "사용자",
+    "steps": {
+      "title_configure_plane": "플레인 구성",
+      "description_configure_plane": "클릭업 데이터를 마이그레이션할 플레인 프로젝트를 먼저 생성하세요. 프로젝트가 생성되면 여기에서 선택하세요.",
+      "title_configure_clickup": "클릭업 구성",
+      "description_configure_clickup": "데이터를 마이그레이션하려는 클릭업 팀, 스페이스 및 폴더를 선택하세요.",
+      "title_map_states": "스테이트 매핑",
+      "description_map_states": "저희는 최선을 다해 클릭업 상태를 플레인 스테이트에 자동으로 매칭했습니다. 진행하기 전에 남은 스테이트를 매핑하세요. 스테이트를 생성하고 수동으로 매핑할 수도 있습니다.",
+      "title_map_priorities": "프라이오리티 매핑",
+      "description_map_priorities": "플레인 프로젝트 프라이오리티에 매핑하려는 클릭업 프라이오리티를 선택하세요.",
+      "title_summary": "요약",
+      "description_summary": "클릭업에서 플레인으로 마이그레이션될 데이터의 요약입니다."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

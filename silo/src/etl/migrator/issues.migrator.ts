@@ -200,7 +200,7 @@ export const generateIssuePayload = async (payload: BulkIssueCreatePayload): Pro
         issue_property_values: associatedIssuePropertyValues,
       });
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`, error);
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating the issue: ${issue.external_id}`);
     }
   }
 
@@ -240,6 +240,12 @@ const processAttachments = async (
 
       if (credentials.source === E_IMPORTER_KEYS.LINEAR && env.LINEAR_OAUTH_ENABLED !== "1") {
         sourceAccessToken = credentials.source_access_token;
+        authToken = sourceAccessToken as string;
+      }
+
+      if (credentials.source === E_IMPORTER_KEYS.CLICKUP) {
+        sourceAccessToken = credentials.source_access_token;
+        authPrefix = "";
         authToken = sourceAccessToken as string;
       }
 
@@ -1027,6 +1033,12 @@ const processCommentAttachments = async (
       if (credentials.source === E_IMPORTER_KEYS.LINEAR && env.LINEAR_OAUTH_ENABLED !== "1") {
         sourceAccessToken = credentials.source_access_token;
         authToken = sourceAccessToken as string;
+      }
+
+      if (credentials.source === E_IMPORTER_KEYS.CLICKUP) {
+        sourceAccessToken = credentials.source_access_token;
+        authToken = sourceAccessToken as string;
+        authPrefix = "";
       }
 
       // Download the file

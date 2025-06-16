@@ -2,6 +2,7 @@ import { getAppSecretValue } from "@/db/query";
 import { logger } from "@/logger";
 import { Store } from "@/worker/base";
 import { getPlaneAppDetailsCacheKey } from "./cache-keys";
+import { TAppKeys } from "@plane/etl/core";
 
 
 type PlaneAppDetails = {
@@ -37,22 +38,23 @@ const getPlaneAppDetailsFromDB = async (appName: string): Promise<PlaneAppDetail
 
 /**
  * Get plane app details from cache or db
+ * IMPORTANT: For importers always send the IMPORTER as the appName
  * @param appName - plane app name in lowercase e.g. "github"
  * @returns plane app details
  */
-export const getPlaneAppDetails = async (appName: string): Promise<PlaneAppDetails> => {
+export const getPlaneAppDetails = async (appName: TAppKeys): Promise<PlaneAppDetails> => {
   try {
     const PLANE_APP_DETAILS_CACHE_EXPIRY_TIME = 60 * 60 * 24; // 1 day
 
-    appName = appName.toLowerCase();
-    const cacheKey = getPlaneAppDetailsCacheKey(appName);
+    const appNameInLowerCase = appName.toLowerCase();
+    const cacheKey = getPlaneAppDetailsCacheKey(appNameInLowerCase);
     const store = Store.getInstance();
     const planeAppDetails = await store.get(cacheKey);
 
     if (planeAppDetails) {
       return JSON.parse(planeAppDetails);
     }
-    const app = await getPlaneAppDetailsFromDB(appName);
+    const app = await getPlaneAppDetailsFromDB(appNameInLowerCase);
     store.set(cacheKey, JSON.stringify(app), PLANE_APP_DETAILS_CACHE_EXPIRY_TIME);
 
     return app;

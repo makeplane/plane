@@ -1216,6 +1216,27 @@
       "description_configure_csv": "Пожалуйста, загрузите ваш файл CSV и настройте поля для сопоставления с полями Plane."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Импортируйте ваши данные ClickUp в проекты Plane.",
+    "select_service_space": "Выберите {serviceName} Пространство",
+    "select_service_folder": "Выберите {serviceName} Папку",
+    "selected": "Выбрано",
+    "users": "Пользователи",
+    "steps": {
+      "title_configure_plane": "Настроить Plane",
+      "description_configure_plane": "Пожалуйста, сначала создайте проект в Plane, в который вы собираетесь мигрировать ваши данные ClickUp. После создания проекта выберите его здесь.",
+      "title_configure_clickup": "Настроить ClickUp",
+      "description_configure_clickup": "Пожалуйста, выберите команду ClickUp, пространство и папку, из которых вы хотите мигрировать ваши данные.",
+      "title_map_states": "Сопоставить состояния",
+      "description_map_states": "Мы автоматически сопоставили статусы ClickUp с состояниями Plane наилучшим образом. Пожалуйста, сопоставьте любые оставшиеся состояния перед продолжением, вы также можете создать состояния и сопоставить их вручную.",
+      "title_map_priorities": "Сопоставить приоритеты",
+      "description_map_priorities": "Пожалуйста, выберите приоритеты ClickUp, которые вы хотите сопоставить с приоритетами проектов Plane.",
+      "title_summary": "Резюме",
+      "description_summary": "Вот резюме данных, которые будут мигрированы из ClickUp в Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

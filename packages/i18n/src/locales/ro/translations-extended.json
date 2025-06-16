@@ -1225,6 +1225,27 @@
       "description_configure_csv": "Te rugăm să încarci fișierul tău CSV și să configurezi câmpurile care vor fi mapate la câmpurile Plane."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importă datele tale ClickUp în proiectele Plane.",
+    "select_service_space": "Selectează {serviceName} Spațiu",
+    "select_service_folder": "Selectează {serviceName} Dosar",
+    "selected": "Selectat",
+    "users": "Utilizatori",
+    "steps": {
+      "title_configure_plane": "Configurează Plane",
+      "description_configure_plane": "Te rugăm să creezi mai întâi proiectul în Plane unde intenționezi să migrezi datele tale ClickUp. Odată ce proiectul este creat, selectează-l aici.",
+      "title_configure_clickup": "Configurează ClickUp",
+      "description_configure_clickup": "Te rugăm să selectezi echipa ClickUp, spațiul și dosarul din care dorești să migrezi datele tale.",
+      "title_map_states": "Mapează Stările",
+      "description_map_states": "Am potrivit automat statusurile ClickUp cu stările Plane cât mai bine posibil. Te rugăm să mapezi orice stări rămase înainte de a continua, poți de asemenea să creezi stări și să le mapezi manual.",
+      "title_map_priorities": "Mapează Prioritățile",
+      "description_map_priorities": "Te rugăm să selectezi prioritățile ClickUp pe care dorești să le mapezi la prioritățile proiectului Plane.",
+      "title_summary": "Sumar",
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la ClickUp la Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

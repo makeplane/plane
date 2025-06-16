@@ -39,7 +39,6 @@
     "express": "^4.21.2",
     "express-winston": "^4.2.0",
     "mimetics": "^1.0.4",
-    "multer": "^1.4.5-lts.1",
     "node-html-parser": "^6.1.13",
     "pg": "^8.15.5",
     "postgres": "^3.4.4",

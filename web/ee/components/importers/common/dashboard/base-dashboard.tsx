@@ -44,7 +44,7 @@ export type TImporterHook<T> = {
       sourceTokenInvalid: boolean;
     };
     deactivateAuth: () => Promise<void>;
-    apiTokenVerification: () => Promise<{ message: string } | undefined>;
+    apiTokenVerification?: () => Promise<{ message: string } | undefined>;
   };
   job: {
     loader: "fetch" | "re-fetch" | "fetch_by_id" | "create" | "start" | "create_config" | undefined;
@@ -88,7 +88,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
   useSWR(
     currentAuth?.isAuthenticated ? swrKey : null,
     currentAuth?.isAuthenticated ? async () => await fetchJobs() : null,
-    { errorRetryCount: 0, refreshInterval: 5000 }
+    { errorRetryCount: 0, refreshInterval: 30000 }
   );
 
   // derived values

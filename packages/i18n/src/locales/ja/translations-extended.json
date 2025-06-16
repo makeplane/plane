@@ -1225,6 +1225,27 @@
       "description_configure_csv": "CSVファイルをアップロードし、Planeのフィールドにマッピングするフィールドを設定してください。"
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUpのデータをPlaneプロジェクトにインポートします。",
+    "select_service_space": "{serviceName}スペースを選択",
+    "select_service_folder": "{serviceName}フォルダーを選択",
+    "selected": "選択済み",
+    "users": "ユーザー",
+    "steps": {
+      "title_configure_plane": "Planeを設定",
+      "description_configure_plane": "まずClickUpデータを移行したいPlaneプロジェクトを作成してください。プロジェクトを作成したら、ここで選択してください。",
+      "title_configure_clickup": "ClickUpを設定",
+      "description_configure_clickup": "ClickUpチーム、スペース、フォルダーを選択してください。",
+      "title_map_states": "状態をマッピング",
+      "description_map_states": "ClickUpのステータスを可能な限り自動的にPlaneの状態にマッチングしました。残りの状態をマッピングしてから進めてください。状態を作成して手動でマッピングすることもできます。",
+      "title_map_priorities": "優先度をマッピング",
+      "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
+      "title_summary": "サマリー",
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。"
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

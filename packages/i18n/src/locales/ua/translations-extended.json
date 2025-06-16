@@ -1225,6 +1225,27 @@
       "description_configure_csv": "Будь ласка, завантажте ваш CSV файл і налаштуйте поля, які будуть мапитися до полів Плейн."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Імпортуйте ваші дані ClickUp у проджекти Плейн.",
+    "select_service_space": "Виберіть {serviceName} Простір",
+    "select_service_folder": "Виберіть {serviceName} Папку",
+    "selected": "Вибрано",
+    "users": "Користувачі",
+    "steps": {
+      "title_configure_plane": "Налаштувати Плейн",
+      "description_configure_plane": "Будь ласка, спочатку створіть проджект у Плейн, куди ви плануєте мігрувати ваші дані ClickUp. Після створення проджекту виберіть його тут.",
+      "title_configure_clickup": "Налаштувати ClickUp",
+      "description_configure_clickup": "Будь ласка, виберіть команду ClickUp, простір і папку, з якої ви хочете мігрувати ваші дані.",
+      "title_map_states": "Мапування Стейтів",
+      "description_map_states": "Ми автоматично зіставили статуси ClickUp зі стейтами Плейн, наскільки це було можливо. Будь ласка, зіставте всі стейти, що залишилися, перед тим як продовжити, ви також можете створити стейти та мапити їх вручну.",
+      "title_map_priorities": "Мапування Пріоритетів",
+      "description_map_priorities": "Будь ласка, виберіть пріоритети ClickUp, які ви хочете мапити до пріоритетів проджекту Плейн.",
+      "title_summary": "Підсумок",
+      "description_summary": "Ось підсумок даних, які будуть мігровані з ClickUp до Плейн."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

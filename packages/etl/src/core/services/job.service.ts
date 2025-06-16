@@ -5,8 +5,12 @@ import { TImporterKeys, propertiesToOmit } from "@/core/types";
 export class JobService<TSyncJobConfig extends object> {
   public axiosInstance: AxiosInstance;
 
-  constructor(baseUrl: string, xApiKey: string) {
-    this.axiosInstance = axios.create({ baseURL: baseUrl, headers: { "x-api-key": xApiKey }, withCredentials: true });
+  constructor(baseUrl: string, xApiKey: string | null) {
+    this.axiosInstance = axios.create({
+      baseURL: baseUrl,
+      headers: xApiKey ? { "x-api-key": xApiKey } : {},
+      withCredentials: true,
+    });
   }
 
   /**
@@ -46,7 +50,7 @@ export class JobService<TSyncJobConfig extends object> {
    */
   async create(
     workspaceId: string,
-    projectId: string,
+    projectId: string | undefined,
     payload: Omit<Partial<TImportJob<TSyncJobConfig>>, (typeof propertiesToOmit)[number]>
   ): Promise<TImportJob<TSyncJobConfig>> {
     // Make workspaceId and projectId required

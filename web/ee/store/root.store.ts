@@ -58,6 +58,7 @@ import {
   NotionStore,
 } from "./importers";
 // initiative
+import { ClickUpStore, IClickUpStore } from "./importers/clickup/root.store";
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
 import { IInitiativeStore, InitiativeStore } from "./initiatives/initiatives.store";
 // integrations
@@ -114,6 +115,7 @@ export class RootStore extends CoreRootStore {
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
   flatfileImporter: IFlatfileStore;
+  clickupImporter: IClickUpStore;
   notionImporter: INotionStore;
   // integrations
   connections: IConnectionStore;
@@ -161,6 +163,7 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.clickupImporter = new ClickUpStore(this);
     this.notionImporter = new NotionStore(this);
     // integrations
     this.connections = new ConnectionStore(this);
@@ -207,6 +210,7 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.clickupImporter = new ClickUpStore(this);
     this.notionImporter = new NotionStore(this);
     // integrations
     this.connections = new ConnectionStore(this);

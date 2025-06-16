@@ -1226,6 +1226,27 @@
       "description_configure_csv": "Nahrajte svůj CSV soubor a nakonfigurujte pole, která mají být mapována na pole Plane."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importujte svá ClickUp data do projektů Plane.",
+    "select_service_space": "Vyberte {serviceName} Space",
+    "select_service_folder": "Vyberte {serviceName} Folder",
+    "selected": "Vybráno",
+    "users": "Uživatelé",
+    "steps": {
+      "title_configure_plane": "Nastavte Plane",
+      "description_configure_plane": "Nejprve vytvořte projekt v Plane, do kterého chcete migrovat svá ClickUp data. Jakmile je projekt vytvořen, vyberte ho zde.",
+      "title_configure_clickup": "Nastavte ClickUp",
+      "description_configure_clickup": "Vyberte ClickUp tým, prostor a složku, ze které chcete migrovat svá data.",
+      "title_map_states": "Mapovat stavy",
+      "description_map_states": "Automaticky jsme přiřadili ClickUp stavy k stavům Plane co nejlépe. Před pokračováním prosím mapujte jakékoli zbývající stavy, můžete také vytvořit stavy a mapovat je ručně.",
+      "title_map_priorities": "Mapovat priority",
+      "description_map_priorities": "Vyberte ClickUp priority, kterou chcete mapovat na priority projektů Plane.",
+      "title_summary": "Shrnutí",
+      "description_summary": "Zde je shrnutí dat, která budou migrována z ClickUp do Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

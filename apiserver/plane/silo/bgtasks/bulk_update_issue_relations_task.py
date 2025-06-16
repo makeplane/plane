@@ -9,11 +9,16 @@ logger = logging.getLogger("plane.worker")
 
 @shared_task
 def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
+    logger.info(f"Bulk updating issue relations for job {job_id}")
     job = ImportJob.objects.get(id=job_id)
     relation_map = job.relation_map
     source = job.source
     project_id = job.project_id
     workspace_id = job.workspace_id
+
+    if relation_map is None or "issue" not in relation_map:
+        logger.warning(f"No relation map found for job {job_id}")
+        return
 
     if not user_id:
         user_id = job.initiator_id
@@ -38,7 +43,9 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
 
     # Get all issues from database
     issues = Issue.objects.filter(
-        external_id__in=all_ex_issues, external_source=source
+        external_id__in=all_ex_issues,
+        external_source=source,
+        workspace_id=workspace_id,
     ).only("external_id", "id")
 
     issues_by_external_id = {issue.external_id: issue.id for issue in issues}

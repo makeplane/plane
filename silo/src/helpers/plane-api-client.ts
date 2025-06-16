@@ -1,5 +1,6 @@
+import { FeatureFlagService, TAppKeys } from "@plane/etl/core";
 import { Client as PlaneClient } from "@plane/sdk";
-import { E_INTEGRATION_KEYS, TWorkspaceCredential } from "@plane/types";
+import { TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
@@ -10,10 +11,7 @@ import { planeOAuthService } from "@/services/oauth/auth";
  * @param credential - The workspace credential for the application connection
  * @param appName - The name of the app
  */
-export const getPlaneAPIClient = async (
-  credential: TWorkspaceCredential,
-  appName: E_INTEGRATION_KEYS
-): Promise<PlaneClient> => {
+export const getPlaneAPIClient = async (credential: TWorkspaceCredential, appName: TAppKeys): Promise<PlaneClient> => {
   try {
     const baseURL = env.API_BASE_URL;
     // checks if the credential is not an OAuth credential
@@ -46,4 +44,11 @@ export const getPlaneAPIClient = async (
     logger.error(`Error getting Plane API client for the given credential ${credential.id}: ${error}`);
     throw error;
   }
+};
+
+export const getPlaneFeatureFlagService = async (): Promise<FeatureFlagService> => {
+  const featureFlagService = new FeatureFlagService(env.FEATURE_FLAG_SERVER_BASE_URL || "", {
+    x_api_key: env.FEATURE_FLAG_SERVER_AUTH_TOKEN || "",
+  });
+  return featureFlagService;
 };

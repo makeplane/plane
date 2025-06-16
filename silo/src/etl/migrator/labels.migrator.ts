@@ -1,4 +1,5 @@
 import { ExIssueLabel, Client as PlaneClient } from "@plane/sdk";
+import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
 
@@ -10,25 +11,25 @@ export const createLabelsForIssues = async (
   workspaceSlug: string,
   projectId: string
 ): Promise<ExIssueLabel[]> => {
-  // TODO: May hit race conditions
-  const createdLabels: ExIssueLabel[] = [];
-
-  const labelPromises = labels.map(async (label) => {
+  const createOrUpdateLabel = async (label: ExIssueLabel) => {
     try {
-      const createdLabel: any = await protect(
+      const createdLabel: ExIssueLabel | undefined = await protect(
         planeClient.label.create.bind(planeClient.label),
         workspaceSlug,
         projectId,
         label
       );
       if (createdLabel) {
-        createdLabels.push(createdLabel);
+        return createdLabel;
       }
-    } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the label: ${label.name}`, error);
-    }
-  });
 
-  await Promise.all(labelPromises);
-  return createdLabels;
+      return undefined;
+    } catch (error) {
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating the label: ${label.name}`);
+      return undefined;
+    }
+  };
+
+  const createdLabels = await processBatchPromises(labels, createOrUpdateLabel, 5);
+  return createdLabels?.filter((label) => label !== undefined) ?? [];
 };

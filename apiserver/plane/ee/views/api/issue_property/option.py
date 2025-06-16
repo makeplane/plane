@@ -168,46 +168,40 @@ class IssuePropertyOptionAPIEndpoint(BaseAPIView):
     # update issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, property_id, option_id):
+        # validate if ant default property option is already available
+        default_option_exists = self.model.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            property_id=property_id,
+            is_default=True,
+            property__issue_type__is_epic=False,
+        )
         if (
-            self.workspace_slug
-            and self.project_id
-            and self.property_id
-            and self.option_id
+            default_option_exists.exists()
+            and "is_default" in request.data
+            and request.data["is_default"]
         ):
-            # validate if ant default property option is already available
-            default_option_exists = self.model.objects.filter(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                property_id=self.property_id,
-                is_default=True,
-                property__issue_type__is_epic=False,
-            )
-            if (
-                default_option_exists.exists()
-                and "is_default" in request.data
-                and request.data["is_default"]
-            ):
-                return Response(
-                    {"error": "Default option already exists"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            property_option = self.model.objects.get(
-                workspace__slug=self.workspace_slug,
-                project_id=self.project_id,
-                property_id=self.property_id,
-                pk=self.option_id,
-                property__issue_type__is_epic=False,
+            return Response(
+                {"error": "Default option already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-            data = request.data
-            property_option_serializer = self.serializer_class(
-                property_option, data=data, partial=True
-            )
-            property_option_serializer.is_valid(raise_exception=True)
-            property_option_serializer.save()
+        property_option = self.model.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            property_id=property_id,
+            pk=option_id,
+            property__issue_type__is_epic=False,
+        )
 
-            return Response(property_option_serializer.data, status=status.HTTP_200_OK)
+        data = request.data
+        property_option_serializer = self.serializer_class(
+            property_option, data=data, partial=True
+        )
+        property_option_serializer.is_valid(raise_exception=True)
+        property_option_serializer.save()
+
+        return Response(property_option_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)

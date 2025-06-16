@@ -1242,6 +1242,27 @@
       "description_configure_csv": "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUp verilerinizi Plane projelerine import edin.",
+    "select_service_space": "{serviceName} Space Seçin",
+    "select_service_folder": "{serviceName} Folder Seçin",
+    "selected": "Seçildi",
+    "users": "Kullanıcılar",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce ClickUp verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_clickup": "ClickUp'ı Yapılandır",
+      "description_configure_clickup": "Lütfen ClickUp takımı, alan ve klasörünü seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "ClickUp durumlarını Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen ClickUp önceliklerini Plane proje önceliklerine eşlemek istediğinizi seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte ClickUp'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

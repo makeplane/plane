@@ -1,5 +1,6 @@
 import { ExIssue, ExModule, Client as PlaneClient } from "@plane/sdk";
 import { getJobData } from "@/helpers/job";
+import { processBatchPromises } from "@/helpers/methods";
 import { AssertAPIErrorResponse, protect } from "@/lib";
 import { logger } from "@/logger";
 
@@ -90,10 +91,7 @@ export const createAllModules = async (
   workspaceSlug: string,
   projectId: string
 ): Promise<{ id: string; issues: string[] }[]> => {
-  const createdModules: { id: string; issues: string[] }[] = [];
-
-  for (const module of modules) {
-    // Create the cycle and get the cycle id
+  const createOrUpdateModule = async (module: ExModule) => {
     try {
       const createdModule = await protect(
         planeClient.modules.create.bind(planeClient.modules),
@@ -101,19 +99,21 @@ export const createAllModules = async (
         projectId,
         module
       );
-      createdModules.push({ id: createdModule.id, issues: module.issues });
+      return { id: createdModule.id, issues: module.issues };
     } catch (error) {
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating the module: ${module.name}`);
       if (AssertAPIErrorResponse(error)) {
         if (error.error && error.error.includes("already exists")) {
           logger.info(`[${jobId.slice(0, 7)}] Module "${module.name}" already exists. Skipping...`);
           // Get the id from the module
-          createdModules.push({ id: error.id, issues: module.issues });
+          return { id: error.id, issues: module.issues };
         }
-      } else {
-        logger.error(`[${jobId.slice(0, 7)}] Error while creating the module: ${module.name}`, error);
       }
+      return undefined;
     }
   }
 
-  return createdModules;
+  const createdModules = await processBatchPromises(modules, createOrUpdateModule, 5);
+
+  return createdModules?.filter((module) => module !== undefined) ?? [];
 };

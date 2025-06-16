@@ -1,6 +1,7 @@
+import { ExIssueProperty, ExIssueType, ExIssuePropertyOption, Client as PlaneClient } from "@plane/sdk";
+import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
-import { ExIssueProperty, ExIssueType, ExIssuePropertyOption, Client as PlaneClient } from "@plane/sdk";
 
 type TCreateOrUpdateIssueProperties = {
   jobId: string;
@@ -28,18 +29,19 @@ export const createOrUpdateIssueProperties = async (
 ): Promise<ExIssueProperty[]> => {
   const { jobId, issueTypesMap, defaultIssueType, issueProperties, planeClient, workspaceSlug, projectId, method } =
     props;
-  const createdUpdatedIssueProperties: ExIssueProperty[] = [];
 
-  const issuePropertyPromises = issueProperties.map(async (issueProperty) => {
+  // Process a single issue property
+  const processIssueProperty = async (issueProperty: Partial<ExIssueProperty>): Promise<ExIssueProperty | null> => {
     try {
-      let createdUpdatedIssueProperty: ExIssueProperty | undefined;
       const issueType = issueTypesMap.get(issueProperty.type_id || "") || defaultIssueType;
       if (!issueType) {
         logger.error(
           `[${jobId.slice(0, 7)}] Issue type not found for the issue property: ${issueProperty.display_name}`
         );
-        return;
+        return null;
       }
+
+      let createdUpdatedIssueProperty: ExIssueProperty | undefined;
 
       if (method === "create") {
         createdUpdatedIssueProperty = await protect(
@@ -59,18 +61,20 @@ export const createOrUpdateIssueProperties = async (
           issueProperty
         );
       }
-      if (createdUpdatedIssueProperty) {
-        createdUpdatedIssueProperties.push(createdUpdatedIssueProperty);
-      }
+
+      return createdUpdatedIssueProperty;
     } catch (error) {
       logger.error(
         `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
         error
       );
+      return null;
     }
-  });
+  };
 
-  await Promise.all(issuePropertyPromises);
+  // Process all issue properties in batches of 5
+  const createdUpdatedIssueProperties = await processBatchPromises(issueProperties, processIssueProperty, 5);
+
   return createdUpdatedIssueProperties;
 };
 
@@ -78,18 +82,18 @@ export const createOrUpdateIssuePropertiesOptions = async (
   props: TCreateOrUpdateIssuePropertiesOptions
 ): Promise<ExIssuePropertyOption[]> => {
   const { jobId, issuePropertyMap, issuePropertiesOptions, planeClient, workspaceSlug, projectId, method } = props;
-  const createdUpdatedIssuePropertiesOptions: ExIssuePropertyOption[] = [];
 
-  const issuePropertyOptionsPromises = issuePropertiesOptions.map(async (issuePropertyOption) => {
+  const processIssuePropertyOption = async (
+    issuePropertyOption: Partial<ExIssuePropertyOption>
+  ): Promise<ExIssuePropertyOption | null> => {
+    let createdUpdatedIssuePropertyOption: ExIssuePropertyOption | undefined;
     try {
-      let createdUpdatedIssuePropertyOption: ExIssuePropertyOption | undefined;
-
-      const issueProperty = issuePropertyMap.get(`customfield_${issuePropertyOption.property_id}` || "");
+      const issueProperty = issuePropertyMap.get(issuePropertyOption.property_id || "");
       if (!issueProperty) {
         logger.error(
           `[${jobId.slice(0, 7)}] Issue property not found for the issue property option: ${issuePropertyOption.name}`
         );
-        return;
+        return null;
       }
 
       if (method === "create") {
@@ -110,17 +114,22 @@ export const createOrUpdateIssuePropertiesOptions = async (
           issuePropertyOption
         );
       }
-      if (createdUpdatedIssuePropertyOption) {
-        createdUpdatedIssuePropertiesOptions.push(createdUpdatedIssuePropertyOption);
-      }
+
+      return createdUpdatedIssuePropertyOption;
     } catch (error) {
       logger.error(
         `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`,
         error
       );
+      return null;
     }
-  });
+  };
 
-  await Promise.all(issuePropertyOptionsPromises);
+  const createdUpdatedIssuePropertiesOptions = await processBatchPromises(
+    issuePropertiesOptions,
+    processIssuePropertyOption,
+    5
+  );
+
   return createdUpdatedIssuePropertiesOptions;
 };

@@ -1225,6 +1225,27 @@
       "description_configure_csv": "Silakan unggah file CSV Anda dan konfigurasikan bidang yang akan dipetakan ke bidang Plane."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Impor data ClickUp Anda ke dalam projek Plane.",
+    "select_service_space": "Pilih {serviceName} Space",
+    "select_service_folder": "Pilih {serviceName} Folder",
+    "selected": "Terpilih",
+    "users": "Pengguna",
+    "steps": {
+      "title_configure_plane": "Konfigurasi Plane",
+      "description_configure_plane": "Silakan buat terlebih dahulu projek di Plane tempat Anda bermaksud memigrasikan data ClickUp Anda. Setelah projek dibuat, pilih di sini.",
+      "title_configure_clickup": "Konfigurasi ClickUp",
+      "description_configure_clickup": "Silakan pilih tim, ruang, dan folder ClickUp dari mana Anda ingin memigrasikan data Anda.",
+      "title_map_states": "Petakan Status",
+      "description_map_states": "Kami telah secara otomatis mencocokkan status ClickUp ke status Plane semampu kami. Silakan petakan status yang tersisa sebelum melanjutkan, Anda juga dapat membuat status dan memetakannya secara manual.",
+      "title_map_priorities": "Petakan Prioritas",
+      "description_map_priorities": "Silakan pilih prioritas ClickUp yang ingin Anda petakan ke prioritas projek Plane.",
+      "title_summary": "Ringkasan",
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari ClickUp ke Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

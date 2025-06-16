@@ -232,7 +232,7 @@ type IProject = {
   default_state: any;
 };
 
-export type ExProject = Partial<IProject>;
+export type ExProject = Partial<IProject> & Partial<ExBase>;
 
 /* ----------------- Export Types --------------------- */
 export type ExIssueLabel = IIssueLabel & ExBase;

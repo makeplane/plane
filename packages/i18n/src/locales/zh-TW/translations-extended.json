@@ -1225,6 +1225,27 @@
       "description_configure_csv": "請上傳您的 CSV 文件並配置要映射到 Plane 字段的字段。"
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "將您的 ClickUp 數據遷移到 Plane 專案中。",
+    "select_service_space": "選擇 {serviceName} 空間",
+    "select_service_folder": "選擇 {serviceName} 文件夾",
+    "selected": "已選擇",
+    "users": "用戶",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "請先在 Plane 中創建您打算遷移 ClickUp 數據的專案。專案創建後，在此處選擇它。",
+      "title_configure_clickup": "配置 ClickUp",
+      "description_configure_clickup": "請選擇您想要遷移數據的 ClickUp 團隊、空間和文件夾。",
+      "title_map_states": "映射狀態",
+      "description_map_states": "我們已盡力自動將 ClickUp 狀態匹配到 Plane 狀態。繼續之前，請映射任何剩餘的狀態，您也可以創建狀態並手動映射它們。",
+      "title_map_priorities": "映射優先級",
+      "description_map_priorities": "請選擇您想要映射到 Plane 專案優先級的 ClickUp 優先級。",
+      "title_summary": "摘要",
+      "description_summary": "以下是將從 ClickUp 遷移到 Plane 的數據摘要。"
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

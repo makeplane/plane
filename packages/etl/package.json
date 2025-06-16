@@ -45,6 +45,10 @@
       "types": "./dist/flatfile/index.d.ts",
       "default": "./dist/flatfile/index.js"
     },
+    "./clickup": {
+      "types": "./dist/clickup/index.d.ts",
+      "default": "./dist/clickup/index.js"
+    },
     "./parser": {
       "types": "./dist/parser/index.d.ts",
       "default": "./dist/parser/index.js"

@@ -6,7 +6,6 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
-import { Lock } from "@/worker/base/lock";
 import { TBatch, UpdateEventType } from "@/worker/types";
 import { migrateToPlane } from "./migrator";
 
@@ -61,40 +60,13 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         end_time: new Date().toISOString(),
         transformed_batch_count: report.total_batch_count,
         completed_batch_count: report.total_batch_count,
-      })
+      }),
     ]);
   }
 
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
     try {
       const job = await this.getJobInfo(headers.jobId);
-      const workspaceId = job.workspace_id;
-
-      const batchLock = new Lock(this.store, {
-        type: "default",
-        jobId: headers.jobId,
-        workspaceId,
-      });
-
-      if (job.cancelled_at) {
-        await batchLock.releaseLock();
-        return true;
-      }
-
-      // For transform/push operations, check if we can acquire the lock
-      const currentBatch = await batchLock.getCurrentBatch();
-
-      if (currentBatch && currentBatch !== data.meta?.batchId) {
-        // Another batch is being processed, requeue this one
-        await this.pushToQueue(headers, data);
-        return true;
-      }
-
-      // Try to acquire lock for this batch
-      const acquired = await batchLock.acquireLock(data.meta?.batchId || "initiate");
-      if (!acquired) {
-        return true;
-      }
 
       try {
         switch (headers.type) {
@@ -116,7 +88,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
                 transformed_batch_count: batches.length,
                 end_time: new Date(),
               });
-              await batchLock.releaseLock();
               return true;
             }
 
@@ -125,7 +96,6 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               headers.type = "transform";
               this.pushToQueue(headers, batch);
             }
-            await batchLock.releaseLock();
 
             return true;
           case "transform":
@@ -141,10 +111,8 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
                 data: transformedData,
                 meta: data.meta,
               });
-              await batchLock.releaseLock();
             } else {
               await this.update(headers.jobId, "FINISHED", {});
-              await batchLock.releaseLock();
               return true;
             }
             await this.update(headers.jobId, "TRANSFORMED", {});
@@ -154,10 +122,11 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Pushing data for batch 🧹 ------------------- [${data.meta.batchId}]`
             );
             await this.update(headers.jobId, "PUSHING", {});
-            await migrateToPlane(job as TImportJob, data.data, data.meta);
+            // eslint-disable-next-line no-case-declarations
+            const jobData = await this.getJobData(headers.jobId);
+            await migrateToPlane(jobData as TImportJob, data.data, data.meta);
             // Delete the workspace from the store, as we are done processing the
             // job, the worker is free to pick another job from the same workspace
-            await batchLock.releaseLock();
             logger.info(
               `[${headers.route.toUpperCase()}][${headers.jobId.slice(0, 7)}] Finished pushing data to batch 🚀 ------------------- [${data.meta.batchId}]`
             );
@@ -165,20 +134,18 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
           case "finished":
             this.markJobAsFinished(headers.jobId, data);
-            await batchLock.releaseLock();
             return true;
 
           default:
             break;
         }
       } catch (error) {
-        logger.error("Got error while iterating", error);
+        logger.error(`Got error while iterating the task ${headers.jobId} ${headers.type}`, { error });
         await this.update(headers.jobId, "ERROR", {
-          error: "Something went wrong while pushing data to plane, ERROR:" + error,
+          error: `Something went wrong while pushing data to plane, ERROR: ${headers.type} ${error instanceof Error ? error.message : JSON.stringify(error)}`,
         });
 
         // IF the job is errored out, we need delete key from the store
-        await batchLock.releaseLock();
         // Inditate that the task has been errored, don't need to requeue, the task
         // will be requeued manually
         logger.error("[ETL] Error processing etl job", error);
@@ -283,6 +250,10 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
           await client.importJob.updateImportJob(jobId, {
             status: stage,
             error_metadata: data,
+          });
+          await client.importReport.incrementImportReportCount(report.id, {
+            errored_batch_count: 1,
+            completed_batch_count: 1,
           });
         }
       default:

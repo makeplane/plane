@@ -111,6 +111,7 @@ from plane.ee.views.app.job.report import ImportReportView
 
 from plane.ee.views.api.job.base import ImportJobAPIView
 from plane.ee.views.api.job.report import ImportReportAPIView
+from plane.ee.views.api.job.report import ImportReportCountIncrementAPIView
 
 from plane.ee.views.api.worklog import (
     IssueWorklogAPIEndpoint,

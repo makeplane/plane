@@ -7,6 +7,7 @@ import { ImportersListItem } from "@/plane-web/components/importers";
 import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import AsanaLogo from "@/public/services/asana.svg";
+import ClickUpLogo from "@/public/services/clickup.svg";
 import JiraLogo from "@/public/services/jira.svg";
 import LinearLogo from "@/public/services/linear.svg";
 import NotionLogo from "@/public/services/notion.svg";
@@ -52,6 +53,14 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     title: "Asana",
     i18n_description: "asana_importer.asana_importer_description",
     logo: AsanaLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.CLICKUP_IMPORTER,
+    key: "clickup",
+    title: "ClickUp",
+    i18n_description: "clickup_importer.clickup_importer_description",
+    logo: ClickUpLogo,
     beta: true,
   },
   {

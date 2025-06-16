@@ -12,6 +12,7 @@ import { TImporterKeys, TIntegrationKeys } from "@plane/etl/core";
 import { resetJobIfStarted } from "@/helpers/job";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { importTaskManger } from "@/worker";
 
@@ -65,6 +66,12 @@ export class JobController {
             workspace_id: req.query.workspaceId as string,
           });
         }
+
+        // remove relation_map and config from the jobs
+        jobs = jobs.map((job) => {
+          const { relation_map, ...rest } = job;
+          return rest;
+        });
 
         res.status(200).json(jobs);
       } else {
@@ -133,18 +140,20 @@ export class JobController {
     try {
       const jobId = req.params.id;
       const phase = req.body.phase;
+      const isLastBatch = req.body.isLastBatch;
       // Look up for the job to ensure the job exists and is valid
       const job = await client.importJob.getImportJob(jobId);
       if (!job) return res.status(400).json({ message: "Job not found" });
 
       // Dispatch an event for the importer to handle any sort of post job processing
+      logger.info(`[${job.id}] Dispatching job finished event for ${job.source} with phase ${phase} and isLastBatch ${isLastBatch}`);
       await importTaskManger.registerTask(
         {
           route: job.source.toLowerCase(),
           jobId: job.id,
           type: "finished",
         },
-        { phase }
+        { phase, isLastBatch }
       );
       res.status(200).json({ message: "Job updated successfully" });
     } catch (error: any) {

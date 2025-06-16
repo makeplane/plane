@@ -1,6 +1,7 @@
 import { E_IMPORTER_KEYS } from "@plane/etl/core";
 import { TImporterCredentialValidation } from "@plane/types";
 import { createAsanaClient } from "@/apps/asana-importer/controllers";
+import { createClickUpClient } from "@/apps/clickup-importer/controllers";
 import { createJiraServerClient } from "@/apps/jira-server-importer/controllers";
 import { createLinearClient } from "@/apps/linear-importer/controllers";
 import { APIClient } from "@/services/client";
@@ -56,6 +57,8 @@ const validateSourceCredentials = async (workspaceId: string, userId: string, so
       return validateLinearCredentials(workspaceId, userId);
     case E_IMPORTER_KEYS.ASANA:
       return validateAsanaCredentials(workspaceId, userId);
+    case E_IMPORTER_KEYS.CLICKUP:
+      return validateClickUpCredentials(workspaceId, userId);
     default:
       return E_VALIDATION_ERRORS.CREDENTIAL_ABSENT;
   }
@@ -104,6 +107,18 @@ const validateAsanaCredentials = async (
   try {
     const asanaClient = await createAsanaClient(workspaceId, userId);
     await asanaClient.getWorkspaces();
+  } catch (error) {
+    return E_VALIDATION_ERRORS.CREDENTIAL_INVALID;
+  }
+};
+
+const validateClickUpCredentials = async (
+  workspaceId: string,
+  userId: string
+): Promise<E_VALIDATION_ERRORS | undefined> => {
+  try {
+    const clickUpClient = await createClickUpClient(workspaceId, userId);
+    await clickUpClient.getTeams();
   } catch (error) {
     return E_VALIDATION_ERRORS.CREDENTIAL_INVALID;
   }

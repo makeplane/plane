@@ -1225,6 +1225,27 @@
       "description_configure_csv": "请上传您的 CSV 文件并配置要映射到 Plane 字段的字段。"
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "将您的 ClickUp 数据导入到 Plane 项目中。",
+    "select_service_space": "选择 {serviceName} 空间",
+    "select_service_folder": "选择 {serviceName} 文件夹",
+    "selected": "已选择",
+    "users": "用户",
+    "steps": {
+      "title_configure_plane": "配置 Plane",
+      "description_configure_plane": "请先在 Plane 中创建您打算迁移 ClickUp 数据的项目。创建项目后，在此处选择它。",
+      "title_configure_clickup": "配置 ClickUp",
+      "description_configure_clickup": "请选择您要从中迁移数据的 ClickUp 团队、空间和文件夹。",
+      "title_map_states": "映射状态",
+      "description_map_states": "我们已尽可能自动将 ClickUp 状态匹配到 Plane 状态。在继续之前，请映射任何剩余的状态，您也可以创建状态并手动映射它们。",
+      "title_map_priorities": "映射优先级",
+      "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 ClickUp 优先级。",
+      "title_summary": "摘要",
+      "description_summary": "以下是将从 ClickUp 迁移到 Plane 的数据摘要。"
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

@@ -1225,6 +1225,27 @@
       "description_configure_csv": "Bitte laden Sie Ihre CSV-Datei hoch und konfigurieren Sie die Felder, die den Plane-Feldern zugeordnet werden sollen."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importieren Sie Ihre ClickUp-Daten in Plane-Projekte.",
+    "select_service_space": "Wählen Sie {serviceName} Space",
+    "select_service_folder": "Wählen Sie {serviceName} Ordner",
+    "selected": "Ausgewählt",
+    "users": "Benutzer",
+    "steps": {
+      "title_configure_plane": "Plane konfigurieren",
+      "description_configure_plane": "Bitte erstellen Sie zuerst das Projekt in Plane, in das Sie Ihre ClickUp-Daten migrieren möchten. Sobald das Projekt erstellt wurde, wählen Sie es hier aus.",
+      "title_configure_clickup": "ClickUp konfigurieren",
+      "description_configure_clickup": "Bitte wählen Sie das ClickUp-Team, den Space und den Ordner aus, von dem Sie Ihre Daten migrieren möchten.",
+      "title_map_states": "Status zuordnen",
+      "description_map_states": "Wir haben die ClickUp-Status nach bestem Wissen automatisch den Plane-Status zugeordnet. Bitte ordnen Sie vor dem Fortfahren alle verbleibenden Status zu. Sie können auch Status erstellen und manuell zuordnen.",
+      "title_map_priorities": "Prioritäten zuordnen",
+      "description_map_priorities": "Bitte wählen Sie die ClickUp-Prioritäten aus, die Sie den Plane-Projektprioritäten zuordnen möchten.",
+      "title_summary": "Zusammenfassung",
+      "description_summary": "Hier ist eine Zusammenfassung der Daten, die von ClickUp zu Plane migriert werden."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

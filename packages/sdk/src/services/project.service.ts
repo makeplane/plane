@@ -1,12 +1,6 @@
 import { APIService } from "@/services/api.service";
 // types
-import {
-  ClientOptions,
-  ExcludedProps,
-  ExProject,
-  Optional,
-  Paginated,
-} from "@/types/types";
+import { ClientOptions, ExcludedProps, ExProject, Optional, Paginated } from "@/types/types";
 
 export class ProjectService extends APIService {
   constructor(options: ClientOptions) {
@@ -30,11 +24,16 @@ export class ProjectService extends APIService {
       });
   }
 
-  async create(
-    slug: string,
-    payload: Omit<Optional<ExProject>, ExcludedProps>,
-  ) {
+  async create(slug: string, payload: Omit<Optional<ExProject>, ExcludedProps>) {
     return this.post(`/api/v1/workspaces/${slug}/projects/`, payload)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async update(slug: string, projectId: string, payload: Omit<Optional<ExProject>, ExcludedProps>) {
+    return this.patch(`/api/v1/workspaces/${slug}/projects/${projectId}/`, payload)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

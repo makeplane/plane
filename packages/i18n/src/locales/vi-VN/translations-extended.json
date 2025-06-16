@@ -1215,6 +1215,27 @@
       "description_configure_csv": "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Nhập dữ liệu ClickUp của bạn vào các dự án Plane.",
+    "select_service_space": "Chọn {serviceName} Space",
+    "select_service_folder": "Chọn {serviceName} Folder",
+    "selected": "Đã chọn",
+    "users": "Người dùng",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu ClickUp của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_clickup": "Cấu hình ClickUp",
+      "description_configure_clickup": "Vui lòng chọn nhóm ClickUp, không gian và thư mục từ đó bạn muốn di chuyển dữ liệu của mình.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái ClickUp với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên ClickUp mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

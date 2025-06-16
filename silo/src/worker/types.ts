@@ -22,6 +22,8 @@ export type TBatch<TSource> = {
     total: {
       [k in keyof TSource]: number;
     };
+    phase?: string;
+    isLastBatch?: boolean;
   };
   data: TSource[];
 };

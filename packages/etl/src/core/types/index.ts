@@ -46,6 +46,8 @@ export enum E_IMPORTER_KEYS {
   LINEAR = "LINEAR",
   TRELLO = "TRELLO",
   FLATFILE = "FLATFILE",
+  CLICKUP = "CLICKUP",
+  IMPORTER = "IMPORTER",
   NOTION = "NOTION",
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
@@ -123,6 +125,7 @@ export type PlaneEntities = {
   issue_property_values?: TIssuePropertyValuesPayload;
 };
 
+export type TAppKeys = E_INTEGRATION_KEYS | E_IMPORTER_KEYS.IMPORTER;
 export type PlanePageEntity = {
   pages: Partial<ExPage>[];
 };

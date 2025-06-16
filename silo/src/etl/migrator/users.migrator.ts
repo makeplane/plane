@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { Client as PlaneClient, PlaneUser, UserResponsePayload } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
+import { processBatchPromises } from "@/helpers/methods";
 import { downloadFile, uploadFile } from "@/helpers/utils";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
@@ -15,8 +16,7 @@ export const createUsers = async (
   workspaceSlug: string,
   projectId: string
 ): Promise<PlaneUser[]> => {
-  const createdUsers: UserResponsePayload[] = [];
-  const createUserPromises = users.map(async (user) => {
+  const createOrUpdateUser = async (user: PlaneUser) => {
     try {
       let avatarId;
 
@@ -43,13 +43,13 @@ export const createUsers = async (
                 await planeClient.users.markAvatarAsUploaded(avatarId);
               }
             } catch (error) {
-              logger.error(`Error while uploading avatar: ${user.display_name}`, error);
+              logger.error(`Error while uploading avatar: ${user.display_name}`);
             }
           }
         }
       }
 
-      const createdUser: any = await protect(
+      const createdUser: UserResponsePayload = await protect(
         planeClient.users.create.bind(planeClient.users),
         workspaceSlug,
         projectId,
@@ -65,21 +65,13 @@ export const createUsers = async (
         }
       );
 
-      // Append the created user to the planeUsers
-      createdUsers.push(createdUser);
+      return createdUser;
     } catch (error) {
-      // User already exists, and we can move ahead with creating other users
-      if (
-        error instanceof AxiosError &&
-        (error.response?.status !== 400 || !error.response.data.error.includes("already exists"))
-      ) {
-        logger.error(`[${jobId.slice(0, 7)}] Error while creating the user: ${user.display_name}`, error);
-      }
-
-      logger.error(`Error while creating the user: ${user.display_name}`, error);
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating the user: ${user.display_name}`);
+      return undefined;
     }
-  });
+  };
 
-  await Promise.all(createUserPromises);
-  return createdUsers;
+  const createdUsers = await processBatchPromises(users, createOrUpdateUser, 5);
+  return createdUsers?.filter((user) => user !== undefined) ?? [];
 };

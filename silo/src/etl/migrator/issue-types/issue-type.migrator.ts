@@ -1,7 +1,8 @@
+import { isAxiosError } from "axios";
+import { ExIssueType, Client as PlaneClient } from "@plane/sdk";
+import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
-import { ExIssueType, Client as PlaneClient } from "@plane/sdk";
-import { isAxiosError } from "axios";
 
 type TCreateOrUpdateIssueTypes = {
   jobId: string;
@@ -14,11 +15,10 @@ type TCreateOrUpdateIssueTypes = {
 
 export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes): Promise<ExIssueType[]> => {
   const { jobId, issueTypes, planeClient, workspaceSlug, projectId, method } = props;
-  const createdUpdatedIssueTypes: ExIssueType[] = [];
 
-  const issueTypePromises = issueTypes.map(async (issueType) => {
+  const createOrUpdateIssueType = async (issueType: Partial<ExIssueType>) => {
     try {
-      let createdUpdatedIssueType: any;
+      let createdUpdatedIssueType: ExIssueType | undefined;
       if (method === "create") {
         createdUpdatedIssueType = await protect(
           planeClient.issueType.create.bind(planeClient.issueType),
@@ -35,11 +35,10 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
           issueType
         );
       }
-      if (createdUpdatedIssueType) {
-        createdUpdatedIssueTypes.push(createdUpdatedIssueType);
-      }
-    } catch (error) {
 
+      return createdUpdatedIssueType;
+    } catch (error) {
+      logger.error(`[${jobId.slice(0, 7)}] Error while creating or updating the issue type: ${issueType.name}`, error);
       const isAxios = isAxiosError(error);
       // If the error is an axios error, check for the status
       if (isAxios) {
@@ -51,14 +50,15 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
             projectId,
             error.response.data.id
           );
-          createdUpdatedIssueTypes.push(fetchedIssueType);
+          return fetchedIssueType;
         }
       }
 
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating or updating the issue type: ${issueType.name}`, error);
+      return undefined;
     }
-  });
+  }
 
-  await Promise.all(issueTypePromises);
-  return createdUpdatedIssueTypes;
+  const createdUpdatedIssueTypes = await processBatchPromises(issueTypes, createOrUpdateIssueType, 5);
+
+  return createdUpdatedIssueTypes?.filter((issueType) => issueType !== undefined) ?? [];
 };

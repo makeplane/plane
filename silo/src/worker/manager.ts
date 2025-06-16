@@ -6,6 +6,8 @@
  */
 
 import { AsanaDataMigrator } from "@/apps/asana-importer/migrator";
+import { ClickUpAdditionalDataMigrator } from "@/apps/clickup-importer/migrator/clickup-additional.migrator";
+import { ClickUpDataMigrator } from "@/apps/clickup-importer/migrator/clickup.migrator";
 import { FlatfileMigrator } from "@/apps/flatfile/migrator/flatfile.migrator";
 import { GithubWebhookWorker } from "@/apps/github/workers";
 import { PlaneGithubWebhookWorker } from "@/apps/github/workers/plane";
@@ -62,6 +64,10 @@ class WorkerFactory {
         return new PlaneSlackWebhookWorker(mq, store);
       case "flatfile":
         return new FlatfileMigrator(mq, store);
+      case "clickup":
+        return new ClickUpDataMigrator(mq, store);
+      case "clickup_additional_data":
+        return new ClickUpAdditionalDataMigrator(mq, store);
       default:
         throw new Error(`Unsupported worker type: ${type}`);
     }
@@ -167,7 +173,7 @@ export class TaskManager {
       try {
         const data = JSON.parse(msg.content.toString());
         const headers = msg.properties.headers;
-        logger.info("Received message:", headers);
+        // logger.info("Received message:", headers);
         const props: TaskProps = {
           type: "mq",
           headers: headers.headers,

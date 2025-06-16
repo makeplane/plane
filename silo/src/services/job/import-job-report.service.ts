@@ -39,4 +39,18 @@ export class ImportReportAPIService extends APIService {
       });
   }
 
+  /**
+   * Update the import report count
+   * @param id - The id of the import report
+   * @param data - The data to increment/decrement the import report count with
+   * @returns The updated import report count
+   */
+  async incrementImportReportCount(id: string, data: Partial<TImportReport>): Promise<TImportReport> {
+    return this.post(`/api/v1/import-reports/${id}/count-increment/`, data)
+      .then((response) => response.data)
+      .catch((error) => {
+        logger.error(error);
+        throw error?.response?.data;
+      });
+  }
 }

@@ -1279,6 +1279,27 @@
       "description_configure_csv": "Please upload your CSV file and configure the fields to be mapped to Plane fields."
     }
   },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Import your ClickUp data into Plane projects.",
+    "select_service_space": "Select {serviceName} Space",
+    "select_service_folder": "Select {serviceName} Folder",
+    "selected": "Selected",
+    "users": "Users",
+    "steps": {
+      "title_configure_plane": "Configure Plane",
+      "description_configure_plane": "Please first create the project in Plane where you intend to migrate your ClickUp data. Once the project is created, select it here.",
+      "title_configure_clickup": "Configure ClickUp",
+      "description_configure_clickup": "Please select the ClickUp team, space and folder from which you want to migrate your data.",
+      "title_map_states": "Map States",
+      "description_map_states": "We have automatically matched the ClickUp statuses to Plane states to the best of our ability. Please map any remaining states before proceeding, you can also create states and map them manually.",
+      "title_map_priorities": "Map Priorities",
+      "description_map_priorities": "Please select the ClickUp priorities which you want to map to Plane project priorities.",
+      "title_summary": "Summary",
+      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane."
+    }
+  },
+
   "dashboards": {
     "widget": {
       "chart_types": {

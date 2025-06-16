@@ -4,6 +4,7 @@ from django.urls import path
 # Module imports
 from plane.ee.views import ImportJobAPIView
 from plane.ee.views import ImportReportAPIView
+from plane.ee.views import ImportReportCountIncrementAPIView
 
 urlpatterns = [
     # Job endpoints
@@ -13,5 +14,10 @@ urlpatterns = [
     path("import-reports/", ImportReportAPIView.as_view(), name="import-reports"),
     path(
         "import-reports/<uuid:pk>/", ImportReportAPIView.as_view(), name="import-report"
+    ),
+    path(
+        "import-reports/<uuid:pk>/count-increment/",
+        ImportReportCountIncrementAPIView.as_view(),
+        name="import-report-count-increment",
     ),
 ]

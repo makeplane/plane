@@ -156,6 +156,7 @@ export class OAuthController {
         const credentials = await integrationConnectionHelper.getWorkspaceCredentials({
           workspace_id: authState.workspace_id,
           source: provider,
+          user_id: authState.user_id,
         });
 
         if (credentials.length === 0) {

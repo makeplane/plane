@@ -6,6 +6,7 @@ from django.conf import settings
 
 import logging
 from plane.utils.exception_logger import log_exception
+from plane.utils.helpers import get_boolean_value
 from plane.api.serializers.issue import IssueSerializer
 from plane.db.models.issue import Issue, IssueLink, IssueComment
 from plane.db.models.project import Project
@@ -15,11 +16,18 @@ from plane.db.models.workspace import Workspace
 from plane.db.models.asset import FileAsset
 from plane.db.models.page import Page, ProjectPage
 from plane.ee.models import IssueProperty, IssuePropertyValue
+from plane.ee.utils.external_issue_property_validator import (
+    externalIssuePropertyValueSaver,
+    externalIssuePropertyValueValidator,
+)
+from plane.silo.bgtasks.bulk_update_issue_relations_task import (
+    bulk_update_issue_relations_task,
+)
 
 logger = logging.getLogger("plane.worker")
 
 
-def dispatch_job_completion(job_id, phase="issues"):
+def dispatch_job_completion(job_id, phase="issues", is_last_batch=False):
     """Dispatch the job completion to silo service"""
     try:
         silo_url = settings.SILO_URL.rstrip("/")
@@ -27,7 +35,7 @@ def dispatch_job_completion(job_id, phase="issues"):
 
         response = requests.post(
             endpoint,
-            json={"jobId": job_id, "phase": phase},
+            json={"jobId": job_id, "phase": phase, "isLastBatch": is_last_batch},
             headers={"Content-Type": "application/json"},
         )
 
@@ -39,7 +47,12 @@ def dispatch_job_completion(job_id, phase="issues"):
 
 
 def update_job_batch_completion(
-    job_id, total_issues=0, imported_issues=0, phase="issues"
+    job_id,
+    imported_batch_count=0,
+    total_issues=0,
+    imported_issues=0,
+    phase="issues",
+    is_last_batch=False,
 ):
     """Update the job report with batch and issue counts"""
     try:
@@ -59,12 +72,14 @@ def update_job_batch_completion(
         # Update counters atomically at database level
         ReportModel.objects.filter(id=job.report.id).update(
             # Coalesce handles NULL values by replacing them with 0 before adding
-            imported_batch_count=Coalesce(F("imported_batch_count"), 0) + 1,
+            imported_batch_count=Coalesce(F("imported_batch_count"), 0)
+            + imported_batch_count,
             total_issue_count=Coalesce(F("total_issue_count"), 0) + total_issues,
             imported_issue_count=Coalesce(F("imported_issue_count"), 0)
             + imported_issues,
             errored_issue_count=Coalesce(F("errored_issue_count"), 0)
             + (total_issues - imported_issues),
+            completed_batch_count=Coalesce(F("completed_batch_count"), 0) + 1,
             updated_at=timezone.now(),
         )
 
@@ -72,12 +87,13 @@ def update_job_batch_completion(
         job.report.refresh_from_db()
 
         # Check if all batches are processed and update job status
-        if job.report.imported_batch_count >= job.report.total_batch_count:
+        if job.report.completed_batch_count >= job.report.total_batch_count:
             """
                 We'll make an api call to silo, such that silo can perform
                 any additional processing along with marking the job as finished
             """
-            dispatch_job_completion(job_id, phase)
+            bulk_update_issue_relations_task(job_id, user_id=job.initiator_id)
+            dispatch_job_completion(job_id, phase, is_last_batch)
 
     except ImportJob.DoesNotExist:
         log_exception(f"Job not found with id: {job_id}")
@@ -214,13 +230,16 @@ def process_issue_comments(user_id, issue, comments):
             bulk_update_comments.append(existing_comment)
         else:
             # Create case
+            comment_actor = (
+                comment_data.get("actor") if comment_data.get("actor") else user_id
+            )
             comment = IssueComment(
                 issue=issue,
                 project_id=issue.project_id,
                 workspace_id=issue.workspace_id,
                 comment_html=comment_data["comment_html"],
-                actor_id=user_id,
-                created_by_id=user_id,
+                actor_id=comment_actor,
+                created_by_id=comment_actor,
                 external_id=external_id,
                 external_source=comment_data.get("external_source"),
             )
@@ -365,6 +384,9 @@ def process_issue_property_values(issue, issue_property_values):
                 # check if issue property with the same external id and external source already exists
                 property_external_id = value.get("external_id", None)
                 property_external_source = value.get("external_source", None)
+
+                if property_value in ["true", "false"]:
+                    property_value = get_boolean_value(property_value)
 
                 # Save the values
                 bulk_external_issue_property_values.append(
@@ -589,14 +611,33 @@ def import_data(slug, project_id, user_id, job_id, payload):
     """
     try:
         project = Project.objects.get(pk=project_id)
+        imported_issues = 0
+        total_issues = 0
+        imported_pages = 0
+        total_pages = 0
 
         # Process issues
         issue_list = payload.get("issues")
+        job_phase = payload.get("phase", "issues")
+        is_last_batch = payload.get("isLastBatch", False)
+
+        print(
+            f"inside import_data task for job {job_id} phase {job_phase} issue_count {len(issue_list or [])} lastBatchData {payload.get('isLastBatch', 'None')}"
+        )
+
         if issue_list:
             imported_issues, total_issues, external_id_map = process_issues(
                 slug, project, user_id, issue_list
             )
-            update_job_batch_completion(job_id, total_issues, imported_issues, "issues")
+            update_job_batch_completion(
+                job_id, 1, total_issues, imported_issues, job_phase, is_last_batch
+            )
+
+        # Handle edge-case where a batch contains no issues.
+        # Without this, completed_batch_count never increments for such batches,
+        # leaving the job in an endless "TRANSFORMING" state.
+        if not issue_list:
+            update_job_batch_completion(job_id, 0, 0, 0, job_phase, is_last_batch)
 
         # Process pages
         page_list = payload.get("pages")
@@ -604,7 +645,12 @@ def import_data(slug, project_id, user_id, job_id, payload):
             imported_pages, total_pages = process_pages(
                 slug, project_id, user_id, page_list
             )
-            update_job_batch_completion(job_id, total_pages, imported_pages, "pages")
+            update_job_batch_completion(
+                job_id, 1, total_pages, imported_pages, "pages", is_last_batch
+            )
+
+        if not page_list:
+            update_job_batch_completion(job_id, 0, 0, 0, "pages", is_last_batch)
 
         logger.info(
             f"Processed {imported_issues}/{total_issues} issues and {imported_pages}/{total_pages} pages."
@@ -613,4 +659,22 @@ def import_data(slug, project_id, user_id, job_id, payload):
     except Exception as e:
         # Assuming there's error handling in the calling code
         log_exception(f"Error in import_data: {str(e)}")
+        # increase the error batch count and completed batch count
+        from plane.ee.models import ImportJob
+        from django.db.models import F
+
+        job = ImportJob.objects.get(pk=job_id)
+        if job.report:
+            job.report.__class__.objects.filter(id=job.report.id).update(
+                errored_batch_count=F("errored_batch_count") + 1,
+                completed_batch_count=F("completed_batch_count") + 1,
+            )
+
+            # Safely fetch phase and last-batch flag from the original payload;
+            # they may not be in scope if the error occurred before variables were set.
+            safe_job_phase = payload.get("phase", "issues")
+            safe_is_last_batch = payload.get("isLastBatch", False)
+
+            dispatch_job_completion(job_id, safe_job_phase, safe_is_last_batch)
+
         return False

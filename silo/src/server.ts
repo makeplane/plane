@@ -22,6 +22,7 @@ import {
 import GithubController from "@/apps/github/controllers";
 import JiraController from "@/apps/jira-importer/controllers";
 import LinearController from "@/apps/linear-importer/controllers";
+import ClickupController from "./apps/clickup-importer/controllers";
 import CSVController from "./apps/flatfile/controllers";
 import GitlabController from "./apps/gitlab/controller";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
@@ -60,6 +61,7 @@ export default class Server {
       GithubController,
       JiraDataCenterController,
       CSVController,
+      ClickupController,
       OAuthRoutes,
     ],
   };

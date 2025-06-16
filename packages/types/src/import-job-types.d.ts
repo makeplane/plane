@@ -16,6 +16,7 @@ export type TImportJob<TJobConfig = object> = {
     cancelled_at?: string | null;
     success_metadata: object;
     error_metadata: object;
+    relation_map: object; // "issues" -> taskExternalId -> relations
 }
 
 export type TImportReport = {

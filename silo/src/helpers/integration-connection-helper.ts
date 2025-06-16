@@ -1,6 +1,6 @@
 // This file is a wrapper for the db connection for silo tables in plane
 // this accepts data in single format for all integrations/importers and returns the data in single format
-
+import { TClickUpRelationMap } from "@plane/etl/clickup";
 import {
   TImportJob,
   TImportReport,
@@ -9,7 +9,6 @@ import {
   TWorkspaceEntityConnection,
 } from "@plane/types";
 import { APIClient, getAPIClient } from "@/services/client";
-
 class IntegrationConnectionHelper {
   private apiClient: APIClient;
   constructor() {
@@ -200,6 +199,7 @@ class IntegrationConnectionHelper {
     target_refresh_token,
     target_identifier,
     target_authorization_type,
+    is_pat,
     source_hostname,
   }: {
     workspace_id: string;
@@ -213,6 +213,7 @@ class IntegrationConnectionHelper {
     target_refresh_token?: string;
     target_identifier?: string;
     target_authorization_type?: string;
+    is_pat?: boolean;
     source_hostname: string;
   }): Promise<TWorkspaceCredential> {
     return this.apiClient.workspaceCredential.createWorkspaceCredential({
@@ -227,6 +228,7 @@ class IntegrationConnectionHelper {
       target_refresh_token,
       target_identifier,
       target_authorization_type,
+      is_pat,
       source_hostname,
     });
   }
@@ -282,13 +284,16 @@ class IntegrationConnectionHelper {
   async getWorkspaceCredentials({
     workspace_id,
     source,
+    user_id,
   }: {
     workspace_id: string;
     source: string;
+    user_id: string;
   }): Promise<TWorkspaceCredential[]> {
     return this.apiClient.workspaceCredential.listWorkspaceCredentials({
       workspace_id,
       source,
+      user_id,
     });
   }
 
@@ -370,18 +375,21 @@ class IntegrationConnectionHelper {
     success_metadata,
     error_metadata,
     cancelled_at,
+    relation_map,
   }: {
     job_id: string;
     status?: string;
     success_metadata?: object;
     error_metadata?: object;
     cancelled_at?: string;
+    relation_map?: TClickUpRelationMap;
   }): Promise<TImportJob> {
     return this.apiClient.importJob.updateImportJob(job_id, {
       status,
       success_metadata,
       error_metadata,
       cancelled_at,
+      relation_map,
     });
   }
 

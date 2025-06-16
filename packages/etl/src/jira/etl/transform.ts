@@ -173,7 +173,7 @@ export const transformIssueFieldOptions = (
   external_source: E_IMPORTER_KEYS.JIRA,
   name: issueFieldOption.value,
   is_active: issueFieldOption.disabled ? false : true,
-  property_id: issueFieldOption.fieldId,
+  property_id: `${projectId}_${resourceId}_${issueFieldOption.fieldId}`,
 });
 
 export const transformIssuePropertyValues = (
