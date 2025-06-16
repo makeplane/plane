@@ -1014,6 +1014,26 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features
+        #  if it is true then show all the issues else show only the issues created by the user
+        issue = issue.filter(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role < 5), show all issues
+            Q(
+                project__project_projectmember__role__gt=5,
+            ),
+        )
+
         issue = issue.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
