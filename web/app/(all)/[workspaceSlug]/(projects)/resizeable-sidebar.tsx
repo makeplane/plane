@@ -173,7 +173,11 @@ export function ResizableSidebar({
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
           className
         )}
-        style={{ width: `${isCollapsed ? 0 : width}px` }}
+        style={{
+          width: `${isCollapsed ? 0 : width}px`,
+          minWidth: `${isCollapsed ? 0 : width}px`,
+          maxWidth: `${isCollapsed ? 0 : width}px`,
+        }}
         role="complementary"
         aria-label="Main sidebar"
       >
