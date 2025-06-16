@@ -8,15 +8,15 @@ import { Plus, Search } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-import { cn, copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // hooks
 import { orderJoinedProjects } from "@/helpers/project.helper";
 import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
-import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 import { TProject } from "@/plane-web/types";
+import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedProjectSidebar = observer(() => {
   // refs
@@ -28,7 +28,8 @@ export const ExtendedProjectSidebar = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { sidebarCollapsed, extendedProjectSidebarCollapsed, toggleExtendedProjectSidebar } = useAppTheme();
+  const { sidebarPeek, toggleSidebarPeek, extendedProjectSidebarCollapsed, toggleExtendedProjectSidebar } =
+    useAppTheme();
   const { getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   const { allowPermissions } = useUserPermissions();
 
@@ -75,15 +76,12 @@ export const ExtendedProjectSidebar = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  useExtendedSidebarOutsideClickDetector(
-    extendedProjectSidebarRef,
-    () => {
-      if (!isProjectModalOpen) {
-        toggleExtendedProjectSidebar(false);
-      }
-    },
-    "extended-project-sidebar-toggle"
-  );
+  const handleClose = () => {
+    if (sidebarPeek) toggleSidebarPeek(false);
+    if (!isProjectModalOpen) {
+      toggleExtendedProjectSidebar(false);
+    }
+  };
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -104,17 +102,11 @@ export const ExtendedProjectSidebar = observer(() => {
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      <div
-        ref={extendedProjectSidebarRef}
-        className={cn(
-          "absolute top-0 h-full z-[19] flex flex-col gap-2 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 shadow-md",
-          {
-            "translate-x-0 opacity-100 pointer-events-auto": extendedProjectSidebarCollapsed,
-            "-translate-x-full opacity-0 pointer-events-none": !extendedProjectSidebarCollapsed,
-            "left-[70px]": sidebarCollapsed,
-            "left-[250px]": !sidebarCollapsed,
-          }
-        )}
+      <ExtendedSidebarWrapper
+        extendedSidebarCollapsed={!!extendedProjectSidebarCollapsed}
+        extendedSidebarRef={extendedProjectSidebarRef}
+        handleClose={handleClose}
+        excludedElementId="extended-project-sidebar-toggle"
       >
         <div className="flex flex-col gap-1 w-full sticky top-4 pt-0 px-4">
           <div className="flex items-center justify-between">
@@ -159,7 +151,7 @@ export const ExtendedProjectSidebar = observer(() => {
             />
           ))}
         </div>
-      </div>
+      </ExtendedSidebarWrapper>
     </>
   );
 });

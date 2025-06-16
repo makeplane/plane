@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Briefcase, ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,7 +19,7 @@ import { SidebarProjectsListItem } from "@/components/workspace";
 import { cn } from "@/helpers/common.helper";
 import { orderJoinedProjects } from "@/helpers/project.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
@@ -34,7 +34,6 @@ export const SidebarProjectsList: FC = observer(() => {
   // store hooks
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -88,8 +87,6 @@ export const SidebarProjectsList: FC = observer(() => {
         });
       });
   };
-
-  const isCollapsed = sidebarCollapsed || false;
 
   /**
    * Implementing scroll animation styles based on the scroll length of the container
@@ -154,24 +151,11 @@ export const SidebarProjectsList: FC = observer(() => {
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div
-              className={cn(
-                "group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
-                {
-                  "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
-                    isCollapsed,
-                }
-              )}
-            >
+            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
               <Disclosure.Button
                 as="button"
                 type="button"
-                className={cn(
-                  "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
-                  {
-                    "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
-                  }
-                )}
+                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
                   isAllProjectsListOpen
@@ -179,52 +163,42 @@ export const SidebarProjectsList: FC = observer(() => {
                     : "aria_labels.projects_sidebar.open_projects_menu"
                 )}
               >
-                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
-                  <>
-                    {isCollapsed ? (
-                      <Briefcase className="flex-shrink-0 size-3" />
-                    ) : (
-                      <span className="text-sm font-semibold">{t("projects")}</span>
-                    )}
-                  </>
-                </Tooltip>
+                <span className="text-sm font-semibold">{t("projects")}</span>
               </Disclosure.Button>
-              {!isCollapsed && (
-                <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
-                  {isAuthorizedUser && (
-                    <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
-                      <button
-                        type="button"
-                        className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                        onClick={() => {
-                          setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
-                          setIsProjectModalOpen(true);
-                        }}
-                        aria-label={t("aria_labels.projects_sidebar.create_new_project")}
-                      >
-                        <Plus className="size-3" />
-                      </button>
-                    </Tooltip>
+              <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                {isAuthorizedUser && (
+                  <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
+                    <button
+                      type="button"
+                      className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                      onClick={() => {
+                        setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
+                        setIsProjectModalOpen(true);
+                      }}
+                      aria-label={t("aria_labels.projects_sidebar.create_new_project")}
+                    >
+                      <Plus className="size-3" />
+                    </button>
+                  </Tooltip>
+                )}
+                <Disclosure.Button
+                  as="button"
+                  type="button"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                  onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                  aria-label={t(
+                    isAllProjectsListOpen
+                      ? "aria_labels.projects_sidebar.close_projects_menu"
+                      : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
-                    className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
-                    onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
-                    aria-label={t(
-                      isAllProjectsListOpen
-                        ? "aria_labels.projects_sidebar.close_projects_menu"
-                        : "aria_labels.projects_sidebar.open_projects_menu"
-                    )}
-                  >
-                    <ChevronRight
-                      className={cn("flex-shrink-0 size-3 transition-all", {
-                        "rotate-90": isAllProjectsListOpen,
-                      })}
-                    />
-                  </Disclosure.Button>
-                </div>
-              )}
+                >
+                  <ChevronRight
+                    className={cn("flex-shrink-0 size-3 transition-all", {
+                      "rotate-90": isAllProjectsListOpen,
+                    })}
+                  />
+                </Disclosure.Button>
+              </div>
             </div>
             <Transition
               show={isAllProjectsListOpen}
@@ -243,13 +217,7 @@ export const SidebarProjectsList: FC = observer(() => {
                 </Loader>
               )}
               {isAllProjectsListOpen && (
-                <Disclosure.Panel
-                  as="div"
-                  className={cn("flex flex-col gap-0.5", {
-                    "space-y-0 ml-0": isCollapsed,
-                  })}
-                  static
-                >
+                <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
                   <>
                     {joinedProjects.map((projectId, index) => (
                       <SidebarProjectsListItem
@@ -273,18 +241,13 @@ export const SidebarProjectsList: FC = observer(() => {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            className={cn(
-              `w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md`,
-              {
-                "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
-              }
-            )}
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
             onClick={() => {
               setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >
-            {!isCollapsed && t("add_project")}
+            {t("add_project")}
           </button>
         )}
       </div>

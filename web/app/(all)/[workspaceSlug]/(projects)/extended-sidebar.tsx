@@ -5,12 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EUserWorkspaceRoles, WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
-import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useWorkspace } from "@/hooks/store";
-import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 // plane-web imports
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar";
+import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(() => {
   // refs
@@ -18,7 +17,7 @@ export const ExtendedAppSidebar = observer(() => {
   // routers
   const { workspaceSlug } = useParams();
   // store hooks
-  const { sidebarCollapsed, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
+  const { sidebarPeek, toggleSidebarPeek, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
   const { updateSidebarPreference, getNavigationPreferences } = useWorkspace();
 
   // derived values
@@ -94,24 +93,17 @@ export const ExtendedAppSidebar = observer(() => {
       });
   };
 
-  useExtendedSidebarOutsideClickDetector(
-    extendedSidebarRef,
-    () => toggleExtendedSidebar(true),
-    "extended-sidebar-toggle"
-  );
+  const handleClose = () => {
+    if (sidebarPeek) toggleSidebarPeek(false);
+    toggleExtendedSidebar(false);
+  };
 
   return (
-    <div
-      ref={extendedSidebarRef}
-      className={cn(
-        "absolute top-0 h-full z-[19] flex flex-col gap-0.5 w-[300px] transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-md pb-6",
-        {
-          "-translate-x-full opacity-0 pointer-events-none": extendedSidebarCollapsed,
-          "translate-x-0 opacity-100 pointer-events-auto": !extendedSidebarCollapsed,
-          "left-[70px]": sidebarCollapsed,
-          "left-[250px]": !sidebarCollapsed,
-        }
-      )}
+    <ExtendedSidebarWrapper
+      extendedSidebarCollapsed={!!extendedSidebarCollapsed}
+      extendedSidebarRef={extendedSidebarRef}
+      handleClose={handleClose}
+      excludedElementId="extended-sidebar-toggle"
     >
       {sortedNavigationItems.map((item, index) => (
         <ExtendedSidebarItem
@@ -121,6 +113,6 @@ export const ExtendedAppSidebar = observer(() => {
           handleOnNavigationItemDrop={handleOnNavigationItemDrop}
         />
       ))}
-    </div>
+    </ExtendedSidebarWrapper>
   );
 });

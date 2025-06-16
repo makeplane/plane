@@ -1,8 +1,9 @@
 "use client";
 
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Home } from "lucide-react";
+import { Home, MenuIcon } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
@@ -14,19 +15,33 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // constants
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { useAppTheme, useEventTracker } from "@/hooks/store";
 
-export const WorkspaceDashboardHeader = () => {
+export const WorkspaceDashboardHeader = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
+  const { sidebarCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek } = useAppTheme();
+
   const { t } = useTranslation();
 
   return (
     <>
       <Header>
         <Header.LeftItem>
-          <div>
+          <div className="flex items-center gap-2">
+            {sidebarCollapsed && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (sidebarPeek) toggleSidebarPeek(false);
+                  toggleSidebar(false);
+                }}
+              >
+                <MenuIcon className="size-5 text-custom-text-300" />
+              </button>
+            )}
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
                 type="text"
@@ -61,4 +76,4 @@ export const WorkspaceDashboardHeader = () => {
       </Header>
     </>
   );
-};
+});

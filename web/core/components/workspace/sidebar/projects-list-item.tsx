@@ -24,7 +24,7 @@ import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web components
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
@@ -58,7 +58,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     renderInExtendedSidebar = false,
   } = props;
   // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   const { t } = useTranslation();
   const { setTrackElement } = useEventTracker();
   const { getPartialProjectById } = useProject();
@@ -101,8 +100,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     setLeaveProjectModal(true);
   };
 
-  const isSidebarCollapsed = sidebarCollapsed && !renderInExtendedSidebar;
-
   useEffect(() => {
     const element = projectRef.current;
     const dragHandleElement = dragHandleRef.current;
@@ -112,7 +109,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
     return combine(
       draggable({
         element,
-        canDrag: () => !disableDrag && !isSidebarCollapsed,
+        canDrag: () => !disableDrag,
         dragHandle: dragHandleElement ?? undefined,
         getInitialData: () => ({ id: projectId, dragInstanceId: "PROJECTS" }),
         onDragStart: () => {
@@ -220,7 +217,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
               "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
               {
                 "bg-custom-sidebar-background-90": isMenuActive,
-                "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
               }
             )}
             id={`${project?.id}`}
@@ -242,7 +238,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
                       flex: isMenuActive || renderInExtendedSidebar,
-                      "!hidden": isSidebarCollapsed,
                     }
                   )}
                   ref={dragHandleRef}
@@ -251,76 +246,52 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 </button>
               </Tooltip>
             )}
-            {isSidebarCollapsed ? (
+            <>
               <ControlLink
                 href={`/${workspaceSlug}/projects/${project.id}/issues`}
-                className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
-                  "justify-center": isSidebarCollapsed,
-                })}
+                className="flex-grow flex truncate"
                 onClick={handleItemClick}
               >
-                <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
+                <Disclosure.Button
+                  as="button"
+                  type="button"
+                  className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {})}
+                  aria-label={
+                    isProjectListOpen
+                      ? t("aria_labels.projects_sidebar.close_project_menu")
+                      : t("aria_labels.projects_sidebar.open_project_menu")
+                  }
+                >
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     <Logo logo={project.logo_props} size={16} />
                   </div>
+                  <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
                 </Disclosure.Button>
               </ControlLink>
-            ) : (
-              <>
-                <Tooltip
-                  tooltipContent={`${project.name}`}
-                  position="right"
-                  disabled={!isSidebarCollapsed}
-                  isMobile={isMobile}
-                >
-                  <ControlLink
-                    href={`/${workspaceSlug}/projects/${project.id}/issues`}
-                    className="flex-grow flex truncate"
-                    onClick={handleItemClick}
+              <CustomMenu
+                customButton={
+                  <span
+                    ref={actionSectionRef}
+                    className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                    onClick={() => setIsMenuActive(!isMenuActive)}
                   >
-                    <Disclosure.Button
-                      as="button"
-                      type="button"
-                      className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
-                        "justify-center": isSidebarCollapsed,
-                      })}
-                      aria-label={
-                        isProjectListOpen
-                          ? t("aria_labels.projects_sidebar.close_project_menu")
-                          : t("aria_labels.projects_sidebar.open_project_menu")
-                      }
-                    >
-                      <div className="size-4 grid place-items-center flex-shrink-0">
-                        <Logo logo={project.logo_props} size={16} />
-                      </div>
-                      <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
-                    </Disclosure.Button>
-                  </ControlLink>
-                </Tooltip>
-                <CustomMenu
-                  customButton={
-                    <span
-                      ref={actionSectionRef}
-                      className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                      onClick={() => setIsMenuActive(!isMenuActive)}
-                    >
-                      <MoreHorizontal className="size-4" />
-                    </span>
+                    <MoreHorizontal className="size-4" />
+                  </span>
+                }
+                className={cn(
+                  "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                  {
+                    "opacity-100 pointer-events-auto": isMenuActive,
                   }
-                  className={cn(
-                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                    {
-                      "opacity-100 pointer-events-auto": isMenuActive,
-                    }
-                  )}
-                  customButtonClassName="grid place-items-center"
-                  placement="bottom-start"
-                  ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-                  useCaptureForOutsideClick
-                  closeOnSelect
-                >
-                  {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
-                  {/* {isAuthorized && (
+                )}
+                customButtonClassName="grid place-items-center"
+                placement="bottom-start"
+                ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+                useCaptureForOutsideClick
+                closeOnSelect
+              >
+                {/* TODO: Removed is_favorite logic due to the optimization in projects API */}
+                {/* {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={project.is_favorite ? handleRemoveFromFavorites : handleAddToFavorites}
                     >
@@ -335,79 +306,78 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     </CustomMenu.MenuItem>
                   )} */}
 
-                  {/* publish project settings */}
-                  {isAdmin && (
-                    <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
-                      <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
-                          <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
-                        </div>
-                        <div>{t("publish_project")}</div>
+                {/* publish project settings */}
+                {isAdmin && (
+                  <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
+                    <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
+                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+                        <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                       </div>
-                    </CustomMenu.MenuItem>
-                  )}
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
-                    <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                      <span>{t("copy_link")}</span>
-                    </span>
+                      <div>{t("publish_project")}</div>
+                    </div>
                   </CustomMenu.MenuItem>
-                  {isAuthorized && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>{t("archives")}</span>
-                        </div>
-                      </Link>
-                    </CustomMenu.MenuItem>
-                  )}
-                  <CustomMenu.MenuItem
-                    onClick={() => {
-                      setIsMenuActive(false);
-                    }}
-                  >
-                    <Link href={`/${workspaceSlug}/settings/projects/${project?.id}`}>
+                )}
+                <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <span className="flex items-center justify-start gap-2">
+                    <LinkIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                    <span>{t("copy_link")}</span>
+                  </span>
+                </CustomMenu.MenuItem>
+                {isAuthorized && (
+                  <CustomMenu.MenuItem>
+                    <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
                       <div className="flex items-center justify-start gap-2">
-                        <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>{t("settings")}</span>
+                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>{t("archives")}</span>
                       </div>
                     </Link>
                   </CustomMenu.MenuItem>
-                  {/* leave project */}
-                  {!isAuthorized && (
-                    <CustomMenu.MenuItem onClick={handleLeaveProject}>
-                      <div className="flex items-center justify-start gap-2">
-                        <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>{t("leave_project")}</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  )}
-                </CustomMenu>
-                <Disclosure.Button
-                  as="button"
-                  type="button"
-                  className={cn(
-                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                    {
-                      "inline-block": isMenuActive,
-                    }
-                  )}
-                  onClick={() => setIsProjectListOpen(!isProjectListOpen)}
-                  aria-label={t(
-                    isProjectListOpen
-                      ? "aria_labels.projects_sidebar.close_project_menu"
-                      : "aria_labels.projects_sidebar.open_project_menu"
-                  )}
+                )}
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setIsMenuActive(false);
+                  }}
                 >
-                  <ChevronRight
-                    className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                      "rotate-90": isProjectListOpen,
-                    })}
-                  />
-                </Disclosure.Button>
-              </>
-            )}
+                  <Link href={`/${workspaceSlug}/settings/projects/${project?.id}`}>
+                    <div className="flex items-center justify-start gap-2">
+                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("settings")}</span>
+                    </div>
+                  </Link>
+                </CustomMenu.MenuItem>
+                {/* leave project */}
+                {!isAuthorized && (
+                  <CustomMenu.MenuItem onClick={handleLeaveProject}>
+                    <div className="flex items-center justify-start gap-2">
+                      <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("leave_project")}</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+              </CustomMenu>
+              <Disclosure.Button
+                as="button"
+                type="button"
+                className={cn(
+                  "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
+                  {
+                    "inline-block": isMenuActive,
+                  }
+                )}
+                onClick={() => setIsProjectListOpen(!isProjectListOpen)}
+                aria-label={t(
+                  isProjectListOpen
+                    ? "aria_labels.projects_sidebar.close_project_menu"
+                    : "aria_labels.projects_sidebar.open_project_menu"
+                )}
+              >
+                <ChevronRight
+                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                    "rotate-90": isProjectListOpen,
+                  })}
+                />
+              </Disclosure.Button>
+            </>
           </div>
           <Transition
             show={isProjectListOpen}
@@ -420,11 +390,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
           >
             {isProjectListOpen && (
               <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
-                <ProjectNavigationRoot
-                  workspaceSlug={workspaceSlug.toString()}
-                  projectId={projectId.toString()}
-                  isSidebarCollapsed={!!isSidebarCollapsed}
-                />
+                <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Disclosure.Panel>
             )}
           </Transition>
