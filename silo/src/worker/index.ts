@@ -9,6 +9,7 @@ export const importTaskManger = new TaskManager({
     asana: "asana",
     jira_server: "jira_server",
     flatfile: "flatfile",
+    notion: "notion",
   },
   retryAttempts: 3,
   retryDelay: 1000,

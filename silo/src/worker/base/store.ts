@@ -119,6 +119,82 @@ export class Store extends EventEmitter {
     return await this.client.lRange(key, 0, -1);
   }
 
+  public async getMap(key: string): Promise<Map<string, string> | null> {
+    const mapObj = await this.client.hGetAll(key);
+    if (Object.keys(mapObj).length === 0) {
+      return null; // key is missing
+    }
+    return new Map(Object.entries(mapObj));
+  }
+
+  // Get a single field from a hash map
+  public async getMapField(key: string, field: string): Promise<string | null> {
+    const value = await this.client.hGet(key, field);
+    return value ?? null;
+  }
+
+  // Get multiple fields from a hash map
+  public async getMapFields(key: string, fields: string[]): Promise<Map<string, string>> {
+    const values = await this.client.hmGet(key, fields);
+
+    // Create a Map from the fields and values
+    const result = new Map<string, string>();
+    fields.forEach((field, index) => {
+      if (values[index] !== null) {
+        result.set(field, values[index]);
+      }
+    });
+
+    return result;
+  }
+
+
+  /**
+ * Atomically increments a counter by the specified amount
+ * @param key The counter key
+ * @param increment Amount to increment (default: 1)
+ * @returns The new counter value
+ */
+  public async incrementCounter(key: string, increment: number = 1): Promise<number> {
+    return await this.client.incrBy(key, increment);
+  }
+
+  /**
+   * Atomically decrements a counter by the specified amount
+   * @param key The counter key
+   * @param decrement Amount to decrement (default: 1)
+   * @returns The new counter value
+   */
+  public async decrementCounter(key: string, decrement: number = 1): Promise<number> {
+    return await this.client.decrBy(key, decrement);
+  }
+
+  /**
+   * Gets counter value if it exists
+   * @param key The counter key
+   * @returns The counter value or null if it doesn't exist
+   */
+  public async getCounter(key: string): Promise<number | null> {
+    const value = await this.client.get(key);
+    return value ? parseInt(value, 10) : null;
+  }
+
+  /**
+   * Initializes a counter with a specified value
+   * @param key The counter key
+   * @param value Initial value
+   * @param ttl Optional TTL in seconds
+   * @returns True if counter was set, false if it already exists
+   */
+  public async initCounter(key: string, value: number, ttl?: number): Promise<boolean> {
+    const result = await this.client.set(
+      key,
+      value.toString(),
+      ttl ? { NX: true, EX: ttl } : { NX: true }
+    );
+    return result === "OK";
+  }
+
   public async set(key: string, value: string, ttl?: number, NX = true): Promise<boolean> {
     this.jobs.push(key);
 
@@ -131,7 +207,29 @@ export class Store extends EventEmitter {
     }
   }
 
-  public async setList(key: string, value: string, ttl?: number, NX = true): Promise<boolean> {
+  public async setMap(key: string, map: Map<string, string>, ttl?: number, NX = false): Promise<boolean> {
+    try {
+      const exists = await this.client.exists(key) > 0;
+      if (NX && exists) return false;
+
+      const hashData = Object.fromEntries(map);
+
+      if (Object.keys(hashData).length === 0) return true;
+
+      const multi = this.client.multi();
+      multi.hSet(key, hashData);
+
+      if (ttl) multi.expire(key, ttl);
+
+      await multi.exec();
+      return true;
+    } catch (error) {
+      logger.error(`Error in setMap for key ${key}:`, error);
+      return false;
+    }
+  }
+
+  public async setList(key: string, value: string | string[], ttl?: number, NX = true): Promise<boolean> {
     try {
       const exists = await this.client.exists(key) > 0;
       if (NX && exists) return false;

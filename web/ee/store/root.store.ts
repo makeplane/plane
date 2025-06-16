@@ -54,6 +54,8 @@ import {
   IAsanaStore,
   AsanaStore,
   FlatfileStore,
+  INotionStore,
+  NotionStore,
 } from "./importers";
 // initiative
 import { IInitiativeFilterStore, InitiativeFilterStore } from "./initiatives/initiatives-filter.store";
@@ -112,6 +114,7 @@ export class RootStore extends CoreRootStore {
   linearImporter: ILinearStore;
   asanaImporter: IAsanaStore;
   flatfileImporter: IFlatfileStore;
+  notionImporter: INotionStore;
   // integrations
   connections: IConnectionStore;
   slackIntegration: ISlackStore;
@@ -158,6 +161,7 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.notionImporter = new NotionStore(this);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
@@ -203,6 +207,7 @@ export class RootStore extends CoreRootStore {
     this.linearImporter = new LinearStore(this);
     this.asanaImporter = new AsanaStore(this);
     this.flatfileImporter = new FlatfileStore(this);
+    this.notionImporter = new NotionStore(this);
     // integrations
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);

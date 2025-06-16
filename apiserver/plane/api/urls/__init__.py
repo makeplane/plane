@@ -8,7 +8,6 @@ from .member import urlpatterns as member_patterns
 from .user import urlpatterns as user_patterns
 from .asset import urlpatterns as asset_patterns
 from .issue_type import urlpatterns as issue_type_patterns
-from .page import urlpatterns as page_patterns
 
 # ee imports
 from plane.ee.urls.api import urlpatterns as ee_api_urls
@@ -25,5 +24,4 @@ urlpatterns = [
     *issue_type_patterns,
     *asset_patterns,
     *ee_api_urls,
-    *page_patterns,
 ]

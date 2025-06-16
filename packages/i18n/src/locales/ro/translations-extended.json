@@ -1186,6 +1186,36 @@
       "description_summary": "Iată un sumar al datelor care vor fi migrate de la Jira la Plane."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Importați datele dvs. Notion în proiectele Plane.",
+    "steps": {
+      "title_upload_zip": "Încărcați ZIP-ul exportat din Notion",
+      "description_upload_zip": "Vă rugăm să încărcați fișierul ZIP care conține datele dvs. Notion."
+    },
+    "upload": {
+      "drop_file_here": "Glisați fișierul zip Notion aici",
+      "upload_title": "Încărcați exportul Notion",
+      "drag_drop_description": "Glisați și plasați fișierul zip de export Notion sau faceți clic pentru a naviga",
+      "file_type_restriction": "Sunt acceptate doar fișiere .zip exportate din Notion",
+      "select_file": "Selectați fișier",
+      "uploading": "Se încarcă...",
+      "preparing_upload": "Se pregătește încărcarea...",
+      "confirming_upload": "Se confirmă încărcarea...",
+      "confirming": "Se confirmă...",
+      "upload_complete": "Încărcare completă",
+      "upload_failed": "Încărcarea a eșuat",
+      "start_import": "Începeți importul",
+      "retry_upload": "Reîncercați încărcarea",
+      "upload": "Încărcați",
+      "ready": "Gata",
+      "error": "Eroare",
+      "upload_complete_message": "Încărcare completă!",
+      "upload_complete_description": "Faceți clic pe \"Începeți importul\" pentru a începe procesarea datelor dvs. Notion.",
+      "upload_progress_message": "Vă rugăm să nu închideți această fereastră."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importă datele tale CSV în proiectele Plane.",
     "steps": {

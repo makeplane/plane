@@ -1176,6 +1176,36 @@
       "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Nhập dữ liệu Notion của bạn vào các dự án Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Notion",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Notion của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Notion của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Notion",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Notion của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Notion",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Notion của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Nhập dữ liệu CSV của bạn vào các dự án Plane.",
     "steps": {

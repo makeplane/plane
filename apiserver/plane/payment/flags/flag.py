@@ -72,6 +72,8 @@ class FeatureFlag(Enum):
     NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
+    # Notion Importer
+    NOTION_IMPORTER = "NOTION_IMPORTER"
 
 
 class AdminFeatureFlag(Enum):

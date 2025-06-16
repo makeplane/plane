@@ -46,6 +46,7 @@ export enum E_IMPORTER_KEYS {
   LINEAR = "LINEAR",
   TRELLO = "TRELLO",
   FLATFILE = "FLATFILE",
+  NOTION = "NOTION",
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
 
@@ -86,6 +87,7 @@ export enum E_JOB_STATUS {
   PUSHING = "PUSHING",
   FINISHED = "FINISHED",
   ERROR = "ERROR",
+  PROGRESSING = "PROGRESSING",
 }
 export type TJobStatus = keyof typeof E_JOB_STATUS;
 

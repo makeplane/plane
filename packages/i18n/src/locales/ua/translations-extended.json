@@ -1186,6 +1186,36 @@
       "description_summary": "Ось підсумок даних, які будуть мігровані з Jira до Плейн."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Імпортуйте ваші дані Notion у проекти Plane.",
+    "steps": {
+      "title_upload_zip": "Завантажити експортований ZIP з Notion",
+      "description_upload_zip": "Будь ласка, завантажте ZIP файл з вашими даними Notion."
+    },
+    "upload": {
+      "drop_file_here": "Перетягніть ваш zip файл Notion сюди",
+      "upload_title": "Завантажити експорт Notion",
+      "drag_drop_description": "Перетягніть ваш zip файл експорту Notion або натисніть для перегляду",
+      "file_type_restriction": "Підтримуються лише .zip файли, експортовані з Notion",
+      "select_file": "Вибрати файл",
+      "uploading": "Завантаження...",
+      "preparing_upload": "Підготовка завантаження...",
+      "confirming_upload": "Підтвердження завантаження...",
+      "confirming": "Підтвердження...",
+      "upload_complete": "Завантаження завершено",
+      "upload_failed": "Завантаження не вдалося",
+      "start_import": "Почати імпорт",
+      "retry_upload": "Повторити завантаження",
+      "upload": "Завантажити",
+      "ready": "Готово",
+      "error": "Помилка",
+      "upload_complete_message": "Завантаження завершено!",
+      "upload_complete_description": "Натисніть \"Почати імпорт\", щоб розпочати обробку ваших даних Notion.",
+      "upload_progress_message": "Будь ласка, не закривайте це вікно."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Імпортуйте ваші дані CSV у проджекти Плейн.",
     "steps": {

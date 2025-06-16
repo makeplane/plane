@@ -5,6 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
 import { ImporterProps } from "@/plane-web/components/importers";
+import { useFlag } from "@/plane-web/hooks/store";
 
 export type ImportersListItemProps = {
   provider: ImporterProps;
@@ -15,6 +16,12 @@ export const ImportersListItem: FC<ImportersListItemProps> = (props) => {
   const { provider, workspaceSlug } = props;
 
   const { t } = useTranslation();
+
+  const isFeatureEnabled = useFlag(workspaceSlug, provider.flag);
+
+  if (!isFeatureEnabled) {
+    return null;
+  }
 
   return (
     <div

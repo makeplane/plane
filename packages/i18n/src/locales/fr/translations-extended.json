@@ -1186,6 +1186,36 @@
       "description_summary": "Voici un résumé des données qui seront migrées de Jira vers Plane."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Importez vos données Notion dans les projets Plane.",
+    "steps": {
+      "title_upload_zip": "Télécharger le ZIP exporté de Notion",
+      "description_upload_zip": "Veuillez télécharger le fichier ZIP contenant vos données Notion."
+    },
+    "upload": {
+      "drop_file_here": "Déposez votre fichier zip Notion ici",
+      "upload_title": "Télécharger l'export Notion",
+      "drag_drop_description": "Glissez-déposez votre fichier zip d'export Notion, ou cliquez pour parcourir",
+      "file_type_restriction": "Seuls les fichiers .zip exportés depuis Notion sont pris en charge",
+      "select_file": "Sélectionner un fichier",
+      "uploading": "Téléchargement...",
+      "preparing_upload": "Préparation du téléchargement...",
+      "confirming_upload": "Confirmation du téléchargement...",
+      "confirming": "Confirmation...",
+      "upload_complete": "Téléchargement terminé",
+      "upload_failed": "Échec du téléchargement",
+      "start_import": "Commencer l'importation",
+      "retry_upload": "Réessayer le téléchargement",
+      "upload": "Télécharger",
+      "ready": "Prêt",
+      "error": "Erreur",
+      "upload_complete_message": "Téléchargement terminé !",
+      "upload_complete_description": "Cliquez sur \"Commencer l'importation\" pour commencer le traitement de vos données Notion.",
+      "upload_progress_message": "Veuillez ne pas fermer cette fenêtre."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importez vos données CSV dans les projets Plane.",
     "steps": {

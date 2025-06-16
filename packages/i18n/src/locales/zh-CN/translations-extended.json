@@ -1186,6 +1186,36 @@
       "description_summary": "以下是将从 Jira 迁移到 Plane 的数据摘要。"
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "将您的 Notion 数据导入到 Plane 项目中。",
+    "steps": {
+      "title_upload_zip": "上传 Notion 导出的 ZIP 文件",
+      "description_upload_zip": "请上传包含您的 Notion 数据的 ZIP 文件。"
+    },
+    "upload": {
+      "drop_file_here": "将您的 Notion zip 文件拖放到这里",
+      "upload_title": "上传 Notion 导出文件",
+      "drag_drop_description": "拖放您的 Notion 导出 zip 文件，或点击浏览",
+      "file_type_restriction": "仅支持从 Notion 导出的 .zip 文件",
+      "select_file": "选择文件",
+      "uploading": "正在上传...",
+      "preparing_upload": "正在准备上传...",
+      "confirming_upload": "正在确认上传...",
+      "confirming": "正在确认...",
+      "upload_complete": "上传完成",
+      "upload_failed": "上传失败",
+      "start_import": "开始导入",
+      "retry_upload": "重试上传",
+      "upload": "上传",
+      "ready": "就绪",
+      "error": "错误",
+      "upload_complete_message": "上传完成！",
+      "upload_complete_description": "点击\"开始导入\"开始处理您的 Notion 数据。",
+      "upload_progress_message": "请不要关闭此窗口。"
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "将您的 CSV 数据导入到 Plane 项目中。",
     "steps": {

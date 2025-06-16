@@ -44,6 +44,10 @@
     "./flatfile": {
       "types": "./dist/flatfile/index.d.ts",
       "default": "./dist/flatfile/index.js"
+    },
+    "./parser": {
+      "types": "./dist/parser/index.d.ts",
+      "default": "./dist/parser/index.js"
     }
   },
   "scripts": {

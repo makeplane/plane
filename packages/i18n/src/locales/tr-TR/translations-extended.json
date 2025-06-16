@@ -1203,6 +1203,36 @@
       "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Notion verilerinizi Plane projelerine aktarın.",
+    "steps": {
+      "title_upload_zip": "Notion'dan Dışa Aktarılan ZIP'i Yükle",
+      "description_upload_zip": "Lütfen Notion verilerinizi içeren ZIP dosyasını yükleyin."
+    },
+    "upload": {
+      "drop_file_here": "Notion zip dosyanızı buraya bırakın",
+      "upload_title": "Notion Dışa Aktarımını Yükle",
+      "drag_drop_description": "Notion dışa aktarım zip dosyanızı sürükleyip bırakın veya göz atmak için tıklayın",
+      "file_type_restriction": "Yalnızca Notion'dan dışa aktarılan .zip dosyaları desteklenir",
+      "select_file": "Dosya Seç",
+      "uploading": "Yükleniyor...",
+      "preparing_upload": "Yükleme hazırlanıyor...",
+      "confirming_upload": "Yükleme onaylanıyor...",
+      "confirming": "Onaylanıyor...",
+      "upload_complete": "Yükleme tamamlandı",
+      "upload_failed": "Yükleme başarısız",
+      "start_import": "İçe Aktarmayı Başlat",
+      "retry_upload": "Yüklemeyi Yeniden Dene",
+      "upload": "Yükle",
+      "ready": "Hazır",
+      "error": "Hata",
+      "upload_complete_message": "Yükleme tamamlandı!",
+      "upload_complete_description": "Notion verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
+      "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
     "steps": {

@@ -2275,5 +2275,34 @@
         "project": "Žiadne šablóny neboli nájdené."
       }
     }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrať exportovaný ZIP z Notion",
+      "description_upload_zip": "Prosím nahrajte ZIP súbor obsahujúci vaše Notion dáta."
+    },
+    "upload": {
+      "drop_file_here": "Pretiahnite váš Notion zip súbor sem",
+      "upload_title": "Nahrať Notion export",
+      "drag_drop_description": "Pretiahnite a pustite váš Notion export zip súbor alebo kliknite na prehľadávanie",
+      "file_type_restriction": "Podporované sú iba .zip súbory exportované z Notion",
+      "select_file": "Vybrať súbor",
+      "uploading": "Nahrávanie...",
+      "preparing_upload": "Príprava nahrávania...",
+      "confirming_upload": "Potvrdzovanie nahrávania...",
+      "confirming": "Potvrdzovanie...",
+      "upload_complete": "Nahrávanie dokončené",
+      "upload_failed": "Nahrávanie zlyhalo",
+      "start_import": "Spustiť import",
+      "retry_upload": "Opakovať nahrávanie",
+      "upload": "Nahrať",
+      "ready": "Pripravené",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávanie dokončené!",
+      "upload_complete_description": "Kliknite na \"Spustiť import\" pre začatie spracovania vašich Notion dát.",
+      "upload_progress_message": "Prosím nezatvárajte toto okno."
+    }
   }
 }

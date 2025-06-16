@@ -9,6 +9,7 @@ import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 import AsanaLogo from "@/public/services/asana.svg";
 import JiraLogo from "@/public/services/jira.svg";
 import LinearLogo from "@/public/services/linear.svg";
+import NotionLogo from "@/public/services/notion.svg";
 
 export type ImporterProps = {
   flag: TFeatureFlags;
@@ -51,6 +52,14 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     title: "Asana",
     i18n_description: "asana_importer.asana_importer_description",
     logo: AsanaLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.NOTION_IMPORTER,
+    key: "notion",
+    title: "Notion",
+    i18n_description: "notion_importer.notion_importer_description",
+    logo: NotionLogo,
     beta: true,
   },
 ];

@@ -1186,6 +1186,36 @@
       "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari Jira ke Plane."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Impor data Notion Anda ke proyek Plane.",
+    "steps": {
+      "title_upload_zip": "Unggah ZIP yang Diekspor dari Notion",
+      "description_upload_zip": "Silakan unggah file ZIP yang berisi data Notion Anda."
+    },
+    "upload": {
+      "drop_file_here": "Jatuhkan file zip Notion Anda di sini",
+      "upload_title": "Unggah Ekspor Notion",
+      "drag_drop_description": "Seret dan jatuhkan file zip ekspor Notion Anda, atau klik untuk menelusuri",
+      "file_type_restriction": "Hanya file .zip yang diekspor dari Notion yang didukung",
+      "select_file": "Pilih File",
+      "uploading": "Mengunggah...",
+      "preparing_upload": "Mempersiapkan unggah...",
+      "confirming_upload": "Mengonfirmasi unggah...",
+      "confirming": "Mengonfirmasi...",
+      "upload_complete": "Unggah selesai",
+      "upload_failed": "Unggah gagal",
+      "start_import": "Mulai Impor",
+      "retry_upload": "Coba Unggah Lagi",
+      "upload": "Unggah",
+      "ready": "Siap",
+      "error": "Error",
+      "upload_complete_message": "Unggah selesai!",
+      "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Notion Anda.",
+      "upload_progress_message": "Harap jangan tutup jendela ini."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Impor data CSV Anda ke dalam projek Plane.",
     "steps": {

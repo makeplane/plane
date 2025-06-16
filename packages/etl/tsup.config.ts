@@ -2,6 +2,7 @@ import { defineConfig, Options } from "tsup";
 
 export default defineConfig((options: Options) => ({
   entry: [
+    "src/parser/index.ts",
     "src/asana/index.ts",
     "src/core/index.ts",
     "src/github/index.ts",

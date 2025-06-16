@@ -68,6 +68,12 @@ const envSchema = z.object({
   // AES Env Variables
   AES_SECRET_KEY: z.string().optional(),
   AES_SALT: z.string().default("aes-salt"),
+  // AWS S3 Env Variables
+  AWS_REGION: z.string().default("us-east-1"),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+  AWS_S3_ENDPOINT_URL: z.string().optional(),
+  AWS_S3_BUCKET_NAME: z.string().default("uploads"),
 
   // Internal Plane App Env Variables
   PRD_AGENT_CLIENT_ID: z.string().optional(),

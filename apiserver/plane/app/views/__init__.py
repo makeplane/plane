@@ -107,6 +107,8 @@ from .asset.v2 import (
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
 )
+from .asset.silo import SiloAssetsEndpoint
+
 from .issue.base import (
     IssueListEndpoint,
     IssueViewSet,

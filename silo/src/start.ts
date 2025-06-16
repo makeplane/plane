@@ -2,7 +2,7 @@ import DB from "@/db/client";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
 import { logger } from "./logger";
 import Server from "./server";
-import { Store } from "./worker/base";
+import { initializeS3Client, Store } from "./worker/base";
 
 (async () => {
   try {
@@ -11,6 +11,8 @@ import { Store } from "./worker/base";
     // connect to db
     const db = DB.getInstance();
     await db.init();
+
+    initializeS3Client();
     // Start the worker for taking over the migration jobs
     logger.info("Warming up worker instance, connecting services... ♨️");
 

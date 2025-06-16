@@ -3,12 +3,8 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-  "choose_workspace_for_integration": "Choose a workspace to connect this app to",
-  "integrations_description": "Apps that work with Plane must connect to a workspace where you are an admin.",
-  "create_a_new_workspace": "Create a new workspace",
-  "learn_more_about_workspaces": "Learn more about workspaces",
-  "no_workspaces_to_connect": "No workspaces to connect",
-  "no_workspaces_to_connect_description": "You will need to create a workspace to be able to connect integrations and templates",
+
+
   "common": {
     "worklogs": "Worklogs",
     "live": "Live",
@@ -1167,6 +1163,7 @@
     "initiated": "Initiated",
     "pulling": "Pulling",
     "pulled": "Pulled",
+    "progressing": "Progressing",
     "transforming": "Transforming",
     "transformed": "Transformed",
     "pushing": "Pushing",
@@ -1213,6 +1210,36 @@
       "description_summary": "Here is a summary of the data that will be migrated from Asana to Plane."
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "Import your Notion data into Plane projects.",
+    "steps": {
+      "title_upload_zip": "Upload Notion Exported ZIP",
+      "description_upload_zip": "Please upload the ZIP file containing your Notion data."
+    },
+    "upload": {
+      "drop_file_here": "Drop your Notion zip file here",
+      "upload_title": "Upload Notion Export",
+      "drag_drop_description": "Drag and drop your Notion export zip file, or click to browse",
+      "file_type_restriction": "Only .zip files exported from Notion are supported",
+      "select_file": "Select File",
+      "uploading": "Uploading...",
+      "preparing_upload": "Preparing upload...",
+      "confirming_upload": "Confirming upload...",
+      "confirming": "Confirming...",
+      "upload_complete": "Upload complete",
+      "upload_failed": "Upload failed",
+      "start_import": "Start Import",
+      "retry_upload": "Retry Upload",
+      "upload": "Upload",
+      "ready": "Ready",
+      "error": "Error",
+      "upload_complete_message": "Upload complete!",
+      "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
+      "upload_progress_message": "Please don't close this window."
+    }
+  },
+
   "linear_importer": {
     "linear_importer_description": "Import your Linear data into Plane projects.",
     "steps": {

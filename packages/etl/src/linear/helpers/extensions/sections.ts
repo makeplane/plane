@@ -1,5 +1,5 @@
 import { HTMLElement } from "node-html-parser";
-import { IParserExtension } from "@/core/parser";
+import { IParserExtension } from "@/parser";
 
 /*
   This extension converts Linear Docs Sections into Plane Callouts

@@ -9,7 +9,6 @@ import {
 import { IssueService } from "@/services/issue.service";
 import { LabelService } from "@/services/label.service";
 import { ModuleService } from "@/services/module.service";
-import { PageService } from "@/services/page.service";
 import { ProjectService } from "@/services/project.service";
 import { StateService } from "@/services/state.service";
 import { UserService } from "@/services/user.service";
@@ -28,7 +27,6 @@ export class Client {
   cycles: CycleService;
   modules: ModuleService;
   project: ProjectService;
-  page: PageService;
   issueComment: IssueCommentService;
   // issue types
   issueType: IssueTypeService;
@@ -43,9 +41,7 @@ export class Client {
     this.issue = new IssueService(options);
     this.users = new UserService(options);
     this.project = new ProjectService(options);
-    this.page = new PageService(options);
     this.issueComment = new IssueCommentService(options);
-    this.assets = new AssetService(options);
     this.cycles = new CycleService(options);
     this.modules = new ModuleService(options);
     this.assets = new AssetService(options);

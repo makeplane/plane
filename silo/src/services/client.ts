@@ -7,6 +7,7 @@ import { WorkspaceConnectionAPIService } from "@/services/workspace/connection.s
 import { WorkspaceCredentialAPIService } from "@/services/workspace/credential.service";
 import { WorkspaceEntityConnectionAPIService } from "@/services/workspace/entity-connection.service";
 import { ClientOptions } from "@/types";
+import { PageAPIService } from "./page/page.service";
 
 
 export class APIClient {
@@ -16,6 +17,8 @@ export class APIClient {
     workspaceConnection: WorkspaceConnectionAPIService;
     workspaceCredential: WorkspaceCredentialAPIService;
     workspaceEntityConnection: WorkspaceEntityConnectionAPIService;
+    // App level services
+    page: PageAPIService;
 
     constructor(options: ClientOptions) {
         this.options = options;
@@ -24,6 +27,7 @@ export class APIClient {
         this.workspaceEntityConnection = new WorkspaceEntityConnectionAPIService(options);
         this.importJob = new ImportJobAPIService(options);
         this.importReport = new ImportReportAPIService(options);
+        this.page = new PageAPIService(options);
     }
 }
 

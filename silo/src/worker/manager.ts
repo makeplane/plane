@@ -14,11 +14,12 @@ import { JiraDataMigrator } from "@/apps/jira-importer/migrator/jira.migrator";
 import { JiraDataCenterMigrator } from "@/apps/jira-server-importer/migrator";
 import { LinearDocsMigrator } from "@/apps/linear-importer/migrator/linear-docs.migrator";
 import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migrator";
+import { NotionDataMigrator } from "@/apps/notion-importer/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
 import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
-import { MQ, Store } from "./base";
+import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
 
@@ -47,6 +48,8 @@ class WorkerFactory {
         return new LinearDocsMigrator(mq, store);
       case "asana":
         return new AsanaDataMigrator(mq, store);
+      case "notion":
+        return new NotionDataMigrator(mq, store, s3Client);
       case "github-webhook":
         return new GithubWebhookWorker(mq, store);
       case "gitlab-webhook":

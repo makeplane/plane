@@ -1186,6 +1186,36 @@
       "description_summary": "JiraからPlaneに移行されるデータのサマリーです。"
     }
   },
+
+  "notion_importer": {
+    "notion_importer_description": "NotionデータをPlaneプロジェクトにインポートします。",
+    "steps": {
+      "title_upload_zip": "Notion エクスポート ZIP をアップロード",
+      "description_upload_zip": "Notionデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Notion zip ファイルをここにドロップ",
+      "upload_title": "Notion エクスポートをアップロード",
+      "drag_drop_description": "Notion エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Notionからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Notionデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
     "steps": {
