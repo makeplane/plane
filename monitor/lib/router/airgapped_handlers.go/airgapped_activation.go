@@ -176,8 +176,9 @@ func PopulateDatabaseWithFilePayload(payload *AirgappedLicensePayload, memberLis
 		err = tx.Where("workspace_id = ? AND workspace_slug = ?", license.WorkspaceID, license.WorkspaceSlug).First(&workspaceLicense).Error
 		if err == nil {
 			// Workspace has a license - check if it's different from the current one
-			if workspaceLicense.LicenseKey != license.LicenseKey {
-				return fmt.Errorf("workspace is already associated with a different license")
+			if (workspaceLicense.ProductType != "FREE") && (workspaceLicense.LicenseKey != license.LicenseKey) {
+				// If the workspace has a non-free license, and the license key is different, return an error
+				return fmt.Errorf("workspace is already associated with a different license, please deactivate the existing license first")
 			}
 		}
 
