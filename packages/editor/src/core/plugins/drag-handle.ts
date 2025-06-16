@@ -21,6 +21,7 @@ const generalSelectors = [
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".page-embed-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -170,7 +171,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;
@@ -196,7 +197,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
-    scrollAnimationFrame = requestAnimationFrame(scroll);
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
   }
 
   let dragHandleElement: HTMLElement | null = null;

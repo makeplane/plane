@@ -75,7 +75,13 @@ def sync_with_external_service(entity_name, description_html):
 
         url = normalize_url_path(f"{live_url}/convert-document/")
 
-        response = requests.post(url, json=data, headers=None)
+        response = requests.post(
+            url,
+            json=data,
+            headers={
+                "LIVE_SERVER_SECRET_KEY": settings.LIVE_SERVER_SECRET_KEY,
+            },
+        )
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:
@@ -143,9 +149,7 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
 
             if external_data:
                 entity.description = external_data.get("description")
-                entity.description_binary = base64.b64decode(
-                    external_data.get("description_binary")
-                )
+                entity.description_html = external_data.get("description_html")
                 entity.save()
 
         return

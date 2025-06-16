@@ -17,7 +17,6 @@ import { UserService } from "@/services/user.service";
 // stores
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
-// local imports
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
 type TUserErrorStatus = {

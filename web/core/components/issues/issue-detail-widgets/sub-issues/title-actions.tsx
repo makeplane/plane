@@ -35,10 +35,9 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
   } = useMember();
 
   // derived values
-  const subIssueFilters = getSubIssueFilters(parentId);
   const projectStates = getProjectStates(projectId);
   const projectMemberIds = getProjectMemberIds(projectId, false);
-
+  const subIssueFilters = getSubIssueFilters(parentId);
   const layoutDisplayFiltersOptions = ISSUE_DISPLAY_FILTERS_BY_PAGE["sub_work_items"].list;
 
   const handleDisplayFilters = useCallback(
@@ -69,7 +68,6 @@ export const SubWorkItemTitleActions: FC<TSubWorkItemTitleActionsProps> = observ
         if (subIssueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
       updateSubWorkItemFilters(EIssueFilterType.FILTERS, { [key]: newValues }, parentId);
     },
     [subIssueFilters?.filters, updateSubWorkItemFilters, parentId]

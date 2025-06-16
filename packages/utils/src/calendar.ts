@@ -1,8 +1,45 @@
 // plane imports
 import { EStartOfTheWeek } from "@plane/constants";
-import { ICalendarDate, ICalendarPayload  } from "@plane/types";
+import { ICalendarDate, ICalendarPayload } from "@plane/types";
 // local imports
-import { getWeekNumberOfDate, renderFormattedPayloadDate  } from "./datetime";
+import { getWeekNumberOfDate, renderFormattedPayloadDate } from "./datetime";
+
+export const formatDate = (date: Date, format: string): string => {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthsOfYear = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const formattedDate = format
+    .replace("dd", day.toString().padStart(2, "0"))
+    .replace("d", day.toString())
+    .replace("eee", daysOfWeek[date.getDay()])
+    .replace("Month", monthsOfYear[month - 1])
+    .replace("yyyy", year.toString())
+    .replace("yyy", year.toString().slice(-3))
+    .replace("hh", hours.toString().padStart(2, "0"))
+    .replace("mm", minutes.toString().padStart(2, "0"))
+    .replace("ss", seconds.toString().padStart(2, "0"));
+
+  return formattedDate;
+};
 
 /**
  * @returns {ICalendarPayload} calendar payload to render the calendar
@@ -67,8 +104,9 @@ export const getOrderedDays = <T>(
   items: T[],
   getDayIndex: (item: T) => number,
   startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
-): T[] => [...items].sort((a, b) => {
+): T[] =>
+  [...items].sort((a, b) => {
     const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
     const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;
     return dayA - dayB;
-  })
+  });

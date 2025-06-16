@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS, EWorkItemConversionType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import {
@@ -26,6 +26,8 @@ import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/iss
 import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ConvertWorkItemAction } from "@/plane-web/components/epics";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
@@ -173,6 +175,13 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           {currentUser && !isArchived && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction
+              workItemId={issueId}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={disabled || isArchived}
+            />
+          </WithFeatureFlagHOC>
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
