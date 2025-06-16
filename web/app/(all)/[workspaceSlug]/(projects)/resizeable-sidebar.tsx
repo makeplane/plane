@@ -264,29 +264,6 @@ export function ResizableSidebar({
         </aside>
       </div>
 
-      {/* Toggle Button */}
-      <button
-        onClick={toggleCollapsed}
-        className={cn(
-          "fixed top-4 right-4 z-40 p-2 bg-white rounded-md shadow-md border border-gray-200",
-          "hover:bg-gray-50 transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-          "transform transition-transform duration-300",
-          isCollapsed ? "translate-x-0" : "translate-x-[-100%]"
-        )}
-        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        aria-expanded={!isCollapsed}
-      >
-        <svg
-          className={cn("w-5 h-5 transition-transform duration-300", isCollapsed ? "rotate-180" : "rotate-0")}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-        </svg>
-      </button>
-
       {/* Extended Sidebar */}
       {extendedSidebar && extendedSidebar}
     </>
