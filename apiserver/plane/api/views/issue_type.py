@@ -132,7 +132,12 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, slug, pk): # Corrected signature
+    def patch(self, request, slug, pk):
+        try:
+            workspace = Workspace.objects.get(slug=slug)
+        except Workspace.DoesNotExist:
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         try:
             issue_type = IssueType.objects.get(workspace__slug=slug, pk=pk)
         except IssueType.DoesNotExist:
@@ -142,20 +147,19 @@ class IssueTypeAPIEndpoint(BaseAPIView):
         if 'name' in request.data and IssueType.objects.filter(
             workspace__slug=slug,
             name=request.data.get('name')
-        ).exclude(pk=pk).exists(): # Ensure we exclude the current instance from the check
-            # Check if the conflicting issue_type is the same as the one being patched
+        ).exclude(pk=pk).exists():
             conflicting_issue_type = IssueType.objects.filter(workspace__slug=slug, name=request.data.get('name')).first()
             if conflicting_issue_type.pk != issue_type.pk:
                  return Response(
                     {
                         "error": "IssueType with the same name already exists",
-                        "id": str(conflicting_issue_type.id) # Return ID of conflicting type
+                        "id": str(conflicting_issue_type.id)
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
 
         serializer = IssueTypeSerializer(
-            issue_type, data=request.data, partial=True # Changed issue_comment to issue_type
+            issue_type, data=request.data, context={'workspace_id': workspace.id}, partial=True
         )
         if serializer.is_valid():
             serializer.save()
@@ -163,7 +167,7 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, slug, pk): # Corrected and uncommented signature
+    def delete(self, request, slug, pk):
         try:
             issue_type = IssueType.objects.get(workspace__slug=slug, pk=pk)
         except IssueType.DoesNotExist:
@@ -211,10 +215,10 @@ class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
                     {"name": "The Property Name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except ValidationError: # This will now correctly reference DRF's ValidationError
+        except ValidationError:
             return Response(
-                {"error": "Validation Error", "details": serializer.errors if serializer else "Unknown"}, # Providing more context
-                status=status.HTTP_400_BAD_REQUEST, # Standard for validation errors
+                {"error": "Validation Error", "details": serializer.errors if serializer else "Unknown"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def patch(self, request, slug, issue_type, pk):
@@ -240,7 +244,7 @@ class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
                         {"name": "The Property Name is already taken for this Issue Type"},
                         status=status.HTTP_409_CONFLICT,
                     )
-                else: # Catch other integrity errors
+                else:
                     return Response({"error": "Database integrity error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
