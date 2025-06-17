@@ -7,8 +7,8 @@ import { Emoji } from "emoji-picker-react";
 // eslint-disable-next-line import/order
 import useFontFaceObserver from "use-font-face-observer";
 // plane imports
-import { LUCIDE_ICONS_LIST } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
+import { LUCIDE_ICONS_LIST } from "@plane/ui";
 import { emojiCodeToUnicode } from "@plane/utils";
 
 type Props = {
