@@ -20,6 +20,10 @@ urlpatterns = [
         "workspaces/<str:slug>/issue-type/<uuid:issue_type>/custom-properties/",
         IssueTypeCustomPropertyAPIEndpoint.as_view(),
         name="issue-type-custom-property",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-type/<uuid:issue_type>/custom-properties/<uuid:pk>/",
+        IssueTypeCustomPropertyAPIEndpoint.as_view(),
+        name="issue-type-custom-property",
     )
-    
 ]
