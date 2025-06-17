@@ -14,23 +14,23 @@ export const CORE_ASSETS_META_DATA_RECORD: Partial<Record<CORE_EXTENSIONS, TAsse
   [CORE_EXTENSIONS.IMAGE]: (attrs) => {
     if (!attrs?.src) return;
     return {
+      href: `#${getImageBlockId(attrs?.id ?? "")}`,
       id: attrs?.id,
       name: `image-${attrs?.id}`,
-      scrollId: `#${getImageBlockId(attrs?.id ?? "")}`,
       size: 0,
       src: attrs?.src,
-      type: "IMAGE",
+      type: CORE_EXTENSIONS.IMAGE,
     };
   },
   [CORE_EXTENSIONS.CUSTOM_IMAGE]: (attrs) => {
     if (!attrs?.src) return;
     return {
+      href: `#${getImageBlockId(attrs?.id ?? "")}`,
       id: attrs?.id,
       name: `image-${attrs?.id}`,
-      scrollId: `#${getImageBlockId(attrs?.id ?? "")}`,
       size: 0,
       src: attrs?.src,
-      type: "CUSTOM_IMAGE",
+      type: CORE_EXTENSIONS.CUSTOM_IMAGE,
     };
   },
   ...ADDITIONAL_ASSETS_META_DATA_RECORD,

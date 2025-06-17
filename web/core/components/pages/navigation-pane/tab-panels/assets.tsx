@@ -3,9 +3,9 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
 // plane imports
-import type { TEditorAsset } from "@plane/editor";
+import { CORE_EXTENSIONS, type TEditorAsset } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { convertBytesToSize, getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
+import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
@@ -61,10 +61,10 @@ const AssetItem = observer((props: AssetItemProps) => {
     }
   };
 
-  if (asset.type === "IMAGE" || asset.type === "CUSTOM_IMAGE")
+  if ([CORE_EXTENSIONS.IMAGE, CORE_EXTENSIONS.CUSTOM_IMAGE].includes(asset.type))
     return (
       <a
-        href={asset.scrollId}
+        href={asset.href}
         className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
       >
         <div
@@ -76,7 +76,7 @@ const AssetItem = observer((props: AssetItemProps) => {
         <div className="flex-1 space-y-0.5 truncate">
           <p className="text-sm font-medium truncate">{asset.name}</p>
           <div className="flex items-end justify-between gap-2">
-            <p className="shrink-0 text-xs text-custom-text-200">{convertBytesToSize(Number(asset.size || 0))}</p>
+            <p className="shrink-0 text-xs text-custom-text-200" />
             <a
               href={getAssetDownloadSrc(asset.src)}
               target="_blank"

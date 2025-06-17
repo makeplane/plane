@@ -1,21 +1,18 @@
 import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
-// plane types
+// plane imports
 import { TWebhookConnectionQueryParams } from "@plane/types";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
 // extension types
 import { TTextAlign } from "@/extensions";
 // helpers
 import { IMarking } from "@/helpers/scroll-to-node";
-// plane editor imports
-import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 // types
 import {
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
   TDocumentEventsServer,
+  TEditorAsset,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
@@ -78,15 +75,6 @@ export type TCommandWithProps<T extends TEditorCommands> = T extends keyof TComm
 type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof TCommandExtraProps
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
-
-export type TEditorAsset = {
-  id: string;
-  name: string;
-  scrollId: string;
-  size: number;
-  src: string;
-  type: keyof typeof CORE_EXTENSIONS | keyof typeof ADDITIONAL_EXTENSIONS;
-};
 
 export type TDocumentInfo = {
   characters: number;
