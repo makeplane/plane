@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -25,7 +24,6 @@ const ApiTokensPage = observer(() => {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
-  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -33,9 +31,7 @@ const ApiTokensPage = observer(() => {
   // derived values
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/api-tokens" });
 
-  const { data: tokens } = useSWR(workspaceSlug ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
-    workspaceSlug ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
-  );
+  const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.getApiTokens());
 
   const pageTitle = currentWorkspace?.name
     ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`

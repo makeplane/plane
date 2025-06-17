@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
 import { IApiToken } from "@plane/types";
@@ -29,8 +28,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   // states
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null | undefined>(null);
-  // router
-  const { workspaceSlug } = useParams();
 
   const handleClose = () => {
     onClose();
@@ -53,17 +50,15 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   };
 
   const handleCreateToken = async (data: Partial<IApiToken>) => {
-    if (!workspaceSlug) return;
-
     // make the request to generate the token
     await apiTokenService
-      .createApiToken(workspaceSlug.toString(), data)
+      .createApiToken(data)
       .then((res) => {
         setGeneratedToken(res);
         downloadSecretKey(res);
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST(workspaceSlug.toString()),
+          API_TOKENS_LIST,
           (prevData) => {
             if (!prevData) return;
 

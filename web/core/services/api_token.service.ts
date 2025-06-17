@@ -7,32 +7,32 @@ export class APITokenService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getApiTokens(workspaceSlug: string): Promise<IApiToken[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/api-tokens/`)
+  async getApiTokens(): Promise<IApiToken[]> {
+    return this.get(`/api/users/api-tokens/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async retrieveApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
-    return this.get(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
+  async retrieveApiToken(tokenId: string): Promise<IApiToken> {
+    return this.get(`/api/users/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async createApiToken(workspaceSlug: string, data: Partial<IApiToken>): Promise<IApiToken> {
-    return this.post(`/api/workspaces/${workspaceSlug}/api-tokens/`, data)
+  async createApiToken(data: Partial<IApiToken>): Promise<IApiToken> {
+    return this.post(`/api/users/api-tokens/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteApiToken(workspaceSlug: string, tokenId: string): Promise<IApiToken> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/api-tokens/${tokenId}`)
+  async deleteApiToken(tokenId: string): Promise<IApiToken> {
+    return this.delete(`/api/users/api-tokens/${tokenId}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
