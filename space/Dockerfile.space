@@ -58,7 +58,7 @@ COPY --from=installer /app/space/package.json .
 
 COPY --from=installer /app/space/.next/standalone ./
 
-COPY --from=installer /app/space/.next/static ./.next/static
+COPY --from=installer /app/space/.next/static ./space/.next/static
 COPY --from=installer /app/space/public ./space/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
