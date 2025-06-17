@@ -9,6 +9,7 @@ export type CustomProperty = {
   is_required: boolean;
   name: string;
   id: string;
+  is_active: boolean;
 };
 
 type CustomPropertiesProps = {
@@ -58,20 +59,21 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     }
   }, [customProperties]);
 
-  const mergedCustomProperties = issueTypeCustomProperties.map((customProp) => {
-    const customProperty = localCustomProperties?.find(
-      (prop) => prop.key === customProp.name
-    );
+  const mergedCustomProperties = issueTypeCustomProperties
+    .filter((customProp) => customProp.is_active)
+    .map((customProp) => {
+      const customProperty = localCustomProperties?.find((prop) => prop.key === customProp.name);
 
-    return {
-      key: customProp.name,
-      value: customProperty ? customProperty.value : "",
-      issue_type_custom_property: customProp.id,
-      is_required: customProp.is_required,
-      id: customProperty ? customProperty.id : "",
-      name: customProp.name,
-    };
-  });
+      return {
+        key: customProp.name,
+        value: customProperty ? customProperty.value : "",
+        issue_type_custom_property: customProp.id,
+        is_required: customProp.is_required,
+        id: customProperty ? customProperty.id : "",
+        name: customProp.name,
+        is_active: customProp.is_active,
+      };
+    });
 
   if (error) {
     return <div className="text-red-500 text-sm mt-1">{error}</div>;
