@@ -239,210 +239,211 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
-        try:
-            workspace = Workspace.objects.get(slug=slug)
+        workspace = Workspace.objects.get(slug=slug)
 
-            serializer = ProjectSerializer(
-                data={**request.data}, context={"workspace_id": workspace.id}
+        serializer = ProjectSerializer(
+            data={**request.data}, context={"workspace_id": workspace.id}
+        )
+        if serializer.is_valid():
+            serializer.save()
+
+            # Add the user as Administrator to the project
+            _ = ProjectMember.objects.create(
+                project_id=serializer.data["id"], member=request.user, role=20
             )
-            if serializer.is_valid():
-                serializer.save()
+            # Also create the issue property for the user
+            _ = IssueUserProperty.objects.create(
+                project_id=serializer.data["id"], user=request.user
+            )
 
-                # Add the user as Administrator to the project
-                _ = ProjectMember.objects.create(
-                    project_id=serializer.data["id"], member=request.user, role=20
+            if serializer.data["project_lead"] is not None and str(
+                serializer.data["project_lead"]
+            ) != str(request.user.id):
+                ProjectMember.objects.create(
+                    project_id=serializer.data["id"],
+                    member_id=serializer.data["project_lead"],
+                    role=20,
                 )
                 # Also create the issue property for the user
-                _ = IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"], user=request.user
+                IssueUserProperty.objects.create(
+                    project_id=serializer.data["id"],
+                    user_id=serializer.data["project_lead"],
                 )
 
-                if serializer.data["project_lead"] is not None and str(
-                    serializer.data["project_lead"]
-                ) != str(request.user.id):
-                    ProjectMember.objects.create(
-                        project_id=serializer.data["id"],
-                        member_id=serializer.data["project_lead"],
-                        role=20,
-                    )
-                    # Also create the issue property for the user
-                    IssueUserProperty.objects.create(
-                        project_id=serializer.data["id"],
-                        user_id=serializer.data["project_lead"],
-                    )
-
-                # Default states
-                states = [
-                    {
-                        "name": "Backlog",
-                        "color": "#60646C",
-                        "sequence": 15000,
-                        "group": "backlog",
-                        "default": True,
-                    },
-                    {
-                        "name": "Todo",
-                        "color": "#60646C",
-                        "sequence": 25000,
-                        "group": "unstarted",
-                    },
-                    {
-                        "name": "In Progress",
-                        "color": "#F59E0B",
-                        "sequence": 35000,
-                        "group": "started",
-                    },
-                    {
-                        "name": "Done",
-                        "color": "#46A758",
-                        "sequence": 45000,
-                        "group": "completed",
-                    },
-                    {
-                        "name": "Cancelled",
-                        "color": "#9AA4BC",
-                        "sequence": 55000,
-                        "group": "cancelled",
-                    },
-                ]
-
-                State.objects.bulk_create(
-                    [
-                        State(
-                            name=state["name"],
-                            color=state["color"],
-                            project=serializer.instance,
-                            sequence=state["sequence"],
-                            workspace=serializer.instance.workspace,
-                            group=state["group"],
-                            default=state.get("default", False),
-                            created_by=request.user,
-                        )
-                        for state in states
-                    ]
-                )
-
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
-
-                # Create the model activity
-                model_activity.delay(
-                    model_name="project",
-                    model_id=str(project.id),
-                    requested_data=request.data,
-                    current_instance=None,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
-
-                serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {
-                        "name": "The project name is already taken",
-                        "code": "PROJECT_NAME_ALREADY_EXIST",
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-        except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
-        except serializers.ValidationError:
-            return Response(
+            # Default states
+            states = [
                 {
-                    "identifier": "The project identifier is already taken",
-                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                    "name": "Backlog",
+                    "color": "#60646C",
+                    "sequence": 15000,
+                    "group": "backlog",
+                    "default": True,
                 },
-                status=status.HTTP_409_CONFLICT,
+                {
+                    "name": "Todo",
+                    "color": "#60646C",
+                    "sequence": 25000,
+                    "group": "unstarted",
+                },
+                {
+                    "name": "In Progress",
+                    "color": "#F59E0B",
+                    "sequence": 35000,
+                    "group": "started",
+                },
+                {
+                    "name": "Done",
+                    "color": "#46A758",
+                    "sequence": 45000,
+                    "group": "completed",
+                },
+                {
+                    "name": "Cancelled",
+                    "color": "#9AA4BC",
+                    "sequence": 55000,
+                    "group": "cancelled",
+                },
+            ]
+
+            State.objects.bulk_create(
+                [
+                    State(
+                        name=state["name"],
+                        color=state["color"],
+                        project=serializer.instance,
+                        sequence=state["sequence"],
+                        workspace=serializer.instance.workspace,
+                        group=state["group"],
+                        default=state.get("default", False),
+                        created_by=request.user,
+                    )
+                    for state in states
+                ]
             )
+
+            project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+
+            # Create the model activity
+            model_activity.delay(
+                model_name="project",
+                model_id=str(project.id),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
+
+            serializer = ProjectListSerializer(project)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # except IntegrityError as e:
+    #     print(e, "Print Exception integrity")
+    #     if "already exists" in str(e):
+    #         return Response(
+    #             {
+    #                 "name": "The project name is already taken",
+    #                 "code": "PROJECT_NAME_ALREADY_EXIST",
+    #             },
+    #             status=status.HTTP_409_CONFLICT,
+    #         )
+    # except Workspace.DoesNotExist:
+    #     return Response(
+    #         {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
+    #     )
+    # except serializers.ValidationError as e:
+    #     print(e, "PRint Exception validation")
+    #     return Response(
+    #         {
+    #             "identifier": "The project identifier is already taken",
+    #             "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+    #         },
+    #         status=status.HTTP_409_CONFLICT,
+    #     )
 
     def partial_update(self, request, slug, pk=None):
-        try:
-            if not ProjectMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                project_id=pk,
-                role=20,
-                is_active=True,
-            ).exists():
-                return Response(
-                    {"error": "You don't have the required permissions."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
-            workspace = Workspace.objects.get(slug=slug)
-
-            project = Project.objects.get(pk=pk)
-            intake_view = request.data.get("inbox_view", project.intake_view)
-            current_instance = json.dumps(
-                ProjectSerializer(project).data, cls=DjangoJSONEncoder
-            )
-            if project.archived_at:
-                return Response(
-                    {"error": "Archived projects cannot be updated"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = ProjectSerializer(
-                project,
-                data={**request.data, "intake_view": intake_view},
-                context={"workspace_id": workspace.id},
-                partial=True,
-            )
-
-            if serializer.is_valid():
-                serializer.save()
-                if intake_view:
-                    intake = Intake.objects.filter(
-                        project=project, is_default=True
-                    ).first()
-                    if not intake:
-                        Intake.objects.create(
-                            name=f"{project.name} Intake",
-                            project=project,
-                            is_default=True,
-                        )
-
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
-
-                model_activity.delay(
-                    model_name="project",
-                    model_id=str(project.id),
-                    requested_data=request.data,
-                    current_instance=current_instance,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
-                serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {
-                        "name": "The project name is already taken",
-                        "code": "PROJECT_NAME_ALREADY_EXIST",
-                    },
-                    status=status.HTTP_409_CONFLICT,
-                )
-        except (Project.DoesNotExist, Workspace.DoesNotExist):
+        # try:
+        if not ProjectMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            project_id=pk,
+            role=20,
+            is_active=True,
+        ).exists():
             return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+                {"error": "You don't have the required permissions."},
+                status=status.HTTP_403_FORBIDDEN,
             )
-        except serializers.ValidationError:
+
+        workspace = Workspace.objects.get(slug=slug)
+
+        project = Project.objects.get(pk=pk)
+        intake_view = request.data.get("inbox_view", project.intake_view)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
+        if project.archived_at:
             return Response(
-                {
-                    "identifier": "The project identifier is already taken",
-                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
-                },
-                status=status.HTTP_409_CONFLICT,
+                {"error": "Archived projects cannot be updated"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        serializer = ProjectSerializer(
+            project,
+            data={**request.data, "intake_view": intake_view},
+            context={"workspace_id": workspace.id},
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            if intake_view:
+                intake = Intake.objects.filter(project=project, is_default=True).first()
+                if not intake:
+                    Intake.objects.create(
+                        name=f"{project.name} Intake",
+                        project=project,
+                        is_default=True,
+                    )
+
+            project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+
+            model_activity.delay(
+                model_name="project",
+                model_id=str(project.id),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
+            serializer = ProjectListSerializer(project)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # except IntegrityError as e:
+    #     print(e, "Print Exception")
+    #     if "already exists" in str(e):
+    #         return Response(
+    #             {
+    #                 "name": "The project name is already taken",
+    #                 "code": "PROJECT_NAME_ALREADY_EXIST",
+    #             },
+    #             status=status.HTTP_409_CONFLICT,
+    #         )
+    # except (Project.DoesNotExist, Workspace.DoesNotExist):
+    #     return Response(
+    #         {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+    #     )
+    # except serializers.ValidationError:
+    #     return Response(
+    #         {
+    #             "identifier": "The project identifier is already taken",
+    #             "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+    #         },
+    #         status=status.HTTP_409_CONFLICT,
+    #     )
 
     def destroy(self, request, slug, pk):
         if (
