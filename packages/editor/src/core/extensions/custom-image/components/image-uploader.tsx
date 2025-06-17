@@ -54,7 +54,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           ...node.attrs,
           src: url,
         };
-        const assetMetaData = CORE_ASSETS_META_DATA_RECORD[CORE_EXTENSIONS.IMAGE]?.(updatedAttrs);
+        const assetMetaData = CORE_ASSETS_META_DATA_RECORD[CORE_EXTENSIONS.CUSTOM_IMAGE]?.(updatedAttrs);
         if (assetMetaData) {
           editor.commands.updateAssetsList?.({
             asset: assetMetaData,
