@@ -1,5 +1,5 @@
 import { FileText, Layers } from "lucide-react";
-import { EUserPermissions } from "@plane/constants";
+import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { ContrastIcon, DiceIcon, Intake, LayersIcon } from "@plane/ui";
 import { TNavigationItem } from "@/components/workspace";
 
@@ -16,7 +16,7 @@ export const getProjectFeatureNavigation = (
 ): TNavigationItem[] => [
   {
     i18n_key: "sidebar.work_items",
-    key: "work_items",
+    key: EProjectFeatureKey.WORK_ITEMS,
     name: "Work items",
     href: `/${workspaceSlug}/projects/${projectId}/issues`,
     icon: LayersIcon,
@@ -26,7 +26,7 @@ export const getProjectFeatureNavigation = (
   },
   {
     i18n_key: "sidebar.cycles",
-    key: "cycles",
+    key: EProjectFeatureKey.CYCLES,
     name: "Cycles",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     icon: ContrastIcon,
@@ -36,7 +36,7 @@ export const getProjectFeatureNavigation = (
   },
   {
     i18n_key: "sidebar.modules",
-    key: "modules",
+    key: EProjectFeatureKey.MODULES,
     name: "Modules",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     icon: DiceIcon,
@@ -46,7 +46,7 @@ export const getProjectFeatureNavigation = (
   },
   {
     i18n_key: "sidebar.views",
-    key: "views",
+    key: EProjectFeatureKey.VIEWS,
     name: "Views",
     href: `/${workspaceSlug}/projects/${projectId}/views`,
     icon: Layers,
@@ -56,7 +56,7 @@ export const getProjectFeatureNavigation = (
   },
   {
     i18n_key: "sidebar.pages",
-    key: "pages",
+    key: EProjectFeatureKey.PAGES,
     name: "Pages",
     href: `/${workspaceSlug}/projects/${projectId}/pages`,
     icon: FileText,
@@ -66,7 +66,7 @@ export const getProjectFeatureNavigation = (
   },
   {
     i18n_key: "sidebar.intake",
-    key: "intake",
+    key: EProjectFeatureKey.INTAKE,
     name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/intake`,
     icon: Intake,
