@@ -1,9 +1,8 @@
-import React, { FC } from "react";
 import { Emoji } from "emoji-picker-react";
+import React, { FC } from "react";
 import useFontFaceObserver from "use-font-face-observer";
-// icons
-import { LUCIDE_ICONS_LIST } from "./icons";
-// helpers
+// local imports
+import { LUCIDE_ICONS_LIST } from "..";
 import { emojiCodeToUnicode } from "./helpers";
 
 export type TEmojiLogoProps = {

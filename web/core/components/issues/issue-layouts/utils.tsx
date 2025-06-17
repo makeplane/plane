@@ -2,7 +2,6 @@
 
 import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import { isEmpty } from "lodash";
 import clone from "lodash/clone";
 import concat from "lodash/concat";
 import isEqual from "lodash/isEqual";
@@ -27,18 +26,22 @@ import {
   TGroupedIssues,
   IWorkspaceView,
   IIssueDisplayFilterOptions,
+  TGetColumns,
 } from "@plane/types";
 // plane ui
 import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // store
 import { store } from "@/lib/store-context";
 // plane web store
-import { getTeamProjectColumns, SpreadSheetPropertyIconMap } from "@/plane-web/components/issues/issue-layouts/utils";
+import {
+  getScopeMemberIds,
+  getTeamProjectColumns,
+  SpreadSheetPropertyIconMap,
+} from "@/plane-web/components/issues/issue-layouts/utils";
 // store
 import { ISSUE_FILTER_DEFAULT_DATA } from "@/store/issue/helpers/base-issues.store";
 import { DEFAULT_DISPLAY_PROPERTIES } from "@/store/issue/issue-details/sub_issues_filter.store";
@@ -61,13 +64,16 @@ export type IssueUpdates = {
   };
 };
 
-type TGetColumns = {
-  isWorkspaceLevel?: boolean;
-  projectId?: string;
-};
-
 export const isWorkspaceLevel = (type: EIssuesStoreType) =>
-  [EIssuesStoreType.PROFILE, EIssuesStoreType.GLOBAL].includes(type) ? true : false;
+  [
+    EIssuesStoreType.PROFILE,
+    EIssuesStoreType.GLOBAL,
+    EIssuesStoreType.TEAM,
+    EIssuesStoreType.TEAM_VIEW,
+    EIssuesStoreType.PROJECT_VIEW,
+  ].includes(type)
+    ? true
+    : false;
 
 type TGetGroupByColumns = {
   groupBy: GroupByColumnTypes | null;
@@ -265,40 +271,28 @@ const getLabelsColumns = ({ isWorkspaceLevel }: TGetColumns): IGroupByColumn[] =
 };
 
 const getAssigneeColumns = ({ isWorkspaceLevel, projectId }: TGetColumns): IGroupByColumn[] | undefined => {
+  // store values
+  const { getUserDetails } = store.memberRoot;
+  // derived values
+  const { memberIds, includeNone } = getScopeMemberIds({ isWorkspaceLevel, projectId });
   const assigneeColumns: IGroupByColumn[] = [];
-  const {
-    project: { projectMemberIds, getProjectMemberIds },
-    getUserDetails,
-  } = store.memberRoot;
-  // if workspace level
-  if (isWorkspaceLevel) {
-    const { workspaceMemberIds } = store.memberRoot.workspace;
-    if (!workspaceMemberIds) return;
-    workspaceMemberIds.forEach((memberId) => {
-      const member = getUserDetails(memberId);
-      assigneeColumns.push({
-        id: memberId,
-        name: member?.display_name || "",
-        icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
-        payload: { assignee_ids: [memberId] },
-      });
+
+  if (!memberIds) return [];
+
+  memberIds.forEach((memberId) => {
+    const member = getUserDetails(memberId);
+    if (!member) return;
+    assigneeColumns.push({
+      id: memberId,
+      name: member?.display_name || "",
+      icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
+      payload: { assignee_ids: [memberId] },
     });
-  } else {
-    // if project level
-    const _projectMemberIds = projectId ? getProjectMemberIds(projectId, false) : projectMemberIds;
-    if (!_projectMemberIds) return;
-    // Map project member ids to group by assignee columns
-    _projectMemberIds.forEach((memberId) => {
-      const member = getUserDetails(memberId);
-      assigneeColumns.push({
-        id: memberId,
-        name: member?.display_name || "",
-        icon: <Avatar name={member?.display_name} src={getFileURL(member?.avatar_url ?? "")} size="md" />,
-        payload: { assignee_ids: [memberId] },
-      });
-    });
+  });
+  if (includeNone) {
+    assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
   }
-  assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+
   return assigneeColumns;
 };
 

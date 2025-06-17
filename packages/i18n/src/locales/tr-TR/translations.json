@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Proje favorilerden kaldırılamadı. Lütfen tekrar deneyin.",
   "project_created_successfully": "Proje başarıyla oluşturuldu",
   "project_created_successfully_description": "Proje başarıyla oluşturuldu. Artık iş öğeleri eklemeye başlayabilirsiniz.",
+  "project_name_already_taken": "Proje ismi zaten kullanılıyor.",
+  "project_identifier_already_taken": "Proje kimliği zaten kullanılıyor.",
   "project_cover_image_alt": "Proje kapak resmi",
   "name_is_required": "Ad gereklidir",
   "title_should_be_less_than_255_characters": "Başlık 255 karakterden az olmalı",
@@ -875,13 +877,15 @@
     "guests": "Misafirler",
     "on_track": "Yolunda",
     "off_track": "Yolunda değil",
+    "at_risk": "Risk altında",
     "timeline": "Zaman çizelgesi",
     "completion": "Tamamlama",
     "upcoming": "Yaklaşan",
     "completed": "Tamamlandı",
     "in_progress": "Devam ediyor",
     "planned": "Planlandı",
-    "paused": "Durduruldu"
+    "paused": "Durduruldu",
+    "no_of": "{entity} sayısı"
   },
   "chart": {
     "x_axis": "X ekseni",

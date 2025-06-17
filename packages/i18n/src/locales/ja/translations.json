@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "project_created_successfully": "プロジェクトが正常に作成されました",
   "project_created_successfully_description": "プロジェクトが正常に作成されました。作業項目を追加できるようになりました。",
+  "project_name_already_taken": "プロジェクト名は既に使用されています。",
+  "project_identifier_already_taken": "プロジェクト識別子は既に使用されています。",
   "project_cover_image_alt": "プロジェクトのカバー画像",
   "name_is_required": "名前は必須です",
   "title_should_be_less_than_255_characters": "タイトルは255文字未満である必要があります",
@@ -873,13 +875,15 @@
     "guests": "ゲスト",
     "on_track": "順調",
     "off_track": "遅れ",
+    "at_risk": "リスクあり",
     "timeline": "タイムライン",
     "completion": "完了",
     "upcoming": "今後の予定",
     "completed": "完了",
     "in_progress": "進行中",
     "planned": "計画済み",
-    "paused": "一時停止"
+    "paused": "一時停止",
+    "no_of": "{entity} の数"
   },
   "chart": {
     "x_axis": "エックス アクシス",

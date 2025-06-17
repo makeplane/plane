@@ -23,6 +23,6 @@
     "@types/lodash": "^4.17.6",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

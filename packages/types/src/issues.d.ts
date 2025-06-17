@@ -220,6 +220,11 @@ export type GroupByColumnTypes =
   | "created_by"
   | "team_project";
 
+type TGetColumns = {
+  isWorkspaceLevel?: boolean;
+  projectId?: string;
+};
+
 export interface IGroupByColumn {
   id: string;
   name: string;

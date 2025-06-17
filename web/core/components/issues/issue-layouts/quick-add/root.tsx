@@ -12,12 +12,11 @@ import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue } from "@plane/types";
 // ui
 import { setPromiseToast } from "@plane/ui";
+import { cn, createIssuePayload } from "@plane/utils";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { createIssuePayload } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web components

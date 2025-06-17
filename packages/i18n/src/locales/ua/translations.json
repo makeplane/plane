@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Не вдалося видалити проєкт із вибраного. Спробуйте ще раз.",
   "project_created_successfully": "Проєкт успішно створено",
   "project_created_successfully_description": "Проєкт успішно створений. Тепер ви можете почати додавати робочі одиниці.",
+  "project_name_already_taken": "Назва проекту вже використовується.",
+  "project_identifier_already_taken": "Ідентифікатор проекту вже використовується.",
   "project_cover_image_alt": "Обкладинка проєкту",
   "name_is_required": "Назва є обов’язковою",
   "title_should_be_less_than_255_characters": "Назва має бути коротшою за 255 символів",
@@ -874,13 +876,15 @@
     "guests": "Гості",
     "on_track": "У межах графіку",
     "off_track": "Поза графіком",
+    "at_risk": "Під загрозою",
     "timeline": "Хронологія",
     "completion": "Завершення",
     "upcoming": "Майбутнє",
     "completed": "Завершено",
     "in_progress": "В процесі",
     "planned": "Заплановано",
-    "paused": "Призупинено"
+    "paused": "Призупинено",
+    "no_of": "Кількість {entity}"
   },
   "chart": {
     "x_axis": "Вісь X",

@@ -1,7 +1,6 @@
 import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-// @ts-expect-error __serializeForClipboard's is not exported
-import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import { EditorView } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions

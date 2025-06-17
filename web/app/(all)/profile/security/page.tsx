@@ -4,16 +4,17 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { PasswordStrengthMeter } from "@/components/account";
-import { PageHead } from "@/components/core";
+import { getPasswordStrength } from "@plane/utils";
+import { PasswordStrengthMeter } from "@/components/account/password-strength-meter";
+import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
 import { authErrorHandler } from "@/helpers/authentication.helper";
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // services

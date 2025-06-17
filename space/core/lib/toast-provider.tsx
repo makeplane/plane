@@ -1,11 +1,10 @@
 "use client";
 
 import { ReactNode } from "react";
-import { useTheme } from "next-themes"
-// ui
+import { useTheme } from "next-themes";
+// plane imports
 import { Toast } from "@plane/ui";
-// helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
+import { resolveGeneralTheme } from "@plane/utils";
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   // themes

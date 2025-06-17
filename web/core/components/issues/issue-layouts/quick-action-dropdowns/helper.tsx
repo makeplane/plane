@@ -5,9 +5,7 @@ import { EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { ArchiveIcon, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
-// helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 

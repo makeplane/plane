@@ -58,6 +58,6 @@
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

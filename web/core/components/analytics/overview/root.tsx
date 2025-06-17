@@ -5,7 +5,7 @@ import ActiveProjects from "./active-projects";
 import ProjectInsights from "./project-insights";
 
 const Overview: React.FC = () => (
-  <AnalyticsWrapper title="Overview">
+  <AnalyticsWrapper i18nTitle="common.overview">
     <div className="flex flex-col gap-14">
       <TotalInsights analyticsType="overview" />
       <div className="grid grid-cols-1 gap-14 md:grid-cols-5 ">
