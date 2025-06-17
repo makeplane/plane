@@ -1,8 +1,7 @@
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
-// plane imports
-import { LUCIDE_ICONS_LIST } from "@plane/constants";
 // local imports
+import { LUCIDE_ICONS_LIST } from "..";
 import { cn } from "../../helpers";
 import { Input } from "../form-fields";
 import { InfoIcon } from "../icons";

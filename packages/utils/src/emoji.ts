@@ -1,7 +1,7 @@
 "use client";
 
 // plane imports
-import { LUCIDE_ICONS_LIST, RANDOM_EMOJI_CODES } from "@plane/constants";
+import { RANDOM_EMOJI_CODES } from "@plane/constants";
 
 /**
  * Converts a hyphen-separated hexadecimal emoji code to its decimal representation
@@ -83,9 +83,3 @@ export const groupReactions: (reactions: any[], key: string) => { [key: string]:
  * @returns {string} A random emoji code
  */
 export const getRandomEmoji = (): string => RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)];
-
-/**
- * Returns a random icon name from the LUCIDE_ICONS_LIST array
- */
-export const getRandomIconName = (): string =>
-  LUCIDE_ICONS_LIST[Math.floor(Math.random() * LUCIDE_ICONS_LIST.length)].name;
