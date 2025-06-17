@@ -1,22 +1,25 @@
-"use client";
-
 import { ReactNode } from "react";
-import { ThemeProvider, useTheme } from "next-themes";
-import { SWRConfig } from "swr";
+import { Metadata } from "next";
 // plane imports
-import { ADMIN_BASE_PATH, DEFAULT_SWR_CONFIG } from "@plane/constants";
-import { Toast } from "@plane/ui";
-import { resolveGeneralTheme } from "@plane/utils";
-// lib
-import { InstanceProvider } from "@/lib/instance-provider";
-import { StoreProvider } from "@/lib/store-provider";
-import { UserProvider } from "@/lib/user-provider";
+import { ADMIN_BASE_PATH } from "@plane/constants";
 // styles
 import "@/styles/globals.css";
 
-const ToastWithTheme = () => {
-  const { resolvedTheme } = useTheme();
-  return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
+export const metadata: Metadata = {
+  title: "Plane | Simple, extensible, open-source project management tool.",
+  description:
+    "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
+  openGraph: {
+    title: "Plane | Simple, extensible, open-source project management tool.",
+    description:
+      "Open-source project management tool to manage work items, sprints, and product roadmaps with peace of mind.",
+    url: "https://plane.so/",
+  },
+  keywords:
+    "software development, customer feedback, software, accelerate, code management, release management, project management, work items tracking, agile, scrum, kanban, collaboration",
+  twitter: {
+    site: "@planepowers",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -30,18 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="manifest" href={`${ASSET_PREFIX}/site.webmanifest.json`} />
         <link rel="shortcut icon" href={`${ASSET_PREFIX}/favicon/favicon.ico`} />
       </head>
-      <body className={`antialiased`}>
-        <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
-          <ToastWithTheme />
-          <SWRConfig value={DEFAULT_SWR_CONFIG}>
-            <StoreProvider>
-              <InstanceProvider>
-                <UserProvider>{children}</UserProvider>
-              </InstanceProvider>
-            </StoreProvider>
-          </SWRConfig>
-        </ThemeProvider>
-      </body>
+      <body className={`antialiased`}>{children}</body>
     </html>
   );
 }

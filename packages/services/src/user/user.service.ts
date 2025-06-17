@@ -20,11 +20,10 @@ export class UserService extends APIService {
 
   /**
    * Retrieves the current user details
-   * @returns {Promise<IUser>} Promise resolving to the current user details\
-   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
+   * @returns {Promise<IUser>} Promise resolving to the current user details
    */
   async me(): Promise<IUser> {
-    return this.get("/api/users/me/", { validateStatus: null })
+    return this.get("/api/users/me/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -76,10 +75,9 @@ export class UserService extends APIService {
    * Retrieves the current instance admin details
    * @returns {Promise<IUser>} Promise resolving to the current instance admin details
    * @throws {Error} If the API request fails
-   * @remarks This method uses the validateStatus: null option to bypass interceptors for unauthorized errors.
    */
   async adminDetails(): Promise<IUser> {
-    return this.get("/api/instances/admins/me/", { validateStatus: null })
+    return this.get("/api/instances/admins/me/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

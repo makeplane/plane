@@ -10,7 +10,8 @@ import { AuthService } from "@plane/services";
 import { Button, Checkbox, Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { Banner, PasswordStrengthMeter } from "@/components/common";
+import { Banner } from "@/components/common/banner";
+import { PasswordStrengthMeter } from "@/components/common/password-strength-meter";
 
 // service initialization
 const authService = new AuthService();
