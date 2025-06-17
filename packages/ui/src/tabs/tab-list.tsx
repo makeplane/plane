@@ -18,10 +18,20 @@ type TTabListProps = {
   tabClassName?: string;
   size?: "sm" | "md" | "lg";
   selectedTab?: string;
+  autoWrap?: boolean;
   onTabChange?: (key: string) => void;
 };
 
-export const TabList: FC<TTabListProps> = ({
+export const TabList: FC<TTabListProps> = ({ autoWrap = true, ...props }) =>
+  autoWrap ? (
+    <Tab.Group>
+      <TabListInner {...props} />
+    </Tab.Group>
+  ) : (
+    <TabListInner {...props} />
+  );
+
+const TabListInner: FC<TTabListProps> = ({
   tabs,
   tabListClassName,
   tabClassName,
@@ -63,7 +73,9 @@ export const TabList: FC<TTabListProps> = ({
         }}
         disabled={tab.disabled}
       >
-        {tab.icon && <tab.icon className="size-4" />}
+        {tab.icon && (
+          <tab.icon className={cn({ "size-3": size === "sm", "size-4": size === "md", "size-5": size === "lg" })} />
+        )}
         {tab.label}
       </Tab>
     ))}

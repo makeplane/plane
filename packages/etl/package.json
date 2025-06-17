@@ -1,0 +1,86 @@
+{
+  "name": "@plane/etl",
+  "version": "0.24.1",
+  "repository": "https://github.com/makeplane/plane-ee",
+  "author": "Plane Engineering",
+  "license": "AGPL",
+  "private": true,
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    "./asana": {
+      "types": "./dist/asana/index.d.ts",
+      "default": "./dist/asana/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./github": {
+      "types": "./dist/github/index.d.ts",
+      "default": "./dist/github/index.js"
+    },
+    "./gitlab": {
+      "types": "./dist/gitlab/index.d.ts",
+      "default": "./dist/gitlab/index.js"
+    },
+    "./jira": {
+      "types": "./dist/jira/index.d.ts",
+      "default": "./dist/jira/index.js"
+    },
+    "./jira-server": {
+      "types": "./dist/jira-server/index.d.ts",
+      "default": "./dist/jira-server/index.js"
+    },
+    "./linear": {
+      "types": "./dist/linear/index.d.ts",
+      "default": "./dist/linear/index.js"
+    },
+    "./slack": {
+      "types": "./dist/slack/index.d.ts",
+      "default": "./dist/slack/index.js"
+    },
+    "./flatfile": {
+      "types": "./dist/flatfile/index.d.ts",
+      "default": "./dist/flatfile/index.js"
+    },
+    "./clickup": {
+      "types": "./dist/clickup/index.d.ts",
+      "default": "./dist/clickup/index.js"
+    },
+    "./parser": {
+      "types": "./dist/parser/index.d.ts",
+      "default": "./dist/parser/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsup --minify",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts ",
+    "lint:errors": "eslint src --ext .ts --quiet"
+  },
+  "dependencies": {
+    "@flatfile/api": "^1.12.0",
+    "@linear/sdk": "^37.0.0",
+    "@octokit/auth-app": "^7.1.0",
+    "@octokit/rest": "^21.0.2",
+    "@plane/constants": "*",
+    "@plane/sdk": "*",
+    "asana": "^3.0.11",
+    "axios": "^1.8.3",
+    "csv-string": "^4.1.1",
+    "jira.js": "^4.0.1",
+    "marked": "^15.0.4",
+    "tsup": "^8.4.0",
+    "turndown": "^7.2.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@octokit/openapi-webhooks-types": "^8.3.0",
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "@types/marked": "^6.0.0",
+    "@types/turndown": "^5.0.5"
+  }
+}
