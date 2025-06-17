@@ -20,7 +20,7 @@ export const SidebarMenuItems = observer(() => {
   // routers
   const { workspaceSlug } = useParams();
   // store hooks
-  const { extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
+  const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
   const { getNavigationPreferences } = useWorkspace();
   // translation
   const { t } = useTranslation();
@@ -54,7 +54,7 @@ export const SidebarMenuItems = observer(() => {
           className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
           id="extended-sidebar-toggle"
           aria-label={t(
-            extendedSidebarCollapsed
+            isExtendedSidebarOpened
               ? "aria_labels.projects_sidebar.open_extended_sidebar"
               : "aria_labels.projects_sidebar.close_extended_sidebar"
           )}

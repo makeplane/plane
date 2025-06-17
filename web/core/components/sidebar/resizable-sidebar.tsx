@@ -4,7 +4,6 @@ import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, 
 // helpers
 import { cn } from "@plane/utils";
 
-
 interface ResizableSidebarProps {
   showPeek?: boolean;
   togglePeek: (value?: boolean) => void;
@@ -169,7 +168,7 @@ export function ResizableSidebar({
       {/* Main Sidebar */}
       <div
         className={cn(
-          "h-full z-20 bg-white border-r border-gray-200",
+          "h-full z-20 bg-custom-background-100 border-r border-custom-sidebar-border-200",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
           className

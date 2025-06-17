@@ -4,28 +4,20 @@ import { observer } from "mobx-react";
 // plane imports
 import { useLocalStorage } from "@plane/hooks";
 // hooks
+import { ResizableSidebar } from "@/components/sidebar";
 import { useAppTheme } from "@/hooks/store";
 // local imports
-import { ExtendedProjectSidebar } from "./extended-project-sidebar";
 import { ExtendedAppSidebar } from "./extended-sidebar";
-import { ResizableSidebar } from "./resizeable-sidebar";
 import { AppSidebar } from "./sidebar";
 
 export const ProjectAppSidebar: FC = observer(() => {
   // store hooks
-  const {
-    sidebarCollapsed,
-    toggleSidebar,
-    sidebarPeek,
-    toggleSidebarPeek,
-    extendedSidebarCollapsed,
-    extendedProjectSidebarCollapsed,
-  } = useAppTheme();
+  const { sidebarCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek, isExtendedSidebarOpened } = useAppTheme();
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", 250);
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? 250);
   // derived values
-  const anyExtendedSidebarCollapsed = extendedSidebarCollapsed || extendedProjectSidebarCollapsed;
+  const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
   // handlers
   const handleWidthChange = (width: number) => setValue(width);
@@ -47,10 +39,9 @@ export const ProjectAppSidebar: FC = observer(() => {
         extendedSidebar={
           <>
             <ExtendedAppSidebar />
-            <ExtendedProjectSidebar />
           </>
         }
-        isAnyExtendedSidebarExpanded={anyExtendedSidebarCollapsed}
+        isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
       >
         <AppSidebar />
       </ResizableSidebar>

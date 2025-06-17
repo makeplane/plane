@@ -6,13 +6,12 @@ import { useAppTheme } from "@/hooks/store";
 
 export const SidebarHamburgerToggle = observer(() => {
   // store hooks
-  const { toggleSidebar, sidebarPeek, toggleSidebarPeek } = useAppTheme();
+  const { toggleSidebar } = useAppTheme();
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (sidebarPeek) toggleSidebarPeek(false);
-    toggleSidebar(false);
+    toggleSidebar();
   };
 
   return (

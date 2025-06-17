@@ -17,7 +17,7 @@ export const ExtendedAppSidebar = observer(() => {
   // routers
   const { workspaceSlug } = useParams();
   // store hooks
-  const { sidebarPeek, toggleSidebarPeek, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
+  const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
   const { updateSidebarPreference, getNavigationPreferences } = useWorkspace();
 
   // derived values
@@ -93,14 +93,11 @@ export const ExtendedAppSidebar = observer(() => {
       });
   };
 
-  const handleClose = () => {
-    if (sidebarPeek) toggleSidebarPeek(false);
-    toggleExtendedSidebar(false);
-  };
+  const handleClose = () => toggleExtendedSidebar(false);
 
   return (
     <ExtendedSidebarWrapper
-      extendedSidebarCollapsed={!!extendedSidebarCollapsed}
+      isExtendedSidebarOpened={!!isExtendedSidebarOpened}
       extendedSidebarRef={extendedSidebarRef}
       handleClose={handleClose}
       excludedElementId="extended-sidebar-toggle"

@@ -4,8 +4,8 @@ export interface IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined;
   sidebarPeek: boolean | undefined;
-  extendedSidebarCollapsed: boolean | undefined;
-  extendedProjectSidebarCollapsed: boolean | undefined;
+  isExtendedSidebarOpened: boolean | undefined;
+  isExtendedProjectSidebarOpened: boolean | undefined;
   profileSidebarCollapsed: boolean | undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined;
   issueDetailSidebarCollapsed: boolean | undefined;
@@ -29,8 +29,8 @@ export class ThemeStore implements IThemeStore {
   // observables
   sidebarCollapsed: boolean | undefined = undefined;
   sidebarPeek: boolean | undefined = undefined;
-  extendedSidebarCollapsed: boolean | undefined = undefined;
-  extendedProjectSidebarCollapsed: boolean | undefined = undefined;
+  isExtendedSidebarOpened: boolean | undefined = undefined;
+  isExtendedProjectSidebarOpened: boolean | undefined = undefined;
   profileSidebarCollapsed: boolean | undefined = undefined;
   workspaceAnalyticsSidebarCollapsed: boolean | undefined = undefined;
   issueDetailSidebarCollapsed: boolean | undefined = undefined;
@@ -43,8 +43,8 @@ export class ThemeStore implements IThemeStore {
       // observable
       sidebarCollapsed: observable.ref,
       sidebarPeek: observable.ref,
-      extendedSidebarCollapsed: observable.ref,
-      extendedProjectSidebarCollapsed: observable.ref,
+      isExtendedSidebarOpened: observable.ref,
+      isExtendedProjectSidebarOpened: observable.ref,
       profileSidebarCollapsed: observable.ref,
       workspaceAnalyticsSidebarCollapsed: observable.ref,
       issueDetailSidebarCollapsed: observable.ref,
@@ -95,9 +95,9 @@ export class ThemeStore implements IThemeStore {
    * @param collapsed
    */
   toggleExtendedSidebar = (collapsed?: boolean) => {
-    const updatedState = collapsed ?? !this.extendedSidebarCollapsed;
+    const updatedState = collapsed ?? !this.isExtendedSidebarOpened;
     runInAction(() => {
-      this.extendedSidebarCollapsed = updatedState;
+      this.isExtendedSidebarOpened = updatedState;
     });
     localStorage.setItem("extended_sidebar_collapsed", updatedState.toString());
   };
@@ -108,11 +108,11 @@ export class ThemeStore implements IThemeStore {
    */
   toggleExtendedProjectSidebar = (collapsed?: boolean) => {
     if (collapsed === undefined) {
-      this.extendedProjectSidebarCollapsed = !this.extendedProjectSidebarCollapsed;
+      this.isExtendedProjectSidebarOpened = !this.isExtendedProjectSidebarOpened;
     } else {
-      this.extendedProjectSidebarCollapsed = collapsed;
+      this.isExtendedProjectSidebarOpened = collapsed;
     }
-    localStorage.setItem("extended_project_sidebar_collapsed", this.extendedProjectSidebarCollapsed.toString());
+    localStorage.setItem("extended_project_sidebar_collapsed", this.isExtendedProjectSidebarOpened.toString());
   };
 
   /**

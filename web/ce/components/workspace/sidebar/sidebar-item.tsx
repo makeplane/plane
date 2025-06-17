@@ -29,13 +29,13 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
   const { data } = useUser();
 
   // store hooks
-  const { toggleSidebar, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
+  const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    if (!extendedSidebarCollapsed) toggleExtendedSidebar();
+    if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
   };
 
   const staticItems = ["home", "inbox", "pi-chat", "projects"];

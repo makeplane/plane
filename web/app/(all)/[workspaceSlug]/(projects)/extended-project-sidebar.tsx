@@ -27,8 +27,7 @@ export const ExtendedProjectSidebar = observer(() => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { sidebarPeek, toggleSidebarPeek, extendedProjectSidebarCollapsed, toggleExtendedProjectSidebar } =
-    useAppTheme();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
   const { getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   const { allowPermissions } = useUserPermissions();
 
@@ -75,12 +74,7 @@ export const ExtendedProjectSidebar = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClose = () => {
-    if (sidebarPeek) toggleSidebarPeek(false);
-    if (!isProjectModalOpen) {
-      toggleExtendedProjectSidebar(false);
-    }
-  };
+  const handleClose = () => toggleExtendedProjectSidebar(false);
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -102,7 +96,7 @@ export const ExtendedProjectSidebar = observer(() => {
         />
       )}
       <ExtendedSidebarWrapper
-        extendedSidebarCollapsed={!!extendedProjectSidebarCollapsed}
+        isExtendedSidebarOpened={!!isExtendedProjectSidebarOpened}
         extendedSidebarRef={extendedProjectSidebarRef}
         handleClose={handleClose}
         excludedElementId="extended-project-sidebar-toggle"
