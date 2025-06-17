@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -72,6 +73,16 @@ func GetAirgappedActivationHandler(api prime_api.IPrimeMonitorApi, key string) f
 			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Failed to read the file",
 			})
+		}
+
+		// Create filename using workspaceId
+		filename := fmt.Sprintf("%s.json", workspaceId)
+
+		// Write content to file
+		err = os.WriteFile(filename, content, 0644)
+		if err != nil {
+			// Let's not return an error here, as we want to continue with the activation
+			fmt.Println("Failed to write file to local system", err)
 		}
 
 		// Parse the json text file for the encrypted data
