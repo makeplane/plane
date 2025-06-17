@@ -177,7 +177,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     selectedItem={cycleId}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
-                      console.log("value", value);
                       router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${value}`);
                     }}
                     title={cycleDetails?.name}
