@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 // types
-import { IGroupByColumn, IIssueDisplayProperties, TSpreadsheetColumn } from "@plane/types";
+import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 import { DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/ui";
 // components
 import {
@@ -32,6 +32,36 @@ import {
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "@/components/issues/issue-layouts/spreadsheet";
+// store
+import { store } from "@/lib/store-context";
+
+export type TGetScopeMemberIdsResult = {
+  memberIds: string[];
+  includeNone: boolean;
+};
+
+export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns): TGetScopeMemberIdsResult => {
+  // store values
+  const { workspaceMemberIds } = store.memberRoot.workspace;
+  const { projectMemberIds } = store.memberRoot.project;
+  // derived values
+  const memberIds = workspaceMemberIds;
+
+  if (isWorkspaceLevel) {
+    return { memberIds: memberIds ?? [], includeNone: true };
+  }
+
+  if (projectId || (projectMemberIds && projectMemberIds.length > 0)) {
+    const { getProjectMemberIds } = store.memberRoot.project;
+    const _projectMemberIds = projectId ? getProjectMemberIds(projectId, false) : projectMemberIds;
+    return {
+      memberIds: _projectMemberIds ?? [],
+      includeNone: true,
+    };
+  }
+
+  return { memberIds: [], includeNone: true };
+};
 
 export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => undefined;
 
