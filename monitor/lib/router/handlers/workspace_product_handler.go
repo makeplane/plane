@@ -93,8 +93,8 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 			// If the workspace could not be created, return a free workspace
 			if apiError != nil {
 				now := time.Now()
-				// Send the response back to the client
-				ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
+				// Send the response back to the client with a free workspace payload
+				return ctx.Status(fiber.StatusOK).JSON(WorkspaceProductResponse{
 					Plan:                   "FREE",
 					PurchasedSeats:         0,
 					FreeSeats:              payload.FreeSeats,
@@ -107,10 +107,6 @@ func GetWorkspaceProductHandler(api prime_api.IPrimeMonitorApi, key string) func
 					LastVerifiedAt:         &now,
 					LastPaymentFailedDate:  nil,
 					LastPaymentFailedCount: 0,
-				})
-				// Return the error
-				return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"error": apiError.Error,
 				})
 			}
 
