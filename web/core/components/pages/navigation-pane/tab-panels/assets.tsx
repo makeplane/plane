@@ -8,6 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { convertBytesToSize, getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// plane web imports
+import { AdditionalPageNavigationPaneAssetItem } from "@/plane-web/components/pages/navigation-pane/tab-panels/assets";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -59,34 +61,37 @@ const AssetItem = observer((props: AssetItemProps) => {
     }
   };
 
-  return (
-    <a
-      href={asset.scrollId}
-      className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
-    >
-      <div
-        className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
-        style={{
-          backgroundImage: `url('${getAssetSrc(asset.src)}')`,
-        }}
-      />
-      <div className="flex-1 space-y-0.5 truncate">
-        <p className="text-sm font-medium truncate">{asset.name}</p>
-        <div className="flex items-end justify-between gap-2">
-          <p className="shrink-0 text-xs text-custom-text-200">{convertBytesToSize(Number(asset.size || 0))}</p>
-          <a
-            href={getAssetDownloadSrc(asset.src)}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
-          >
-            <Download className="shrink-0 size-3" />
-            <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
-          </a>
+  if (asset.type === "IMAGE" || asset.type === "CUSTOM_IMAGE")
+    return (
+      <a
+        href={asset.scrollId}
+        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
+      >
+        <div
+          className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
+          style={{
+            backgroundImage: `url('${getAssetSrc(asset.src)}')`,
+          }}
+        />
+        <div className="flex-1 space-y-0.5 truncate">
+          <p className="text-sm font-medium truncate">{asset.name}</p>
+          <div className="flex items-end justify-between gap-2">
+            <p className="shrink-0 text-xs text-custom-text-200">{convertBytesToSize(Number(asset.size || 0))}</p>
+            <a
+              href={getAssetDownloadSrc(asset.src)}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
+            >
+              <Download className="shrink-0 size-3" />
+              <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
+            </a>
+          </div>
         </div>
-      </div>
-    </a>
-  );
+      </a>
+    );
+
+  return <AdditionalPageNavigationPaneAssetItem asset={asset} page={page} />;
 });
 
 export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props) => {

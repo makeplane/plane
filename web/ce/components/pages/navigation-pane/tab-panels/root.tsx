@@ -3,9 +3,11 @@ import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { TPageNavigationPaneTab } from "..";
 
-export type Props = {
+export type TPageNavigationPaneAdditionalTabPanelsRootProps = {
   activeTab: TPageNavigationPaneTab;
   page: TPageInstance;
 };
 
-export const PageNavigationPaneAdditionalTabPanelsRoot: React.FC<Props> = () => null;
+export const PageNavigationPaneAdditionalTabPanelsRoot: React.FC<
+  TPageNavigationPaneAdditionalTabPanelsRootProps
+> = () => null;
