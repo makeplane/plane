@@ -338,30 +338,6 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # except IntegrityError as e:
-    #     print(e, "Print Exception integrity")
-    #     if "already exists" in str(e):
-    #         return Response(
-    #             {
-    #                 "name": "The project name is already taken",
-    #                 "code": "PROJECT_NAME_ALREADY_EXIST",
-    #             },
-    #             status=status.HTTP_409_CONFLICT,
-    #         )
-    # except Workspace.DoesNotExist:
-    #     return Response(
-    #         {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
-    #     )
-    # except serializers.ValidationError as e:
-    #     print(e, "PRint Exception validation")
-    #     return Response(
-    #         {
-    #             "identifier": "The project identifier is already taken",
-    #             "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
-    #         },
-    #         status=status.HTTP_409_CONFLICT,
-    #     )
-
     def partial_update(self, request, slug, pk=None):
         # try:
         if not ProjectMember.objects.filter(
@@ -421,29 +397,6 @@ class ProjectViewSet(BaseViewSet):
             serializer = ProjectListSerializer(project)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # except IntegrityError as e:
-    #     print(e, "Print Exception")
-    #     if "already exists" in str(e):
-    #         return Response(
-    #             {
-    #                 "name": "The project name is already taken",
-    #                 "code": "PROJECT_NAME_ALREADY_EXIST",
-    #             },
-    #             status=status.HTTP_409_CONFLICT,
-    #         )
-    # except (Project.DoesNotExist, Workspace.DoesNotExist):
-    #     return Response(
-    #         {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
-    #     )
-    # except serializers.ValidationError:
-    #     return Response(
-    #         {
-    #             "identifier": "The project identifier is already taken",
-    #             "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
-    #         },
-    #         status=status.HTTP_409_CONFLICT,
-    #     )
 
     def destroy(self, request, slug, pk):
         if (
