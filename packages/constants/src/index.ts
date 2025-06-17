@@ -5,7 +5,6 @@ export * from "./endpoints";
 export * from "./file";
 export * from "./filter";
 export * from "./graph";
-export * from "./icons";
 export * from "./instance";
 export * from "./issue";
 export * from "./metadata";

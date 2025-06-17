@@ -152,6 +152,8 @@ import {
   CircleChevronDown,
   UsersRound,
   ToggleLeft,
+  Search,
+  User,
 } from "lucide-react";
 
 export const MATERIAL_ICONS_LIST = [
@@ -912,6 +914,8 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Minus", element: Minus },
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
+  { name: "Search", element: Search },
   { name: "ToggleLeft", element: ToggleLeft },
+  { name: "User", element: User },
   { name: "UsersRound", element: UsersRound },
 ];
