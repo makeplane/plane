@@ -1,11 +1,13 @@
 // types
 import { FC } from "react";
-import { IGroupByColumn, IIssueDisplayProperties, TSpreadsheetColumn } from "@plane/types";
+import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
 import { CustomerRequestIcon, CustomersIcon, ISvgIcons } from "@plane/ui";
 import {
   SpreadSheetPropertyIconMap as CeSpreadSheetPropertyIconMap,
   SPREADSHEET_COLUMNS as CE_SPREAD_SHEET_COLUMNS,
+  getScopeMemberIds as getCeScopeMemberIds,
+  TGetScopeMemberIdsResult,
 } from "@/ce/components/issues/issue-layouts/utils";
 import { Logo } from "@/components/common";
 // store
@@ -14,7 +16,17 @@ import {
   SpreadsheetCustomerColumn,
   SpreadSheetCustomerRequestColumn,
 } from "@/plane-web/components/issues/issue-layouts/spreadsheet";
-// utils
+
+export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns): TGetScopeMemberIdsResult => {
+  // store values
+  const { currentTeamspaceMemberIds } = store.teamspaceRoot.teamspaces;
+
+  if (store.router.teamspaceId) {
+    return { memberIds: currentTeamspaceMemberIds ?? [], includeNone: false };
+  }
+
+  return getCeScopeMemberIds({ isWorkspaceLevel, projectId });
+};
 
 export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => {
   const { projectMap } = store.projectRoot.project;

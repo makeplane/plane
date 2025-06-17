@@ -28,6 +28,7 @@ export interface ITeamspaceStore {
   isTeamSidebarCollapsed: boolean;
   // computed
   currentTeamspaceProjectIds: string[] | undefined;
+  currentTeamspaceMemberIds: string[] | undefined;
   allTeamSpaceIds: string[];
   joinedTeamSpaceIds: string[];
   currentScopeTeamSpaceIds: string[];
@@ -97,6 +98,7 @@ export class TeamspaceStore implements ITeamspaceStore {
       isTeamSidebarCollapsed: observable,
       // computed
       currentTeamspaceProjectIds: computed,
+      currentTeamspaceMemberIds: computed,
       allTeamSpaceIds: computed,
       joinedTeamSpaceIds: computed,
       currentScopeTeamSpaceIds: computed,
@@ -131,6 +133,16 @@ export class TeamspaceStore implements ITeamspaceStore {
   get currentTeamspaceProjectIds() {
     return this.rootStore.router.teamspaceId
       ? this.getTeamspaceProjectIds(this.rootStore.router.teamspaceId)
+      : undefined;
+  }
+
+  /**
+   * Returns current teamspace member IDs
+   * @returns string[] | undefined
+   */
+  get currentTeamspaceMemberIds() {
+    return this.rootStore.router.teamspaceId
+      ? this.getTeamspaceMemberIds(this.rootStore.router.teamspaceId)
       : undefined;
   }
 

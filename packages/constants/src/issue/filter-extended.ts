@@ -24,7 +24,7 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: ["state_detail.group", "priority", "team_project", null],
+        group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
@@ -46,8 +46,8 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: ["state_detail.group", "priority", "team_project", null],
-        sub_group_by: ["state_detail.group", "priority", "team_project", null],
+        group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
+        sub_group_by: ["state_detail.group", "priority", "team_project", "assignees", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority", "target_date"],
         type: [null, "active", "backlog"],
       },

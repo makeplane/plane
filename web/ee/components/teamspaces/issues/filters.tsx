@@ -5,14 +5,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { isIssueFilterActive  } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { isIssueFilterActive  } from "@plane/utils";
 // hooks
-import { useLabel, useMember, useIssues } from "@/hooks/store";
+import { useLabel, useIssues } from "@/hooks/store";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
@@ -33,7 +32,6 @@ export const TeamHeaderFilters = observer((props: Props) => {
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
   const teamspaceMemberIds = getTeamspaceMemberIds(teamspaceId);
-  const memberIds = teamspaceMemberIds;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
@@ -105,7 +103,7 @@ export const TeamHeaderFilters = observer((props: Props) => {
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues[activeLayout] : undefined
           }
           labels={workspaceLabels}
-          memberIds={memberIds ?? undefined}
+          memberIds={teamspaceMemberIds ?? undefined}
         />
       </FiltersDropdown>
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
