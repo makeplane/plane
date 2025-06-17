@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
-import { EUserProjectRoles } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
-import { EInboxIssueCurrentTab } from "@plane/types";
+import { EUserProjectRoles, EInboxIssueCurrentTab } from "@plane/types";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { InboxIssueRoot } from "@/components/inbox";
