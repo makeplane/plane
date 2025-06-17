@@ -31,6 +31,16 @@ class BaseDocument(Document):
         settings = {
             "number_of_shards": settings.OPENSEARCH_SHARD_COUNT,
             "number_of_replicas": settings.OPENSEARCH_REPLICA_COUNT,
+            # Text search performance optimizations during heavy indexing
+            "refresh_interval": "30s",  # Reduce refresh frequency (default: 1s)
+            # Indexing performance settings
+            "index.translog.flush_threshold_size": "1gb",  # Larger translog before flush
+            "index.translog.sync_interval": "30s",  # Less frequent syncing
+            # Search performance during indexing
+            "index.search.slowlog.threshold.query.warn": "1s",
+            "index.search.slowlog.threshold.query.info": "500ms",
+            "index.indexing.slowlog.threshold.index.warn": "5s",
+            "index.indexing.slowlog.threshold.index.info": "2s",
             "analysis": {
                 "normalizer": {
                     "lowercase_normalizer": lowercase_normalizer.get_definition()

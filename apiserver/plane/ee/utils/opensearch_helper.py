@@ -10,7 +10,7 @@ from opensearchpy.exceptions import (
     ConnectionError,
     NotFoundError,
     RequestError,
-    TransportError
+    TransportError,
 )
 from opensearchpy.helpers.query import Q
 from rest_framework.serializers import Serializer
@@ -66,7 +66,7 @@ class OpenSearchHelper:
         sort: Optional[List[str]] = None,
         operator: str = "or",
         result_key: Optional[str] = None,
-        serializer_class: Optional[Type[Serializer]] = None
+        serializer_class: Optional[Type[Serializer]] = None,
     ):
         """
         Initialize the OpenSearch helper.
@@ -91,7 +91,9 @@ class OpenSearchHelper:
         self.search_fields = search_fields or self._get_default_search_fields()
         self.source_fields = source_fields
         self.page = max(1, page)  # Ensure page is at least 1
-        self.page_size = min(page_size, getattr(settings, 'OPENSEARCH_MAX_PAGE_SIZE', 100))
+        self.page_size = min(
+            page_size, getattr(settings, "OPENSEARCH_MAX_PAGE_SIZE", 100)
+        )
         self.boosts = boosts or {}
         self.sort = sort
         self.operator = operator.lower() if operator else "or"
@@ -105,8 +107,13 @@ class OpenSearchHelper:
         """Get default search fields based on the document class."""
         # Prefer text fields with analyzers, especially edge_ngram_analyzer
         fields = []
-        for field_name, field in self.document_cls._doc_type.mapping.properties.properties.to_dict().items():
-            if field.get('type') == 'text':
+        for (
+            field_name,
+            field,
+        ) in (
+            self.document_cls._doc_type.mapping.properties.properties.to_dict().items()
+        ):
+            if field.get("type") == "text":
                 fields.append(field_name)
         return fields
 
@@ -118,13 +125,13 @@ class OpenSearchHelper:
             Q object with combined filters
         """
         # Always filter out deleted items unless explicitly requested otherwise
-        has_deleted_filter = any('is_deleted' in f for f in self.filters)
+        has_deleted_filter = any("is_deleted" in f for f in self.filters)
 
-        filter_q = Q('bool', must=[Q('term', **f) for f in self.filters])
+        filter_q = Q("bool", must=[Q("term", **f) for f in self.filters])
 
         # Add default filters
         if not has_deleted_filter:
-            filter_q = filter_q & Q('term', is_deleted=False)
+            filter_q = filter_q & Q("term", is_deleted=False)
 
         return filter_q
 
@@ -139,64 +146,58 @@ class OpenSearchHelper:
             return None
 
         # Categorize fields by their types for appropriate query construction
-        edge_ngram_fields = []     # Text fields with edge_ngram analyzer
-        standard_fields = []       # Regular text fields
-        keyword_fields = []        # Keyword fields
-        numeric_fields = []        # Integer, long, float, etc.
+        edge_ngram_fields = []  # Text fields with edge_ngram analyzer
+        standard_fields = []  # Regular text fields
+        keyword_fields = []  # Keyword fields
+        numeric_fields = []  # Integer, long, float, etc.
 
         for field_name in self.search_fields:
             field_info = self._field_meta(self.document_cls, field_name)
             if not field_info:
                 continue
 
-            field_type = field_info.get('type', '')
+            field_type = field_info.get("type", "")
 
             # Handle text fields
-            if field_type == 'text':
-                analyzer = field_info.get('analyzer', '')
-                if 'edge_ngram' in analyzer:
+            if field_type == "text":
+                analyzer = field_info.get("analyzer", "")
+                if "edge_ngram" in analyzer:
                     edge_ngram_fields.append(field_name)
                 else:
                     standard_fields.append(field_name)
             # Handle keyword fields
-            elif field_type == 'keyword':
+            elif field_type == "keyword":
                 keyword_fields.append(field_name)
             # Handle numeric fields (integer, long, double, etc.)
-            elif field_type in ('integer', 'long', 'double', 'float'):
+            elif field_type in ("integer", "long", "double", "float"):
                 numeric_fields.append(field_name)
 
-        # Apply boosts to fields
-        boosted_edge_ngram_fields = [f"{f}^{self.boosts.get(f, 1.0)}" for f in edge_ngram_fields]
-        boosted_standard_fields = [f"{f}^{self.boosts.get(f, 1.0)}" for f in standard_fields]
+        # Apply boosts to all text fields (edge_ngram + standard)
+        all_text_fields = edge_ngram_fields + standard_fields
+        boosted_text_fields = [
+            f"{f}^{self.boosts.get(f, 1.0)}" for f in all_text_fields
+        ]
 
         # Build query components
         query_parts = []
 
-        # Edge-ngram fields for prefix matching
-        if boosted_edge_ngram_fields:
+        # Combined text fields (edge_ngram + standard) for comprehensive matching
+        if boosted_text_fields:
             query_parts.append(
-                Q('multi_match',
-                  query=self.query,
-                  fields=boosted_edge_ngram_fields,
-                  type='best_fields',
-                  operator=self.operator)
-            )
-
-        # Standard fields for whole-word matching
-        if boosted_standard_fields:
-            query_parts.append(
-                Q('multi_match',
-                  query=self.query,
-                  fields=boosted_standard_fields,
-                  type='best_fields',
-                  operator=self.operator)
+                Q(
+                    "multi_match",
+                    query=self.query,
+                    fields=boosted_text_fields,
+                    type="best_fields",
+                    operator=self.operator,
+                )
             )
 
         # Keyword fields
         for field in keyword_fields:
             boost = self.boosts.get(field, 1.0)
             query_parts.append(
-                Q('term', **{field: {"value": self.query, "boost": boost}})
+                Q("term", **{field: {"value": self.query, "boost": boost}})
             )
 
         # Numeric fields - try to convert query to number if possible
@@ -206,7 +207,7 @@ class OpenSearchHelper:
                 boost = self.boosts.get(field, 1.0)
                 # For numeric fields, use a term query with the converted value
                 query_parts.append(
-                    Q('term', **{field: {"value": numeric_value, "boost": boost}})
+                    Q("term", **{field: {"value": numeric_value, "boost": boost}})
                 )
         except (ValueError, TypeError):
             # If query can't be converted to number, skip numeric fields
@@ -218,7 +219,8 @@ class OpenSearchHelper:
         elif len(query_parts) == 1:
             return query_parts[0]
         else:
-            return Q('bool', should=query_parts)
+            # Use dis_max for better performance than bool should
+            return Q("dis_max", queries=query_parts, tie_breaker=0.3)
 
     def to_search(self) -> Search:
         """
@@ -242,9 +244,12 @@ class OpenSearchHelper:
         from_idx = (self.page - 1) * self.page_size
         search = search.extra(from_=from_idx, size=self.page_size)
 
-        # Apply source fields if provided
+        # Apply source fields if provided (reduces data transfer)
         if self.source_fields:
-            search = search.source(self.source_fields)
+            search = search.source(includes=self.source_fields)
+        else:
+            # For performance, exclude heavy fields by default
+            search = search.source(excludes=["description", "description_stripped"])
 
         # Apply sorting if provided
         if self.sort:
@@ -293,7 +298,7 @@ class OpenSearchHelper:
             raise
 
     @classmethod
-    def multi_search(cls, helpers: List['OpenSearchHelper']) -> MultiSearch:
+    def multi_search(cls, helpers: List["OpenSearchHelper"]) -> MultiSearch:
         """
         Combine multiple helpers into a MultiSearch instance.
 
@@ -312,8 +317,7 @@ class OpenSearchHelper:
 
     @classmethod
     def execute_multi_search(
-        cls,
-        helpers: List['OpenSearchHelper']
+        cls, helpers: List["OpenSearchHelper"]
     ) -> Dict[str, List[Dict[str, Any]]]:
         """
         Execute a multi-search query and organize results by each helper's result_key.
@@ -362,8 +366,7 @@ class OpenSearchHelper:
 
     @staticmethod
     def serialize_hits(
-        hits: Sequence,
-        serializer_class: Type[Serializer]
+        hits: Sequence, serializer_class: Type[Serializer]
     ) -> List[Dict[str, Any]]:
         """
         Serialize raw hits with DRF serializers.

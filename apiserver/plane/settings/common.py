@@ -568,6 +568,22 @@ OPENSEARCH_ENABLED = os.environ.get("OPENSEARCH_ENABLED", "0") == "1"
 OPENSEARCH_INDEX_PREFIX = os.environ.get("OPENSEARCH_INDEX_PREFIX", "")
 OPENSEARCH_SHARD_COUNT = os.environ.get("OPENSEARCH_SHARD_COUNT", 1)
 OPENSEARCH_REPLICA_COUNT = os.environ.get("OPENSEARCH_REPLICA_COUNT", 0)
+
+# Text Search Performance Optimization
+OPENSEARCH_SEARCH_TIMEOUT = int(
+    os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
+)  # seconds
+OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
+OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
+
+# Optimizations for 2-active-data-node setup with heavy indexing
+OPENSEARCH_BULK_CHUNK_SIZE = int(
+    os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500")
+)  # Smaller chunks
+OPENSEARCH_INDEXING_TIMEOUT = int(
+    os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120")
+)  # Longer indexing timeout
+
 if OPENSEARCH_ENABLED:
     # OpenSearch Config
     OPENSEARCH_DSL = {
@@ -580,7 +596,13 @@ if OPENSEARCH_ENABLED:
             "use_ssl": True,
             "verify_certs": False,
             "ssl_show_warn": False,
-            "timeout": 60,
+            "timeout": OPENSEARCH_SEARCH_TIMEOUT,
+            # Connection pool optimization for 2-data-node setup
+            "maxsize": 15,  # Reduced from 25 to not overwhelm 2 data nodes
+            "max_retries": 3,
+            "retry_on_timeout": True,
+            # Bulk indexing optimizations
+            "http_compress": True,  # Reduce network overhead
         }
     }
     OPENSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
