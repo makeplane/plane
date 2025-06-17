@@ -217,9 +217,11 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
         return project.identifier if project else None
 
     def get_assignees(self, obj):
-        return obj.assignees.filter(
-            issue_assignee__deleted_at__isnull=True
-        ).values_list("id", flat=True)
+        return list(
+            obj.assignees.filter(issue_assignee__deleted_at__isnull=True).values_list(
+                "id", flat=True
+            )
+        )
 
 
 class ProjectRecentVisitSerializer(serializers.ModelSerializer):
