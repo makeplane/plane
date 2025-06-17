@@ -318,6 +318,8 @@
   "failed_to_remove_project_from_favorites": "Projekt konnte nicht aus den Favoriten entfernt werden. Bitte versuchen Sie es erneut.",
   "project_created_successfully": "Projekt erfolgreich erstellt",
   "project_created_successfully_description": "Das Projekt wurde erfolgreich erstellt. Sie können nun Arbeitselemente hinzufügen.",
+  "project_name_already_taken": "Der Projektname ist bereits vergeben.",
+  "project_identifier_already_taken": "Der Projekt-Identifier ist bereits vergeben.",
   "project_cover_image_alt": "Titelbild des Projekts",
   "name_is_required": "Name ist erforderlich",
   "title_should_be_less_than_255_characters": "Der Titel sollte weniger als 255 Zeichen enthalten",

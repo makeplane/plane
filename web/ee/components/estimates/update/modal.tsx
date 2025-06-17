@@ -2,8 +2,6 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { TEstimateSystemKeys, TEstimateUpdateStageKeys } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// hooks
-import { useEstimate } from "@/hooks/store";
 // plane web components
 import {
   EstimateUpdateStageOne,
@@ -11,7 +9,7 @@ import {
   EstimatePointSwitchRoot,
 } from "@/plane-web/components/estimates";
 // plane web constants
-import { EEstimateSystem, EEstimateUpdateStages } from "@/plane-web/constants/estimates";
+import { EEstimateUpdateStages } from "@/plane-web/constants/estimates";
 
 type TUpdateEstimateModal = {
   workspaceSlug: string;
@@ -24,8 +22,6 @@ type TUpdateEstimateModal = {
 export const UpdateEstimateModal: FC<TUpdateEstimateModal> = observer((props) => {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
-  // hooks
-  const { asJson: estimate } = useEstimate(estimateId);
   // states
   const [estimateEditType, setEstimateEditType] = useState<TEstimateUpdateStageKeys | undefined>(undefined);
   const [estimateSystemSwitchType, setEstimateSystemSwitchType] = useState<TEstimateSystemKeys | undefined>(undefined);

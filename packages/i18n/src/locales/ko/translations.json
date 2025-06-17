@@ -318,6 +318,8 @@
   "failed_to_remove_project_from_favorites": "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   "project_created_successfully": "프로젝트가 성공적으로 생성되었습니다",
   "project_created_successfully_description": "프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
+  "project_name_already_taken": "프로젝트 이름이 이미 사용 중입니다.",
+  "project_identifier_already_taken": "프로젝트 식별자가 이미 사용 중입니다.",
   "project_cover_image_alt": "프로젝트 커버 이미지",
   "name_is_required": "이름이 필요합니다",
   "title_should_be_less_than_255_characters": "제목은 255자 미만이어야 합니다",

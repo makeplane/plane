@@ -145,4 +145,4 @@ export interface ISearchIssueResponse {
 
 export type TPartialProject = IPartialProject;
 
-export type TProject =  TPartialProject & IProject & TProjectExtended;
+export type TProject = TPartialProject & IProject & TProjectExtended;

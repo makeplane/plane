@@ -28,6 +28,7 @@
     "turbo": "^2.5.4"
   },
   "resolutions": {
+    "brace-expansion": "2.0.2",
     "amqplib": "0.10.5",
     "@types/amqplib": "0.10.5",
     "@types/react": "18.3.18",

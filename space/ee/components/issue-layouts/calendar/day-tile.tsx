@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import { TGroupedIssues, TPaginationData } from "@plane/types";
+import { TGroupedIssues, TPaginationData, ICalendarDate } from "@plane/types";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // plane web
@@ -12,7 +12,6 @@ import { renderFormattedPayloadDate } from "@/plane-web/helpers/date-time.helper
 import { IIssue } from "@/types/issue";
 //
 import { CalendarIssueBlocks } from "./issue-blocks";
-import { ICalendarDate } from "./types";
 
 type Props = {
   date: ICalendarDate;

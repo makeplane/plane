@@ -318,6 +318,8 @@
   "failed_to_remove_project_from_favorites": "Не удалось удалить проект из избранного. Попробуйте снова.",
   "project_created_successfully": "Проект успешно создан",
   "project_created_successfully_description": "Проект успешно создан. Теперь вы можете добавлять рабочие элементы.",
+  "project_name_already_taken": "Имя проекта уже используется.",
+  "project_identifier_already_taken": "Идентификатор проекта уже используется.",
   "project_cover_image_alt": "Обложка проекта",
   "name_is_required": "Требуется имя",
   "title_should_be_less_than_255_characters": "Заголовок должен быть короче 255 символов",
