@@ -56,10 +56,10 @@ WORKDIR /app
 COPY --from=installer /app/space/next.config.js .
 COPY --from=installer /app/space/package.json .
 
-COPY --from=installer  /app/space/.next/standalone ./
-
-COPY --from=installer /app/space/.next ./space/.next
-COPY --from=installer /app/space/public ./space/public
+# Only bring in what's needed for standalone runtime
+COPY --from=installer /app/space/.next/standalone ./
+COPY --from=installer /app/space/.next/static ./.next/static
+COPY --from=installer /app/space/public ./public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
