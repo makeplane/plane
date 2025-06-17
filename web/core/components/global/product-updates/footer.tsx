@@ -3,7 +3,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { getButtonStyling } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // assets
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 

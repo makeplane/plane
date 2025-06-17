@@ -11,10 +11,10 @@ import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services

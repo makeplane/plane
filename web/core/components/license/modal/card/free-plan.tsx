@@ -5,7 +5,7 @@ import { CircleX } from "lucide-react";
 // plane constants
 import { FREE_PLAN_UPGRADE_FEATURES } from "@plane/constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type FreePlanCardProps = {
   isOnFreePlan: boolean;

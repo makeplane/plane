@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
 // plane packages
-import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
@@ -87,7 +87,7 @@ const errorCodeMessages: {
 export const authErrorHandler = (
   errorCode: EAdminAuthErrorCodes,
   email?: string | undefined
-): TAuthErrorInfo | undefined => {
+): TAdminAuthErrorInfo | undefined => {
   const bannerAlertErrorCodes = [
     EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST,
     EAdminAuthErrorCodes.REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME,

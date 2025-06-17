@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useTranslation, TLanguage } from "@plane/i18n";
 // helpers
-import { applyTheme, unsetCustomCssVariables } from "@/helpers/theme.helper";
+import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 // hooks
 import { useRouterParams, useAppTheme, useUserProfile } from "@/hooks/store";
 

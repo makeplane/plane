@@ -8,6 +8,7 @@ import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types"
 // ui
 import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
 // components
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import {
   AppliedAccessFilters,
   AppliedDateFilters,
@@ -15,7 +16,6 @@ import {
   AppliedProjectDisplayFilters,
 } from "@/components/project";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 
 type Props = {
   appliedFilters: TProjectFilters;

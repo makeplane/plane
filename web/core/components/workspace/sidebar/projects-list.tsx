@@ -11,13 +11,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { orderJoinedProjects } from "@/helpers/project.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web types
