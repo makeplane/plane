@@ -17,7 +17,7 @@ export interface IApiTokenStore {
   fetchApiTokenDetails: (tokenId: string) => Promise<IApiToken>;
   // crud actions
   createApiToken: (data: Partial<IApiToken>) => Promise<IApiToken>;
-  deleteApiToken: (workspaceSlug: string, tokenId: string) => Promise<void>;
+  deleteApiToken: (tokenId: string) => Promise<void>;
 }
 
 export class ApiTokenStore implements IApiTokenStore {
@@ -55,7 +55,7 @@ export class ApiTokenStore implements IApiTokenStore {
   });
 
   /**
-   * fetch all the API tokens for a workspace
+   * fetch all the API tokens
    */
   fetchApiTokens = async () =>
     await this.apiTokenService.getApiTokens().then((response) => {
@@ -85,7 +85,6 @@ export class ApiTokenStore implements IApiTokenStore {
 
   /**
    * create API token using data
-   * @param workspaceSlug
    * @param data
    */
   createApiToken = async (data: Partial<IApiToken>) =>
@@ -98,7 +97,6 @@ export class ApiTokenStore implements IApiTokenStore {
 
   /**
    * delete API token using token id
-   * @param workspaceSlug
    * @param tokenId
    */
   deleteApiToken = async (tokenId: string) =>
