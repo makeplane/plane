@@ -13,7 +13,6 @@ from plane.app.permissions import WorkspaceEntityPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
 
     def post(self, request, slug):
         label = request.data.get("label", str(uuid4().hex))
