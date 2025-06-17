@@ -2,9 +2,9 @@
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
+import { ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks

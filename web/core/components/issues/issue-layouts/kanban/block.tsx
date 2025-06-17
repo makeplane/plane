@@ -7,10 +7,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
 import { MoreHorizontal } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { EIssueServiceType, TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
 import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";

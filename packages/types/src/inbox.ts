@@ -1,8 +1,40 @@
-// plane constants
-import { TInboxIssue, TInboxIssueStatus } from "@plane/constants";
 // plane types
 import { TPaginationInfo } from "./common";
 import { TIssuePriorities } from "./issues";
+import { TIssue } from "./issues/issue";
+
+export enum EInboxIssueCurrentTab {
+  OPEN = "open",
+  CLOSED = "closed",
+}
+
+export type TInboxIssueCurrentTab = EInboxIssueCurrentTab;
+
+export enum EInboxIssueStatus {
+  PENDING = -2,
+  DECLINED = -1,
+  SNOOZED = 0,
+  ACCEPTED = 1,
+  DUPLICATE = 2,
+}
+
+export enum EInboxIssueSource {
+  IN_APP = "IN_APP",
+  FORMS = "FORMS",
+  EMAIL = "EMAIL",
+}
+
+export type TInboxIssueStatus = EInboxIssueStatus;
+export type TInboxIssue = {
+  id: string;
+  status: TInboxIssueStatus;
+  snoozed_till: Date | null;
+  duplicate_to: string | undefined;
+  source: EInboxIssueSource | undefined;
+  issue: TIssue;
+  created_by: string;
+  duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
+};
 
 // filters
 export type TInboxIssueFilterMemberKeys = "assignees" | "created_by";

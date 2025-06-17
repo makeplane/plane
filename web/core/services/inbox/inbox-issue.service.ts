@@ -1,6 +1,6 @@
 // plane imports
-import { EInboxIssueSource, TInboxIssue, API_BASE_URL } from "@plane/constants";
-import type { TIssue, TInboxIssueWithPagination } from "@plane/types";
+import { API_BASE_URL } from "@plane/constants";
+import { EInboxIssueSource, TInboxIssue, TIssue, TInboxIssueWithPagination } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";
