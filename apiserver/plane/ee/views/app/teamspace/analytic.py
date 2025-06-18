@@ -31,7 +31,7 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
     def get(self, request, slug, team_space_id):
         # Get team entities count
         team_page_count = TeamspacePage.objects.filter(
-            team_space_id=team_space_id, page__access=0
+            team_space_id=team_space_id, page__access=0, page__archived_at__isnull=True
         ).count()
         team_view_count = TeamspaceView.objects.filter(
             team_space_id=team_space_id, view__access=1
@@ -46,14 +46,20 @@ class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
             team_space_id=team_space_id
         ).values_list("member_id", flat=True)
 
-        issue_count = Issue.objects.filter(
+        issue_ids = IssueAssignee.objects.filter(
+            workspace__slug=slug, assignee_id__in=team_member_ids
+        ).values_list("issue_id", flat=True)
+
+        issue_count = Issue.issue_objects.filter(
+            id__in=issue_ids,
             project_id__in=project_ids,
             workspace__slug=slug,
-            assignees__id__in=team_member_ids,
         ).count()
 
         cycles_count = Cycle.objects.filter(
-            project_id__in=project_ids, workspace__slug=slug
+            project_id__in=project_ids,
+            workspace__slug=slug,
+            archived_at__isnull=True,
         ).count()
 
         return Response(

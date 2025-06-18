@@ -47,7 +47,11 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
         order_by_param = request.GET.get("order_by", "created_at")
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = (
-            Issue.issue_objects.filter(workspace__slug=slug, id__in=issue_ids)
+            Issue.issue_objects.filter(
+                workspace__slug=slug,
+                id__in=issue_ids,
+                project_id__in=accessible_project_ids,
+            )
             .filter(**filters)
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related(
@@ -82,7 +86,6 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .filter(project_id__in=accessible_project_ids)
         )
 
         # Issue queryset
