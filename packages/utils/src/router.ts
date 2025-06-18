@@ -1,9 +1,8 @@
-import { ReadonlyURLSearchParams } from "next/navigation";
-
-export const generateQueryParams = (searchParams: ReadonlyURLSearchParams, excludedParamKeys?: string[]): string => {
+export const generateQueryParams = (searchParams: URLSearchParams, excludedParamKeys?: string[]): string => {
   const params = new URLSearchParams(searchParams);
-  excludedParamKeys && excludedParamKeys.forEach((key) => {
-    params.delete(key);
-  });
+  excludedParamKeys &&
+    excludedParamKeys.forEach((key) => {
+      params.delete(key);
+    });
   return params.toString();
 };
