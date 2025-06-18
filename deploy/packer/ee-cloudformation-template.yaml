@@ -1,0 +1,300 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template to deploy an EC2 instance with dynamic infrastructure options'
+
+Parameters:
+  InstanceDomainName:
+    Description: Domain name for the Plane instance
+    Type: String
+    Default: "plane.example.com"
+    
+  CreateNewInfra:
+    Description: Create new VPC, Subnet, and Security Group?
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+  
+  # Existing Infrastructure Parameters (conditional)
+  ExistingVpcId:
+    Type: String
+    Description: Select an existing VPC (required only when using existing infrastructure)
+    ConstraintDescription: "Required when using existing infrastructure"
+    Default: ""
+  
+  ExistingSubnetId:
+    Type: String
+    Description: Select an existing Subnet (required only when using existing infrastructure)
+    ConstraintDescription: "Required when using existing infrastructure"
+    Default: ""
+  
+  ExistingSecurityGroupId:
+    Type: String
+    Description: Select an existing Security Group (required only when using existing infrastructure)
+    ConstraintDescription: "Required when using existing infrastructure"
+    Default: ""
+  # New Infrastructure Parameters
+  VpcCidr:
+    Type: String
+    Default: "10.50.0.0/16"
+    Description: CIDR block for the New VPC e.g. 10.50.0.0/16 (required only if creating new infrastructure)
+    
+  PublicSubnetCidr:
+    Type: String
+    Default: "10.50.1.0/16"
+    Description: CIDR block for the New Public Subnet e.g. 10.50.1.0/24 (required only if creating new infrastructure)
+
+  # Instance Configuration
+  InstanceType:
+    Type: String
+    Default: t3a.xlarge
+    Description: EC2 instance type (suggested - 4vCPU, 8/16GB RAM)
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Select an existing EC2 KeyPair to enable SSH access to the instance
+  
+Mappings:
+  RegionMap:
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Instance Configuration"
+        Parameters:
+          - InstanceDomainName
+      - Label:
+          default: "Infrastructure Selection"
+        Parameters:
+          - CreateNewInfra
+      - Label:
+          default: "New Infrastructure Configuration (required only if creating new infrastructure)"
+        Parameters:
+          - VpcCidr
+          - PublicSubnetCidr
+      - Label:
+          default: "Existing Infrastructure Configuration (required only if not creating new infrastructure)"
+        Parameters:
+          - ExistingVpcId
+          - ExistingSubnetId
+          - ExistingSecurityGroupId
+      - Label:
+          default: "Instance Configuration"
+        Parameters:
+          - InstanceType
+          - KeyName
+    ParameterLabels:
+      InstanceDomainName:
+        default: "Instance Domain Name"
+      CreateNewInfra:
+        default: "Create New Infrastructure?"
+      ExistingVpcId:
+        default: "Existing VPC ID (ignore if creating new infrastructure)"
+      ExistingSubnetId:
+        default: "Existing Subnet ID (ignore if creating new infrastructure)"
+      ExistingSecurityGroupId:
+        default: "Existing Security Group ID (ignore if creating new infrastructure)"
+      VpcCidr:
+        default: "New VPC CIDR"
+      PublicSubnetCidr:
+        default: "New Public Subnet CIDR"
+      InstanceType:
+        default: "EC2 Instance Type"
+      KeyName:
+        default: "EC2 Key Pair"
+    Rules:
+      InstanceDomainNameValidation:
+        Assertions:
+          - Assert: !Not [!Equals [!Ref InstanceDomainName, ""]]
+            AssertDescription: "Instance Domain Name is required"
+      InfrastructureValidation:
+        Assertions:
+          - Assert: !Or [
+              !Equals [!Ref CreateNewInfra, "true"],
+              !Not [!Equals [!Ref ExistingVpcId, ""]]
+            ]
+            AssertDescription: "A valid VPC ID is required when using existing infrastructure"
+          - Assert: !Or [
+              !Equals [!Ref CreateNewInfra, "true"],
+              !Not [!Equals [!Ref ExistingSubnetId, ""]]
+            ]
+            AssertDescription: "A valid Subnet ID is required when using existing infrastructure"
+          - Assert: !Or [
+              !Equals [!Ref CreateNewInfra, "true"],
+              !Not [!Equals [!Ref ExistingSecurityGroupId, ""]]
+            ]
+            AssertDescription: "A valid Security Group ID is required when using existing infrastructure"
+      NewInfraVisibility:
+        RuleCondition: !Equals 
+          - !Ref CreateNewInfra
+          - "true"
+        Assertions:
+          - Assert: !Not [!Equals [!Ref VpcCidr, ""]]
+            AssertDescription: "VPC CIDR is required when creating new infrastructure"
+          - Assert: !Not [!Equals [!Ref PublicSubnetCidr, ""]]
+            AssertDescription: "Public Subnet CIDR is required when creating new infrastructure"
+      RegionRestriction:
+        Assertions:
+          - Assert: !Equals [ !FindInMap [RegionMap, !Ref "AWS::Region", Allowed], "true" ]
+            AssertDescription: "This template can only be deployed in allowed regions."
+
+Conditions:
+  CreateInfra: !Equals [!Ref CreateNewInfra, "true"]
+  UseExistingInfra: !Equals [!Ref CreateNewInfra, "false"]
+  IsExistingVpcProvided: !Not [!Equals [!Ref ExistingVpcId, ""]]
+  IsAllowedRegion: !Equals [ !FindInMap [RegionMap, !Ref "AWS::Region", Allowed], "true" ]
+
+Resources:
+  # VPC Resources (if creating new infrastructure)
+  VPC:
+    Type: AWS::EC2::VPC
+    Condition: CreateInfra
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-vpc'
+          
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Condition: CreateInfra
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-igw'
+          
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Condition: CreateInfra
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+      
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Condition: CreateInfra
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetCidr
+      AvailabilityZone: !Select 
+        - 0
+        - !GetAZs ''
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-public-subnet'
+          
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Condition: CreateInfra
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-public-rt'
+          
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Condition: CreateInfra
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Condition: CreateInfra
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+      
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CreateInfra
+    Properties:
+      GroupDescription: Security group for EC2 instance
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: Allow SSH access
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: Allow HTTP access
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: Allow HTTPS access
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-sg'
+  
+  # EC2 Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", AMI]
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds: 
+        - !If [UseExistingInfra, !Ref ExistingSecurityGroupId, !Ref SecurityGroup]
+      SubnetId: !If [UseExistingInfra, !Ref ExistingSubnetId, !Ref PublicSubnet]
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "export INSTANCE_DOMAIN_NAME=${InstanceDomainName}" >> /etc/environment
+          echo "export INSTANCE_DOMAIN_NAME=${InstanceDomainName}" >> /home/ubuntu/.bashrc
+          source /etc/environment
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-plane-commercial'
+
+Outputs:
+  Note:
+    Description: Note about the URL of the Plane instance
+    Value: !Sub 'The URL of the Plane instance is available in the outputs below. The URL is only available after the instance is created. It might take 5-15 min based on the region and instance type'
+  DomainUrl:
+    Description: Domain URL of the Plane instance
+    Value: !Sub 'http://${InstanceDomainName}'
+
+  IPBasedUrl:
+    Description: IP based URL of the Plane instance
+    Value: !If [UseExistingInfra, !Sub 'http://${InstanceDomainName}', !Sub 'http://${EC2Instance.PublicIp}']
+
+  SSHCommand:
+    Description: SSH command to connect to the EC2 instance
+    Value: !If [UseExistingInfra, !Sub 'ssh -i ${KeyName} ubuntu@${EC2Instance.PrivateIp}', !Sub 'ssh -i ${KeyName} ubuntu@${EC2Instance.PublicIp}']
+
+  InstanceId:
+    Description: ID of the EC2 instance
+    Value: !Ref EC2Instance
+    
+  PrivateIP:
+    Description: Private IP address of the EC2 instance
+    Value: !GetAtt EC2Instance.PrivateIp
+    
+  PublicIP:
+    Description: Public IP address of the EC2 instance (if instance is in a public subnet)
+    Value: !GetAtt EC2Instance.PublicIp
+    Condition: CreateInfra
+    
+  VpcId:
+    Description: ID of the VPC (created or used)
+    Value: !If [UseExistingInfra, !Ref ExistingVpcId, !Ref VPC]
+    
+  SubnetId:
+    Description: ID of the Subnet (created or used)
+    Value: !If [UseExistingInfra, !Ref ExistingSubnetId, !Ref PublicSubnet]
+    
+  SecurityGroupId:
+    Description: ID of the Security Group (created or used)
+    Value: !If [UseExistingInfra, !Ref ExistingSecurityGroupId, !Ref SecurityGroup]

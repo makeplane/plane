@@ -16,13 +16,14 @@
     "NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS",
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
+    "NEXT_PUBLIC_GOD_MODE",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
     "NEXT_PUBLIC_SUPPORT_EMAIL"
   ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "dist/**", "out/**"]
     },
     "develop": {
       "cache": false,

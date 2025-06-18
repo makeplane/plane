@@ -224,8 +224,10 @@
   "something_went_wrong_please_try_again": "Terjadi kesalahan. Silakan coba lagi.",
   "load_more": "Muat lebih banyak",
   "select_or_customize_your_interface_color_scheme": "Pilih atau sesuaikan skema warna antarmuka Anda.",
+  "select_the_cursor_motion_style_that_feels_right_for_you": "Pilih gaya gerakan kursor yang terasa tepat untuk Anda.",
   "theme": "Tema",
-  "system_preference": "Preferensi sistem",
+  "smooth_cursor": "Kursor Halus",
+  "system_preference": "Preferensi Sistem",
   "light": "Terang",
   "dark": "Gelap",
   "light_contrast": "Kontras tinggi terang",
@@ -2464,6 +2466,5 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan Plane gagal untuk dimulai.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
-  },
-  "no_of": "Jumlah {entity}"
+  }
 }

@@ -169,19 +169,20 @@
 #page-content-container {
   container-name: page-content-container;
   container-type: inline-size;
-}
 
-.editor-container.document-editor {
-  --editor-content-width: var(--normal-content-width);
+  .frame-renderer {
+    --editor-content-width: var(--normal-content-width);
 
-  &.wide-layout {
-    --editor-content-width: var(--wide-content-width);
-  }
+    &.wide-layout {
+      --editor-content-width: var(--wide-content-width);
+    }
 
-  .ProseMirror {
-    max-width: var(--editor-content-width);
-    margin: 0 auto;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    .ProseMirror,
+    .document-editor-loader {
+      max-width: var(--editor-content-width);
+      margin: 0 auto;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   }
 }
 
@@ -210,7 +211,8 @@
 
 /* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
 @container page-content-container (min-width: 912px) and (max-width: 1344px) {
-  .editor-container.wide-layout,
+  #page-content-container .frame-renderer.wide-layout .editor-container,
+  #page-content-container .frame-renderer.wide-layout .document-editor-loader,
   .page-header-container {
     padding-left: var(--wide-content-margin);
     padding-right: var(--wide-content-margin);
@@ -219,7 +221,8 @@
 
 /* keep a static padding of 20px for wide layouts for container width <912px */
 @container page-content-container (max-width: 912px) {
-  .editor-container.wide-layout,
+  #page-content-container .frame-renderer.wide-layout .editor-container,
+  #page-content-container .frame-renderer.wide-layout .document-editor-loader,
   .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
@@ -228,7 +231,8 @@
 
 /* keep a static padding of 20px for normal layouts for container width <760px */
 @container page-content-container (max-width: 760px) {
-  .editor-container:not(.wide-layout),
+  #page-content-container .frame-renderer:not(.wide-layout) .editor-container,
+  #page-content-container .frame-renderer:not(.wide-layout) .document-editor-loader,
   .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
