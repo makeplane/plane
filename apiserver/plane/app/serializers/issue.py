@@ -498,6 +498,19 @@ class RelatedIssueSerializer(BaseSerializer):
         ]
 
 
+class IssueDuplicateSerializer(BaseSerializer):
+    sequence_id = serializers.IntegerField(
+        source="related_issue.sequence_id", read_only=True
+    )
+    project_identifier = serializers.CharField(
+        source="related_issue.project.identifier", read_only=True
+    )
+
+    class Meta:
+        model = IssueRelation
+        fields = ["id", "project_id", "sequence_id", "project_identifier"]
+
+
 class IssueAssigneeSerializer(BaseSerializer):
     assignee_details = UserLiteSerializer(read_only=True, source="assignee")
 

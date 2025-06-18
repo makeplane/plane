@@ -34,7 +34,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "../../feature-flags";
 import { ConvertWorkItemAction } from "../conversions";
-import { ProjectEpicQuickActions } from "../epic-quick-action";
+import { ProjectEpicQuickActions } from "../quick-actions/epic-quick-action";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [

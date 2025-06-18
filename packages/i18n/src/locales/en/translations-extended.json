@@ -31,6 +31,24 @@
         "requests": "Customer request"
       }
     },
+    "duplicate": {
+      "modal": {
+        "title": "Make a copy to another project",
+        "description1": "This creates a copy of the work item, its attachments, links.",
+        "description2": "All property data will be removed while duplicating.",
+        "placeholder": "Select a project"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Work item duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate work item"
+        }
+      }
+    },
     "pages":{
       "link_pages": "Link pages",
       "show_wiki_pages": "Show Wiki pages",
@@ -534,6 +552,23 @@
         "description": "Start adding epics to manage and track the progress.",
         "primary_button": {
           "text": "Add epics"
+        }
+      }
+    },
+    "duplicate": {
+      "modal": {
+        "description1": "This creates a copy of the epic, its attachments, links.",
+        "description2": "All property data will be removed while duplicating.",
+        "epics_not_enabled": "Epics not enabled"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Epic duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate epic"
         }
       }
     }

@@ -72,6 +72,8 @@ class FeatureFlag(Enum):
     NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
+    # Copy Work Item
+    COPY_WORK_ITEM = "COPY_WORK_ITEM"
     # Analytics
     ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED"
     # Notion Importer

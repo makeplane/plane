@@ -5,63 +5,62 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel, EIssueServiceType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
-import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
+import { cn } from "@plane/utils";
+import { DeleteIssueModal } from "@/components/issues";
+// helpers
+import { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
-import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
-// plane-web components
+import { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
+import { useEventTracker, useIssues, useProject, useUserPermissions } from "@/hooks/store";
+// plane-web
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
-import { useIssueType } from "@/plane-web/hooks/store";
-import { IQuickActionProps } from "../list/list-view-types";
 // helper
-import { useModuleIssueMenuItems, MenuItemFactoryProps } from "./helper";
+import { useEpicMenuItems } from "./helper";
 
-export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
+type TProjectEpicQuickActionProps = IQuickActionProps & {
+  toggleEditEpicModal?: (value: boolean) => void;
+  toggleDeleteEpicModal?: (value: boolean) => void;
+  isPeekMode?: boolean;
+};
+
+export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = observer((props) => {
   const {
     issue,
     handleDelete,
     handleUpdate,
-    handleRemoveFromView,
-    handleArchive,
-    customActionButton,
-    portalElement,
     readOnly = false,
-    placements = "bottom-start",
     parentRef,
+    toggleEditEpicModal,
+    toggleDeleteEpicModal,
+    isPeekMode = false,
+    portalElement,
   } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
-  // router
-  const { workspaceSlug, moduleId } = useParams();
   // store hooks
-  const { setTrackElement } = useEventTracker();
-  const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { allowPermissions } = useUserPermissions();
-  const { getStateById } = useProjectState();
+  const { setTrackElement } = useEventTracker();
+  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getProjectIdentifierById } = useProject();
-  // plane web hooks
-  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
-  const stateDetails = getStateById(issue.state_id);
+  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isArchivingAllowed = handleArchive && isEditingAllowed;
-  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
+    allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
-  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
-
-  const duplicateIssuePayload = omit(
+  const duplicateEpicPayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
@@ -70,60 +69,91 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     ["id"]
   );
 
-  // Menu items and modals using helper
+  const customEditAction = () => {
+    setTrackElement(activeLayout);
+    setIssueToEdit(issue);
+    setCreateUpdateIssueModal(true);
+    if (toggleEditEpicModal) toggleEditEpicModal(true);
+  };
+
+  const customDeleteAction = async () => {
+    setTrackElement(activeLayout);
+    setDeleteIssueModal(true);
+    if (toggleDeleteEpicModal) toggleDeleteEpicModal(true);
+  };
+
+  // Menu items using helper
   const menuItemProps: MenuItemFactoryProps = {
     issue,
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
     isEditingAllowed,
-    isArchivingAllowed,
     isDeletingAllowed,
-    isInArchivableGroup,
-    issueTypeDetail,
     setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
-    setArchiveIssueModal,
     setDuplicateWorkItemModal,
-    handleRemoveFromView,
-    moduleId: moduleId?.toString(),
-    handleDelete,
+    handleDelete: customDeleteAction,
     handleUpdate,
-    handleArchive,
-    storeType: EIssuesStoreType.MODULE,
+    storeType: EIssuesStoreType.PROJECT,
   };
 
-  const MENU_ITEMS = useModuleIssueMenuItems(menuItemProps);
+  const baseMenuItems = useEpicMenuItems(menuItemProps);
+
+  // Filter out items based on peek mode and customize actions
+  const MENU_ITEMS = baseMenuItems
+    .map((item) => {
+      // Customize edit action for epic
+      if (item.key === "edit") {
+        return {
+          ...item,
+          action: customEditAction,
+          shouldRender: isEditingAllowed && !isPeekMode,
+        };
+      }
+      // Customize delete action for epic
+      if (item.key === "delete") {
+        return {
+          ...item,
+          action: customDeleteAction,
+        };
+      }
+      // Hide copy link in peek mode
+      if (item.key === "copy-link") {
+        return {
+          ...item,
+          shouldRender: !isPeekMode,
+        };
+      }
+      return item;
+    })
+    .filter((item) => item.shouldRender !== false);
 
   return (
     <>
-      {/* Modals */}
-      <ArchiveIssueModal
-        data={issue}
-        isOpen={archiveIssueModal}
-        handleClose={() => setArchiveIssueModal(false)}
-        onSubmit={handleArchive}
-      />
       <DeleteIssueModal
         data={issue}
         isOpen={deleteIssueModal}
-        handleClose={() => setDeleteIssueModal(false)}
+        handleClose={() => {
+          setDeleteIssueModal(false);
+          if (toggleDeleteEpicModal) toggleDeleteEpicModal(false);
+        }}
         onSubmit={handleDelete}
+        isEpic
       />
-      <CreateUpdateIssueModal
+      <CreateUpdateEpicModal
         isOpen={createUpdateIssueModal}
         onClose={() => {
           setCreateUpdateIssueModal(false);
           setIssueToEdit(undefined);
+          if (toggleEditEpicModal) toggleEditEpicModal(false);
         }}
-        data={issueToEdit ?? duplicateIssuePayload}
+        data={issueToEdit ?? duplicateEpicPayload}
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
-        storeType={EIssuesStoreType.MODULE}
-        isDraft={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
@@ -132,14 +162,13 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
           onClose={() => setDuplicateWorkItemModal(false)}
           workspaceSlug={workspaceSlug.toString()}
           projectId={issue.project_id}
+          serviceType={EIssueServiceType.EPICS}
         />
       )}
 
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
         ellipsis
-        placement={placements}
-        customButton={customActionButton}
         portalElement={portalElement}
         menuItemsClassName="z-[14]"
         maxHeight="lg"

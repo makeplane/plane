@@ -7,6 +7,7 @@ from plane.ee.views.app.issue import (
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
     IssueConvertEndpoint,
+    IssueDuplicateEndpoint,
     IssuePageViewSet,
     PageSearchViewSet,
 )

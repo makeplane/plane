@@ -90,7 +90,14 @@ def sync_with_external_service(entity_name, description_html):
 
 
 @shared_task
-def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
+def copy_s3_objects(
+    entity_name,
+    entity_identifier,
+    project_id,
+    slug,
+    user_id,
+    copy_to_entity_project=False,
+):
     """
     Step 1: Extract asset ids from the description_html of the entity
     Step 2: Duplicate the assets
@@ -112,6 +119,11 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
         original_assets = FileAsset.objects.filter(
             workspace=workspace, project_id=project_id, id__in=asset_ids
         )
+
+        if copy_to_entity_project:
+            project_id = entity.project_id
+        else:
+            project_id = project_id
 
         for original_asset in original_assets:
             destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"

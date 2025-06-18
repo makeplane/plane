@@ -87,6 +87,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
+    issueTypeDetail,
     isDraftIssue,
     setTrackElement,
     setIssueToEdit,
