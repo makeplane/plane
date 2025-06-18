@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum, TALK_TO_SALES_URL } from "@plane/constants";
-import { IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { TALK_TO_SALES_URL } from "@plane/constants";
+import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";

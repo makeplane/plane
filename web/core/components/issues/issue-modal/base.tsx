@@ -3,10 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+import { ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import type { TBaseIssue, TIssue } from "@plane/types";
+import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";

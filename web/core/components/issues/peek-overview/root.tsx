@@ -4,17 +4,9 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
-import {
-  EIssuesStoreType,
-  ISSUE_UPDATED,
-  ISSUE_DELETED,
-  ISSUE_ARCHIVED,
-  ISSUE_RESTORED,
-  EUserPermissions,
-  EUserPermissionsLevel,
-} from "@plane/constants";
+import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IWorkItemPeekOverview } from "@plane/types";
+import { EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components

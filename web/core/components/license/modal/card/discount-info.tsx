@@ -1,7 +1,6 @@
 import { useTheme } from "next-themes";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
-import { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 import { cn } from "@plane/utils";
 
 type TDiscountInfoProps = {

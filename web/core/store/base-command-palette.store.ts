@@ -1,12 +1,12 @@
 import { observable, action, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 import {
-  EIssuesStoreType,
   TCreateModalStoreTypes,
   DEFAULT_CREATE_PAGE_MODAL_DATA,
   EPageAccess,
   TCreatePageModal,
 } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 
 export interface ModalData {
   store: EIssuesStoreType;

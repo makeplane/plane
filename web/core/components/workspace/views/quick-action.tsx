@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
 // types
-import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspaceView } from "@plane/types";
+import { EViewAccess, IWorkspaceView } from "@plane/types";
 import { ContextMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components

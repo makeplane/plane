@@ -10,13 +10,13 @@ import { PanelRight } from "lucide-react";
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
+  EIssuesStoreType,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,

@@ -4,11 +4,11 @@ import {
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
   EIssueLayoutTypes,
-  EIssuesStoreType,
   EIssueFilterType,
   ENABLE_ISSUE_DEPENDENCIES,
 } from "@plane/constants";
 import {
+  EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

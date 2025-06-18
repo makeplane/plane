@@ -1,8 +1,21 @@
-import { EStartOfTheWeek } from "@plane/constants";
 import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 import { TUserPermissions } from "./enums";
 
-type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
+/**
+ * @description The start of the week for the user
+ * @enum {number}
+ */
+export enum EStartOfTheWeek {
+  SUNDAY = 0,
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
+}
+
+export type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
 export interface IUserLite {
   avatar_url: string;
@@ -19,7 +32,7 @@ export interface IUser extends IUserLite {
   cover_image_asset?: string | null;
   cover_image?: string | null;
   // only for rendering the cover image
-  cover_image_url: readonly (string | null);
+  cover_image_url: string | null;
   date_joined: string;
   email: string;
   is_active: boolean;

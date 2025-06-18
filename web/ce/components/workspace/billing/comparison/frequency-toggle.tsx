@@ -1,8 +1,7 @@
 import { FC } from "react";
 // plane imports
 import { observer } from "mobx-react";
-import { EProductSubscriptionEnum } from "@plane/constants";
-import { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 import { calculateYearlyDiscount, cn } from "@plane/utils";
 // plane web imports
 import { getDiscountPillStyle, getSubscriptionBackgroundColor } from "@/components/workspace/billing/subscription";

@@ -2,9 +2,9 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EIssuesStoreType, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks

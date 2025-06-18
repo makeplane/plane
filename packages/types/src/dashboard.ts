@@ -2,7 +2,7 @@ import { EDurationFilters } from "./enums";
 import { IIssueActivity, TIssuePriorities } from "./issues";
 import { TIssue } from "./issues/issue";
 import { TStateGroups } from "./state";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import { TIssueRelationTypes } from "./issues/issue_relation";
 
 export type TWidgetKeys =
   | "overview_stats"
@@ -161,7 +161,7 @@ export type TWidgetStatsResponse =
   | TRecentCollaboratorsWidgetResponse[];
 
 // dashboard
-export type TDashboard = {
+export type TDeprecatedDashboard = {
   created_at: string;
   created_by: string | null;
   description_html: string;
@@ -176,6 +176,6 @@ export type TDashboard = {
 };
 
 export type THomeDashboardResponse = {
-  dashboard: TDashboard;
+  dashboard: TDeprecatedDashboard;
   widgets: TWidget[];
 };

@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
-import { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 // components
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
 import { PLANE_PLANS, TPlanePlans } from "@/constants/plans";

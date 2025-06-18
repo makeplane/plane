@@ -1,15 +1,4 @@
-import { IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
-
-/**
- * Enum representing different product subscription types
- */
-export enum EProductSubscriptionEnum {
-  FREE = "FREE",
-  ONE = "ONE",
-  PRO = "PRO",
-  BUSINESS = "BUSINESS",
-  ENTERPRISE = "ENTERPRISE",
-}
+import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 
 /**
  * Default billing frequency for each product subscription type

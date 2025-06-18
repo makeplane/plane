@@ -1,13 +1,9 @@
-import { IProject, IProjectLite, IWorkspaceLite } from "@plane/types";
+import { IProject, IProjectLite } from "./project";
+import { IWorkspaceLite } from "./workspace";
 
 export type TPublishEntityType = "project" | "page";
 
-export type TProjectPublishLayouts =
-  | "calendar"
-  | "gantt"
-  | "kanban"
-  | "list"
-  | "spreadsheet";
+export type TProjectPublishLayouts = "calendar" | "gantt" | "kanban" | "list" | "spreadsheet";
 
 export type TProjectPublishViewProps = {
   calendar?: boolean;
@@ -17,10 +13,9 @@ export type TProjectPublishViewProps = {
   spreadsheet?: boolean;
 };
 
-export type TProjectDetails = IProjectLite &
-  Pick<IProject, "cover_image" | "logo_props" | "description">;
+export type TProjectDetails = IProjectLite & Pick<IProject, "cover_image" | "logo_props" | "description">;
 
-type TPublishSettings = {
+export type TPublishSettings = {
   anchor: string | undefined;
   created_at: string | undefined;
   created_by: string | undefined;

@@ -6,8 +6,8 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
-import { IProjectBulkAddFormData, TProjectMembership, IUserLite } from "@plane/types";
+import { EUserPermissions } from "@plane/constants";
+import { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
 // services

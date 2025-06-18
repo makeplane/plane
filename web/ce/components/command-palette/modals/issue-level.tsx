@@ -2,8 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 // components
 import { BulkDeleteIssuesModal } from "@/components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";

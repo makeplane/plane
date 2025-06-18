@@ -5,8 +5,9 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class
 import { computedFn } from "mobx-utils";
-import { EIssuesStoreType, EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 import {
+  EIssuesStoreType,
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,

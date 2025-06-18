@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";

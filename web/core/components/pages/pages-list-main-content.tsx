@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state";
 import { PageLoader } from "@/components/pages";

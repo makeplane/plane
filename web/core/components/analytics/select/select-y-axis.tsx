@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Briefcase } from "lucide-react";
-import { ChartYAxisMetric, EEstimateSystem } from "@plane/constants";
+import { EEstimateSystem } from "@plane/constants";
+import { ChartYAxisMetric } from "@plane/types";
 // plane package imports
 import { CustomSelect } from "@plane/ui";
 // hooks

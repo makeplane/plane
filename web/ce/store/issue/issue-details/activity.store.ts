@@ -8,8 +8,9 @@ import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { EIssueServiceType, E_SORT_ORDER, EActivityFilterType } from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType } from "@plane/constants";
 import {
+  EIssueServiceType,
   TIssueActivityComment,
   TIssueActivity,
   TIssueActivityMap,

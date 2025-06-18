@@ -1,4 +1,5 @@
 import { EditorState, Selection } from "@tiptap/pm/state";
+import { Node as ProsemirrorNode } from "prosemirror-model";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -21,7 +22,10 @@ export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassNam
   );
 
 // Helper function to find the parent node of a specific type
-export function findParentNodeOfType(selection: Selection, typeName: string) {
+export function findParentNodeOfType(selection: Selection, typeName: string): {
+  node: ProsemirrorNode;
+  pos: number;
+} | null {
   let depth = selection.$anchor.depth;
   while (depth > 0) {
     const node = selection.$anchor.node(depth);

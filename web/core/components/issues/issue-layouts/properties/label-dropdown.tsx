@@ -5,11 +5,11 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, getRandomLabelColor } from "@plane/constants";
+import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueLabel } from "@plane/types";
+import { EUserProjectRoles, IIssueLabel } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
 // hooks

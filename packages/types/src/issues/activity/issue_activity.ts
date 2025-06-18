@@ -1,5 +1,3 @@
-// plane imports
-import { EInboxIssueSource } from "@plane/constants";
 // local imports
 import {
   TIssueActivityWorkspaceDetail,
@@ -7,6 +5,7 @@ import {
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
+import { EInboxIssueSource } from "../../inbox";
 
 export type TIssueActivity = {
   id: string;

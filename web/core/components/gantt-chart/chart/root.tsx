@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EStartOfTheWeek } from "@plane/constants";
 // components
 import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
 import { cn } from "@plane/utils";

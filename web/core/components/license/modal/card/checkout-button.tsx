@@ -2,8 +2,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
-import { IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

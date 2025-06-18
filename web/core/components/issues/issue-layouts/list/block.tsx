@@ -6,9 +6,8 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";

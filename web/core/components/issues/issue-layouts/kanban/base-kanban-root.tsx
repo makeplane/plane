@@ -8,13 +8,12 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import {
   EIssueLayoutTypes,
-  EIssueServiceType,
   EIssueFilterType,
-  EIssuesStoreType,
   ISSUE_DELETED,
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 //hooks

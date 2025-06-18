@@ -72,7 +72,7 @@ docker compose -f docker-compose-local.yml up
 4. Start web apps:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 5. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin

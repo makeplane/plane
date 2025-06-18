@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssuesStoreType } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 // ui
 import { ArchiveIcon, Breadcrumbs, Tooltip, Header, ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 // components

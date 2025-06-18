@@ -4,8 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { ROLE, EUserPermissions, EUserProjectRoles } from "@plane/constants";
-import { IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
+import { ROLE, EUserPermissions } from "@plane/constants";
+import { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
 import { CustomMenu, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks

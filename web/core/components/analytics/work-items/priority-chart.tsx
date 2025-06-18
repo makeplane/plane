@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { ColumnDef, RowData, Table } from "@tanstack/react-table";
-import { mkConfig } from "export-to-csv";
+import { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -12,13 +11,11 @@ import {
   ANALYTICS_Y_AXIS_VALUES,
   CHART_COLOR_PALETTES,
   ChartXAxisDateGrouping,
-  ChartXAxisProperty,
-  ChartYAxisMetric,
   EChartModels,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { ExportConfig } from "@plane/types";
+import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 import { TBarItem, TChart, TChartDatum } from "@plane/types/src/charts";
 // plane web components
 import { Button } from "@plane/ui";
@@ -36,7 +33,11 @@ import { generateBarColor } from "./utils";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
-    export: ExportConfig<TData>;
+    export: {
+      key: string;
+      value: (row: Row<TData>) => string | number;
+      label?: string;
+    };
   }
 }
 

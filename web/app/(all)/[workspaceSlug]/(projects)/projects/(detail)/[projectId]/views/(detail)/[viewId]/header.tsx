@@ -8,14 +8,14 @@ import { Layers, Lock } from "lucide-react";
 import {
   EIssueLayoutTypes,
   EIssueFilterType,
-  EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EViewAccess,
   EUserPermissions,
   EUserPermissionsLevel,
 } from "@plane/constants";
 // types
 import {
+  EIssuesStoreType,
+  EViewAccess,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,

@@ -13,9 +13,10 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
+import { EIssueLayoutTypes, ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
 import {
+  EIssueServiceType,
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,

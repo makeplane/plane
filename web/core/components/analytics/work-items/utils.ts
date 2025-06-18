@@ -1,6 +1,5 @@
 // plane package imports
-import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
-import { IState } from "@plane/types";
+import { ChartXAxisProperty, ChartYAxisMetric, IState } from "@plane/types";
 
 interface ParamsProps {
   x_axis: ChartXAxisProperty;

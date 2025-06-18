@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
-import { IIssueFilterOptions } from "@plane/types";
+import { EIssueFilterType } from "@plane/constants";
+import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // hooks
 // components
 import { AppliedFiltersList } from "@/components/issues";

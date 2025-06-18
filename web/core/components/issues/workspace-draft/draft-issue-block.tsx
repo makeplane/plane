@@ -4,9 +4,7 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
-import { TWorkspaceDraftIssue } from "@plane/types";
-// ui
+import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
 // constants
 // helper
