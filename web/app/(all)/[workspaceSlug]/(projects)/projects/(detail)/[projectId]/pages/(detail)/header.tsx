@@ -113,7 +113,7 @@ export const PageDetailsHeader = observer(() => {
       <Header.RightItem>
         <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
         <CollaboratorsList page={page} className="bottom-1" />
-        <PageDetailsHeaderExtraActions page={page} />
+        <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

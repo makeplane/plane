@@ -25,6 +25,12 @@ class ProjectPagePublishEndpoint(BaseAPIView):
             pk=pk, workspace=workspace, projects__id=project_id, is_global=False
         )
 
+        if page.archived_at:
+            return Response(
+                {"error": "You cannot publish an archived page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Throw error if the page is a workspace page
         if page.is_global:
             return Response(
@@ -149,6 +155,12 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         if not page:
             return Response(
                 {"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if page.archived_at:
+            return Response(
+                {"error": "You cannot publish an archived page"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Throw error if the page is a project page

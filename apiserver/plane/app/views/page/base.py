@@ -395,6 +395,24 @@ class PageViewSet(BaseViewSet):
         page.archived_at = timezone.now()
         page.save()
 
+        # unpublish the deploy board
+        deploy_board = DeployBoard.objects.filter(
+            entity_name="page",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).first()
+
+        if deploy_board:
+            deploy_board.delete()
+            nested_page_update.delay(
+                page_id=str(pk),
+                action=PageAction.UNPUBLISHED,
+                project_id=project_id,
+                slug=slug,
+                user_id=request.user.id,
+            )
+
         # archive the sub pages
         nested_page_update.delay(
             page_id=str(pk),

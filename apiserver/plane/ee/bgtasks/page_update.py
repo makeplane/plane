@@ -88,6 +88,13 @@ def nested_page_update(
                 workspace__slug=slug,
             ).delete(soft=False)
 
+            DeployBoard.objects.filter(
+                entity_name="page",
+                entity_identifier__in=descendants_ids,
+                project_id=project_id,
+                workspace__slug=slug,
+            ).delete()
+
         elif action == PageAction.UNARCHIVED:
             Page.objects.filter(id__in=descendants_ids).update(
                 archived_at=None, updated_at=timezone.now(), updated_by=user_id

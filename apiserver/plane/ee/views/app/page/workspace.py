@@ -319,6 +319,21 @@ class WorkspacePageViewSet(BaseViewSet):
         page.archived_at = datetime.now()
         page.save()
 
+        deploy_board = DeployBoard.objects.filter(
+            entity_name="page",
+            entity_identifier=pk,
+            workspace__slug=slug,
+        ).first()
+
+        if deploy_board:
+            deploy_board.delete()
+            nested_page_update.delay(
+                page_id=str(pk),
+                action=PageAction.UNPUBLISHED,
+                slug=slug,
+                user_id=request.user.id,
+            )
+
         # archive the sub pages
         nested_page_update.delay(
             page_id=str(pk),
