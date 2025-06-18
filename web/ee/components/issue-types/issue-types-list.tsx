@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import { EWorkItemTypeEntity } from "@plane/constants";
-import { Loader } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
+import { Loader, setPromiseToast } from "@plane/ui";
 // plane web components
 import { IssueTypeListItem } from "@/plane-web/components/issue-types";
 // plane web hooks
@@ -11,10 +12,12 @@ import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypesList = {
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
+  onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
+  onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
 };
 
 export const IssueTypesList = observer((props: TIssueTypesList) => {
-  const { onEditIssueTypeIdChange } = props;
+  const { onEditIssueTypeIdChange, onDeleteIssueTypeIdChange, onEnableDisableIssueType } = props;
   // router
   const { projectId } = useParams();
   // states
@@ -65,6 +68,8 @@ export const IssueTypesList = observer((props: TIssueTypesList) => {
             onToggle={handleIssueTypeListToggle}
             onEditIssueTypeIdChange={onEditIssueTypeIdChange}
             getWorkItemTypeById={useIssueType}
+            onDeleteIssueTypeIdChange={onDeleteIssueTypeIdChange}
+            onEnableDisableIssueType={onEnableDisableIssueType}
           />
         ))}
     </div>

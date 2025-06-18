@@ -840,7 +840,24 @@
           "title": "カスタムプロパティを追加",
           "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "このタイプを削除",
+        "description": "タイプの削除は既存データの損失につながる可能性があります。",
+        "primary_button": "はい、削除します",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "作業項目のタイプが正常に削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "作業項目のタイプを削除できませんでした。もう一度お試しください！"
+          }
+        },
+        "can_disable_warning": "代わりにタイプを無効にしますか？"
+      },
+      "cant_delete_linked_message": "既存の作業項目にリンクされているため、この作業項目タイプは削除できません。"
     },
     "create": {
       "title": "作業項目タイプを作成",

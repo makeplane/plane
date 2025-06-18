@@ -857,7 +857,24 @@
           "title": "Özel özellikler ekle",
           "description": "Bu iş öğesi tipi için eklediğiniz yeni özellikler burada gösterilecektir."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Bu türü sil",
+        "description": "Türlerin silinmesi mevcut verilerin kaybına yol açabilir.",
+        "primary_button": "Evet, sil",
+        "toast": {
+          "success": {
+            "title": "Başarılı!",
+            "message": "İş öğesi türü başarıyla silindi."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "İş öğesi türü silinemedi. Lütfen tekrar deneyin!"
+          }
+        },
+        "can_disable_warning": "Bunun yerine türü devre dışı bırakmak ister misiniz?"
+      },
+      "cant_delete_linked_message": "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez."
     },
     "create": {
       "title": "İş öğesi tipi oluştur",

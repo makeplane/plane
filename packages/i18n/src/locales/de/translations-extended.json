@@ -841,7 +841,24 @@
           "title": "Benutzerdefinierte Eigenschaften hinzufügen",
           "description": "Neue Eigenschaften, die Sie für diesen Arbeitsaufgabentyp hinzufügen, werden hier angezeigt."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Diesen Typ löschen",
+        "description": "Das Löschen von Typen kann zum Verlust vorhandener Daten führen.",
+        "primary_button": "Ja, löschen",
+        "toast": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Arbeitselementtyp wurde erfolgreich gelöscht."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Löschen des Arbeitselementtyps fehlgeschlagen. Bitte versuchen Sie es erneut!"
+          }
+        },
+        "can_disable_warning": "Möchten Sie stattdessen den Typ deaktivieren?"
+      },
+      "cant_delete_linked_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er mit bestehenden Arbeitselementen verknüpft ist."
     },
     "create": {
       "title": "Arbeitsaufgabentyp erstellen",

@@ -841,7 +841,24 @@
           "title": "Tambahkan properti kustom",
           "description": "Properti baru yang Anda tambahkan untuk tipe item kerja ini akan ditampilkan di sini."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Hapus jenis ini",
+        "description": "Penghapusan tipe dapat menyebabkan hilangnya data yang ada.",
+        "primary_button": "Ya, hapus",
+        "toast": {
+          "success": {
+            "title": "Berhasil!",
+            "message": "Jenis item kerja berhasil dihapus."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Gagal menghapus jenis item kerja. Silakan coba lagi!"
+          }
+        },
+        "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?"
+      },
+      "cant_delete_linked_message": "Jenis item kerja ini tidak dapat dihapus karena terhubung dengan item kerja yang ada."
     },
     "create": {
       "title": "Buat tipe item kerja",

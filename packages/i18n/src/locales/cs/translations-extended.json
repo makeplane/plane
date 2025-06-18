@@ -841,7 +841,24 @@
           "title": "Přidat vlastní vlastnosti",
           "description": "Nové vlastnosti, které přidáte pro tento typ pracovních položek, se zde zobrazí."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Smazat tento typ",
+        "description": "Odstranění typů může vést ke ztrátě stávajících dat.",
+        "primary_button": "Ano, smazat",
+        "toast": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Typ pracovního položky byl úspěšně odstraněn."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodařilo se odstranit typ pracovního položky. Zkuste to prosím znovu!"
+          }
+        },
+        "can_disable_warning": "Chcete místo toho zakázat tento typ?"
+      },
+      "cant_delete_linked_message": "Tento typ pracovního položky nelze odstranit, protože je propojen s existujícími pracovními položkami."
     },
     "create": {
       "title": "Vytvořit typ pracovních položek",

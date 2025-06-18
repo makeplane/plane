@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
-import { Collapsible } from "@plane/ui";
+import { Collapsible, setToast, TOAST_TYPE, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn  } from "@plane/utils";
 // plane web components
@@ -17,6 +18,8 @@ type TIssueTypeListItem = {
   containerClassName?: string;
   onToggle: (issueTypeId: string) => void;
   onEditIssueTypeIdChange: (issueTypeId: string) => void;
+  onDeleteIssueTypeIdChange: (issueTypeId: string) => void;
+  onEnableDisableIssueType: (issueTypeId: string) => Promise<void>;
   getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   getClassName?: (isOpen: boolean) => string;
 };
@@ -30,6 +33,8 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
     containerClassName,
     onToggle,
     onEditIssueTypeIdChange,
+    onDeleteIssueTypeIdChange,
+    onEnableDisableIssueType,
     getWorkItemTypeById,
     getClassName,
   } = props;
@@ -39,7 +44,6 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
   const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
   const issueTypeDetail = issueType?.asJSON;
-
   if (!issueTypeDetail) return null;
 
   return (
@@ -93,13 +97,6 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   </div>
                 </div>
               </div>
-              <div className="flex-shrink-0 flex">
-                <IssueTypeQuickActions
-                  issueTypeId={issueTypeId}
-                  getWorkItemTypeById={getWorkItemTypeById}
-                  onEditIssueTypeIdChange={onEditIssueTypeIdChange}
-                />
-              </div>
               {issueTypeDetail?.is_default && (
                 <div
                   className={cn(
@@ -109,6 +106,15 @@ export const IssueTypeListItem = observer((props: TIssueTypeListItem) => {
                   {t("common.default")}
                 </div>
               )}
+              <div className="flex-shrink-0 flex">
+                <IssueTypeQuickActions
+                  issueTypeId={issueTypeId}
+                  getWorkItemTypeById={getWorkItemTypeById}
+                  onEditIssueTypeIdChange={onEditIssueTypeIdChange}
+                  onDeleteIssueTypeIdChange={onDeleteIssueTypeIdChange}
+                  onEnableDisableIssueType={onEnableDisableIssueType}
+                />
+              </div>
             </div>
           }
           className={cn("p-2")}

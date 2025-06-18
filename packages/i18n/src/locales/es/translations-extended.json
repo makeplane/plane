@@ -840,7 +840,24 @@
           "title": "Agregar propiedades personalizadas",
           "description": "Las nuevas propiedades que agregues para este tipo de elemento de trabajo aparecerán aquí."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Eliminar este tipo",
+        "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
+        "primary_button": "Sí, eliminarlo",
+        "toast": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Tipo de elemento de trabajo eliminado con éxito."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el tipo de elemento de trabajo. ¡Inténtalo de nuevo!"
+          }
+        },
+        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?"
+      },
+      "cant_delete_linked_message": "No se puede eliminar este tipo de elemento de trabajo porque está vinculado a elementos de trabajo existentes."
     },
     "create": {
       "title": "Crear tipo de elemento de trabajo",

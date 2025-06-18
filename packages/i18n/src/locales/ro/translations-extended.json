@@ -841,7 +841,24 @@
           "title": "Adaugă proprietăți personalizate",
           "description": "Noile proprietăți pe care le adaugi pentru acest tip de element de lucru vor apărea aici."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Șterge acest tip",
+        "description": "Ștergerea tipurilor poate duce la pierderea datelor existente.",
+        "primary_button": "Da, șterge-l",
+        "toast": {
+          "success": {
+            "title": "Succes!",
+            "message": "Tipul elementului de lucru a fost șters cu succes."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Ștergerea tipului de element de lucru a eșuat. Vă rugăm să încercați din nou!"
+          }
+        },
+        "can_disable_warning": "Doriți să dezactivați tipul în schimb?"
+      },
+      "cant_delete_linked_message": "Nu se poate șterge acest tip de element de lucru deoarece este legat de elemente de lucru existente."
     },
     "create": {
       "title": "Creează tip de element de lucru",

@@ -702,7 +702,7 @@ export class IssueTypes implements IIssueTypesStore {
     try {
       this.loader = "mutation";
       await this.issueTypesService.deleteType({ workspaceSlug, projectId, issueTypeId: typeId });
-      set(this.issueTypes, typeId, undefined);
+      delete this.issueTypes[typeId];
       this.loader = "loaded";
     } catch (error) {
       this.loader = "loaded";

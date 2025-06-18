@@ -841,7 +841,24 @@
           "title": "커스텀 프로퍼티 추가",
           "description": "이 워크 아이템 타입에 대해 추가하는 새 프로퍼티가 여기에 표시됩니다."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "이 유형 삭제",
+        "description": "유형을 삭제하면 기존 데이터가 손실될 수 있습니다.",
+        "primary_button": "예, 삭제합니다",
+        "toast": {
+          "success": {
+            "title": "성공!",
+            "message": "작업 항목 유형이 성공적으로 삭제되었습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "작업 항목 유형 삭제에 실패했습니다. 다시 시도해 주세요!"
+          }
+        },
+        "can_disable_warning": "대신 유형을 비활성화하시겠습니까?"
+      },
+      "cant_delete_linked_message": "기존 작업 항목에 연결되어 있어 이 작업 항목 유형을 삭제할 수 없습니다."
     },
     "create": {
       "title": "워크 아이템 타입 생성",

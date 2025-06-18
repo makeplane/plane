@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -9,17 +9,20 @@ import { SettingsHeading } from "@/components/settings";
 import { IssueTypeEmptyState, IssueTypesList, CreateOrUpdateIssueTypeModal } from "@/plane-web/components/issue-types";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { IssueTypeDeleteConfirmationModal } from "./issue-type-delete-confirmation-modal";
 
 export const IssueTypesRoot = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [editIssueTypeId, setEditIssueTypeId] = useState<string | null>(null);
+  const [deleteIssueTypeId, setDeleteIssueTypeId] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // plane web store hooks
-  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
+  const { isWorkItemTypeEnabledForProject, getIssueTypeById } = useIssueTypes();
   // derived values
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), projectId?.toString());
 
@@ -27,6 +30,29 @@ export const IssueTypesRoot = observer(() => {
     setEditIssueTypeId(issueTypeId);
     setIsModalOpen(true);
   };
+
+  const handleDeleteIssueTypeIdChange = (issueTypeId: string) => {
+    setDeleteIssueTypeId(issueTypeId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEnableDisableIssueType = useCallback(
+    async (issueTypeId: string) => {
+      if (!issueTypeId) return;
+      const issueType = getIssueTypeById(issueTypeId);
+      if (!issueType) return;
+      const issueTypeDetail = issueType.asJSON;
+
+      const updateIssueTypePromise = issueType?.updateType({
+        is_active: !issueTypeDetail?.is_active,
+      });
+      if (!updateIssueTypePromise) return;
+      await updateIssueTypePromise.finally(() => {
+        setIsModalOpen(false);
+      });
+    },
+    [getIssueTypeById]
+  );
 
   return (
     <div className="container mx-auto h-full pb-8">
@@ -41,7 +67,11 @@ export const IssueTypesRoot = observer(() => {
       />
       <div className="my-2 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {isWorkItemTypeEnabled ? (
-          <IssueTypesList onEditIssueTypeIdChange={handleEditIssueTypeIdChange} />
+          <IssueTypesList
+            onEditIssueTypeIdChange={handleEditIssueTypeIdChange}
+            onDeleteIssueTypeIdChange={handleDeleteIssueTypeIdChange}
+            onEnableDisableIssueType={handleEnableDisableIssueType}
+          />
         ) : (
           <IssueTypeEmptyState workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
         )}
@@ -54,6 +84,12 @@ export const IssueTypesRoot = observer(() => {
           setEditIssueTypeId(null);
           setIsModalOpen(false);
         }}
+      />
+      <IssueTypeDeleteConfirmationModal
+        issueTypeId={deleteIssueTypeId}
+        isModalOpen={isDeleteModalOpen}
+        handleModalClose={() => setIsDeleteModalOpen(false)}
+        handleEnableDisable={handleEnableDisableIssueType}
       />
     </div>
   );

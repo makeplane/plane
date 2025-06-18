@@ -831,7 +831,24 @@
           "title": "Thêm thuộc tính tùy chỉnh",
           "description": "Các thuộc tính mới bạn thêm cho loại mục công việc này sẽ hiển thị ở đây."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Xóa loại này",
+        "description": "Việc xóa các loại có thể dẫn đến mất dữ liệu hiện có.",
+        "primary_button": "Vâng, xóa nó",
+        "toast": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã xóa thành công loại mục công việc."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa loại mục công việc. Vui lòng thử lại!"
+          }
+        },
+        "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?"
+      },
+      "cant_delete_linked_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
     },
     "create": {
       "title": "Tạo loại mục công việc",

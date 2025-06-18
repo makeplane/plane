@@ -6,13 +6,14 @@ import { PlusIcon } from "lucide-react";
 import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
-import { Button, ToggleSwitch } from "@plane/ui";
+import { Button, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { IssueTypeListItem } from "@/plane-web/components/issue-types";
 import { TemplateCollapsibleWrapper } from "@/plane-web/components/templates/settings/common";
 // local imports
 import { ProjectTemplateWorkItemTypeModal } from "./create-update-modal";
+import { DeleteWorkItemTypeModal } from "./delete-modal";
 
 type TProjectWorkItemTypesProps = {
   workspaceSlug: string;
@@ -26,6 +27,8 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
   // states
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editIssueTypeId, setEditIssueTypeId] = useState<string | null>(null);
+  const [deleteIssueTypeId, setDeleteIssueTypeId] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [openIssueTypeId, setOpenIssueTypeId] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
@@ -56,6 +59,58 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
         }
       );
     }
+  };
+
+  const handleDeleteIssueTypeIdChange = (issueTypeId: string) => {
+    setDeleteIssueTypeId(issueTypeId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleEnableDisableWorkItemType = async (issueTypeId: string) => {
+    const issueType = getWorkItemTypeById(issueTypeId);
+    if (!issueType) return;
+    const issueTypeDetail = issueType.asJSON;
+    const isIssueTypeEnabled = issueTypeDetail?.is_active;
+    const updateIssueTypePromise = issueType?.updateType({
+      is_active: !issueTypeDetail?.is_active,
+    });
+    if (!updateIssueTypePromise) return;
+    setPromiseToast(updateIssueTypePromise, {
+      loading: t("work_item_types.enable_disable.toast.loading", {
+        action: isIssueTypeEnabled ? t("common.disabling") : t("common.enabling"),
+        name: issueTypeDetail?.name,
+      }),
+      success: {
+        title: t("work_item_types.enable_disable.toast.success.title"),
+        message: () =>
+          t("work_item_types.enable_disable.toast.success.message", {
+            name: issueTypeDetail?.name,
+            action: isIssueTypeEnabled ? t("common.disabled") : t("common.enabled"),
+          }),
+      },
+      error: {
+        title: t("work_item_types.enable_disable.toast.error.title"),
+        message: () =>
+          t("work_item_types.enable_disable.toast.error.message", {
+            name: issueTypeDetail?.name,
+            action: isIssueTypeEnabled ? t("common.disabled") : t("common.enabled"),
+          }),
+      },
+    });
+  };
+
+  const handleDeleteWorkItemType = async (issueTypeId: string) => {
+    const issueType = getWorkItemTypeById(issueTypeId);
+    if (!issueType) return;
+    const deleteIssueTypePromise = issueType?.deleteProperty(issueTypeId);
+    if (!deleteIssueTypePromise) return;
+    await deleteIssueTypePromise.finally(() => {
+      setDeleteIssueTypeId(null);
+      setIsDeleteModalOpen(false);
+      const updatedWorkItemTypes = { ...workItemTypes };
+      delete updatedWorkItemTypes[issueTypeId];
+      setValue("project.workitem_types", updatedWorkItemTypes);
+    });
   };
 
   return (
@@ -105,6 +160,8 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
                     "bg-custom-background-100 hover:bg-custom-background-100 border border-custom-border-100 rounded-lg"
                   )
                 }
+                onEnableDisableIssueType={handleEnableDisableWorkItemType}
+                onDeleteIssueTypeIdChange={handleDeleteIssueTypeIdChange}
               />
             ))}
           </div>
@@ -122,6 +179,14 @@ export const ProjectWorkItemTypes = observer((props: TProjectWorkItemTypesProps)
         }}
         getWorkItemTypeById={getWorkItemTypeById}
         getCustomPropertyById={getCustomPropertyById}
+      />
+      <DeleteWorkItemTypeModal
+        issueTypeId={deleteIssueTypeId}
+        isModalOpen={isDeleteModalOpen}
+        handleModalClose={() => setIsDeleteModalOpen(false)}
+        handleEnableDisable={handleEnableDisableWorkItemType}
+        getWorkItemTypeById={getWorkItemTypeById}
+        handleDelete={handleDeleteWorkItemType}
       />
     </>
   );

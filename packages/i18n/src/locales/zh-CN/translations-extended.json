@@ -840,7 +840,24 @@
           "title": "添加自定义属性",
           "description": "您为此工作项类型添加的新属性将显示在此处。"
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "删除此类型",
+        "description": "删除类型可能会导致现有数据丢失。",
+        "primary_button": "是的，删除它",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "工作项类型已成功删除。"
+          },
+          "error": {
+            "title": "错误！",
+            "message": "删除工作项类型失败。请再试一次！"
+          }
+        },
+        "can_disable_warning": "您想改为禁用该类型吗？"
+      },
+      "cant_delete_linked_message": "无法删除此工作项类型，因为它已链接到现有的工作项。"
     },
     "create": {
       "title": "创建工作项类型",

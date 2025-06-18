@@ -841,7 +841,24 @@
           "title": "Dodaj niestandardowe właściwości",
           "description": "Nowe właściwości, które dodasz dla tego typu elementu pracy, pojawią się tutaj."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Usuń ten typ",
+        "description": "Usunięcie typów może prowadzić do utraty istniejących danych.",
+        "primary_button": "Tak, usuń to",
+        "toast": {
+          "success": {
+            "title": "Sukces!",
+            "message": "Typ elementu pracy został pomyślnie usunięty."
+          },
+          "error": {
+            "title": "Błąd!",
+            "message": "Nie udało się usunąć typu elementu pracy. Spróbuj ponownie!"
+          }
+        },
+        "can_disable_warning": "Czy chcesz zamiast tego wyłączyć ten typ?"
+      },
+      "cant_delete_linked_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on powiązany z istniejącymi elementami pracy."
     },
     "create": {
       "title": "Utwórz typ elementu pracy",

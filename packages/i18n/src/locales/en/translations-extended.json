@@ -730,6 +730,7 @@
     "label_lowercase": "work item types",
     "settings": {
       "title": "Work item Types",
+      "cant_delete_linked_message": "Cannot delete this work item type as it is linked to existing work items.",
       "properties": {
         "title": "Custom properties",
         "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",
@@ -910,6 +911,22 @@
         "empty_state": {
           "title": "Add custom properties",
           "description": "New properties you add for this work item type will show here."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Delete this type",
+        "description": "Deletion of types may lead to loss of existing data.",
+        "can_disable_warning": "Do you want to disable the type instead?",
+        "primary_button": "Yes, delete it",
+        "toast": {
+          "success": {
+            "title": "Success!",
+            "message": "Work item type deleted successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to delete work item type. Please try again!"
+          }
         }
       }
     },

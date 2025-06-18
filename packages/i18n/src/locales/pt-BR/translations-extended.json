@@ -841,7 +841,24 @@
           "title": "Adicionar propriedades personalizadas",
           "description": "Novas propriedades que você adicionar para este tipo de item de trabalho aparecerão aqui."
         }
-      }
+      },
+      "item_delete_confirmation": {
+        "title": "Excluir este tipo",
+        "description": "A exclusão de tipos pode levar à perda de dados existentes.",
+        "primary_button": "Sim, excluir",
+        "toast": {
+          "success": {
+            "title": "Sucesso!",
+            "message": "Tipo de item de trabalho excluído com sucesso."
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Falha ao excluir o tipo de item de trabalho. Por favor, tente novamente!"
+          }
+        },
+        "can_disable_warning": "Deseja desativar o tipo em vez disso?"
+      },
+      "cant_delete_linked_message": "Não é possível excluir este tipo de item de trabalho, pois ele está vinculado a itens de trabalho existentes."
     },
     "create": {
       "title": "Criar tipo de item de trabalho",
