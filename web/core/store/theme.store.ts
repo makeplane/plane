@@ -2,6 +2,7 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 
 export interface IThemeStore {
   // observables
+  isAnySidebarDropdownOpen: boolean | undefined;
   sidebarCollapsed: boolean | undefined;
   sidebarPeek: boolean | undefined;
   isExtendedSidebarOpened: boolean | undefined;
@@ -13,6 +14,7 @@ export interface IThemeStore {
   initiativesSidebarCollapsed: boolean | undefined;
   projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
+  toggleAnySidebarDropdown: (open?: boolean) => void;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleSidebarPeek: (peek?: boolean) => void;
   toggleExtendedSidebar: (collapsed?: boolean) => void;
@@ -27,6 +29,7 @@ export interface IThemeStore {
 
 export class ThemeStore implements IThemeStore {
   // observables
+  isAnySidebarDropdownOpen: boolean | undefined = undefined;
   sidebarCollapsed: boolean | undefined = undefined;
   sidebarPeek: boolean | undefined = undefined;
   isExtendedSidebarOpened: boolean | undefined = undefined;
@@ -41,6 +44,7 @@ export class ThemeStore implements IThemeStore {
   constructor() {
     makeObservable(this, {
       // observable
+      isAnySidebarDropdownOpen: observable.ref,
       sidebarCollapsed: observable.ref,
       sidebarPeek: observable.ref,
       isExtendedSidebarOpened: observable.ref,
@@ -52,6 +56,7 @@ export class ThemeStore implements IThemeStore {
       initiativesSidebarCollapsed: observable.ref,
       projectOverviewSidebarCollapsed: observable.ref,
       // action
+      toggleAnySidebarDropdown: action,
       toggleSidebar: action,
       toggleSidebarPeek: action,
       toggleExtendedSidebar: action,
@@ -64,6 +69,14 @@ export class ThemeStore implements IThemeStore {
       toggleProjectOverviewSidebar: action,
     });
   }
+
+  toggleAnySidebarDropdown = (open?: boolean) => {
+    if (open === undefined) {
+      this.isAnySidebarDropdownOpen = !this.isAnySidebarDropdownOpen;
+    } else {
+      this.isAnySidebarDropdownOpen = open;
+    }
+  };
 
   /**
    * Toggle the sidebar collapsed state

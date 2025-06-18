@@ -30,11 +30,11 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        `fixed top-0 h-full z-[19] flex flex-col w-[300px]  transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-md`,
+        `fixed top-0 h-full z-[19] flex flex-col w-[300px]  transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
         {
           "translate-x-0 opacity-100": isExtendedSidebarOpened,
           "-translate-x-[600px] opacity-0 w-0": !isExtendedSidebarOpened,
-          "border border-l-none shadow-lg rounded-tr-md rounded-br-md": sidebarPeek,
+          "border border-l-none rounded-tr-md rounded-br-md": sidebarPeek,
         }
       )}
       style={{

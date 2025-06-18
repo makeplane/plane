@@ -12,7 +12,14 @@ import { AppSidebar } from "./sidebar";
 
 export const ProjectAppSidebar: FC = observer(() => {
   // store hooks
-  const { sidebarCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek, isExtendedSidebarOpened } = useAppTheme();
+  const {
+    sidebarCollapsed,
+    toggleSidebar,
+    sidebarPeek,
+    toggleSidebarPeek,
+    isExtendedSidebarOpened,
+    isAnySidebarDropdownOpen,
+  } = useAppTheme();
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", 250);
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? 250);
@@ -42,6 +49,7 @@ export const ProjectAppSidebar: FC = observer(() => {
           </>
         }
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
+        isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
       >
         <AppSidebar />
       </ResizableSidebar>

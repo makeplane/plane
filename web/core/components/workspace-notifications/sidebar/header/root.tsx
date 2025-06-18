@@ -9,6 +9,10 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 import { SidebarHamburgerToggle } from "@/components/core";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
+// hooks
+import { useAppTheme } from "@/hooks/store";
+// plane web components
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;
@@ -17,14 +21,19 @@ type TNotificationSidebarHeader = {
 export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
+  const { sidebarCollapsed } = useAppTheme();
 
   if (!workspaceSlug) return <></>;
   return (
     <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
-        <div className="block bg-custom-sidebar-background-100 md:hidden">
-          <SidebarHamburgerToggle />
-        </div>
+        {sidebarCollapsed && <SidebarHamburgerToggle />}
+
+        {isSidebarToggleVisible() && (
+          <div className="block bg-custom-sidebar-background-100 md:hidden">
+            <SidebarHamburgerToggle />
+          </div>
+        )}
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
             type="text"

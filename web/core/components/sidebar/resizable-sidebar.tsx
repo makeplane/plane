@@ -22,12 +22,13 @@ interface ResizableSidebarProps {
   children?: ReactElement;
   extendedSidebar?: ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
+  isAnySidebarDropdownOpen?: boolean;
 }
 
 export function ResizableSidebar({
   showPeek = false,
   togglePeek,
-  peekDuration = 1000,
+  peekDuration = 500,
   isCollapsed = false,
   toggleCollapsed: toggleCollapsedProp,
   onCollapsedChange,
@@ -40,6 +41,7 @@ export function ResizableSidebar({
   children,
   extendedSidebar,
   isAnyExtendedSidebarExpanded = false,
+  isAnySidebarDropdownOpen = false,
 }: ResizableSidebarProps) {
   // states
   const [isResizing, setIsResizing] = useState(false);
@@ -109,12 +111,12 @@ export function ResizableSidebar({
   }, [isCollapsed, showPeek]);
 
   const handlePeekLeave = useCallback(() => {
-    if (isCollapsed && !isAnyExtendedSidebarExpanded) {
+    if (isCollapsed && !isAnyExtendedSidebarExpanded && !isAnySidebarDropdownOpen) {
       peekTimeoutRef.current = setTimeout(() => {
         setShowPeek(false);
       }, peekDuration);
     }
-  }, [isCollapsed, peekDuration, setShowPeek, isAnyExtendedSidebarExpanded]);
+  }, [isCollapsed, peekDuration, setShowPeek, isAnyExtendedSidebarExpanded, isAnySidebarDropdownOpen]);
 
   // Set up event listeners for resizing
   useEffect(() => {
@@ -142,6 +144,18 @@ export function ResizableSidebar({
     },
     []
   );
+
+  useEffect(() => {
+    if (!isAnySidebarDropdownOpen) {
+      handlePeekLeave();
+    }
+  }, [isAnySidebarDropdownOpen]);
+
+  useEffect(() => {
+    if (!isAnyExtendedSidebarExpanded) {
+      handlePeekLeave();
+    }
+  }, [isAnyExtendedSidebarExpanded]);
 
   // Reset peek when sidebar is expanded
   useEffect(() => {
@@ -184,8 +198,7 @@ export function ResizableSidebar({
         <aside
           className={cn(
             "group/sidebar h-full w-full bg-custom-background-100 overflow-hidden relative flex flex-col pt-4",
-            isAnyExtendedSidebarExpanded && "rounded-none",
-            !isResizing && "border-r border-custom-sidebar-border-200 "
+            isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
           {children}
@@ -211,7 +224,7 @@ export function ResizableSidebar({
       {isCollapsed && (
         <div
           className={cn(
-            "fixed top-0 left-0 w-6 h-full z-50 bg-transparent",
+            "fixed top-0 left-0 w-1 h-full z-50 bg-transparent",
             "transition-opacity duration-200",
             isHoveringTrigger ? "opacity-100" : "opacity-0"
           )}
@@ -225,7 +238,7 @@ export function ResizableSidebar({
       {/* Peek View */}
       <div
         className={cn(
-          "fixed left-0 z-30 bg-custom-background-100 shadow-xl",
+          "fixed left-0 z-30 bg-custom-background-100 shadow-sm",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed && showPeek ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0",
           "pointer-events-none",
@@ -245,9 +258,9 @@ export function ResizableSidebar({
         <aside
           className={cn(
             "group/sidebar h-full w-full bg-custom-background-100 overflow-hidden relative flex flex-col z-20 pt-4",
-            "self-center border-y shadow-lg rounded-md rounded-tl-none rounded-bl-none",
+            "self-center border-y border-r border-custom-sidebar-border-200 rounded-md rounded-tl-none rounded-bl-none",
             isAnyExtendedSidebarExpanded && "rounded-none",
-            !isResizing && "border-r border-custom-sidebar-border-200 "
+            !isResizing && !isAnyExtendedSidebarExpanded && "border-r"
           )}
         >
           {children}
@@ -256,7 +269,7 @@ export function ResizableSidebar({
             className={cn(
               "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
               !isResizing && "hover:bg-custom-background-90",
-              isResizing && "w-1.5 bg-custom-background-80",
+              isResizing && "bg-custom-background-80",
               "top-0 right-0"
             )}
             // onDoubleClick toggle sidebar
