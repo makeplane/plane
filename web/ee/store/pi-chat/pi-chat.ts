@@ -46,7 +46,7 @@ export interface IPiChatStore {
   fetchChatById: (chatId: string) => void;
   getAnswer: (chatId: string, query: string, user_id: string) => Promise<string | undefined>;
   getTemplates: () => Promise<TTemplate[]>;
-  fetchUserThreads: (userId: string) => void;
+  fetchUserThreads: (userId: string, workspaceId: string) => void;
   searchCallback: (workspace: string, query: string) => Promise<IFormattedValue>;
   sendFeedback: (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
   setFocus: (chatId: string, entityType: string, entityIdentifier: string) => void;
@@ -362,8 +362,8 @@ export class PiChatStore implements IPiChatStore {
     }
   };
 
-  fetchUserThreads = async (userId: string) => {
-    const response = await this.piChatService.getUserThreads(userId);
+  fetchUserThreads = async (userId: string, workspaceId: string) => {
+    const response = await this.piChatService.getUserThreads(userId, workspaceId);
     runInAction(() => {
       response.results.forEach((chat) => {
         update(this.chatMap, chat.chat_id, (prev) => ({

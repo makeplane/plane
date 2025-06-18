@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { useUser } from "@/hooks/store";
+import { useUser, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
@@ -20,8 +20,9 @@ type TProps = {
 };
 export const PiChatBase = observer((props: TProps) => {
   const { isFullScreen: isFullScreenProp = false, onlyShowInput = false } = props;
+  // states
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
-
+  const [isInitialized, setIsInitialized] = useState(false);
   // store hooks
   const {
     activeChatId,
@@ -36,14 +37,15 @@ export const PiChatBase = observer((props: TProps) => {
   } = usePiChat();
   const { isMobile } = usePlatformOS();
   const { data: currentUser } = useUser();
+  const { getWorkspaceBySlug } = useWorkspace();
   // query params
+  const { workspaceSlug } = useParams();
   const router = useAppRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
-  const chat_id = searchParams.get("chat_id");
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // derived states
+  const chat_id = searchParams.get("chat_id");
   const isFullScreen = pathName.includes("pi-chat") || isFullScreenProp;
 
   useSWR(currentUser ? `PI_AI_MODELS` : null, currentUser ? () => fetchModels() : null, {
@@ -52,8 +54,10 @@ export const PiChatBase = observer((props: TProps) => {
     errorRetryCount: 0,
   });
   useSWR(
-    currentUser ? `PI_USER_THREADS_${currentUser?.id}` : null,
-    currentUser ? () => fetchUserThreads(currentUser?.id) : null,
+    currentUser && workspaceSlug ? `PI_USER_THREADS_${currentUser?.id}_${workspaceSlug}` : null,
+    currentUser && workspaceSlug
+      ? () => fetchUserThreads(currentUser?.id, getWorkspaceBySlug(workspaceSlug as string)?.id || "")
+      : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
