@@ -104,6 +104,37 @@
       "finish_after": "Kończy po"
     }
   },
+
+  "pages": {
+    "link_pages": "Połącz strony",
+    "show_wiki_pages": "Pokaż strony wiki",
+    "link_pages_to": "Połącz strony do",
+    "linked_pages": "Połączone strony",
+    "no_description": "Ta strona jest pusta. Napisz coś tutaj i zobacz to jako ten placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Strony zaktualizowane",
+          "message": "Strony zaktualizowane pomyślnie"
+        },
+        "error": {
+          "title": "Strony nie zaktualizowane",
+          "message": "Nie udało się zaktualizować stron."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Strona usunięta",
+          "message": "Strona została pomyślnie usunięta"
+        },
+        "error": {
+          "title": "Strona nie usunięta",
+          "message": "Nie udało się usunąć strony."
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Połączenia"

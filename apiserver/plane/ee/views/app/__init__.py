@@ -7,6 +7,8 @@ from plane.ee.views.app.issue import (
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
     IssueConvertEndpoint,
+    IssuePageViewSet,
+    PageSearchViewSet,
 )
 from plane.ee.views.app.assets import DuplicateAssetEndpoint
 from plane.ee.views.app.intake import ProjectInTakePublishViewSet

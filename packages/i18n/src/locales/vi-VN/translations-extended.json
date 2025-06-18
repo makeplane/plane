@@ -94,6 +94,37 @@
       "finish_after": "Kết thúc Sau"
     }
   },
+
+  "pages": {
+    "link_pages": "Kết nối trang",
+    "show_wiki_pages": "Hiển thị trang Wiki",
+    "link_pages_to": "Kết nối trang đến",
+    "linked_pages": "Trang đã kết nối",
+    "no_description": "Trang này trống. Viết điều gì đó và xem nó ở đây như thế này",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Trang đã được cập nhật",
+          "message": "Trang đã được cập nhật thành công"
+        },
+        "error": {
+          "title": "Trang không được cập nhật",
+          "message": "Trang không được cập nhật"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Trang đã được xóa",
+          "message": "Trang đã được xóa thành công"
+        },
+        "error": {
+          "title": "Trang không được xóa",
+          "message": "Trang không được xóa"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Kết nối"

@@ -103,6 +103,37 @@
       "finish_after": "終了後"
     }
   },
+
+  "pages": {
+    "link_pages": "ページを接続",
+    "show_wiki_pages": "Wikiページを表示",
+    "link_pages_to": "ページを接続",
+    "linked_pages": "リンクされたページ",
+    "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "ページが更新されました",
+          "message": "ページが正常に更新されました"
+        },
+        "error": {
+          "title": "ページが更新されませんでした",
+          "message": "ページを更新できませんでした"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "ページが削除されました",
+          "message": "ページが正常に削除されました"
+        },
+        "error": {
+          "title": "ページが削除されませんでした",
+          "message": "ページを削除できませんでした"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "接続"

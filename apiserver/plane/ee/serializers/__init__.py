@@ -1,6 +1,6 @@
 from plane.app.serializers import BaseSerializer, ProjectLiteSerializer, IssueSerializer
 
-from .app.issue import IssueLiteSerializer
+from .app.issue import IssueLiteSerializer, WorkItemPageSerializer
 from .app.active_cycle import WorkspaceActiveCycleSerializer
 from .app.page import (
     WorkspacePageSerializer,

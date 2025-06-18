@@ -103,6 +103,37 @@
       "finish_after": "结束于之后"
     }
   },
+
+  "pages": {
+    "link_pages": "连接页面",
+    "show_wiki_pages": "显示 Wiki 页面",
+    "link_pages_to": "连接页面到",
+    "linked_pages": "连接的页面",
+    "no_description": "此页面为空。在此输入一些内容，并在此处查看此占位符",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "页面已更新",
+          "message": "页面已成功更新"
+        },
+        "error": {
+          "title": "页面未更新",
+          "message": "页面无法更新"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "页面已删除",
+          "message": "页面已成功删除"
+        },
+        "error": {
+          "title": "页面未删除",
+          "message": "页面无法删除"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "连接"

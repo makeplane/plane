@@ -104,6 +104,37 @@
       "finish_after": "Selesai Setelah"
     }
   },
+
+  "pages": {
+    "link_pages": "Menghubungkan halaman",
+    "show_wiki_pages": "Tampilkan halaman wiki",
+    "link_pages_to": "Menghubungkan halaman ke",
+    "linked_pages": "Halaman yang terhubung",
+    "no_description": "Halaman ini kosong. Tulis sesuatu di sini dan lihatnya di sini sebagai placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Halaman diperbarui",
+          "message": "Halaman berhasil diperbarui"
+        },
+        "error": {
+          "title": "Halaman tidak diperbarui",
+          "message": "Halaman tidak dapat diperbarui"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Halaman dihapus",
+          "message": "Halaman berhasil dihapus"
+        },
+        "error": {
+          "title": "Halaman tidak dihapus",
+          "message": "Halaman tidak dapat dihapus"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Koneksi"

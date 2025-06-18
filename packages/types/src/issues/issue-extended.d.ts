@@ -4,4 +4,4 @@ export type TWorkItemExtended = {
   initiative_ids?: string[];
 };
 
-export type TWorkItemWidgetsExtended = "customer_requests";
+export type TWorkItemWidgetsExtended = "customer_requests" | "pages";

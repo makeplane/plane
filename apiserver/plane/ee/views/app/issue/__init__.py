@@ -5,3 +5,4 @@ from .bulk_operations import (
     BulkSubscribeIssuesEndpoint,
 )
 from .convert import IssueConvertEndpoint
+from .issue_page import IssuePageViewSet, PageSearchViewSet

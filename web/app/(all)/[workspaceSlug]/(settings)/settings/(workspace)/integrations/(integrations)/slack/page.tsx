@@ -99,12 +99,6 @@ const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ s
 
   return (
     <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
-      <div className="flex-shrink-0 text-sm text-custom-text-300 hover:text-custom-text-200 hover:underline font-medium">
-        <Link className="flex items-center gap-2" href={`/${workspaceSlug?.toString()}/settings/integrations`}>
-          <ArrowLeft size={16} />
-          {t("integrations.back_to_integrations")}
-        </Link>
-      </div>
       {externalApiTokenIsLoading ? (
         <Loader className="w-full h-full flex flex-col gap-8">
           <Loader.Item width="100%" height="60px" />

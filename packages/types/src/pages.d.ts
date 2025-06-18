@@ -114,3 +114,11 @@ export type TPageDragPayload = {
   id: string;
   parentId: string | null;
 };
+
+export type TIssuePage = Pick<TPage, "name" | "logo_props"> & {
+  id: string;
+  is_global: boolean;
+  description_stripped: string;
+  created_by?: string;
+  updated_at?: string;
+};

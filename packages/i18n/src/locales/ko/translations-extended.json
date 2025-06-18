@@ -104,6 +104,37 @@
       "finish_after": "완료 이후"
     }
   },
+
+  "pages": {
+    "link_pages": "페이지 연결",
+    "show_wiki_pages": "위키 페이지 표시",
+    "link_pages_to": "페이지 연결",
+    "linked_pages": "연결된 페이지",
+    "no_description": "이 페이지는 비어 있습니다. 여기에 무언가를 작성하고 이 플레이스홀더로 표시하세요.",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "페이지가 업데이트되었습니다",
+          "message": "페이지가 성공적으로 업데이트되었습니다."
+        },
+        "error": {
+          "title": "페이지가 업데이트되지 않았습니다",
+          "message": "페이지를 업데이트할 수 없습니다."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "페이지가 삭제되었습니다",
+          "message": "페이지가 성공적으로 삭제되었습니다."
+        },
+        "error": {
+          "title": "페이지가 삭제되지 않았습니다",
+          "message": "페이지를 삭제할 수 없습니다."
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "커넥션"

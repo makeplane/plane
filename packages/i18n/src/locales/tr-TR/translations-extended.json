@@ -110,6 +110,36 @@
       }
     }
   },
+  "pages": {
+    "link_pages": "Sayfaları bağla",
+    "show_wiki_pages": "Wiki sayfalarını görüntüle",
+    "link_pages_to": "Sayfaları bağla",
+    "linked_pages": "Bağlı sayfalar",
+    "no_description": "Bu sayfa boş. Buraya bir şey yazın ve bunu buradaki yer tutucu olarak görün.",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Sayfalar güncellendi",
+          "message": "Sayfalar başarıyla güncellendi"
+        },
+        "error": {
+          "title": "Sayfalar güncellenemedi",
+          "message": "Sayfalar güncellenemedi"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Sayfa silindi",
+          "message": "Sayfa başarıyla silindi"
+        },
+        "error": {
+          "title": "Sayfa silinemedi",
+          "message": "Sayfa silinemedi"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Bağlantılar"

@@ -83,6 +83,7 @@ export interface IIssueDetail
   isWorkItemToEpicModalOpen: string | null;
   isEpicToWorkItemModalOpen: string | null;
   isConversionWarningModalOpen: string | null;
+  isPagesModalOpen: string | null;
   // computed
   isAnyModalOpen: boolean;
   // helper actions
@@ -106,6 +107,7 @@ export interface IIssueDetail
   toggleWorkItemToEpicModal: (value: string | null) => void;
   toggleEpicToWorkItemModal: (value: string | null) => void;
   toggleConversionWarningModal: (value: string | null) => void;
+  togglePagesModal: (value: string | null) => void;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -150,6 +152,7 @@ export class IssueDetail implements IIssueDetail {
   isWorkItemToEpicModalOpen: string | null = null;
   isEpicToWorkItemModalOpen: string | null = null;
   isConversionWarningModalOpen: string | null = null;
+  isPagesModalOpen: string | null = null;
   // service type
   serviceType: TIssueServiceType;
   // store
@@ -185,6 +188,7 @@ export class IssueDetail implements IIssueDetail {
       isWorkItemToEpicModalOpen: observable.ref,
       isEpicToWorkItemModalOpen: observable.ref,
       isConversionWarningModalOpen: observable.ref,
+      isPagesModalOpen: observable.ref,
       // computed
       isAnyModalOpen: computed,
       // action
@@ -206,6 +210,7 @@ export class IssueDetail implements IIssueDetail {
       setRelationKey: action,
       setIssueCrudOperationState: action,
       toggleConversionWarningModal: action,
+      togglePagesModal: action,
     });
 
     // store
@@ -236,7 +241,8 @@ export class IssueDetail implements IIssueDetail {
       !!this.attachmentDeleteModalId ||
       !!this.isWorkItemToEpicModalOpen ||
       !!this.isEpicToWorkItemModalOpen ||
-      !!this.isConversionWarningModalOpen
+      !!this.isConversionWarningModalOpen ||
+      !!this.isPagesModalOpen
     );
   }
 
@@ -272,6 +278,7 @@ export class IssueDetail implements IIssueDetail {
   toggleWorkItemToEpicModal = (value: string | null) => (this.isWorkItemToEpicModalOpen = value);
   toggleEpicToWorkItemModal = (value: string | null) => (this.isEpicToWorkItemModalOpen = value);
   toggleConversionWarningModal = (value: string | null) => (this.isConversionWarningModalOpen = value);
+  togglePagesModal = (value: string | null) => (this.isPagesModalOpen = value);
   // issue
   fetchIssue = async (
     workspaceSlug: string,

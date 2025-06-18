@@ -1,5 +1,5 @@
 // types
-import { TDocumentPayload, TPage, TPageEmbedType } from "@plane/types";
+import { TDocumentPayload, TIssuePage, TPage, TPageEmbedType } from "@plane/types";
 // helpers
 import { API_BASE_URL  } from "@plane/constants";
 // services
@@ -167,6 +167,20 @@ export class WorkspacePageService extends APIService {
 
   async fetchParentPages(workspaceSlug: string, pageId: string): Promise<TPage[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/pages/${pageId}/parent-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchPages(
+    workspaceSlug: string,
+    projectId: string,
+    payload: { is_global: boolean; search: string }
+  ): Promise<TIssuePage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages-search/`, {
+      params: payload,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

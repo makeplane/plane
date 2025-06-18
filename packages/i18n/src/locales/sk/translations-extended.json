@@ -104,6 +104,36 @@
       "finish_after": "Končí po"
     }
   },
+
+  "pages": {
+    "link_pages": "Pripojenie stránok",
+    "show_wiki_pages": "Zobraziť Wiki stránky",
+    "link_pages_to": "Pripojenie stránok k",
+    "linked_pages": "Pripojené stránky",
+    "no_description": "Táto stránka je prázdna. Napíšte niečo sem a pozrite si, ako sa zobrazí tu ako tento placeholder",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Stránky aktualizované",
+          "message": "Stránky boli úspešne aktualizované"
+        },
+        "error": {
+          "title": "Stránky neaktualizované",
+          "message": "Stránky sa nepodarilo aktualizovať"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Stránka odstránená",
+          "message": "Stránka bola úspešne odstránená"
+        },
+        "error": {
+          "title": "Stránka neodstránená",
+          "message": "Stránku sa nepodarilo odstrániť"
+        }
+      }
+    }
+  },
   "profile": {
     "actions": {
       "connections": "Pripojenia"

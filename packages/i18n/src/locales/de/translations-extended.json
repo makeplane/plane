@@ -104,6 +104,37 @@
       "finish_after": "Endet Nach"
     }
   },
+
+  "pages": {
+    "link_pages": "Seiten verbinden",
+    "show_wiki_pages": "Wiki-Seiten anzeigen",
+    "link_pages_to": "Seiten verbinden zu",
+    "linked_pages": "Verlinkte Seiten",
+    "no_description": "Diese Seite ist leer. Schreiben Sie etwas hinein und sehen Sie es hier als dieser Platzhalter",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Seiten aktualisiert",
+          "message": "Seiten wurden erfolgreich aktualisiert"
+        },
+        "error": {
+          "title": "Seiten nicht aktualisiert",
+          "message": "Seiten konnten nicht aktualisiert werden"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Seite entfernt",
+          "message": "Seite wurde erfolgreich entfernt"
+        },
+        "error": {
+          "title": "Seite nicht entfernt",
+          "message": "Seite konnte nicht entfernt werden"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Verbindungen"

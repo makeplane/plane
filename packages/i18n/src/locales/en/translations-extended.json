@@ -30,6 +30,35 @@
         "customer": "Customer",
         "requests": "Customer request"
       }
+    },
+    "pages":{
+      "link_pages": "Link pages",
+      "show_wiki_pages": "Show Wiki pages",
+      "link_pages_to": "Link pages to",
+      "linked_pages": "Linked pages",
+      "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
+      "toasts": {
+        "link":{
+          "success": {
+            "title": "Pages updated",
+            "message": "Pages updated successfully"
+          },
+          "error":{
+            "title": "Pages update failed",
+            "message": "Pages update failed"
+          }
+        },  
+        "remove":{
+          "success": {
+            "title": "Page removed",
+            "message": "Page removed successfully"
+          },
+          "error":{
+            "title": "Page removal failed",
+            "message": "Page removal failed"
+          }
+        }
+      }
     }
   },
   "updates": {

@@ -103,6 +103,37 @@
       "finish_after": "Termina después"
     }
   },
+
+  "pages": {
+    "link_pages": "Enlazar páginas",
+    "show_wiki_pages": "Mostrar páginas de wiki",
+    "link_pages_to": "Enlazar páginas a",
+    "linked_pages": "Páginas enlazadas",
+    "no_description": "Esta página está vacía. Escriba algo aquí y véalo como este marcador de posición",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Páginas actualizadas",
+          "message": "Páginas actualizadas con éxito"
+        },
+        "error": {
+          "title": "Páginas no actualizadas",
+          "message": "No se pudieron actualizar las páginas"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Página eliminada",
+          "message": "Página eliminada con éxito"
+        },
+        "error": {
+          "title": "Página no eliminada",
+          "message": "No se pudo eliminar la página"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Conexiones"

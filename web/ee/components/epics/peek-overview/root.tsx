@@ -18,6 +18,7 @@ import { TIssueOperations } from "@/components/issues";
 // hooks
 import { useEventTracker, useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web constants
+import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { EpicView } from "./view";
 
 export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
@@ -33,6 +34,7 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
     fetchActivities,
   } = useIssueDetail(EIssueServiceType.EPICS);
   const { captureIssueEvent } = useEventTracker();
+  useWorkItemProperties(peekIssue?.projectId, peekIssue?.workspaceSlug, peekIssue?.issueId, EIssueServiceType.EPICS);
   // state
   const [error, setError] = useState(false);
 

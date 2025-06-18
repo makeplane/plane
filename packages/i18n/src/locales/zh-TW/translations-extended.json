@@ -104,6 +104,37 @@
       "finish_after": "在之後完成"
     }
   },
+
+  "pages": {
+    "link_pages": "連接頁面",
+    "show_wiki_pages": "顯示 Wiki 頁面",
+    "link_pages_to": "連接頁面到",
+    "linked_pages": "連接的頁面",
+    "no_description": "此頁面為空。在此輸入一些內容，並在此處查看此佔位符",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "頁面已更新",
+          "message": "頁面已成功更新"
+        },
+        "error": {
+          "title": "頁面未更新",
+          "message": "頁面無法更新"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "頁面已刪除",
+          "message": "頁面已成功刪除"
+        },
+        "error": {
+          "title": "頁面未刪除",
+          "message": "頁面無法刪除"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "連接"

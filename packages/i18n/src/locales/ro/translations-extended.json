@@ -104,6 +104,36 @@
       "finish_after": "Termină după"
     }
   },
+  "pages": {
+    "link_pages": "Conectează pagini",
+    "show_wiki_pages": "Afișează pagini Wiki",
+    "link_pages_to": "Conectează pagini la",
+    "linked_pages": "Pagini conectate",
+    "no_description": "Această pagină este goală. Scrie ceva aici și vezi-l aici ca acest spațiu rezervat",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Pagini actualizate",
+          "message": "Pagini actualizate cu succes"
+        },
+        "error": {
+          "title": "Pagini năo actualizate",
+          "message": "Pagini năo pot fi actualizate"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Pagini șterse",
+          "message": "Pagini șterse cu succes"
+        },
+        "error": {
+          "title": "Pagini năo șterse",
+          "message": "Pagini năo pot fi șterse"
+        }
+      }
+    }
+  },
+
   "profile": {
     "actions": {
       "connections": "Conexiuni"

@@ -104,6 +104,37 @@
       "finish_after": "Končí po"
     }
   },
+
+  "pages": {
+    "link_pages": "Propojit stránky", 
+    "show_wiki_pages": "Zobrazit wikipedií",
+    "link_pages_to": "Propojit stránky k",
+    "linked_pages": "Propojené stránky",
+    "no_description": "Tato stránka je prázdná. Napište něco do ní a uvidíte to zde jako tento placeholder",
+    "toasts": {
+      "link":  {
+        "success": {
+          "title": "Stránky aktualizovány",
+          "message": "Stránky byly úspěšně aktualizovány"
+        },
+        "error": {
+          "title": "Stránky nebyly aktualizovány",
+          "message": "Nepodařilo se aktualizovat stránky"
+        }
+      },
+      "remove": {
+        "success": {  
+          "title": "Stránka odstraněna",
+          "message": "Stránka byla úspěšně odstraněna"
+        },
+        "error": {
+          "title": "Stránka nebyla odstraněna",
+          "message": "Nepodařilo se odstranit stránku"
+        }
+      }
+    }
+  },
+  
   "profile": {
     "actions": {
       "connections": "Spojení"

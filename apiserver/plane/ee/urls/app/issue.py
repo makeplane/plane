@@ -7,7 +7,10 @@ from plane.ee.views.app import (
     IssueWorkLogsEndpoint,
     IssueTotalWorkLogEndpoint,
     IssueConvertEndpoint,
+    IssuePageViewSet,
+    PageSearchViewSet,
 )
+
 
 urlpatterns = [
     path(
@@ -47,4 +50,23 @@ urlpatterns = [
         name="issue-conversion",
     ),
     # End Issue Convertion Endpoint
+    # Issue Page Endpoint
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/pages/",
+        IssuePageViewSet.as_view(),
+        name="issue-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/pages/<uuid:page_id>/",
+        IssuePageViewSet.as_view(),
+        name="issue-page",
+    ),
+    # End Issue Page Endpoint
+    # Page List Endpoint
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages-search/",
+        PageSearchViewSet.as_view(),
+        name="issue-page-search",
+    ),
+    # End Page List Endpoint
 ]
