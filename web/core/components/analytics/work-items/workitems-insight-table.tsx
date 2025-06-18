@@ -52,7 +52,6 @@ const WorkItemsInsightTable = observer(() => {
           ...(selectedCycle ? { cycle_id: selectedCycle } : {}),
           ...(selectedModule ? { module_id: selectedModule } : {}),
           ...(isEpic ? { epic: true } : {}),
-          ...(isEpic ? { epic: true } : {}),
         },
         isPeekView
       )
