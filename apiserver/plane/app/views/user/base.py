@@ -5,11 +5,10 @@ import uuid
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
-
+from django.utils.decorators import method_decorator
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
@@ -38,9 +37,7 @@ from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
+from plane.authentication.session import BaseSessionAuthentication
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
@@ -196,15 +193,19 @@ class UserEndpoint(BaseViewSet):
 
 
 class UserSessionEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
+
+    # Authentication classes
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get(self, request):
+        # If the user is authenticated, return the user data
         if request.user.is_authenticated:
             user = User.objects.get(pk=request.user.id)
             serializer = UserMeSerializer(user)
             data = {"is_authenticated": True}
             data["user"] = serializer.data
             return Response(data, status=status.HTTP_200_OK)
+        # If the user is not authenticated, return False
         else:
             return Response({"is_authenticated": False}, status=status.HTTP_200_OK)
 

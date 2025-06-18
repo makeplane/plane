@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from plane.db.models import User, Workspace, FileAsset
 from plane.db.models.api import APIToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @pytest.fixture(scope="session")
@@ -111,6 +112,18 @@ def session_client(api_client, create_user):
     api_client.force_authenticate(user=create_user)
     return api_client
 
+
+@pytest.fixture
+def jwt_client(api_client, create_user):
+    """Return a JWT authenticated API client for app API testing, which is what plane.graphql uses"""
+
+    # Get JWT tokens for the user
+    refresh = RefreshToken.for_user(create_user)
+    access_token = str(refresh.access_token)
+
+    # Set the Authorization header with the JWT token
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+    return api_client
 
 @pytest.fixture
 def create_bot_user(db):
