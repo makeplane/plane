@@ -22,9 +22,9 @@ import {
 } from "@plane/ui";
 // types
 // components
+import { getPageName, getTabIndex } from "@plane/utils";
 import { IssueIdentifier } from "@/ce/components/issues/issue-details/issue-identifier";
-import { getPageName } from "@/helpers/page.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services

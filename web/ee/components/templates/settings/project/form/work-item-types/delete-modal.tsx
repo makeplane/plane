@@ -5,8 +5,8 @@ import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IIssueType } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type TProps = {
   issueTypeId: string | null;
