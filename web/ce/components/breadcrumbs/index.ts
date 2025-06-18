@@ -1,3 +1,3 @@
 export * from "./common";
-export * from "./feature";
+export * from "./project-feature";
 export * from "./project";

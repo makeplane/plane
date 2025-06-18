@@ -4,7 +4,7 @@ import { FC } from "react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
 // local components
-import { ProjectFeatureBreadcrumb } from "./feature";
+import { ProjectFeatureBreadcrumb } from "./project-feature";
 import { ProjectBreadcrumb } from "./project";
 
 type TCommonProjectBreadcrumbProps = {
