@@ -44,7 +44,7 @@ export interface IJiraResponseUser {
   accountId: string;
   accountType: string;
   emailAddress: string;
-  avatarUrls: AvatarUrls;
+  avatarUrls: IJiraResponseAvatarUrls;
   displayName: string;
   active: boolean;
   locale: string;

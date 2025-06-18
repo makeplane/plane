@@ -1,6 +1,6 @@
 import { Mail, MessageCircle } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { DiscordIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 

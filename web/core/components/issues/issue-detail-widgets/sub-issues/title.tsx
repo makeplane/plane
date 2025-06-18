@@ -3,9 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from "react";
 // types
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EIssuesStoreType, EDraftIssuePaginationType } from "@plane/constants";
+import { EIssueFilterType, EDraftIssuePaginationType } from "@plane/constants";
 import {
+  EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

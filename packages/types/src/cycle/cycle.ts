@@ -1,4 +1,5 @@
-import type { TIssue, IIssueFilterOptions } from "@plane/types";
+import type { TIssue } from "../issues/issue";
+import type { IIssueFilterOptions } from "../view-props";
 
 export type TCycleGroups = "current" | "upcoming" | "completed" | "draft";
 

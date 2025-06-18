@@ -2,7 +2,7 @@ export * from "./issue_activity";
 export * from "./issue_comment";
 export * from "./issue_comment_reaction";
 
-import { TIssuePriorities } from "../issues";
+import { TIssuePriorities } from "../../issues";
 
 // root types
 export type TIssueActivityWorkspaceDetail = {

@@ -39,6 +39,7 @@
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
     "mobx": "^6.10.0",
+    "mobx-react-lite": "^4.1.0",
     "next": "14.2.30",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
