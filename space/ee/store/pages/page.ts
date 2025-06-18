@@ -2,16 +2,20 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { SitesPagePublishService } from "@plane/services";
-import { TLogoProps, TPublicPageResponse } from "@plane/types";
+import { IStateLite, TLogoProps, TPublicPageResponse } from "@plane/types";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
 import { IIssue } from "@/types/issue";
 
+export type TIssueEmbed = IIssue & {
+  state_detail?: IStateLite;
+};
+
 export interface IPage extends TPublicPageResponse {
   // observables
   issueEmbedError: boolean;
-  issueEmbedData: IIssue[] | undefined;
+  issueEmbedData: TIssueEmbed[] | undefined;
   // additional properties for subpages
   archived_at: string | null | undefined;
   deleted_at: Date | undefined;
@@ -22,16 +26,16 @@ export interface IPage extends TPublicPageResponse {
   asJSON: TPublicPageResponse | undefined;
   areIssueEmbedsLoaded: boolean;
   // helpers
-  getIssueEmbedDetails: (issueID: string) => IIssue | undefined;
+  getIssueEmbedDetails: (issueID: string) => TIssueEmbed | undefined;
   // actions
-  fetchPageIssueEmbeds: (anchor: string) => Promise<IIssue[]>;
+  fetchPageIssueEmbeds: (anchor: string) => Promise<TIssueEmbed[]>;
   mutateProperties: (data: Partial<TPublicPageResponse>, shouldUpdateName?: boolean) => void;
 }
 
 export class Page implements IPage {
   // observables
   issueEmbedError: boolean = false;
-  issueEmbedData: IIssue[] | undefined = undefined;
+  issueEmbedData: TIssueEmbed[] | undefined = undefined;
   // page properties
   created_at: Date | undefined;
   description_html: string | undefined;

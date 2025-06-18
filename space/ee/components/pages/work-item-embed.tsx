@@ -5,7 +5,7 @@ import { Loader } from "@plane/ui";
 // components
 import { IssueBlockDate, IssueBlockPriority, IssueBlockState } from "@/components/issues";
 // hooks
-import { usePublish, useStates } from "@/hooks/store";
+import { usePublish } from "@/hooks/store";
 // plane web hooks
 import { usePage } from "@/plane-web/hooks/store";
 
@@ -14,19 +14,18 @@ type Props = {
   issueId: string;
 };
 
-export const IssueEmbedCard: React.FC<Props> = observer((props) => {
+export const WorkItemEmbedCard: React.FC<Props> = observer((props) => {
   const { anchor, issueId } = props;
   // store hooks
   const pageDetails = usePage(anchor);
   const { project_details } = usePublish(anchor);
-  const { getStateById } = useStates();
 
   if (!pageDetails) return null;
 
   // derived values
   const { areIssueEmbedsLoaded, getIssueEmbedDetails, issueEmbedError } = pageDetails;
   const issueDetails = getIssueEmbedDetails(issueId);
-  const stateDetails = issueDetails?.state_id ? getStateById(issueDetails?.state_id) : undefined;
+  const stateDetails = issueDetails?.state_detail;
 
   if (!areIssueEmbedsLoaded && !issueEmbedError)
     return (
@@ -62,21 +61,21 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
       </h5>
       <h4 className="!text-sm !font-medium !mt-1 line-clamp-2 break-words">{issueDetails?.name}</h4>
       <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">
-        {/* priority */}
-        {issueDetails?.priority && (
-          <div className="flex-shrink-0">
-            <IssueBlockPriority priority={issueDetails?.priority} />
-          </div>
-        )}
         {/* state */}
         {stateDetails && (
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 h-5">
             <IssueBlockState stateId={stateDetails.id} />
+          </div>
+        )}
+        {/* priority */}
+        {issueDetails?.priority && (
+          <div className="flex-shrink-0 h-5">
+            <IssueBlockPriority priority={issueDetails?.priority} />
           </div>
         )}
         {/* due date */}
         {issueDetails?.target_date && (
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 h-5">
             <IssueBlockDate due_date={issueDetails?.target_date} stateId={stateDetails?.id} />
           </div>
         )}
