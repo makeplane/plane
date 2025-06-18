@@ -1,11 +1,11 @@
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
 from django_opensearch_dsl.registries import registry
 
 from plane.db.models import Page, Project, WorkspaceMember, ProjectMember
 
-from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
+from .base import BaseDocument, JsonKeywordField, KnnVectorField, edge_ngram_analyzer
 
 
 @registry.register_document
@@ -20,10 +20,39 @@ class PageDocument(BaseDocument):
     is_deleted = fields.BooleanField()
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
 
+    # KNN Vector fields for semantic search
+    description_semantic = KnnVectorField(
+        dimension=1536,
+        method={
+            "name": "hnsw",
+            "engine": "lucene",
+            "space_type": "cosinesimil",
+            "parameters": {"m": 16, "ef_construction": 512},
+        },
+    )
+
+    name_semantic = KnnVectorField(
+        dimension=1536,
+        method={
+            "name": "hnsw",
+            "engine": "lucene",
+            "space_type": "cosinesimil",
+            "parameters": {"m": 16, "ef_construction": 512},
+        },
+    )
+
     class Index(BaseDocument.Index):
+        # Enable KNN for the index
+        settings = {
+            **BaseDocument.Index.settings,
+            "index": {
+                "knn": True,
+                "default_pipeline": django_settings.OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE,  # noqa: E501
+            },
+        }
         name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_pages"
-            if settings.OPENSEARCH_INDEX_PREFIX
+            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_pages"
+            if django_settings.OPENSEARCH_INDEX_PREFIX
             else "pages"
         )
 

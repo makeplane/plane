@@ -3,6 +3,7 @@ import json
 
 # Third-party imports
 from django_opensearch_dsl import Document, fields
+from django_opensearch_dsl.fields import DODField
 from opensearchpy.helpers import analysis
 from django.conf import settings
 
@@ -89,3 +90,12 @@ class JsonKeywordField(fields.KeywordField):
             return json.dumps(value)
         except TypeError:
             return "{}"
+
+
+class KnnVectorField(DODField):
+    """
+    A custom field for KNN vector data type in OpenSearch.
+    This field allows for vector similarity search using k-NN algorithms.
+    """
+
+    name = "knn_vector"
