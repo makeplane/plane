@@ -41,9 +41,13 @@ def is_uuid(value):
         return False
 
 class IssueCustomPropertySerializer(BaseSerializer):
+    issue_type_custom_property_is_active = serializers.BooleanField(
+        source="issue_type_custom_property.is_active", read_only=True, default=False
+    )
+
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property", "id"]
+        fields = ["key", "value", "issue_type_custom_property", "id", "issue_type_custom_property_is_active"]
         read_only_fields = [
             "id",
             "issue",
