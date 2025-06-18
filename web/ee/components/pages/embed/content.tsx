@@ -322,7 +322,7 @@ export const PageEmbedContent: React.FC<Props> = observer((props) => {
         >
           {pageEmbedLogo}
           <div className="flex-shrink-0 flex items-center gap-3">
-            <p className="not-prose text-base font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
+            <p className="not-prose text-[--font-size-regular] font-medium break-words truncate underline decoration-custom-text-300 underline-offset-4">
               {displayState.text}
             </p>
             {displayState?.badge}
