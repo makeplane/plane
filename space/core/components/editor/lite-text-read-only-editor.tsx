@@ -2,10 +2,10 @@ import React from "react";
 // plane imports
 import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // store hooks
 import { useMember } from "@/hooks/store";

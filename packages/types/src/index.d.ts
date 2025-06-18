@@ -43,4 +43,5 @@ export * from "./home";
 export * from "./stickies";
 export * from "./utils";
 export * from "./payment";
+export * from "./layout";
 export * from "./analytics";

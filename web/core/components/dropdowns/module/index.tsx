@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, DiceIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useModule } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";

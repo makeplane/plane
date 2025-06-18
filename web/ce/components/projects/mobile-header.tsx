@@ -9,10 +9,10 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
+import { calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
 

@@ -1,12 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // PLane
-import { IModule } from "@plane/types";
+import { IBlockUpdateData, IBlockUpdateDependencyData, IModule } from "@plane/types";
 // components
 import {
   GanttChartRoot,
-  IBlockUpdateData,
-  IBlockUpdateDependencyData,
   ModuleGanttSidebar,
 } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
@@ -19,7 +17,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store
   const { currentProjectDetails } = useProject();
-  const { getFilteredModuleIds, updateModuleDetails, getModuleById } = useModule();
+  const { getFilteredModuleIds, updateModuleDetails } = useModule();
   const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
 
   // derived values
