@@ -122,8 +122,15 @@ export class PiChatStore implements IPiChatStore {
     return this.focus[this.activeChatId];
   }
 
+  setLocalStorage = (chatId: string, key: string, value: string | boolean) => {
+    const existingData = JSON.parse(localStorage.getItem(`chat-focus-${chatId}`) || "{}");
+    localStorage.setItem(`chat-focus-${chatId}`, JSON.stringify({ ...existingData, [key]: value }));
+  };
+
   setFocus = (chatId: string, entityType: string, entityIdentifier: string) => {
     set(this.focus, [chatId], { entityType, entityIdentifier });
+    this.setLocalStorage(chatId, "entityType", entityType);
+    this.setLocalStorage(chatId, "entityIdentifier", entityIdentifier);
   };
 
   setActiveModel = (model: TAiModels) => {
@@ -132,7 +139,8 @@ export class PiChatStore implements IPiChatStore {
 
   setIsInWorkspaceContext = (value: boolean) => {
     this.isInWorkspaceContext = value;
-    if (isEmpty(this.focus[this.activeChatId]) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
+    this.setLocalStorage(this.activeChatId, "isInWorkspaceContext", value);
+    if (isEmpty(this.currentFocus) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
       this.setFocus(this.activeChatId, "workspace_id", this.rootStore.workspaceRoot.currentWorkspace?.id);
     }
   };
@@ -165,9 +173,13 @@ export class PiChatStore implements IPiChatStore {
     }
     this.isAuthorized = true;
     // Set Focus
-    if (isEmpty(this.focus[this.activeChatId]) && this.rootStore.workspaceRoot.currentWorkspace?.id) {
-      this.setFocus(this.activeChatId, "workspace_id", this.rootStore.workspaceRoot.currentWorkspace?.id);
-    }
+    const existingFocus = JSON.parse(localStorage.getItem(`chat-focus-${this.activeChatId}`) || "{}");
+    set(this.focus, [this.activeChatId], {
+      entityType: existingFocus.entityType || "workspace_id",
+      entityIdentifier: existingFocus.entityIdentifier || this.rootStore.workspaceRoot.currentWorkspace?.id,
+    });
+    this.isInWorkspaceContext = existingFocus.isInWorkspaceContext ?? true;
+
     return this.activeChatId;
   };
 
@@ -363,9 +375,7 @@ export class PiChatStore implements IPiChatStore {
 
   searchCallback = async (workspace: string, search: string): Promise<IFormattedValue> => {
     const filteredProjectId =
-      this.focus[this.activeChatId]?.entityType === "project_id"
-        ? this.focus[this.activeChatId]?.entityIdentifier
-        : undefined;
+      this.currentFocus?.entityType === "project_id" ? this.currentFocus?.entityIdentifier : undefined;
     let params: { search: string; projectId?: string } = { search };
     if (filteredProjectId) {
       params = {

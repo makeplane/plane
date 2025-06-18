@@ -104,7 +104,7 @@ export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, 
   "pi-chat": {
     key: "pi_chat",
     labelTranslationKey: "pi_chat",
-    href: `/pi-chat`,
+    href: `/pi-chat/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
   },
 };
