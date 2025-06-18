@@ -146,13 +146,13 @@ export function ResizableSidebar({
   );
 
   useEffect(() => {
-    if (!isAnySidebarDropdownOpen) {
+    if (!isAnySidebarDropdownOpen && isCollapsed && isHoveringTrigger) {
       handlePeekLeave();
     }
   }, [isAnySidebarDropdownOpen]);
 
   useEffect(() => {
-    if (!isAnyExtendedSidebarExpanded) {
+    if (!isAnyExtendedSidebarExpanded && isCollapsed && isHoveringTrigger) {
       handlePeekLeave();
     }
   }, [isAnyExtendedSidebarExpanded]);
