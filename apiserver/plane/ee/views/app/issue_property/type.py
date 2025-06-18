@@ -175,11 +175,15 @@ class IssueTypeEndpoint(BaseAPIView):
             is_epic=False,
             pk=pk,
         )
-        issue_types = IssueType.objects.filter(
-            workspace__slug=slug,
-            project_issue_types__project_id=project_id,
-            is_epic=False,
-        ).values_list("name", flat=True)
+        issue_types = (
+            IssueType.objects.filter(
+                workspace__slug=slug,
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+            )
+            .exclude(pk=pk)
+            .values_list("name", flat=True)
+        )
 
         # Default cannot be made in active
         if issue_type.is_default and not request.data.get("is_active"):
