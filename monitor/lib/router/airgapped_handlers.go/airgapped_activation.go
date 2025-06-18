@@ -75,8 +75,8 @@ func GetAirgappedActivationHandler(api prime_api.IPrimeMonitorApi, key string) f
 			})
 		}
 
-		// Create filename using workspaceId
-		filename := fmt.Sprintf("%s.json", workspaceId)
+		// Create filename using workspaceId and app version
+		filename := fmt.Sprintf("%s_%s.json", workspaceId, api.AppVersion())
 
 		// Write content to file
 		err = os.WriteFile(filename, content, 0644)

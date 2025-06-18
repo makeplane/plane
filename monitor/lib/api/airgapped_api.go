@@ -120,7 +120,7 @@ Downloads the workspace activation file from the server and returns the response
 */
 func (a *AirgappedPrimeApi) SyncWorkspace(payload WorkspaceSyncPayload) (*WorkspaceActivationResponse, *APIError) {
 	// Step 1: Read the file from the local system
-	fileContent, err := os.ReadFile(payload.WorkspaceID + ".json")
+	fileContent, err := os.ReadFile(fmt.Sprintf("%s_%s.json", payload.WorkspaceID, a.AppVersion()))
 	if err != nil {
 		return nil, &APIError{
 			Error:   fmt.Sprintf("Failed to read activation file: %v", err),
@@ -281,7 +281,10 @@ if the deactivation is successfull, it will proceed to delete the license from t
 func (a *AirgappedPrimeApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, *APIError) {
 
 	// Delete the license file from the local system
-	os.Remove(payload.WorkspaceID + ".json")
+	err := os.Remove(fmt.Sprintf("%s_%s.json", payload.WorkspaceID, a.AppVersion()))
+	if err != nil {
+		fmt.Println("Failed to delete license file", err)
+	}
 
 	response := GetMockWorkspaceActivationResponse(payload, true)
 	return response, nil
