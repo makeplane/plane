@@ -354,6 +354,7 @@
   },
   "initiatives": {
     "label": "Sáng kiến",
+    "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
     "add_initiative": "Thêm Sáng kiến",
     "create_initiative": "Tạo Sáng kiến",
     "update_initiative": "Cập nhật Sáng kiến",

@@ -363,6 +363,7 @@
   },
   "initiatives": {
     "label": "计划",
+    "placeholder": "{count, plural, one{# 计划} other{# 计划}}",
     "add_initiative": "添加计划",
     "create_initiative": "创建计划",
     "update_initiative": "更新计划",

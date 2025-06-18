@@ -27,6 +27,7 @@ import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { EProjectPriority } from "@/plane-web/types/workspace-project-states";
 // assets
 import ImagelLight from "@/public/empty-state/empty-updates-light.png";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;
@@ -44,6 +45,7 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
   const {
     initiative: { isInitiativeModalOpen, isInitiativesFeatureEnabled, toggleInitiativeModal },
   } = useInitiatives();
+  const { t } = useTranslation();
   // derived values
   const project = getProjectById(projectId.toString());
 
@@ -174,12 +176,21 @@ export const ProjectOverviewSidebarPropertiesRoot: FC<Props> = observer((props) 
                   <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Initiatives</span>
                 </div>
-                <div
-                  className="p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start cursor-pointer"
+                <Button
+                  variant="link-neutral"
+                  className={cn(
+                    "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start w-full font-normal",
+                    {
+                      "text-custom-text-350": !project.initiative_ids?.length,
+                    }
+                  )}
                   onClick={() => toggleInitiativeModal(projectId)}
+                  disabled={!isEditingAllowed || isArchived}
                 >
-                  {project.initiative_ids?.length} initiative(s)
-                </div>
+                  {project.initiative_ids?.length
+                    ? t("initiatives.placeholder", { count: project.initiative_ids?.length })
+                    : t("initiatives.add_initiative")}
+                </Button>
               </div>
             )}
             <div className="flex h-8 items-center gap-2">

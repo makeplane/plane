@@ -364,6 +364,7 @@
   },
   "initiatives": {
     "label": "Iniciativy",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativy}}",
     "add_initiative": "Přidat iniciativu",
     "create_initiative": "Vytvořit iniciativu",
     "update_initiative": "Aktualizovat iniciativu",

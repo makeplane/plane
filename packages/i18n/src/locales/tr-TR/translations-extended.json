@@ -380,6 +380,7 @@
   },
   "initiatives": {
     "label": "İnisiyatifler",
+    "placeholder": "{count, plural, one{# inisiyatif} other{# inisiyatif}}",
     "add_initiative": "İnisiyatif Ekle",
     "create_initiative": "İnisiyatif Oluştur",
     "update_initiative": "İnisiyatif Güncelle",

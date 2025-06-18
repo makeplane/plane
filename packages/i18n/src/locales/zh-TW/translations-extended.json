@@ -364,6 +364,7 @@
   },
   "initiatives": {
     "label": "倡議",
+    "placeholder": "{count, plural, one{# 倡議} other{# 倡議}}",
     "add_initiative": "添加倡議",
     "create_initiative": "創建倡議",
     "update_initiative": "更新倡議",

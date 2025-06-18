@@ -363,6 +363,7 @@
   },
   "initiatives": {
     "label": "Initiatives",
+    "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Ajouter une initiative",
     "create_initiative": "Créer une initiative",
     "update_initiative": "Mettre à jour l'initiative",

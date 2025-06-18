@@ -364,6 +364,7 @@
   },
   "initiatives": {
     "label": "Inisiatif",
+    "placeholder": "{count, plural, one{# inisiatif} other{# inisiatif}}",
     "add_initiative": "Tambah Inisiatif",
     "create_initiative": "Buat Inisiatif",
     "update_initiative": "Perbarui Inisiatif",

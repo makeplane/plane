@@ -363,6 +363,7 @@
   },
   "initiatives": {
     "label": "イニシアチブ",
+    "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
     "add_initiative": "イニシアチブを追加",
     "create_initiative": "イニシアチブを作成",
     "update_initiative": "イニシアチブを更新",

@@ -27,6 +27,7 @@ import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-de
 import { useCustomers } from "@/plane-web/hooks/store/customers";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEpicOperations } from "../helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;
@@ -48,6 +49,7 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const {
     initiative: { isInitiativeModalOpen, toggleInitiativeModal },
   } = useInitiatives();
+  const { t } = useTranslation();
 
   // derived values
   const issue = getIssueById(epicId);
@@ -153,10 +155,17 @@ export const EpicSidebarPropertiesRoot: FC<Props> = observer((props) => {
             <span>Initiatives</span>
           </div>
           <div
-            className="p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start cursor-pointer"
+            className={cn(
+              "p-2 rounded text-sm text-custom-text-200 hover:bg-custom-background-80 justify-start flex items-start cursor-pointer",
+              {
+                "text-custom-text-400": !issue.initiative_ids?.length,
+              }
+            )}
             onClick={() => toggleInitiativeModal(epicId)}
           >
-            {issue.initiative_ids?.length} initiative(s)
+            {issue.initiative_ids?.length
+              ? t("initiatives.placeholder", { count: issue.initiative_ids?.length })
+              : t("initiatives.add_initiative")}
           </div>
         </div>
         <div className="flex h-8 items-center gap-2">
