@@ -9,6 +9,7 @@ import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
 import { ReasoningBlock } from "./reasoning";
 import { Thinking } from "./thinking";
+import Link from "next/link";
 
 type TProps = {
   id: string;
@@ -65,7 +66,18 @@ export const AiMessage = observer((props: TProps) => {
         {!isPiThinking && !isLoading && (
           <div className="flex flex-col gap-4">
             {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
-            <Markdown className="pi-chat-root [&>*:first-child]:mt-0">{handleMessage()}</Markdown>
+            <Markdown
+              className="pi-chat-root [&>*:first-child]:mt-0"
+              components={{
+                a: ({ children, href }) => (
+                  <a href={href || ""} target="_blank" rel="noopener noreferrer">
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {handleMessage()}
+            </Markdown>
           </div>
         )}
 
