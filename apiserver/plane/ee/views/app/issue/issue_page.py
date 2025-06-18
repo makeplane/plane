@@ -11,6 +11,8 @@ from plane.ee.models.issue import WorkItemPage
 from plane.db.models import Page, Workspace
 from plane.ee.serializers import WorkItemPageSerializer
 from plane.app.permissions import ProjectLitePermission
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class IssuePageViewSet(BaseAPIView):
@@ -21,6 +23,7 @@ class IssuePageViewSet(BaseAPIView):
             workspace=workspace, project_id=project_id, issue_id=issue_id
         )
 
+    @check_feature_flag(FeatureFlag.LINK_PAGES)
     def post(self, request, slug, project_id, issue_id):
         workspace = Workspace.objects.get(slug=slug)
         pages_ids = request.data.get("pages_ids", [])
@@ -61,12 +64,14 @@ class IssuePageViewSet(BaseAPIView):
         serializer = WorkItemPageSerializer(work_item_pages, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.LINK_PAGES)
     def get(self, request, slug, project_id, issue_id, page_id=None):
         workspace = Workspace.objects.get(slug=slug)
         work_item_pages = self.filter_work_item_pages(workspace, project_id, issue_id)
         serializer = WorkItemPageSerializer(work_item_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.LINK_PAGES)
     def delete(self, request, slug, project_id, issue_id, page_id):
         workspace = Workspace.objects.get(slug=slug)
         work_item_page = self.filter_work_item_pages(
@@ -79,6 +84,7 @@ class IssuePageViewSet(BaseAPIView):
 class PageSearchViewSet(BaseAPIView):
     permission_classes = [ProjectLitePermission]
 
+    @check_feature_flag(FeatureFlag.LINK_PAGES)
     def get(self, request, slug, project_id):
         is_global = request.query_params.get("is_global", False)
         search = request.query_params.get("search", "")

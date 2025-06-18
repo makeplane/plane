@@ -34,7 +34,7 @@
     "duplicate": {
       "modal": {
         "title": "Make a copy to another project",
-        "description1": "This creates a copy of the work item, its attachments, links.",
+        "description1": "This creates a copy of the work item.",
         "description2": "All property data will be removed while duplicating.",
         "placeholder": "Select a project"
       }
@@ -557,7 +557,7 @@
     },
     "duplicate": {
       "modal": {
-        "description1": "This creates a copy of the epic, its attachments, links.",
+        "description1": "This creates a copy of the epic.",
         "description2": "All property data will be removed while duplicating.",
         "epics_not_enabled": "Epics not enabled"
       }

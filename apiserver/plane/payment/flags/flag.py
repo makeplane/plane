@@ -78,6 +78,8 @@ class FeatureFlag(Enum):
     ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED"
     # Notion Importer
     NOTION_IMPORTER = "NOTION_IMPORTER"
+    # Link Pages
+    LINK_PAGES = "LINK_PAGES"
 
 
 class AdminFeatureFlag(Enum):

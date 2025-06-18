@@ -1,12 +1,13 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { CircleX, Files, FileText, Link2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TIssuePage, TIssueServiceType, TLogoProps } from "@plane/types";
 import { setToast, TContextMenuItem, TOAST_TYPE, CustomMenu, Logo } from "@plane/ui";
 import { calculateTimeAgo, cn, copyUrlToClipboard } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { useIssueDetail, useProject, useWorkspace } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 
 type TProps = {
   issueServiceType: TIssueServiceType;
@@ -21,12 +22,10 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
   // hooks
   const { t } = useTranslation();
   const { getProjectById } = useProject();
-  const { getWorkspaceBySlug } = useWorkspace();
   const {
     pages: { deleteIssuePages },
   } = useIssueDetail(issueServiceType);
   // derived
-  const workspace = getWorkspaceBySlug(workspaceSlug);
   const project = getProjectById(projectId);
 
   const handleCopyText = () => {
@@ -36,7 +35,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),
-        message: t("project_link_copied_to_clipboard"),
+        message: t("entity.link_copied_to_clipboard", { entity: t("page") }),
       });
     });
   };
@@ -79,7 +78,15 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
       key={page.id}
       className="flex flex-col gap-2 rounded-xl border border-custom-border-100 p-4 pb-2 min-h-[166px]"
     >
-      <div className="border-b border-custom-border-100 pb-2 flex flex-col gap-2 flex-1">
+      <Link
+        href={
+          page.is_global
+            ? `/${workspaceSlug}/pages/${page.id}`
+            : `/${workspaceSlug}/projects/${projectId}/pages/${page.id}`
+        }
+        target="_blank"
+        className="border-b border-custom-border-100 pb-2 flex flex-col gap-2 flex-1"
+      >
         <div className="flex gap-2 items-center max-w-full w-fit overflow-hidden bg-custom-background-90 p-1 rounded">
           <div className="my-auto">
             {page.is_global ? (
@@ -105,7 +112,7 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
             {page.description_stripped === "" ? t("issue.pages.no_description") : page.description_stripped}
           </div>
         </div>
-      </div>
+      </Link>
       <div className="flex gap-2 justify-between items-center">
         <div>{page.created_by && <ButtonAvatars showTooltip userIds={[page.created_by]} />}</div>
         <div className="flex gap-2">

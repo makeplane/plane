@@ -1,10 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // ce imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TWorkItemAdditionalWidgetCollapsiblesProps } from "@/ce/components/issues/issue-detail-widgets/collapsibles";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 import { CustomerRequestsCollapsible } from "@/plane-web/components/issues/issue-detail-widgets";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { PagesCollapsible } from "./pages";
@@ -27,15 +29,17 @@ export const WorkItemAdditionalWidgetCollapsibles: FC<TWorkItemAdditionalWidgetC
         {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (
           <CustomerRequestsCollapsible workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
         )}
-        {shouldRenderPages && (
-          <PagesCollapsible
-            workItemId={workItemId}
-            workspaceSlug={workspaceSlug}
-            disabled={disabled}
-            projectId={issue?.project_id}
-            issueServiceType={issueServiceType}
-          />
-        )}
+        <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
+          {shouldRenderPages && (
+            <PagesCollapsible
+              workItemId={workItemId}
+              workspaceSlug={workspaceSlug}
+              disabled={disabled}
+              projectId={issue?.project_id}
+              issueServiceType={issueServiceType}
+            />
+          )}
+        </WithFeatureFlagHOC>
       </>
     );
   }
