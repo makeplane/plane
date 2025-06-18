@@ -1,7 +1,6 @@
-import { TModuleStatus } from "@plane/ui";
+import { TModuleStatus } from "./module";
 import { TLogoProps } from "./common";
 import { TCycleGroups } from "./cycle";
-import { TStateGroups } from "./state";
 import { TChartData } from "./charts";
 
 export type TAnalyticsTabsExtended = "users" | "projects" | "cycles" | "modules" | "intake";

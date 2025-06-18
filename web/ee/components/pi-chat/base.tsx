@@ -91,7 +91,7 @@ export const PiChatBase = observer((props: TProps) => {
     }
     // In caase we are on pi-chat page and we have an activeChatId, we need to redirect to the chat page
     if (!chat_id && !onlyShowInput && isFullScreen && activeChatId) {
-      router.push(`${pathName}?chat_id=${activeChatId}`);
+      router.replace(`${pathName}?chat_id=${activeChatId}`);
     }
   }, [chat_id, isInitialized]);
 
