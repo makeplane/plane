@@ -19,7 +19,7 @@ type Props = {
 
 export const WorkItemsModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, isEpic } = props;
-  const { updateIsEpic } = useAnalytics();
+  const { updateIsEpic, isPeekView } = useAnalytics();
   const [fullScreen, setFullScreen] = useState(false);
 
   const handleClose = () => {
@@ -27,8 +27,8 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
   };
 
   useEffect(() => {
-    updateIsEpic(isEpic ?? false);
-  }, [isEpic, updateIsEpic]);
+    updateIsEpic(isPeekView ? (isEpic ?? false) : false);
+  }, [isEpic, updateIsEpic, isPeekView]);
 
   return (
     <Transition.Root appear show={isOpen} as={React.Fragment}>

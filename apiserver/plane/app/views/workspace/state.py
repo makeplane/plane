@@ -18,11 +18,9 @@ class WorkspaceStatesEndpoint(BaseAPIView):
     def get(self, request, slug):
         states = State.objects.filter(
             workspace__slug=slug,
-            project__project_projectmember__member=request.user,
-            project__project_projectmember__is_active=True,
             project__archived_at__isnull=True,
             is_triage=False,
-        )
+        ).accessible_to(request.user.id, slug)
 
         grouped_states = defaultdict(list)
         for state in states:
@@ -33,6 +31,7 @@ class WorkspaceStatesEndpoint(BaseAPIView):
 
             for index, state in enumerate(group_states, start=1):
                 state.order = index / count
+
 
         serializer = StateSerializer(states, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)

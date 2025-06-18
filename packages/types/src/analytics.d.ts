@@ -1,9 +1,10 @@
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
 import { TChartData } from "./charts";
+import { AnalyticsTableDataMapExtended, TAnalyticsGraphsExtended, TAnalyticsTabsExtended } from "./analytics-extended";
 import { Row } from "@tanstack/react-table";
 
-export type TAnalyticsTabsBase = "overview" | "work-items";
-export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+export type TAnalyticsTabsBase = "overview" | "work-items" | TAnalyticsTabsExtended;
+export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items" | TAnalyticsGraphsExtended;
 export interface AnalyticsTab {
   key: TAnalyticsTabsBase;
   label: string;
@@ -52,7 +53,7 @@ export interface WorkItemInsightColumns {
 
 export type AnalyticsTableDataMap = {
   "work-items": WorkItemInsightColumns;
-};
+} & AnalyticsTableDataMapExtended;
 
 export interface IAnalyticsParams {
   x_axis: ChartXAxisProperty;
