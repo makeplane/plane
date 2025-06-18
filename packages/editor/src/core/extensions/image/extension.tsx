@@ -1,7 +1,7 @@
 import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
-import { CustomImageNode } from "@/extensions";
+import { CustomImageNode, CustomImageNodeProps } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
@@ -15,6 +15,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
   const {
     getAssetSrc,
     validation: { maxFileSize },
+    isMobile = false,
   } = fileHandler;
 
   return BaseImageExtension.extend<unknown, ImageExtensionStorage>({
@@ -56,7 +57,7 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
 
     // render custom image node
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
+      return ReactNodeViewRenderer((props: CustomImageNodeProps) => <CustomImageNode {...props} isMobile={isMobile} />);
     },
   });
 };

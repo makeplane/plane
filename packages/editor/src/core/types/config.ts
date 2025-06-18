@@ -2,6 +2,7 @@ export type TReadOnlyFileHandler = {
   checkIfAssetExists: (assetId: string) => Promise<boolean>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
+  isMobile?: boolean;
 };
 
 export type TFileHandler = TReadOnlyFileHandler & {
@@ -16,13 +17,14 @@ export type TFileHandler = TReadOnlyFileHandler & {
      */
     maxFileSize: number;
   };
+  isMobile?: boolean;
 };
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
-export type TEditorFontSize = "small-font" | "large-font";
+export type TEditorFontSize = "small-font" | "large-font" | "mobile-font";
 
-export type TEditorLineSpacing = "regular" | "small";
+export type TEditorLineSpacing = "regular" | "small" | "mobile-regular";
 
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;

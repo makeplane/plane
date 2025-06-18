@@ -1,12 +1,12 @@
 import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
-import { CustomImageNode } from "@/extensions";
+import { CustomImageNode, CustomImageNodeProps } from "@/extensions";
 // types
 import { TReadOnlyFileHandler } from "@/types";
 
 export const ReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
-  const { getAssetSrc } = props;
+  const { getAssetSrc, isMobile = false } = props;
 
   return BaseImageExtension.extend({
     addAttributes() {
@@ -31,7 +31,7 @@ export const ReadOnlyImageExtension = (props: TReadOnlyFileHandler) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
+      return ReactNodeViewRenderer((props: CustomImageNodeProps) => <CustomImageNode {...props} isMobile={isMobile} />);
     },
   });
 };

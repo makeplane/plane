@@ -24,6 +24,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     forwardedRef,
     handleEditorReady,
     id,
+    isDragDropEnabled,
     mentionHandler,
     placeholder,
     realtimeConfig,
@@ -83,7 +84,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
+        dragDropEnabled: isDragDropEnabled,
       }),
       HeadingListExtension,
       Collaboration.configure({

@@ -38,6 +38,8 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   embedHandler?: TEmbedConfig;
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  isDragDropEnabled: boolean;
+  isMobile: boolean;
   mentionHandler: TMentionHandler;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
