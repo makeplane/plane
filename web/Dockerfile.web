@@ -1,11 +1,10 @@
-
 # *****************************************************************************
 # STAGE 1: Setup base image
 # *****************************************************************************
 
-FROM node:20-alpine as base
-RUN apk update
+FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
+RUN apk update
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -39,11 +38,11 @@ ENV TURBO_TELEMETRY_DISABLED 1
 # *****************************************************************************
 FROM base AS pruner
 
-RUN npm install pnpm turbo --global
-RUN pnpm config set store-dir ~/.pnpm-store
-
 # Set working directory
 WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm --activate
+RUN npm install turbo --global
 
 COPY . .
 
@@ -57,24 +56,26 @@ FROM base AS builder
 WORKDIR /app
 
 # Copy lockfile and package.json's of isolated subworkspace
+COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-COPY --from=pruner /app/out/json/ .
-
-# First install the dependencies (as they change less often)
-RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm install --frozen-lockfile
-
-# Copy source code of isolated subworkspace
-COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN pnpm turbo run build --filter=web
-RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
+# Install dependencies
+RUN corepack enable && corepack prepare pnpm --activate
+RUN pnpm install
+
+# Build the project
+COPY --from=pruner /app/out/full/ .
+RUN pnpm turbo run build --filter=web...
 
 # *****************************************************************************
 # STAGE 4: Copy the project and start it
 # *****************************************************************************
 FROM base AS runner
+
+# Set NODE_ENV to production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
