@@ -11,7 +11,8 @@
     "admin",
     "live",
     "silo",
-    "packages/*"
+    "packages/*",
+    "dev-wiki"
   ],
   "scripts": {
     "build": "turbo run build",
