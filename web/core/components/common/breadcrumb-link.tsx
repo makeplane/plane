@@ -1,6 +1,7 @@
 "use client";
 
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, FC } from "react";
+import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Breadcrumbs } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -44,7 +45,8 @@ const ItemWrapper = React.memo(({ children, ...props }: React.ComponentProps<typ
 
 ItemWrapper.displayName = "ItemWrapper";
 
-export const BreadcrumbLink = React.memo(({ href, label, icon, disableTooltip = false, isLast = false }: Props) => {
+export const BreadcrumbLink: FC<Props> = observer((props) => {
+  const { href, label, icon, disableTooltip = false, isLast = false } = props;
   const { isMobile } = usePlatformOS();
 
   const itemWrapperProps = useMemo(
