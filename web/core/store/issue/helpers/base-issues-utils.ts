@@ -5,7 +5,6 @@ import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
 import set from "lodash/set";
 import uniq from "lodash/uniq";
-import { runInAction } from "mobx";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
@@ -16,7 +15,7 @@ import {
   TIssueGroupByOptions,
   TIssueOrderByOptions,
 } from "@plane/types";
-import { checkDateCriteria, convertToISODateString, parseDateFilter } from "@/helpers/date-time.helper";
+import { checkDateCriteria, convertToISODateString, parseDateFilter } from "@plane/utils";
 import { store } from "@/lib/store-context";
 import { EIssueGroupedAction, ISSUE_GROUP_BY_KEY } from "./base-issues.store";
 
@@ -318,10 +317,22 @@ export const getGroupedWorkItemIds = (
     };
   }
 
+  // Get the default key for the group by key
+  const getDefaultGroupKey = (groupByKey: TIssueGroupByOptions) => {
+    switch (groupByKey) {
+      case "state_detail.group":
+        return "state__group";
+      case null:
+        return null;
+      default:
+        return ISSUE_GROUP_BY_KEY[groupByKey];
+    }
+  };
+
   // Group work items
-  const groupKey = ISSUE_GROUP_BY_KEY[groupByKey];
+  const groupKey = getDefaultGroupKey(groupByKey);
   const groupedWorkItems = groupBy(workItems, (item) => {
-    const value = item[groupKey];
+    const value = groupKey ? item[groupKey] : null;
     if (Array.isArray(value)) {
       if (value.length === 0) return "None";
       // Sort & join to build deterministic set-like key

@@ -29,6 +29,7 @@ export interface IssuesModalProps {
   };
   isProjectSelectionDisabled?: boolean;
   templateId?: string;
+  allowedProjectIds?: string[];
 }
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -43,7 +44,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
   if (!props.isOpen) return null;
   return (
-    <IssueModalProvider templateId={props.templateId} dataForPreload={dataForPreload}>
+    <IssueModalProvider
+      templateId={props.templateId}
+      dataForPreload={dataForPreload}
+      allowedProjectIds={props.allowedProjectIds}
+    >
       <CreateUpdateIssueModalBase {...props} />
     </IssueModalProvider>
   );

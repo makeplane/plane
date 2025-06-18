@@ -9,9 +9,11 @@ import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Eye, EyeOff } from "lucide-react";
 // ui
+import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input } from "@plane/ui";
 // components
+import { getPasswordStrength } from "@plane/utils";
 import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
 // helpers
 import {
@@ -21,8 +23,6 @@ import {
   TAuthErrorInfo,
   authErrorHandler,
 } from "@/helpers/authentication.helper";
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 // services

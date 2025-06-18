@@ -12,7 +12,7 @@ import { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";

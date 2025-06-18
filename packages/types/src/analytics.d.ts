@@ -1,8 +1,15 @@
 import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/constants";
 import { TChartData } from "./charts";
+import { Row } from "@tanstack/react-table";
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
+export interface AnalyticsTab {
+  key: TAnalyticsTabsBase;
+  label: string;
+  content: React.FC;
+  isDisabled: boolean;
+}
 export type TAnalyticsFilterParams = {
   project_ids?: string;
   cycle_id?: string;
@@ -18,12 +25,6 @@ export interface IAnalyticsResponse {
 export interface IAnalyticsResponseFields {
   count: number;
   filter_count: number;
-}
-
-export interface IAnalyticsRadarEntity {
-  key: string;
-  name: string;
-  count: number;
 }
 
 // chart types
@@ -43,7 +44,7 @@ export interface WorkItemInsightColumns {
   backlog_work_items: number;
   un_started_work_items: number;
   started_work_items: number;
-  // because of the peek view, we will display the name of the project instead of project__name
+  // incase of peek view, we will display the display_name instead of project__name
   display_name?: string;
   avatar_url?: string;
   assignee_id?: string;
@@ -58,3 +59,9 @@ export interface IAnalyticsParams {
   y_axis: ChartYAxisMetric;
   group_by?: ChartXAxisProperty;
 }
+
+export type ExportConfig<T> = {
+  key: string;
+  value: (row: Row<T>) => string | number;
+  label?: string;
+};

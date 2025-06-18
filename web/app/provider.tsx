@@ -9,7 +9,7 @@ import { WEB_SWR_CONFIG } from "@plane/constants";
 import { TranslationProvider } from "@plane/i18n";
 import { Toast } from "@plane/ui";
 //helpers
-import { resolveGeneralTheme } from "@/helpers/theme.helper";
+import { resolveGeneralTheme } from "@plane/utils";
 // nprogress
 import { AppProgressBar } from "@/lib/n-progress";
 // polyfills

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { getValidKeysFromObject } from "@/helpers/array.helper";
+import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components

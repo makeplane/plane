@@ -1,12 +1,11 @@
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, API_BASE_URL } from "@plane/constants";
 import {
   type TDescriptionVersionsListResponse,
   type TDescriptionVersionDetails,
   type TIssueServiceType,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // services
 import { APIService } from "@/services/api.service";
 

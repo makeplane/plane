@@ -104,9 +104,9 @@ const CreatedVsResolved = observer(() => {
           }}
           yAxis={{
             key: "count",
-            label: t("no_of", { entity: t("work_items") }),
-            offset: -30,
-            dx: -22,
+            label: t("common.no_of", { entity: isEpic ? t("epics") : t("work_items") }),
+            offset: -60,
+            dx: -24,
           }}
           legend={{
             align: "left",

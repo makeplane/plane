@@ -1,13 +1,13 @@
 /**
  * Represents an RGB color with numeric values for red, green, and blue components
- * @typedef {Object} RGB
+ * @typedef {Object} TRgb
  * @property {number} r - Red component (0-255)
  * @property {number} g - Green component (0-255)
  * @property {number} b - Blue component (0-255)
  */
-export type RGB = { r: number; g: number; b: number };
+export type TRgb = { r: number; g: number; b: number };
 
-export type HSL = { h: number; s: number; l: number };
+export type THsl = { h: number; s: number; l: number };
 
 /**
  * @description Validates and clamps color values to RGB range (0-255)
@@ -40,7 +40,7 @@ export const toHex = (value: number) => validateColor(value).toString(16).padSta
  * hexToRgb("#00ff00") // returns { r: 0, g: 255, b: 0 }
  * hexToRgb("#0000ff") // returns { r: 0, g: 0, b: 255 }
  */
-export const hexToRgb = (hex: string): RGB => {
+export const hexToRgb = (hex: string): TRgb => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
   return result
     ? {
@@ -63,7 +63,7 @@ export const hexToRgb = (hex: string): RGB => {
  * rgbToHex({ r: 0, g: 255, b: 0 }) // returns "#00ff00"
  * rgbToHex({ r: 0, g: 0, b: 255 }) // returns "#0000ff"
  */
-export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+export const rgbToHex = ({ r, g, b }: TRgb): string => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
 /**
  * Converts Hex values to HSL values
@@ -74,7 +74,7 @@ export const rgbToHex = ({ r, g, b }: RGB): string => `#${toHex(r)}${toHex(g)}${
  * hexToHsl("#00ff00") // returns { h: 120, s: 100, l: 50 }
  * hexToHsl("#0000ff") // returns { h: 240, s: 100, l: 50 }
  */
-export const hexToHsl = (hex: string): HSL => {
+export const hexToHsl = (hex: string): THsl => {
   // return default value for invalid hex
   if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return { h: 0, s: 0, l: 0 };
 
@@ -124,7 +124,7 @@ export const hexToHsl = (hex: string): HSL => {
  * hslToHex({ h: 120, s: 100, l: 50 }) // returns "#00ff00"
  * hslToHex({ h: 240, s: 100, l: 50 }) // returns "#0000ff"
  */
-export const hslToHex = ({ h, s, l }: HSL): string => {
+export const hslToHex = ({ h, s, l }: THsl): string => {
   if (h < 0 || h > 360) return "#000000";
   if (s < 0 || s > 100) return "#000000";
   if (l < 0 || l > 100) return "#000000";
@@ -141,4 +141,159 @@ export const hslToHex = ({ h, s, l }: HSL): string => {
   };
 
   return `#${f(0)}${f(8)}${f(4)}`;
+};
+
+/**
+ * Calculate relative luminance of a color according to WCAG
+ * @param {Object} rgb - RGB color object with r, g, b properties
+ * @returns {number} Relative luminance value
+ */
+export const getLuminance = ({ r, g, b }: TRgb) => {
+  // Convert RGB to sRGB
+  const sR = r / 255;
+  const sG = g / 255;
+  const sB = b / 255;
+
+  // Convert sRGB to linear RGB with gamma correction
+  const R = sR <= 0.03928 ? sR / 12.92 : Math.pow((sR + 0.055) / 1.055, 2.4);
+  const G = sG <= 0.03928 ? sG / 12.92 : Math.pow((sG + 0.055) / 1.055, 2.4);
+  const B = sB <= 0.03928 ? sB / 12.92 : Math.pow((sB + 0.055) / 1.055, 2.4);
+
+  // Calculate luminance
+  return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+};
+
+/**
+ * Calculate contrast ratio between two colors
+ * @param {Object} rgb1 - First RGB color object
+ * @param {Object} rgb2 - Second RGB color object
+ * @returns {number} Contrast ratio between the colors
+ */
+export function getContrastRatio(rgb1: { r: number; g: number; b: number }, rgb2: { r: number; g: number; b: number }) {
+  const luminance1 = getLuminance(rgb1);
+  const luminance2 = getLuminance(rgb2);
+
+  const lighter = Math.max(luminance1, luminance2);
+  const darker = Math.min(luminance1, luminance2);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/**
+ * Lighten a color by a specified amount
+ * @param {Object} rgb - RGB color object
+ * @param {number} amount - Amount to lighten (0-1)
+ * @returns {Object} Lightened RGB color
+ */
+export function lightenColor(rgb: { r: number; g: number; b: number }, amount: number) {
+  return {
+    r: rgb.r + (255 - rgb.r) * amount,
+    g: rgb.g + (255 - rgb.g) * amount,
+    b: rgb.b + (255 - rgb.b) * amount,
+  };
+}
+
+/**
+ * Darken a color by a specified amount
+ * @param {Object} rgb - RGB color object
+ * @param {number} amount - Amount to darken (0-1)
+ * @returns {Object} Darkened RGB color
+ */
+export function darkenColor(rgb: { r: number; g: number; b: number }, amount: number) {
+  return {
+    r: rgb.r * (1 - amount),
+    g: rgb.g * (1 - amount),
+    b: rgb.b * (1 - amount),
+  };
+}
+
+/**
+ * Generate appropriate foreground and background colors based on input color
+ * @param {string} color - Input color in hex format
+ * @returns {Object} Object containing foreground and background colors in hex format
+ */
+export function generateIconColors(color: string) {
+  // Parse input color
+  const rgbColor = hexToRgb(color);
+  const luminance = getLuminance(rgbColor);
+
+  // Initialize output colors
+  let foregroundColor = rgbColor;
+
+  // Constants for color adjustment
+  const MIN_CONTRAST_RATIO = 3.0; // Minimum acceptable contrast ratio
+
+  // For light colors, use as foreground and darken for background
+  if (luminance > 0.5) {
+    // Make sure the foreground color is dark enough for visibility
+    let adjustedForeground = foregroundColor;
+    const whiteContrast = getContrastRatio(foregroundColor, { r: 255, g: 255, b: 255 });
+
+    if (whiteContrast < MIN_CONTRAST_RATIO) {
+      // Darken the foreground color until it has enough contrast
+      let darkenAmount = 0.1;
+      while (darkenAmount <= 0.9) {
+        adjustedForeground = darkenColor(foregroundColor, darkenAmount);
+        if (getContrastRatio(adjustedForeground, { r: 255, g: 255, b: 255 }) >= MIN_CONTRAST_RATIO) {
+          break;
+        }
+        darkenAmount += 0.1;
+      }
+      foregroundColor = adjustedForeground;
+    }
+  }
+  // For dark colors, use as foreground and lighten for background
+  else {
+    // Make sure the foreground color is light enough for visibility
+    let adjustedForeground = foregroundColor;
+    const blackContrast = getContrastRatio(foregroundColor, { r: 0, g: 0, b: 0 });
+
+    if (blackContrast < MIN_CONTRAST_RATIO) {
+      // Lighten the foreground color until it has enough contrast
+      let lightenAmount = 0.1;
+      while (lightenAmount <= 0.9) {
+        adjustedForeground = lightenColor(foregroundColor, lightenAmount);
+        if (getContrastRatio(adjustedForeground, { r: 0, g: 0, b: 0 }) >= MIN_CONTRAST_RATIO) {
+          break;
+        }
+        lightenAmount += 0.1;
+      }
+      foregroundColor = adjustedForeground;
+    }
+  }
+
+  return {
+    foreground: rgbToHex({ r: foregroundColor.r, g: foregroundColor.g, b: foregroundColor.b }),
+    background: `rgba(${foregroundColor.r}, ${foregroundColor.g}, ${foregroundColor.b}, 0.25)`,
+  };
+}
+
+/**
+ * @description Generates a deterministic HSL color based on input string
+ * @param {string} input - Input string to generate color from
+ * @returns {THsl} An object containing the HSL values
+ * @example
+ * generateRandomColor("hello") // returns consistent HSL color for "hello"
+ * generateRandomColor("") // returns { h: 0, s: 0, l: 0 }
+ */
+export const generateRandomColor = (input: string): THsl => {
+  // If input is falsy, generate a random seed string.
+  // The random seed is created by converting a random number to base-36 and taking a substring.
+  const seed = input || Math.random().toString(36).substring(2, 8);
+
+  const uniqueId = seed.length.toString() + seed; // Unique identifier based on string length
+  const combinedString = uniqueId + seed;
+
+  // Create a hash value from the combined string.
+  const hash = Array.from(combinedString).reduce((acc, char) => {
+    const charCode = char.charCodeAt(0);
+    return (acc << 5) - acc + charCode;
+  }, 0);
+
+  // Derive the HSL values from the hash.
+  const hue = Math.abs(hash % 360);
+  const saturation = 70; // Maintains a good amount of color
+  const lightness = 70; // Increased lightness for a pastel look
+
+  return { h: hue, s: saturation, l: lightness };
 };

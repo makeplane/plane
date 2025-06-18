@@ -1,6 +1,6 @@
-import { addDaysToDate, findTotalDaysInRange, getDate } from "@/helpers/date-time.helper";
+import type { ChartDataType, IGanttBlock } from "@plane/types";
+import { addDaysToDate, findTotalDaysInRange, getDate } from "@plane/utils";
 import { DEFAULT_BLOCK_WIDTH } from "../constants";
-import { ChartDataType, IGanttBlock } from "../types";
 
 /**
  * Generates Date by using Day, month and Year

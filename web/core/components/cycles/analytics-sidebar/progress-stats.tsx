@@ -14,11 +14,10 @@ import {
   TStateGroups,
 } from "@plane/types";
 import { Avatar, StateGroupIcon } from "@plane/ui";
+import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
