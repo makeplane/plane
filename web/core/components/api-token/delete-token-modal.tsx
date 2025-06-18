@@ -4,13 +4,12 @@ import { useState, FC } from "react";
 import { mutate } from "swr";
 // types
 import { useTranslation } from "@plane/i18n";
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-// services
-import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -36,7 +35,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
     setDeleteLoading(true);
 
     await apiTokenService
-      .deleteApiToken(tokenId)
+      .destroy(tokenId)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

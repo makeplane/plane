@@ -1,9 +1,9 @@
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // services
-import { APITokenService } from "@/services/api_token.service";
 // store
 import { CoreRootStore } from "../root.store";
 
@@ -58,7 +58,7 @@ export class ApiTokenStore implements IApiTokenStore {
    * fetch all the API tokens
    */
   fetchApiTokens = async () =>
-    await this.apiTokenService.getApiTokens().then((response) => {
+    await this.apiTokenService.list().then((response) => {
       const apiTokensObject: { [apiTokenId: string]: IApiToken } = response.reduce((accumulator, currentWebhook) => {
         if (currentWebhook && currentWebhook.id) {
           return { ...accumulator, [currentWebhook.id]: currentWebhook };
@@ -76,7 +76,7 @@ export class ApiTokenStore implements IApiTokenStore {
    * @param tokenId
    */
   fetchApiTokenDetails = async (tokenId: string) =>
-    await this.apiTokenService.retrieveApiToken(tokenId).then((response) => {
+    await this.apiTokenService.retrieve(tokenId).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
@@ -88,7 +88,7 @@ export class ApiTokenStore implements IApiTokenStore {
    * @param data
    */
   createApiToken = async (data: Partial<IApiToken>) =>
-    await this.apiTokenService.createApiToken(data).then((response) => {
+    await this.apiTokenService.create(data).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
@@ -100,7 +100,7 @@ export class ApiTokenStore implements IApiTokenStore {
    * @param tokenId
    */
   deleteApiToken = async (tokenId: string) =>
-    await this.apiTokenService.deleteApiToken(tokenId).then(() => {
+    await this.apiTokenService.destroy(tokenId).then(() => {
       const updatedApiTokens = { ...this.apiTokens };
       delete updatedApiTokens[tokenId];
       runInAction(() => {

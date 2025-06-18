@@ -6,6 +6,7 @@ import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // component
+import { APITokenService } from "@plane/services";
 import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
@@ -16,7 +17,6 @@ import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
-import { APITokenService } from "@/services/api_token.service";
 
 const apiTokenService = new APITokenService();
 
@@ -31,7 +31,7 @@ const ApiTokensPage = observer(() => {
   // derived values
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/api-tokens" });
 
-  const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.getApiTokens());
+  const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.list());
 
   const pageTitle = currentWorkspace?.name
     ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`

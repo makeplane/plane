@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { mutate } from "swr";
 // types
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,7 +14,6 @@ import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-toke
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
 // services
-import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -52,7 +52,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   const handleCreateToken = async (data: Partial<IApiToken>) => {
     // make the request to generate the token
     await apiTokenService
-      .createApiToken(data)
+      .create(data)
       .then((res) => {
         setGeneratedToken(res);
         downloadSecretKey(res);
