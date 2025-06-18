@@ -17,6 +17,7 @@ import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
+    onChange,
     onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
@@ -62,6 +63,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     handleEditorReady,
     id,
     mentionHandler,
+    onChange,
     onTransaction,
     placeholder,
     realtimeConfig,

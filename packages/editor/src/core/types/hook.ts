@@ -33,7 +33,15 @@ export type TEditorHookProps = TCoreHookProps &
 export type TCollaborativeEditorHookProps = TCoreHookProps &
   Pick<
     TEditorHookProps,
-    "editable" | "fileHandler" | "forwardedRef" | "id" | "mentionHandler" | "onTransaction" | "placeholder" | "tabIndex"
+    | "editable"
+    | "fileHandler"
+    | "forwardedRef"
+    | "id"
+    | "mentionHandler"
+    | "onChange"
+    | "onTransaction"
+    | "placeholder"
+    | "tabIndex"
   > &
   Pick<ICollaborativeDocumentEditorProps, "embedHandler" | "realtimeConfig" | "serverHandler" | "user">;
 
