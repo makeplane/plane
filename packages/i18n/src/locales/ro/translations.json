@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nu s-a putut elimina proiectul din favorite. Încearcă din nou.",
   "project_created_successfully": "Proiect creat cu succes",
   "project_created_successfully_description": "Proiect creat cu succes. Poți începe să adaugi activități în el.",
+  "project_name_already_taken": "Numele proiectului este deja folosit.",
+  "project_identifier_already_taken": "Identificatorul proiectului este deja folosit.",
   "project_cover_image_alt": "Coperta proiectului",
   "name_is_required": "Numele este obligatoriu",
   "title_should_be_less_than_255_characters": "Titlul trebuie să conțină mai puțin de 255 de caractere",
@@ -872,13 +874,15 @@
     "guests": "Invitați",
     "on_track": "Pe drumul cel bun",
     "off_track": "În afara traiectoriei",
+    "at_risk": "În pericol",
     "timeline": "Cronologie",
     "completion": "Finalizare",
     "upcoming": "Viitor",
     "completed": "Finalizat",
     "in_progress": "În desfășurare",
     "planned": "Planificat",
-    "paused": "Pauzat"
+    "paused": "Pauzat",
+    "no_of": "Nr. de {entity}"
   },
   "chart": {
     "x_axis": "axa-X",

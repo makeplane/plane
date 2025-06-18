@@ -6,9 +6,8 @@ import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/editor";
 // ui
 import { TextArea } from "@plane/ui";
+import { cn, getPageName } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 

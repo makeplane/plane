@@ -7,8 +7,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "PORT=3100 concurrently \"babel src --out-dir dist --extensions '.ts,.js' --watch\" \"nodemon dist/server.js\"",
-    "build": "babel src --out-dir dist --extensions \".ts,.js\"",
+    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
+    "build": "tsup",
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
@@ -21,7 +21,9 @@
     "@hocuspocus/extension-redis": "^2.15.0",
     "@hocuspocus/server": "^2.15.0",
     "@plane/constants": "workspace:*",
+    "@plane/decorators": "workspace:*",
     "@plane/editor": "workspace:*",
+    "@plane/logger": "workspace:*",
     "@plane/types": "workspace:*",
     "@tiptap/core": "2.10.4",
     "@tiptap/html": "2.11.0",
@@ -43,21 +45,18 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
-    "@babel/cli": "^7.25.6",
-    "@babel/core": "^7.25.2",
-    "@babel/preset-env": "^7.25.4",
-    "@babel/preset-typescript": "^7.24.7",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.21",
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
-    "babel-plugin-module-resolver": "^5.0.2",
+    "@types/pino-http": "^5.8.4",
+    "@plane/typescript-config": "workspace:*",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

@@ -4,12 +4,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // types

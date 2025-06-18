@@ -7,18 +7,16 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
 import { MoreHorizontal } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { EIssueServiceType, TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
 import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

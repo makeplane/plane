@@ -6,18 +6,17 @@ import { useParams, usePathname } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueServiceType, ISSUE_CREATED } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_CREATED } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue } from "@plane/types";
 // ui
 import { setPromiseToast } from "@plane/ui";
+import { cn, createIssuePayload } from "@plane/utils";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { createIssuePayload } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web components

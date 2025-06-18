@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
+import { cn } from "@plane/utils";
 import { EmptyState } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { CycleDetailsSidebar } from "@/components/cycles";
 import useCyclesDetails from "@/components/cycles/active-cycle/use-cycles-details";
 import { CycleLayoutRoot } from "@/components/issues/issue-layouts";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCycle, useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

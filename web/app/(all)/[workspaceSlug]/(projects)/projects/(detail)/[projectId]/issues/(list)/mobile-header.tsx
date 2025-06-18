@@ -5,20 +5,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
-// plane constants
-import {
-  EIssueLayoutTypes,
-  EIssueFilterType,
-  EIssuesStoreType,
-  ISSUE_LAYOUTS,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-} from "@plane/constants";
-// i18n
+// plane imports
+import { EIssueLayoutTypes, EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
-// ui
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 import { CustomMenu } from "@plane/ui";
+import { isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import {
@@ -28,7 +25,6 @@ import {
   IssueLayoutIcon,
 } from "@/components/issues/issue-layouts";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 

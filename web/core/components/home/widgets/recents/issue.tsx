@@ -1,16 +1,13 @@
 import { observer } from "mobx-react";
-// plane constants
-import { EIssueServiceType } from "@plane/constants";
 // plane types
-import { TActivityEntityData, TIssueEntityData } from "@plane/types";
+import { EIssueServiceType, TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
 import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 // plane web components

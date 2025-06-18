@@ -3,18 +3,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
+import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
+//
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // helpers
-import { convertBytesToSize, getFileExtension, getFileName } from "@/helpers/attachment.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetail, useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -3,6 +3,7 @@ import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import * as Y from "yjs";
 // extensions
+import { TDocumentPayload } from "@plane/types";
 import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,
@@ -12,7 +13,9 @@ import {
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
 const DOCUMENT_EDITOR_EXTENSIONS = [...CoreEditorExtensionsWithoutProps, ...DocumentEditorExtensionsWithoutProps];
 // editor schemas
+// @ts-expect-error tiptap types are incorrect
 const richTextEditorSchema = getSchema(RICH_TEXT_EDITOR_EXTENSIONS);
+// @ts-expect-error tiptap types are incorrect
 const documentEditorSchema = getSchema(DOCUMENT_EDITOR_EXTENSIONS);
 
 /**
@@ -54,6 +57,7 @@ export const convertBase64StringToBinaryData = (document: string): ArrayBuffer =
  */
 export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: string): Uint8Array => {
   // convert HTML to JSON
+  // @ts-expect-error tiptap types are incorrect
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", RICH_TEXT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(richTextEditorSchema, contentJSON, "default");
@@ -69,6 +73,7 @@ export const getBinaryDataFromRichTextEditorHTMLString = (descriptionHTML: strin
  */
 export const getBinaryDataFromDocumentEditorHTMLString = (descriptionHTML: string): Uint8Array => {
   // convert HTML to JSON
+  // @ts-expect-error tiptap types are incorrect
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", DOCUMENT_EDITOR_EXTENSIONS);
   // convert JSON to Y.Doc format
   const transformedData = prosemirrorJSONToYDoc(documentEditorSchema, contentJSON, "default");
@@ -97,6 +102,7 @@ export const getAllDocumentFormatsFromRichTextEditorBinaryData = (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, richTextEditorSchema).toJSON();
   // convert to HTML
+  // @ts-expect-error tiptap types are incorrect
   const contentHTML = generateHTML(contentJSON, RICH_TEXT_EDITOR_EXTENSIONS);
 
   return {
@@ -126,6 +132,7 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, documentEditorSchema).toJSON();
   // convert to HTML
+  // @ts-expect-error tiptap types are incorrect
   const contentHTML = generateHTML(contentJSON, DOCUMENT_EDITOR_EXTENSIONS);
 
   return {
@@ -133,4 +140,51 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
     contentJSON,
     contentHTML,
   };
+};
+
+type TConvertHTMLDocumentToAllFormatsArgs = {
+  document_html: string;
+  variant: "rich" | "document";
+};
+
+/**
+ * @description Converts HTML content to all supported document formats (JSON, HTML, and binary)
+ * @param {TConvertHTMLDocumentToAllFormatsArgs} args - Arguments containing HTML content and variant type
+ * @param {string} args.document_html - The HTML content to convert
+ * @param {"rich" | "document"} args.variant - The type of editor variant to use for conversion
+ * @returns {TDocumentPayload} Object containing the document in all supported formats
+ * @throws {Error} If an invalid variant is provided
+ */
+export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllFormatsArgs): TDocumentPayload => {
+  const { document_html, variant } = args;
+
+  let allFormats: TDocumentPayload;
+
+  if (variant === "rich") {
+    // Convert HTML to binary format for rich text editor
+    const contentBinary = getBinaryDataFromRichTextEditorHTMLString(document_html);
+    // Generate all document formats from the binary data
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromRichTextEditorBinaryData(contentBinary);
+    allFormats = {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  } else if (variant === "document") {
+    // Convert HTML to binary format for document editor
+    const contentBinary = getBinaryDataFromDocumentEditorHTMLString(document_html);
+    // Generate all document formats from the binary data
+    const { contentBinaryEncoded, contentHTML, contentJSON } =
+      getAllDocumentFormatsFromDocumentEditorBinaryData(contentBinary);
+    allFormats = {
+      description: contentJSON,
+      description_html: contentHTML,
+      description_binary: contentBinaryEncoded,
+    };
+  } else {
+    throw new Error(`Invalid variant provided: ${variant}`);
+  }
+
+  return allFormats;
 };

@@ -5,9 +5,10 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane constants
 import { computedFn } from "mobx-utils";
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType } from "@plane/constants";
 // base class
 import {
+  EIssuesStoreType,
   IIssueFilterOptions,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -18,7 +19,7 @@ import {
   IssuePaginationOptions,
 } from "@plane/types";
 // services
-import { handleIssueQueryParamsByLayout } from "@/helpers/issue.helper";
+import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { WorkspaceService } from "@/plane-web/services";
 import { IBaseIssueFilterStore, IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 // helpers

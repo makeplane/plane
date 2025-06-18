@@ -4,17 +4,23 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constant
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, EViewAccess } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+import {
+  EViewAccess,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IWorkspaceView,
+} from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 import { AccessController } from "@/plane-web/components/views/access-controller";

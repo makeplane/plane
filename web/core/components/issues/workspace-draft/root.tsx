@@ -5,14 +5,15 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EDraftIssuePaginationType } from "@plane/constants";
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants/src/user";
+import { EUserPermissionsLevel } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // constants
 
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

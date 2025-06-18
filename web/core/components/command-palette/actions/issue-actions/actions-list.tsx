@@ -4,12 +4,11 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 

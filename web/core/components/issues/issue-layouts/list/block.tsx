@@ -6,17 +6,15 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
+import { EIssueServiceType, TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

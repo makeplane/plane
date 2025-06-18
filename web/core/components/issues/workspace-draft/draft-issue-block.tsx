@@ -4,13 +4,11 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
-import { EIssuesStoreType } from "@plane/constants";
-import { TWorkspaceDraftIssue } from "@plane/types";
-// ui
+import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
 // constants
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components

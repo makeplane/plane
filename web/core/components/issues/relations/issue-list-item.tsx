@@ -4,14 +4,13 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // Plane
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // components
+import { generateWorkItemLink } from "@plane/utils";
 import { RelationIssueProperty } from "@/components/issues/relations";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

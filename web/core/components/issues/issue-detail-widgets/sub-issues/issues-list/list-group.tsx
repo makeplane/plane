@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, CircleDashed } from "lucide-react";
-import { ALL_ISSUES, EIssuesStoreType } from "@plane/constants";
-import { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { ALL_ISSUES } from "@plane/constants";
+import { EIssuesStoreType, IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";

@@ -18,6 +18,7 @@
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
+    "@types/uuid": "^9.0.8",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
@@ -25,6 +26,7 @@
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "tailwind-merge": "^2.5.5",
+    "uuid": "^10.0.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
@@ -35,6 +37,6 @@
     "@types/react": "^18.3.11",
     "@types/zxcvbn": "^4.4.5",
     "tsup": "8.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

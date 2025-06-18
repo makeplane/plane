@@ -9,12 +9,10 @@ import { observer } from "mobx-react";
 import { TDraggableData } from "@plane/constants";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
+import { cn, getCurrentStateSequence } from "@plane/utils";
 // components
 import { StateItemTitle, StateUpdate } from "@/components/project-states";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getCurrentStateSequence } from "@/helpers/state.helper";
-
 type TStateItem = {
   groupKey: TStateGroups;
   groupedStates: Record<string, IState[]>;

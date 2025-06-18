@@ -4,17 +4,17 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCycleFilters } from "@plane/types";
+import { EUserProjectRoles, TCycleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
-import { PageHead } from "@/components/core";
+import { calculateTotalFilters } from "@plane/utils";
+import { PageHead } from "@/components/core/page-title";
 import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/components/cycles";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { CycleModuleListLayout } from "@/components/ui";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useEventTracker, useCycle, useProject, useCycleFilter, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

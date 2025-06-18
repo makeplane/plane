@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EInboxIssueCurrentTab } from "@plane/types";
 import { Intake } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

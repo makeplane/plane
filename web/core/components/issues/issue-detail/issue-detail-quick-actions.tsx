@@ -4,22 +4,14 @@ import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import {
-  ISSUE_ARCHIVED,
-  ISSUE_DELETED,
-  ARCHIVABLE_STATE_GROUPS,
-  EIssuesStoreType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-} from "@plane/constants";
+import { ISSUE_ARCHIVED, ISSUE_DELETED, ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,

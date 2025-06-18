@@ -4,9 +4,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 // plane constants
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
 // components
@@ -14,7 +15,6 @@ import { BreadcrumbLink, CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";

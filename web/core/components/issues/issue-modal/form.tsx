@@ -5,16 +5,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // editor
-import { ETabIndices, EIssuesStoreType, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
+import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
-// types
-import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset, cn, getTextContent, getChangedIssuefields, getTabIndex } from "@plane/utils";
 // components
-import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset } from "@plane/utils";
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
@@ -24,10 +23,6 @@ import {
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";

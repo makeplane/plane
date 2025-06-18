@@ -1,15 +1,14 @@
 "use client";
 import { observer } from "mobx-react";
-// components
 import { useParams, useSearchParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/constants/src/user";
+// components
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles, EInboxIssueCurrentTab } from "@plane/types";
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { InboxIssueRoot } from "@/components/inbox";
 // helpers
-import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

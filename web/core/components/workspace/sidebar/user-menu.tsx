@@ -4,13 +4,13 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Home, Inbox, PenSquare } from "lucide-react";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
 import { UserActivityIcon } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
 

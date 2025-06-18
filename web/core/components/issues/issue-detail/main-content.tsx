@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
-import { TNameDescriptionLoader } from "@plane/types";
+import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
 // components
+import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import {
   IssueActivity,
@@ -19,7 +19,6 @@ import {
   PeekOverviewProperties,
 } from "@/components/issues";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
 // hooks
 import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";

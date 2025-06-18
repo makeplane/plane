@@ -4,11 +4,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
+import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { EUserProjectRoles } from "@plane/constants";
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 

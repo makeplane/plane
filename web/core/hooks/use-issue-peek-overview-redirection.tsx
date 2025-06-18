@@ -1,10 +1,8 @@
 import { useRouter } from "next/navigation";
-// constants
-import { EIssueServiceType } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, TIssue } from "@plane/types";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "./store";
 

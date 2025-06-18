@@ -23,6 +23,7 @@
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
+    "@tanstack/react-table": "^8.21.3",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -31,9 +32,10 @@
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "next": "^14.2.29",
+    "mobx-react-lite": "^4.1.0",
+    "next": "14.2.30",
     "next-themes": "^0.2.1",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "7.51.5",
@@ -50,6 +52,6 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

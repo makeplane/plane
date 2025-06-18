@@ -3,9 +3,11 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
-import { EUserWorkspaceRoles } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@/helpers/common.helper";
+import { EUserWorkspaceRoles } from "@plane/types";
+import { cn } from "@plane/utils";
+// hooks
 import { useUserSettings } from "@/hooks/store";
 
 export type TSettingItem = {

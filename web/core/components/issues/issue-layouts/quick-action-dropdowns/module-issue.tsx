@@ -5,13 +5,12 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
 // plane-web components

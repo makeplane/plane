@@ -26,6 +26,8 @@
     "@plane/services": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
+    "@plane/utils": "workspace:*",
+    "@popperjs/core": "^2.11.8",
     "axios": "^1.8.3",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
@@ -34,17 +36,18 @@
     "lodash": "^4.17.21",
     "lowlight": "^2.9.0",
     "lucide-react": "^0.469.0",
-    "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^14.2.29",
+    "mobx": "^6.10.0",
+    "mobx-react-lite": "^4.1.0",
+    "next": "14.2.30",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
-    "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "7.51.5",
     "react-popper": "^2.3.0",
+    "react": "^18.3.1",
     "swr": "^2.2.2",
     "tailwind-merge": "^2.0.0",
     "uuid": "^9.0.0",
@@ -63,6 +66,6 @@
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }
