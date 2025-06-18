@@ -6,6 +6,9 @@ from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
