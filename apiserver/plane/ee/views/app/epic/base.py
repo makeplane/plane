@@ -170,6 +170,14 @@ class EpicViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
+            ).annotate(
+                initiative_ids=Coalesce(
+                    ArrayAgg(
+                        "initiative_epics__initiative_id",
+                        distinct=True,
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
             .prefetch_related(
                 Prefetch(
