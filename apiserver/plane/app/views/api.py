@@ -1,5 +1,6 @@
 # Python import
 from uuid import uuid4
+from typing import Optional
 from datetime import timedelta
 
 # Django imports
@@ -7,6 +8,7 @@ from django.utils import timezone
 
 # Third party
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework import status
 
 # Module import
@@ -17,12 +19,9 @@ from plane.app.permissions import WorkspaceEntityPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
-
-    def post(self, request, slug):
+    def post(self, request: Request) -> Response:
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
-        workspace = Workspace.objects.get(slug=slug)
         expired_at = request.data.get("expired_at", None)
 
         # Check the user type
@@ -32,7 +31,6 @@ class ApiTokenEndpoint(BaseAPIView):
             label=label,
             description=description,
             user=request.user,
-            workspace=workspace,
             user_type=user_type,
             expired_at=expired_at,
         )
@@ -41,29 +39,23 @@ class ApiTokenEndpoint(BaseAPIView):
         # Token will be only visible while creating
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def get(self, request, slug, pk=None):
+    def get(self, request: Request, pk: Optional[str] = None) -> Response:
         if pk is None:
-            api_tokens = APIToken.objects.filter(
-                user=request.user, workspace__slug=slug, is_service=False
-            )
+            api_tokens = APIToken.objects.filter(user=request.user, is_service=False)
             serializer = APITokenReadSerializer(api_tokens, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            api_tokens = APIToken.objects.get(
-                user=request.user, workspace__slug=slug, pk=pk
-            )
+            api_tokens = APIToken.objects.get(user=request.user, pk=pk)
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, slug, pk):
-        api_token = APIToken.objects.get(
-            workspace__slug=slug, user=request.user, pk=pk, is_service=False
-        )
+    def delete(self, request: Request, pk: str) -> Response:
+        api_token = APIToken.objects.get(user=request.user, pk=pk, is_service=False)
         api_token.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def patch(self, request, slug, pk):
-        api_token = APIToken.objects.get(workspace__slug=slug, user=request.user, pk=pk)
+    def patch(self, request: Request, pk: str) -> Response:
+        api_token = APIToken.objects.get(user=request.user, pk=pk)
         serializer = APITokenSerializer(api_token, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -74,7 +66,7 @@ class ApiTokenEndpoint(BaseAPIView):
 class ServiceApiTokenEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
 
-    def post(self, request, slug):
+    def post(self, request: Request, slug: str) -> Response:
         workspace = Workspace.objects.get(slug=slug)
 
         api_token = APIToken.objects.filter(

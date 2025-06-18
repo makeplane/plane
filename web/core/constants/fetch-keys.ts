@@ -116,7 +116,7 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 
 // api-tokens
-export const API_TOKENS_LIST = (workspaceSlug: string) => `API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
+export const API_TOKENS_LIST = `API_TOKENS_LIST`;
 export const API_TOKEN_DETAILS = (workspaceSlug: string, tokenId: string) =>
   `API_TOKEN_DETAILS_${workspaceSlug.toUpperCase()}_${tokenId.toUpperCase()}`;
 

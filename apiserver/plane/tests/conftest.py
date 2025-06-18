@@ -113,6 +113,48 @@ def session_client(api_client, create_user):
 
 
 @pytest.fixture
+def create_bot_user(db):
+    """Create and return a bot user instance"""
+    from uuid import uuid4
+
+    unique_id = uuid4().hex[:8]
+    user = User.objects.create(
+        email=f"bot-{unique_id}@plane.so",
+        username=f"bot_user_{unique_id}",
+        first_name="Bot",
+        last_name="User",
+        is_bot=True,
+    )
+    user.set_password("bot@123")
+    user.save()
+    return user
+
+
+@pytest.fixture
+def api_token_data():
+    """Return sample API token data for testing"""
+    from django.utils import timezone
+    from datetime import timedelta
+
+    return {
+        "label": "Test API Token",
+        "description": "Test description for API token",
+        "expired_at": (timezone.now() + timedelta(days=30)).isoformat(),
+    }
+
+
+@pytest.fixture
+def create_api_token_for_user(db, create_user):
+    """Create and return an API token for a specific user"""
+    return APIToken.objects.create(
+        label="Test Token",
+        description="Test token description",
+        user=create_user,
+        user_type=0,
+    )
+
+
+@pytest.fixture
 def plane_server(live_server):
     """
     Renamed version of live_server fixture to avoid name clashes.

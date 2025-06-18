@@ -4,7 +4,6 @@ import { TIssueServiceType } from "@plane/types";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 import { IIssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
-// types
 
 export const useIssueDetail = (serviceType: TIssueServiceType = EIssueServiceType.ISSUES): IIssueDetail => {
   const context = useContext(StoreContext);
