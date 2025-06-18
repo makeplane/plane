@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
-  label?: string | ReactNode;
+  label?: string;
   href?: string;
   icon?: React.ReactNode;
   disableTooltip?: boolean;
