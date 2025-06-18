@@ -1,4 +1,4 @@
-import { update } from "lodash";
+import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { TEpicStats, TLoader } from "@plane/types";
@@ -236,7 +236,7 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
       this.rootStore.issue.issues.addIssue(transformedResponse);
 
       runInAction(() => {
-        update(this.initiativeEpicsMap, [initiativeId], (Ids: string[]) => [...Ids, ...responseIds]);
+        set(this.initiativeEpicsMap, [initiativeId],  responseIds);
       });
 
       try {

@@ -32,7 +32,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
       getInitiativeById,
       updateInitiative,
       fetchInitiativeAnalytics,
-      epics: { addEpicsToInitiative },
+      epics: { addEpicsToInitiative, getInitiativeEpicsById },
     },
   } = useInitiatives();
   const { workspaceProjectIds } = useProject();
@@ -124,6 +124,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
         searchParams={{
           initiative_id: initiativeId,
         }}
+        selectedEpicIds={getInitiativeEpicsById(initiativeId) ?? []}
         handleClose={() => setIsEpicModalOpen(false)}
         handleOnSubmit={async (data) => {
           handleAddEpicToInitiative(data.map((epic) => epic.id));

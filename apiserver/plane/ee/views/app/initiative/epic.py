@@ -56,10 +56,20 @@ class InitiativeEpicViewSet(BaseViewSet):
             largest_sort_order = 10000
         else:
             largest_sort_order += 1000
+            
+        #  Current initiative epics
+        current_initiative_epics = InitiativeEpic.objects.filter(
+            workspace=workspace,
+            initiative_id=initiative_id,
+        ).values_list("epic_id", flat=True)
 
+        # Get epics to delete and create using symmetric difference (XOR)
+        epics_to_delete = set(current_initiative_epics) - set(epic_ids)
+        epics_to_create = set(epic_ids) - set(current_initiative_epics)
+        
         # Create the initiative_epics
         initiative_epics = []
-        for epic_id in epic_ids:
+        for epic_id in epics_to_create:
             initiative_epics.append(
                 InitiativeEpic(
                     workspace=workspace,
@@ -69,6 +79,13 @@ class InitiativeEpicViewSet(BaseViewSet):
                 )
             )
             largest_sort_order += 1000
+
+        # Delete the initiative_epics
+        InitiativeEpic.objects.filter(
+            workspace=workspace,
+            initiative_id=initiative_id,
+            epic_id__in=epics_to_delete,
+        ).delete()
 
         # Bulk create the initiative_epics
         initiative_epics = InitiativeEpic.objects.bulk_create(

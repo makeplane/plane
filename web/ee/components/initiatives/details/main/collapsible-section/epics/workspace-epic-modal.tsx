@@ -1,6 +1,6 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -8,13 +8,14 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
 // ui
-import { Button, EpicIcon, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, EpicIcon, Loader } from "@plane/ui";
 // helpers
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
+import { getSelectedEpicDetails } from "@/plane-web/components/initiatives/utils";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
 import { WorkspaceService } from "@/plane-web/services";
 import { EpicSearchModalEmptyState } from "./issue-search-modal-empty-state";
@@ -27,13 +28,14 @@ type Props = {
   handleClose: () => void;
   searchParams: Partial<TWorkspaceEpicsSearchParams>;
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
+  selectedEpicIds: string[];
 };
 
 // move this to workspace service
 const workspaceService = new WorkspaceService();
 
 export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, isOpen, handleClose: onClose, handleOnSubmit, searchParams } = props;
+  const { workspaceSlug, isOpen, handleClose: onClose, handleOnSubmit, searchParams, selectedEpicIds } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,16 +59,6 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
   };
 
   const onSubmit = async () => {
-    if (selectedEpics.length === 0) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one epic.",
-      });
-
-      return;
-    }
-
     setIsSubmitting(true);
 
     await handleOnSubmit(selectedEpics).finally(() => setIsSubmitting(false));
@@ -89,8 +81,19 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
       });
   }, [debouncedSearchTerm, isOpen, searchParams, workspaceSlug]);
 
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug) return;
+    const _selectedEpics = getSelectedEpicDetails(selectedEpicIds, workspaceSlug);
+    setSelectedEpics(_selectedEpics);
+  }, [isOpen, workspaceSlug, selectedEpicIds]);
+
   // filter by search term check for name and sequence
   const filteredEpics = epics.filter((epic) => epic.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
+
+  const showSubmitButton = useMemo(() => {
+    const newEpicIds = selectedEpics.map((epic) => epic.id);
+    return !isEqual(newEpicIds, selectedEpicIds);
+  }, [selectedEpics, selectedEpicIds]);
 
   return (
     <>
@@ -256,11 +259,15 @@ export const WorkspaceEpicsListModal: React.FC<Props> = observer((props) => {
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     {t("cancel")}
                   </Button>
-                  {selectedEpics.length > 0 && (
-                    <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
-                      {isSubmitting ? `${t("adding")}...` : t("epics.add_selected_epics")}
-                    </Button>
-                  )}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={onSubmit}
+                    loading={isSubmitting}
+                    disabled={!showSubmitButton || isSubmitting}
+                  >
+                    {isSubmitting ? t("adding") : t("submit")}
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
