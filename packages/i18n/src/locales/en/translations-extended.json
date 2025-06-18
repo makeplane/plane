@@ -13,6 +13,7 @@
     "overview": "Overview",
     "workflows": "Workflows",
     "templates": "Templates",
+    "business": "Business",
     "members_and_teamspaces": "Members & Teamspaces"
   },
   "issue": {
@@ -465,6 +466,26 @@
       }
     }
   },
+  "workspace_analytics": {
+    "upgrade_to_plan": "Upgrade to {plan} to unlock {tab}",
+    "projects_by_status": "Projects by status",
+    "active_users": "Active users",
+    "intake_trends": "Intake Trends",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "No data yet",
+        "description": "Cycle progress analytics will appear here. Add work items to cycles to start tracking progress."
+      },
+      "module_progress": {
+        "title": "No data yet",
+        "description": "Module progress analytics will appear here. Add work items to modules to start tracking progress."
+      },
+      "intake_trends": {
+        "title": "No data yet",
+        "description": "Intake trends analytics will appear here. Add work items to intake to start tracking trends."
+      }
+    }
+  },
   "epics": {
     "label": "Epics",
     "no_epics_selected": "No epics selected",
@@ -684,7 +705,6 @@
       "description": "Manage your workspace connections settings."
     }
   },
-
   "bulk_operations": {
     "error_details": {
       "invalid_archive_state_group": {

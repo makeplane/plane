@@ -2319,5 +2319,25 @@
         "project": "找不到範本。"
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "按狀態分類的專案",
+    "active_users": "活躍使用者",
+    "intake_trends": "入學趨勢",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "尚無資料",
+        "description": "循環進度分析將顯示在此處。將工作項目加入循環以開始追蹤進度。"
+      },
+      "module_progress": {
+        "title": "尚無資料",
+        "description": "模組進度分析將顯示在此處。將工作項目加入模組以開始追蹤進度。"
+      },
+      "intake_trends": {
+        "title": "尚無資料",
+        "description": "引入趨勢分析將顯示在此處。將工作項目加入引入以開始追蹤趨勢。"
+      }
+    },
+    "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}"
   }
 }

@@ -72,6 +72,8 @@ class FeatureFlag(Enum):
     NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
+    # Analytics
+    ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED"
     # Notion Importer
     NOTION_IMPORTER = "NOTION_IMPORTER"
 

@@ -2318,5 +2318,25 @@
         "project": "Aucun modèle trouvé."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projets par statut",
+    "active_users": "Utilisateurs actifs",
+    "intake_trends": "Tendances des admissions",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Pas encore de données",
+        "description": "Les analyses de progression du cycle apparaîtront ici. Ajoutez des éléments de travail aux cycles pour commencer à suivre la progression."
+      },
+      "module_progress": {
+        "title": "Pas encore de données",
+        "description": "Les analyses de progression du module apparaîtront ici. Ajoutez des éléments de travail aux modules pour commencer à suivre la progression."
+      },
+      "intake_trends": {
+        "title": "Pas encore de données",
+        "description": "Les analyses des tendances d'entrée apparaîtront ici. Ajoutez des éléments de travail à l'entrée pour commencer à suivre les tendances."
+      }
+    },
+    "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}"
   }
 }

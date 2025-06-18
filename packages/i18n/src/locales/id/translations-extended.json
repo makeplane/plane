@@ -2316,5 +2316,25 @@
         "project": "Tidak ada template ditemukan."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proyek berdasarkan status",
+    "active_users": "Pengguna aktif",
+    "intake_trends": "Tren Penerimaan",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan siklus akan muncul di sini. Tambahkan item kerja ke siklus untuk mulai melacak kemajuan."
+      },
+      "module_progress": {
+        "title": "Belum ada data",
+        "description": "Analitik kemajuan modul akan muncul di sini. Tambahkan item kerja ke modul untuk mulai melacak kemajuan."
+      },
+      "intake_trends": {
+        "title": "Belum ada data",
+        "description": "Analitik tren intake akan muncul di sini. Tambahkan item kerja ke intake untuk mulai melacak tren."
+      }
+    },
+    "upgrade_to_plan": "Tingkatkan ke {plan} untuk membuka {tab}"
   }
 }

@@ -2319,5 +2319,25 @@
         "project": "Keine Vorlagen gefunden."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekte nach Status",
+    "active_users": "Aktive Nutzer",
+    "intake_trends": "Aufnahmetrends",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Noch keine Daten",
+        "description": "Analyse des Zyklusfortschritts wird hier angezeigt. Fügen Sie Arbeitsaufgaben zu Zyklen hinzu, um den Fortschritt zu verfolgen."
+      },
+      "module_progress": {
+        "title": "Noch keine Daten",
+        "description": "Analyse des Modulfortschritts wird hier angezeigt. Fügen Sie Arbeitsaufgaben zu Modulen hinzu, um den Fortschritt zu verfolgen."
+      },
+      "intake_trends": {
+        "title": "Noch keine Daten",
+        "description": "Analyse der Intake-Trends wird hier angezeigt. Fügen Sie Arbeitsaufgaben zum Intake hinzu, um Trends zu verfolgen."
+      }
+    },
+    "upgrade_to_plan": "Upgrade auf {plan}, um {tab} freizuschalten"
   }
 }

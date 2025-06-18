@@ -2312,5 +2312,25 @@
       "work_item": "Nenhum modelo encontrado.",
       "project": "Nenhum modelo encontrado."
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projetos por status",
+    "active_users": "Usuários ativos",
+    "intake_trends": "Tendências de entrada",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Ainda não há dados",
+        "description": "A análise de progresso do ciclo aparecerá aqui. Adicione itens de trabalho aos ciclos para começar a acompanhar o progresso."
+      },
+      "module_progress": {
+        "title": "Ainda não há dados",
+        "description": "A análise de progresso do módulo aparecerá aqui. Adicione itens de trabalho aos módulos para começar a acompanhar o progresso."
+      },
+      "intake_trends": {
+        "title": "Ainda não há dados",
+        "description": "A análise de tendências de intake aparecerá aqui. Adicione itens de trabalho ao intake para começar a acompanhar as tendências."
+      }
+    },
+    "upgrade_to_plan": "Faça upgrade para {plan} para desbloquear {tab}"
   }
 }

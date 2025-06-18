@@ -2316,5 +2316,25 @@
         "project": "Nu s-au găsit șabloane."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proiecte după statut",
+    "active_users": "Utilizatori activi",
+    "intake_trends": "Tendințe de admitere",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Nu există date încă",
+        "description": "Analizele progresului ciclului vor apărea aici. Adăugați elemente de lucru la cicluri pentru a începe să urmăriți progresul."
+      },
+      "module_progress": {
+        "title": "Nu există date încă",
+        "description": "Analizele progresului modulului vor apărea aici. Adăugați elemente de lucru la module pentru a începe să urmăriți progresul."
+      },
+      "intake_trends": {
+        "title": "Nu există date încă",
+        "description": "Analizele tendințelor de intake vor apărea aici. Adăugați elemente de lucru la intake pentru a începe să urmăriți tendințele."
+      }
+    },
+    "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}"
   }
 }

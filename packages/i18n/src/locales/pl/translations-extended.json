@@ -2319,5 +2319,25 @@
         "project": "Nie znaleziono szablonów."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty według statusu",
+    "active_users": "Aktywni użytkownicy",
+    "intake_trends": "Trendy przyjęć",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Brak danych",
+        "description": "Analiza postępu cyklu pojawi się tutaj. Dodaj elementy pracy do cykli, aby rozpocząć śledzenie postępów."
+      },
+      "module_progress": {
+        "title": "Brak danych",
+        "description": "Analiza postępu modułu pojawi się tutaj. Dodaj elementy pracy do modułów, aby rozpocząć śledzenie postępów."
+      },
+      "intake_trends": {
+        "title": "Brak danych",
+        "description": "Analiza trendów przyjęć pojawi się tutaj. Dodaj elementy pracy do przyjęć, aby rozpocząć śledzenie trendów."
+      }
+    },
+    "upgrade_to_plan": "Ulepsz do {plan}, aby odblokować {tab}"
   }
 }

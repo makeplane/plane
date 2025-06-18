@@ -2378,5 +2378,25 @@
         "project": "Şablon bulunamadı."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Durumuna göre projeler",
+    "active_users": "Aktif kullanıcılar",
+    "intake_trends": "Alım Eğilimleri",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Henüz veri yok",
+        "description": "Döngü ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için döngülere iş öğeleri ekleyin."
+      },
+      "module_progress": {
+        "title": "Henüz veri yok",
+        "description": "Modül ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için modüllere iş öğeleri ekleyin."
+      },
+      "intake_trends": {
+        "title": "Henüz veri yok",
+        "description": "Intake eğilim analizleri burada görünecek. Eğilimleri izlemeye başlamak için intake'e iş öğeleri ekleyin."
+      }
+    },
+    "upgrade_to_plan": "{tab} sekmesini açmak için {plan} planına geçin"
   }
 }

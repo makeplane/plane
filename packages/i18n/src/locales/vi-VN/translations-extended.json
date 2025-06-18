@@ -2302,5 +2302,25 @@
         "project": "Không tìm thấy mẫu."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Dự án theo trạng thái",
+    "active_users": "Người dùng hoạt động",
+    "intake_trends": "Xu hướng tiếp nhận",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm các hạng mục công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
+      },
+      "module_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ mô-đun sẽ hiển thị ở đây. Thêm các hạng mục công việc vào mô-đun để bắt đầu theo dõi tiến độ."
+      },
+      "intake_trends": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích xu hướng intake sẽ hiển thị ở đây. Thêm các hạng mục công việc vào intake để bắt đầu theo dõi xu hướng."
+      }
+    },
+    "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
   }
 }

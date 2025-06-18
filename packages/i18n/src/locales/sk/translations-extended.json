@@ -2298,6 +2298,26 @@
       }
     }
   },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty podľa stavu",
+    "active_users": "Aktívni používatelia",
+    "intake_trends": "Trendy prijímania",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu cyklu sa zobrazí tu. Pridajte pracovné položky do cyklov, aby ste mohli začať sledovať postup."
+      },
+      "module_progress": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza postupu modulu sa zobrazí tu. Pridajte pracovné položky do modulov, aby ste mohli začať sledovať postup."
+      },
+      "intake_trends": {
+        "title": "Zatiaľ žiadne údaje",
+        "description": "Analýza trendov príjmu sa zobrazí tu. Pridajte pracovné položky do príjmu, aby ste mohli sledovať trendy."
+      }
+    },
+    "upgrade_to_plan": "Inovujte na {plan}, aby ste odomkli kartu {tab}"
+  },
 
   "notion_importer": {
     "notion_importer_description": "Importujte vaše Notion dáta do projektov Plane.",

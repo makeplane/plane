@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,6 +15,7 @@ import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import { useFlag } from "@/plane-web/hooks/store";
 
 const AnalyticsPage = observer(() => {
   const router = useRouter();
@@ -39,9 +40,11 @@ const AnalyticsPage = observer(() => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+  const params = useParams();
+  const workspaceSlug = params.workspaceSlug;
+  const isAnalyticsTabsEnabled = useFlag(workspaceSlug.toString(), "ANALYTICS_ADVANCED");
 
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
-
+  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t, isAnalyticsTabsEnabled), [isAnalyticsTabsEnabled, t]);
   const tabs = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
@@ -51,7 +54,7 @@ const AnalyticsPage = observer(() => {
         onClick: () => {
           router.push(`?tab=${tab.key}`);
         },
-        isDisabled: tab.isDisabled,
+        disabled: tab.isDisabled,
       })),
     [ANALYTICS_TABS, router]
   );

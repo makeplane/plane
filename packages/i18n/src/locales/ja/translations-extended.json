@@ -2318,5 +2318,25 @@
         "project": "テンプレートが見つかりません。"
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "ステータス別のプロジェクト",
+    "active_users": "アクティブユーザー",
+    "intake_trends": "受け入れの傾向",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "データがまだありません",
+        "description": "サイクルの進捗分析がここに表示されます。作業項目をサイクルに追加して進捗の追跡を開始してください。"
+      },
+      "module_progress": {
+        "title": "データがまだありません",
+        "description": "モジュールの進捗分析がここに表示されます。作業項目をモジュールに追加して進捗の追跡を開始してください。"
+      },
+      "intake_trends": {
+        "title": "データがまだありません",
+        "description": "インテークの傾向分析がここに表示されます。作業項目をインテークに追加して傾向の追跡を開始してください。"
+      }
+    },
+    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
   }
 }

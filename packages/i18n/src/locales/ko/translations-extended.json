@@ -2319,5 +2319,25 @@
         "project": "템플릿을 찾을 수 없습니다."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "상태별 프로젝트",
+    "active_users": "활성 사용자",
+    "intake_trends": "수용 추세",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "아직 데이터가 없습니다",
+        "description": "사이클 진행 분석이 여기에 표시됩니다. 작업 항목을 사이클에 추가하여 진행 상황을 추적하세요."
+      },
+      "module_progress": {
+        "title": "아직 데이터가 없습니다",
+        "description": "모듈 진행 분석이 여기에 표시됩니다. 작업 항목을 모듈에 추가하여 진행 상황을 추적하세요."
+      },
+      "intake_trends": {
+        "title": "아직 데이터가 없습니다",
+        "description": "인테이크 트렌드 분석이 여기에 표시됩니다. 작업 항목을 인테이크에 추가하여 트렌드를 추적하세요."
+      }
+    },
+    "upgrade_to_plan": "{tab} 잠금 해제를 위해 {plan}(으)로 업그레이드하세요"
   }
 }

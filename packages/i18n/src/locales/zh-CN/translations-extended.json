@@ -2318,5 +2318,25 @@
         "project": "未找到模板。"
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "按状态分类的项目",
+    "active_users": "活跃用户",
+    "intake_trends": "入学趋势",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "尚无数据",
+        "description": "周期进度分析将显示在此处。将工作项添加到周期中以开始跟踪进度。"
+      },
+      "module_progress": {
+        "title": "尚无数据",
+        "description": "模块进度分析将显示在此处。将工作项添加到模块中以开始跟踪进度。"
+      },
+      "intake_trends": {
+        "title": "尚无数据",
+        "description": "引入趋势分析将显示在此处。将工作项添加到引入中以开始跟踪趋势。"
+      }
+    },
+    "upgrade_to_plan": "升级到 {plan} 以解锁 {tab}"
   }
 }

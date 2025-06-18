@@ -2319,5 +2319,25 @@
         "project": "Nebyly nalezeny žádné šablony."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Projekty podle stavu",
+    "active_users": "Aktivní uživatelé",
+    "intake_trends": "Trendy příjmů",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu cyklu se zobrazí zde. Přidejte pracovní položky do cyklů, abyste mohli sledovat postup."
+      },
+      "module_progress": {
+        "title": "Zatím žádná data",
+        "description": "Analýza postupu modulu se zobrazí zde. Přidejte pracovní položky do modulů, abyste mohli sledovat postup."
+      },
+      "intake_trends": {
+        "title": "Zatím žádná data",
+        "description": "Analýza trendů příjmu se zobrazí zde. Přidejte pracovní položky do příjmu, abyste mohli sledovat trendy."
+      }
+    },
+    "upgrade_to_plan": "Přejděte na plán {plan}, abyste odemkli kartu {tab}"
   }
 }

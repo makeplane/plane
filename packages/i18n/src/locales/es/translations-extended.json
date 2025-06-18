@@ -2317,5 +2317,25 @@
         "project": "No se encontraron plantillas."
       }
     }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proyectos por estado",
+    "active_users": "Usuarios activos",
+    "intake_trends": "Tendencias de admisión",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del ciclo aparecerán aquí. Agrega elementos de trabajo a los ciclos para comenzar a rastrear el progreso."
+      },
+      "module_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del módulo aparecerán aquí. Agrega elementos de trabajo a los módulos para comenzar a rastrear el progreso."
+      },
+      "intake_trends": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de tendencias de entrada aparecerán aquí. Agrega elementos de trabajo a la entrada para comenzar a rastrear tendencias."
+      }
+    },
+    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
   }
 }

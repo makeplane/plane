@@ -1,10 +1,14 @@
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any, Optional, Union
+
 from django.db.models import QuerySet, Q, Count
 from django.http import HttpRequest
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
+from django.db.models.functions import Cast
+from django.db.models.fields.json import KeyTextTransform
+
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import (
@@ -23,10 +27,13 @@ from plane.utils.build_chart import build_analytics_chart
 from plane.utils.date_utils import (
     get_analytics_filters,
 )
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 from django.db.models import Max
 from django.db import models
 from django.db.models import Case, When, Value, F, CharField
 from django.db.models.functions import Concat
+from plane.payment.flags.flag_decorator import ErrorCodes
 
 
 class AdvanceAnalyticsBaseView(BaseAPIView):
@@ -110,7 +117,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             ),
             "total_intake": self.get_filtered_counts(
                 Issue.objects.filter(**self.filters["base_filters"]).filter(
-                    issue_intake__status__in=["-2", "0"]
+                    issue_intake__status__in=["-2", "-1", "0", "1", "2"]
                 )
             ),
         }
@@ -228,7 +235,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
     def get_intake_stats(self) -> Dict[str, Dict[str, int]]:
         base_queryset = Issue.objects.filter(**self.filters["base_filters"]).filter(
             issue_intake__isnull=False,
-            issue_intake__status__in=[1, -1, 2],
+            issue_intake__status__in=["-2", "-1", "0", "1", "2"],
         )
 
         return {
@@ -259,35 +266,49 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
                 self.get_work_items_stats(),
                 status=status.HTTP_200_OK,
             )
-        elif tab == "users":
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.ANALYTICS_ADVANCED,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            if tab == "users":
+                return Response(
+                    self.get_users_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif tab == "projects":
+                return Response(
+                    self.get_projects_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif tab == "work-items":
+                return Response(
+                    self.get_work_items_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif tab == "cycles":
+                return Response(
+                    self.get_cycles_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif tab == "modules":
+                return Response(
+                    self.get_module_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif tab == "intake":
+                return Response(
+                    self.get_intake_stats(),
+                    status=status.HTTP_200_OK,
+                )
+        else:
             return Response(
-                self.get_users_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif tab == "projects":
-            return Response(
-                self.get_projects_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif tab == "work-items":
-            return Response(
-                self.get_work_items_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif tab == "cycles":
-            return Response(
-                self.get_cycles_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif tab == "modules":
-            return Response(
-                self.get_module_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif tab == "intake":
-            return Response(
-                self.get_intake_stats(),
-                status=status.HTTP_200_OK,
+                {
+                    "error": "Payment required",
+                    "error_code": ErrorCodes.PAYMENT_REQUIRED.value,
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED,
             )
 
         return Response({"message": "Invalid tab"}, status=status.HTTP_400_BAD_REQUEST)
@@ -345,6 +366,15 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     ),
                     distinct=True,
                 ),
+                completed_work_items=Count(
+                    "project_issue",
+                    filter=Q(
+                        project_issue__archived_at__isnull=True,
+                        project_issue__is_draft=False,
+                        project_issue__state__group="completed",
+                    ),
+                    distinct=True,
+                ),
                 total_epics=Count(
                     "project_issue",
                     filter=Q(
@@ -360,7 +390,13 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                         project_issue__archived_at__isnull=True,
                         project_issue__is_draft=False,
                         project_issue__issue_intake__isnull=False,
-                        project_issue__issue_intake__status__in=[1, -1, 2],
+                        project_issue__issue_intake__status__in=[
+                            "-2",
+                            "-1",
+                            "0",
+                            "1",
+                            "2",
+                        ],
                     ),
                     distinct=True,
                 ),
@@ -400,8 +436,10 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             .values(
                 "id",
                 "name",
+                "logo_props",
                 "identifier",
                 "total_work_items",
+                "completed_work_items",
                 "total_epics",
                 "total_intake",
                 "total_cycles",
@@ -515,7 +553,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     "id", filter=Q(created_by__in=member_ids), distinct=True
                 ),
             )
-            .order_by("display_name"),
+            .order_by("display_name")
         )
 
     def get_cycle_stats(self, filters: Dict[str, Any]) -> QuerySet:
@@ -525,7 +563,13 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
 
         return (
             qs.values(
-                "id", "name", "project__name", "owned_by_id", "start_date", "end_date"
+                "id",
+                "name",
+                "project__name",
+                "project__logo_props",
+                "owned_by_id",
+                "start_date",
+                "end_date",
             )
             .annotate(
                 total_issues=Count(
@@ -544,54 +588,6 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     distinct=True,
                     filter=Q(
                         issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_cycle__issue__state__group__in=["cancelled"],
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                un_started_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_cycle__issue__state__group__in=["unstarted"],
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_cycle__issue__state__group__in=["started"],
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_cycle__issue__state__group__in=["backlog"],
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
@@ -624,7 +620,14 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
 
         return (
             qs.values(
-                "id", "name", "project__name", "start_date", "target_date", "lead_id"
+                "id",
+                "name",
+                "project__name",
+                "project__logo_props",
+                "start_date",
+                "target_date",
+                "lead_id",
+                "status",
             )
             .annotate(
                 total_issues=Count(
@@ -649,62 +652,17 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                     ),
                 )
             )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_module__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_module__issue__state__group__in=["cancelled"],
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                un_started_issues=Count(
-                    "issue_module__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_module__issue__state__group__in=["unstarted"],
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_module__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_module__issue__state__group__in=["started"],
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_module__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_module__issue__state__group__in=["backlog"],
-                        issue_module__issue__archived_at__isnull=True,
-                        issue_module__issue__is_draft=False,
-                        issue_module__deleted_at__isnull=True,
-                    ),
-                )
-            )
         )
 
     def get_intake_stats(self, filters: Dict[str, Any]) -> QuerySet:
         qs = Issue.objects.filter(
             **self.filters["base_filters"],
-        ).filter(issue_intake__isnull=False, issue_intake__status__in=[1, -1, 2])
+        ).filter(
+            issue_intake__isnull=False,
+            issue_intake__status__in=["-2", "-1", "0", "1", "2"],
+        )
 
-        return qs.values("project_id", "project__name").annotate(
+        return qs.values("project_id", "project__name", "project__logo_props").annotate(
             total_work_items=Count("issue_intake__issue_id"),
             accepted_intake=Count(
                 "issue_intake__issue_id", filter=Q(issue_intake__status=1)
@@ -727,34 +685,50 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
                 self.get_work_items_stats(),
                 status=status.HTTP_200_OK,
             )
-        elif type == "users":
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.ANALYTICS_ADVANCED,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            if type == "users":
+                return Response(
+                    self.get_users_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "projects":
+                return Response(
+                    self.get_project_stats(),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "cycles":
+                return Response(
+                    self.get_cycle_stats(self.filters["base_filters"]),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "modules":
+                return Response(
+                    self.get_module_stats(self.filters["base_filters"]),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "intake":
+                return Response(
+                    self.get_intake_stats(self.filters["base_filters"]),
+                    status=status.HTTP_200_OK,
+                )
+        else:
             return Response(
-                self.get_users_stats(),
-                status=status.HTTP_200_OK,
+                {
+                    "error": "Payment required",
+                    "error_code": ErrorCodes.PAYMENT_REQUIRED.value,
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED,
             )
-        elif type == "projects":
-            return Response(
-                self.get_project_stats(),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "cycles":
-            return Response(
-                self.get_cycle_stats(self.filters["base_filters"]),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "modules":
-            return Response(
-                self.get_module_stats(self.filters["base_filters"]),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "intake":
-            return Response(
-                self.get_intake_stats(self.filters["base_filters"]),
-                status=status.HTTP_200_OK,
-            )
+
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# TODO : Add pagination for the charts
 class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
     def project_chart(self) -> List[Dict[str, Any]]:
         # Get the base queryset with workspace and project filters
@@ -777,7 +751,10 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
             **self.filters["base_filters"], **date_filter
         ).count()
         total_intake = Issue.objects.filter(
-            issue_intake__isnull=False, **self.filters["base_filters"], **date_filter
+            issue_intake__isnull=False,
+            issue_intake__status__in=["-2", "-1", "0", "1", "2"],
+            **self.filters["base_filters"],
+            **date_filter,
         ).count()
         total_members = WorkspaceMember.objects.filter(
             workspace__slug=self._workspace_slug,
@@ -910,45 +887,178 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         # Get the base queryset
         queryset = (
             Cycle.objects.filter(**self.filters["base_filters"])
+            .values("id", "name", "progress_snapshot", "start_date", "end_date")
             .annotate(
-                total_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
+                total_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("total_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
+                    ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(
+                            issue_cycle__issue__archived_at__isnull=True,
+                            issue_cycle__issue__is_draft=False,
+                            issue_cycle__issue__deleted_at__isnull=True,
+                        ),
+                    ),
+                    output_field=models.IntegerField(),
+                )
+            )
+            .annotate(
+                completed_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("completed_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
+                    ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(
+                            issue_cycle__issue__state__group="completed",
+                            issue_cycle__issue__archived_at__isnull=True,
+                            issue_cycle__issue__is_draft=False,
+                            issue_cycle__issue__deleted_at__isnull=True,
+                        ),
+                    ),
+                    output_field=models.IntegerField(),
+                )
+            )
+            .annotate(
+                unstarted_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("unstarted_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
+                    ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(
+                            issue_cycle__issue__state__group="unstarted",
+                            issue_cycle__issue__archived_at__isnull=True,
+                            issue_cycle__issue__is_draft=False,
+                            issue_cycle__issue__deleted_at__isnull=True,
+                        ),
+                    ),
+                    output_field=models.IntegerField(),
+                )
+            )
+            .annotate(
+                started_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("started_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
+                    ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(issue_cycle__issue__state__group="started"),
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__issue__deleted_at__isnull=True,
                     ),
+                    output_field=models.IntegerField(),
                 )
             )
             .annotate(
-                completed_issues=Count(
-                    "issue_cycle__issue__id",
-                    distinct=True,
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__issue__deleted_at__isnull=True,
+                backlog_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("backlog_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
                     ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(
+                            issue_cycle__issue__state__group="backlog",
+                            issue_cycle__issue__archived_at__isnull=True,
+                            issue_cycle__issue__is_draft=False,
+                            issue_cycle__issue__deleted_at__isnull=True,
+                        ),
+                    ),
+                    output_field=models.IntegerField(),
                 )
             )
-        )
+            .annotate(
+                cancelled_issues=Case(
+                    When(
+                        Q(progress_snapshot__isnull=False) & ~Q(progress_snapshot={}),
+                        then=Cast(
+                            KeyTextTransform("cancelled_issues", "progress_snapshot"),
+                            output_field=models.IntegerField(),
+                        ),
+                    ),
+                    default=Count(
+                        "issue_cycle__issue__id",
+                        distinct=True,
+                        filter=Q(
+                            issue_cycle__issue__state__group="cancelled",
+                            issue_cycle__issue__archived_at__isnull=True,
+                            issue_cycle__issue__is_draft=False,
+                            issue_cycle__issue__deleted_at__isnull=True,
+                        ),
+                    ),
+                    output_field=models.IntegerField(),
+                )
+            )
+            .annotate(
+                status=Case(
+                    When(
+                        Q(start_date__lte=timezone.now())
+                        & Q(end_date__gte=timezone.now()),
+                        then=Value("CURRENT"),
+                    ),
+                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
+                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
+                    When(
+                        Q(start_date__isnull=True) & Q(end_date__isnull=True),
+                        then=Value("DRAFT"),
+                    ),
+                    default=Value("DRAFT"),
+                    output_field=CharField(),
+                )
+            )
+        )[:30]
 
         # Calculate completion percentage for each cycle
         data = []
         for cycle in queryset:
-            total_issues = cycle.total_issues or 0
-            completed_issues = cycle.completed_issues or 0
+            total_issues = cycle.get("total_issues", 0)
+            completed_issues = cycle.get("completed_issues", 0)
             completion_percentage = (
                 (completed_issues / total_issues * 100) if total_issues > 0 else 0
             )
 
             data.append(
                 {
-                    "key": cycle.name,
-                    "name": cycle.name,
+                    "key": cycle.get("name"),
+                    "name": cycle.get("name"),
                     "count": round(completion_percentage, 2),
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                    "unstarted_issues": cycle.get("unstarted_issues", 0),
+                    "started_issues": cycle.get("started_issues", 0),
+                    "backlog_issues": cycle.get("backlog_issues", 0),
+                    "cancelled_issues": cycle.get("cancelled_issues", 0),
+                    "status": cycle.get("status"),
+                    "start_date": cycle.get("start_date"),
+                    "end_date": cycle.get("end_date"),
                 }
             )
 
@@ -978,24 +1088,73 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                         issue_module__deleted_at__isnull=True,
                     ),
                 ),
+                cancelled_issues=Count(
+                    "issue_module__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_module__issue__state__group__in=["cancelled"],
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                ),
+                unstarted_issues=Count(
+                    "issue_module__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_module__issue__state__group__in=["unstarted"],
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                ),
+                started_issues=Count(
+                    "issue_module__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_module__issue__state__group__in=["started"],
+                        issue_module__issue__archived_at__isnull=True,
+                        issue_module__issue__is_draft=False,
+                        issue_module__deleted_at__isnull=True,
+                    ),
+                ),
             )
-            .values("id", "name", "project__name", "total_issues", "completed_issues")
+            .values(
+                "id",
+                "name",
+                "project__name",
+                "total_issues",
+                "completed_issues",
+                "unstarted_issues",
+                "started_issues",
+                "cancelled_issues",
+                "status",
+                "start_date",
+                "target_date",
+            )
         )
-
         # Calculate completion percentage for each module
         data = []
         for module in queryset:
-            total_issues = module["total_issues"] or 0
-            completed_issues = module["completed_issues"] or 0
+            total_issues = module.get("total_issues", 0)
+            completed_issues = module.get("completed_issues", 0)
             completion_percentage = (
                 (completed_issues / total_issues * 100) if total_issues > 0 else 0
             )
 
             data.append(
                 {
-                    "key": module["name"],
-                    "name": module["name"],
+                    "key": module.get("name"),
+                    "name": module.get("name"),
                     "count": round(completion_percentage, 2),
+                    "total_issues": total_issues,
+                    "completed_issues": completed_issues,
+                    "unstarted_issues": module.get("unstarted_issues", 0),
+                    "started_issues": module.get("started_issues", 0),
+                    "cancelled_issues": module.get("cancelled_issues", 0),
+                    "status": module.get("status"),
+                    "start_date": module.get("start_date"),
+                    "target_date": module.get("target_date"),
                 }
             )
 
@@ -1096,25 +1255,39 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
                 self.work_item_completion_chart(),
                 status=status.HTTP_200_OK,
             )
-        elif type == "project-status":
+
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.ANALYTICS_ADVANCED,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            if type == "project-status":
+                return Response(
+                    self.project_status_chart(),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "cycles":
+                return Response(
+                    self.cycle_chart(),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "modules":
+                return Response(
+                    self.module_chart(),
+                    status=status.HTTP_200_OK,
+                )
+            elif type == "intake":
+                return Response(
+                    self.intake_chart(),
+                    status=status.HTTP_200_OK,
+                )
+        else:
             return Response(
-                self.project_status_chart(),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "cycles":
-            return Response(
-                self.cycle_chart(),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "modules":
-            return Response(
-                self.module_chart(),
-                status=status.HTTP_200_OK,
-            )
-        elif type == "intake":
-            return Response(
-                self.intake_chart(),
-                status=status.HTTP_200_OK,
+                {
+                    "error": "Payment required",
+                    "error_code": ErrorCodes.PAYMENT_REQUIRED.value,
+                },
+                status=status.HTTP_402_PAYMENT_REQUIRED,
             )
 
         return Response({"message": "Invalid type"}, status=status.HTTP_400_BAD_REQUEST)
