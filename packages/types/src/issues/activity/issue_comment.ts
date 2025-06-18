@@ -7,6 +7,7 @@ import {
 import { EIssueCommentAccessSpecifier } from "../../enums";
 import { TFileSignedURLResponse } from "../../file";
 import { IUserLite } from "../../users";
+import { IWorkspaceLite } from "../../workspace";
 
 export type TCommentReaction = {
   id: string;
@@ -63,6 +64,57 @@ export type TIssueCommentMap = {
 export type TIssueCommentIdMap = {
   [issue_id: string]: string[];
 };
+
+export interface ActorDetail {
+  avatar_url?: string;
+  display_name?: string;
+  first_name?: string;
+  is_bot?: boolean;
+  id?: string;
+  last_name?: string;
+}
+
+export interface IssueDetail {
+  id: string;
+  name: string;
+  description: Description;
+  description_html: string;
+  priority: string;
+  start_date: null;
+  target_date: null;
+  sequence_id: number;
+  sort_order: number;
+}
+
+export interface Description {
+  type: string;
+  content: DescriptionContent[];
+}
+
+export interface DescriptionContent {
+  type: string;
+  attrs?: Attrs;
+  content: ContentContent[];
+}
+
+export interface Attrs {
+  level: number;
+}
+
+export interface ContentContent {
+  text: string;
+  type: string;
+}
+
+export interface ProjectDetail {
+  id: string;
+  identifier: string;
+  name: string;
+  cover_image: string;
+  icon_prop: null;
+  emoji: string;
+  description: string;
+}
 
 export type TIssuePublicComment = {
   actor_detail: ActorDetail;

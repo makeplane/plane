@@ -7,9 +7,8 @@ import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
-import { EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle, IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";

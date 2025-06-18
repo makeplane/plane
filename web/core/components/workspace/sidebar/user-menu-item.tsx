@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, SIDEBAR_CLICKED, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel, SIDEBAR_CLICKED } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";

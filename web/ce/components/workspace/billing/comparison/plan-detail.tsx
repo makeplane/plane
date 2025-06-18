@@ -2,13 +2,12 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
-  EProductSubscriptionEnum,
   SUBSCRIPTION_REDIRECTION_URLS,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
   TALK_TO_SALES_URL,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 import { getButtonStyling } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components

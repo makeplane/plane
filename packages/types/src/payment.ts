@@ -1,4 +1,10 @@
-import { EProductSubscriptionEnum } from "@plane/constants";
+export enum EProductSubscriptionEnum {
+  FREE = "FREE",
+  ONE = "ONE",
+  PRO = "PRO",
+  BUSINESS = "BUSINESS",
+  ENTERPRISE = "ENTERPRISE",
+}
 
 export type TBillingFrequency = "month" | "year";
 

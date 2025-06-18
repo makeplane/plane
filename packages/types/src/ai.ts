@@ -1,4 +1,5 @@
-import { IProjectLite, IWorkspaceLite } from "@plane/types";
+import { IProjectLite } from "./project";
+import { IWorkspaceLite } from "./workspace";
 
 export interface IGptResponse {
   response: string;

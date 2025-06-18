@@ -11,20 +11,22 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "@types/express": "^4.17.21",
+    "express": "^4.21.2",
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "^22.5.4",
-    "tsup": "8.4.0",
     "typescript": "5.8.3"
   }
 }

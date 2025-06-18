@@ -26,7 +26,7 @@ export interface IWorkspaceIntegration {
   created_by: string;
   id: string;
   integration: string;
-  integration_detail: IIntegrations;
+  integration_detail: IAppIntegration;
   metadata: any;
   updated_at: string;
   updated_by: string;
