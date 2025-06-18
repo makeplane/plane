@@ -1,7 +1,5 @@
 # Third party imports
 from rest_framework import serializers
-from rest_framework import status
-from rest_framework.response import Response
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
@@ -224,6 +222,7 @@ class WorkspaceUserLinkSerializer(BaseSerializer):
 
 class IssueRecentVisitSerializer(serializers.ModelSerializer):
     project_identifier = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField()
     is_epic = serializers.SerializerMethodField()
 
     class Meta:
@@ -243,8 +242,14 @@ class IssueRecentVisitSerializer(serializers.ModelSerializer):
 
     def get_project_identifier(self, obj):
         project = obj.project
-
         return project.identifier if project else None
+
+    def get_assignees(self, obj):
+        return list(
+            obj.assignees.filter(issue_assignee__deleted_at__isnull=True).values_list(
+                "id", flat=True
+            )
+        )
 
     def get_is_epic(self, obj):
         return obj.type.is_epic if obj.type else False
