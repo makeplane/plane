@@ -212,18 +212,18 @@ class ProjectViewSet(BaseViewSet):
     )
     def retrieve(self, request, slug, pk):
         project = (
-            self.get_queryset()
-            .filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-            .filter(archived_at__isnull=True)
-            .filter(pk=pk)
-        ).first()
+            self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
+        )
 
         if project is None:
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        if project.member_role is None:
+            return Response(
+                {"error": "You do not have permission"},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(
