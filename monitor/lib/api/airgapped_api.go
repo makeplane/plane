@@ -279,6 +279,10 @@ We provide a non nil error here, as the route handler handles the deactivate as
 if the deactivation is successfull, it will proceed to delete the license from the database
 */
 func (a *AirgappedPrimeApi) DeactivateLicense(payload LicenseDeactivatePayload) (*WorkspaceActivationResponse, *APIError) {
+
+	// Delete the license file from the local system
+	os.Remove(payload.WorkspaceID + ".json")
+
 	response := GetMockWorkspaceActivationResponse(payload, true)
 	return response, nil
 }
