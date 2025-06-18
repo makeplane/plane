@@ -83,7 +83,7 @@ export const PageTemplateFormRoot: React.FC<Props> = observer((props) => {
           <div className="w-full max-w-4xl">
             <PageTemplatePageDetails workspaceSlug={workspaceSlug} templateId={preloadedData?.template?.id} />
             {/* Form Actions */}
-            <div className="flex items-center justify-between gap-2 pt-8 mt-8 border-t border-custom-border-200">
+            <div className="flex items-center justify-end gap-2 pt-8 mt-8 border-t border-custom-border-200">
               <div className="flex items-center justify-end gap-2">
                 <Button
                   variant="neutral-primary"

@@ -125,7 +125,6 @@ export const PageTemplatePageDetails: React.FC<Props> = observer((props) => {
             <PageTemplateEditor
               initialValue={value ?? "<p></p>"}
               onChange={(_json, html) => {
-                console.log("html", html);
                 onChange(html);
               }}
               projectId={projectId}
