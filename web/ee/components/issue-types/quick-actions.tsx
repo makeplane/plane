@@ -41,17 +41,16 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
       action: () => onEditIssueTypeIdChange(issueTypeId),
       title: t("common.actions.edit"),
       icon: Pencil,
-      disabled: issueTypeDetail?.issue_exists,
     },
     {
       key: "delete",
       action: () => onDeleteIssueTypeIdChange(issueTypeId),
       title: t("common.actions.delete"),
-      disabled: issueTypeDetail?.issue_exists,
       tooltipContent: issueTypeDetail?.issue_exists
         ? t("work_item_types.settings.cant_delete_linked_message")
         : undefined,
       icon: Trash2,
+      disabled: issueTypeDetail?.issue_exists,
     },
   ];
 
@@ -115,7 +114,12 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
           chevronClassName="h-4 w-4"
         >
           {MENU_ITEMS.map((item) => (
-            <Tooltip key={item.key} tooltipContent={item.tooltipContent} position="right" disabled={!item.tooltipContent}>
+            <Tooltip
+              key={item.key}
+              tooltipContent={item.tooltipContent}
+              position="right"
+              disabled={!item.tooltipContent}
+            >
               <span>
                 <CustomMenu.MenuItem
                   key={item.key}
