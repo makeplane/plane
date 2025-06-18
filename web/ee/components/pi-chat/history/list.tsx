@@ -1,5 +1,6 @@
 "use-client";
 
+import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -41,7 +42,7 @@ const HistoryList = observer((props: TProps) => {
 
           <div className="flex flex-col space-y-2">
             {threads && threads.length > 0 ? (
-              threads.map((thread) => (
+              uniqBy(threads, "chat_id").map((thread) => (
                 <ControlLink
                   key={`${thread.chat_id}-${thread.last_modified}`}
                   href={`/${workspaceSlug}/pi-chat?chat_id=${thread.chat_id}`}
@@ -53,7 +54,7 @@ const HistoryList = observer((props: TProps) => {
                     }
                   )}
                 >
-                  {thread.title}
+                  {thread.title || "Untitled"}
                 </ControlLink>
               ))
             ) : (

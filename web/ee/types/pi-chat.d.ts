@@ -62,11 +62,11 @@ export type TChatHistory = {
   chat_id: string;
   dialogue: TDialogue[];
   title: string;
+  last_modified: string;
 };
 
 export type TUserThreads = {
   chat_id: string;
-  dialogue: string[];
   title: string;
   last_modified: string;
 };

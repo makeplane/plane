@@ -9,7 +9,7 @@ export const groupThreadsByDate = (threads: TUserThreads[]) => {
   yesterday.setDate(today.getDate() - 1);
 
   threads.forEach((thread) => {
-    const threadDate = new Date(thread.last_modified);
+    const threadDate = thread.last_modified ? new Date(thread.last_modified) : new Date();
     // Group by today
     if (threadDate.toDateString() === today.toDateString()) {
       if (!groupedThreads["today"]) {

@@ -22,7 +22,7 @@ type TProps = {
 export const AiMessage = observer((props: TProps) => {
   // store
   const { message = "", reasoning, isPiThinking = false, id, isLoading = false, feedback, isLatest } = props;
-  const { sendFeedback } = usePiChat();
+  const { sendFeedback, activeChatId } = usePiChat();
   // state
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
@@ -37,7 +37,7 @@ export const AiMessage = observer((props: TProps) => {
   };
   const handleFeedback = async (feedback: EFeedback, feedbackMessage?: string) => {
     try {
-      await sendFeedback(parseInt(id), feedback, feedbackMessage);
+      await sendFeedback(activeChatId, parseInt(id), feedback, feedbackMessage);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Feedback sent!",

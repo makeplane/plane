@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
+import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -28,11 +29,12 @@ export interface IPiChatStore {
   isLoading: boolean;
   activeChatId: string;
   activeChat: TChatHistory;
+  chatMap: Record<string, TChatHistory>; // chat_id -> chat
   focus: Record<string, TFocus>;
   isPiThinking: boolean;
   isPiTyping: boolean;
   isUserTyping: boolean;
-  threads: Record<string, TUserThreads[]>; // user -> threads
+  threads: Record<string, string[]>; // user -> chat_ids
   activeModel: TAiModels | undefined;
   models: TAiModels[];
   isAuthorized: boolean;
@@ -42,13 +44,12 @@ export interface IPiChatStore {
   // actions
   initPiChat: (chatId?: string) => string;
   fetchChatById: (chatId: string) => void;
-  getAnswer: (query: string, user_id: string) => Promise<string | undefined>;
+  getAnswer: (chatId: string, query: string, user_id: string) => Promise<string | undefined>;
   getTemplates: () => Promise<TTemplate[]>;
   fetchUserThreads: (userId: string) => void;
   searchCallback: (workspace: string, query: string) => Promise<IFormattedValue>;
-  sendFeedback: (message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
+  sendFeedback: (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => Promise<void>;
   setFocus: (chatId: string, entityType: string, entityIdentifier: string) => void;
-  startChatWithTemplate: (template: TTemplate, userId: string) => Promise<void>;
   fetchModels: () => Promise<void>;
   setActiveModel: (model: TAiModels) => void;
   setIsInWorkspaceContext: (value: boolean) => void;
@@ -58,21 +59,16 @@ export class PiChatStore implements IPiChatStore {
   activeChatId = "";
   isInWorkspaceContext = true;
   isNewChat: boolean = true;
-  isLoading: boolean = false;
-  isPiThinking = false;
-  isPiTyping = false;
-  isUserTyping = false;
   models: TAiModels[] = [];
   activeModel: TAiModels | undefined = undefined;
   isAuthorized = true;
-  activeChat: TChatHistory = {
-    chat_id: "",
-    dialogue: [],
-    title: "",
-  };
+  chatMap: Record<string, TChatHistory> = {};
   focus: Record<string, TFocus> = {};
-  threads: Record<string, TUserThreads[]> = {};
-
+  threads: Record<string, string[]> = {};
+  isPiThinkingMap: Record<string, boolean> = {};
+  isPiTypingMap: Record<string, boolean> = {};
+  isUserTypingMap: Record<string, boolean> = {};
+  isLoadingMap: Record<string, boolean> = {};
   //services
   userStore;
   rootStore;
@@ -82,21 +78,26 @@ export class PiChatStore implements IPiChatStore {
   constructor(public store: RootStore) {
     makeObservable(this, {
       //observables
-      isLoading: observable,
       isNewChat: observable,
-      isPiThinking: observable,
-      isPiTyping: observable,
-      isUserTyping: observable,
       activeChatId: observable,
+      chatMap: observable,
       focus: observable,
-      activeChat: observable,
       threads: observable,
       models: observable,
       activeModel: observable,
       isInWorkspaceContext: observable,
+      isPiThinkingMap: observable,
+      isPiTypingMap: observable,
+      isUserTypingMap: observable,
+      isLoadingMap: observable,
       isAuthorized: observable,
       // computed
       currentFocus: computed,
+      activeChat: computed,
+      isPiThinking: computed,
+      isPiTyping: computed,
+      isUserTyping: computed,
+      isLoading: computed,
       // actions
       initPiChat: action,
       getAnswer: action,
@@ -105,7 +106,6 @@ export class PiChatStore implements IPiChatStore {
       searchCallback: action,
       sendFeedback: action,
       setFocus: action,
-      startChatWithTemplate: action,
       fetchModels: action,
       setActiveModel: action,
       setIsInWorkspaceContext: action,
@@ -120,6 +120,26 @@ export class PiChatStore implements IPiChatStore {
 
   get currentFocus() {
     return this.focus[this.activeChatId];
+  }
+
+  get activeChat() {
+    return this.chatMap[this.activeChatId];
+  }
+
+  get isPiThinking() {
+    return this.isPiThinkingMap[this.activeChatId] ?? false;
+  }
+
+  get isPiTyping() {
+    return this.isPiTypingMap[this.activeChatId] ?? false;
+  }
+
+  get isUserTyping() {
+    return this.isUserTypingMap[this.activeChatId] ?? false;
+  }
+
+  get isLoading() {
+    return this.isLoadingMap[this.activeChatId] ?? false;
   }
 
   setLocalStorage = (chatId: string, key: string, value: string | boolean) => {
@@ -147,8 +167,8 @@ export class PiChatStore implements IPiChatStore {
 
   // computed
   geUserThreads = computedFn((userId: string) => {
-    if (!userId) return [];
-    return this.threads[userId];
+    if (!userId || !this.threads[userId]) return [];
+    return this.threads[userId]?.map((chatId) => this.chatMap[chatId]);
   });
 
   // actions
@@ -160,16 +180,17 @@ export class PiChatStore implements IPiChatStore {
     }
     // New Chat
     else {
-      this.activeChat = {
-        chat_id: "",
-        dialogue: [],
-        title: "",
-      };
       // Generate new chat
       const id = uuidv4();
       this.activeChatId = id;
       this.isNewChat = true;
-      this.isLoading = false;
+      this.isLoadingMap[id] = false;
+      this.chatMap[id] = {
+        chat_id: id,
+        dialogue: [],
+        title: "",
+        last_modified: new Date().toISOString(),
+      };
     }
     this.isAuthorized = true;
     // Set Focus
@@ -188,13 +209,12 @@ export class PiChatStore implements IPiChatStore {
     return response?.templates;
   };
 
-  getAnswer = async (query: string, userId: string) => {
-    if (!this.activeChatId) {
+  getAnswer = async (chatId: string, query: string, userId: string) => {
+    if (!chatId) {
       throw new Error("Chat not initialized");
     }
-    const isNewChat = this.activeChat.dialogue.length === 0;
-    const userThreads = this.threads[userId];
-    const dialogueHistory = this.activeChat.dialogue;
+    const isNewChat = this.chatMap[chatId]?.dialogue.length === 0;
+    const dialogueHistory = this.chatMap[chatId]?.dialogue || [];
     const newDialogue: TDialogue = {
       query,
       llm: this.activeModel?.id,
@@ -203,26 +223,26 @@ export class PiChatStore implements IPiChatStore {
     try {
       // Optimistically update conversation with user query
       runInAction(() => {
-        this.isPiThinking = true;
-        this.isPiTyping = true;
-        this.activeChat = {
-          ...this.activeChat,
-          dialogue: [...this.activeChat.dialogue, newDialogue],
-        };
-        this.isUserTyping = false;
-        if (isNewChat && userThreads)
-          set(this.threads, userId, [
-            {
-              chat_id: this.activeChatId,
-              title: "New Chat",
-              last_modified: new Date().toISOString(),
-            },
-            ...userThreads,
-          ]);
+        this.isNewChat = false;
+        this.isPiThinkingMap[chatId] = true;
+        this.isPiTypingMap[chatId] = true;
+        update(this.chatMap, chatId, (chat) => ({
+          ...chat,
+          dialogue: [...dialogueHistory, newDialogue],
+        }));
+        this.isUserTypingMap[chatId] = false;
+        if (isNewChat) {
+          update(this.threads, userId, (threads) => [chatId, ...(threads || [])]);
+          update(this.chatMap, chatId, (chat) => ({
+            ...chat,
+            title: "New Chat",
+            last_modified: new Date().toISOString(),
+          }));
+        }
       });
 
       let payload: TQuery = {
-        chat_id: this.activeChatId,
+        chat_id: chatId,
         query,
         is_new: isNewChat,
         user_id: userId,
@@ -262,7 +282,7 @@ export class PiChatStore implements IPiChatStore {
 
       while (true) {
         const { done, value } = await (reader?.read() as Promise<ReadableStreamReadResult<string>>);
-        if (this.isPiThinking) this.isPiThinking = false;
+        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
         if (done) break;
         if (value.startsWith("title: ")) continue; // Use this title value and remove the api call to get title in the future
         if (value.startsWith("reasoning: ")) isReasoning = true;
@@ -276,52 +296,41 @@ export class PiChatStore implements IPiChatStore {
         }
         // Update the store with the latest ai message
         runInAction(() => {
-          this.activeChat = {
-            ...this.activeChat,
+          update(this.chatMap, chatId, (chat) => ({
+            ...chat,
             dialogue: [...dialogueHistory, newDialogue],
-          };
+          }));
         });
       }
 
-      this.isPiTyping = false;
+      this.isPiTypingMap[chatId] = false;
       // Call the title api if its a new chat
       if (isNewChat) {
-        this.isNewChat = false;
-        const title = await this.piChatService.getTitle(this.activeChatId);
+        const title = await this.piChatService.getTitle(chatId);
         runInAction(() => {
-          set(this.threads, userId, [
-            {
-              chat_id: this.activeChatId,
-              title: title.title,
-              last_modified: new Date().toISOString(),
-            },
-            ...userThreads,
-          ]);
+          this.isNewChat = false;
+          update(this.chatMap, chatId, (chat) => ({
+            ...chat,
+            title: title.title,
+            last_modified: new Date().toISOString(),
+          }));
         });
       }
       // Todo: Optimistically update the chat history
       return latestAiMessage;
     } catch (e) {
+      console.log(e);
       runInAction(() => {
         newDialogue.answer = "Sorry, I am unable to answer that right now. Please try again later.";
-        this.activeChat = {
-          ...this.activeChat,
+        update(this.chatMap, chatId, (chat) => ({
+          ...chat,
           dialogue: [...dialogueHistory, newDialogue],
-        };
-        this.isPiThinking = false;
-        this.isPiTyping = false;
-        this.isUserTyping = false;
+        }));
+        this.isPiThinkingMap[chatId] = false;
+        this.isPiTypingMap[chatId] = false;
+        this.isUserTypingMap[chatId] = false;
       });
     }
-  };
-
-  startChatWithTemplate = async (template: TTemplate, userId: string) => {
-    const placeholder = await this.piChatService.getPlaceHolder(template);
-    runInAction(() => {
-      this.isUserTyping = true;
-    });
-
-    await this.getAnswer(placeholder.placeholder, userId);
   };
 
   fetchChatById = async (chatId: string) => {
@@ -329,12 +338,15 @@ export class PiChatStore implements IPiChatStore {
     try {
       // Call api here
       runInAction(() => {
-        this.isLoading = true;
+        this.isLoadingMap[chatId] = true;
       });
       const response = await this.piChatService.getChatById(chatId);
       runInAction(() => {
-        this.activeChat = response.results;
-        this.isLoading = false;
+        update(this.chatMap, chatId, (chat) => ({
+          ...chat,
+          ...response.results,
+        }));
+        this.isLoadingMap[chatId] = false;
         this.isNewChat = response.results.dialogue.length === 0;
       });
     } catch (e: any) {
@@ -345,7 +357,7 @@ export class PiChatStore implements IPiChatStore {
         } else {
           this.isNewChat = true;
         }
-        this.isLoading = false;
+        this.isLoadingMap[chatId] = false;
       });
     }
   };
@@ -353,7 +365,19 @@ export class PiChatStore implements IPiChatStore {
   fetchUserThreads = async (userId: string) => {
     const response = await this.piChatService.getUserThreads(userId);
     runInAction(() => {
-      set(this.threads, userId, response.results);
+      response.results.forEach((chat) => {
+        update(this.chatMap, chat.chat_id, (prev) => ({
+          ...prev,
+          chat_id: chat.chat_id,
+          title: chat.title,
+          last_modified: chat.last_modified,
+        }));
+      });
+      set(
+        this.threads,
+        userId,
+        response.results.map((chat) => chat.chat_id)
+      );
     });
   };
 
@@ -388,22 +412,28 @@ export class PiChatStore implements IPiChatStore {
     return response.results;
   };
 
-  sendFeedback = async (message_index: number, feedback: EFeedback, feedbackMessage?: string) => {
-    const initialState = this.activeChat.dialogue[message_index].feedback;
+  sendFeedback = async (chatId: string, message_index: number, feedback: EFeedback, feedbackMessage?: string) => {
+    const initialState = this.chatMap[chatId]?.dialogue?.[message_index]?.feedback;
     runInAction(() => {
-      set(this.activeChat.dialogue[message_index], "feedback", feedback);
+      runInAction(() => {
+        if (this.chatMap[chatId]?.dialogue?.[message_index]) {
+          set(this.chatMap[chatId].dialogue[message_index], "feedback", feedback);
+        }
+      });
     });
     try {
       const response = await this.piChatService.postFeedback({
         message_index,
-        chat_id: this.activeChatId,
+        chat_id: chatId,
         feedback,
         feedback_message: feedbackMessage,
       });
       return response;
     } catch (e) {
       runInAction(() => {
-        set(this.activeChat.dialogue[message_index], "feedback", initialState);
+        if (this.chatMap[chatId]?.dialogue?.[message_index]) {
+          set(this.chatMap[chatId].dialogue[message_index], "feedback", initialState);
+        }
       });
       throw e;
     }

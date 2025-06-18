@@ -11,8 +11,8 @@ type TSystemPrompt = {
 const SystemPrompts = (props: TSystemPrompt) => {
   const { userId, templates } = props;
   // store hooks
-  const { startChatWithTemplate } = usePiChat();
-
+  const { getAnswer, activeChatId, isPiTyping } = usePiChat();
+  // router
   const getIcon = (type: string) => {
     switch (type) {
       case "pages":
@@ -29,6 +29,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
         return PiChatLogo;
     }
   };
+
   return (
     <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">
       {templates && userId ? (
@@ -36,10 +37,11 @@ const SystemPrompts = (props: TSystemPrompt) => {
           const promptIcon = getIcon(prompt.type);
 
           return (
-            <div
+            <button
               key={index}
-              className="bg-custom-background-100 rounded-lg flex flex-col w-[250px] p-4 border-none cursor-pointer"
-              onClick={() => startChatWithTemplate(prompt, userId)}
+              className="bg-custom-background-100 rounded-lg flex flex-col w-[250px] p-4 border-none"
+              onClick={() => getAnswer(activeChatId, prompt.text, userId)}
+              disabled={isPiTyping}
             >
               <span>
                 {React.createElement(promptIcon, {
@@ -49,8 +51,8 @@ const SystemPrompts = (props: TSystemPrompt) => {
                       : `flex-shrink-0 size-[20px] stroke-[2] text-pi-400 stroke-current mb-2`,
                 })}
               </span>
-              <span className="text-sm break-words">{prompt.text}</span>
-            </div>
+              <span className="text-left text-sm break-words">{prompt.text}</span>
+            </button>
           );
         })
       ) : (

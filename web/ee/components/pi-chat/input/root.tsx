@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
@@ -35,7 +35,6 @@ export const InputBox = observer((props: TProps) => {
   //ref
   const isPiTypingRef = useRef(false);
   // query params
-  const pathName = usePathname();
   const searchParams = useSearchParams();
   const router_chat_id = searchParams.get("chat_id");
   // states
@@ -43,23 +42,24 @@ export const InputBox = observer((props: TProps) => {
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
+  // refs
+  const activeChatIdRef = useRef<string | null>(null);
 
   const handleRedirect = (path: string) => {
-    if (!activeChatId) return; // Don't redirect if we don't have an activeChatId
+    if (!activeChatIdRef.current) return; // Don't redirect if we don't have an activeChatIdRef.current
 
     const query = generateQueryParams(searchParams, ["chat_id"]);
-    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatId}`);
+    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatIdRef.current}`);
   };
 
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
-      if (!currentUser || isPiTypingRef.current) return;
+      if (!currentUser || !activeChatIdRef.current || isPiTypingRef.current) return;
       e?.preventDefault();
-      if (!router_chat_id) handleRedirect(shouldRedirect ? `/${workspaceSlug}/pi-chat` : pathName);
+      if (!router_chat_id && shouldRedirect) handleRedirect(`/${workspaceSlug}/pi-chat`);
       const query = editorCommands.current?.getHTML();
       if (!query || isCommentEmpty(query)) return;
-
-      getAnswer(query, currentUser?.id);
+      getAnswer(activeChatIdRef.current, query, currentUser?.id);
       editorCommands.current?.clear();
     },
     [currentUser, editorCommands, getAnswer, activeChatId]
@@ -110,6 +110,11 @@ export const InputBox = observer((props: TProps) => {
     });
     return parsedResponse;
   };
+
+  useEffect(() => {
+    if (!activeChatId) return;
+    activeChatIdRef.current = activeChatId;
+  }, [activeChatId]);
 
   useEffect(() => {
     isPiTypingRef.current = isPiTyping;

@@ -1,7 +1,7 @@
-import { useTranslation } from "@plane/i18n";
-import { Button, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
+import { Button, EModalWidth, ModalCore, TextArea } from "@plane/ui";
 
 type TProps = {
   isOpen: boolean;

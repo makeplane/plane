@@ -1,8 +1,5 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react";
-import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { cn } from "@plane/utils";
-import { TChatHistory } from "@/plane-web/types";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
 
@@ -16,7 +13,7 @@ type TProps = {
 };
 
 export const Loading = observer((props: TProps) => {
-  const { isLoading, isFullScreen, currentUser } = props;
+  const { isLoading, currentUser } = props;
 
   return (
     <div className={cn("flex flex-col gap-8 max-h-full h-full overflow-y-scroll w-full pb-[230px]")}>

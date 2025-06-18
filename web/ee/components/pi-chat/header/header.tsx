@@ -12,17 +12,13 @@ import { ModelsDropdown } from "./models-dropdown";
 type THeaderProps = {
   isSidePanelOpen: boolean;
   isFullScreen: boolean;
-  models: TAiModels[];
   isNewChat: boolean;
-  activeModel: TAiModels | undefined;
-  setActiveModel: (model: TAiModels) => void;
   toggleSidePanel: (value: boolean) => void;
   initPiChat: (chat_id?: string) => void;
 };
 export const Header = observer((props: THeaderProps) => {
   const router = useAppRouter();
-  const { initPiChat, isSidePanelOpen, toggleSidePanel, isFullScreen, models, isNewChat, activeModel, setActiveModel } =
-    props;
+  const { initPiChat, isSidePanelOpen, toggleSidePanel, isFullScreen, isNewChat } = props;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleNewConversation = async () => {
@@ -36,7 +32,7 @@ export const Header = observer((props: THeaderProps) => {
 
       <div className="flex rounded gap-1">
         <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
-        <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4o)</span>
+        <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4.1)</span>
         <BetaBadge />
       </div>
       {/* Actions */}

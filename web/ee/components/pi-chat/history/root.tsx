@@ -1,34 +1,40 @@
 "use-client";
 
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { PanelRightClose } from "lucide-react";
+import { IUser } from "@plane/types";
 import { Card } from "@plane/ui";
-import { cn  } from "@plane/utils";
-import { TUserThreads } from "@/plane-web/types";
+import { cn } from "@plane/utils";
+import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import HistoryList from "./list";
 import { Toolbar } from "./toolbar";
 
 type TProps = {
-  userThreads: TUserThreads[] | undefined;
   isSidePanelOpen: boolean;
   isMobile?: boolean;
   isNewChat: boolean;
   activeChatId?: string;
+  currentUser: IUser | undefined;
   toggleSidePanel: (value: boolean) => void;
   initPiChat: (chat_id?: string) => void;
 };
-export const History = (props: TProps) => {
+export const History = observer((props: TProps) => {
   const {
-    userThreads,
     isSidePanelOpen,
     isNewChat,
     activeChatId,
     toggleSidePanel,
     initPiChat,
     isMobile = false,
+    currentUser,
   } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
+  // store
+  const { geUserThreads } = usePiChat();
+  const userThreads = currentUser && geUserThreads(currentUser?.id);
+
   // filter user threads
   const filteredUserThread =
     userThreads && userThreads.filter((thread) => thread.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -67,4 +73,4 @@ export const History = (props: TProps) => {
       <HistoryList userThreads={filteredUserThread ?? []} initPiChat={initPiChat} activeChatId={activeChatId} />
     </Card>
   );
-};
+});

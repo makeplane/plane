@@ -18,7 +18,7 @@ export const MyMessage = observer((props: TProps) => {
   const { message, currentUser, isUserTyping = false, id, isLoading = false } = props;
 
   return (
-    <div className="w-full flex gap-2 justify-end" id={id}>
+    <div className="w-full flex gap-4 justify-end" id={id}>
       {!isLoading && (
         <Card
           className={cn(
@@ -43,7 +43,7 @@ export const MyMessage = observer((props: TProps) => {
         </Loader>
       )}
       {/* Avatar */}
-      <Avatar size="lg" name={currentUser?.display_name} src={currentUser?.avatar} />
+      <Avatar name={currentUser?.display_name} src={currentUser?.avatar} size={36} className="text-base" />
     </div>
   );
 });
