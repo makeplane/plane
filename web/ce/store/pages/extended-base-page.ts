@@ -1,5 +1,5 @@
 import { TPage, TPageExtended } from "@plane/types";
-import { RootStore } from "@/plane-web//store/root.store";
+import { RootStore } from "@/plane-web/store/root.store";
 import { TBasePageServices } from "@/store/pages/base-page";
 
 export type TExtendedPageInstance = TPageExtended & {
