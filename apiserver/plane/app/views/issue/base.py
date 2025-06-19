@@ -944,9 +944,33 @@ class IssueDetailEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
+
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features
+        #  if it is true then show all the issues else show only the issues created by the user
+        project_member_subquery = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+        ).filter(
+            Q(role__gt=ROLE.GUEST.value) 
+            | Q(
+                role=ROLE.GUEST.value, project__guest_view_all_features=True
+            )
+        )
+
+        # Main issue query
         issue = (
             Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("workspace", "project", "state", "parent")
+            .filter(
+                Q(Exists(project_member_subquery))
+                | Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role=ROLE.GUEST.value,
+                    project__guest_view_all_features=False,
+                    created_by=self.request.user,
+                )
+            )
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
@@ -1013,24 +1037,6 @@ class IssueDetailEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-        )
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features
-        #  if it is true then show all the issues else show only the issues created by the user
-        issue = issue.filter(
-            Q(
-                project__project_projectmember__role=ROLE.GUEST.value,
-                project__guest_view_all_features=True,
-            )
-            | Q(
-                project__project_projectmember__role=ROLE.GUEST.value,
-                project__guest_view_all_features=False,
-                created_by=self.request.user,
-            )
-            |
-            # For other roles (role < 5), show all issues
-            Q(
-                project__project_projectmember__role__gt=ROLE.GUEST.value,
-            ),
         )
 
         issue = issue.filter(**filters)
