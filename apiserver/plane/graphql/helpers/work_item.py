@@ -12,6 +12,7 @@ from strawberry.exceptions import GraphQLError
 
 # Module Imports
 from plane.db.models import Issue
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 
 
 def work_item_base_query(
@@ -54,10 +55,13 @@ def work_item_base_query(
 
     # project member filters
     if user_id:
-        work_item_base_query = work_item_base_query.filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
+        project_teamspace_filter = project_member_filter_via_teamspaces(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
         )
+        work_item_base_query = work_item_base_query.filter(
+            project_teamspace_filter.query
+        ).distinct()
 
     return work_item_base_query
 

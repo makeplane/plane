@@ -13,6 +13,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import Issue
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.issues.base import (
     IssuesInformationObjectType,
@@ -74,19 +75,23 @@ class WorkspaceIssuesQuery:
         orderBy: Optional[str] = "-created_at",
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         filters = work_item_filters(filters)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         issues = await sync_to_async(list)(
             Issue.issue_objects.filter(workspace__slug=slug)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
-            .distinct()
         )
 
         return paginate(results_object=issues, cursor=cursor)

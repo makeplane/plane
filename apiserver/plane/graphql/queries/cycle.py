@@ -18,6 +18,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import Cycle, CycleUserProperties, Issue, Project, UserFavorite
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.cycle import CycleType, CycleUserPropertyType
 from plane.graphql.types.issues.base import (
@@ -48,6 +49,9 @@ class CycleQuery:
         project: strawberry.ID,
         ids: Optional[list[strawberry.ID]] = None,
     ) -> list[CycleType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         project_details = await get_project(project)
 
         # Fetch project for the specific record or pass project_id dynamically
@@ -67,11 +71,14 @@ class CycleQuery:
             entity_identifier=OuterRef("pk"),
         ).values("id")
 
-        cycle_query = Cycle.objects.filter(
-            workspace__slug=slug,
-            project_id=project,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
+        cycle_query = (
+            Cycle.objects.filter(workspace__slug=slug, project_id=project)
+            .filter(project_teamspace_filter.query)
+            .distinct()
         )
 
         if ids:
@@ -119,6 +126,9 @@ class CycleQuery:
     async def cycle(
         self, info: Info, slug: str, project: strawberry.ID, cycle: strawberry.ID
     ) -> CycleType:
+        user = info.context.user
+        user_id = str(user.id)
+
         project_details = await get_project(project)
 
         # Fetch project for the specific record or pass project_id dynamically
@@ -138,14 +148,18 @@ class CycleQuery:
             entity_identifier=OuterRef("pk"),
         ).values("id")
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         cycle_query = (
             Cycle.objects.filter(
                 workspace__slug=slug,
                 project_id=project,
                 id=cycle,
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
             )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .annotate(is_favorite=Exists(fav_subquery))
             .annotate(favorite_id=Subquery(fav_subquery[:1]))
             .annotate(
@@ -298,6 +312,9 @@ class CycleIssueQuery:
         cursor: Optional[str] = None,
         type: Optional[str] = "all",
     ) -> PaginatorResponse[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         filters = work_item_filters(filters)
 
         # Filter issues based on the type
@@ -306,6 +323,10 @@ class CycleIssueQuery:
         elif type == "active":
             filters["state__group__in"] = ["unstarted", "started"]
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         cycles_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
                 workspace__slug=slug,
@@ -313,14 +334,11 @@ class CycleIssueQuery:
                 issue_cycle__cycle_id=cycle,
                 issue_cycle__deleted_at__isnull=True,
             )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
-            .distinct()
         )
         return paginate(results_object=cycles_issues, cursor=cursor)

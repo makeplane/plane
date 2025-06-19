@@ -14,6 +14,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import IssueActivity
 from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.activity import EpicPropertyActivityType
 
@@ -35,16 +36,19 @@ class EpicActivityQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         epic_activities = await sync_to_async(list)(
             IssueActivity.objects.filter(workspace__slug=slug)
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(project__id=project)
             .filter(issue_id=epic)
             .filter(deleted_at__isnull=True)
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
             )
             .select_related("actor", "workspace", "issue", "project")
             .order_by("created_at")

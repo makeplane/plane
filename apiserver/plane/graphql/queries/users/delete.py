@@ -34,7 +34,7 @@ class UserDeleteQuery:
     @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def user_delete(self, info: Info) -> UserDeleteType:
         user = info.context.user
-        user_id = user.id
+        user_id = str(user.id)
 
         workspaces = await get_workspaces(user_id)
 

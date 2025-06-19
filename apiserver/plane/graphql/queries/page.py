@@ -5,23 +5,24 @@ from typing import Optional
 import strawberry
 from asgiref.sync import sync_to_async
 
-# Strawberry Imports
-from strawberry.types import Info
-from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
-
 # Django Imports
 from django.db.models import Exists, OuterRef, Q
 
+# Strawberry Imports
+from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
+from strawberry.types import Info
+
 # Module Imports
-from plane.graphql.types.page import PageType
-from plane.db.models import UserFavorite, Page
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
-from plane.graphql.types.paginator import PaginatorResponse
-from plane.graphql.utils.paginator import paginate
+from plane.db.models import Page, UserFavorite
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
-from plane.graphql.utils.feature_flag import validate_feature_flag
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.graphql.types.page import PageType
+from plane.graphql.types.paginator import PaginatorResponse
+from plane.graphql.utils.feature_flag import validate_feature_flag
+from plane.graphql.utils.paginator import paginate
 
 
 # workspace level queries
@@ -124,19 +125,29 @@ class UserPageQuery:
     async def userPages(
         self, info: Info, slug: str, cursor: Optional[str] = None
     ) -> PaginatorResponse[PageType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
             entity_type="page",
             entity_identifier=OuterRef("pk"),
             workspace__slug=slug,
         )
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            related_field="projects__id",
+            query={
+                "projects__project_projectmember__member_id": user_id,
+                "projects__project_projectmember__is_active": True,
+                "projects__archived_at__isnull": True,
+            },
+        )
         pages = await sync_to_async(list)(
             Page.objects.filter(workspace__slug=slug)
-            .filter(
-                projects__project_projectmember__member=info.context.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(projects__isnull=False, archived_at__isnull=True)
             .filter(parent__isnull=True)
             .filter(moved_to_page__isnull=True)
@@ -161,19 +172,29 @@ class PageQuery:
         project: strawberry.ID,
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[PageType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
             entity_type="page",
             entity_identifier=OuterRef("pk"),
             workspace__slug=slug,
         )
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            related_field="projects__id",
+            query={
+                "projects__project_projectmember__member_id": user_id,
+                "projects__project_projectmember__is_active": True,
+                "projects__archived_at__isnull": True,
+            },
+        )
         pages = await sync_to_async(list)(
             Page.objects.filter(workspace__slug=slug, projects__id=project)
-            .filter(
-                projects__project_projectmember__member=info.context.user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(parent__isnull=True, archived_at__isnull=True)
             .filter(Q(owned_by=info.context.user) | Q(access=0))
             .filter(moved_to_page__isnull=True)
@@ -191,6 +212,7 @@ class PageQuery:
         self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
     ) -> PageType:
         user = info.context.user
+        user_id = str(user.id)
 
         # Build subquery for UserFavorite
         subquery = UserFavorite.objects.filter(
@@ -201,13 +223,20 @@ class PageQuery:
         )
 
         # Build the query
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            related_field="projects__id",
+            query={
+                "projects__project_projectmember__member_id": user_id,
+                "projects__project_projectmember__is_active": True,
+                "projects__archived_at__isnull": True,
+            },
+        )
         query = (
             Page.objects.filter(workspace__slug=slug, projects__id=project, pk=page)
-            .filter(
-                projects__project_projectmember__member=user,
-                projects__project_projectmember__is_active=True,
-                projects__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(Q(owned_by=user) | Q(access=0))
             .select_related("workspace", "owned_by")
             .prefetch_related("projects")

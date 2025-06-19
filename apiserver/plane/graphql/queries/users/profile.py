@@ -18,5 +18,7 @@ from plane.graphql.permissions.workspace import IsAuthenticated
 class ProfileQuery:
     @strawberry.field(extensions=[PermissionExtension(permissions=[IsAuthenticated()])])
     async def profile(self, info: Info) -> ProfileType:
-        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
+        user = info.context.user
+
+        profile = await sync_to_async(Profile.objects.get)(user=user)
         return profile

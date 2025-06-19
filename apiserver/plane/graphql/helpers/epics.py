@@ -14,6 +14,7 @@ from strawberry.scalars import JSON
 # Module Imports
 from plane.db.models import Issue, IssueType
 from plane.ee.models import ProjectFeature
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
 from plane.graphql.utils.feature_flag import _validate_feature_flag
 
@@ -60,10 +61,13 @@ def epic_base_query(
 
     # project member filters
     if user_id:
-        epic_base_query = epic_base_query.filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
+        project_teamspace_filter = project_member_filter_via_teamspaces(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
         )
+        epic_base_query = epic_base_query.filter(
+            project_teamspace_filter.query
+        ).distinct()
 
     return epic_base_query
 

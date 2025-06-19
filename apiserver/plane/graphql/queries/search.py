@@ -30,6 +30,10 @@ from plane.graphql.helpers import (
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
+from plane.graphql.helpers.teamspace import (
+    project_member_filter_via_teamspaces_async,
+    project_member_filter_via_teamspaces,
+)
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.cycle import CycleLiteType
 from plane.graphql.types.issues.base import IssueLiteType
@@ -65,10 +69,19 @@ async def filter_projects(
         q, workspace__slug=slug, archived_at__isnull=True
     )
 
+    user_id = str(user.id)
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+        user_id=user_id,
+        workspace_slug=slug,
+        related_field="id",
+        query={
+            "project_projectmember__member": user,
+            "project_projectmember__is_active": True,
+            "archived_at__isnull": True,
+        },
+    )
     if include_unjoined_projects is False:
-        project_query = project_query.filter(
-            project_projectmember__member=user, project_projectmember__is_active=True
-        )
+        project_query = project_query.filter(project_teamspace_filter.query)
     else:
         is_workspace_admin = await check_user_is_workspace_admin(user, slug)
         if is_workspace_admin is False:
@@ -92,6 +105,20 @@ async def filter_projects(
             )
         )
     )()
+
+    if (
+        project_teamspace_filter.is_teamspace_enabled
+        and project_teamspace_filter.is_teamspace_feature_flagged
+        and projects is not None
+        and len(projects) > 0
+    ):
+        teamspace_project_ids = project_teamspace_filter.teamspace_project_ids or []
+
+        for project in projects:
+            project_id = str(project["id"])
+            is_member = project["is_member"]
+            if is_member is False and project_id in teamspace_project_ids:
+                project["is_member"] = True
 
     return [ProjectLiteType(**project) for project in projects]
 
@@ -123,14 +150,15 @@ async def filter_issues(
     if cycle:
         issue_query = issue_query.filter(issue_cycle__cycle_id=cycle)
 
+    user_id = str(user.id)
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+        user_id=user_id,
+        workspace_slug=slug,
+    )
     issues = await sync_to_async(
         lambda: list(
-            issue_query.filter(
-                q,
-                project__project_projectmember__member=user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            issue_query.filter(project_teamspace_filter.query)
+            .filter(q)
             .distinct()
             .values("id", "sequence_id", "name", "project", "project__identifier")
         )
@@ -163,13 +191,14 @@ async def filter_modules(
     if project:
         module_query = module_query.filter(project=project)
 
+    user_id = str(user.id)
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+        user_id=user_id, workspace_slug=slug
+    )
     modules = await sync_to_async(
         lambda: list(
-            module_query.filter(
-                q,
-                project__project_projectmember__member=user,
-                project__project_projectmember__is_active=True,
-            )
+            module_query.filter(q)
+            .filter(project_teamspace_filter.query)
             .distinct()
             .values("id", "name", "project")
         )
@@ -198,13 +227,14 @@ async def filter_cycles(
     if project:
         cycle_query = cycle_query.filter(project=project)
 
+    user_id = str(user.id)
+    project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+        user_id=user_id, workspace_slug=slug
+    )
     cycles = await sync_to_async(
         lambda: list(
-            cycle_query.filter(
-                q,
-                project__project_projectmember__member=user,
-                project__project_projectmember__is_active=True,
-            )
+            cycle_query.filter(q)
+            .filter(project_teamspace_filter.query)
             .distinct()
             .values("id", "name", "project")
         )
@@ -231,29 +261,39 @@ async def filter_pages(
 
     page_query = Page.objects.filter(workspace__slug=slug, archived_at__isnull=True)
     if project:
-        page_query = page_query.filter(
-            projects=project,
-            projects__project_projectmember__member=user,
-            projects__project_projectmember__is_active=True,
+        user_id = str(user.id)
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+            related_field="projects__id",
+            query={
+                "projects__project_projectmember__member": user,
+                "projects__project_projectmember__is_active": True,
+                "projects__archived_at__isnull": True,
+            },
+        )
+        page_query = page_query.filter(projects=project).filter(
+            project_teamspace_filter.query
         )
 
     pages = await sync_to_async(lambda: list(page_query.filter(q).distinct()))()
     return pages
 
 
-async def filter_epics(
+@sync_to_async
+def filter_epics(
     query: str, slug: str, user, project: Optional[strawberry.ID] = None
 ) -> list[IssueLiteType]:
     user_id = str(user.id)
 
-    epic_feature_flagged = await is_epic_feature_flagged(
+    epic_feature_flagged = is_epic_feature_flagged(
         user_id=user_id, workspace_slug=slug, raise_exception=False
     )
     if epic_feature_flagged is False:
         return []
 
     if project:
-        project_epics_enabled = await is_project_epics_enabled(
+        project_epics_enabled = is_project_epics_enabled(
             workspace_slug=slug, project_id=project, raise_exception=False
         )
         if project_epics_enabled is False:
@@ -269,20 +309,23 @@ async def filter_epics(
         else:
             q |= Q(**{f"{field}__icontains": query})
 
-    epic_query = epic_base_query(workspace_slug=slug, user_id=user.id)
+    epic_query = epic_base_query(workspace_slug=slug, user_id=user_id)
     if project:
         epic_query = epic_base_query(
-            workspace_slug=slug, project_id=project, user_id=user.id
+            workspace_slug=slug, project_id=project, user_id=user_id
         )
 
-    epics = await sync_to_async(
-        lambda: list(
-            epic_query.filter(q)
-            .filter(project__project_projectfeature__is_epic_enabled=True)
-            .distinct()
-            .values("id", "sequence_id", "name", "project", "project__identifier")
-        )
-    )()
+    project_teamspace_filter = project_member_filter_via_teamspaces(
+        user_id=user_id,
+        workspace_slug=slug,
+    )
+    epics = list(
+        epic_query.filter(project_teamspace_filter.query)
+        .filter(q)
+        .filter(project__project_projectfeature__is_epic_enabled=True)
+        .distinct()
+        .values("id", "sequence_id", "name", "project", "project__identifier")
+    )
 
     for epic in epics:
         epic["project_identifier"] = epic["project__identifier"]

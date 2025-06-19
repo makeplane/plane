@@ -1,11 +1,11 @@
 # Python imports
 import requests
 
-# Django imports
-from django.conf import settings
-
 # Third-party imports
 from asgiref.sync import sync_to_async
+
+# Django imports
+from django.conf import settings
 
 # Module imports
 from plane.utils.exception_logger import log_exception
