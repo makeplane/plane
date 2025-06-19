@@ -17,6 +17,7 @@ from django.db.models import (
     Value,
     When,
     Subquery,
+    Prefetch,
 )
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
@@ -57,7 +58,8 @@ from plane.db.models import (
     IssueType,
     IssueCustomProperty,
     IssueTypeCustomProperty,
-    Workspace
+    Workspace,
+    User
 )
 from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from .base import BaseAPIView
@@ -202,6 +204,14 @@ class IssueAPIEndpoint(BaseAPIView):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            ).prefetch_related(
+                Prefetch(
+                    "assignees",
+                    queryset=User.objects.filter(
+                        member_project__is_active=True,
+                        issue_assignee__deleted_at__isnull=True,
+                    ).distinct()
+                )
             ).get(workspace__slug=slug, project_id=project_id, pk=pk)
             return Response(
                 IssueSerializer(
