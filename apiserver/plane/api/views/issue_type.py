@@ -128,6 +128,8 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             #         serializer.data, cls=DjangoJSONEncoder
             #     ),
             #     current_instance=None,
+            # epoch=int(timezone.now().timestamp()),
+            # )
             # No issue_activity.delay here
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -162,9 +164,13 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             issue_type, data=request.data, context={'workspace_id': workspace.id}, partial=True
         )
         if serializer.is_valid():
-            serializer.save()
-            # No issue_activity.delay here
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                serializer.save()
+                # No issue_activity.delay here
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IntegrityError as e:
+                return Response({"error": "Database integrity error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, slug, pk):
@@ -174,8 +180,11 @@ class IssueTypeAPIEndpoint(BaseAPIView):
             return Response({"error": "IssueType not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # No issue_activity.delay here
-        issue_type.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            issue_type.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IntegrityError as e:
+            return Response({"error": "Database integrity error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
     def get(self, request, slug, issue_type, pk=None):
@@ -258,5 +267,8 @@ class IssueTypeCustomPropertyAPIEndpoint(BaseAPIView):
         except IssueTypeCustomProperty.DoesNotExist:
             return Response({"error": "IssueTypeCustomProperty not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        custom_property.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        try:
+            custom_property.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except IntegrityError as e:
+            return Response({"error": "Database integrity error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
