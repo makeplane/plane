@@ -146,7 +146,9 @@ export class JobController {
       if (!job) return res.status(400).json({ message: "Job not found" });
 
       // Dispatch an event for the importer to handle any sort of post job processing
-      logger.info(`[${job.id}] Dispatching job finished event for ${job.source} with phase ${phase} and isLastBatch ${isLastBatch}`);
+      logger.info(
+        `[${job.id}] Dispatching job finished event for ${job.source} with phase ${phase} and isLastBatch ${isLastBatch}`
+      );
       await importTaskManger.registerTask(
         {
           route: job.source.toLowerCase(),
@@ -201,6 +203,7 @@ export class JobController {
         });
         return;
       }
+      logger.info(`[${job.id}] Initiating job ${job.source}}`);
 
       await client.importJob.updateImportJob(job.id, {
         status: "CREATED",

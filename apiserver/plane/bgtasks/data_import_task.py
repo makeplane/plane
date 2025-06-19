@@ -79,7 +79,8 @@ def update_job_batch_completion(
             + imported_issues,
             errored_issue_count=Coalesce(F("errored_issue_count"), 0)
             + (total_issues - imported_issues),
-            completed_batch_count=Coalesce(F("completed_batch_count"), 0) + 1,
+            completed_batch_count=Coalesce(F("completed_batch_count"), 0)
+            + (1 if imported_batch_count > 0 else 0),
             updated_at=timezone.now(),
         )
 

@@ -45,8 +45,11 @@ export class ClickupAPIService {
         if (error.response?.status === 429) {
           const headers = error.response.headers as RawAxiosResponseHeaders;
           if (headers && headers["x-ratelimit-reset"]) {
-            const waitTime = getWaitTimeInMs(headers["x-ratelimit-reset"] as string);
+            let waitTime = getWaitTimeInMs(headers["x-ratelimit-reset"] as string);
             console.log("Rate limit exceeded ======> waiting for", waitTime, "ms");
+            // add a random jitter of 20% to the wait time
+            const jitter = Math.random() * 0.2;
+            waitTime = waitTime * (1 + jitter);
             await new Promise((resolve) => setTimeout(resolve, waitTime));
             return this.client.request(error.config);
           }

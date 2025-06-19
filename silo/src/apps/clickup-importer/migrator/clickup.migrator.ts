@@ -221,7 +221,15 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     const job = await this.getJobData(jobId);
     const report = await integrationConnectionHelper.getImportReport({ report_id: job.report_id });
     const isJobCompleted = report.completed_batch_count >= report.total_batch_count;
-    logger.info(`Marking job as finished for ${jobId}`, { data, jobId, phase, isLastBatch, isJobCompleted });
+    logger.info(`Marking job as finished for ${jobId}`, {
+      data,
+      jobId,
+      phase,
+      isLastBatch,
+      isJobCompleted,
+      completed_batch_count: report.completed_batch_count,
+      total_batch_count: report.total_batch_count,
+    });
     if (phase === E_CLICKUP_IMPORT_PHASE.ISSUES) {
       // check if the job is completed
       if (isJobCompleted) {

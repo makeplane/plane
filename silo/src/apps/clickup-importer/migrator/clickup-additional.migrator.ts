@@ -26,6 +26,7 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
+import { Lock } from "@/worker/base/lock";
 import { TBatch } from "@/worker/types";
 import { getClickUpClient } from "../helpers/clickup-client";
 import { ClickUpBulkTransformer } from "./transformers/etl";
@@ -64,6 +65,15 @@ export class ClickUpAdditionalDataMigrator extends TaskHandler {
       const clickUpClient = getClickUpClient(credentials);
 
       if (!job.config) {
+        return false;
+      }
+
+      // If the job has been cancelled return
+      if (job.cancelled_at) {
+        logger.info(`[${headers.route.toUpperCase()}] Job cancelled, skipping`, {
+          jobId: headers.jobId,
+          type: headers.type,
+        });
         return false;
       }
 
@@ -110,6 +120,24 @@ export class ClickUpAdditionalDataMigrator extends TaskHandler {
     const clickUpPullService = new ClickUpPullService(clickUpClient);
 
     const page: number = data?.page || 0;
+
+    /**
+     * Sometimes, we're getting multiple messages being injected for the same page.
+     * We should lock the page to prevent same page being pulled multiple times.
+     */
+    const lock = new Lock(this.store!, {
+      type: "custom",
+      lockKey: `clickup_pull_${job.id}_${job.config.team.id}_${job.config.folder.id}_${page}`,
+      ttl: 15 * 60, // 15 minutes TTL
+    });
+
+    const acquired = await lock.acquireLock("lock");
+    if (!acquired) {
+      // Another container is processing this event, skip
+      throw new Error(
+        `Another container is processing this event ${job.id}_${job.config.team.id}_${job.config.folder.id}_${page}, skipping`
+      );
+    }
 
     const { last_page, tasks } = await clickUpPullService.pullTasksForFolderPaginated(
       job.config.team.id,

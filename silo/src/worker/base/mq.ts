@@ -77,7 +77,7 @@ export class MQActorBase {
 
   private async initializeConnection() {
     this.connection = await amqp.connect(this.amqpUrl, {
-      heartbeat: 60,
+      heartbeat: 5 * 60, // 5 minutes - suitable for long-running operations
     });
 
     this.channel = await this.connection.createConfirmChannel();
