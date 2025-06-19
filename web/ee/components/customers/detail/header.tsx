@@ -53,9 +53,8 @@ export const CustomerDetailHeader: FC = observer(() => {
           <div className="flex items-center gap-4">
             {/* bread crumps */}
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink
                     href={`/${workspaceSlug}/customers`}
                     label="Customers"
@@ -63,8 +62,7 @@ export const CustomerDetailHeader: FC = observer(() => {
                   />
                 }
               />
-              <Breadcrumbs.BreadcrumbItem
-                type="component"
+              <Breadcrumbs.Item
                 component={
                   <CustomSearchSelect
                     label={

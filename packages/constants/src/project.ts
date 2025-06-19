@@ -149,3 +149,14 @@ export const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
   network: 2,
   project_lead: null,
 };
+
+export enum EProjectFeatureKey {
+  WORK_ITEMS = "work_items",
+  CYCLES = "cycles",
+  MODULES = "modules",
+  VIEWS = "views",
+  PAGES = "pages",
+  INTAKE = "intake",
+  EPICS = "epics",
+  OVERVIEW = "overview",
+}

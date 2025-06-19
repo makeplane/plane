@@ -6,15 +6,14 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
-import { Breadcrumbs, Button, Intake, Header, Popover, Loader } from "@plane/ui";
+import { EUserProjectRoles, EUserPermissionsLevel, E_FEATURE_FLAGS, EProjectFeatureKey } from "@plane/constants";
+import { Breadcrumbs, Button, Header, Popover, Loader } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
 import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 // local components
 import { useFlag } from "@/plane-web/hooks/store";
 import IntakeTooltip from "../intake-tooltip";
@@ -83,10 +82,11 @@ export const ProjectInboxHeader: FC = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-1">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Intake" icon={<Intake className="h-4 w-4 text-custom-text-300" />} />}
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={currentProjectDetails?.id?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.INTAKE}
+              isLast
             />
           </Breadcrumbs>
 

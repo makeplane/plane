@@ -139,9 +139,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
         <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label={t("teamspaces.label")}
@@ -149,9 +148,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {loader === "init-loader" ? (
                     <Loader.Item height="20px" width="140px" />
@@ -165,9 +163,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 </>
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces/${teamspaceId}/views`}
                   label={t("views")}
@@ -175,9 +172,8 @@ export const TeamspaceViewWorkItemsHeader: React.FC = observer(() => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {teamspaceViewLoader === "init-loader" && !view ? (
                     <Loader.Item height="20px" width="140px" />

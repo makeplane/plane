@@ -20,9 +20,10 @@ export const WorkspaceDashboardsListHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Dashboards" icon={<LayoutGrid className="size-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label="Dashboards" icon={<LayoutGrid className="size-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
         </div>

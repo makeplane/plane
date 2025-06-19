@@ -4,11 +4,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel, EProjectFeatureKey } from "@plane/constants";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, EpicIcon } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip } from "@/components/common";
+import { CountChip } from "@/components/common";
 import HeaderFilters from "@/components/issues/filters";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
@@ -16,7 +16,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
@@ -56,10 +56,11 @@ export const EpicsHeader = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
             <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
-              <ProjectBreadcrumb />
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={<BreadcrumbLink label="Epics" icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />} />}
+              <CommonProjectBreadcrumbs
+                workspaceSlug={workspaceSlug?.toString()}
+                projectId={currentProjectDetails?.id?.toString() ?? ""}
+                featureKey={EProjectFeatureKey.EPICS}
+                isLast
               />
             </Breadcrumbs>
             {issuesCount > 0 ? (

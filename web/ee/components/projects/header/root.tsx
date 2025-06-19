@@ -40,14 +40,15 @@ export const ProjectsListHeader = observer(() => {
     <div className="flex-shrink-0 relative z-10 flex h-[3.75rem] w-full">
       {/* flex-row items-center justify-between gap-x-2 gap-y-4 */}
       <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-grow">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label="Projects" icon={<Briefcase className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
-            {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
+            {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}
           </Breadcrumbs>
           {/* scope dropdown */}
           {!isArchived && (

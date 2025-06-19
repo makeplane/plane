@@ -8,15 +8,15 @@ import { Circle, ExternalLink, RssIcon } from "lucide-react";
 // plane imports
 import {
   EIssuesStoreType,
-  EUserPermissionsLevel,
+  EUserPermissionsLevel, EProjectFeatureKey,
   EUserProjectRoles,
   SPACE_BASE_PATH,
   SPACE_BASE_URL,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header, LayersIcon, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip } from "@/components/common";
+import { CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
@@ -26,7 +26,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 
 export const AdvancedIssuesHeader = observer(() => {
   const { t } = useTranslation();
@@ -57,18 +57,13 @@ export const AdvancedIssuesHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={t("issue.label", { count: 2 })}
-                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
-                />
-              }
+        <div className="flex items-center gap-2.5 flex-grow">
+          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={currentProjectDetails?.id?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.WORK_ITEMS}
+              isLast
             />
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (

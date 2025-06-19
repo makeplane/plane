@@ -32,9 +32,10 @@ export const TeamspaceListItemHeader = observer(() => {
         <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Teamspaces" icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label="Teamspaces" icon={<TeamsIcon className="h-4 w-4 text-custom-text-300" />} />
+              }
             />
           </Breadcrumbs>
           {/* Only workspace admins can see and join teamspaces created by other admins. */}

@@ -30,9 +30,8 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
           </div>
         )}
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={t("notification.label")}
                 icon={<Inbox className="h-4 w-4 text-custom-text-300" />}

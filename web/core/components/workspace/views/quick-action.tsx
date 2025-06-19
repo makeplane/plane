@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { ExternalLink, LinkIcon, Pencil, Trash2, Lock } from "lucide-react";
+import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // types
-import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceView } from "@plane/types";
-import { ContextMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
@@ -18,15 +17,12 @@ import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/compone
 import { useUser, useUserPermissions } from "@/hooks/store";
 
 type Props = {
-  parentRef: React.RefObject<HTMLElement>;
   workspaceSlug: string;
-  globalViewId: string;
-  viewId: string;
   view: IWorkspaceView;
 };
 
 export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, view, globalViewId, viewId, workspaceSlug } = props;
+  const { workspaceSlug, view } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -78,42 +74,53 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
-  const isSelected = viewId === globalViewId;
-  const isPrivateView = view.access === EViewAccess.PRIVATE;
-
-  let customButton = (
-    <div
-      className={`flex gap-1 items-center flex-shrink-0 whitespace-nowrap border-b-2 p-3  text-sm font-medium outline-none ${
-        isSelected
-          ? "border-custom-primary-100 text-custom-primary-100"
-          : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-      } ${isPrivateView ? "pr-2" : ""}`}
-    >
-      <span className={`flex min-w-min flex-shrink-0 whitespace-nowrap text-sm font-medium outline-none`}>
-        {view.name}
-      </span>
-      {isPrivateView && (
-        <Lock className={`${isSelected ? "text-custom-primary-100" : "text-custom-text-400"} h-4 w-4`} />
-      )}
-    </div>
-  );
-
-  if (!isSelected) {
-    customButton = (
-      <Link key={viewId} id={`global-view-${viewId}`} href={`/${workspaceSlug}/workspace-views/${viewId}`}>
-        {customButton}
-      </Link>
-    );
-  }
-
   return (
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-
-      {customButton}
+      <CustomMenu
+        ellipsis
+        placement="bottom-end"
+        closeOnSelect
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+      >
+        {MENU_ITEMS.map((item) => {
+          if (item.shouldRender === false) return null;
+          return (
+            <CustomMenu.MenuItem
+              key={item.key}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                item.action();
+              }}
+              className={cn(
+                "flex items-center gap-2",
+                {
+                  "text-custom-text-400": item.disabled,
+                },
+                item.className
+              )}
+              disabled={item.disabled}
+            >
+              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+              <div>
+                <h5>{item.title}</h5>
+                {item.description && (
+                  <p
+                    className={cn("text-custom-text-300 whitespace-pre-line", {
+                      "text-custom-text-400": item.disabled,
+                    })}
+                  >
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            </CustomMenu.MenuItem>
+          );
+        })}
+      </CustomMenu>
     </>
   );
 });

@@ -34,14 +34,13 @@ export const InitiativesListHeader = observer(() => {
     <>
       <Header>
         <Header.LeftItem>
-          <div className="flex items-center gap-2.5">
-            <Breadcrumbs onBack={() => router.back()}>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={<BreadcrumbLink label={t("initiatives.label")} icon={<InitiativeIcon className="h-4 w-4" />} />}
-              />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs onBack={() => router.back()}>
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label={t("initiatives.label")} icon={<InitiativeIcon className="h-4 w-4" />} />
+              }
+            />
+          </Breadcrumbs>
         </Header.LeftItem>
         <Header.RightItem>
           <div className="hidden gap-3 md:flex">

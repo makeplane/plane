@@ -146,9 +146,8 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
         <div className="flex items-center gap-4">
           {/* bread crumps */}
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/teamspaces`}
                   label="Teamspaces"
@@ -156,9 +155,8 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <>
                   {loader === "init-loader" ? (
                     <Loader.Item height="20px" width="140px" />
@@ -172,8 +170,7 @@ export const TeamspaceDetailHeader = observer((props: TTeamspaceDetailHeaderProp
                 </>
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
+            <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationDropdown
                   selectedItemKey={selectedNavigationKey}

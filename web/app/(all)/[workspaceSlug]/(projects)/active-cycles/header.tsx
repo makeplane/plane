@@ -13,20 +13,19 @@ export const WorkspaceActiveCycleHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <Breadcrumbs>
-          <div className="flex gap-2">
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+        <div className="flex gap-2">
+          <Breadcrumbs>
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   label={t("active_cycles")}
                   icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
                 />
               }
             />
-            <BetaBadge />
-          </div>
-        </Breadcrumbs>
+          </Breadcrumbs>
+          <BetaBadge />
+        </div>
         <UpgradeBadge size="md" flag="WORKSPACE_ACTIVE_CYCLES" />
       </Header.LeftItem>
     </Header>

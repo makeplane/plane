@@ -6,7 +6,15 @@ import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, Button, CustomSearchSelect, getButtonStyling, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import {
+  BreadcrumbNavigationSearchDropdown,
+  Breadcrumbs,
+  Button,
+  getButtonStyling,
+  Header,
+  setToast,
+  TOAST_TYPE,
+} from "@plane/ui";
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // plane web components
@@ -73,33 +81,36 @@ export const WorkspaceDashboardDetailsHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div>
-          <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/dashboards`}
-                  label={t("workspace_dashboards")}
-                  icon={<LayoutGrid className="size-4 text-custom-text-300" />}
-                />
-              }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
-              component={
-                <CustomSearchSelect
-                  label={<SwitcherLabel name={dashboardDetails?.name} LabelIcon={LayoutGrid} />}
-                  value={dashboardId.toString()}
-                  onChange={(value: string) => {
-                    router.push(`/${workspaceSlug}/dashboards/${value}`);
-                  }}
-                  options={switcherOptions}
-                />
-              }
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs>
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                href={`/${workspaceSlug}/dashboards`}
+                label={t("workspace_dashboards")}
+                icon={<LayoutGrid className="size-4 text-custom-text-300" />}
+              />
+            }
+          />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbNavigationSearchDropdown
+                selectedItem={dashboardId.toString()}
+                navigationItems={switcherOptions}
+                onChange={(value: string) => {
+                  router.push(`/${workspaceSlug}/dashboards/${value}`);
+                }}
+                title={dashboardDetails?.name}
+                icon={
+                  <Breadcrumbs.Icon>
+                    <LayoutGrid className="size-4 flex-shrink-0 text-custom-text-300" />
+                  </Breadcrumbs.Icon>
+                }
+                isLast
+              />
+            }
+            isLast
+          />
+        </Breadcrumbs>
       </Header.LeftItem>
       {dashboardDetails && (
         <Header.RightItem className="items-center">

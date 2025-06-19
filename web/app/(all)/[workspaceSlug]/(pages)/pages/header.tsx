@@ -24,9 +24,8 @@ export const PagesAppDashboardHeader = () => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Home" icon={<Home className="h-4 w-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={<BreadcrumbLink label="Home" icon={<Home className="h-4 w-4 text-custom-text-300" />} />}
             />
           </Breadcrumbs>
         </div>

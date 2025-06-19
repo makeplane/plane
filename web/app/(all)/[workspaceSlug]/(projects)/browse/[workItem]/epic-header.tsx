@@ -2,17 +2,18 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Briefcase, Sidebar } from "lucide-react";
+import { Sidebar } from "lucide-react";
 // plane imports
 import {
   EIssueServiceType,
   EIssuesStoreType,
+  EProjectFeatureKey,
   EUserPermissionsLevel,
   EUserProjectRoles,
   EWorkItemConversionType,
 } from "@plane/constants";
 import { TIssue } from "@plane/types";
-import { Breadcrumbs, EpicIcon, Header, Logo } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -23,6 +24,7 @@ import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/h
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web components
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 import { ConvertWorkItemAction, ProjectEpicQuickActions } from "@/plane-web/components/epics";
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
@@ -72,52 +74,20 @@ export const EpicItemDetailsHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={projectDetails?.name ?? "Project"}
-                  icon={
-                    projectDetails ? (
-                      projectDetails && (
-                        <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                          <Logo logo={projectDetails?.logo_props} size={16} />
-                        </span>
-                      )
-                    ) : (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <Briefcase className="h-4 w-4" />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${projectId}/epics`}
-                  label="Epics"
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
-                />
-              }
-            />
-
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={
-                    projectDetails && issueDetails ? `${projectDetails.identifier}-${issueDetails.sequence_id}` : ""
-                  }
-                />
-              }
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectDetails?.id?.toString() ?? ""}
+            featureKey={EProjectFeatureKey.EPICS}
+          />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label={projectDetails && issueDetails ? `${projectDetails.identifier}-${issueDetails.sequence_id}` : ""}
+              />
+            }
+          />
+        </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>
         {epicId && projectId && (

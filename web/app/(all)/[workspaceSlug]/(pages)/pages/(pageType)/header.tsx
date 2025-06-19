@@ -70,9 +70,8 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   href={`/${workspaceSlug}/pages`}
                   label="Pages"
@@ -80,10 +79,7 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
                 />
               }
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />}
-            />
+            <Breadcrumbs.Item component={<BreadcrumbLink label={`${capitalizeFirstLetter(pageType)} pages`} />} />
           </Breadcrumbs>
         </div>
       </Header.LeftItem>

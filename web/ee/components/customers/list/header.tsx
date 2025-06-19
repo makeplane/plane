@@ -30,20 +30,16 @@ export const CustomersListHeader = observer(() => {
     <>
       <div className="flex-shrink-0 relative z-10 flex h-[3.75rem] w-full">
         <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
-          <div className="flex items-center gap-4">
-            {/* bread crumps */}
-            <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
-                  <BreadcrumbLink
-                    label={t("customers.label", { count: 2 })} // count for pluralization
-                    icon={<CustomersIcon className="h-4 w-4 text-custom-text-300" />}
-                  />
-                }
-              />
-            </Breadcrumbs>
-          </div>
+          <Breadcrumbs>
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label={t("customers.label", { count: 2 })} // count for pluralization
+                  icon={<CustomersIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
+            />
+          </Breadcrumbs>
           <div className="flex items-center gap-4">
             <CustomerSearch />
             {hasAdminLevelPermissions && (

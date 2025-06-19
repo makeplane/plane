@@ -5,31 +5,47 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import {
+  DEFAULT_GLOBAL_VIEWS_LIST,
+  EIssueFilterType,
+  EIssuesStoreType,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  ICustomSearchSelectOption,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
-import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
+import {
+  CreateUpdateWorkspaceViewModal,
+  WorkspaceViewQuickActions,
+  DefaultWorkspaceViewQuickActions,
+} from "@/components/workspace";
 // helpers
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
+  const router = useAppRouter();
   const { workspaceSlug, globalViewId } = useParams();
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { getViewDetailsById } = useGlobalView();
+  const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
   const { workspaceLabels } = useLabel();
   const {
     workspace: { workspaceMemberIds },
@@ -97,15 +113,59 @@ export const GlobalIssuesHeader = observer(() => {
 
   const isLocked = viewDetails?.is_locked;
 
+  const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
+
+  const defaultViewDetails = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
+
+  const defaultOptions = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => ({
+    value: view.key,
+    query: view.key,
+    content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={Layers} />,
+  }));
+
+  const workspaceOptions = (currentWorkspaceViews || []).map((view) => {
+    const _view = getViewDetailsById(view);
+    if (!_view) return;
+    return {
+      value: _view.id,
+      query: _view.name,
+      content: <SwitcherLabel name={_view.name} LabelIcon={Layers} />,
+    };
+  });
+
+  const switcherOptions = [...defaultOptions, ...workspaceOptions].filter(
+    (option) => option !== undefined
+  ) as ICustomSearchSelectOption[];
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <Header>
         <Header.LeftItem>
           <Breadcrumbs>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />
+              }
+            />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbNavigationSearchDropdown
+                  selectedItem={globalViewId?.toString() || ""}
+                  navigationItems={switcherOptions}
+                  onChange={(value: string) => {
+                    router.push(`/${workspaceSlug}/workspace-views/${value}`);
+                  }}
+                  title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
+                  icon={
+                    <Breadcrumbs.Icon>
+                      <Layers className="size-4 flex-shrink-0 text-custom-text-300" />
+                    </Breadcrumbs.Icon>
+                  }
+                  isLast
+                />
+              }
+              isLast
             />
           </Breadcrumbs>
         </Header.LeftItem>
@@ -145,6 +205,12 @@ export const GlobalIssuesHeader = observer(() => {
           <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
             {t("workspace_views.add_view")}
           </Button>
+          <div className="hidden md:block">
+            {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
+            {isDefaultView && defaultViewDetails && (
+              <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={defaultViewDetails} />
+            )}
+          </div>
         </Header.RightItem>
       </Header>
     </>

@@ -4,10 +4,16 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssueServiceType,
+  EIssuesStoreType,
+  EUserProjectRoles,
+  EUserPermissionsLevel,
+  EProjectFeatureKey,
+} from "@plane/constants";
 // plane imports
 import { TIssue } from "@plane/types";
-import { Breadcrumbs, Header, EpicIcon } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -16,7 +22,7 @@ import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/h
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 import { ProjectEpicQuickActions } from "@/plane-web/components/epics";
 
 export const ProjectEpicDetailsHeader = observer(() => {
@@ -62,21 +68,14 @@ export const ProjectEpicDetailsHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${projectId}/epics`}
-                  label="Epics"
-                  icon={<EpicIcon className="h-4 w-4 text-custom-text-300" />}
-                />
-              }
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={currentProjectDetails?.id?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.EPICS}
             />
 
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   label={
                     currentProjectDetails && issueDetails
