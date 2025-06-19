@@ -4,7 +4,9 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus, AlertTriangle, RefreshCw } from "lucide-react";
+import { E_SLACK_ENTITY_TYPE, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
+import { TWorkspaceEntityConnection } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // plane web components
 //  plane web hooks
@@ -12,8 +14,6 @@ import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { ConnectionItem } from "./entity-item";
 import ProjectUpdatesForm from "./form/form";
-import { TWorkspaceEntityConnection } from "@plane/types";
-import { E_SLACK_ENTITY_TYPE, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 
 export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ connectionId }) => {
   // hooks

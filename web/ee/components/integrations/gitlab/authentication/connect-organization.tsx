@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button, Loader } from "@plane/ui";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";
 
@@ -94,21 +94,28 @@ export const ConnectOrganization: FC = observer(() => {
           <div className="text-sm text-custom-text-200">{t("gitlab_integration.connect_org_description")}</div>
         </div>
       )}
-      <Button
-        variant={workspaceConnectionId ? "neutral-primary" : "primary"}
-        size="sm"
-        className="flex-shrink-0"
-        onClick={handleGitlabAuth}
-        disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
-      >
-        {(isLoading && workspaceConnectionId) || error
-          ? "..."
-          : isConnectionSetup
-            ? t("common.processing")
-            : !workspaceConnectionId
-              ? t("common.connect")
-              : t("common.disconnect")}
-      </Button>
+
+      {isLoading && !workspaceConnectionId ? (
+        <Loader>
+          <Loader.Item height="29px" width="82px" />
+        </Loader>
+      ) : (
+        <Button
+          variant={workspaceConnectionId ? "neutral-primary" : "primary"}
+          size="sm"
+          className="flex-shrink-0"
+          onClick={handleGitlabAuth}
+          disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
+        >
+          {(isLoading && workspaceConnectionId) || error
+            ? "..."
+            : isConnectionSetup
+              ? t("common.processing")
+              : !workspaceConnectionId
+                ? t("common.connect")
+                : t("common.disconnect")}
+        </Button>
+      )}
     </div>
   );
 });

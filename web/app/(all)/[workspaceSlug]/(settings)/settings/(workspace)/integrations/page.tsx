@@ -6,6 +6,7 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Loader } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
@@ -46,12 +47,20 @@ const WorkspaceIntegrationsPage = observer(() => {
 
   if (supportedIntegrationsLoading && !supportedIntegrations) {
     return (
-      <div className="w-full">
+      <SettingsContentWrapper size="lg">
         <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center">
-          <p className="text-sm text-custom-text-300">{t("integrations.loading")}</p>
-        </div>
-      </div>
+        <section className="w-full flex flex-col">
+          <SettingsHeading
+            title={t("workspace_settings.settings.integrations.heading")}
+            description={t("workspace_settings.settings.integrations.description")}
+          />
+          <Loader className="flex flex-wrap gap-4 mt-6">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <Loader.Item height="200px" width="300px" key={index} />
+            ))}
+          </Loader>
+        </section>
+      </SettingsContentWrapper>
     );
   }
 
@@ -70,8 +79,6 @@ const WorkspaceIntegrationsPage = observer(() => {
         </div>
       </>
     );
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper size="lg">

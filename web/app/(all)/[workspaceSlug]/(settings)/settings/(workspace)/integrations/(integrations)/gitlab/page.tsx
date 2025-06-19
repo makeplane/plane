@@ -2,20 +2,18 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
 import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
-import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/gitlab";
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { UserAuthentication, IntegrationRoot, GitlabHeader } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useFlag, useGitlabIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
-import GitlabLogo from "@/public/services/gitlab.svg";
 
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
@@ -76,7 +74,26 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   if (!isFeatureEnabled) return null;
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
-    return <div className="text-custom-text-200 relative flex justify-center items-center">Loading...</div>;
+    return (
+      <div className="relative space-y-6">
+        {/* header */}
+        <GitlabHeader />
+        <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+          {/* Icon and Title Section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Loader>
+                <Loader.Item height="44px" width="44px" />
+              </Loader>
+              <Loader>
+                <Loader.Item height="24px" width="80px" />
+              </Loader>
+            </div>
+            <Loader.Item height="29px" width="80px" />
+          </div>
+        </div>
+      </div>
+    );
 
   if (!externalApiToken)
     return (
@@ -105,17 +122,9 @@ const GitlabIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
     );
 
   return (
-    <div className="relative space-y-10">
+    <div className="relative space-y-6">
       {/* header */}
-      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
-        <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={GitlabLogo} layout="fill" objectFit="contain" alt="Gitlab Logo" />
-        </div>
-        <div>
-          <div className="text-lg font-medium">{t("gitlab_integration.name")}</div>
-          <div className="text-sm text-custom-text-200">{t("gitlab_integration.description")}</div>
-        </div>
-      </div>
+      <GitlabHeader />
 
       {/* integration auth root */}
       <UserAuthentication />

@@ -2,7 +2,6 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { Briefcase, Loader, RefreshCcw } from "lucide-react";
 import { TJobStatus } from "@plane/etl/core";
@@ -12,7 +11,8 @@ import { Button } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import { useNotionImporter } from "@/plane-web/hooks/store";
 import NotionLogo from "@/public/services/notion.svg";
-import { SyncJobStatus } from "../../common/dashboard";
+import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
+import ImporterHeader from "../../header";
 
 export const NotionJobDashboard: FC = observer(() => {
   const { t } = useTranslation();
@@ -37,28 +37,22 @@ export const NotionJobDashboard: FC = observer(() => {
 
   return (
     <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
-      <div className="flex-shrink-0 text-lg font-medium">{t("importers.imports")}</div>
       {/* header */}
-      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90 p-4">
-        <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={NotionLogo} layout="fill" objectFit="contain" alt="Notion Logo" />
-        </div>
-        <div className="w-full h-full overflow-hidden">
-          <div className="text-lg font-medium">Notion</div>
-          <div className="text-sm text-custom-text-200">{t("importers.import_message", { serviceName: "Notion" })}</div>
-        </div>
-        <div className="flex-shrink-0 relative flex items-center gap-4">
-          <Button size="sm" onClick={handleDashboardView}>
+      <ImporterHeader
+        config={{
+          serviceName: "Notion",
+          logo: NotionLogo,
+        }}
+        actions={
+          <Button size="sm" onClick={handleDashboardView} className="my-auto">
             {t("importers.import")}
           </Button>
-        </div>
-      </div>
+        }
+      />
       {/* migrations */}
       <div className="w-full h-full space-y-3 relative flex flex-col">
         {loader ? (
-          <div className="grid h-full w-full place-items-center">
-            <Loader className="h-5 w-5 animate-spin" />
-          </div>
+          <DashboardLoaderTable />
         ) : jobIds && jobIds.length > 0 ? (
           <div className="w-full h-full space-y-3 relative flex flex-col">
             <div className="relative flex items-center gap-2">

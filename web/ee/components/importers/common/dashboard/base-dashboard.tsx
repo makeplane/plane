@@ -13,7 +13,7 @@ import { Logo } from "@/components/common";
 import { renderFormattedDate, renderFormattedTime  } from "@plane/utils";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
-import { IconFieldRender, SyncJobStatus } from "./";
+import { DashboardLoaderTable, IconFieldRender, SyncJobStatus } from "./";
 
 export type TImporterConfig<T> = {
   serviceName: string;
@@ -223,9 +223,7 @@ export const BaseDashboard = observer(<T,>(props: IBaseDashboardProps<T>) => {
         {/* migrations */}
         <div className="w-full h-full space-y-3 relative flex flex-col">
           {loader ? (
-            <div className="grid h-full w-full place-items-center">
-              <Loader className="h-5 w-5 animate-spin" />
-            </div>
+            <DashboardLoaderTable />
           ) : jobIds && jobIds.length > 0 ? (
             <div className="w-full h-full space-y-3 relative flex flex-col">
               <div className="relative flex items-center gap-2">

@@ -1,11 +1,11 @@
-import { Button, Logo } from "@plane/ui";
-import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { useSlackIntegration } from "@/plane-web/hooks/store";
-import { TWorkspaceEntityConnection } from "@plane/types";
+import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
 import { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
-import SlackLogo from "@/public/services/slack.png";
+import { TWorkspaceEntityConnection } from "@plane/types";
+import { Button, Logo } from "@plane/ui";
+import { useSlackIntegration } from "@/plane-web/hooks/store";
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
+import SlackLogo from "@/public/services/slack.png";
 
 interface ConnectionItemProps {
   connection: TWorkspaceEntityConnection<TSlackProjectUpdatesConfig>;

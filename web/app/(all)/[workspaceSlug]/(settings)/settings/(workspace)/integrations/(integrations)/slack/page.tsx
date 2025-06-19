@@ -68,7 +68,23 @@ const SlackIntegration: FC<{ searchParams?: { error: string } }> = observer(({ s
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
+      <div className="relative space-y-6">
+        {/* header */}
+        <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+          {/* Icon and Title Section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Loader>
+                <Loader.Item height="44px" width="44px" />
+              </Loader>
+              <Loader>
+                <Loader.Item height="24px" width="80px" />
+              </Loader>
+            </div>
+            <Loader.Item height="29px" width="80px" />
+          </div>
+        </div>
+      </div>
     );
 
   if (!isFeatureEnabled)

@@ -2,8 +2,6 @@
 
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
@@ -11,20 +9,17 @@ import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants
 // import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE } from "@plane/ui";
-import { UserAuthentication, IntegrationRoot } from "@/plane-web/components/integrations/github";
+import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { UserAuthentication, IntegrationRoot, GithubHeader } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images
 import { SiloAppService } from "@/plane-web/services/integrations/silo.service";
-import GithubDarkLogo from "@/public/services/github-dark.svg";
-import GithubLightLogo from "@/public/services/github-light.svg";
 
 const siloAppService = new SiloAppService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
 
 const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ searchParams }) => {
   // hooks
-  const { resolvedTheme } = useTheme();
   const {
     workspace,
     externalApiToken,
@@ -39,7 +34,6 @@ const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
   const isFeatureEnabled = useFlag(workspaceSlug?.toString() || "", E_FEATURE_FLAGS.GITHUB_INTEGRATION) || false;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const organization = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
-  const githubLogo = resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo;
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   // derived values
@@ -82,7 +76,24 @@ const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
 
   if ((!externalApiToken && externalApiTokenIsLoading) || (!supportedIntegrations && supportedIntegrationsLoading))
     return (
-      <div className="text-custom-text-200 relative flex justify-center items-center">{t("integrations.loading")}</div>
+      <div className="relative space-y-6">
+        {/* header */}
+        <GithubHeader />
+        <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
+          {/* Icon and Title Section */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Loader>
+                <Loader.Item height="44px" width="44px" />
+              </Loader>
+              <Loader>
+                <Loader.Item height="24px" width="80px" />
+              </Loader>
+            </div>
+            <Loader.Item height="29px" width="80px" />
+          </div>
+        </div>
+      </div>
     );
 
   if (!externalApiToken)
@@ -112,18 +123,9 @@ const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
     );
 
   return (
-    <div className="relative space-y-10">
+    <div className="relative space-y-6">
       {/* header */}
-      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90/50 p-4">
-        <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
-          <Image src={githubLogo} layout="fill" objectFit="contain" alt="GitHub Logo" />
-        </div>
-        <div>
-          <div className="text-lg font-medium">GitHub</div>
-          <div className="text-sm text-custom-text-200">{t("github_integration.description")}</div>
-        </div>
-      </div>
-
+      <GithubHeader />
       {/* integration auth root */}
       <UserAuthentication />
 

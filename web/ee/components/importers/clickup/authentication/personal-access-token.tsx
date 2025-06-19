@@ -11,6 +11,8 @@ import { AuthFormInput, TAuthFormInputFormField } from "@/plane-web/silo/ui/auth
 // plane web types
 import { TImporterPATError } from "@/plane-web/types";
 import { TClickUpPATFormFields } from "@/plane-web/types/importers/clickup";
+import ClickUpLogo from "@/public/services/clickup.svg";
+import ImporterHeader from "../../header";
 import ErrorBanner from "../../ui/error-banner";
 
 export const PersonalAccessTokenAuth: FC = observer(() => {
@@ -92,12 +94,13 @@ export const PersonalAccessTokenAuth: FC = observer(() => {
 
   return (
     <div className="space-y-6">
-      <div className="relative flex flex-col border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">ClickUp to Plane {t("importers.migration_assistant")}</h3>
-        <p className="text-custom-text-300 text-sm">
-          {t("importers.migration_assistant_description", { serviceName: "ClickUp" })}
-        </p>
-      </div>
+      <ImporterHeader
+        config={{
+          serviceName: `ClickUp to Plane ${t("importers.migration_assistant")}`,
+          logo: ClickUpLogo,
+        }}
+        description={t("importers.migration_assistant_description", { serviceName: "ClickUp" })}
+      />
       <div className="space-y-6">
         {patError.showPATError && (
           <ErrorBanner

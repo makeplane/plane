@@ -2,7 +2,9 @@
 
 import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 import { SILO_BASE_URL, SILO_BASE_PATH } from "@plane/constants";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings";
@@ -31,7 +33,18 @@ const ImporterLayout: FC<TImporterLayout> = observer((props) => {
   // check if workspace exists
   if (!workspaceSlug || !workspaceId || !userId || !siloBaseUrl) return null;
 
-  return <SettingsContentWrapper size="lg">{children}</SettingsContentWrapper>;
+  return (
+    <SettingsContentWrapper size="lg">
+      <Link
+        href={`/${workspaceSlug}/settings/imports`}
+        className="flex items-center gap-2 text-sm text-custom-text-300 font-semibold pb-4"
+      >
+        <ChevronLeft className="size-4" />
+        <span>Back to Imports</span>
+      </Link>
+      {children}
+    </SettingsContentWrapper>
+  );
 });
 
 export default ImporterLayout;
