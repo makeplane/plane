@@ -55,7 +55,7 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^14.2.29",
+    "next": "14.2.30",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
     "pako": "^2.1.0",
@@ -97,13 +97,6 @@
     "@types/uuid": "^8.3.4",
     "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
-    "typescript": "5.3.3"
-  },
-  "resolutions": {
-    "nanoid": "^3.3.8",
-    "@todesktop/client-util/nanoid": "^3.3.8"
-  },
-  "peerDependencies": {
-    "nanoid": "^3.3.8"
+    "typescript": "5.8.3"
   }
 }
