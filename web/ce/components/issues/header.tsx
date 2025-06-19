@@ -6,11 +6,11 @@ import { useParams } from "next/navigation";
 import { Circle, ExternalLink } from "lucide-react";
 import {
   EIssuesStoreType,
+  EProjectFeatureKey,
   EUserPermissions,
   EUserPermissionsLevel,
   SPACE_BASE_PATH,
   SPACE_BASE_URL,
-  EProjectFeatureKey,
 } from "@plane/constants";
 // plane constants
 import { useTranslation } from "@plane/i18n";
