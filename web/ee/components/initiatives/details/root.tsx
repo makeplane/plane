@@ -121,9 +121,7 @@ export const InitiativeDetailRoot = observer((props: Props) => {
       <WorkspaceEpicsListModal
         workspaceSlug={workspaceSlug}
         isOpen={isEpicModalOpen}
-        searchParams={{
-          initiative_id: initiativeId,
-        }}
+        searchParams={{}}
         selectedEpicIds={getInitiativeEpicsById(initiativeId) ?? []}
         handleClose={() => setIsEpicModalOpen(false)}
         handleOnSubmit={async (data) => {
