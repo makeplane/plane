@@ -211,7 +211,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
     @state_docs(
         operation_id="delete_state",
         summary="Delete state",
-        description="Permanently remove a workflow state from a project. Default states and states with existing issues cannot be deleted.",
+        description="Permanently remove a workflow state from a project. Default states and states with existing work items cannot be deleted.",
         parameters=[
             STATE_ID_PARAMETER,
         ],
@@ -224,7 +224,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
         """Delete state
 
         Permanently remove a workflow state from a project.
-        Default states and states with existing issues cannot be deleted.
+        Default states and states with existing work items cannot be deleted.
         """
         state = State.objects.get(
             is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug

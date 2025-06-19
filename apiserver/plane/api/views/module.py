@@ -544,7 +544,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
 
 
 class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
-    """Module Issue List and Create Endpoint"""
+    """Module Work Item List and Create Endpoint"""
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
@@ -578,9 +578,9 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
     @module_issue_docs(
-        operation_id="list_module_issues",
-        summary="List module issues",
-        description="Retrieve all issues assigned to a module with detailed information.",
+        operation_id="list_module_work_items",
+        summary="List module work items",
+        description="Retrieve all work items assigned to a module with detailed information.",
         parameters=[
             MODULE_ID_PARAMETER,
             CURSOR_PARAMETER,
@@ -594,16 +594,16 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
             200: create_paginated_response(
                 IssueSerializer,
                 "PaginatedModuleIssueResponse",
-                "Paginated list of module issues",
-                "Paginated Module Issues",
+                "Paginated list of module work items",
+                "Paginated Module Work Items",
             ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
     def get(self, request, slug, project_id, module_id):
-        """List module issues
+        """List module work items
 
-        Retrieve all issues assigned to a module with detailed information.
+        Retrieve all work items assigned to a module with detailed information.
         Returns paginated results including assignees, labels, and attachments.
         """
         order_by = request.GET.get("order_by", "created_at")
@@ -652,9 +652,9 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
     @module_issue_docs(
-        operation_id="add_module_issues",
-        summary="Add Issues to Module",
-        description="Assign multiple issues to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",
+        operation_id="add_module_work_items",
+        summary="Add Work Items to Module",
+        description="Assign multiple work items to a module or move them from another module. Automatically handles bulk creation and updates with activity tracking.",
         parameters=[
             MODULE_ID_PARAMETER,
         ],
@@ -673,9 +673,9 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id, module_id):
-        """Add module issues
+        """Add module work items
 
-        Assign multiple issues to a module or move them from another module.
+        Assign multiple work items to a module or move them from another module.
         Automatically handles bulk creation and updates with activity tracking.
         """
         issues = request.data.get("issues", [])
@@ -761,7 +761,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
 class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to module issues.
+    `update` and `destroy` actions related to module work items.
 
     """
 
@@ -799,9 +799,9 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         )
 
     @module_issue_docs(
-        operation_id="retrieve_module_issue",
-        summary="Retrieve module issue",
-        description="Retrieve details of a specific module issue.",
+        operation_id="retrieve_module_work_item",
+        summary="Retrieve module work item",
+        description="Retrieve details of a specific module work item.",
         parameters=[
             MODULE_ID_PARAMETER,
             ISSUE_ID_PARAMETER,
@@ -815,16 +815,16 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             200: create_paginated_response(
                 IssueSerializer,
                 "PaginatedModuleIssueDetailResponse",
-                "Paginated list of module issue details",
-                "Module Issue Details",
+                "Paginated list of module work item details",
+                "Module Work Item Details",
             ),
             404: OpenApiResponse(description="Module not found"),
         },
     )
     def get(self, request, slug, project_id, module_id, issue_id):
-        """List module issues
+        """List module work items
 
-        Retrieve all issues assigned to a module with detailed information.
+        Retrieve all work items assigned to a module with detailed information.
         Returns paginated results including assignees, labels, and attachments.
         """
         order_by = request.GET.get("order_by", "created_at")
@@ -875,9 +875,9 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         )
 
     @module_issue_docs(
-        operation_id="delete_module_issue",
-        summary="Delete module issue",
-        description="Remove an issue from a module while keeping the issue in the project.",
+        operation_id="delete_module_work_item",
+        summary="Delete module work item",
+        description="Remove a work item from a module while keeping the work item in the project.",
         parameters=[
             MODULE_ID_PARAMETER,
             ISSUE_ID_PARAMETER,
@@ -888,9 +888,9 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, module_id, issue_id):
-        """Remove module issue
+        """Remove module work item
 
-        Remove an issue from a module while keeping the issue in the project.
+        Remove a work item from a module while keeping the work item in the project.
         Records the removal activity for tracking purposes.
         """
         module_issue = ModuleIssue.objects.get(

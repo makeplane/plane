@@ -48,7 +48,7 @@ from plane.utils.openapi import (
 
 
 class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
-    """Intake List and Create Endpoint"""
+    """Intake Work Item List and Create Endpoint"""
 
     serializer_class = IntakeIssueSerializer
     model = Intake
@@ -79,9 +79,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
     @intake_docs(
-        operation_id="get_intake_issues_list",
-        summary="List intake issues",
-        description="Retrieve all issues in the project's intake queue. Returns paginated results when listing all intake issues.",
+        operation_id="get_intake_work_items_list",
+        summary="List intake work items",
+        description="Retrieve all work items in the project's intake queue. Returns paginated results when listing all intake work items.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -94,16 +94,16 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             200: create_paginated_response(
                 IntakeIssueSerializer,
                 "PaginatedIntakeIssueResponse",
-                "Paginated list of intake issues",
-                "Paginated Intake Issues",
+                "Paginated list of intake work items",
+                "Paginated Intake Work Items",
             ),
         },
     )
     def get(self, request, slug, project_id):
-        """List intake issues
+        """List intake work items
 
-        Retrieve all issues in the project's intake queue.
-        Returns paginated results when listing all intake issues.
+        Retrieve all work items in the project's intake queue.
+        Returns paginated results when listing all intake work items.
         """
         issue_queryset = self.get_queryset()
         return self.paginate(
@@ -115,9 +115,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
     @intake_docs(
-        operation_id="create_intake_issue",
-        summary="Create intake issue",
-        description="Submit a new issue to the project's intake queue for review and triage. Automatically creates the issue with default triage state and tracks activity.",
+        operation_id="create_intake_work_item",
+        summary="Create intake work item",
+        description="Submit a new work item to the project's intake queue for review and triage. Automatically creates the work item with default triage state and tracks activity.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -128,7 +128,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         ),
         responses={
             201: OpenApiResponse(
-                description="Intake issue created",
+                description="Intake work item created",
                 response=IntakeIssueSerializer,
                 examples=[INTAKE_ISSUE_EXAMPLE],
             ),
@@ -136,10 +136,10 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         },
     )
     def post(self, request, slug, project_id):
-        """Create intake issue
+        """Create intake work item
 
-        Submit a new issue to the project's intake queue for review and triage.
-        Automatically creates the issue with default triage state and tracks activity.
+        Submit a new work item to the project's intake queue for review and triage.
+        Automatically creates the work item with default triage state and tracks activity.
         """
         if not request.data.get("issue", {}).get("name", False):
             return Response(
@@ -242,9 +242,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         )
 
     @intake_docs(
-        operation_id="retrieve_intake_issue",
-        summary="Retrieve intake issue",
-        description="Retrieve details of a specific intake issue.",
+        operation_id="retrieve_intake_work_item",
+        summary="Retrieve intake work item",
+        description="Retrieve details of a specific intake work item.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -252,16 +252,16 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         ],
         responses={
             200: OpenApiResponse(
-                description="Intake issue",
+                description="Intake work item",
                 response=IntakeIssueSerializer,
                 examples=[INTAKE_ISSUE_EXAMPLE],
             ),
         },
     )
     def get(self, request, slug, project_id, issue_id):
-        """Retrieve intake issue
+        """Retrieve intake work item
 
-        Retrieve details of a specific intake issue.
+        Retrieve details of a specific intake work item.
         """
         intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
         intake_issue_data = IntakeIssueSerializer(
@@ -270,9 +270,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         return Response(intake_issue_data, status=status.HTTP_200_OK)
 
     @intake_docs(
-        operation_id="update_intake_issue",
-        summary="Update intake issue",
-        description="Modify an existing intake issue's properties or status for triage processing. Supports status changes like accept, reject, or mark as duplicate.",
+        operation_id="update_intake_work_item",
+        summary="Update intake work item",
+        description="Modify an existing intake work item's properties or status for triage processing. Supports status changes like accept, reject, or mark as duplicate.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -284,7 +284,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         ),
         responses={
             200: OpenApiResponse(
-                description="Intake issue updated",
+                description="Intake work item updated",
                 response=IntakeIssueSerializer,
                 examples=[INTAKE_ISSUE_EXAMPLE],
             ),
@@ -292,9 +292,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         },
     )
     def patch(self, request, slug, project_id, issue_id):
-        """Update intake issue
+        """Update intake work item
 
-        Modify an existing intake issue's properties or status for triage processing.
+        Modify an existing intake work item's properties or status for triage processing.
         Supports status changes like accept, reject, or mark as duplicate.
         """
         intake = Intake.objects.filter(
@@ -333,7 +333,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             request.user.id
         ):
             return Response(
-                {"error": "You cannot edit intake issues"},
+                {"error": "You cannot edit intake work items"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -463,9 +463,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             )
 
     @intake_docs(
-        operation_id="delete_intake_issue",
-        summary="Delete intake issue",
-        description="Permanently remove an intake issue from the triage queue. Also deletes the underlying issue if it hasn't been accepted yet.",
+        operation_id="delete_intake_work_item",
+        summary="Delete intake work item",
+        description="Permanently remove an intake work item from the triage queue. Also deletes the underlying work item if it hasn't been accepted yet.",
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -476,10 +476,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         },
     )
     def delete(self, request, slug, project_id, issue_id):
-        """Delete intake issue
+        """Delete intake work item
 
-        Permanently remove an intake issue from the triage queue.
-        Also deletes the underlying issue if it hasn't been accepted yet.
+        Permanently remove an intake work item from the triage queue.
+        Also deletes the underlying work item if it hasn't been accepted yet.
         """
         intake = Intake.objects.filter(
             workspace__slug=slug, project_id=project_id
@@ -520,7 +520,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                 ).exists()
             ):
                 return Response(
-                    {"error": "Only admin or creator can delete the issue"},
+                    {"error": "Only admin or creator can delete the work item"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
             issue.delete()

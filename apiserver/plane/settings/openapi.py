@@ -267,6 +267,6 @@ SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
     "ENUM_NAME_OVERRIDES": {
         "ModuleStatusEnum": "plane.db.models.module.ModuleStatus",
-        "IntakeIssueStatusEnum": "plane.db.models.intake.IntakeIssueStatus",
+        "IntakeWorkItemStatusEnum": "plane.db.models.intake.IntakeIssueStatus",
     },
 }
