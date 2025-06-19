@@ -45,3 +45,4 @@ export * from "./utils";
 export * from "./payment";
 export * from "./layout";
 export * from "./analytics";
+export * from "./changelog";
