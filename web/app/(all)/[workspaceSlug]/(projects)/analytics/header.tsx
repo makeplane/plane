@@ -15,8 +15,6 @@ import { useAppTheme } from "@/hooks/store";
 
 export const WorkspaceAnalyticsHeader = observer(() => {
   const { t } = useTranslation();
-  const searchParams = useSearchParams();
-  const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
   const { workspaceAnalyticsSidebarCollapsed, toggleWorkspaceAnalyticsSidebar } = useAppTheme();
 
@@ -49,23 +47,6 @@ export const WorkspaceAnalyticsHeader = observer(() => {
             }
           />
         </Breadcrumbs>
-        {analytics_tab === "custom" ? (
-          <button
-            className="block md:hidden"
-            onClick={() => {
-              toggleWorkspaceAnalyticsSidebar();
-            }}
-          >
-            <PanelRight
-              className={cn(
-                "block h-4 w-4 md:hidden",
-                !workspaceAnalyticsSidebarCollapsed ? "text-custom-primary-100" : "text-custom-text-200"
-              )}
-            />
-          </button>
-        ) : (
-          <></>
-        )}
       </Header.LeftItem>
     </Header>
   );
