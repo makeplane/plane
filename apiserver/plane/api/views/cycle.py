@@ -33,6 +33,7 @@ from plane.api.serializers import (
     TransferCycleIssueRequestSerializer,
     CycleCreateSerializer,
     CycleUpdateSerializer,
+    IssueSerializer,
 )
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -52,6 +53,31 @@ from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from drf_spectacular.utils import OpenApiResponse
 from plane.utils.openapi.decorators import cycle_docs
+from plane.utils.openapi import (
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    CYCLE_VIEW_PARAMETER,
+    ORDER_BY_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    CYCLE_CREATE_EXAMPLE,
+    CYCLE_UPDATE_EXAMPLE,
+    CYCLE_ISSUE_REQUEST_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_EXAMPLE,
+    # Response Examples
+    CYCLE_EXAMPLE,
+    CYCLE_ISSUE_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_ERROR_EXAMPLE,
+    TRANSFER_CYCLE_COMPLETED_ERROR_EXAMPLE,
+    DELETED_RESPONSE,
+    ARCHIVED_RESPONSE,
+    CYCLE_CANNOT_ARCHIVE_RESPONSE,
+    UNARCHIVED_RESPONSE,
+    REQUIRED_FIELDS_RESPONSE,
+)
 
 
 class CycleListCreateAPIEndpoint(BaseAPIView):
@@ -146,10 +172,20 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_cycles",
         summary="List cycles",
         description="Retrieve all cycles in a project. Supports filtering by cycle status like current, upcoming, completed, or draft.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            CYCLE_VIEW_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="Cycles",
-                response=CycleSerializer,
+            200: create_paginated_response(
+                CycleSerializer,
+                "PaginatedCycleResponse",
+                "Paginated list of cycles",
+                "Paginated Cycles",
             ),
         },
     )
@@ -256,25 +292,13 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
         description="Create a new development cycle with specified name, description, and date range. Supports external ID tracking for integration purposes.",
         request=OpenApiRequest(
             request=CycleCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "CycleCreateSerializer",
-                    value={
-                        "name": "Cycle 1",
-                        "description": "Cycle 1 description",
-                        "start_date": "2021-01-01",
-                        "end_date": "2021-01-31",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating a cycle",
-                ),
-            ],
+            examples=[CYCLE_CREATE_EXAMPLE],
         ),
         responses={
             201: OpenApiResponse(
                 description="Cycle created",
                 response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
             ),
         },
     )
@@ -439,6 +463,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Cycles",
                 response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
             ),
         },
     )
@@ -464,25 +489,13 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         description="Modify an existing cycle's properties like name, description, or date range. Completed cycles can only have their sort order changed.",
         request=OpenApiRequest(
             request=CycleUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "CycleUpdateSerializer",
-                    value={
-                        "name": "Cycle 1",
-                        "description": "Cycle 1 description",
-                        "start_date": "2021-01-01",
-                        "end_date": "2021-01-31",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for updating a cycle",
-                ),
-            ],
+            examples=[CYCLE_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="Cycle updated",
                 response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
             ),
         },
     )
@@ -563,7 +576,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         summary="Delete cycle",
         description="Permanently remove a cycle and all its associated issue relationships",
         responses={
-            204: OpenApiResponse(description="Cycle deleted"),
+            204: DELETED_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, pk):
@@ -730,11 +743,14 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="list_archived_cycles",
         description="Retrieve all cycles that have been archived in the project.",
         summary="List archived cycles",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER],
         request={},
         responses={
-            200: OpenApiResponse(
-                description="Archived cycles",
-                response=CycleSerializer,
+            200: create_paginated_response(
+                CycleSerializer,
+                "PaginatedArchivedCycleResponse",
+                "Paginated list of archived cycles",
+                "Paginated Archived Cycles",
             ),
         },
     )
@@ -758,8 +774,8 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         description="Move a completed cycle to archived status for historical tracking. Only cycles that have ended can be archived.",
         request={},
         responses={
-            204: OpenApiResponse(description="Cycle archived"),
-            400: OpenApiResponse(description="Cycle cannot be archived"),
+            204: ARCHIVED_RESPONSE,
+            400: CYCLE_CANNOT_ARCHIVE_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, cycle_id):
@@ -792,7 +808,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         description="Restore an archived cycle to active status, making it available for regular use.",
         request={},
         responses={
-            204: OpenApiResponse(description="Cycle unarchived"),
+            204: UNARCHIVED_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, cycle_id):
@@ -845,11 +861,14 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_cycle_issues",
         summary="List cycle issues",
         description="Retrieve all issues assigned to a cycle.",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER],
         request={},
         responses={
-            200: OpenApiResponse(
-                description="Cycle issues",
-                response=CycleIssueSerializer,
+            200: create_paginated_response(
+                CycleIssueSerializer,
+                "PaginatedCycleIssueResponse",
+                "Paginated list of cycle issues",
+                "Paginated Cycle Issues",
             ),
         },
     )
@@ -912,25 +931,15 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         description="Assign multiple issues to a cycle. Automatically handles bulk creation and updates with activity tracking.",
         request=OpenApiRequest(
             request=CycleIssueRequestSerializer,
-            examples=[
-                OpenApiExample(
-                    "CycleIssueRequestSerializer",
-                    value={
-                        "issues": [
-                            "0ec6cfa4-e906-4aad-9390-2df0303a41cd",
-                            "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
-                        ],
-                    },
-                    description="Example request for adding cycle issues",
-                ),
-            ],
+            examples=[CYCLE_ISSUE_REQUEST_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="Cycle issues added",
                 response=CycleIssueSerializer,
+                examples=[CYCLE_ISSUE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Issues are required"),
+            400: REQUIRED_FIELDS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id, cycle_id):
@@ -1070,6 +1079,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(
                 description="Cycle issues",
                 response=CycleIssueSerializer,
+                examples=[CYCLE_ISSUE_EXAMPLE],
             ),
         },
     )
@@ -1095,7 +1105,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
         summary="Delete cycle issue",
         description="Remove an issue from a cycle while keeping the issue in the project.",
         responses={
-            204: OpenApiResponse(description="Cycle issue deleted"),
+            204: DELETED_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
@@ -1143,15 +1153,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         description="Move incomplete issues from the current cycle to a new target cycle. Captures progress snapshot and transfers only unfinished work items.",
         request=OpenApiRequest(
             request=TransferCycleIssueRequestSerializer,
-            examples=[
-                OpenApiExample(
-                    "TransferCycleIssueRequestSerializer",
-                    value={
-                        "new_cycle_id": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
-                    },
-                    description="Example request for transferring cycle issues",
-                ),
-            ],
+            examples=[TRANSFER_CYCLE_ISSUE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
@@ -1162,9 +1164,11 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         "message": {
                             "type": "string",
                             "description": "Success message",
+                            "example": "Success",
                         },
                     },
                 },
+                examples=[TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE],
             ),
             400: OpenApiResponse(
                 description="Bad request",
@@ -1174,9 +1178,14 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         "error": {
                             "type": "string",
                             "description": "Error message",
+                            "example": "New Cycle Id is required",
                         },
                     },
                 },
+                examples=[
+                    TRANSFER_CYCLE_ISSUE_ERROR_EXAMPLE,
+                    TRANSFER_CYCLE_COMPLETED_ERROR_EXAMPLE,
+                ],
             ),
         },
     )

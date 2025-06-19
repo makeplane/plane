@@ -36,7 +36,28 @@ from plane.api.serializers import (
     ProjectUpdateSerializer,
 )
 from plane.app.permissions import ProjectBasePermission
-from plane.utils.openapi.decorators import project_docs
+from plane.utils.openapi import (
+    project_docs,
+    PROJECT_ID_PARAMETER,
+    PROJECT_PK_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    PROJECT_CREATE_EXAMPLE,
+    PROJECT_UPDATE_EXAMPLE,
+    # Response Examples
+    PROJECT_EXAMPLE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+    PROJECT_NAME_TAKEN_RESPONSE,
+    DELETED_RESPONSE,
+    ARCHIVED_RESPONSE,
+    UNARCHIVED_RESPONSE,
+)
 
 
 class ProjectListCreateAPIEndpoint(BaseAPIView):
@@ -113,12 +134,21 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_projects",
         summary="List or retrieve projects",
         description="Retrieve all projects in a workspace or get details of a specific project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="List of projects or project details",
-                response=ProjectSerializer,
+            200: create_paginated_response(
+                ProjectSerializer,
+                "PaginatedProjectResponse",
+                "Paginated list of projects",
+                "Paginated Projects",
             ),
-            404: OpenApiResponse(description="Project not found"),
+            404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug):
@@ -160,23 +190,16 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
         description="Create a new project in the workspace with default states and member assignments.",
         request=OpenApiRequest(
             request=ProjectCreateSerializer,
-            examples=[
-                OpenApiExample(
-                    "ProjectCreateSerializer",
-                    value={
-                        "name": "New Project",
-                        "description": "New project description",
-                        "identifier": "new-project",
-                        "project_lead": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
-                    },
-                    description="Example request for creating a project",
-                ),
-            ],
+            examples=[PROJECT_CREATE_EXAMPLE],
         ),
         responses={
-            201: ProjectSerializer,
-            404: OpenApiResponse(description="Workspace not found"),
-            409: OpenApiResponse(description="Project name already taken"),
+            201: OpenApiResponse(
+                description="Project created successfully",
+                response=ProjectSerializer,
+                examples=[PROJECT_EXAMPLE],
+            ),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+            409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
     def post(self, request, slug):
@@ -375,12 +398,16 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_project",
         summary="Retrieve project",
         description="Retrieve details of a specific project.",
+        parameters=[
+            PROJECT_PK_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="Project details",
                 response=ProjectSerializer,
+                examples=[PROJECT_EXAMPLE],
             ),
-            404: OpenApiResponse(description="Project not found"),
+            404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
     def get(self, request, slug, pk):
@@ -396,25 +423,21 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         operation_id="update_project",
         summary="Update project",
         description="Partially update an existing project's properties like name, description, or settings.",
+        parameters=[
+            PROJECT_PK_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=ProjectUpdateSerializer,
-            examples=[
-                OpenApiExample(
-                    "ProjectUpdateSerializer",
-                    value={
-                        "name": "Updated Project",
-                        "description": "Updated project description",
-                        "identifier": "updated-project",
-                        "project_lead": "0ec6cfa4-e906-4aad-9390-2df0303a41ce",
-                    },
-                    description="Example request for updating a project",
-                ),
-            ],
+            examples=[PROJECT_UPDATE_EXAMPLE],
         ),
         responses={
-            200: ProjectSerializer,
-            404: OpenApiResponse(description="Project not found"),
-            409: OpenApiResponse(description="Project name already taken"),
+            200: OpenApiResponse(
+                description="Project updated successfully",
+                response=ProjectSerializer,
+                examples=[PROJECT_EXAMPLE],
+            ),
+            404: PROJECT_NOT_FOUND_RESPONSE,
+            409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
     def patch(self, request, slug, pk):
@@ -493,8 +516,11 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_project",
         summary="Delete project",
         description="Permanently remove a project and all its associated data from the workspace.",
+        parameters=[
+            PROJECT_PK_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="Project deleted"),
+            204: DELETED_RESPONSE,
         },
     )
     def delete(self, request, slug, pk):
@@ -534,9 +560,12 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="archive_project",
         summary="Archive project",
         description="Move a project to archived status, hiding it from active project lists.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+        ],
         request={},
         responses={
-            204: OpenApiResponse(description="Project archived"),
+            204: ARCHIVED_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -555,9 +584,12 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         operation_id="unarchive_project",
         summary="Unarchive project",
         description="Restore an archived project to active status, making it available in regular workflows.",
+        parameters=[
+            PROJECT_ID_PARAMETER,
+        ],
         request={},
         responses={
-            204: OpenApiResponse(description="Project unarchived"),
+            204: UNARCHIVED_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id):

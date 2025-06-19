@@ -13,6 +13,22 @@ from plane.db.models import Issue, State
 from .base import BaseAPIView
 from plane.utils.openapi import (
     state_docs,
+    STATE_ID_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    STATE_CREATE_EXAMPLE,
+    STATE_UPDATE_EXAMPLE,
+    # Response Examples
+    STATE_EXAMPLE,
+    INVALID_REQUEST_RESPONSE,
+    STATE_NAME_EXISTS_RESPONSE,
+    DELETED_RESPONSE,
+    STATE_CANNOT_DELETE_RESPONSE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
 )
 
 
@@ -44,27 +60,16 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         description="Create a new workflow state for a project with specified name, color, and group.",
         request=OpenApiRequest(
             request=StateSerializer,
-            examples=[
-                OpenApiExample(
-                    "StateCreateSerializer",
-                    value={
-                        "name": "New State",
-                        "color": "#ff0000",
-                        "group": "backlog",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for creating a state",
-                ),
-            ],
+            examples=[STATE_CREATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="State created",
                 response=StateSerializer,
+                examples=[STATE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            409: OpenApiResponse(description="State with the same name already exists"),
+            400: INVALID_REQUEST_RESPONSE,
+            409: STATE_NAME_EXISTS_RESPONSE,
         },
     )
     def post(self, request, slug, project_id):
@@ -123,10 +128,18 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_states",
         summary="List states",
         description="Retrieve all workflow states for a project.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
         responses={
-            200: OpenApiResponse(
-                description="State retrieved",
-                response=StateSerializer,
+            200: create_paginated_response(
+                StateSerializer,
+                "PaginatedStateResponse",
+                "Paginated list of states",
+                "Paginated States",
             ),
         },
     )
@@ -171,10 +184,14 @@ class StateDetailAPIEndpoint(BaseAPIView):
         operation_id="retrieve_state",
         summary="Retrieve state",
         description="Retrieve details of a specific state.",
+        parameters=[
+            STATE_ID_PARAMETER,
+        ],
         responses={
             200: OpenApiResponse(
                 description="State retrieved",
                 response=StateSerializer,
+                examples=[STATE_EXAMPLE],
             ),
         },
     )
@@ -195,9 +212,12 @@ class StateDetailAPIEndpoint(BaseAPIView):
         operation_id="delete_state",
         summary="Delete state",
         description="Permanently remove a workflow state from a project. Default states and states with existing issues cannot be deleted.",
+        parameters=[
+            STATE_ID_PARAMETER,
+        ],
         responses={
-            204: OpenApiResponse(description="State deleted"),
-            400: OpenApiResponse(description="State cannot be deleted"),
+            204: DELETED_RESPONSE,
+            400: STATE_CANNOT_DELETE_RESPONSE,
         },
     )
     def delete(self, request, slug, project_id, state_id):
@@ -232,31 +252,21 @@ class StateDetailAPIEndpoint(BaseAPIView):
         operation_id="update_state",
         summary="Update state",
         description="Partially update an existing workflow state's properties like name, color, or group.",
+        parameters=[
+            STATE_ID_PARAMETER,
+        ],
         request=OpenApiRequest(
             request=StateSerializer,
-            examples=[
-                OpenApiExample(
-                    "StateUpdateSerializer",
-                    value={
-                        "name": "Updated State",
-                        "color": "#00ff00",
-                        "group": "backlog",
-                        "external_id": "1234567890",
-                        "external_source": "github",
-                    },
-                    description="Example request for updating a state",
-                ),
-            ],
+            examples=[STATE_UPDATE_EXAMPLE],
         ),
         responses={
             200: OpenApiResponse(
                 description="State updated",
                 response=StateSerializer,
+                examples=[STATE_EXAMPLE],
             ),
-            400: OpenApiResponse(description="Invalid request data"),
-            409: OpenApiResponse(
-                description="State with same external ID already exists"
-            ),
+            400: INVALID_REQUEST_RESPONSE,
+            409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
     def patch(self, request, slug, project_id, state_id):

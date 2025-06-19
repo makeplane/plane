@@ -75,6 +75,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
+    # Preserve original Django URL parameter names (pk) instead of converting to 'id'
+    "SCHEMA_COERCE_PATH_PK": False,
 }
 
 # Django Auth Backend
