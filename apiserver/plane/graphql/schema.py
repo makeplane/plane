@@ -128,7 +128,7 @@ from .queries.pages import (
     WorkspaceNestedChildPagesQuery,
     WorkspaceNestedParentPagesQuery,
 )
-from .queries.project import ProjectMembersQuery, ProjectQuery
+from .queries.project import ProjectMembersQuery, ProjectQuery, ProjectFeatureQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
 from .queries.state import StateQuery, WorkspaceStateQuery
@@ -152,6 +152,7 @@ from .queries.workspace import (
     WorkspaceMembersQuery,
     WorkspaceQuery,
     YourWorkQuery,
+    WorkspaceFeatureQuery,
 )
 
 
@@ -185,16 +186,18 @@ class Query(
     # notification
     NotificationQuery,
     # search
-    GlobalSearchQuery,  # TODO: add teamspace filter last and test it out
+    GlobalSearchQuery,
     # workspace
     WorkspaceLicenseQuery,
     WorkspaceQuery,
     WorkspaceMembersQuery,
     WorkspaceInviteQuery,
     PublicWorkspaceInviteQuery,
+    WorkspaceFeatureQuery,
     # project
     ProjectQuery,
     ProjectMembersQuery,
+    ProjectFeatureQuery,
     # workitem
     IssueShortenedMetaInfoQuery,
     WorkspaceIssuesInformationQuery,
@@ -209,7 +212,7 @@ class Query(
     IssueAttachmentQuery,
     SubIssuesQuery,
     IssueRelationQuery,
-    IssuesSearchQuery,  # TODO: add teamspace filter last and test it out
+    IssuesSearchQuery,
     WorkItemCommentReactionQuery,
     # workitem type
     IssueTypesTypeQuery,
