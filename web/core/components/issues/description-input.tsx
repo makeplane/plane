@@ -12,7 +12,7 @@ import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
 // components
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
-import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
 // hooks
@@ -110,66 +110,55 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { onChange } }) =>
-            !disabled ? (
-              <RichTextEditor
-                id={issueId}
-                initialValue={localIssueDescription.description_html ?? "<p></p>"}
-                value={swrIssueDescription ?? null}
-                workspaceSlug={workspaceSlug}
-                workspaceId={workspaceId}
-                projectId={projectId}
-                dragDropEnabled
-                onChange={(_description: object, description_html: string) => {
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  debouncedFormSave();
-                }}
-                placeholder={
-                  placeholder
-                    ? placeholder
-                    : (isFocused, value) => t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
+          render={({ field: { onChange } }) => (
+            <RichTextEditor
+              editable={!disabled}
+              id={issueId}
+              initialValue={localIssueDescription.description_html ?? "<p></p>"}
+              value={swrIssueDescription ?? null}
+              workspaceSlug={workspaceSlug}
+              workspaceId={workspaceId}
+              projectId={projectId}
+              dragDropEnabled
+              onChange={(_description: object, description_html: string) => {
+                setIsSubmitting("submitting");
+                onChange(description_html);
+                debouncedFormSave();
+              }}
+              placeholder={
+                placeholder
+                  ? placeholder
+                  : (isFocused, value) => t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
+              }
+              searchMentionCallback={async (payload) =>
+                await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                  ...payload,
+                  project_id: projectId?.toString() ?? "",
+                  issue_id: issueId?.toString(),
+                })
+              }
+              containerClassName={containerClassName}
+              uploadFile={async (blockId, file) => {
+                try {
+                  const { asset_id } = await uploadEditorAsset({
+                    blockId,
+                    data: {
+                      entity_identifier: issueId,
+                      entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                    },
+                    file,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in uploading work item asset:", error);
+                  throw new Error("Asset upload failed. Please try again later.");
                 }
-                searchMentionCallback={async (payload) =>
-                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                    ...payload,
-                    project_id: projectId?.toString() ?? "",
-                    issue_id: issueId?.toString(),
-                  })
-                }
-                containerClassName={containerClassName}
-                uploadFile={async (blockId, file) => {
-                  try {
-                    const { asset_id } = await uploadEditorAsset({
-                      blockId,
-                      data: {
-                        entity_identifier: issueId,
-                        entity_type: EFileAssetType.ISSUE_DESCRIPTION,
-                      },
-                      file,
-                      projectId,
-                      workspaceSlug,
-                    });
-                    return asset_id;
-                  } catch (error) {
-                    console.log("Error in uploading work item asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
-                  }
-                }}
-                ref={editorRef}
-              />
-            ) : (
-              <RichTextReadOnlyEditor
-                id={issueId}
-                initialValue={localIssueDescription.description_html ?? ""}
-                containerClassName={containerClassName}
-                workspaceId={workspaceId}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-                ref={editorReadOnlyRef}
-              />
-            )
-          }
+              }}
+              ref={editorRef}
+            />
+          )}
         />
       ) : (
         <Loader>
