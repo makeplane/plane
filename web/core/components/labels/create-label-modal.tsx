@@ -14,7 +14,7 @@ import type { IIssueLabel, IState } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

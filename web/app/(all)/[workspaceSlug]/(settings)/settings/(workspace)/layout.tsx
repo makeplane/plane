@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
-import { CommandPalette } from "@/components/command-palette";
 import { SettingsMobileNav } from "@/components/settings";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 // hooks
@@ -36,18 +35,17 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
 
   return (
     <>
-      <CommandPalette />
       <SettingsMobileNav
         hamburgerContent={WorkspaceSettingsSidebar}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
-      <div className="inset-y-0 flex flex-row w-full">
+      <div className="inset-y-0 flex flex-row w-full h-full">
         {workspaceUserInfo && !isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
           <div className="relative flex h-full w-full">
             <div className="hidden md:block">{<WorkspaceSettingsSidebar />}</div>
-            {children}
+            <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
           </div>
         )}
       </div>

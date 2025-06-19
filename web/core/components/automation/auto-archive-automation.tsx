@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
 // types
-import { PROJECT_AUTOMATION_MONTHS,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui

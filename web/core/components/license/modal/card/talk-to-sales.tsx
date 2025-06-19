@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // types
 import { EProductSubscriptionEnum } from "@plane/constants";
 // plane imports
-import { TSubscriptionPrice } from "@plane/types";
+import { IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
@@ -18,12 +18,14 @@ export type TalkToSalesCardProps = {
   href: string;
   isLoading?: boolean;
   features: string[];
+  product: IPaymentProduct | undefined;
   prices: TSubscriptionPrice[];
   upgradeLoaderType: Omit<EProductSubscriptionEnum, "FREE"> | undefined;
   verticalFeatureList?: boolean;
   extraFeatures?: string | React.ReactNode;
   isSelfHosted: boolean;
   isTrialAllowed: boolean;
+  renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
 export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
@@ -31,6 +33,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
     planVariant,
     href,
     features,
+    product,
     prices,
     isLoading,
     verticalFeatureList = false,
@@ -38,6 +41,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
     upgradeLoaderType,
     isSelfHosted,
     isTrialAllowed,
+    renderTrialButton,
   } = props;
 
   const renderPriceContent = (price: TSubscriptionPrice) => (
@@ -47,7 +51,7 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
     </>
   );
 
-  const renderActionButton = () => {
+  const renderActionButton = (price: TSubscriptionPrice) => {
     const upgradeButtonStyle =
       getUpgradeButtonStyle(planVariant, !!upgradeLoaderType) ?? getButtonStyling("primary", "lg", !!upgradeLoaderType);
 
@@ -81,7 +85,15 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
             >
               Talk to Sales
             </a>
-            {isTrialAllowed && !isSelfHosted && <div className="mt-4 h-4" />}
+            {isTrialAllowed && !isSelfHosted && (
+              <div className="mt-4 h-4 transition-all duration-300 animate-fade-in">
+                {renderTrialButton &&
+                  renderTrialButton({
+                    productId: product?.id,
+                    priceId: price.id,
+                  })}
+              </div>
+            )}
           </div>
         )}
       </>

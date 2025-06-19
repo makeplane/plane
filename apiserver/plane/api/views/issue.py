@@ -58,7 +58,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
-
+from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
@@ -692,6 +692,9 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
 
             link = IssueLink.objects.get(pk=serializer.data["id"])
             link.created_by_id = request.data.get("created_by", request.user.id)
@@ -719,6 +722,9 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,

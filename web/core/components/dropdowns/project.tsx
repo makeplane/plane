@@ -7,9 +7,9 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { ComboDropDown } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { Logo } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -29,6 +29,7 @@ type Props = TDropdownProps & {
   onClose?: () => void;
   renderCondition?: (project: TProject) => boolean;
   renderByDefault?: boolean;
+  currentProjectId?: string;
 } & (
     | {
         multiple: false;
@@ -63,6 +64,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     tabIndex,
     value,
     renderByDefault = true,
+    currentProjectId,
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -108,7 +110,9 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   });
 
   const filteredOptions =
-    query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
+    query === ""
+      ? options?.filter((o) => o?.value !== currentProjectId)
+      : options?.filter((o) => o?.value !== currentProjectId && o?.query.toLowerCase().includes(query.toLowerCase()));
 
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
@@ -198,7 +202,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
           >
             {!hideIcon && getProjectIcon(value)}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate max-w-40">{getDisplayName(value, placeholder)}</span>
+              <span className="truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
             {dropdownArrow && (
               <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />

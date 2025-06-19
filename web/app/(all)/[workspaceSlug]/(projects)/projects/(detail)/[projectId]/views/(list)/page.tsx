@@ -8,13 +8,13 @@ import { EUserPermissionsLevel, EUserProjectRoles, EViewAccess } from "@plane/co
 import { useTranslation } from "@plane/i18n";
 import { TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
-import { PageHead } from "@/components/core";
+import { calculateTotalFilters } from "@plane/utils";
+import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { ProjectViewsList } from "@/components/views";
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";
 // constants
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useProject, useProjectView, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

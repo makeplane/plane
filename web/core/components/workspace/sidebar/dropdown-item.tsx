@@ -8,9 +8,8 @@ import { Menu } from "@headlessui/react";
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, getUserRole } from "@plane/utils";
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription";
 

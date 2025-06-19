@@ -72,10 +72,9 @@ export const SettingsHeader = observer(() => {
           </div>
         </div>
       </Link>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5">
         {/* Description */}
         <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
-        {!isScrolled && <div className="text-custom-text-200 text-base">{t("settings_description")}</div>}
         {/* Actions */}
         <SettingsTabs />
       </div>

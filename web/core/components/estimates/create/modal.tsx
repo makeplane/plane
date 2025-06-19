@@ -4,6 +4,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // types
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 // ui
@@ -13,7 +14,6 @@ import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/es
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TCreateEstimateModal = {
   workspaceSlug: string;

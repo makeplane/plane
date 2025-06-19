@@ -1,9 +1,10 @@
 import { RefObject, useRef } from "react";
 import { observer } from "mobx-react";
 // components
+import type { IBlockUpdateDependencyData } from "@plane/types";
+import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // constants
@@ -11,7 +12,6 @@ import { BLOCK_HEIGHT } from "../constants";
 // components
 import { ChartDraggable } from "../helpers";
 import { useGanttResizable } from "../helpers/blockResizables/use-gantt-resizable";
-import { IBlockUpdateDependencyData } from "../types";
 
 type Props = {
   blockId: string;

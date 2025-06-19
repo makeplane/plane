@@ -114,7 +114,7 @@ export interface IIssueDetail
   relation: IIssueRelationStore;
 }
 
-export class IssueDetail implements IIssueDetail {
+export abstract class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
   relationKey: TIssueRelationTypes | null = null;
@@ -204,7 +204,7 @@ export class IssueDetail implements IIssueDetail {
     this.commentReaction = new IssueCommentReactionStore(this);
     this.subIssues = new IssueSubIssuesStore(this, serviceType);
     this.link = new IssueLinkStore(this, serviceType);
-    this.subscription = new IssueSubscriptionStore(this);
+    this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
   }
 

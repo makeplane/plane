@@ -8,13 +8,13 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/ui";
 // components
-import AnalyticsFilterActions from "@/components/analytics-v2/analytics-filter-actions";
+import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { ANALYTICS_TABS } from "@/plane-web/components/analytics-v2/tabs";
+import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 
 const AnalyticsPage = observer(() => {
   const router = useRouter();
@@ -40,17 +40,20 @@ const AnalyticsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
+
   const tabs = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
         key: tab.key,
-        label: t(tab.i18nKey),
+        label: tab.label,
         content: <tab.content />,
         onClick: () => {
           router.push(`?tab=${tab.key}`);
         },
+        isDisabled: tab.isDisabled,
       })),
-    [router, t]
+    [ANALYTICS_TABS, router]
   );
   const defaultTab = searchParams.get("tab") || ANALYTICS_TABS[0].key;
 

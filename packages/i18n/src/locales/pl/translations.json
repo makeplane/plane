@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nie udało się usunąć projektu z ulubionych. Spróbuj ponownie.",
   "project_created_successfully": "Projekt utworzono pomyślnie",
   "project_created_successfully_description": "Projekt został pomyślnie utworzony. Teraz możesz dodawać elementy pracy.",
+  "project_name_already_taken": "Nazwa projektu jest już zajęta.",
+  "project_identifier_already_taken": "Identyfikator projektu jest już zajęty.",
   "project_cover_image_alt": "Obraz w tle projektu",
   "name_is_required": "Nazwa jest wymagana",
   "title_should_be_less_than_255_characters": "Nazwa musi mieć mniej niż 255 znaków",
@@ -868,7 +870,21 @@
     "view": "Widok",
     "deactivated_user": "Dezaktywowany użytkownik",
     "apply": "Zastosuj",
-    "applying": "Zastosowanie"
+    "applying": "Zastosowanie",
+    "users": "Użytkownicy",
+    "admins": "Administratorzy",
+    "guests": "Goście",
+    "on_track": "Na dobrej drodze",
+    "off_track": "Poza planem",
+    "at_risk": "W zagrożeniu",
+    "timeline": "Oś czasu",
+    "completion": "Zakończenie",
+    "upcoming": "Nadchodzące",
+    "completed": "Zakończone",
+    "in_progress": "W trakcie",
+    "planned": "Zaplanowane",
+    "paused": "Wstrzymane",
+    "no_of": "Liczba {entity}"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -1318,19 +1334,6 @@
       "custom": "Analizy niestandardowe"
     },
     "empty_state": {
-      "general": {
-        "title": "Śledź postępy, obciążenie i alokacje. Identyfikuj trendy, usuwaj przeszkody i przyspieszaj pracę",
-        "description": "Obserwuj zakres vs. zapotrzebowanie, szacunki i zakres. Sprawdzaj wydajność członków i zespołów, upewnij się, że projekty kończą się na czas.",
-        "primary_button": {
-          "text": "Zacznij pierwszy projekt",
-          "comic": {
-            "title": "Analizy najlepiej działają z Cyklem + Modułami",
-            "description": "Najpierw ogranicz pracę w cyklach i grupuj zadania w modułach obejmujących wiele cykli. Znajdziesz je w menu po lewej."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj.",
         "title": "Brak danych"
@@ -1346,21 +1349,22 @@
     },
     "created_vs_resolved": "Utworzone vs Rozwiązane",
     "customized_insights": "Dostosowane informacje",
-    "backlog_work_items": "Elementy pracy w backlogu",
+    "backlog_work_items": "{entity} w backlogu",
     "active_projects": "Aktywne projekty",
     "trend_on_charts": "Trend na wykresach",
     "all_projects": "Wszystkie projekty",
     "summary_of_projects": "Podsumowanie projektów",
     "project_insights": "Wgląd w projekt",
-    "started_work_items": "Rozpoczęte elementy pracy",
-    "total_work_items": "Łączna liczba elementów pracy",
+    "started_work_items": "Rozpoczęte {entity}",
+    "total_work_items": "Łączna liczba {entity}",
     "total_projects": "Łączna liczba projektów",
     "total_admins": "Łączna liczba administratorów",
     "total_users": "Łączna liczba użytkowników",
     "total_intake": "Całkowity dochód",
-    "un_started_work_items": "Nierozpoczęte elementy pracy",
+    "un_started_work_items": "Nierozpoczęte {entity}",
     "total_guests": "Łączna liczba gości",
-    "completed_work_items": "Ukończone elementy pracy"
+    "completed_work_items": "Ukończone {entity}",
+    "total": "Łączna liczba {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektów}}",
@@ -2463,5 +2467,9 @@
     "last_edited_by": "Ostatnio edytowane przez",
     "previously_edited_by": "Wcześniej edytowane przez",
     "edited_by": "Edytowane przez"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Plane nie mogła się uruchomić.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wybierz View Logs z setup.sh i logów Docker, aby mieć pewność."
   }
 }

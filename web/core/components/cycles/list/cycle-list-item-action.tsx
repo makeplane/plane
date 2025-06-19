@@ -1,7 +1,6 @@
 "use client";
 
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -19,14 +18,13 @@ import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
+import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { getDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
-import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -230,9 +228,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             >
               <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
-                <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+                <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
@@ -269,6 +265,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                   {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
                 </span>
               }
+              mergeDates
               required={cycleDetails.status !== "draft"}
               disabled
               hideIcon={{

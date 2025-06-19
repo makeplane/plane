@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { UserService } from "@/services/user.service";
 
 const userService = new UserService();
