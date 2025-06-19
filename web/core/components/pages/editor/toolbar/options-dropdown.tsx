@@ -2,18 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter } from "next/navigation";
-import { ArrowUpToLine, Clipboard, History } from "lucide-react";
+import { ArrowUpToLine, Clipboard } from "lucide-react";
 // plane imports
 import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
-// components
 import { copyTextToClipboard } from "@plane/utils";
+// components
 import { ExportPageModal, PageActions, TPageActions } from "@/components/pages";
-// helpers
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
-import { useQueryParams } from "@/hooks/use-query-params";
-// plane web hooks
+// plane web imports
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
@@ -27,8 +24,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   const { page, storeType } = props;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  // router
-  const router = useRouter();
   // store values
   const {
     name,
@@ -37,8 +32,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   } = page;
   // page filters
   const { isFullWidth, handleFullWidth, isStickyToolbarEnabled, handleStickyToolbar } = usePageFilters();
-  // update query params
-  const { updateQueryParams } = useQueryParams();
   // menu items list
   const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
     () => [
@@ -82,19 +75,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
       {
-        key: "version-history",
-        action: () => {
-          // add query param, version=current to the route
-          const updatedRoute = updateQueryParams({
-            paramsToAdd: { version: "current" },
-          });
-          router.push(updatedRoute);
-        },
-        title: "Version history",
-        icon: History,
-        shouldRender: true,
-      },
-      {
         key: "export",
         action: () => setIsExportModalOpen(true),
         title: "Export",
@@ -102,16 +82,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         shouldRender: true,
       },
     ],
-    [
-      editorRef,
-      handleFullWidth,
-      handleStickyToolbar,
-      isContentEditable,
-      isFullWidth,
-      isStickyToolbarEnabled,
-      router,
-      updateQueryParams,
-    ]
+    [editorRef, handleFullWidth, handleStickyToolbar, isContentEditable, isFullWidth, isStickyToolbarEnabled]
   );
 
   return (
