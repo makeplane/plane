@@ -1,7 +1,7 @@
 import { Hocuspocus } from "@hocuspocus/server";
-import { ServerAgentManager } from "@/ee/agents/server-agent";
 import { BroadcastedEvent } from "@plane/editor";
 import { CustomHocuspocusRedisExtension } from "@/core/extensions/redis";
+import { ServerAgentManager } from "@/core/agents/server-agent";
 
 export const broadcastMessageToPage = (
   instance: Hocuspocus | ServerAgentManager,

@@ -1,9 +1,9 @@
-import { TLogoProps } from "./common";
-import { EPageAccess } from "./enums";
+import { TLogoProps } from "../common";
+import { EPageAccess } from "../enums";
+import { TPageExtended } from "./extended";
 
 export type TPage = {
   access: EPageAccess | undefined;
-  anchor?: string | null | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;
   created_at: Date | undefined;
@@ -18,8 +18,6 @@ export type TPage = {
   owned_by: string | undefined;
   parent_id: string | null | undefined;
   project_ids?: string[] | undefined;
-  sub_pages_count: number | undefined;
-  team: string | null | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;
@@ -27,14 +25,7 @@ export type TPage = {
   deleted_at: Date | undefined;
   moved_to_page: string | null;
   moved_to_project: string | null;
-  collaborators: TCollaborator[];
-};
-export type TCollaborator = {
-  name: string;
-  color: string;
-  id?: string;
-  photoUrl?: string;
-};
+} & TPageExtended;
 
 export type TSubPageDetails = Pick<
   TPage,
@@ -42,7 +33,7 @@ export type TSubPageDetails = Pick<
 >;
 
 // page filters
-export type TPageNavigationTabs = "public" | "private" | "archived";
+export type TPageNavigationTabs = "public" | "private" | "archived" | "shared";
 
 export type TPageFiltersSortKey = "name" | "created_at" | "updated_at" | "opened_at";
 

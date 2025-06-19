@@ -2014,6 +2014,10 @@
       "archived": {
         "title": "No archived pages yet",
         "description": "Archive pages not on your radar. Access them here when needed."
+      },
+      "shared": {
+        "title": "No shared pages yet",
+        "description": "Pages that others have shared with you will appear here."
       }
     }
   },

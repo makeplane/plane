@@ -14,6 +14,7 @@ from plane.db.models import (
     DeployBoard,
     UserFavorite,
 )
+from plane.ee.models import PageUser
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -116,7 +117,10 @@ class MovePageEndpoint(BaseAPIView):
 
         # Delete favorites for the members who are not part of the new project
         UserFavorite.objects.filter(
-            entity_type="page", entity_identifier=old_page.id, project_id=project_id
+            entity_type="page",
+            entity_identifier=old_page.id,
+            project_id=project_id,
+            workspace__slug=slug,
         ).exclude(user_id__in=new_project_members_list).delete()
 
         # Update the project id of the members who are part of the project
@@ -133,14 +137,14 @@ class MovePageEndpoint(BaseAPIView):
         )
 
         # change the page version
-        PageVersion.objects.filter(page_id=pk).update(
+        PageVersion.objects.filter(page_id=pk, workspace__slug=slug).update(
             page_id=new_page_id,
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
         )
 
         # change the uploaded files in the page
-        FileAsset.objects.filter(page_id=pk, project_id=project_id).update(
+        FileAsset.objects.filter(page_id=pk, project_id=project_id, workspace__slug=slug).update(
             page_id=new_page_id,
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
@@ -148,9 +152,21 @@ class MovePageEndpoint(BaseAPIView):
 
         # change the deployed board url for the page
         DeployBoard.objects.filter(
-            entity_identifier=pk, project_id=project_id, entity_name="page"
+            entity_identifier=pk,
+            project_id=project_id,
+            entity_name="page",
+            workspace__slug=slug,
         ).update(
             entity_identifier=new_page_id,
+            updated_by_id=request.user.id,
+            updated_at=timezone.now(),
+        )
+
+        # share the page with the new project
+        PageUser.objects.filter(
+            page_id=pk, project_id=project_id, workspace__slug=slug
+        ).update(
+            page_id=new_page_id,
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
         )

@@ -25,7 +25,7 @@ from plane.app.serializers import (
 from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.db.models.user import BotTypeEnum
-from plane.ee.models import TeamspaceMember, TeamspaceProject
+from plane.ee.models import TeamspaceMember, TeamspaceProject, PageUser
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -265,7 +265,9 @@ class ProjectMemberViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         # Get the list of project members for the project
-        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value) # noqa: E501
+        bot_filter = Q(member__is_bot=False) | Q(
+            member__bot_type=BotTypeEnum.APP_BOT.value
+        )  # noqa: E501
         project_members = ProjectMember.objects.filter(
             bot_filter,
             project_id=project_id,
@@ -384,6 +386,14 @@ class ProjectMemberViewSet(BaseViewSet):
 
         project_member.is_active = False
         project_member.save()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            user_id=project_member.member_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
         project_activity.delay(
             type="project.activity.updated",
             requested_data=json.dumps({"members": []}),
@@ -428,6 +438,14 @@ class ProjectMemberViewSet(BaseViewSet):
         # Deactivate the user
         project_member.is_active = False
         project_member.save()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            user_id=project_member.member_id,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
+
         project_activity.delay(
             type="project.activity.updated",
             requested_data=json.dumps({"members": []}),

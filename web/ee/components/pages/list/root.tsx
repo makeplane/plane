@@ -34,8 +34,14 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
-  const { filters, fetchPagesByType, filteredPublicPageIds, filteredArchivedPageIds, filteredPrivatePageIds } =
-    pageStore;
+  const {
+    filters,
+    fetchPagesByType,
+    filteredPublicPageIds,
+    filteredArchivedPageIds,
+    filteredPrivatePageIds,
+    filteredSharedPageIds,
+  } = pageStore;
 
   // Use SWR to fetch the data but not for rendering
   const { isLoading, data } = useSWR(
@@ -60,10 +66,20 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
         return filteredPrivatePageIds;
       case "archived":
         return filteredArchivedPageIds;
+      case "shared":
+        return filteredSharedPageIds;
       default:
         return [];
     }
-  }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, filters.searchQuery]);
+  }, [
+    pageType,
+    filteredPublicPageIds,
+    filteredPrivatePageIds,
+    filteredArchivedPageIds,
+    filteredSharedPageIds,
+    data,
+    filters.searchQuery,
+  ]);
 
   // derived values - memoized for performance
   const hasWorkspaceMemberLevelPermissions = useMemo(
@@ -82,6 +98,10 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
   });
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
+  });
+  const sharedPageResolvedPath = useResolvedAssetPath({
+    // todo - remove this and add a new asset for shared
+    basePath: "/empty-state/pages/public",
   });
 
   if (isLoading) return <PageLoader />;
@@ -124,6 +144,14 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
           title={t("workspace_pages.empty_state.archived.title")}
           description={t("workspace_pages.empty_state.archived.description")}
           assetPath={archivedPageResolvedPath}
+        />
+      );
+    if (pageType === "shared")
+      return (
+        <DetailedEmptyState
+          title="No shared pages"
+          description="Pages shared with you will appear here when someone shares them."
+          assetPath={sharedPageResolvedPath}
         />
       );
 

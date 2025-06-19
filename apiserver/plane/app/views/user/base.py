@@ -34,7 +34,7 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Session,
 )
-from plane.ee.models import TeamspaceMember
+from plane.ee.models import TeamspaceMember, PageUser
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
@@ -149,6 +149,9 @@ class UserEndpoint(BaseViewSet):
 
         # Remove the user from the teamspaces where the user is part of
         TeamspaceMember.objects.filter(member_id=request.user.id).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(user_id=request.user.id).delete()
 
         # Sync workspace members
         [

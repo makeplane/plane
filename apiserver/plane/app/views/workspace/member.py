@@ -25,7 +25,7 @@ from plane.db.models import (
     DraftIssue,
     Cycle,
 )
-from plane.ee.models import TeamspaceMember
+from plane.ee.models import TeamspaceMember, PageUser
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 from plane.payment.utils.member_payment_count import workspace_member_check
 from .. import BaseViewSet
@@ -173,6 +173,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug, member_id=workspace_member.member_id
         ).delete()
 
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            workspace__slug=slug, user_id=workspace_member.member_id
+        ).delete()
+
         # Sync workspace members
         member_sync_task.delay(slug)
 
@@ -242,6 +247,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Remove the user from the teamspaces where the user is part of
         TeamspaceMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id
+        ).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(
+            workspace__slug=slug, user_id=workspace_member.member_id
         ).delete()
 
         # # Sync workspace members

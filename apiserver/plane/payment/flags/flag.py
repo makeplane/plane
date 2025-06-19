@@ -72,6 +72,8 @@ class FeatureFlag(Enum):
     NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
+    # Shared Pages
+    SHARED_PAGES = "SHARED_PAGES"
     # Copy Work Item
     COPY_WORK_ITEM = "COPY_WORK_ITEM"
     # Analytics

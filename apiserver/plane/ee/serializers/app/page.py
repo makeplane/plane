@@ -18,6 +18,8 @@ class WorkspacePageSerializer(BaseSerializer):
         source="parent", queryset=Page.objects.all(), required=False, allow_null=True
     )
     sub_pages_count = serializers.IntegerField(read_only=True)
+    shared_access = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Page
@@ -41,8 +43,10 @@ class WorkspacePageSerializer(BaseSerializer):
             "anchor",
             "parent_id",
             "sub_pages_count",
+            "shared_access",
+            "is_shared",
         ]
-        read_only_fields = ["workspace", "owned_by", "anchor"]
+        read_only_fields = ["workspace", "owned_by", "anchor", "shared_access"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -146,12 +150,16 @@ class WorkspacePageDetailSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Page.objects.all(), required=False, allow_null=True
     )
+    shared_access = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
 
     class Meta(WorkspacePageSerializer.Meta):
         fields = WorkspacePageSerializer.Meta.fields + [
             "description_html",
             "is_description_empty",
             "anchor",
+            "shared_access",
+            "is_shared",
         ]
 
 

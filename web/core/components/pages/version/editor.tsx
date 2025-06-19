@@ -14,10 +14,10 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { PageEmbedCardRoot } from "@/plane-web/components/pages";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
-import { PageEmbedCardRoot } from "@/plane-web/components/pages";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;

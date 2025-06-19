@@ -170,6 +170,7 @@ from .page.base import (
     PageDuplicateEndpoint,
     PagesDescriptionViewSet,
 )
+from .page.shared import ProjectPageUserViewSet
 from .page.version import PageVersionEndpoint
 
 from .search.base import GlobalSearchEndpoint, SearchEndpoint

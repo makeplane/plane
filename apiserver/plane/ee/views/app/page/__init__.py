@@ -9,3 +9,4 @@ from .workspace import (
 )
 from .base import MovePageEndpoint
 from .live import PagesLiveServerSubPagesViewSet, PagesLiveServerDescriptionViewSet
+from .shared import WorkspacePageUserViewSet

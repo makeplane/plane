@@ -5,10 +5,9 @@ import { observer } from "mobx-react";
 // plane types
 import { TPageNavigationTabs } from "@plane/types";
 // plane web hooks
-import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 // local components
 import { PageListBlock } from "./block";
-import { useParams } from "next/navigation";
 
 type TPageListBlock = {
   paddingLeft: number;

@@ -36,7 +36,7 @@ export class BroadcastController {
   async handleBroadcast(req: Request<any, any, BroadcastPayloadUnion>, res: Response) {
     try {
       const payload = req.body;
-
+      console.log("payload", payload);
       // Destructure common properties
       const { action, descendants_ids, page_id, parent_id, data, workspace_slug, user_id } = payload;
 

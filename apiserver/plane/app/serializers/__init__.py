@@ -98,6 +98,7 @@ from .page import (
     PageDetailSerializer,
     PageVersionSerializer,
     PageVersionDetailSerializer,
+    PageUserSerializer,
 )
 
 from .estimate import (

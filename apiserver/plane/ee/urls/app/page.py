@@ -12,6 +12,7 @@ from plane.ee.views import (
     PagesLiveServerDescriptionViewSet,
     PagesLiveServerSubPagesViewSet,
     WorkspacePageRestoreEndpoint,
+    WorkspacePageUserViewSet,
 )
 
 
@@ -111,5 +112,17 @@ urlpatterns = [
         "workspaces/<str:slug>/pages/<uuid:page_id>/parent-pages/",
         WorkspacePageViewSet.as_view({"get": "parent_pages"}),
         name="workspace-parent-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/share/",
+        WorkspacePageUserViewSet.as_view({"post": "create", "get": "list"}),
+        name="workspace-shared-page",
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:pk>/share/<uuid:user_id>/",
+        WorkspacePageUserViewSet.as_view(
+            {"patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-shared-page",
     ),
 ]

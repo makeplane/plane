@@ -37,6 +37,7 @@ from plane.ee.views.app.page import (
     WorkspacePageDuplicateEndpoint,
     MovePageEndpoint,
     WorkspacePageRestoreEndpoint,
+    WorkspacePageUserViewSet,
 )
 from plane.ee.views.app.views import (
     IssueViewEEViewSet,

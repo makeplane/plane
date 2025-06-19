@@ -1,7 +1,6 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 # Django imports
 from django.conf import settings
@@ -21,6 +20,7 @@ from plane.db.models import (
     FileAsset,
     PageVersion,
     UserRecentVisit,
+    ProjectMember,
 )
 from plane.utils.exception_logger import log_exception
 from plane.ee.bgtasks.move_page import move_page
@@ -29,6 +29,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 from plane.ee.utils.page_events import PageAction
 from plane.utils.url import normalize_url_path
+from plane.ee.models import PageUser
 
 
 @shared_task
@@ -71,9 +72,11 @@ def nested_page_update(
         parent_id = page.parent_id
         data = {}
         descendants_ids = []
+        workspace_id = workspace.id
 
         if sub_pages:
             descendants_ids = get_descendant_page_ids(page_id)
+            descendants_ids = [str(ids) for ids in descendants_ids]
 
         if action == PageAction.ARCHIVED:
             Page.objects.filter(id__in=descendants_ids).update(
@@ -120,6 +123,52 @@ def nested_page_update(
                 access=1, updated_at=timezone.now(), updated_by=user_id
             )
 
+        elif action == PageAction.SUB_PAGE:
+            # publish the current page if the parent page is published
+            if DeployBoard.objects.filter(
+                entity_identifier=parent_id,
+                entity_name="page",
+                project_id=project_id,
+                workspace_id=workspace_id,
+            ).exists():
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.PUBLISHED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+            else:
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.UNPUBLISHED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+
+            # get the shared users of the parent page
+            shared_users = [
+                {"user_id": user_id, "access": access}
+                for user_id, access in PageUser.objects.filter(
+                    page_id=parent_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                ).values_list("user_id", "access")
+            ]
+            if shared_users:
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.SHARED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                    extra=json.dumps(
+                        {"users_and_access": shared_users},
+                        cls=DjangoJSONEncoder,
+                    ),
+                )
+
         elif action == PageAction.PUBLISHED:
             # remove the page ids which are already published from the array
             page_ids = descendants_ids + [page_id]
@@ -146,7 +195,7 @@ def nested_page_update(
                         entity_identifier=descendant_id,
                         entity_name="page",
                         project_id=project_id,
-                        workspace_id=workspace.id,
+                        workspace_id=workspace_id,
                         created_by_id=user_id,
                         updated_by_id=user_id,
                     )
@@ -159,7 +208,7 @@ def nested_page_update(
                 DeployBoard.objects.filter(
                     entity_identifier__in=descendants_ids,
                     entity_name="page",
-                    workspace_id=workspace.id,
+                    workspace_id=workspace_id,
                 ).values("entity_identifier", "anchor")
             )
             data["published_pages"] = [
@@ -277,6 +326,37 @@ def nested_page_update(
                     updated_by=user_id,
                 )
 
+                # Step 1: Get users the page is currently shared with in the old project
+                shared_users = PageUser.objects.filter(
+                    page_id__in=descendants_ids, project_id=project_id
+                ).values_list("user_id", "access")
+
+                # Step 2: Get users who are NOT in the new project (i.e., remove them)
+                removed_user_ids = (
+                    ProjectMember.objects.filter(
+                        project_id=new_project_id, is_active=True
+                    )
+                    .exclude(user_id__in=shared_users)
+                    .values_list("user_id", flat=True)
+                )
+
+                # Step 3: Delete PageUser records for removed users in the new project
+                PageUser.objects.filter(
+                    page_id__in=descendants_ids,
+                    project_id=new_project_id,
+                    user_id__in=removed_user_ids,
+                    workspace__slug=slug,
+                ).delete()
+
+                # Step 4: Move PageUser entries from old project to new project
+                PageUser.objects.filter(
+                    page_id__in=descendants_ids, project_id=project_id
+                ).update(
+                    project_id=new_project_id,
+                    updated_at=timezone.now(),
+                    updated_by=user_id,
+                )
+
                 # Background job to handle favorites
                 for descendant_id in descendants_ids:
                     move_page.delay(descendant_id, project_id, new_project_id)
@@ -284,16 +364,90 @@ def nested_page_update(
         elif action == PageAction.MOVED_INTERNALLY:
             new_parent_id = extra["new_parent_id"]
             old_parent_id = extra["old_parent_id"]
+            access = extra["access"]
             data = {
                 "new_parent_id": str(new_parent_id) if new_parent_id else None,
                 "old_parent_id": str(old_parent_id) if old_parent_id else None,
             }
 
+            # Get users the new parent page is shared with
+            shared_users = [
+                {"user_id": user_id, "access": access}
+                for user_id, access in PageUser.objects.filter(
+                    page_id=parent_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                ).values_list("user_id", "access")
+            ]
+
+            # Get all affected page IDs (moved page + descendants)
+            all_page_ids = descendants_ids + [page_id]
+
+            # Delete existing shared access for these pages so that access can be changed
+            PageUser.objects.filter(
+                page_id__in=all_page_ids, project_id=project_id, workspace__slug=slug
+            ).delete()
+
+            # Bulk create shared access for each page and user
+            nested_page_update.delay(
+                page_id=page_id,
+                action=PageAction.SHARED,
+                slug=slug,
+                project_id=project_id,
+                user_id=user_id,
+                extra=json.dumps(
+                    {"users_and_access": shared_users}, cls=DjangoJSONEncoder
+                ),
+            )
+            if access == 0:
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.UNSHARED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+
+            # if the parent page is published, then publish the nested pages
+            if DeployBoard.objects.filter(
+                entity_identifier=new_parent_id,
+                entity_name="page",
+                workspace__slug=slug,
+            ).exists():
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.PUBLISHED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+            else:
+                nested_page_update.delay(
+                    page_id=page_id,
+                    action=PageAction.UNPUBLISHED,
+                    slug=slug,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+
         elif action == PageAction.DELETED:
             # delete all the descendants
-            Page.objects.filter(id__in=descendants_ids).delete()
+            Page.objects.filter(
+                id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+            ).delete()
             # delete the page version history
-            PageVersion.objects.filter(page_id__in=descendants_ids).delete()
+            PageVersion.objects.filter(
+                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+            ).delete()
+            # shared pages
+            PageUser.objects.filter(
+                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+            ).delete()
+            DeployBoard.objects.filter(
+                entity_identifier__in=descendants_ids,
+                entity_name="page",
+                workspace__slug=slug,
+            ).delete()
             # delete the page from user recent's visit
             UserRecentVisit.objects.filter(
                 workspace__slug=slug,
@@ -304,7 +458,73 @@ def nested_page_update(
         elif action == PageAction.RESTORED:
             data = {"deleted_page_ids": extra["deleted_page_ids"]}
 
-        descendants_ids = [str(ids) for ids in descendants_ids]
+        elif action == PageAction.SHARED:
+            descendants_ids += [str(page_id)]
+            # get the data payload of user with each page
+            extra_data = json.loads(extra)
+            users_and_access = extra_data.get("users_and_access", [])
+
+            values = []
+            for user in users_and_access:
+                values.append(
+                    {
+                        "user_id": str(user.get("user_id")),
+                        "page_id": descendants_ids,
+                        "access": user.get("access"),
+                    }
+                )
+
+            # also remove the shared access for the page
+            PageUser.objects.filter(
+                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
+            ).delete()
+
+            # create shared pages for all the nested child pages
+            PageUser.objects.bulk_create(
+                [
+                    PageUser(
+                        page_id=page_id,
+                        project_id=project_id,
+                        user_id=user_data.get("user_id"),
+                        access=user_data.get("access"),
+                        created_by_id=user_id,
+                        updated_by_id=user_id,
+                        workspace_id=workspace_id,
+                    )
+                    for page_id in descendants_ids
+                    for user_data in users_and_access
+                ],
+                batch_size=50,
+                ignore_conflicts=True,
+            )
+            data = {"users_and_access": values}
+
+        elif action == PageAction.UNSHARED:
+            values = []
+            user_ids = None
+
+            if extra:
+                extra_data = json.loads(extra)
+                user_ids = extra_data.get("user_ids", None)
+
+            if not user_ids:
+                user_ids = PageUser.objects.filter(
+                    page_id__in=descendants_ids + [str(page_id)],
+                    project_id=project_id,
+                    workspace__slug=slug,
+                )
+                user_ids.delete()
+
+            for user in user_ids:
+                values.append(
+                    {
+                        "user": user,
+                        "page_id": descendants_ids + [str(page_id)],
+                        "access": None,
+                    }
+                )
+
+            data = {"users_and_access": values}
 
         payload = {
             "action": action,

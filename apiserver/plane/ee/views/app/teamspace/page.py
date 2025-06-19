@@ -177,7 +177,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
             )
 
         # Only update access if the page owner is the requesting  user
-        if page.access == 1:
+        if page.access == Page.PRIVATE_ACCESS:
             return Response(
                 {"error": "Access cannot be updated to private for teams page"},
                 status=status.HTTP_400_BAD_REQUEST,

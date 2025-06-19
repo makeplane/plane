@@ -15,6 +15,9 @@ from django.db.models import (
     F,
     Count,
     Subquery,
+    Case,
+    When,
+    BooleanField,
 )
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -53,7 +56,12 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
-from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
+from plane.ee.models.page import PageUser
+
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+
 
 class PageViewSet(BaseViewSet):
     serializer_class = PageSerializer
@@ -67,6 +75,12 @@ class PageViewSet(BaseViewSet):
             entity_identifier=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        user_pages = PageUser.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            user_id=self.request.user.id,
+            project_id=self.kwargs.get("project_id"),
+        ).values_list("page_id", flat=True)
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -75,7 +89,7 @@ class PageViewSet(BaseViewSet):
                 projects__archived_at__isnull=True,
             )
             .filter(moved_to_page__isnull=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .prefetch_related("projects")
             .select_related("workspace")
             .select_related("owned_by")
@@ -106,14 +120,34 @@ class PageViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             )
-            .filter(project=True)
             .annotate(
-                anchor=DeployBoard.objects.filter(
-                    entity_name="page",
-                    entity_identifier=OuterRef("pk"),
-                    workspace__slug=self.kwargs.get("slug"),
-                ).values("anchor")
+                anchor=Subquery(
+                    DeployBoard.objects.filter(
+                        entity_name="page",
+                        entity_identifier=OuterRef("pk"),
+                        project_id=self.kwargs.get("project_id"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    ).values("anchor")[:1]
+                )
             )
+            .annotate(
+                shared_access=Subquery(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                        user_id=self.request.user.id,
+                    ).values("access")[:1]
+                )
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
+            )
+            .filter(project=True)
             .distinct()
             .accessible_to(self.request.user.id, self.kwargs.get("slug"))
         )
@@ -173,7 +207,11 @@ class PageViewSet(BaseViewSet):
                     action=PageAction.MOVED_INTERNALLY,
                     project_id=project_id,
                     slug=slug,
-                    extra={"old_parent_id": page.parent_id, "new_parent_id": parent},
+                    extra={
+                        "old_parent_id": page.parent_id,
+                        "new_parent_id": parent,
+                        "access": request.data.get("access", page.access),
+                    },
                     user_id=request.user.id,
                 )
 
@@ -232,7 +270,9 @@ class PageViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not page.owned_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this page"},
@@ -369,7 +409,9 @@ class PageViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             queryset = queryset.filter(owned_by=request.user)
 

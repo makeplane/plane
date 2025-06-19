@@ -4,11 +4,12 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { TLoader, TPageFilters, TPage } from "@plane/types";
 // plane web services
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage  } from "@plane/utils";
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
-// local imports
+// services
 import { TTeamspacePage, TeamspacePage } from "./teamspace-page";
 
 export interface ITeamspacePageStore {
@@ -41,6 +42,9 @@ export interface ITeamspacePageStore {
   removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TTeamspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
+  // page sharing actions
+  fetchPageSharedUsers: (pageId: string) => Promise<void>;
+  bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
 }
 
 export class TeamspacePageStore implements ITeamspacePageStore {
@@ -53,6 +57,7 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   rootStore;
   // services
   teamspacePageService;
+  pageShareService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -73,14 +78,16 @@ export class TeamspacePageStore implements ITeamspacePageStore {
       // CRUD actions
       createPage: action,
       removePage: action,
+      // page sharing actions
+      fetchPageSharedUsers: action,
+      bulkUpdatePageSharedUsers: action,
     });
     // root store
     this.rootStore = _rootStore;
     // services
     this.teamspacePageService = new TeamspacePageService();
+    this.pageShareService = new PageShareService();
   }
-
-  // computed functions
   get flattenedPages() {
     return Object.values(this.pageMap).reduce(
       (result, teamPages) => ({
@@ -339,6 +346,39 @@ export class TeamspacePageStore implements ITeamspacePageStore {
     const page = this.getPageById(pageId);
     if (page && page.team) {
       delete this.pageMap[page.team][pageId];
+    }
+  };
+
+  // page sharing actions
+  fetchPageSharedUsers = async (pageId: string) => {
+    const { workspaceSlug, projectId } = this.rootStore.router;
+    if (!workspaceSlug || !pageId) return;
+
+    if (projectId) {
+      const sharedUsers = await this.pageShareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
+      // Update page instance with shared users
+      const page = this.getPageById(pageId);
+      if (page && sharedUsers) {
+        page.updateSharedUsers(sharedUsers);
+      }
+    } else {
+      const sharedUsers = await this.pageShareService.getWorkspacePageSharedUsers(workspaceSlug, pageId);
+      // Update page instance with shared users
+      const page = this.getPageById(pageId);
+      if (page && sharedUsers) {
+        page.updateSharedUsers(sharedUsers);
+      }
+    }
+  };
+
+  bulkUpdatePageSharedUsers = async (pageId: string, sharedUsers: TPageSharedUser[]) => {
+    const { workspaceSlug, projectId } = this.rootStore.router;
+    if (!workspaceSlug || !pageId) return;
+
+    if (projectId) {
+      await this.pageShareService.bulkUpdateProjectPageSharedUsers(workspaceSlug, projectId, pageId, sharedUsers);
+    } else {
+      await this.pageShareService.bulkUpdateWorkspacePageSharedUsers(workspaceSlug, pageId, sharedUsers);
     }
   };
 }

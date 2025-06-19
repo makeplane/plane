@@ -14,7 +14,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import (
     WorkspacePageSerializer,
     WorkspacePageLiteSerializer,
@@ -31,6 +30,7 @@ from plane.db.models import (
     WorkspaceMember,
     UserRecentVisit,
 )
+from plane.ee.models import PageUser
 from plane.utils.error_codes import ERROR_CODES
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.views.base import BaseViewSet, BaseAPIView
@@ -42,12 +42,13 @@ from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.utils.page_events import PageAction
+from plane.ee.permissions.page import WorkspacePagePermission
 
 
 class WorkspacePageViewSet(BaseViewSet):
     serializer_class = WorkspacePageSerializer
     model = Page
-    permission_classes = [WorkspaceEntityPermission]
+    permission_classes = [WorkspacePagePermission]
     search_fields = ["name"]
 
     def get_queryset(self):
@@ -57,12 +58,16 @@ class WorkspacePageViewSet(BaseViewSet):
             entity_identifier=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
         )
+        user_pages = PageUser.objects.filter(
+            user_id=self.request.user.id,
+            workspace__slug=self.kwargs.get("slug"),
+        ).values_list("page_id", flat=True)
         return self.filter_queryset(
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(is_global=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id__in=user_pages))
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
@@ -70,11 +75,30 @@ class WorkspacePageViewSet(BaseViewSet):
             .prefetch_related("labels")
             .order_by("-is_favorite", "-created_at")
             .annotate(
-                anchor=DeployBoard.objects.filter(
-                    entity_name="page",
-                    entity_identifier=OuterRef("pk"),
-                    workspace__slug=self.kwargs.get("slug"),
-                ).values("anchor")
+                anchor=Subquery(
+                    DeployBoard.objects.filter(
+                        entity_name="page",
+                        entity_identifier=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    ).values("anchor")[:1]
+                )
+            )
+            .annotate(
+                shared_access=Subquery(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                        user_id=self.request.user.id,
+                    ).values("access")[:1]
+                )
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("pk"),
+                        workspace__slug=self.kwargs.get("slug"),
+                    )
+                )
             )
             .distinct()
         )
@@ -103,6 +127,9 @@ class WorkspacePageViewSet(BaseViewSet):
                     user_id=request.user.id,
                 )
             page = self.get_queryset().filter(pk=serializer.data["id"]).first()
+            if page.parent_id and page.parent.access == Page.PRIVATE_ACCESS:
+                page.owned_by_id = page.parent.owned_by_id
+                page.save()
             serializer = WorkspacePageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -127,7 +154,11 @@ class WorkspacePageViewSet(BaseViewSet):
                     action=PageAction.MOVED_INTERNALLY,
                     slug=slug,
                     user_id=request.user.id,
-                    extra={"old_parent_id": page.parent_id, "new_parent_id": parent},
+                    extra={
+                        "old_parent_id": page.parent_id,
+                        "new_parent_id": parent,
+                        "access": request.data.get("access", page.access),
+                    },
                 )
 
             # Only update access if the page owner is the requesting  user
@@ -148,6 +179,12 @@ class WorkspacePageViewSet(BaseViewSet):
             page_description = page.description_html
             if serializer.is_valid():
                 serializer.save()
+                nested_page_update.delay(
+                    page_id=page.id,
+                    action=PageAction.UNSHARED,
+                    slug=slug,
+                    user_id=request.user.id,
+                )
                 # capture the page transaction
                 if request.data.get("description_html"):
                     page_transaction.delay(
@@ -270,6 +307,11 @@ class WorkspacePageViewSet(BaseViewSet):
         search = request.query_params.get("search")
         page_type = request.query_params.get("type", "public")
 
+        user_pages = PageUser.objects.filter(
+            Q(user_id=self.request.user.id) | Q(page__owned_by_id=self.request.user.id),
+            workspace__slug=self.kwargs.get("slug"),
+        ).values_list("page_id", flat=True)
+
         sub_pages_count = (
             Page.objects.filter(parent=OuterRef("id"))
             .order_by()
@@ -282,7 +324,7 @@ class WorkspacePageViewSet(BaseViewSet):
         if search:
             filters &= Q(name__icontains=search)
         if page_type == "private":
-            filters &= Q(access=1)
+            filters &= Q(access=1) & ~Q(id__in=user_pages)
         elif page_type == "archived":
             filters &= Q(archived_at__isnull=False)
         elif page_type == "public":
@@ -290,6 +332,8 @@ class WorkspacePageViewSet(BaseViewSet):
                 filters &= Q(access=0)
             else:
                 filters &= Q(parent__isnull=True, access=0)
+        elif page_type == "shared":
+            filters &= Q(id__in=user_pages, parent__isnull=True, access=1)
 
         queryset = (
             self.get_queryset()
@@ -449,7 +493,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
 
 class WorkspacePageDuplicateEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
+    permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, pk):
@@ -472,7 +516,7 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 
 
 class WorkspacePagesDescriptionViewSet(BaseViewSet):
-    permission_classes = [WorkspaceEntityPermission]
+    permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, pk):
@@ -561,6 +605,8 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 
 
 class WorkspacePageVersionEndpoint(BaseAPIView):
+    permission_classes = [WorkspacePagePermission]
+
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def get(self, request, slug, page_id, pk=None):
         # Check if pk is provided
@@ -609,6 +655,8 @@ class WorkspacePageFavoriteEndpoint(BaseAPIView):
 
 
 class WorkspacePageRestoreEndpoint(BaseAPIView):
+    permission_classes = [WorkspacePagePermission]
+
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id, pk):
         page_version = PageVersion.objects.get(pk=pk, page_id=page_id)

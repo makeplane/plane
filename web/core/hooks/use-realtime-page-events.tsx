@@ -40,6 +40,7 @@ export const useRealtimePageEvents = ({
 }: UsePageEventsProps) => {
   const router = useAppRouter();
   const { removePage, getPageById, getOrFetchPageInstance } = usePageStore(storeType);
+
   const { data: currentUser } = useUser();
   // derived values
   const editorRef = page.editorRef;
@@ -219,6 +220,27 @@ export const useRealtimePageEvents = ({
           else if (page.id === pageId) router.push(handlers.getRedirectionLink());
         });
       },
+      shared: async ({ data }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, access, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.appendSharedUsers([
+                {
+                  user_id,
+                  access,
+                },
+              ]);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(access);
+              }
+            }
+          }
+        }
+      },
+      unshared: async ({ pageIds, data }) => {},
       duplicated: async ({ pageIds, data }) => {
         const duplicatedPage = data.new_page_id;
         dismissToast("duplicating-page");

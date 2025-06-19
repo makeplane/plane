@@ -6,8 +6,8 @@ import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
-// plane web constants
 // plane web store
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 import { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
@@ -67,6 +67,9 @@ export interface IProjectPageStore {
     projectId?: string;
   }) => Promise<TProjectPage | undefined>;
   removePageInstance: (pageId: string) => void;
+  // page sharing actions
+  fetchPageSharedUsers: (pageId: string) => Promise<void>;
+  bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
 }
 
 export class ProjectPageStore implements IProjectPageStore {
@@ -81,6 +84,7 @@ export class ProjectPageStore implements IProjectPageStore {
   };
   // service
   service: ProjectPageService;
+  shareService: PageShareService;
   rootStore: CoreRootStore;
 
   constructor(private store: RootStore) {
@@ -102,10 +106,14 @@ export class ProjectPageStore implements IProjectPageStore {
       createPage: action,
       removePage: action,
       movePage: action,
+      // page sharing actions
+      fetchPageSharedUsers: action,
+      bulkUpdatePageSharedUsers: action,
     });
     this.rootStore = store;
     // service
     this.service = new ProjectPageService();
+    this.shareService = new PageShareService();
     // initialize display filters of the current project
     reaction(
       () => this.store.router.projectId,
@@ -427,5 +435,78 @@ export class ProjectPageStore implements IProjectPageStore {
 
   removePageInstance = (pageId: string) => {
     delete this.data[pageId];
+  };
+
+  // page sharing actions
+  fetchPageSharedUsers = async (pageId: string) => {
+    try {
+      const { workspaceSlug, projectId } = this.store.router;
+      if (!workspaceSlug || !projectId || !pageId) return;
+
+      const sharedUsers = await this.shareService.getProjectPageSharedUsers(workspaceSlug, projectId, pageId);
+      const finalUsers = sharedUsers.map((user) => ({
+        user_id: user.user_id,
+        access: user.access,
+      }));
+
+      runInAction(() => {
+        const pageInstance = this.getPageById(pageId);
+        if (pageInstance && finalUsers) {
+          pageInstance.updateSharedUsers(finalUsers);
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to fetch page shared users. Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  bulkUpdatePageSharedUsers = async (pageId: string, sharedUsers: TPageSharedUser[]) => {
+    const oldSharedUsers = this.getPageById(pageId)?.sharedUsers || [];
+    try {
+      const { workspaceSlug, projectId } = this.store.router;
+      if (!workspaceSlug || !projectId || !pageId) return;
+
+      const pageInstance = this.getPageById(pageId);
+      if (!pageInstance) return;
+
+      // Optimistically update the state
+      runInAction(() => {
+        if (sharedUsers.length === 0) {
+          pageInstance.is_shared = false;
+        } else {
+          pageInstance.is_shared = true;
+        }
+        pageInstance.updateSharedUsers(sharedUsers);
+      });
+
+      // Make API call
+      await this.shareService.bulkUpdateProjectPageSharedUsers(workspaceSlug, projectId, pageId, sharedUsers);
+    } catch (error) {
+      runInAction(() => {
+        // Revert to old shared users list on error
+        const pageInstance = this.getPageById(pageId);
+        if (pageInstance) {
+          if (oldSharedUsers.length === 0) {
+            pageInstance.is_shared = false;
+          } else {
+            pageInstance.is_shared = true;
+          }
+          pageInstance.updateSharedUsers(oldSharedUsers);
+        }
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to bulk update page shared users. Please try again later.",
+        };
+      });
+      throw error;
+    }
   };
 }

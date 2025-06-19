@@ -1,6 +1,7 @@
 # Python imports
 import uuid
 from uuid import UUID
+from enum import IntEnum
 
 # Django imports
 from django.conf import settings
@@ -62,9 +63,14 @@ class PageManager(SoftDeletionManager):
         return self.get_queryset().accessible_to(user_id, slug)
 
 
+class PageAccess(IntEnum):
+    PUBLIC = 0
+    PRIVATE = 1
+
+
 class Page(BaseModel):
-    PRIVATE_ACCESS = 1
-    PUBLIC_ACCESS = 0
+    PRIVATE_ACCESS = PageAccess.PRIVATE
+    PUBLIC_ACCESS = PageAccess.PUBLIC
 
     ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
 

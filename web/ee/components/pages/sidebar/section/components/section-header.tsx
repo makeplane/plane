@@ -38,7 +38,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
         </Tooltip>
         {!isCollapsed && (
           <div className="flex-shrink-0 flex items-center justify-center opacity-0 group-hover:opacity-100">
-            {sectionType !== "archived" && (
+            {sectionType !== "archived" && sectionType !== "shared" && (
               <button
                 className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
                 onClick={() => {

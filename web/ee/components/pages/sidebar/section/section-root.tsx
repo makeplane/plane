@@ -40,12 +40,12 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const { sidebarCollapsed } = useAppTheme();
-  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds } = usePageStore(
+  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
     EPageStoreType.WORKSPACE
   );
 
   // Custom hooks
-  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById);
+  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType);
   const { isLoading } = useSectionPages(sectionType);
 
   // Get the page IDs based on section type directly from store's observable arrays
@@ -57,10 +57,12 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
         return privatePageIds;
       case "archived":
         return archivedPageIds;
+      case "shared":
+        return sharedPageIds;
       default:
         return [];
     }
-  }, [publicPageIds, privatePageIds, archivedPageIds, sectionType]);
+  }, [publicPageIds, privatePageIds, archivedPageIds, sharedPageIds, sectionType]);
 
   // Memoize derived values
   const pageIds = useMemo(() => getStorePageIds(), [getStorePageIds]);
@@ -79,9 +81,11 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
     // Determine current section of the page
     const currentPageSection = currentPage?.archived_at
       ? "archived"
-      : currentPage?.access === EPageAccess.PRIVATE
-        ? "private"
-        : "public";
+      : currentPage?.is_shared
+        ? "shared"
+        : currentPage?.access === EPageAccess.PRIVATE
+          ? "private"
+          : "public";
 
     if (!currentPageSection) return;
 

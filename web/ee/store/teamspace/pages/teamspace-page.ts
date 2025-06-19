@@ -109,26 +109,50 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can access the page
    */
   get canCurrentUserAccessPage() {
+    // Owner can always access
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.hasSharedAccess) {
+      return this.canViewWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic || this.isCurrentUserOwner;
+    return isPagePublic;
   }
 
   /**
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
+    // Owner can always edit
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const userRole = this.getUserWorkspaceRole();
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return (
-      (isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER) ||
-      (!isPagePublic && this.isCurrentUserOwner)
-    );
+    return isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   /**
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
+    // Owner can always duplicate
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can only duplicate if they have edit access
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const userRole = this.getUserWorkspaceRole();
     return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
@@ -137,6 +161,12 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
+    // Only owner can lock/unlock pages with shared access
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const userRole = this.getUserWorkspaceRole();
     return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
@@ -161,6 +191,12 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
+    // Shared access users cannot delete pages
+    if (this.hasSharedAccess) {
+      return this.isCurrentUserOwner;
+    }
+
+    // Fallback to regular access control
     const userRole = this.getUserWorkspaceRole();
     return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
   }
@@ -185,13 +221,25 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
-    const userRole = this.getUserWorkspaceRole();
-    const isOwner = this.isCurrentUserOwner;
-    const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 
-    return !isArchived && !isLocked && (isOwner || (isPublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER));
+    // Can't edit if archived or locked
+    if (isArchived || isLocked) return false;
+
+    // Owner can always edit (if not archived/locked)
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
+    const userRole = this.getUserWorkspaceRole();
+    const isPublic = this.access === EPageAccess.PUBLIC;
+
+    return isPublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   getRedirectionLink = computedFn(() => {

@@ -14,3 +14,4 @@ from plane.app.permissions import (
 )
 from .hmac import HMACPermission
 from .teamspace import TeamspacePermission
+from .page import WorkspacePagePermission, ProjectPagePermission

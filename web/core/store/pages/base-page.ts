@@ -7,14 +7,8 @@ import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@pl
 import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
+import { ExtendedBasePage, TExtendedPageInstance } from "@/plane-web/store/pages/extended-base-page";
 import { RootStore } from "@/plane-web/store/root.store";
-
-export type TCollaborator = {
-  name: string;
-  color: string;
-  userId?: string;
-  photoUrl?: string;
-};
 
 export type TVersionToBeRestored = {
   versionId: string | null;
@@ -31,7 +25,6 @@ export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
   editorRef: EditorRefApi | null;
-  collaborators: TCollaborator[];
   restoration: TRestorationState;
   isSyncingWithServer: "syncing" | "synced" | "error";
   // computed
@@ -57,7 +50,6 @@ export type TBasePage = TPage & {
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
   setEditorRef: (editorRef: EditorRefApi | null) => void;
-  updateCollaborators: (collaborators: TCollaborator[]) => void;
   setVersionToBeRestored: (versionId: string | null, descriptionHTML: string | null) => void;
   setRestorationStatus: (inProgress: boolean) => void;
   setSyncingStatus: (status: "syncing" | "synced" | "error") => void;
@@ -90,6 +82,7 @@ export type TBasePageServices = {
 };
 
 export type TPageInstance = TBasePage &
+  TExtendedPageInstance &
   TBasePagePermissions & {
     getRedirectionLink: () => string;
     fetchSubPages: () => Promise<void>;
@@ -98,11 +91,10 @@ export type TPageInstance = TBasePage &
     subPages: TPageInstance[];
   };
 
-export class BasePage implements TBasePage {
+export class BasePage extends ExtendedBasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
   editorRef: EditorRefApi | null = null;
-  collaborators: TCollaborator[] = [];
   restoration: TRestorationState = {
     versionId: null,
     descriptionHTML: null,
@@ -119,15 +111,11 @@ export class BasePage implements TBasePage {
   label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
-  anchor?: string | null | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
   workspace: string | undefined;
-  parent_id: string | null | undefined;
   project_ids?: string[] | undefined;
-  sub_pages_count: number | undefined;
-  team: string | null | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
@@ -148,6 +136,7 @@ export class BasePage implements TBasePage {
     page: TPage,
     services: TBasePageServices
   ) {
+    super(store, page, services);
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;
@@ -156,21 +145,16 @@ export class BasePage implements TBasePage {
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
-    this.anchor = page?.anchor || undefined;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
-    this.parent_id = page?.parent_id;
     this.project_ids = page?.project_ids || undefined;
-    this.sub_pages_count = !page?.sub_pages_count ? 0 : page.sub_pages_count;
-    this.team = page?.team || undefined;
     this.created_by = page?.created_by || undefined;
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
     this.updated_at = page?.updated_at || undefined;
     this.oldName = page?.name || "";
-    this.parent_id = page?.parent_id === null ? null : page?.parent_id;
     this.deleted_at = page?.deleted_at || undefined;
     this.moved_to_page = page?.moved_to_page || null;
     this.moved_to_project = page?.moved_to_project || null;
@@ -189,14 +173,11 @@ export class BasePage implements TBasePage {
       label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
-      anchor: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,
       workspace: observable.ref,
-      parent_id: observable.ref,
       project_ids: observable,
-      sub_pages_count: observable.ref,
       created_by: observable.ref,
       updated_by: observable.ref,
       created_at: observable.ref,
@@ -204,7 +185,6 @@ export class BasePage implements TBasePage {
       deleted_at: observable.ref,
       moved_to_page: observable.ref,
       moved_to_project: observable.ref,
-      collaborators: observable,
       restoration: observable,
       isSyncingWithServer: observable.ref,
       // helpers
@@ -230,7 +210,6 @@ export class BasePage implements TBasePage {
       duplicate: action,
       mutateProperties: action,
       setEditorRef: action,
-      updateCollaborators: action,
       setVersionToBeRestored: action,
       setRestorationStatus: action,
       setSyncingStatus: action,
@@ -273,16 +252,12 @@ export class BasePage implements TBasePage {
       label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
-      anchor: this.anchor,
       logo_props: this.logo_props,
       is_favorite: this.is_favorite,
       is_locked: this.is_locked,
       archived_at: this.archived_at,
       workspace: this.workspace,
-      parent_id: this.parent_id,
       project_ids: this.project_ids,
-      sub_pages_count: this.sub_pages_count,
-      team: this.team,
       created_by: this.created_by,
       updated_by: this.updated_by,
       created_at: this.created_at,
@@ -291,7 +266,6 @@ export class BasePage implements TBasePage {
       moved_to_page: this.moved_to_page,
       moved_to_project: this.moved_to_project,
       is_description_empty: this.is_description_empty,
-      collaborators: this.collaborators,
       isSyncingWithServer: this.isSyncingWithServer,
       version_to_be_restored: this.restoration.versionId
         ? {
@@ -299,6 +273,7 @@ export class BasePage implements TBasePage {
             descriptionHTML: this.restoration.descriptionHTML,
           }
         : null,
+      ...this.asJSONExtended,
     };
   }
 
@@ -332,12 +307,12 @@ export class BasePage implements TBasePage {
     const currentPage = { ...this.asJSON };
     try {
       runInAction(() => {
-        if (pageData.parent_id && pageData.parent_id !== this.parent_id) {
+        if (pageData.hasOwnProperty("parent_id") && pageData.parent_id !== this.parent_id) {
           if (pageData.parent_id === null && this.parent_id) {
             const pageDetails = this.rootStore.workspacePages.getPageById(this.parent_id);
             const newSubPagesCount = (pageDetails?.sub_pages_count ?? 1) - 1;
             pageDetails?.mutateProperties({ sub_pages_count: newSubPagesCount });
-          } else {
+          } else if (pageData.parent_id) {
             const pageDetails = this.rootStore.workspacePages.getPageById(pageData.parent_id);
             const newSubPagesCount = (pageDetails?.sub_pages_count ?? 0) + 1;
             pageDetails?.mutateProperties({ sub_pages_count: newSubPagesCount });
@@ -348,6 +323,9 @@ export class BasePage implements TBasePage {
           const currentPageKey = key as keyof TPage;
           set(this, key, pageData[currentPageKey] || undefined);
         });
+
+        // Update the updated_at field locally to ensure reactions trigger
+        this.updated_at = new Date();
       });
 
       return await this.services.update(pageData);
@@ -396,8 +374,10 @@ export class BasePage implements TBasePage {
    */
   makePublic = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
+    const oldIsShared = this.is_shared;
     runInAction(() => {
       this.access = EPageAccess.PUBLIC;
+      this.is_shared = false;
     });
 
     if (shouldSync) {
@@ -408,6 +388,7 @@ export class BasePage implements TBasePage {
       } catch (error) {
         runInAction(() => {
           this.access = pageAccess;
+          this.is_shared = oldIsShared;
         });
         throw error;
       }
@@ -620,14 +601,6 @@ export class BasePage implements TBasePage {
     runInAction(() => {
       this.editorRef = editorRef;
     });
-  };
-
-  /**
-   * @description update the collaborators
-   * @param collaborators
-   */
-  updateCollaborators = (collaborators: TCollaborator[]) => {
-    this.collaborators = collaborators;
   };
 
   /**

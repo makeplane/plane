@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.ee.permissions import allow_permission, ROLE, WorkspacePagePermission
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import DeployBoard, Workspace, Page
 from plane.app.serializers import DeployBoardSerializer
@@ -11,7 +11,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
-
 
 class ProjectPagePublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
@@ -140,14 +139,9 @@ class ProjectPagePublishEndpoint(BaseAPIView):
 
 
 class WorkspacePagePublishEndpoint(BaseAPIView):
+    permission_classes = [WorkspacePagePermission]
+
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=Page,
-        field="owned_by",
-        level="WORKSPACE",
-    )
     def post(self, request, slug, pk):
         # Fetch the page
         page = Page.objects.get(pk=pk, workspace__slug=slug)
@@ -183,13 +177,6 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=Page,
-        field="owned_by",
-        level="WORKSPACE",
-    )
     def patch(self, request, slug, pk):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=pk, entity_name="page", workspace__slug=slug
@@ -216,9 +203,6 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
     def get(self, request, slug, pk):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=pk, entity_name="page", workspace__slug=slug
@@ -226,13 +210,7 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=Page,
-        field="owned_by",
-        level="WORKSPACE",
-    )
+    @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def delete(self, request, slug, pk):
         # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(

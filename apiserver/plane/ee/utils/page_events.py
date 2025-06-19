@@ -16,3 +16,5 @@ class PageAction(str, Enum):
     MOVED_INTERNALLY = "moved_internally"
     DELETED = "deleted"
     RESTORED = "restored"
+    SHARED = "shared"
+    UNSHARED = "unshared"

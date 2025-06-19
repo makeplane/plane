@@ -15,6 +15,7 @@ import { cn } from "@plane/utils";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
+import { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { WikiPageSidebarListItem } from "./list-item";
 
@@ -23,7 +24,7 @@ type Props = {
   pageId: string;
   expandedPageIds?: string[];
   setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
-  sectionType?: "public" | "private" | "archived";
+  sectionType?: "public" | "private" | "archived" | "shared";
 };
 
 export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => {
@@ -237,7 +238,12 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           setIsDragging(false);
         },
         canDrag: () =>
-          page.canCurrentUserEditPage && page.isContentEditable && isNestedPagesEnabled(workspaceSlug.toString()),
+          page.canCurrentUserEditPage &&
+          page.isContentEditable &&
+          isNestedPagesEnabled(workspaceSlug.toString()) &&
+          !page.archived_at &&
+          // For shared pages, only the owner can drag them
+          (!page.is_shared || page.isCurrentUserOwner),
       }),
       dropTargetForElements({
         element,
@@ -263,22 +269,47 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           const { id: droppedPageId } = source.data as TPageDragPayload;
           const droppedPageDetails = getPageById(droppedPageId);
           if (!droppedPageDetails) return;
-          droppedPageDetails.update({ parent_id: page.id });
+
+          // When dropping on a list item, also inherit the access level of the target page
+          const updateData: Partial<TPageInstance> = { parent_id: page.id };
+          if (page.access !== undefined) {
+            updateData.access = page.access;
+            // If we're changing access from shared, unset the shared flag
+            if (droppedPageDetails.is_shared) {
+              updateData.is_shared = false;
+            }
+          }
+
+          droppedPageDetails.update(updateData);
         },
         canDrop: ({ source }) => {
           if (
             !page.canCurrentUserEditPage ||
             !page.isContentEditable ||
-            !isNestedPagesEnabled(workspaceSlug.toString())
+            !isNestedPagesEnabled(workspaceSlug.toString()) ||
+            page.archived_at
           ) {
             return false;
           }
+
           const { id: droppedPageId, parentId: droppedPageParentId } = source.data as TPageDragPayload;
           if (!droppedPageId) return false;
+
+          // Get the source page to check additional properties
+          const sourcePage = getPageById(droppedPageId);
+          if (!sourcePage) return false;
+
           const isSamePage = droppedPageId === page.id;
           const isImmediateParent = droppedPageParentId === page.id;
           const isAnyLevelChild = page.parentPageIds.includes(droppedPageId);
+
           if (isSamePage || isImmediateParent || isAnyLevelChild) return false;
+
+          // Allow dropping shared pages onto any accessible page (they will inherit the target's access)
+          if (sourcePage.is_shared) {
+            return true;
+          }
+
           return true;
         },
       })

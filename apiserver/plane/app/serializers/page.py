@@ -13,6 +13,8 @@ from plane.db.models import (
     PageVersion,
 )
 
+from plane.ee.models.page import PageUser
+
 
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
@@ -28,6 +30,8 @@ class PageSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Page.objects.all(), required=False, allow_null=True
     )
+    shared_access = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
     sub_pages_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -56,6 +60,8 @@ class PageSerializer(BaseSerializer):
             "external_source",
             "parent_id",
             "sub_pages_count",
+            "shared_access",
+            "is_shared",
         ]
         read_only_fields = ["workspace", "owned_by", "anchor"]
 
@@ -133,6 +139,7 @@ class PageDetailSerializer(PageSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Page.objects.all(), required=False, allow_null=True
     )
+    shared_access = serializers.IntegerField(read_only=True)
 
     class Meta(PageSerializer.Meta):
         fields = PageSerializer.Meta.fields + ["description_html"]
@@ -207,3 +214,12 @@ class PageVersionDetailSerializer(BaseSerializer):
             "sub_pages_data",
         ]
         read_only_fields = ["workspace", "page"]
+
+
+class PageUserSerializer(BaseSerializer):
+    user_id = serializers.UUIDField(source="user.id", read_only=True)
+
+    class Meta:
+        model = PageUser
+        fields = "__all__"
+        read_only_fields = ["workspace", "page", "user"]
