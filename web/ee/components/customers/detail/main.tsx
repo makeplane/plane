@@ -168,6 +168,7 @@ export const CustomerMainRoot: FC<TProps> = observer((props) => {
           setIsSubmitting={setIsSubmitting}
           containerClassName="border-none min-h-[88px]"
           disabled={!isEditable}
+          disabledExtensions={["attachments"]}
         />
       </div>
       <Tabs

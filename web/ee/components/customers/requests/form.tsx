@@ -8,10 +8,10 @@ import { CustomerService } from "@plane/services";
 import { ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core";
 // plane web imports
 import { RichTextEditor } from "@/components/editor";
-import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -220,6 +220,7 @@ export const CustomerRequestForm: FC<TProps> = observer((props) => {
                       onChange={(_description: object, description_html: string) => {
                         onChange(description_html);
                       }}
+                      disabledExtensions={["attachments"]}
                       displayConfig={{ fontSize: "small-font" }}
                       placeholder={(isFocused, description) => t(getDescriptionPlaceholderI18n(isFocused, description))}
                       searchMentionCallback={async (payload) =>

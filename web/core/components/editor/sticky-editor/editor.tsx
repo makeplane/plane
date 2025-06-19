@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
@@ -15,7 +15,10 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled"> {
+  extends Omit<
+    ILiteTextEditorProps,
+    "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "isSmoothCursorEnabled" | "mentionHandler"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -49,7 +52,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // store hooks
   const {
     data: { is_smooth_cursor_enabled },
@@ -70,7 +73,8 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={[...disabledExtensions, "enter-key"]}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

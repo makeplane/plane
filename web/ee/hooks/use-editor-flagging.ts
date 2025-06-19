@@ -1,36 +1,54 @@
-// editor
-import { TExtensions } from "@plane/editor";
+// plane imports
+import type { TExtensions } from "@plane/editor";
+// ce imports
+import { TEditorFlaggingHookReturnType } from "@/ce/hooks/use-editor-flagging";
 // plane web hooks
 import { EPageStoreType, useFlag, usePageStore } from "@/plane-web/hooks/store";
 
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (
-  workspaceSlug: string,
-  storeType?: EPageStoreType
-): {
-  documentEditor: TExtensions[];
-  liteTextEditor: TExtensions[];
-  richTextEditor: TExtensions[];
-} => {
-  const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
+export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreType): TEditorFlaggingHookReturnType => {
+  const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const isEditorAIOpsEnabled = useFlag(workspaceSlug, "EDITOR_AI_OPS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
-  // extensions disabled in the document editor
-  const documentEditor: TExtensions[] = [];
-  if (!isIssueEmbedEnabled) documentEditor.push("issue-embed");
-  if (!isEditorAIOpsEnabled) documentEditor.push("ai");
-  if (!isCollaborationCursorEnabled) documentEditor.push("collaboration-cursor");
-
   const { isNestedPagesEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
+  const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
+  // disabled and flagged in the document editor
+  const documentDisabled: TExtensions[] = [];
+  const documentFlagged: TExtensions[] = [];
+  // disabled and flagged in the rich text editor
+  const richTextDisabled: TExtensions[] = [];
+  const richTextFlagged: TExtensions[] = [];
+  if (!isWorkItemEmbedEnabled) {
+    documentFlagged.push("issue-embed");
+  }
+  if (!isEditorAIOpsEnabled) {
+    documentDisabled.push("ai");
+  }
+  if (!isCollaborationCursorEnabled) {
+    documentDisabled.push("collaboration-cursor");
+  }
   if (storeType && !isNestedPagesEnabled(workspaceSlug)) {
-    documentEditor.push("nested-pages");
+    documentFlagged.push("nested-pages");
+  }
+  if (!isEditorAttachmentsEnabled) {
+    documentFlagged.push("attachments");
+    richTextFlagged.push("attachments");
   }
 
   return {
-    documentEditor,
-    liteTextEditor: [],
-    richTextEditor: [],
+    document: {
+      disabled: documentDisabled,
+      flagged: documentFlagged,
+    },
+    liteText: {
+      disabled: [],
+      flagged: [],
+    },
+    richText: {
+      disabled: richTextDisabled,
+      flagged: richTextFlagged,
+    },
   };
 };

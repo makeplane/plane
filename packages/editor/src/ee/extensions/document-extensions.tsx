@@ -1,5 +1,5 @@
-import { Extension } from "@tiptap/core";
-import { FileText } from "lucide-react";
+import { AnyExtension, Extensions } from "@tiptap/core";
+import { FileText, Paperclip } from "lucide-react";
 // core imports
 import {
   TDocumentEditorAdditionalExtensionsProps,
@@ -16,17 +16,22 @@ import { IssueEmbedSuggestions, IssueListRenderer, PageEmbedExtension } from "@/
 // types
 import { TExtensions } from "@/types";
 // local imports
+import { insertAttachment } from "../helpers/editor-commands";
+import { CustomAttachmentExtension } from "./attachments/extension";
 import { CustomCollaborationCursor } from "./collaboration-cursor";
 
 /**
  * Registry for slash commands
  * Each entry defines a single slash command option with its own enabling logic
  */
-const slashCommandRegistry = [
+const slashCommandRegistry: {
+  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
+  getOption: (props: TDocumentEditorAdditionalExtensionsProps) => TSlashCommandAdditionalOption | null;
+}[] = [
   {
     // Work item embed slash command
-    isEnabled: (disabledExtensions: TExtensions[]) => !disabledExtensions.includes("issue-embed"),
-    getOption: (): TSlashCommandAdditionalOption => ({
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    getOption: () => ({
       commandKey: "issue-embed",
       key: "issue-embed",
       title: "Work item",
@@ -42,8 +47,8 @@ const slashCommandRegistry = [
   },
   {
     // Page embed slash command
-    isEnabled: (disabledExtensions: TExtensions[]) => !disabledExtensions.includes("nested-pages"),
-    getOption: ({ embedConfig }: TDocumentEditorAdditionalExtensionsProps): TSlashCommandAdditionalOption | null => {
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
+    getOption: ({ embedConfig }) => {
       // Only enable if page config with createCallback exists
       const pageConfig = embedConfig?.page;
       if (!pageConfig?.createCallback) return null;
@@ -73,6 +78,21 @@ const slashCommandRegistry = [
       };
     },
   },
+  {
+    // Attachment slash command
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
+    getOption: () => ({
+      commandKey: "attachment",
+      key: "attachment",
+      title: "Attachment",
+      description: "Insert a file",
+      searchTerms: ["image", "photo", "picture", "pdf", "media", "upload", "audio", "video", "file", "attachment"],
+      icon: <Paperclip className="size-3.5" />,
+      command: ({ editor, range }) => insertAttachment({ editor, event: "insert", range }),
+      section: "general",
+      pushAfter: "image",
+    }),
+  },
 ];
 
 /**
@@ -93,11 +113,12 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
       return SlashCommands({
         additionalOptions: slashCommandOptions,
         disabledExtensions: props.disabledExtensions,
+        flaggedExtensions: props.flaggedExtensions,
       });
     },
   },
   {
-    // Issue embed suggestions extension
+    // Work item embed suggestions extension
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
     getExtension: ({ embedConfig }) => {
       const issueConfig = embedConfig?.issue;
@@ -125,7 +146,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   },
   {
     // Page embed extension
-    isEnabled: () => true,
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
     getExtension: ({ embedConfig }) => {
       const pageConfig = embedConfig?.page;
 
@@ -141,19 +162,29 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
       });
     },
   },
+  {
+    // Attachment extension
+    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
+    getExtension: ({ flaggedExtensions, fileHandler, isEditable }) =>
+      CustomAttachmentExtension({
+        fileHandler,
+        isFlagged: flaggedExtensions.includes("attachments"),
+        isEditable,
+      }),
+  },
 ];
 
 /**
  * Returns all enabled extensions for the document editor
  */
 export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
-  const { disabledExtensions = [] } = props;
+  const { disabledExtensions, flaggedExtensions } = props;
 
   // Filter enabled extensions and flatten the result
-  const extensions: Extension[] = extensionRegistry
-    .filter((config) => config.isEnabled(disabledExtensions))
+  const extensions: Extensions = extensionRegistry
+    .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
     .map((config) => config.getExtension(props))
-    .filter((extension): extension is Extension => extension !== undefined);
+    .filter((extension): extension is AnyExtension => extension !== undefined);
 
   return extensions;
 };

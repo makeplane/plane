@@ -13,26 +13,23 @@ import { useRealtimeEvents } from "@/hooks/use-realtime-events";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeEditorHookProps } from "@/types";
+// local imports
 import { useEditorNavigation } from "./use-editor-navigation";
 import { useTitleEditor } from "./use-title-editor";
 
-/**
- * Hook that creates a collaborative editor with title and main editor components
- * Handles real-time collaboration, local persistence, and keyboard navigation between editors
- */
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
-    onChange,
     onTransaction,
     isSmoothCursorEnabled,
     disabledExtensions,
     editable,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
     embedHandler,
-    extensions,
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
@@ -125,7 +122,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   // Initialize main document editor
   const editor = useEditor({
-    embedConfig: embedHandler,
     disabledExtensions,
     id,
     editable,
@@ -145,15 +141,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
         document: provider.document,
         field: "default",
       }),
-
-      // User-provided extensions
-      ...(extensions ?? []),
-
-      // Additional document editor extensions
+      ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
         embedConfig: embedHandler,
         fileHandler,
+        flaggedExtensions,
+        isEditable: editable,
         provider,
         userDetails: user,
       }),
@@ -162,11 +156,11 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
       mainNavigationExtension,
     ],
     fileHandler,
+    flaggedExtensions,
+    forwardedRef,
     handleEditorReady,
     isSmoothCursorEnabled,
-    forwardedRef,
     mentionHandler,
-    onChange,
     onTransaction,
     placeholder,
     provider,

@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Glissez-déposez pour télécharger des fichiers externes"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Fichier trop volumineux.",
+        "description": "La taille maximale par fichier est de {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Type de fichier non pris en charge.",
+        "description": "Voir les formats pris en charge"
+      },
+      "default": {
+        "title": "Échec du téléchargement.",
+        "description": "Quelque chose s'est mal passé. Veuillez réessayer."
+      }
+    },
+    "upgrade": {
+      "description": "Mettez à niveau votre plan pour voir cette pièce jointe."
+    },
+    "aria": {
+      "click_to_upload": "Cliquez pour télécharger la pièce jointe"
+    }
+  }
+}

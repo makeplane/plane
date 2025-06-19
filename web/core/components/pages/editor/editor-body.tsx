@@ -122,7 +122,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -289,7 +289,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             realtimeConfig={realtimeConfig}
             serverHandler={serverHandler}
             user={userConfig}
-            disabledExtensions={disabledExtensions}
+            disabledExtensions={documentEditorExtensions.disabled}
+            flaggedExtensions={documentEditorExtensions.flagged}
             aiHandler={{
               menu: getAIMenu,
             }}

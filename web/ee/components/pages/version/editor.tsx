@@ -27,7 +27,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
   // editor config
   const { getReadOnlyEditorFileHandlers } = useEditorConfig();
   // editor flagging
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 
@@ -86,7 +86,8 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
-      disabledExtensions={disabledExtensions}
+      disabledExtensions={documentEditorExtensions.disabled}
+      flaggedExtensions={documentEditorExtensions.flagged}
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({

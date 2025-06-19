@@ -1,5 +1,5 @@
 import { Extensions } from "@tiptap/core";
-import { forwardRef, MutableRefObject } from "react";
+import React, { forwardRef, MutableRefObject } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -12,33 +12,11 @@ import { getEditorClassNames } from "@/helpers/common";
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // plane editor extensions
 import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
-// plane web types
-import { TReadOnlyEmbedConfig } from "@/plane-editor/types";
+import { CustomAttachmentExtension } from "@/plane-editor/extensions/attachments/extension";
 // types
-import {
-  EditorReadOnlyRefApi,
-  TDisplayConfig,
-  TExtensions,
-  TReadOnlyFileHandler,
-  TReadOnlyMentionHandler,
-} from "@/types";
+import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
-interface IDocumentReadOnlyEditor {
-  disabledExtensions: TExtensions[];
-  id: string;
-  initialValue: string;
-  containerClassName: string;
-  displayConfig?: TDisplayConfig;
-  editorClassName?: string;
-  embedHandler: TReadOnlyEmbedConfig;
-  fileHandler: TReadOnlyFileHandler;
-  tabIndex?: number;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: TReadOnlyMentionHandler;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-}
-
-const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) => {
   const {
     containerClassName,
     disabledExtensions,
@@ -46,13 +24,20 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName = "",
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     id,
     forwardedRef,
     handleEditorReady,
     initialValue,
     mentionHandler,
   } = props;
-  const extensions: Extensions = [];
+  const extensions: Extensions = [
+    CustomAttachmentExtension({
+      fileHandler,
+      isFlagged: flaggedExtensions.includes("attachments"),
+      isEditable: false,
+    }),
+  ];
   if (embedHandler?.issue) {
     extensions.push(
       WorkItemEmbedExtension({
@@ -74,6 +59,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -97,7 +83,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps>((props, ref) => (
   <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 

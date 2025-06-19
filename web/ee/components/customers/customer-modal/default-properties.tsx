@@ -226,6 +226,7 @@ export const DefaultProperties: FC<Props> = (props) => {
                 })
               }
               containerClassName="pt-3 min-h-[120px] border-[0.5px] border-custom-border-200 rounded-lg relative focus:ring-1 focus:ring-custom-primary"
+              disabledExtensions={["attachments"]}
               uploadFile={async (blockId, file) => {
                 try {
                   const { asset_id } = await uploadEditorAsset({

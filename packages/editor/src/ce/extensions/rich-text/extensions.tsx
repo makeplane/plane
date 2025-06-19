@@ -2,19 +2,19 @@ import { AnyExtension, Extensions } from "@tiptap/core";
 // extensions
 import { SlashCommands } from "@/extensions/slash-commands/root";
 // types
-import { TExtensions, TFileHandler } from "@/types";
+import { IEditorProps, TExtensions } from "@/types";
 
-export type TRichTextEditorAdditionalExtensionsProps = {
-  disabledExtensions: TExtensions[];
-  fileHandler: TFileHandler;
-};
+export type TRichTextEditorAdditionalExtensionsProps = Pick<
+  IEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+>;
 
 /**
  * Registry entry configuration for extensions
  */
 export type TRichTextEditorAdditionalExtensionsRegistry = {
   /** Determines if the extension should be enabled based on disabled extensions */
-  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
+  isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
   /** Returns the extension instance(s) when enabled */
   getExtension: (props: TRichTextEditorAdditionalExtensionsProps) => AnyExtension | undefined;
 };
@@ -22,18 +22,19 @@ export type TRichTextEditorAdditionalExtensionsRegistry = {
 const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
   {
     isEnabled: (disabledExtensions) => !disabledExtensions.includes("slash-commands"),
-    getExtension: ({ disabledExtensions }) =>
+    getExtension: ({ disabledExtensions, flaggedExtensions }) =>
       SlashCommands({
         disabledExtensions,
+        flaggedExtensions,
       }),
   },
 ];
 
 export const RichTextEditorAdditionalExtensions = (props: TRichTextEditorAdditionalExtensionsProps) => {
-  const { disabledExtensions } = props;
+  const { disabledExtensions, flaggedExtensions } = props;
 
   const extensions: Extensions = extensionRegistry
-    .filter((config) => config.isEnabled(disabledExtensions))
+    .filter((config) => config.isEnabled(disabledExtensions, flaggedExtensions))
     .map((config) => config.getExtension(props))
     .filter((extension): extension is AnyExtension => extension !== undefined);
 

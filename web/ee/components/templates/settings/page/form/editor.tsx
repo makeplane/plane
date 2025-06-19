@@ -36,10 +36,10 @@ export const PageTemplateEditor = observer((props: Props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
   const { getEditorFileHandlers } = useEditorConfig();
-  const { documentEditor: documentEditorDisabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // derived values
   const additionalDisabledExtensions: TExtensions[] = ["issue-embed"];
-  const disabledExtensions = [...documentEditorDisabledExtensions, ...additionalDisabledExtensions];
+  const disabledExtensions = [...documentEditorExtensions.disabled, ...additionalDisabledExtensions];
   const workspaceId = useMemo(
     () => (workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : ""),
     [getWorkspaceBySlug, workspaceSlug]
@@ -97,6 +97,7 @@ export const PageTemplateEditor = observer((props: Props) => {
   return (
     <DocumentEditorWithRef
       disabledExtensions={disabledExtensions}
+      flaggedExtensions={documentEditorExtensions.flagged}
       fileHandler={fileHandler}
       id="page-template-editor"
       initialValue={initialValue}

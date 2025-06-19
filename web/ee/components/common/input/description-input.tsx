@@ -5,15 +5,15 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorReadOnlyRefApi, EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Loader } from "@plane/ui";
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web services
@@ -26,6 +26,7 @@ interface IFormData {
 }
 
 export type DescriptionInputProps = {
+  disabledExtensions?: TExtensions[];
   editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
   editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
@@ -56,6 +57,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
     swrDescription,
     containerClassName,
     disabled,
+    disabledExtensions,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState({
@@ -117,6 +119,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
               <RichTextEditor
                 ref={editorRef}
                 id={itemId}
+                disabledExtensions={disabledExtensions}
                 initialValue={localDescription.description_html ?? "<p></p>"}
                 value={swrDescription ?? null}
                 workspaceSlug={workspaceSlug}
@@ -161,6 +164,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
               <RichTextReadOnlyEditor
                 ref={editorReadOnlyRef}
                 id={itemId}
+                disabledExtensions={disabledExtensions}
                 initialValue={localDescription.description_html ?? ""}
                 containerClassName={containerClassName}
                 workspaceId={workspaceDetails?.id ?? ""}

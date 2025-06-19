@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
@@ -15,8 +15,8 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 interface RichTextEditorWrapperProps
   extends MakeOptional<
-    Omit<IRichTextEditor, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
-    "disabledExtensions"
+    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions" | "isSmoothCursorEnabled"
   > {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
@@ -42,7 +42,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
   // editor flaggings
-  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) => await searchMentionCallback(payload),
@@ -53,7 +53,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
-      disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
+      disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+      flaggedExtensions={richTextEditorExtensions.flagged}
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile,

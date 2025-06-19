@@ -31,16 +31,12 @@ import { isValidHttpUrl } from "@/helpers/common";
 // plane editor extensions
 import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
+import type { IReadOnlyEditorProps } from "@/types";
 
-type Props = {
-  disabledExtensions: TExtensions[];
-  fileHandler: TReadOnlyFileHandler;
-  mentionHandler: TReadOnlyMentionHandler;
-};
+type Props = Pick<IReadOnlyEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler">;
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { disabledExtensions, fileHandler, mentionHandler } = props;
+  const { disabledExtensions, fileHandler, flaggedExtensions, mentionHandler } = props;
 
   const extensions = [
     StarterKit.configure({
@@ -133,6 +129,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     }),
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
+      flaggedExtensions,
     }),
   ];
 

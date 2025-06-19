@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "外部ファイルをアップロードするにはドラッグ&ドロップしてください"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "ファイルが大きすぎます。",
+        "description": "ファイルあたりの最大サイズは {maxFileSize} MB です"
+      },
+      "unsupported_file_type": {
+        "title": "サポートされていないファイル形式です。",
+        "description": "サポートされている形式を確認"
+      },
+      "default": {
+        "title": "アップロードに失敗しました。",
+        "description": "問題が発生しました。もう一度お試しください。"
+      }
+    },
+    "upgrade": {
+      "description": "この添付ファイルを表示するにはプランをアップグレードしてください。"
+    },
+    "aria": {
+      "click_to_upload": "クリックして添付ファイルをアップロード"
+    }
+  }
+}

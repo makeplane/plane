@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Arrastra y suelta para subir archivos externos"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Archivo demasiado grande.",
+        "description": "El tamaño máximo por archivo es {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Tipo de archivo no compatible.",
+        "description": "Ver formatos compatibles"
+      },
+      "default": {
+        "title": "Error al subir.",
+        "description": "Algo salió mal. Por favor, inténtelo de nuevo."
+      }
+    },
+    "upgrade": {
+      "description": "Actualice su plan para ver este archivo adjunto."
+    },
+    "aria": {
+      "click_to_upload": "Haga clic para subir archivo adjunto"
+    }
+  }
+}

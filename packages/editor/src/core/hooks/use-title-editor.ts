@@ -5,6 +5,8 @@ import { DOMSerializer } from "@tiptap/pm/model";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";
 import * as Y from "yjs";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { IMarking, SmoothCursorExtension } from "@/extensions";
 import { TitleExtensions } from "@/extensions/title-extension";
@@ -70,7 +72,7 @@ export const useTitleEditor = (props: TitleEditorProps) => {
     clearEditor: (emitUpdate = false) => {
       editor
         ?.chain()
-        .setMeta("skipImageDeletion", true)
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
         .setMeta("intentionalDeletion", true)
         .clearContent(emitUpdate)
         .run();

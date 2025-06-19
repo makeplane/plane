@@ -33,7 +33,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = useParams();
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
     workspaceSlug: workspaceSlug?.toString() ?? "",
@@ -168,7 +168,8 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   initialValue={description_html ?? "<p></p>"}
                   containerClassName="p-0 pl-3 border-none"
                   editorClassName="p-2.5 text-xs"
-                  disabledExtensions={disabledExtensions}
+                  disabledExtensions={documentEditorExtensions.disabled}
+                  flaggedExtensions={documentEditorExtensions.flagged}
                   displayConfig={{
                     fontSize: "small-font",
                   }}

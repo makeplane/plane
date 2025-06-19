@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Trascina e rilascia per caricare file esterni"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "File troppo grande.",
+        "description": "La dimensione massima per file è {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Tipo di file non supportato.",
+        "description": "Vedi formati supportati"
+      },
+      "default": {
+        "title": "Caricamento fallito.",
+        "description": "Qualcosa è andato storto. Riprova."
+      }
+    },
+    "upgrade": {
+      "description": "Aggiorna il tuo piano per visualizzare questo allegato."
+    },
+    "aria": {
+      "click_to_upload": "Clicca per caricare allegato"
+    }
+  }
+}

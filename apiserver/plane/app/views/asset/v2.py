@@ -385,12 +385,26 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -608,12 +622,28 @@ class ProjectAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

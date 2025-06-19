@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Seret dan lepas untuk mengunggah file eksternal"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "File terlalu besar.",
+        "description": "Ukuran maksimum per file adalah {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Jenis file tidak didukung.",
+        "description": "Lihat format yang didukung"
+      },
+      "default": {
+        "title": "Upload gagal.",
+        "description": "Terjadi kesalahan. Silakan coba lagi."
+      }
+    },
+    "upgrade": {
+      "description": "Tingkatkan paket Anda untuk melihat lampiran ini."
+    },
+    "aria": {
+      "click_to_upload": "Klik untuk mengunggah lampiran"
+    }
+  }
+}

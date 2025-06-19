@@ -1,1 +1,27 @@
-{}
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Pretiahni a pusť pre nahranie externých súborov"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Súbor je príliš veľký.",
+        "description": "Maximálna veľkosť na súbor je {maxFileSize} MB"
+      },
+      "unsupported_file_type": {
+        "title": "Nepodporovaný typ súboru.",
+        "description": "Zobraziť podporované formáty"
+      },
+      "default": {
+        "title": "Nahrávanie zlyhalo.",
+        "description": "Niečo sa pokazilo. Skúste to znovu."
+      }
+    },
+    "upgrade": {
+      "description": "Upgradujte svoj plán pre zobrazenie tejto prílohy."
+    },
+    "aria": {
+      "click_to_upload": "Kliknite pre nahranie prílohy"
+    }
+  }
+}

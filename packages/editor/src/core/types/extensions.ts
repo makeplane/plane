@@ -6,4 +6,5 @@ export type TExtensions =
   | "slash-commands"
   | "enter-key"
   | "image"
-  | "nested-pages";
+  | "nested-pages"
+  | "attachments";

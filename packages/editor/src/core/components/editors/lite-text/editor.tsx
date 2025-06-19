@@ -4,23 +4,25 @@ import { EditorWrapper } from "@/components/editors/editor-wrapper";
 // extensions
 import { EnterKeyExtension } from "@/extensions";
 // types
-import { EditorRefApi, ILiteTextEditor } from "@/types";
+import { EditorRefApi, ILiteTextEditorProps } from "@/types";
 
-const LiteTextEditor = (props: ILiteTextEditor) => {
+const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
   const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [], isSmoothCursorEnabled } = props;
 
-  const extensions = useMemo(
-    () => [
-      ...externalExtensions,
-      ...(disabledExtensions?.includes("enter-key") ? [] : [EnterKeyExtension(onEnterKeyPress)]),
-    ],
-    [externalExtensions, disabledExtensions, onEnterKeyPress]
-  );
+  const extensions = useMemo(() => {
+    const resolvedExtensions = [...externalExtensions];
+
+    if (!disabledExtensions?.includes("enter-key")) {
+      resolvedExtensions.push(EnterKeyExtension(onEnterKeyPress));
+    }
+
+    return resolvedExtensions;
+  }, [externalExtensions, disabledExtensions, onEnterKeyPress]);
 
   return <EditorWrapper {...props} extensions={extensions} isSmoothCursorEnabled={isSmoothCursorEnabled} />;
 };
 
-const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditor>((props, ref) => (
+const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditorProps>((props, ref) => (
   <LiteTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 

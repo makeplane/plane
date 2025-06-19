@@ -70,6 +70,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             ref={editorRef}
             id={pageDetails.id}
             disabledExtensions={[]}
+            flaggedExtensions={[]}
             initialValue={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getReadOnlyEditorFileHandlers({
