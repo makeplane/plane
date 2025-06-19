@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
 import { manualLogger } from "@/core/helpers/logger";
 import { TConvertDocumentRequestBody } from "@/core/types/common";
+import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 
 export const handleConvertDocument = (req: Request, res: Response) => {
   const { description_html, variant } = req.body as TConvertDocumentRequestBody;
@@ -27,4 +27,3 @@ export const handleConvertDocument = (req: Request, res: Response) => {
     });
   }
 };
-

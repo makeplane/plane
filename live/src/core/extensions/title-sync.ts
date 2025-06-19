@@ -41,6 +41,8 @@ export class TitleSyncExtension implements Extension {
         const titleField = TiptapTransformer.toYdoc(
           generateTitleProsemirrorJson(title),
           "title",
+          // @ts-expect-error TODO: fix this type error once we update packaages of
+          // editor
           TITLE_EDITOR_EXTENSIONS
         );
         document.merge(titleField);

@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/start.js'",
-    "build": "tsup",
+    "build": "tsc --noEmit && tsup",
     "start": "node --env-file=.env dist/start.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
