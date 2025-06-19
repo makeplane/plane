@@ -35,3 +35,4 @@ export * from "./settings";
 export * from "./icon";
 export * from "./estimates";
 export * from "./analytics";
+export * from "./changelog";
