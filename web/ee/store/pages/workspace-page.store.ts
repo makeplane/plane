@@ -146,6 +146,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         // Track the version property of each page to detect updates
         pageVersions: Object.values(this.data).map((page) => ({
           id: page.id,
+          name: page.name,
           updated_at: page.updated_at,
           access: page.access,
           archived_at: page.archived_at,
@@ -342,7 +343,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
     // ---------- PUBLIC PAGES ----------
-    // Unfiltered public pages (sorted by updated_at)
+    // Unfiltered public pages (sorted alphabetically by name)
     const publicPages = workspacePages.filter(
       (page) =>
         page.access === EPageAccess.PUBLIC &&
@@ -351,8 +352,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         !page.deleted_at &&
         !page.is_shared
     );
-    const sortedPublicPages = publicPages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    const sortedPublicPages = publicPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
@@ -382,8 +383,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
     const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
-    const sortedPrivatePages = combinedPrivatePages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    const sortedPrivatePages = combinedPrivatePages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
@@ -403,15 +404,15 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       .filter((id): id is string => id !== undefined);
 
     // ---------- ARCHIVED PAGES ----------
-    // Unfiltered archived pages (sorted by archived_at)
+    // Unfiltered archived pages (sorted alphabetically by name)
     const archivedWorkspacePages = workspacePages.filter((page) => page.archived_at && !page.deleted_at);
     const topLevelArchivedPages = archivedWorkspacePages.filter((page) => {
       if (!page.parent_id) return true; // Include pages without parents
       const rootParent = this.findRootParent(page);
       return !rootParent?.archived_at;
     });
-    const sortedArchivedPages = topLevelArchivedPages.sort(
-      (a, b) => new Date(b.archived_at ?? 0).getTime() - new Date(a.archived_at ?? 0).getTime()
+    const sortedArchivedPages = topLevelArchivedPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newArchivedPageIds = sortedArchivedPages
       .map((page) => page.id)

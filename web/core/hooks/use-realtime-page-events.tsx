@@ -169,6 +169,7 @@ export const useRealtimePageEvents = ({
               name: col.name,
               color: col.color,
               id: col.id,
+              clientId: col.clientId,
             }));
             pageItem.updateCollaborators(collaboratorsForPageStore);
           }

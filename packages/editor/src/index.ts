@@ -36,8 +36,8 @@ export * from "@/components/menus";
 
 // hooks
 export { useEditor } from "@/hooks/use-editor";
-export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 
 // types
 export * from "@/types";

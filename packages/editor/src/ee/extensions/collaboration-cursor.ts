@@ -3,6 +3,10 @@ import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 // types
 import { TUserDetails } from "@/types";
 
+export type CollaborationCursorStorage = {
+  users: { clientId: number; color: string; name: string }[];
+};
+
 type Props = {
   provider: HocuspocusProvider;
   userDetails: TUserDetails;

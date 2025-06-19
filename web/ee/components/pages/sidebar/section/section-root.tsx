@@ -143,10 +143,11 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
 
   // Control loader visibility based on pageIds and loading state
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && pageIds.length === 0) {
+      // Only show loader if we're loading and have no cached data
       setShowLoader(true);
     } else if (pageIds.length > 0) {
-      // Short delay to prevent flickering if data arrives quickly
+      // If we have data, hide the loader (even if still loading for refresh)
       const timer = setTimeout(() => setShowLoader(false), 100);
       return () => clearTimeout(timer);
     } else {

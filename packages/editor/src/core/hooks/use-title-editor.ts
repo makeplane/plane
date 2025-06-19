@@ -53,6 +53,8 @@ export const useTitleEditor = (props: TitleEditorProps) => {
         }
       },
       editable,
+      immediatelyRender: false,
+      shouldRerenderOnTransaction: false,
       extensions: [
         ...TitleExtensions,
         ...(extensions ?? []),
@@ -81,7 +83,6 @@ export const useTitleEditor = (props: TitleEditorProps) => {
       editor?.commands.setContent(content);
     },
     blur: () => editor?.commands.blur(),
-    getHeadings: () => editor?.storage.headingList.headings,
     getMarkDown: (): string => {
       const markdownOutput = editor?.storage.markdown.getMarkdown();
       return markdownOutput;

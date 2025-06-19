@@ -1,5 +1,7 @@
+// tiptap
 import { Extensions } from "@tiptap/core";
-import React, { useMemo } from "react";
+import { useEditorState } from "@tiptap/react";
+import React, { useEffect, useMemo } from "react";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -8,10 +10,12 @@ import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
@@ -93,17 +97,22 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   }
 
   return (
-    <PageRenderer
-      aiHandler={aiHandler}
-      bubbleMenuEnabled={bubbleMenuEnabled}
-      displayConfig={displayConfig}
-      editor={editor}
-      titleEditor={titleEditor}
-      editorContainerClassName={editorContainerClassNames}
-      id={id}
-      isLoading={(!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress}
-      tabIndex={tabIndex}
-    />
+    <>
+      <RealtimeEventsHandler editor={editor} id={id} updatePageProperties={updatePageProperties} />
+      <PageRenderer
+        aiHandler={aiHandler}
+        bubbleMenuEnabled={bubbleMenuEnabled}
+        displayConfig={displayConfig}
+        editor={editor}
+        titleEditor={titleEditor}
+        editorContainerClassName={editorContainerClassNames}
+        id={id}
+        isLoading={
+          (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
+        }
+        tabIndex={tabIndex}
+      />
+    </>
   );
 };
 
@@ -116,3 +125,27 @@ const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, IColla
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
 export { CollaborativeDocumentEditorWithRef };
+
+const RealtimeEventsHandler = ({ editor, id, updatePageProperties }) => {
+  const { users } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      users: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR)?.users || [],
+    }),
+  });
+
+  // Update page properties when collaborators change
+  useEffect(() => {
+    if (!users || !updatePageProperties) return;
+
+    const currentUsers = users;
+
+    const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
+      users: currentUsers,
+    };
+
+    updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);
+  }, [users, updatePageProperties, id, editor]);
+
+  return null;
+};

@@ -115,10 +115,10 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   setProviderDocument: (value: Uint8Array) => void;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  getHeadings: () => IMarking[];
   findAndDeleteNode: (
     {
       attribute,

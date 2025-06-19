@@ -17,6 +17,7 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
   let lastFewTypingSpeeds: number[] = [];
   let lastTypeTime = 0;
 
+
   // Initialize cursor
   if (smoothCursor) {
     smoothCursor.className = PROSEMIRROR_SMOOTH_CURSOR_CLASS;
@@ -237,10 +238,23 @@ function getCursorRect(
   view: EditorView,
   toStart: boolean
 ): { left: number; right: number; top: number; bottom: number } | null {
-  const selection = window.getSelection();
-  if (!selection || !selection.rangeCount) return null;
+  const { state } = view;
+  const { selection } = state;
 
-  const range = selection?.getRangeAt(0)?.cloneRange();
+  // Check if the selection is within a codeBlock
+  // Use $anchor for simplicity, head should be in the same block for text selections
+  const isInsideCodeBlock = selection.$anchor.parent.type.name === "codeBlock";
+
+  // If inside a code block, prefer ProseMirror's coordsAtPos directly
+  if (isInsideCodeBlock) {
+    return view.coordsAtPos(selection.head);
+  }
+
+  // Original logic for non-code-block selections
+  const nativeSelection = window.getSelection();
+  if (!nativeSelection || !nativeSelection.rangeCount) return null;
+
+  const range = nativeSelection?.getRangeAt(0)?.cloneRange();
   if (!range) return null;
 
   range.collapse(toStart);
@@ -248,7 +262,8 @@ function getCursorRect(
   const rect = rects?.length ? rects[0] : null; // using first rect for better performance
   if (rect?.height) return rect;
 
-  return view.coordsAtPos(view.state.selection.head);
+  // Fallback remains the same
+  return view.coordsAtPos(selection.head);
 }
 
 function isTextSelection(selection: Selection): selection is TextSelection {

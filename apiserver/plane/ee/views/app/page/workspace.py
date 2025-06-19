@@ -314,6 +314,7 @@ class WorkspacePageViewSet(BaseViewSet):
 
         sub_pages_count = (
             Page.objects.filter(parent=OuterRef("id"))
+            .filter(archived_at__isnull=True)
             .order_by()
             .values("parent")
             .annotate(count=Count("id"))
@@ -470,6 +471,7 @@ class WorkspacePageViewSet(BaseViewSet):
             workspace__slug=slug, parent_id=page_id
         ).annotate(
             sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+            .filter(archived_at__isnull=True)
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
             .values("count")

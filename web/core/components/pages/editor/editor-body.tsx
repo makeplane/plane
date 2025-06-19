@@ -228,7 +228,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
-        {/* table of content */}
+        {/* table of contents - Sticky position */}
         <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
           <div className="sticky top-[72px]">
             <div className="group/page-toc relative px-page-x">
@@ -241,6 +241,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         </div>
+
         <div
           className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
           style={{

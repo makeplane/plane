@@ -51,7 +51,6 @@ export const CommentBlock = (props: TProps) => {
                 operations={{
                   remove: operations.remove,
                   update: () => {
-                    console.log("here");
                     setIsEditing(true);
                   },
                 }}

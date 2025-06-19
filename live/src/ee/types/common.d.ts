@@ -1,7 +1,7 @@
 import { TPage } from "@plane/types";
 import * as Y from "yjs";
 
-export type TAdditionalDocumentTypes = "teamspace_page" | "workspace_page" | "server_agent";
+export type TAdditionalDocumentTypes = "teamspace_page" | "workspace_page" | "server_agent" | "sync_agent";
 
 export interface ActionCondition {
   name: string;

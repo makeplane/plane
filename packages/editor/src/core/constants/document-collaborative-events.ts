@@ -34,6 +34,7 @@ export type SharedPayload = CreatePayload<{
 }>;
 export type UnsharedPayload = CreatePayload<{ users_and_access: { user_id: string; access: EPageAccess }[] }>;
 export type RestoredPayload = CreatePayload<{ deleted_page_ids?: string[] }>;
+export type SubPagePayload = BaseActionPayload;
 
 // Enhanced DocumentCollaborativeEvents with payload types.
 // Both the client name and server name are defined, and we add a "payloadType" property
@@ -113,6 +114,11 @@ export const DocumentCollaborativeEvents = {
     client: "restored",
     server: "restore",
     payloadType: {} as RestoredPayload,
+  },
+  sub_page: {
+    client: "sub_page",
+    server: "sub_page",
+    payloadType: {} as SubPagePayload,
   },
   shared: {
     client: "shared",

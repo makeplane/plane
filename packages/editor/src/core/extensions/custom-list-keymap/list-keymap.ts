@@ -59,7 +59,7 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
           if (tabIndex !== undefined && tabIndex !== null) {
             return false;
           }
-          return false;
+          return true;
         },
         Delete: ({ editor }) => {
           try {

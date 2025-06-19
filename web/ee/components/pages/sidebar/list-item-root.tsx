@@ -9,13 +9,13 @@ import { useParams } from "next/navigation";
 import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
+import { EPageAccess } from "@plane/constants";
 import { TPageDragPayload } from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-import { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { WikiPageSidebarListItem } from "./list-item";
 
@@ -192,13 +192,6 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
 
         const newPage = await createPage(payload);
 
-        // Expand the current page to show the newly created subpage
-        if (setExpandedPageIds && !expandedPageIds.includes(pageId)) {
-          setExpandedPageIds([...expandedPageIds, pageId]);
-        } else if (!localIsExpanded) {
-          setLocalIsExpanded(true);
-        }
-
         // Redirect to the newly created page
         if (newPage?.id) {
           // Get the new page instance which has the getRedirectionLink method
@@ -214,7 +207,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         setIsCreatingPage(false);
       }
     },
-    [getPageById, router, createPage, expandedPageIds, setExpandedPageIds, localIsExpanded, page, pageId]
+    [getPageById, router, createPage, page]
   );
 
   // drag and drop
@@ -270,17 +263,25 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           const droppedPageDetails = getPageById(droppedPageId);
           if (!droppedPageDetails) return;
 
-          // When dropping on a list item, also inherit the access level of the target page
-          const updateData: Partial<TPageInstance> = { parent_id: page.id };
-          if (page.access !== undefined) {
-            updateData.access = page.access;
-            // If we're changing access from shared, unset the shared flag
-            if (droppedPageDetails.is_shared) {
-              updateData.is_shared = false;
-            }
+          // Prepare update payload
+          const updatePayload: { parent_id?: string; access?: EPageAccess } = {
+            parent_id: page.id,
+          };
+
+          // Map sectionType to access value
+          let targetAccess: EPageAccess | undefined;
+          if (sectionType === "public") {
+            targetAccess = EPageAccess.PUBLIC;
+          } else if (sectionType === "private") {
+            targetAccess = EPageAccess.PRIVATE;
           }
 
-          droppedPageDetails.update(updateData);
+          // Check if access needs to be updated (section has changed)
+          if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
+            updatePayload.access = targetAccess;
+          }
+
+          droppedPageDetails.update(updatePayload);
         },
         canDrop: ({ source }) => {
           if (
@@ -324,6 +325,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
     setExpandedPageIds,
     isNestedPagesEnabled,
     workspaceSlug,
+    sectionType,
   ]);
 
   if (!page) return null;
@@ -358,28 +360,30 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           </button>
         )}
       </div>
-      <Transition
-        show={shouldShowSubPages}
-        enter="transition-all duration-200 ease-out"
-        enterFrom="opacity-0 max-h-0 -translate-y-2"
-        enterTo="opacity-100 max-h-[1000px] translate-y-0"
-        leave="transition-all duration-150 ease-in"
-        leaveFrom="opacity-100 max-h-[1000px] translate-y-0"
-        leaveTo="opacity-0 max-h-0 -translate-y-2"
-        className="overflow-hidden"
-      >
-        <div className="transform-gpu will-change-transform">
-          {subPageIds?.map((subPageId) => (
-            <WikiPageSidebarListItemRoot
-              key={subPageId}
-              paddingLeft={paddingLeft + 17.6}
-              pageId={subPageId}
-              expandedPageIds={expandedPageIds}
-              setExpandedPageIds={setExpandedPageIds}
-            />
-          ))}
-        </div>
-      </Transition>
+      {shouldShowSubPages && (
+        <Transition
+          show={isExpanded}
+          enter="transition ease-out duration-100"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div>
+            {subPageIds?.map((subPageId) => (
+              <WikiPageSidebarListItemRoot
+                key={subPageId}
+                paddingLeft={paddingLeft + 16}
+                pageId={subPageId}
+                expandedPageIds={expandedPageIds}
+                setExpandedPageIds={setExpandedPageIds}
+                sectionType={sectionType}
+              />
+            ))}
+          </div>
+        </Transition>
+      )}
     </div>
   );
 });

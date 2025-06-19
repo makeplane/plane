@@ -45,6 +45,7 @@ class PagesLiveServerSubPagesViewSet(BaseViewSet):
             )
             .annotate(
                 sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .filter(archived_at__isnull=True)
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")

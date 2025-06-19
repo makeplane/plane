@@ -4,6 +4,8 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess, EUserWorkspaceRoles, EUserPermissions } from "@plane/constants";
 import { TPage } from "@plane/types";
+// utils
+import { getPageName } from "@plane/utils";
 // plane web services
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
 // store
@@ -87,11 +89,14 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
 
   get subPageIds() {
     const pages = Object.values(this.rootStore.projectPages.data);
-    const subPageIds = pages
-      .filter((page) => page.parent_id === this.id)
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
-    return subPageIds;
+    const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
+
+    // Sort pages alphabetically by name
+    const sortedPages = filteredPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
+    );
+
+    return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
 
   get subPages() {

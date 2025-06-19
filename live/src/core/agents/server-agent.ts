@@ -113,10 +113,11 @@ export class ServerAgentManager {
       return connectionData;
     }
 
+    context.documentType = context.documentType === "sync_agent" ? "sync_agent" : "server_agent";
     try {
       // Create a new connection
       const connection = await this.hocuspocusServer.openDirectConnection(documentId, {
-        documentType: "server_agent",
+        documentType: context.documentType,
         projectId: context.projectId,
         workspaceSlug: context.workspaceSlug,
         // triggerExecutionAfterLoad: context.triggerExecutionAfterLoad,
@@ -212,7 +213,10 @@ export class ServerAgentManager {
         // // Process the document using our extensible system
         DocumentProcessor.process(xmlFragment, subPagesFromBackend || [], options);
       },
-      context
+      {
+        ...context,
+        documentType: "sync_agent",
+      }
     );
   }
 

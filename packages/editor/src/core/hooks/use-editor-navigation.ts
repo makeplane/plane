@@ -15,12 +15,22 @@ export const createTitleNavigationExtension = (getMainEditor: () => Editor | nul
     addKeyboardShortcuts() {
       return {
         // Arrow down at end of title - Move to main editor
-        ArrowDown: ({ editor }) => {
+        ArrowDown: () => {
           const mainEditor = getMainEditor();
           if (!mainEditor) return false;
 
-          const { from, to } = editor.state.selection;
-          const documentLength = editor.state.doc.content.size;
+          // If cursor is at the end of the title
+          mainEditor.commands.focus("start");
+          return true;
+        },
+
+        // Right arrow at end of title - Move to main editor
+        ArrowRight: ({ editor: titleEditor }) => {
+          const mainEditor = getMainEditor();
+          if (!mainEditor) return false;
+
+          const { from, to } = titleEditor.state.selection;
+          const documentLength = titleEditor.state.doc.content.size;
 
           // If cursor is at the end of the title
           if (from === to && to === documentLength - 1) {
@@ -30,21 +40,13 @@ export const createTitleNavigationExtension = (getMainEditor: () => Editor | nul
           return false;
         },
 
-        // Tab - Move to main editor
-        Tab: () => {
-          const mainEditor = getMainEditor();
-          if (!mainEditor) return false;
-
-          mainEditor.commands.focus("start");
-          return true;
-        },
-
-        // Enter - Move to main editor
+        // Enter - Create new line in main editor and focus
         Enter: () => {
           const mainEditor = getMainEditor();
           if (!mainEditor) return false;
 
-          mainEditor.commands.focus("start");
+          // Focus at the start of the main editor
+          mainEditor.chain().focus().insertContentAt(0, { type: "paragraph" }).run();
           return true;
         },
       };
@@ -65,11 +67,11 @@ export const createMainNavigationExtension = (getTitleEditor: () => Editor | nul
     addKeyboardShortcuts() {
       return {
         // Arrow up at start of main editor - Move to title editor
-        ArrowUp: ({ editor }) => {
+        ArrowUp: ({ editor: mainEditor }) => {
           const titleEditor = getTitleEditor();
           if (!titleEditor) return false;
 
-          const { from, to } = editor.state.selection;
+          const { from, to } = mainEditor.state.selection;
 
           // If cursor is at the start of the main editor
           if (from === 1 && to === 1) {
@@ -79,13 +81,19 @@ export const createMainNavigationExtension = (getTitleEditor: () => Editor | nul
           return false;
         },
 
-        // Shift+Tab - Move to title editor
-        "Shift-Tab": () => {
+        // Left arrow at start of main editor - Move to title editor
+        ArrowLeft: ({ editor: mainEditor }) => {
           const titleEditor = getTitleEditor();
           if (!titleEditor) return false;
 
-          titleEditor.commands.focus("end");
-          return true;
+          const { from, to } = mainEditor.state.selection;
+
+          // If cursor is at the absolute start of the main editor
+          if (from === 1 && to === 1) {
+            titleEditor.commands.focus("end");
+            return true;
+          }
+          return false;
         },
 
         // Backspace - Special handling for first paragraph

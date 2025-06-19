@@ -1,8 +1,6 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Editor } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
+import { Editor } from "@tiptap/react";
 import { useEffect } from "react";
-import { TCollaborator } from "@plane/types";
 import { EventToPayloadMap, ICollaborativeDocumentEditor, BroadcastedEventUnion } from "@/types";
 
 export const useRealtimeEvents = (props: {
@@ -12,27 +10,6 @@ export const useRealtimeEvents = (props: {
   updatePageProperties: ICollaborativeDocumentEditor["updatePageProperties"];
 }) => {
   const { editor, updatePageProperties, provider, id } = props;
-
-  const collaboratorState = useEditorState({
-    editor,
-    selector: (ctx) => ({
-      users: (ctx?.editor?.storage?.collaborationCursor?.users as TCollaborator[]) || [],
-    }),
-  });
-
-  // Update page properties when collaborators change
-  useEffect(() => {
-    if (!collaboratorState?.users || !updatePageProperties) return;
-
-    const currentUsers = collaboratorState.users;
-
-    const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
-      users: currentUsers,
-      user_id: editor?.storage?.collaborationCursor?.clientId,
-    };
-
-    updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);
-  }, [collaboratorState?.users, updatePageProperties, id, editor]);
 
   useEffect(() => {
     if (!editor) return;
@@ -49,7 +26,7 @@ export const useRealtimeEvents = (props: {
 
           if (movedPageId) {
             const partialData: Partial<EventToPayloadMap["moved_internally"]> = {
-              parent_id: event.data.new_parent_id, // Properly typed!
+              parent_id: event.data.new_parent_id,
             };
             updatePageProperties(movedPageId, event.action, partialData, true);
           }

@@ -5,8 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 // indexeddb
 import { IndexeddbPersistence } from "y-indexeddb";
 // extensions
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { HeadingListExtension, SideMenuExtension } from "@/extensions";
-// helpers
 // hooks
 import { useEditor } from "@/hooks/use-editor";
 import { useRealtimeEvents } from "@/hooks/use-realtime-events";
@@ -135,7 +135,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         dragDropEnabled: true,
       }),
       HeadingListExtension,
-
       // Collaboration extension
       Collaboration.configure({
         document: provider.document,
@@ -211,7 +210,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         // Focus the title editor if it's empty
         titleEditor.commands.focus("start");
       } else {
-        editor.commands.focus("start");
+        if (editor.state.doc.firstChild?.type.name === CORE_EXTENSIONS.PARAGRAPH) {
+          // If the title editor is empty, focus the main editor at the start
+          editor.commands.focus("start");
+        } else {
+          // Otherwise, focus the title editor at the end
+          titleEditor.commands.focus("end");
+        }
       }
       // Mark initial focus as set to prevent re-running
       setInitialFocusSet(true);
