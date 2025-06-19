@@ -137,6 +137,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     services: TBasePageServices
   ) {
     super(store, page, services);
+
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;

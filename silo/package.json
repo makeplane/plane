@@ -73,7 +73,7 @@
     "ts-to-zod": "^3.13.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
-    "tsup": "^8.4.0",
-    "typescript": "^5.3.3"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }

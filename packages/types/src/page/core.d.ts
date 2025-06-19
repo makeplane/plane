@@ -2,7 +2,7 @@ import { TLogoProps } from "../common";
 import { EPageAccess } from "../enums";
 import { TPageExtended } from "./extended";
 
-export type TPage = {
+export type TPage = TPageExtended & {
   access: EPageAccess | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;

@@ -7,7 +7,6 @@ import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
-
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
