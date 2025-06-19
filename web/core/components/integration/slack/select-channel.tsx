@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
+// constants
+import { SLACK_CHANNEL_INFO } from "@plane/constants";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
-// fetch-keys
-import { SLACK_CHANNEL_INFO } from "@/constants/fetch-keys";
 // hooks
 import { useInstance } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";

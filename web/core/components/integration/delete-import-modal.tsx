@@ -9,15 +9,12 @@ import { mutate } from "swr";
 // headless ui
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// services
+// constants
+import { IMPORTER_SERVICES_LIST } from "@plane/constants";
 import { IUser, IImporterService } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+// services
 import { IntegrationService } from "@/services/integrations/integration.service";
-// ui
-// icons
-// types
-// fetch-keys
 
 type Props = {
   isOpen: boolean;

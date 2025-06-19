@@ -2,16 +2,17 @@
 
 import React, { useState } from "react";
 import { mutate } from "swr";
-// types
+// constants
+import { API_TOKENS_LIST } from "@plane/constants";
+// services
 import { APITokenService } from "@plane/services";
+// types
 import { IApiToken } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // components
 import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
-// fetch-keys
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
 // services
 

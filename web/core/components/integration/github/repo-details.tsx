@@ -7,13 +7,12 @@ import { useParams } from "next/navigation";
 // react-hook-form
 import { UseFormSetValue } from "react-hook-form";
 import useSWR from "swr";
-// services
+// constants
+import { GITHUB_REPOSITORY_INFO } from "@plane/constants";
 // ui
 import { Button, Loader } from "@plane/ui";
 // types
 import { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
-// fetch-keys
-import { GITHUB_REPOSITORY_INFO } from "@/constants/fetch-keys";
 import { GithubIntegrationService } from "@/services/integrations";
 
 type Props = {

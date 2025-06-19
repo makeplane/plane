@@ -4,13 +4,13 @@ import Link from "next/link";
 import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
+// constants
+import { USER_ACTIVITY } from "@plane/constants";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
-import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
+import { ActivityIcon, ActivityMessage } from "@/components/core";
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
 import { ActivitySettingsLoader } from "@/components/ui";
-// constants
-import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 // hooks
 import { useUser } from "@/hooks/store";

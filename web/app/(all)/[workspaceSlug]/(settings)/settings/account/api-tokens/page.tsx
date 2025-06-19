@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { API_TOKENS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // component
 import { APITokenService } from "@plane/services";
@@ -12,7 +13,6 @@ import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { SettingsHeading } from "@/components/settings";
 import { APITokenSettingsLoader } from "@/components/ui";
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
 import { useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

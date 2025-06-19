@@ -4,15 +4,13 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
-import { USER_ONBOARDING_COMPLETED } from "@plane/constants";
+import { USER_ONBOARDING_COMPLETED, USER_WORKSPACES_LIST } from "@plane/constants";
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
 import { InviteMembers, CreateOrJoinWorkspaces, ProfileSetup } from "@/components/onboarding";
-// constants
-import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks

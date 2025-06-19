@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// constants
+import { ISSUE_DETAILS } from "@plane/constants";
 // ui
 import { ArchiveIcon, Breadcrumbs, LayersIcon, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 import { IssueDetailQuickActions } from "@/components/issues";
-// constants
-import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web

@@ -4,13 +4,13 @@ import { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import useSWR from "swr";
+// constants
+import { WORKSPACE_MEMBERS } from "@plane/constants";
 // plane types
 import { IJiraImporterForm } from "@plane/types";
 // plane ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
-// constants
 import { getFileURL } from "@plane/utils";
-import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
 // helpers
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";

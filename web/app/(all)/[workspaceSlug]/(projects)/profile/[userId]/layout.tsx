@@ -4,12 +4,16 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
-import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  PROFILE_VIEWER_TAB,
+  PROFILE_ADMINS_TAB,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  USER_PROFILE_PROJECT_SEGREGATION,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AppHeader, ContentWrapper } from "@/components/core";
 import { ProfileSidebar } from "@/components/profile";
-// constants
-import { USER_PROFILE_PROJECT_SEGREGATION } from "@/constants/fetch-keys";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 import useSize from "@/hooks/use-window-size";

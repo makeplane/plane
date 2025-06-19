@@ -2,9 +2,8 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType, EIssuesStoreType, CYCLE_ISSUES_WITH_PARAMS } from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
-import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
 import { useCycle, useIssues } from "@/hooks/store";
 
 interface IActiveCycleDetails {

@@ -7,6 +7,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
+// constants
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@plane/constants";
 // types
 import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // ui
@@ -19,8 +21,6 @@ import {
   GithubImportUsers,
   GithubImportConfirm,
 } from "@/components/integration";
-// fetch keys
-import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // images

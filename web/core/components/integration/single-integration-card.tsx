@@ -6,12 +6,11 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// constants
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_INTEGRATIONS } from "@plane/constants";
 import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Button, Loader, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useInstance, useUserPermissions } from "@/hooks/store";
 import useIntegrationPopup from "@/hooks/use-integration-popup";

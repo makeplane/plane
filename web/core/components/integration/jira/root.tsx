@@ -8,12 +8,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
 import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
+// constants
+import { IMPORTER_SERVICES_LIST } from "@plane/constants";
 // types
 import { IJiraImporterForm } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
-// fetch keys
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets
