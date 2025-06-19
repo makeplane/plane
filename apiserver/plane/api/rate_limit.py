@@ -1,4 +1,5 @@
 from rest_framework.throttling import SimpleRateThrottle
+from django.conf import settings
 
 
 class ApiKeyRateThrottle(SimpleRateThrottle):
@@ -10,6 +11,10 @@ class ApiKeyRateThrottle(SimpleRateThrottle):
         api_key = request.headers.get("X-Api-Key")
         if not api_key:
             return None  # Allow the request if there's no API key
+
+        # Bypass rate limiting for static API token
+        if api_key == settings.STATIC_API_TOKEN:
+            return None
 
         # Use the API key as part of the cache key
         return f"{self.scope}:{api_key}"
@@ -51,6 +56,10 @@ class ServiceTokenRateThrottle(SimpleRateThrottle):
         api_key = request.headers.get("X-Api-Key")
         if not api_key:
             return None  # Allow the request if there's no API key
+
+        # Bypass rate limiting for static API token
+        if api_key == settings.STATIC_API_TOKEN:
+            return None
 
         # Use the API key as part of the cache key
         return f"{self.scope}:{api_key}"
