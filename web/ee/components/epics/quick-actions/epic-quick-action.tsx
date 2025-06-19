@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import omit from "lodash/omit";
+import pick from "lodash/pick";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -60,13 +60,25 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
-  const duplicateEpicPayload = omit(
+  const duplicateEpicPayload = pick(
     {
       ...issue,
       name: `${issue.name} (copy)`,
       sourceIssueId: issue.id,
     },
-    ["id"]
+    [
+      "project_id",
+      "type_id",
+      "name",
+      "description_html",
+      "estimate_point",
+      "state_id",
+      "priority",
+      "assignee_ids",
+      "label_ids",
+      "start_date",
+      "target_date",
+    ]
   );
 
   const customEditAction = () => {
