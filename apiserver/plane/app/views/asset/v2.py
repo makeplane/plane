@@ -11,14 +11,19 @@ from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace, Project, User
+from plane.ee.models import Customer
 from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.authentication.session import BaseSessionAuthentication
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -206,7 +211,10 @@ class UserAssetsV2Endpoint(BaseAPIView):
 
 
 class WorkspaceFileAssetEndpoint(BaseAPIView):
-    """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+    """
+    This endpoint is used to upload cover images/logos
+    etc for workspace, projects and users.
+    """
 
     def get_entity_id_field(self, entity_type, entity_id):
         # Workspace Logo
@@ -238,6 +246,26 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         # Comment Description
         if entity_type == FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:
             return {"comment_id": entity_id}
+
+        if entity_type in (
+            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEAM_SPACE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+            FileAsset.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_ATTACHMENT,
+            FileAsset.EntityTypeContext.INITIATIVE_COMMENT_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_REQUEST_ATTACHMENT,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
+            FileAsset.EntityTypeContext.CUSTOMER_DESCRIPTION,
+            FileAsset.EntityTypeContext.CUSTOMER_REQUEST_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
+        ):
+            return {"entity_identifier": entity_id}
+
         return {}
 
     def asset_delete(self, asset_id):
@@ -291,7 +319,16 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             project.cover_image_asset_id = asset_id
             project.save()
             return
-        else:
+        elif entity_type == FileAsset.EntityTypeContext.CUSTOMER_LOGO:
+            customer = Customer.objects.filter(id=asset.entity_identifier).first()
+            if customer is None:
+                return
+            # Delete the previous logo
+            if customer.logo_asset_id:
+                self.asset_delete(customer.logo_asset_id)
+            # Save the new logo
+            customer.logo_asset_id = asset_id
+            customer.save()
             return
 
     def entity_asset_delete(self, entity_type, asset, request):
@@ -348,17 +385,44 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if settings.IS_MULTI_TENANT and check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -468,6 +532,11 @@ class StaticFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.USER_COVER,
             FileAsset.EntityTypeContext.WORKSPACE_LOGO,
             FileAsset.EntityTypeContext.PROJECT_COVER,
+            FileAsset.EntityTypeContext.OAUTH_APP_LOGO,
+            FileAsset.EntityTypeContext.CUSTOMER_LOGO,
+            FileAsset.EntityTypeContext.OAUTH_APP_DESCRIPTION,
+            FileAsset.EntityTypeContext.OAUTH_APP_ATTACHMENT,
+            FileAsset.EntityTypeContext.TEMPLATE_ATTACHMENT,
         ]:
             return Response(
                 {"error": "Invalid entity type.", "status": False},
@@ -485,6 +554,8 @@ class StaticFileAssetEndpoint(BaseAPIView):
 class AssetRestoreEndpoint(BaseAPIView):
     """Endpoint to restore a deleted assets."""
 
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
@@ -496,6 +567,8 @@ class AssetRestoreEndpoint(BaseAPIView):
 
 class ProjectAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload cover images/logos etc for workspace, projects and users."""
+
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get_entity_id_field(self, entity_type, entity_id):
         if entity_type == FileAsset.EntityTypeContext.WORKSPACE_LOGO:
@@ -549,17 +622,45 @@ class ProjectAssetEndpoint(BaseAPIView):
             "image/jpg",
             "image/gif",
         ]
-        if type not in allowed_types:
+
+        # Define the set of entity types that use settings.ATTACHMENT_MIME_TYPES
+        special_entity_types = {
+            FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_DESCRIPTION,
+            FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+            FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
+            FileAsset.EntityTypeContext.PROJECT_DESCRIPTION,
+        }
+
+        # Map entity type category to allowed types and error message
+        if entity_type in special_entity_types:
+            valid_types = settings.ATTACHMENT_MIME_TYPES
+            error_message = "Invalid file type."
+        else:
+            valid_types = allowed_types
+            error_message = "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed."
+
+        if type not in valid_types:
             return Response(
-                {
-                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
-                    "status": False,
-                },
+                {"error": error_message, "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the size limit
-        size_limit = min(settings.FILE_SIZE_LIMIT, size)
+        if entity_type in [
+            FileAsset.EntityTypeContext.WORKSPACE_LOGO,
+            FileAsset.EntityTypeContext.PROJECT_COVER,
+        ]:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        else:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+                slug=slug,
+                user_id=str(request.user.id),
+            ):
+                size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+            else:
+                size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)

@@ -1,0 +1,2449 @@
+{
+  "sidebar": {
+    "pi_chat": "Pay Çet",
+    "initiatives": "İnisiyetivs",
+    "teamspaces": "Timspeys",
+    "epics": "Epiks",
+    "upgrade_plan": "Apgreyd plen",
+    "plane_pro": "Pleyn Pro",
+    "business": "Biznis",
+    "customers": "Kastımırs"
+  },
+  "workspace_dashboards": "Dashbordlar",
+  "pi_chat": "Pi Chat",
+  "in_app": "Uygulama İçi",
+  "forms": "Formlar",
+  "choose_workspace_for_integration": "Bu uygulamayı bağlamak için bir çalışma alanı seçin",
+  "integrations_description": "Plane ile çalışan uygulamalar, yönetici olduğunuz bir çalışma alanına bağlanmalıdır.",
+  "create_a_new_workspace": "Yeni bir çalışma alanı oluştur",
+  "learn_more_about_workspaces": "Çalışma alanları hakkında daha fazla bilgi edinin",
+  "no_workspaces_to_connect": "Bağlamak için çalışma alanı yok",
+  "no_workspaces_to_connect_description": "Bir çalışma alanı oluşturmak için lütfen bu sayfaya dönün",
+  "common": {
+    "worklogs": "Çalışma Logları",
+    "live": "Canlı",
+    "epics": "Epikler",
+    "project_updates": "Proje Güncellemeleri",
+    "overview": "Genel Bakış",
+    "workflows": "İş Akışları",
+    "templates": "Şablonlar",
+    "members_and_teamspaces": "Üyeler ve Takım Alanları"
+  },
+  "updates": {
+    "add_update": "Güncelleme Ekle",
+    "add_update_placeholder": "Buraya güncelleme ekleyin",
+    "empty": {
+      "title": "Henüz güncelleme yok",
+      "description": "Burada güncellemelere göz atabilirsiniz."
+    },
+    "create": {
+      "success": {
+        "title": "Güncelleme oluşturuldu",
+        "message": "Güncelleme başarıyla oluşturuldu."
+      },
+      "error": {
+        "title": "Güncelleme oluşturulamadı",
+        "message": "Güncelleme oluşturulamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Güncelleme güncellendi",
+        "message": "Güncelleme başarıyla güncellendi."
+      },
+      "error": {
+        "title": "Güncelleme güncellenemedi",
+        "message": "Güncelleme güncellenemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Güncelleme silindi",
+        "message": "Güncelleme başarıyla silindi."
+      },
+      "error": {
+        "title": "Güncelleme silinemedi",
+        "message": "Güncelleme silinemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaksiyon oluşturuldu",
+          "message": "Reaksiyon başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Reaksiyon oluşturulamadı",
+          "message": "Reaksiyon oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaksiyon silindi",
+          "message": "Reaksiyon başarıyla silindi."
+        },
+        "error": {
+          "title": "Reaksiyon silinemedi",
+          "message": "Reaksiyon silinemedi. Lütfen tekrar deneyin."
+        }
+      }
+    },
+    "progress": {
+      "title": "İlerleme",
+      "since_last_update": "Son güncellemeden beri",
+      "comments": "{count, plural, one{# yorum} other{# yorum}}"
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Starts Bifor",
+      "start_after": "Starts Aftır",
+      "finish_before": "Finishes Bifor",
+      "finish_after": "Finishes Aftır"
+    },
+    "display": {
+      "properties": {
+        "customer_count": "Kastımir kaunt",
+        "customer_request_count": "Kastımir rikvest kaunt",
+        "customer": "Kastımir",
+        "requests": "Kastımir rikvest"
+      }
+    }
+  },
+  "pages": {
+    "link_pages": "Sayfaları bağla",
+    "show_wiki_pages": "Wiki sayfalarını görüntüle",
+    "link_pages_to": "Sayfaları bağla",
+    "linked_pages": "Bağlı sayfalar",
+    "no_description": "Bu sayfa boş. Buraya bir şey yazın ve bunu buradaki yer tutucu olarak görün.",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Sayfalar güncellendi",
+          "message": "Sayfalar başarıyla güncellendi"
+        },
+        "error": {
+          "title": "Sayfalar güncellenemedi",
+          "message": "Sayfalar güncellenemedi"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Sayfa silindi",
+          "message": "Sayfa başarıyla silindi"
+        },
+        "error": {
+          "title": "Sayfa silinemedi",
+          "message": "Sayfa silinemedi"
+        }
+      }
+    }
+  },
+
+  "profile": {
+    "actions": {
+      "connections": "Bağlantılar"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "İnisiyatifler",
+      "sub_heading": "Plane'deki tüm işleriniz için en üst seviye organizasyonu aktive edin.",
+      "title": "İnisiyatifleri Aktive Et",
+      "description": "İlerlemeyi takip etmek için büyük hedefler belirleyin",
+      "toast": {
+        "updating": "İnisiyatif özelliği güncelleniyor",
+        "enable_success": "İnisiyatif özelliği başarıyla aktive edildi.",
+        "disable_success": "İnisiyatif özelliği başarıyla deaktive edildi.",
+        "error": "İnisiyatif özelliği güncellenemedi!"
+      }
+    },
+    "customers": {
+      "heading": "Kastımerlar",
+      "settings_heading": "Kastımerlarınız için önemli olan şeylere göre işleri yönetin.",
+      "settings_sub_heading": "Kastımer taleplerini iş öğelerine dönüştürün, taleplere göre önceliklendirin ve iş öğesi durumlarını kastımer kayıtlarıyla senkronize edin. Yakında CRM veya destek araçlarınızla entegre olarak kastımer özelliklerine göre daha iyi iş yönetimi yapabileceksiniz."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "Konfigüre edilmiş entegrasyon yok",
+        "description": "Proje iş öğelerinizi senkronize etmek için GitHub ve diğer entegrasyonları konfigüre edin."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Estimasyon sistemini düzenle",
+        "add_or_update": {
+          "title": "Estimasyonları ekle, güncelle veya sil",
+          "description": "Mevcut sistemi puanlar veya kategoriler ekleyerek, güncelleyerek veya silerek yönetin."
+        },
+        "switch": {
+          "title": "Estimasyon tipini değiştir",
+          "description": "Puan sisteminizi kategori sistemine veya tam tersine dönüştürün."
+        }
+      },
+      "switch": "Estimasyon sistemini değiştir",
+      "current": "Mevcut estimasyon sistemi",
+      "select": "Estimasyon sistemi seç",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimasyonlar yeniden sıralandı",
+            "message": "Projenizdeki estimasyonlar yeniden sıralandı."
+          },
+          "error": {
+            "title": "Estimasyonları yeniden sıralama başarısız",
+            "message": "Estimasyonlar yeniden sıralanamadı, lütfen tekrar deneyin"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Estimeyt sistemi oluşturuldu",
+            "message": "Başarıyla oluşturuldu ve aktif edildi"
+          },
+          "error": {
+            "title": "Erır",
+            "message": "Bir şeyler yanlış gitti"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Lütfen bu estimasyon alanını doldurun",
+        "repeat": "Estimasyon değeri tekrar edemez"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Propertiler",
+        "description": "Epiğinize özel propertiler ekleyin."
+      },
+      "disabled": "Deaktive"
+    }
+  },
+  "teamspaces": {
+    "label": "Takım Alanları",
+    "empty_state": {
+      "general": {
+        "title": "Takım Alanları Plane'de daha iyi organizasyon ve takip sağlar.",
+        "description": "Her gerçek dünya ekibi için Plane'deki diğer tüm çalışma alanlarından ayrı, özel bir alan oluşturun ve ekibinizin çalışma şekline uyacak şekilde özelleştirin.",
+        "primary_button": {
+          "text": "Yeni bir takım alanı oluştur"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Henüz hiç takım alanı bağlamadınız.",
+          "description": "Takım alanı ve proje sahipleri projelere erişimi yönetebilir."
+        }
+      },
+      "primary_button": {
+        "text": "Takım alanı bağla"
+      },
+      "secondary_button": {
+        "text": "Daha fazla bilgi"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Takım alanı adı",
+          "members": "Üyeler",
+          "accountType": "Hesap türü"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Takım alanını kaldır"
+            },
+            "confirm": {
+              "title": "{teamspaceName} takım alanını {projectName} projesinden kaldır",
+              "description": "Bu takım alanını bağlı bir projeden kaldırdığınızda, buradaki üyeler bağlı projeye erişimlerini kaybedecekler."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Eşleşen takım alanı bulunamadı"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bu projeye bir takım alanı bağladınız.} other {Bu projeye # takım alanı bağladınız.}}",
+            "description": "{additionalCount, plural, =0 {{firstTeamspaceName} takım alanı artık bu projeye bağlı.} other {{firstTeamspaceName} takım alanı ve {additionalCount} tanesi daha artık bu projeye bağlı.}}"
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bu takım alanını projeden kaldırdınız.",
+            "description": "{teamspaceName} takım alanı {projectName} projesinden kaldırıldı."
+          },
+          "error": {
+            "title": "İşlem başarısız oldu.",
+            "description": "Tekrar deneyin veya sayfayı yenileyip tekrar deneyin."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Takım alanlarında ara",
+        "info": {
+          "title": "Bir takım alanı eklemek, tüm takım alanı üyelerine bu projeye erişim sağlar.",
+          "link": "Daha fazla bilgi"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bağlayabileceğiniz hiç takım alanınız yok.",
+            "description": "Ya bağlayabileceğiniz bir takım alanında değilsiniz ya da tüm mevcut takım alanlarını zaten bağladınız."
+          },
+          "no_results": {
+            "title": "Bu, takım alanlarınızdan hiçbiriyle eşleşmiyor.",
+            "description": "Başka bir terim deneyin veya bağlayabileceğiniz takım alanlarınız olduğundan emin olun."
+          }
+        },
+        "primary_button": {
+          "text": "Seçili takım alan(lar)ını bağla"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Takıma özel iş öğeleri oluşturun.",
+        "description": "Bağlı herhangi bir projede bu ekibin üyelerine atanan iş öğeleri otomatik olarak burada görünecektir. Burada bazı iş öğeleri görmeyi bekliyorsanız, bağlı projelerinizin bu ekibin üyelerine atanmış iş öğelerine sahip olduğundan emin olun veya iş öğeleri oluşturun.",
+        "primary_button": {
+          "text": "Bağlı bir projeye iş öğeleri ekle"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Uygulanan filtreler için takıma özel iş öğesi yok",
+        "description": "Bu filtrelerin bazılarını değiştirin veya bu alana uygun iş öğelerini görmek için hepsini temizleyin.",
+        "secondary_button": {
+          "text": "Tüm filtreleri temizle"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Bağlı projelerinizden hiçbirinin aktif bir döngüsü yok.",
+        "description": "Bağlı projelerdeki aktif döngüler otomatik olarak burada görünecektir. Aktif bir döngü görmeyi bekliyorsanız, şu anda bağlı bir projede çalıştığından emin olun."
+      },
+      "completed": {
+        "title": "Bağlı projelerinizden hiçbirinin tamamlanmış bir döngüsü yok.",
+        "description": "Bağlı projelerdeki tamamlanmış döngüler otomatik olarak burada görünecektir. Tamamlanmış bir döngü görmeyi bekliyorsanız, bağlı bir projede de tamamlandığından emin olun."
+      },
+      "upcoming": {
+        "title": "Bağlı projelerinizden hiçbirinin yaklaşan bir döngüsü yok.",
+        "description": "Bağlı projelerdeki yaklaşan döngüler otomatik olarak burada görünecektir. Yaklaşan bir döngü görmeyi bekliyorsanız, bağlı bir projede de olduğundan emin olun."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Çalışma alanınızdaki diğer görünümleri bozmadan ekibinizin çalışmalarınızın görünümleri",
+        "description": "Ekibinizin çalışmalarını sadece ekibiniz için kaydedilen ve bir projenin görünümlerinden ayrı olan görünümlerde görün.",
+        "primary_button": {
+          "text": "Bir görünüm oluştur"
+        }
+      },
+      "filter": {
+        "title": "Eşleşen görünüm yok",
+        "description": "Arama kriterlerine uygun görünüm yok. \n Bunun yerine yeni bir görünüm oluşturun."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Ekibinizin bilgilerini Takım Sayfalarında barındırın.",
+        "description": "Bir projedeki sayfaların aksine, bir ekibe özgü bilgileri burada ayrı bir sayfa setinde saklayabilirsiniz. Sayfaların tüm özelliklerini alın, en iyi uygulama dokümanları oluşturun ve ekip vikilerini kolayca oluşturun.",
+        "primary_button": {
+          "text": "İlk takım sayfanızı oluşturun"
+        }
+      },
+      "filter": {
+        "title": "Eşleşen sayfa yok",
+        "description": "Tüm sayfaları görmek için filtreleri kaldırın"
+      },
+      "search": {
+        "title": "Eşleşen sayfa yok",
+        "description": "Tüm sayfaları görmek için arama kriterlerini kaldırın"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Bağlı projelerinizden hiçbirinin yayınlanmış iş öğeleri yok.",
+        "description": "Tarihlere, durumlara ve önceliklere göre ilerlemeyi görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Bir takım arkadaşını engelleyen herhangi bir iş öğeniz yok.",
+          "description": "Aferin! Ekibiniz için yolu açtınız. İyi bir takım oyuncususunuz."
+        },
+        "blocked": {
+          "title": "Sizi engelleyen herhangi bir takım arkadaşının iş öğesi yok.",
+          "description": "İyi haber! Atanmış tüm iş öğelerinizde ilerleme kaydedebilirsiniz."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Bağlı projelerinizden hiçbirinin yayınlanmış iş öğeleri yok.",
+          "description": "Projeye ve ekip üyelerine göre iş dağılımını görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+        },
+        "filter": {
+          "title": "Uygulanan filtreler için takım istatistikleri yok.",
+          "description": "Projeye ve ekip üyelerine göre iş dağılımını görmek için bu projelerden bir veya daha fazlasında bazı iş öğeleri oluşturun."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "label": "İnisiyatifler",
+    "placeholder": "{count, plural, one{# inisiyatif} other{# inisiyatif}}",
+    "add_initiative": "İnisiyatif Ekle",
+    "create_initiative": "İnisiyatif Oluştur",
+    "update_initiative": "İnisiyatif Güncelle",
+    "initiative_name": "İnisiyatif adı",
+    "all_initiatives": "Tüm İnisiyatifler",
+    "delete_initiative": "İnisiyatif Sil",
+    "fill_all_required_fields": "Lütfen tüm zorunlu alanları doldurun.",
+    "toast": {
+      "create_success": "İnisiyatif {name} başarıyla oluşturuldu.",
+      "create_error": "İnisiyatif oluşturulamadı. Lütfen tekrar deneyin!",
+      "update_success": "İnisiyatif {name} başarıyla güncellendi.",
+      "update_error": "İnisiyatif güncellenemedi. Lütfen tekrar deneyin!",
+      "delete": {
+        "success": "İnisiyatif başarıyla silindi.",
+        "error": "İnisiyatif silinemedi"
+      },
+      "link_copied": "İnisiyatif bağlantısı panoya kopyalandı.",
+      "project_update_success": "İnisiyatif projeleri başarıyla güncellendi.",
+      "project_update_error": "İnisiyatif projeleri güncellenemedi. Lütfen tekrar deneyin!",
+      "epic_update_success": "Epik{count, plural, one { İnisiyatife başarıyla eklendi.} other {ler İnisiyatife başarıyla eklendi.}}",
+      "epic_update_error": "Epikin İnisiyatife eklenmesi başarısız oldu. Lütfen daha sonra tekrar deneyin."
+    },
+    "empty_state": {
+      "general": {
+        "title": "İnisiyatiflerle en üst düzeyde işleri organize edin",
+        "description": "Birkaç proje ve ekibi kapsayan işleri organize etmeniz gerektiğinde, İnisiyatifler işe yarar. Projeleri ve epikleri inisiyatiflere bağlayın, otomatik olarak toplanmış güncellemeleri görün ve ağaçlara ulaşmadan önce ormanları görün.",
+        "primary_button": {
+          "text": "Bir inisiyatif oluştur"
+        }
+      },
+      "search": {
+        "title": "Eşleşen inisiyatif yok",
+        "description": "Eşleşen kriterlere sahip inisiyatif tespit edilmedi. \n Bunun yerine yeni bir inisiyatif oluşturun."
+      },
+      "not_found": {
+        "title": "İnisiyatif mevcut değil",
+        "description": "Aradığınız İnisiyatif mevcut değil veya silinmiş.",
+        "primary_button": {
+          "text": "Diğer İnisiyatifleri Görüntüle"
+        }
+      },
+      "epics": {
+        "title": "Eşleşen epik yok",
+        "subHeading": "Tüm epikleri görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Bir not, bir belge veya tam bir bilgi tabanı yazın. Başlamanıza yardımcı olması için Plane'in yapay zeka asistanı Galileo'yu alın",
+        "description": "Sayfalar, Plane'deki düşünce saksı alanıdır. Toplantı notları alın, bunları kolayca biçimlendirin, iş öğelerini gömin, bunları bir bileşen kitaplığı kullanarak düzenleyin ve hepsini projenizin bağlamında tutun. Herhangi bir belgeyi kısa sürede yapmak için, Plane'in yapay zekası Galileo'yu bir kısayolla veya bir düğmeye tıklayarak çağırın.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "private": {
+        "title": "Henüz özel sayfa yok",
+        "description": "Özel düşüncelerinizi burada saklayın. Paylaşmaya hazır olduğunuzda, ekip sadece bir tık uzaklıkta.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "public": {
+        "title": "Henüz herkese açık sayfa yok",
+        "description": "Çalışma alanınızdaki herkesle paylaşılan sayfaları burada görün.",
+        "primary_button": {
+          "text": "İlk sayfanızı oluşturun"
+        }
+      },
+      "archived": {
+        "title": "Henüz arşivlenmiş sayfa yok",
+        "description": "Radarınızda olmayan sayfaları arşivleyin. Gerektiğinde bunlara buradan erişin."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epikler",
+    "no_epics_selected": "Seçili epik yok",
+    "add_selected_epics": "Seçili epikleri ekle",
+    "epic_link_copied_to_clipboard": "Epik bağlantısı panoya kopyalandı.",
+    "project_link_copied_to_clipboard": "Proje bağlantısı panoya kopyalandı",
+    "empty_state": {
+      "general": {
+        "title": "Bir epik oluşturun ve birisine, hatta kendinize atayın",
+        "description": "Birkaç döngüye yayılan ve modüller arasında yaşayabilen daha büyük iş kütleleri için bir epik oluşturun. Bir projedeki iş öğelerini ve alt iş öğelerini bir epiğe bağlayın ve genel bakıştan bir iş öğesine atlayın.",
+        "primary_button": {
+          "text": "Bir Epik Oluştur"
+        }
+      },
+      "section": {
+        "title": "Henüz epik yok",
+        "description": "İlerlemeyi yönetmek ve izlemek için epikler eklemeye başlayın.",
+        "primary_button": {
+          "text": "Epikler ekle"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Eşleşen epik bulunamadı"
+      },
+      "no_epics": {
+        "title": "Epik bulunamadı"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Aktif döngü yok",
+        "description": "Projelerinizin, bugünün tarihini aralığı içinde kapsayan herhangi bir dönemi içeren döngüleri. Tüm aktif döngünüzün ilerlemesini ve detaylarını burada bulun."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Döngünün ilerlemesini görüntülemek için iş öğeleri ekleyin"
+      },
+      "priority": {
+        "title": "Döngüde ele alınan yüksek öncelikli iş öğelerini bir bakışta gözlemleyin."
+      },
+      "assignee": {
+        "title": "Atayanlara göre iş dağılımını görmek için iş öğelerine atayan ekleyin."
+      },
+      "label": {
+        "title": "Etiketlere göre iş dağılımını görmek için iş öğelerine etiketler ekleyin."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Entegrasyonlar"
+      },
+      "imports": {
+        "title": "İmportlar"
+      },
+      "worklogs": {
+        "title": "Workloglar"
+      },
+      "project_states": {
+        "title": "Proje durumları"
+      },
+      "teamspaces": {
+        "title": "Timspeys"
+      },
+      "initiatives": {
+        "title": "İnisiyatifler"
+      },
+      "customers": {
+        "title": "Kastımerlar"
+      },
+      "cancel_trial": {
+        "title": "Önce deneme sürenizi iptal edin.",
+        "description": "Ücretli planlarımızdan birine ait aktif deneme süreniz var. Lütfen devam etmek için önce bunu iptal edin.",
+        "dismiss": "Kapat",
+        "cancel": "Denemeyi iptal et",
+        "cancel_success_title": "Deneme iptal edildi.",
+        "cancel_success_message": "Artık workspeysi silebilirsiniz.",
+        "cancel_error_title": "Bu işlem başarısız oldu.",
+        "cancel_error_message": "Lütfen tekrar deneyin."
+      },
+      "applications": {
+        "title": "Aplikasyonlar",
+        "applicationId_copied": "Aplikasyon ID panoya kopyalandı",
+        "clientId_copied": "Klayınt ID panoya kopyalandı",
+        "clientSecret_copied": "Klayınt Sikrıt panoya kopyalandı",
+        "third_party_apps": "Üçüncü parti aplikasyonlar",
+        "your_apps": "Aplikasyonlarınız",
+        "connect": "Bağlan",
+        "connected": "Bağlandı",
+        "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
+        "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
+        "client_id_and_secret": "Klayınt ID ve Sikrıt",
+        "client_id_and_secret_description": "Bu sikrıt anahtarı Peycislere kopyalayıp kaydedin. Kapat'a bastıktan sonra bu anahtarı tekrar göremezsiniz.",
+        "client_id_and_secret_download": "Anahtarı buradan CSV olarak indirebilirsiniz.",
+        "application_id": "Aplikasyon ID",
+        "client_id": "Klayınt ID",
+        "client_secret": "Klayınt Sikrıt",
+        "export_as_csv": "CSV olarak dışa aktar",
+        "slug_already_exists": "Slag zaten mevcut",
+        "failed_to_create_application": "Aplikasyon oluşturulamadı",
+        "upload_logo": "Logo yükle",
+        "app_name_title": "Bu aplikasyonu ne olarak adlandıracaksınız",
+        "app_name_error": "Aplikasyon adı gerekli",
+        "app_short_description_title": "Bu aplikasyona kısa bir açıklama verin",
+        "app_short_description_error": "Aplikasyon kısa açıklaması gerekli",
+        "app_description_title": "Ayrıca daha fazla bilgi isteyenler için uzun bir açıklama yazın. Komutlar için / tuşuna basın",
+        "app_description_error": "Aplikasyon açıklaması gerekli",
+        "app_slug_title": "Aplikasyon slag",
+        "app_slug_error": "Aplikasyon slag gerekli",
+        "app_maker_title": "Aplikasyon Meykır",
+        "app_maker_error": "Aplikasyon meykır gerekli",
+        "webhook_url_title": "Webhuk URL",
+        "webhook_url_error": "Webhuk URL gerekli",
+        "invalid_webhook_url_error": "Geçersiz webhuk URL",
+        "redirect_uris_title": "Ridayrekt URIları",
+        "redirect_uris_error": "Ridayrekt URIları gerekli",
+        "invalid_redirect_uris_error": "Geçersiz ridayrekt URIları",
+        "redirect_uris_description": "Aplikasyonun kullanıcıdan sonra yönlendirileceği boşlukla ayrılmış URIları girin örn. https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Yetkilendirilmiş Cavaskrip Orijinleri",
+        "authorized_javascript_origins_error": "Yetkilendirilmiş Cavaskrip Orijinleri gerekli",
+        "invalid_authorized_javascript_origins_error": "Geçersiz yetkilendirilmiş Cavaskrip Orijinleri",
+        "authorized_javascript_origins_description": "Aplikasyonun istek yapmasına izin verilecek boşlukla ayrılmış orijinleri girin örn. app.com example.com",
+        "create_app": "Aplikasyon oluştur",
+        "update_app": "Aplikasyonu güncelle",
+        "regenerate_client_secret_description": "Klayınt sikrıtı yeniden oluştur. Sikrıtı yeniden oluşturursanız, anahtarı kopyalayabilir veya hemen sonra bir CSV dosyasına indirebilirsiniz.",
+        "regenerate_client_secret": "Klayınt sikrıtı yeniden oluştur",
+        "regenerate_client_secret_confirm_title": "Klayınt sikrıtı yeniden oluşturmak istediğinizden emin misiniz?",
+        "regenerate_client_secret_confirm_description": "Bu sikrıtı kullanan aplikasyon çalışmayı durduracak. Sikrıtı aplikasyonda güncellemeniz gerekecek.",
+        "regenerate_client_secret_confirm_cancel": "İptal",
+        "regenerate_client_secret_confirm_regenerate": "Yeniden oluştur",
+        "read_only_access_to_workspace": "Workspeysinize salt okunur erişim",
+        "write_access_to_workspace": "Workspeysinize yazma erişimi",
+        "read_only_access_to_user_profile": "Kullanıcı profilinize salt okunur erişim",
+        "write_access_to_user_profile": "Kullanıcı profilinize yazma erişimi",
+        "connect_app_to_workspace": "{app} aplikasyonunu {workspace} workspeysinize bağlayın",
+        "user_permissions": "Kullanıcı permişınları",
+        "user_permissions_description": "Kullanıcı permişınları, kullanıcının profiline erişim vermek için kullanılır.",
+        "workspace_permissions": "Workspeysı permişınları",
+        "workspace_permissions_description": "Workspeysı permişınları, workspeyse erişim vermek için kullanılır.",
+        "with_the_permissions": "permişınlarla birlikte",
+        "app_consent_title": "{app} Pleyn workspeysinize ve profilinize erişim talep ediyor.",
+        "choose_workspace_to_connect_app_with": "Aplikasyonu bağlamak için bir workspeysı seçin",
+        "app_consent_workspace_permissions_title": "{app} şunları yapmak istiyor",
+        "app_consent_user_permissions_title": "{app} ayrıca bir kullanıcının aşağıdaki kaynaklara erişim permişınını talep edebilir. Bu permişınlar yalnızca bir kullanıcı tarafından talep edilecek ve yetkilendirilecektir.",
+        "app_consent_accept_title": "Kabul ederek",
+        "app_consent_accept_1": "Aplikasyona Pleyn içinde veya dışında kullanabileceğiniz her yerde Pleyn verilerinize erişim izni verirsiniz",
+        "app_consent_accept_2": "{app}'in Gizlilik Politikası ve Kullanım Koşullarını kabul edersiniz",
+        "accepting": "Kabul ediliyor...",
+        "accept": "Kabul et",
+        "categories": "Kategoriler",
+        "select_app_categories": "Aplikasyon kategorilerini seçin",
+        "categories_title": "Kategoriler",
+        "categories_error": "Kategoriler gerekli",
+        "invalid_categories_error": "Geçersiz kategoriler",
+        "categories_description": "En iyi açıklamayı veren kategorileri seçin",
+        "privacy_policy_url_title": "Gizlilik Politikası URL",
+        "privacy_policy_url_error": "Gizlilik Politikası URL gerekli",
+        "invalid_privacy_policy_url_error": "Geçersiz gizlilik politikası URL",
+        "terms_of_service_url_title": "Hizmet Şartları URL",
+        "terms_of_service_url_error": "Hizmet Şartları URL gerekli",
+        "invalid_terms_of_service_url_error": "Geçersiz hizmet şartları URL",
+        "support_url_title": "Destek URL",
+        "support_url_error": "Destek URL gerekli",
+        "invalid_support_url_error": "Geçersiz destek URL",
+        "video_url_title": "Video URL",
+        "video_url_error": "Video URL gerekli",
+        "invalid_video_url_error": "Geçersiz video URL",
+        "setup_url_title": "Kurulum URL",
+        "setup_url_error": "Kurulum URL gerekli",
+        "invalid_setup_url_error": "Geçersiz kurulum URL",
+        "contact_email_title": "İletişim Email",
+        "contact_email_error": "İletişim Email gerekli",
+        "invalid_contact_email_error": "Geçersiz iletişim email",
+        "upload_attachments": "Ekleri yükle",
+        "uploading_images": "{count, plural, one {Yükleniyor {count} görsel} other {Yükleniyor {count} görsel}}",
+        "drop_images_here": "Görselleri buraya bırakın",
+        "click_to_upload_images": "Görselleri yüklemek için tıklayın",
+        "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
+        "uploading": "Yükleniyor...",
+        "upload_and_save": "Yükle ve kaydet"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "İş öğeleri arşivlenemiyor",
+        "message": "Yalnızca Tamamlanmış veya İptal Edilmiş durum gruplarına ait iş öğeleri arşivlenebilir."
+      },
+      "invalid_issue_start_date": {
+        "title": "İş öğeleri güncellenemiyor",
+        "message": "Seçilen başlangıç tarihi bazı iş öğeleri için bitiş tarihinden sonra geliyor. Başlangıç tarihinin bitiş tarihinden önce olduğundan emin olun."
+      },
+      "invalid_issue_target_date": {
+        "title": "İş öğeleri güncellenemiyor",
+        "message": "Seçilen bitiş tarihi bazı iş öğeleri için başlangıç tarihinden önce geliyor. Bitiş tarihinin başlangıç tarihinden sonra olduğundan emin olun."
+      },
+      "invalid_state_transition": {
+        "title": "İş öğeleri güncellenemiyor",
+        "message": "Bazı iş öğeleri için durum değişikliğine izin verilmiyor. Durum değişikliğine izin verildiğinden emin olun."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "İş Öğesi Tipleri",
+    "label_lowercase": "iş öğesi tipleri",
+    "settings": {
+      "title": "İş Öğesi Tipleri",
+      "properties": {
+        "title": "Özel özellikler",
+        "tooltip": "Her iş öğesi tipi, Başlık, Açıklama, Atanan Kişi, Durum, Öncelik, Başlangıç tarihi, Bitiş tarihi, Modül, Döngü vb. gibi varsayılan bir özellik seti ile gelir. Ayrıca ekibinizin ihtiyaçlarına göre kendi özelliklerinizi özelleştirebilir ve ekleyebilirsiniz.",
+        "add_button": "Yeni özellik ekle",
+        "dropdown": {
+          "label": "Özellik tipi",
+          "placeholder": "Tip seçin"
+        },
+        "property_type": {
+          "text": {
+            "label": "Metin"
+          },
+          "number": {
+            "label": "Sayı"
+          },
+          "dropdown": {
+            "label": "Açılır Liste"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Tarih"
+          },
+          "member_picker": {
+            "label": "Üye seçici"
+          }
+        },
+        "attributes": {
+          "label": "Özellikler",
+          "text": {
+            "single_line": {
+              "label": "Tek satır"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Salt okunur",
+              "header": "Salt okunur veri"
+            },
+            "invalid_text_format": {
+              "label": "Geçersiz metin formatı"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Sayı ekle"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Tek seçim"
+            },
+            "multi_select": {
+              "label": "Çoklu seçim"
+            },
+            "no_default_value": {
+              "label": "Varsayılan değer yok"
+            }
+          },
+          "boolean": {
+            "label": "Doğru | Yanlış",
+            "no_default": "Varsayılan değer yok"
+          },
+          "option": {
+            "create_update": {
+              "label": "Seçenekler",
+              "form": {
+                "placeholder": "Seçenek ekle",
+                "errors": {
+                  "name": {
+                    "required": "Seçenek adı gereklidir.",
+                    "integrity": "Aynı ada sahip seçenek zaten var."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Seçenek seçin",
+                "multi": {
+                  "default": "Seçenekler seçin",
+                  "variable": "{count} seçenek seçildi"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla oluşturuldu."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik oluşturulamadı. Lütfen tekrar deneyin!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla güncellendi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik güncellenemedi. Lütfen tekrar deneyin!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla silindi."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik silinemedi. Lütfen tekrar deneyin!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{name} özelliği {action}",
+            "success": {
+              "title": "Başarılı!",
+              "message": "Özellik {name} başarıyla {action}."
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Özellik {action} başarısız oldu. Lütfen tekrar deneyin!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Başlık"
+            },
+            "description": {
+              "placeholder": "Açıklama"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Özelliğinize bir isim vermelisiniz.",
+              "max_length": "Özellik adı 255 karakteri geçmemelidir."
+            },
+            "property_type": {
+              "required": "Bir özellik tipi seçmelisiniz."
+            },
+            "options": {
+              "required": "En az bir seçenek eklemelisiniz."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Aktif",
+          "tooltip": {
+            "disabled": "Devre dışı bırakmak için tıklayın",
+            "enabled": "Etkinleştirmek için tıklayın"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Bu özelliği sil",
+          "description": "Özelliklerin silinmesi mevcut verilerin kaybına neden olabilir.",
+          "secondary_description": "Bunun yerine özelliği devre dışı bırakmak ister misiniz?",
+          "primary_button": "{action}, sil",
+          "secondary_button": "Evet, devre dışı bırak"
+        },
+        "mandate_confirmation": {
+          "label": "Zorunlu özellik",
+          "content": "Bu özellik için varsayılan bir seçenek olduğu görünüyor. Özelliği zorunlu hale getirmek varsayılan değeri kaldıracak ve kullanıcıların kendi seçtikleri bir değer eklemeleri gerekecek.",
+          "tooltip": {
+            "disabled": "Bu özellik türü zorunlu hale getirilemez",
+            "enabled": "Alanı isteğe bağlı olarak işaretlemek için işareti kaldırın",
+            "checked": "Alanı zorunlu olarak işaretlemek için işaretleyin"
+          }
+        },
+        "empty_state": {
+          "title": "Özel özellikler ekle",
+          "description": "Bu iş öğesi tipi için eklediğiniz yeni özellikler burada gösterilecektir."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Bu türü sil",
+        "description": "Türlerin silinmesi mevcut verilerin kaybına yol açabilir.",
+        "primary_button": "Evet, sil",
+        "toast": {
+          "success": {
+            "title": "Başarılı!",
+            "message": "İş öğesi türü başarıyla silindi."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "İş öğesi türü silinemedi. Lütfen tekrar deneyin!"
+          }
+        },
+        "can_disable_warning": "Bunun yerine türü devre dışı bırakmak ister misiniz?"
+      },
+      "cant_delete_linked_message": "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez."
+    },
+    "create": {
+      "title": "İş öğesi tipi oluştur",
+      "button": "İş öğesi tipi ekle",
+      "toast": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi başarıyla oluşturuldu."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": {
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "İş öğesi tipini güncelle",
+      "button": "İş öğesi tipini güncelle",
+      "toast": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi {name} başarıyla güncellendi."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": {
+            "conflict": "{name} türü zaten mevcut. Farklı bir ad seçin."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Bu iş öğesi tipine benzersiz bir isim verin"
+        },
+        "description": {
+          "placeholder": "Bu iş öğesi tipinin ne için olduğunu ve ne zaman kullanılacağını açıklayın."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{name} iş öğesi tipi {action}",
+        "success": {
+          "title": "Başarılı!",
+          "message": "İş öğesi tipi {name} başarıyla {action}."
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "İş öğesi tipi {action} başarısız oldu. Lütfen tekrar deneyin!"
+        }
+      },
+      "tooltip": "{action} için tıklayın"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "İş Öğesi Tiplerini Etkinleştir",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Etkinleştir"
+        },
+        "confirmation": {
+          "title": "Bir kez etkinleştirildikten sonra, İş Öğesi Tipleri devre dışı bırakılamaz.",
+          "description": "Plane'in İş Öğesi, bu proje için varsayılan iş öğesi tipi haline gelecek ve bu projede simgesi ve arka planıyla görünecektir.",
+          "button": {
+            "default": "Etkinleştir",
+            "loading": "Ayarlanıyor"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "İş öğesi tiplerini etkinleştirmek için Pro'ya geçin.",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Pro'ya Geç"
+        }
+      },
+      "upgrade": {
+        "title": "İş öğesi tiplerini etkinleştirmek için yükseltin.",
+        "description": "İş öğelerinizi İş öğesi tipleriyle şekillendirin. Simgeler, arka planlar ve özelliklerle özelleştirin ve bu proje için yapılandırın.",
+        "primary_button": {
+          "text": "Yükselt"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "İmportlar",
+    "logo": "Logo",
+    "import_message": "{serviceName} verilerinizi plane projelerine import edin.",
+    "deactivate": "Deaktif Et",
+    "deactivating": "Deaktif Ediliyor",
+    "migrating": "Taşınıyor",
+    "migrations": "Taşımalar",
+    "refreshing": "Yenileniyor",
+    "import": "İmport Et",
+    "serial_number": "Sıra No.",
+    "project": "Proje",
+    "workspace": "Workspace",
+    "status": "Durum",
+    "total_batches": "Toplam Batch",
+    "imported_batches": "İmport Edilen Batchler",
+    "re_run": "Tekrar Çalıştır",
+    "cancel": "İptal",
+    "start_time": "Başlangıç Zamanı",
+    "no_jobs_found": "İş bulunamadı",
+    "no_project_imports": "Henüz hiç {serviceName} projesi import etmediniz.",
+    "cancel_import_job": "İmport işini iptal et",
+    "cancel_import_job_confirmation": "Bu import işini iptal etmek istediğinizden emin misiniz? Bu, bu proje için import işlemini durduracaktır.",
+    "re_run_import_job": "İmport işini yeniden çalıştır",
+    "re_run_import_job_confirmation": "Bu import işini yeniden çalıştırmak istediğinizden emin misiniz? Bu, bu proje için import işlemini yeniden başlatacaktır.",
+    "upload_csv_file": "Kullanıcı verilerini import etmek için bir CSV dosyası yükleyin.",
+    "connect_importer": "{serviceName} Bağla",
+    "migration_assistant": "Taşıma Asistanı",
+    "migration_assistant_description": "{serviceName} projelerinizi güçlü asistanımızla Plane'e sorunsuzca taşıyın.",
+    "token_helper": "Bunu şuradan alacaksınız",
+    "personal_access_token": "Kişisel Erişim Tokeni",
+    "source_token_expired": "Token Süresi Doldu",
+    "source_token_expired_description": "Sağlanan tokenin süresi doldu. Lütfen deaktif edip yeni bir kimlik seti ile yeniden bağlanın.",
+    "user_email": "Kullanıcı Emaili",
+    "select_state": "Durum Seçin",
+    "select_service_project": "{serviceName} Projesi Seçin",
+    "loading_service_projects": "{serviceName} projeleri yükleniyor",
+    "select_service_workspace": "{serviceName} Workspace Seçin",
+    "loading_service_workspaces": "{serviceName} Workspaceleri Yükleniyor",
+    "select_priority": "Öncelik Seçin",
+    "select_service_team": "{serviceName} Takımı Seçin",
+    "add_seat_msg_free_trial": "{additionalUserCount} kayıtlı olmayan kullanıcı import etmeye çalışıyorsunuz ve mevcut planda sadece {currentWorkspaceSubscriptionAvailableSeats} koltuk kullanılabilir. İmport etmeye devam etmek için şimdi yükseltin.",
+    "add_seat_msg_paid": "{additionalUserCount} kayıtlı olmayan kullanıcı import etmeye çalışıyorsunuz ve mevcut planda sadece {currentWorkspaceSubscriptionAvailableSeats} koltuk kullanılabilir. İmport etmeye devam etmek için en az {extraSeatRequired} ekstra koltuk satın alın.",
+    "skip_user_import_title": "Kullanıcı verisi importunu atla",
+    "skip_user_import_description": "Kullanıcı importunu atlamak, {serviceName}'den gelen iş öğelerinin, yorumların ve diğer verilerin Plane'de taşımayı gerçekleştiren kullanıcı tarafından oluşturulmasıyla sonuçlanacaktır. Yine de daha sonra manuel olarak kullanıcı ekleyebilirsiniz.",
+    "invalid_pat": "Geçersiz Kişisel Erişim Tokeni"
+  },
+  "integrations": {
+    "integrations": "Entegrasyonlar",
+    "loading": "Yükleniyor",
+    "unauthorized": "Bu sayfayı görüntüleme yetkiniz yok.",
+    "configure": "Yapılandır",
+    "not_enabled": "{name} bu workspace için etkinleştirilmemiş.",
+    "not_configured": "Yapılandırılmamış",
+    "disconnect_personal_account": "Kişisel {providerName} hesabını bağlantıdan kes",
+    "not_configured_message_admin": "{name} entegrasyonu yapılandırılmamış. Lütfen yapılandırmak için instance admininizle iletişime geçin.",
+    "not_configured_message_support": "{name} entegrasyonu yapılandırılmamış. Lütfen yapılandırmak için destekle iletişime geçin.",
+    "external_api_unreachable": "Harici API'ye erişilemiyor. Lütfen daha sonra tekrar deneyin.",
+    "error_fetching_supported_integrations": "Desteklenen entegrasyonlar getirilemedi. Lütfen daha sonra tekrar deneyin.",
+    "back_to_integrations": "Entegrasyonlara geri dön",
+    "select_state": "Durum Seçin"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "GitHub İş öğenizi Plane ile bağlayın ve senkronize edin.",
+    "connect_org": "Organizasyonu Bağla",
+    "connect_org_description": "GitHub organizasyonunuzu Plane ile bağlayın.",
+    "processing": "İşleniyor",
+    "org_added_desc": "GitHub organizasyonu eklendi ve zaman",
+    "connection_fetch_error": "Sunucudan bağlantı detayları getirilirken hata oluştu",
+    "personal_account_connected": "Kişisel hesap bağlandı",
+    "personal_account_connected_description": "Kişisel GitHub hesabınız Plane'e bağlandı.",
+    "connect_personal_account": "Kişisel Hesabı Bağla",
+    "connect_personal_account_description": "Kişisel GitHub hesabınızı Plane ile bağlayın.",
+    "repo_mapping": "Repo Eşleştirme",
+    "repo_mapping_description": "GitHub repolarınızı Plane projeleriyle eşleştirin.",
+    "remove_entity": "Varlığı kaldır",
+    "remove_entity_confirmation": "Bu varlığı kaldırmak istediğinizden emin misiniz?",
+    "issue_sync_message": "İş öğeleri {project} ile senkronize edildi",
+    "link": "GitHub reposunu Plane projesine bağla",
+    "pull_request_automation": "Pull Request Otomasyonu",
+    "pull_request_automation_description": "GitHub'dan Plane'e pull request durum eşlemesini yapılandırın",
+    "DRAFT_MR_OPENED": "Taslak PR açıldığında, durumu şuna ayarla",
+    "MR_OPENED": "PR açıldığında, durumu şuna ayarla",
+    "MR_READY_FOR_MERGE": "PR birleştirmeye hazır olduğunda, durumu şuna ayarla",
+    "MR_REVIEW_REQUESTED": "PR incelemesi istendiğinde, durumu şuna ayarla",
+    "MR_MERGED": "PR birleştirildiğinde, durumu şuna ayarla",
+    "MR_CLOSED": "PR kapatıldığında, durumu şuna ayarla"
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Gitlab Merge Requestlerinizi Plane ile bağlayın ve senkronize edin.",
+    "connection_fetch_error": "Sunucudan bağlantı detayları getirilirken hata oluştu",
+    "connect_org": "Organizasyonu Bağla",
+    "connect_org_description": "Gitlab organizasyonunuzu Plane ile bağlayın.",
+    "project_connections": "Gitlab Proje Bağlantıları",
+    "project_connections_description": "Gitlab'dan Plane projelerine merge requestleri senkronize edin.",
+    "plane_project_connection": "Plane Proje Bağlantısı",
+    "plane_project_connection_description": "Gitlab'dan Plane projelerine pull request durum eşlemesini yapılandırın",
+    "remove_connection": "Bağlantıyı Kaldır",
+    "remove_connection_confirmation": "Bu bağlantıyı kaldırmak istediğinizden emin misiniz?",
+    "link": "Gitlab reposunu Plane projesine bağla",
+    "pull_request_automation": "Pull Request Otomasyonu",
+    "pull_request_automation_description": "Gitlab'dan Plane'e pull request durum eşlemesini yapılandırın",
+    "DRAFT_MR_OPENED": "Taslak MR açıldığında, durumu şuna ayarla",
+    "MR_OPENED": "MR açıldığında, durumu şuna ayarla",
+    "MR_REVIEW_REQUESTED": "MR incelemesi istendiğinde, durumu şuna ayarla",
+    "MR_READY_FOR_MERGE": "MR birleştirmeye hazır olduğunda, durumu şuna ayarla",
+    "MR_MERGED": "MR birleştirildiğinde, durumu şuna ayarla",
+    "MR_CLOSED": "MR kapatıldığında, durumu şuna ayarla",
+    "integration_enabled_text": "Gitlab entegrasyonu Etkinleştirildiğinde, iş öğesi iş akışlarını otomatikleştirebilirsiniz",
+    "choose_entity": "Varlık Seçin",
+    "choose_project": "Proje Seçin",
+    "link_plane_project": "Plane projesini bağla"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Slack workspacenizi Plane ile bağlayın.",
+    "connect_personal_account": "Kişisel Slack hesabınızı Plane ile bağlayın.",
+    "personal_account_connected": "Kişisel {providerName} hesabınız artık Plane'e bağlı.",
+    "link_personal_account": "Kişisel {providerName} hesabınızı Plane'e bağlayın.",
+    "connected_slack_workspaces": "Bağlı Slack workspaceleri",
+    "connected_on": "{date} tarihinde bağlandı",
+    "disconnect_workspace": "{name} workspaceini bağlantıdan kes",
+    "project_updates": {
+      "title": "Proje Güncellemeleri",
+      "description": "Projeleriniz için proje güncelleme bildirimlerini yapılandırın",
+      "add_new_project_update": "Yeni proje güncelleme bildirimi ekle",
+      "project_updates_empty_state": "Slack Kanallarına bağlı projeler burada görünecek.",
+      "project_updates_form": {
+        "title": "Proje Güncellemelerini Yapılandır",
+        "description": "İş öğeleri oluşturulduğunda Slack'te proje güncelleme bildirimleri alın",
+        "failed_to_load_channels": "Slack'ten kanallar yüklenemedi",
+        "project_dropdown": {
+          "placeholder": "Bir proje seçin",
+          "label": "Plane Projesi",
+          "no_projects": "Kullanılabilir proje yok"
+        },
+        "channel_dropdown": {
+          "label": "Slack Kanalı",
+          "placeholder": "Bir kanal seçin",
+          "no_channels": "Kullanılabilir kanal yok"
+        },
+        "all_projects_connected": "Tüm projeler zaten Slack kanallarına bağlı.",
+        "all_channels_connected": "Tüm Slack kanalları zaten projelere bağlı.",
+        "project_connection_success": "Proje bağlantısı başarıyla oluşturuldu",
+        "project_connection_updated": "Proje bağlantısı başarıyla güncellendi",
+        "project_connection_deleted": "Proje bağlantısı başarıyla silindi",
+        "failed_delete_project_connection": "Proje bağlantısı silinemedi",
+        "failed_create_project_connection": "Proje bağlantısı oluşturulamadı",
+        "failed_upserting_project_connection": "Proje bağlantısı güncellenemedi",
+        "failed_loading_project_connections": "Proje bağlantılarınızı yükleyemedik. Bu, bir ağ sorunu veya entegrasyonla ilgili bir sorundan kaynaklanıyor olabilir."
+      }
+    }
+  },
+  "file_upload": {
+    "upload_text": "Dosya yüklemek için buraya tıklayın",
+    "drag_drop_text": "Sürükle ve Bırak",
+    "processing": "İşleniyor",
+    "invalid": "Geçersiz dosya tipi",
+    "missing_fields": "Eksik alanlar",
+    "success": "{fileName} Yüklendi!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Sağlanan sorgu parametreleri geçersiz veya gerekli alanlar eksik",
+    "invalid_installation_account": "Sağlanan kurulum hesabı geçerli değil",
+    "generic_error": "İsteğiniz işlenirken beklenmeyen bir hata oluştu",
+    "connection_not_found": "İstenilen bağlantı bulunamadı",
+    "multiple_connections_found": "Yalnızca bir tane beklenirken birden fazla bağlantı bulundu",
+    "cannot_create_multiple_connections": "Organizasyonunuzu zaten bir workspeysle konnekt ettiniz. Lütfen yeni bir konnekşın yapmadan önce mevcut konnekşını diskonnekt edin.",
+    "installation_not_found": "İstenilen kurulum bulunamadı",
+    "user_not_found": "İstenilen kullanıcı bulunamadı",
+    "error_fetching_token": "Kimlik doğrulama tokeni alınamadı",
+    "invalid_app_credentials": "Sağlanan uygulama kimlik bilgileri geçersiz",
+    "invalid_app_installation_id": "Uygulama yüklenemedi"
+  },
+  "import_status": {
+    "created": "Oluşturuldu",
+    "initiated": "Başlatıldı",
+    "pulling": "Çekiliyor",
+    "pulled": "Çekildi",
+    "transforming": "Dönüştürülüyor",
+    "transformed": "Dönüştürüldü",
+    "pushing": "İtiliyor",
+    "finished": "Tamamlandı",
+    "error": "Hata",
+    "cancelled": "İptal Edildi"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Jira verilerinizi Plane projelerine import edin.",
+    "personal_access_token": "Kişisel Erişim Tokeni",
+    "user_email": "Kullanıcı Emaili",
+    "atlassian_security_settings": "Atlassian Güvenlik Ayarları",
+    "email_description": "Bu, kişisel erişim tokeninize bağlı emaildir",
+    "jira_domain": "Jira Domain",
+    "jira_domain_description": "Bu, Jira instance'ınızın domainidir",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Jira verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_jira": "Jira'yı Yapılandır",
+      "description_configure_jira": "Lütfen verilerinizi taşımak istediğiniz Jira workspaceini seçin.",
+      "title_import_users": "Kullanıcıları İmport Et",
+      "description_import_users": "Lütfen Jira'dan Plane'e taşımak istediğiniz kullanıcıları ekleyin. Alternatif olarak, bu adımı atlayabilir ve daha sonra manuel olarak kullanıcı ekleyebilirsiniz.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Jira durumlarını elimizden geldiğince Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Öncelikleri elimizden geldiğince otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan öncelikleri eşleştirin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Asana verilerinizi Plane projelerine import edin.",
+    "select_asana_priority_field": "Asana Öncelik Alanını Seçin",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Asana verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_asana": "Asana'yı Yapılandır",
+      "description_configure_asana": "Lütfen verilerinizi taşımak istediğiniz Asana workspaceini ve projeyi seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Lütfen Plane proje durumlarına eşlemek istediğiniz Asana durumlarını seçin.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Asana önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Asana'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Linear verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Linear verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_linear": "Linear'ı Yapılandır",
+      "description_configure_linear": "Lütfen verilerinizi taşımak istediğiniz Linear takımını seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Linear durumlarını elimizden geldiğince Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Linear önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Linear'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Jira Server verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce Jira verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_jira": "Jira'yı Yapılandır",
+      "description_configure_jira": "Lütfen verilerinizi taşımak istediğiniz Jira workspaceini seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "Lütfen Plane proje durumlarına eşlemek istediğiniz Jira durumlarını seçin.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen Plane proje önceliklerine eşlemek istediğiniz Jira önceliklerini seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte Jira'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Notion verilerinizi Plane projelerine aktarın.",
+    "steps": {
+      "title_upload_zip": "Notion'dan Dışa Aktarılan ZIP'i Yükle",
+      "description_upload_zip": "Lütfen Notion verilerinizi içeren ZIP dosyasını yükleyin."
+    },
+    "upload": {
+      "drop_file_here": "Notion zip dosyanızı buraya bırakın",
+      "upload_title": "Notion Dışa Aktarımını Yükle",
+      "drag_drop_description": "Notion dışa aktarım zip dosyanızı sürükleyip bırakın veya göz atmak için tıklayın",
+      "file_type_restriction": "Yalnızca Notion'dan dışa aktarılan .zip dosyaları desteklenir",
+      "select_file": "Dosya Seç",
+      "uploading": "Yükleniyor...",
+      "preparing_upload": "Yükleme hazırlanıyor...",
+      "confirming_upload": "Yükleme onaylanıyor...",
+      "confirming": "Onaylanıyor...",
+      "upload_complete": "Yükleme tamamlandı",
+      "upload_failed": "Yükleme başarısız",
+      "start_import": "İçe Aktarmayı Başlat",
+      "retry_upload": "Yüklemeyi Yeniden Dene",
+      "upload": "Yükle",
+      "ready": "Hazır",
+      "error": "Hata",
+      "upload_complete_message": "Yükleme tamamlandı!",
+      "upload_complete_description": "Notion verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
+      "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    }
+  },
+
+  "flatfile_importer": {
+    "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce CSV verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_csv": "CSV'yi Yapılandır",
+      "description_configure_csv": "Lütfen CSV dosyanızı yükleyin ve Plane alanlarına eşlenecek alanları yapılandırın."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "ClickUp verilerinizi Plane projelerine import edin.",
+    "select_service_space": "{serviceName} Space Seçin",
+    "select_service_folder": "{serviceName} Folder Seçin",
+    "selected": "Seçildi",
+    "users": "Kullanıcılar",
+    "steps": {
+      "title_configure_plane": "Plane'i Yapılandır",
+      "description_configure_plane": "Lütfen önce ClickUp verilerinizi taşımayı düşündüğünüz projeyi Plane'de oluşturun. Proje oluşturulduktan sonra, burada seçin.",
+      "title_configure_clickup": "ClickUp'ı Yapılandır",
+      "description_configure_clickup": "Lütfen ClickUp takımı, alan ve klasörünü seçin.",
+      "title_map_states": "Durumları Eşleştir",
+      "description_map_states": "ClickUp durumlarını Plane durumlarıyla otomatik olarak eşleştirdik. Devam etmeden önce lütfen kalan durumları eşleştirin, ayrıca manuel olarak durumlar oluşturup eşleştirebilirsiniz.",
+      "title_map_priorities": "Öncelikleri Eşleştir",
+      "description_map_priorities": "Lütfen ClickUp önceliklerini Plane proje önceliklerine eşlemek istediğinizi seçin.",
+      "title_summary": "Özet",
+      "description_summary": "İşte ClickUp'dan Plane'e taşınacak verilerin bir özeti."
+    }
+  },
+
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Bar",
+          "long_label": "Bar çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik bar"
+            },
+            "stacked": {
+              "short_label": "Stekt",
+              "long_label": "Stekt bar"
+            },
+            "grouped": {
+              "short_label": "Grupd",
+              "long_label": "Grupd bar"
+            }
+          },
+          "orientation": {
+            "label": "Oryantasyon",
+            "horizontal": "Horizontal",
+            "vertical": "Vertikal",
+            "placeholder": "Oryantasyon ekle"
+          },
+          "bar_color": "Bar rengi"
+        },
+        "line_chart": {
+          "short_label": "Layn",
+          "long_label": "Layn çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik layn"
+            },
+            "multi_line": {
+              "short_label": "Multi-layn",
+              "long_label": "Multi-layn"
+            }
+          },
+          "line_color": "Layn rengi",
+          "line_type": {
+            "label": "Layn tipi",
+            "solid": "Solid",
+            "dashed": "Deşt",
+            "placeholder": "Layn tipi ekle"
+          }
+        },
+        "area_chart": {
+          "short_label": "Eriya",
+          "long_label": "Eriya çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik eriya"
+            },
+            "stacked": {
+              "short_label": "Stekt",
+              "long_label": "Stekt eriya"
+            },
+            "comparison": {
+              "short_label": "Komperisın",
+              "long_label": "Komperisın eriya"
+            }
+          },
+          "fill_color": "Fil rengi"
+        },
+        "donut_chart": {
+          "short_label": "Donıt",
+          "long_label": "Donıt çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Beysik donıt"
+            },
+            "progress": {
+              "short_label": "Progrıs",
+              "long_label": "Progrıs donıt"
+            }
+          },
+          "center_value": "Sentır değeri",
+          "completed_color": "Tamamlanmış rengi"
+        },
+        "pie_chart": {
+          "short_label": "Pay",
+          "long_label": "Pay çart",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Pay"
+            }
+          },
+          "group": {
+            "label": "Grupd parçalar",
+            "group_thin_pieces": "İnce parçaları grupla",
+            "minimum_threshold": {
+              "label": "Minimum treşhold",
+              "placeholder": "Treşhold ekle"
+            },
+            "name_group": {
+              "label": "Grup ismi",
+              "placeholder": "\"5%'den az\""
+            }
+          },
+          "show_values": "Değerleri göster",
+          "value_type": {
+            "percentage": "Yüzde",
+            "count": "Sayı"
+          }
+        },
+        "number": {
+          "short_label": "Nambır",
+          "long_label": "Nambır",
+          "chart_models": {
+            "basic": {
+              "short_label": "Beysik",
+              "long_label": "Nambır"
+            }
+          },
+          "alignment": {
+            "label": "Tekst hizalama",
+            "left": "Sol",
+            "center": "Sentır",
+            "right": "Sağ",
+            "placeholder": "Tekst hizalama ekle"
+          },
+          "text_color": "Tekst rengi"
+        }
+      },
+      "sections": {
+        "charts": "Çarts",
+        "text": "Tekst"
+      },
+      "color_palettes": {
+        "modern": "Modern",
+        "horizon": "Horayzın",
+        "earthen": "Örtın"
+      },
+      "common": {
+        "add_widget": "Vicıt ekle",
+        "widget_title": {
+          "label": "Bu vicıtı adlandır",
+          "placeholder": "örn., \"Dünkü yapılacaklar\", \"Hepsi Tamamlandı\""
+        },
+        "widget_type": "Vicıt tipi",
+        "date_group": {
+          "label": "Deyt grup",
+          "placeholder": "Deyt grup ekle"
+        },
+        "group_by": "Grup bay",
+        "stack_by": "Stek bay",
+        "daily": "Deyli",
+        "weekly": "Vikli",
+        "monthly": "Mantli",
+        "yearly": "Yirli",
+        "work_item_count": "Work aytım sayısı",
+        "estimate_point": "Estimeyt poynt",
+        "pending_work_item": "Bekleyen work aytımlar",
+        "completed_work_item": "Tamamlanmış work aytımlar",
+        "in_progress_work_item": "Devam eden work aytımlar",
+        "blocked_work_item": "Bloklanmış work aytımlar",
+        "work_item_due_this_week": "Bu hafta dolan work aytımlar",
+        "work_item_due_today": "Bugün dolan work aytımlar",
+        "color_scheme": {
+          "label": "Renkler şeması",
+          "placeholder": "Renk şeması ekle"
+        },
+        "smoothing": "Smuting",
+        "markers": "Markırlar",
+        "legends": "Lecınds",
+        "tooltips": "Tultips",
+        "opacity": {
+          "label": "Opasiti",
+          "placeholder": "Opasiti ekle"
+        },
+        "border": "Bordır",
+        "widget_configuration": "Vicıt konfigürasyonu",
+        "configure_widget": "Vicıtı konfigüre et",
+        "guides": "Gaydlar",
+        "style": "Stayl",
+        "area_appearance": "Eriya görünümü",
+        "comparison_line_appearance": "Komperisın-layn görünümü",
+        "add_property": "Properti ekle",
+        "add_metric": "Metrik ekle"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "stacked": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Stek bay için değer eksik."
+          },
+          "grouped": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Grup bay için değer eksik."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "multi_line": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Grup bay için değer eksik."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "stacked": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik.",
+            "group_by": "Stek bay için değer eksik."
+          },
+          "comparison": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          },
+          "progress": {
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "X-ekseni için değer eksik.",
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "number": {
+          "basic": {
+            "y_axis_metric": "Metrik için değer eksik."
+          }
+        },
+        "ask_admin": "Bu vicıtı konfigüre etmesi için admininize sorun."
+      },
+      "upgrade_required": {
+        "title": "Bu vicıt tipi planınıza dahil değil."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Yeni deşbord oluştur",
+        "update": "Deşbordu güncelle"
+      },
+      "title": {
+        "label": "Deşbordunuzu adlandırın.",
+        "placeholder": "\"Projeler arası kapasite\", \"Takıma göre iş yükü\", \"Tüm projelerdeki durum\"",
+        "required_error": "Başlık gerekli"
+      },
+      "project": {
+        "label": "Projeleri seç",
+        "placeholder": "Bu projelerden gelen veriler bu deşbordu besleyecek.",
+        "required_error": "Projeler gerekli"
+      },
+      "create_dashboard": "Deşbord oluştur",
+      "update_dashboard": "Deşbordu güncelle"
+    },
+    "delete_modal": {
+      "heading": "Deşbordu sil"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "İlerlemeni talep üzerine, kalıcı deşbordlarda sun.",
+        "description": "İhtiyacın olan herhangi bir deşbordu oluştur ve verilerinin görünümünü mükemmel sunum için özelleştir.",
+        "coming_soon_to_mobile": "Yakında mobil uygulamada",
+        "card_1": {
+          "title": "Tüm projelerin için",
+          "description": "Tüm projelerinle workspeysin tanrı-bakışı görünümünü al veya ilerleme görünümün için work verilerini dilimle."
+        },
+        "card_2": {
+          "title": "Pleyn'deki herhangi bir veri için",
+          "description": "Hazır Analitiks ve hazır Saykıl çartlarının ötesine geç ve timleri, inisiyatifleri veya başka şeyleri daha önce görmediğin gibi gör."
+        },
+        "card_3": {
+          "title": "Tüm deyta viz ihtiyaçların için",
+          "description": "Work verilerini tam istediğin gibi görmek ve göstermek için ince ayarlı kontrollerle birkaç özelleştirilebilir çart arasından seç."
+        },
+        "card_4": {
+          "title": "Talep üzerine ve kalıcı",
+          "description": "Verilerinin otomatik yenilenmesi, skop değişiklikleri için kontekstual flagler ve paylaşılabilir permalinklerle bir kere oluştur, sonsuza kadar sakla."
+        },
+        "card_5": {
+          "title": "Eksportlar ve şedyuld komslar",
+          "description": "Linklerin çalışmadığı zamanlar için, deşbordlarını tek seferlik PDF'lere çıkar veya steykholderslara otomatik olarak gönderilmek üzere şedyul et."
+        },
+        "card_6": {
+          "title": "Tüm devayslar için oto-leyavt",
+          "description": "İstediğin leyavt için vicıtlarını yeniden boyutlandır ve mobil, tablet ve diğer bravzırlarda aynı şekilde gör."
+        }
+      },
+      "dashboards_list": {
+        "title": "Verileri vicıtlarda vizualize et, deşbordlarını vicıtlarla oluştur ve en güncel halini talep üzerine gör.",
+        "description": "Deşbordlarını, verilerini belirttiğin skopta gösteren Kastım Vicıtlarla oluştur. Projeler ve timler arasındaki tüm işin için deşbordlar al ve talep üzerine takip için steykholderlarla permalinkler paylaş."
+      },
+      "dashboards_search": {
+        "title": "Bu bir deşbordun ismiyle eşleşmiyor.",
+        "description": "Kverinin doğru olduğundan emin ol veya başka bir kveri dene."
+      },
+      "widgets_list": {
+        "title": "Verilerini istediğin gibi vizualize et.",
+        "description": "Verilerini belirttiğin kaynaklardan istediğin şekilde görmek için laynlar, barlar, paylar ve diğer formatları kullan."
+      },
+      "widget_data": {
+        "title": "Burada görülecek bir şey yok",
+        "description": "Burada görmek için yenile veya veri ekle."
+      }
+    },
+    "common": {
+      "editing": "Editliniyor"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Yeni iş öğelerine izin ver",
+      "work_item_creation_disable_tooltip": "Bu durum için iş öğesi oluşturma devre dışı",
+      "default_state": "Varsayılan durum tüm üyelerin yeni iş öğeleri oluşturmasına izin verir. Bu değiştirilemez",
+      "state_change_count": "{count, plural, one {1 izin verilen durum değişikliği} other {{count} izin verilen durum değişikliği}}",
+      "movers_count": "{count, plural, one {1 listelenmiş inceleyici} other {{count} listelenmiş inceleyici}}",
+      "state_changes": {
+        "label": {
+          "default": "İzin verilen durum değişikliği ekle",
+          "loading": "İzin verilen durum değişikliği ekleniyor"
+        },
+        "move_to": "Durumu şuna değiştir",
+        "movers": {
+          "label": "İncelendiğinde",
+          "tooltip": "İnceleyiciler, iş öğelerini bir durumdan diğerine taşıma izni olan kişilerdir.",
+          "add": "İnceleyici ekle"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Bu iş öğesini buraya taşıyamazsınız."
+    },
+    "workflow_enabled": {
+      "label": "Durum değişikliği"
+    },
+    "workflow_tree": {
+      "label": "Şuradaki iş öğeleri için",
+      "state_change_label": "şuraya taşıyabilir"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Değişikliklerin ve incelemelerin kargaşasını İş Akışları ile kontrol edin.",
+        "description": "Plane'deki İş Akışları ile işinizin nereye, kim tarafından ve ne zaman taşınacağına dair kurallar belirleyin."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Değişiklik geçmişini görüntüle",
+      "reset_workflow": "İş akışını sıfırla"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Bu iş akışını sıfırlamak istediğinizden emin misiniz?",
+        "description": "Bu iş akışını sıfırlarsanız, tüm durum değişikliği kurallarınız silinecek ve bunları bu projede çalıştırmak için yeniden oluşturmanız gerekecektir."
+      },
+      "delete_state_change": {
+        "title": "Bu durum değişikliği kuralını silmek istediğinizden emin misiniz?",
+        "description": "Silindikten sonra, bu değişikliği geri alamazsınız ve bu kuralı bu proje için çalıştırmak istiyorsanız tekrar ayarlamanız gerekecektir."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "İş akışı {action}",
+        "success": {
+          "title": "Başarılı",
+          "message": "İş akışı başarıyla {action}"
+        },
+        "error": {
+          "title": "Hata",
+          "message": "İş akışı {action} olamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Başarılı",
+          "message": "İş akışı başarıyla sıfırlandı"
+        },
+        "error": {
+          "title": "İş akışı sıfırlama hatası",
+          "message": "İş akışı sıfırlanamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı ekleme hatası",
+          "message": "Durum değişikliği kuralı eklenemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı değiştirme hatası",
+          "message": "Durum değişikliği kuralı değiştirilemedi. Lütfen tekrar deneyin."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Durum değişikliği kuralı kaldırma hatası",
+          "message": "Durum değişikliği kuralı kaldırılamadı. Lütfen tekrar deneyin."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Durum değişikliği kuralı inceleyicileri değiştirme hatası",
+          "message": "Durum değişikliği kuralı inceleyicileri değiştirilemedi. Lütfen tekrar deneyin."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Müşteri} other {Müşteriler}}",
+    "open": "Müşteriyi aç",
+    "dropdown": {
+      "placeholder": "Müşteri seç",
+      "required": "Lütfen bir müşteri seçin",
+      "no_selection": "Müşteri yok"
+    },
+    "upgrade": {
+      "title": "Müşterilerle işleri önceliklendir ve yönet.",
+      "description": "İşlerinizi müşterilere göre eşleştirin ve müşteri özelliklerine göre önceliklendirin."
+    },
+    "properties": {
+      "default": {
+        "title": "Varsayılan özellikler",
+        "customer_name": {
+          "name": "Müşteri adı",
+          "placeholder": "Bu kişi veya işletmenin adı olabilir",
+          "validation": {
+            "required": "Müşteri adı gereklidir.",
+            "max_length": "Müşteri adı 255 karakterden fazla olamaz."
+          }
+        },
+        "description": {
+          "name": "Açıklama",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Email girin",
+          "validation": {
+            "required": "Email gereklidir.",
+            "pattern": "Geçersiz email adresi."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "https:// ile başlayan herhangi bir URL çalışacaktır.",
+          "placeholder_short": "Website ekle",
+          "validation": {
+            "pattern": "Geçersiz website URL'si"
+          }
+        },
+        "employees": {
+          "name": "Çalışanlar",
+          "placeholder": "Müşteriniz bir işletme ise çalışan sayısı.",
+          "validation": {
+            "min_length": "Çalışanlar 0'dan az olamaz.",
+            "max_length": "Çalışan sayısı 2147483647'yi aşamaz"
+          }
+        },
+        "size": {
+          "name": "Büyüklük",
+          "placeholder": "Şirket büyüklüğü ekle",
+          "validation": {
+            "min_length": "Geçersiz büyüklük"
+          }
+        },
+        "domain": {
+          "name": "Sektör",
+          "placeholder": "Perakende, e-Ticaret, Fintek, Bankacılık",
+          "placeholder_short": "Sektör ekle",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Aşama",
+          "placeholder": "Aşama seç",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Kontrat Durumu",
+          "placeholder": "Kontrat durumu seç",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Gelir",
+          "placeholder": "Bu, müşterinizin yıllık olarak ürettiği gelirdir.",
+          "placeholder_short": "Gelir ekle",
+          "validation": {
+            "min_length": "Gelir 0'dan az olamaz."
+          }
+        },
+        "requests": {
+          "name": "Talep sayısı"
+        },
+        "invalid_value": "Geçersiz özellik değeri."
+      },
+      "custom": {
+        "title": "Özel özellikler",
+        "info": "İş öğelerini veya müşteri kayıtlarını daha iyi yönetebilmeniz için müşterilerinizin benzersiz özelliklerini Plane'e ekleyin."
+      },
+      "empty_state": {
+        "title": "Henüz özel özelliğiniz yok.",
+        "description": "İş öğelerinde, Plane'in başka yerlerinde veya CRM gibi Plane dışındaki bir araçta görmek istediğiniz özel özellikler, eklediğinizde burada görünecektir."
+      },
+      "add": {
+        "primary_button": "Yeni özellik ekle"
+      }
+    },
+    "stage": {
+      "lead": "Lead",
+      "sales_qualified_lead": "Satış onaylı lead",
+      "contract_negotiation": "Kontrat görüşmesi",
+      "closed_won": "Kazanıldı",
+      "closed_lost": "Kaybedildi"
+    },
+    "contract_status": {
+      "active": "Aktif",
+      "pre_contract": "Kontrat öncesi",
+      "signed": "İmzalandı",
+      "inactive": "İnaktif"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Bu müşteri kaydını bulamadık.",
+        "description": "Bu kayda giden bağlantı yanlış olabilir veya bu kayıt silinmiş olabilir.",
+        "primary_button": "Müşterilere git",
+        "secondary_button": "Müşteri ekle"
+      },
+      "search": {
+        "title": "Bu terimle eşleşen müşteri kayıtlarınız yok gibi görünüyor.",
+        "description": "Başka bir arama terimiyle deneyin veya o terim için sonuç görmeniz gerektiğinden eminseniz bizimle iletişime geçin."
+      },
+      "list": {
+        "title": "İşinizin hacmini, ritmini ve akışını müşterileriniz için önemli olana göre yönetin.",
+        "description": "Plane'e özel bir özellik olan Müşteriler ile artık sıfırdan yeni müşteriler oluşturabilir ve bunları işinizle bağlantılandırabilirsiniz. Yakında, onları sizin için önemli olan özel özellikleriyle birlikte diğer araçlardan da getirebileceksiniz.",
+        "primary_button": "İlk müşterinizi ekleyin"
+      }
+    },
+    "settings": {
+      "unauthorized": "Bu sayfaya erişme yetkiniz yok.",
+      "description": "İş akışınızda müşteri ilişkilerini takip edin ve yönetin.",
+      "enable": "Müşterileri Etkinleştir",
+      "toasts": {
+        "enable": {
+          "loading": "Müşteriler özelliği etkinleştiriliyor...",
+          "success": {
+            "title": "Bu workspace için Müşterileri etkinleştirdiniz.",
+            "message": "Üyeler artık müşteri kayıtları ekleyebilir, bunları iş öğelerine bağlayabilir ve daha fazlasını yapabilir."
+          },
+          "error": {
+            "title": "Bu sefer Müşterileri etkinleştiremedik.",
+            "message": "Tekrar deneyin veya daha sonra bu ekrana geri dönün. Hala çalışmazsa.",
+            "action": "Destek ile görüşün"
+          }
+        },
+        "disable": {
+          "loading": "Müşteriler özelliği devre dışı bırakılıyor...",
+          "success": {
+            "title": "Müşteriler devre dışı",
+            "message": "Müşteriler özelliği başarıyla devre dışı bırakıldı!"
+          },
+          "error": {
+            "title": "Hata",
+            "message": "Müşteriler özelliği devre dışı bırakılamadı!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Müşteri listenizi alamadık.",
+          "message": "Tekrar deneyin veya bu sayfayı yenileyin."
+        }
+      },
+      "copy_link": {
+        "title": "Bu müşteriye doğrudan bağlantıyı kopyaladınız.",
+        "message": "Herhangi bir yere yapıştırın ve doğrudan buraya yönlendirecektir."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} artık kullanılabilir",
+          "message": "Bu müşteriyi iş öğelerinde referans gösterebilir ve onlardan gelen talepleri de takip edebilirsiniz.",
+          "actions": {
+            "view": "Görüntüle",
+            "copy_link": "Bağlantıyı kopyala",
+            "copied": "Kopyalandı!"
+          }
+        },
+        "error": {
+          "title": "Bu sefer o kaydı oluşturamadık.",
+          "message": "Tekrar kaydetmeyi deneyin veya kaydedilmemiş metninizi tercihen başka bir sekmede yeni bir girişe kopyalayın."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Başarılı!",
+          "message": "Müşteri başarıyla güncellendi!"
+        },
+        "error": {
+          "title": "Hata!",
+          "message": "Müşteri güncellenemedi. Tekrar deneyin!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Müşterinin logosunu yükleyemedik.",
+          "message": "Logoyu tekrar kaydetmeyi deneyin veya sıfırdan başlayın."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Bu müşterinin kaydından bir iş öğesini kaldırdınız.",
+            "message": "Bu müşteriyi iş öğesinden de otomatik olarak kaldırdık."
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Bu sefer o iş öğesini bu müşterinin kaydından kaldıramadık."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Bu sefer o iş öğesini bu müşterinin kaydına ekleyemedik.",
+            "message": "O iş öğesini tekrar eklemeyi deneyin veya daha sonra geri dönün. Hala çalışmazsa, bize ulaşın."
+          },
+          "success": {
+            "title": "Bu müşterinin kaydına bir iş öğesi eklediniz.",
+            "message": "Bu müşteriyi iş öğesine de otomatik olarak ekledik."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Düzenle",
+      "copy_link": "Müşteri bağlantısını kopyala",
+      "delete": "Sil"
+    },
+    "create": {
+      "label": "Müşteri kaydı oluştur",
+      "loading": "Oluşturuluyor",
+      "cancel": "İptal"
+    },
+    "update": {
+      "label": "Müşteriyi güncelle",
+      "loading": "Güncelleniyor"
+    },
+    "delete": {
+      "title": "{customer_name} müşteri kaydını silmek istediğinizden emin misiniz?",
+      "description": "Bu kayıtla ilişkili tüm veriler kalıcı olarak silinecek. Bu kaydı daha sonra geri yükleyemezsiniz."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Henüz gösterilecek talep yok.",
+          "description": "Müşterilerinizden iş öğelerine bağlayabileceğiniz talepler oluşturun.",
+          "button": "Yeni talep ekle"
+        },
+        "search": {
+          "title": "Bu terimle eşleşen talepleriniz yok gibi görünüyor.",
+          "description": "Başka bir arama terimiyle deneyin veya o terim için sonuç görmeniz gerektiğinden eminseniz bizimle iletişime geçin."
+        }
+      },
+      "label": "{count, plural, one {Talep} other {Talepler}}",
+      "add": "Talep ekle",
+      "create": "Talep oluştur",
+      "update": "Talebi güncelle",
+      "form": {
+        "name": {
+          "placeholder": "Bu talebi adlandırın",
+          "validation": {
+            "required": "İsim gereklidir.",
+            "max_length": "Talep adı 255 karakteri geçmemelidir."
+          }
+        },
+        "description": {
+          "placeholder": "Talebin niteliğini açıklayın veya bu müşterinin başka bir araçtaki yorumunu yapıştırın."
+        },
+        "source": {
+          "add": "Kaynak ekle",
+          "update": "Kaynağı güncelle",
+          "url": {
+            "label": "URL",
+            "required": "URL gereklidir",
+            "invalid": "Geçersiz website URL'si"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Bağlantı kopyalandı",
+          "message": "Müşteri talebi bağlantısı panoya kopyalandı."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Ek yükleniyor...",
+            "success": {
+              "title": "Ek yüklendi",
+              "message": "Ek başarıyla yüklendi."
+            },
+            "error": {
+              "title": "Ek yüklenemedi",
+              "message": "Ek yüklenemedi."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Hata!",
+              "message": "Bir seferde yalnızca bir dosya yüklenebilir."
+            }
+          },
+          "length": {
+            "message": "Dosya {size}MB veya daha küçük boyutta olmalıdır"
+          },
+          "remove": {
+            "success": {
+              "title": "Ek kaldırıldı",
+              "message": "Ek başarıyla kaldırıldı"
+            },
+            "error": {
+              "title": "Ek kaldırılamadı",
+              "message": "Ek kaldırılamadı"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Başarılı!",
+              "message": "Kaynak başarıyla güncellendi!"
+            },
+            "error": {
+              "title": "Hata!",
+              "message": "Kaynak güncellenemedi."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Hata!",
+              "message": "Talebe iş öğeleri eklenemedi. Tekrar deneyin."
+            },
+            "success": {
+              "title": "Başarılı!",
+              "message": "Talebe iş öğeleri eklendi."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Talep başarıyla güncellendi!",
+            "title": "Başarılı!"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Talep güncellenemedi. Tekrar deneyin!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Talep başarıyla oluşturuldu!",
+            "title": "Başarılı!"
+          },
+          "error": {
+            "title": "Hata!",
+            "message": "Talep oluşturulamadı. Tekrar deneyin!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Bağlantılı iş öğeleri",
+      "link": "İş öğelerini bağla",
+      "empty_state": {
+        "list": {
+          "title": "Bu müşteriye henüz bağlı iş öğeniz yok gibi görünüyor.",
+          "description": "Herhangi bir projeden mevcut iş öğelerini buraya bağlayın, böylece onları bu müşteriye göre takip edebilirsiniz.",
+          "button": "İş öğesi bağla"
+        }
+      },
+      "action": {
+        "remove_epic": "Epik'i kaldır",
+        "remove": "İş öğesini kaldır"
+      }
+    },
+    "sidebar": {
+      "properties": "Özellikler"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Şablonlar",
+      "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmak için harcanan zamanın %80'ini tasarruf edin.",
+      "options": {
+        "project": {
+          "label": "Proje şablonları"
+        },
+        "work_item": {
+          "label": "İş öğesi şablonları"
+        },
+        "page": {
+          "label": "Sayfa şablonları"
+        }
+      },
+      "create_template": {
+        "label": "Şablon oluştur",
+        "no_permission": {
+          "project": "Şablon oluşturmak için proje admininizle iletişime geçin",
+          "workspace": "Şablon oluşturmak için workspace admininizle iletişime geçin"
+        }
+      },
+      "use_template": {
+        "button": "Şablonu kullan"
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Workspace'den türetildi"
+        },
+        "project": {
+          "info": "Projeden türetildi"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Proje şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Projenizi adlandırın.",
+            "validation": {
+              "required": "Proje başlığı gereklidir",
+              "maxLength": "Proje başlığı 255 karakterden az olmalıdır"
+            }
+          },
+          "description": {
+            "placeholder": "Bu projenin amacını ve hedeflerini açıklayın."
+          },
+          "button": {
+            "create": "Proje şablonu oluştur",
+            "update": "Proje şablonunu güncelle"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "İş-öğesi şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Bu iş öğesine bir başlık verin.",
+            "validation": {
+              "required": "İş öğesi başlığı gereklidir",
+              "maxLength": "İş öğesi başlığı 255 karakterden az olmalıdır"
+            }
+          },
+          "description": {
+            "placeholder": "Bu iş öğesini, tamamladığınızda ne başaracağınız açık olacak şekilde açıklayın."
+          },
+          "button": {
+            "create": "İş-öğesi şablonu oluştur",
+            "update": "İş-öğesi şablonunu güncelle"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Sayfa şablonunuzu adlandırın.",
+              "validation": {
+                "required": "Şablon adı gereklidir",
+                "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+              }
+            },
+            "description": {
+              "placeholder": "Bu şablonun ne zaman ve nasıl kullanılacağını açıklayın."
+            }
+          },
+          "name": {
+            "placeholder": "Başlıksız sayfa",
+            "validation": {
+              "maxLength": "Sayfa adı 255 karakterden az olmalıdır"
+            }
+          },
+          "button": {
+            "create": "Sayfa şablonu oluştur",
+            "update": "Sayfa şablonunu güncelle"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Yayın ayarları} other {Marketplace'de yayınla}}",
+          "unpublish_action": "Marketplace'den kaldır",
+          "title": "Şablonunuzu keşfedilebilir ve tanınabilir yapın.",
+          "name": {
+            "label": "Şablon adı",
+            "placeholder": "Şablonunuzu adlandırın",
+            "validation": {
+              "required": "Şablon adı gereklidir",
+              "maxLength": "Şablon adı 255 karakterden az olmalıdır"
+            }
+          },
+          "short_description": {
+            "label": "Kısa açıklama",
+            "placeholder": "Bu şablon, aynı anda birden fazla projeyi yöneten Proje Yöneticileri için mükemmeldir.",
+            "validation": {
+              "required": "Kısa açıklama gereklidir"
+            }
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Konuşma-Metin entegrasyonumuzla üretkenliği artırın ve iletişimi kolaylaştırın.\n• Gerçek zamanlı dönüştürme: Söylenen kelimeleri anında doğru metne dönüştürün.\n• Görev ve yorum oluşturma: Sesli komutlarla görevler, açıklamalar ve yorumlar ekleyin.",
+            "validation": {
+              "required": "Açıklama gereklidir"
+            }
+          },
+          "category": {
+            "label": "Kategori",
+            "placeholder": "En uygun olduğunu düşündüğünüz yeri seçin. Birden fazla seçim yapabilirsiniz.",
+            "validation": {
+              "required": "En az bir kategori gereklidir"
+            }
+          },
+          "keywords": {
+            "label": "Anahtar kelimeler",
+            "placeholder": "Kullanıcılarınızın bu şablonu ararken arayacağını düşündüğünüz terimleri kullanın.",
+            "helperText": "Virgül ile ayrılmış anahtar kelimeleri girin, bu, insanların bu şablonu aramadan bulmasına yardımcı olacaktır.",
+            "validation": {
+              "required": "En az bir anahtar kelime gereklidir"
+            }
+          },
+          "company_name": {
+            "label": "Şirket adı",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Şirket adı gereklidir",
+              "maxLength": "Şirket adı 255 karakterden az olmalıdır"
+            }
+          },
+          "contact_email": {
+            "label": "Destek e-postası",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Geçersiz e-posta adresi",
+              "required": "Destek e-postası gereklidir",
+              "maxLength": "Destek e-postası 255 karakterden az olmalıdır"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Gizlilik politikası bağlantısı",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Kullanım koşulları bağlantısı",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
+          "cover_image": {
+            "label": "Pazaryerinde görüntülenecek bir kapak resmi ekleyin",
+            "upload_title": "Kapak resmi yükle",
+            "upload_placeholder": "Kapak resmi yüklemek için tıklayın veya sürükleyip bırakın",
+            "drop_here": "Buraya bırakın",
+            "click_to_upload": "Yüklemek için tıklayın",
+            "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor. Lütfen tekrar deneyin.",
+            "upload_and_save": "Yükle ve kaydet",
+            "uploading": "Yükleniyor",
+            "remove": "Kaldır",
+            "removing": "Kaldırılıyor",
+            "validation": {
+              "required": "Kapak resmi gereklidir"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bu şablonun görüntüleyicilerini etkileyeceğini düşündüğünüz belgeleri ve resimleri ekleyin.",
+            "validation": {
+              "required": "En az bir ekran görüntüsü gereklidir"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Şablonlar",
+        "description": "Plane'deki proje, iş-öğesi ve sayfa şablonlarıyla, bir projeyi sıfırdan oluşturmanız veya iş öğesi özelliklerini manuel olarak ayarlamanız gerekmez.",
+        "sub_description": "Şablonları kullandığınızda admin zamanınızın %80'ini geri kazanın."
+      },
+      "no_templates": {
+        "button": "İlk şablonunuzu oluşturun"
+      },
+      "no_labels": {
+        "description": "Henüz etiket yok. Projenizde iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Erişiminiz olan şablon yok.",
+          "description": "Lütfen bir şablon oluşturun"
+        },
+        "no_results": {
+          "title": "Bu bir şablonla eşleşmedi.",
+          "description": "Başka terimlerle arama yapmayı deneyin."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Şablon oluşturuldu",
+          "message": "{templateType} şablonu olan {templateName}, artık workspace'iniz için kullanılabilir."
+        },
+        "error": {
+          "title": "Bu sefer o şablonu oluşturamadık.",
+          "message": "Detaylarınızı tekrar kaydetmeyi deneyin veya tercihen başka bir sekmede yeni bir şablona kopyalayın."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Şablon değiştirildi",
+          "message": "{templateType} şablonu olan {templateName} değiştirildi."
+        },
+        "error": {
+          "title": "Bu şablondaki değişiklikleri kaydedemedik.",
+          "message": "Detaylarınızı tekrar kaydetmeyi deneyin veya daha sonra bu şablona geri dönün. Hala sorun yaşıyorsanız, bizimle iletişime geçin."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Şablon silindi",
+          "message": "{templateType} şablonu olan {templateName} artık workspace'inizden silindi."
+        },
+        "error": {
+          "title": "O şablonu bu sefer silemedik.",
+          "message": "Tekrar silmeyi deneyin veya daha sonra tekrar gelin. O zaman silemezseniz bizimle iletişime geçin."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Şablon yayından kaldırıldı",
+          "message": "{templateType} şablonu olan {templateName} marketplace'den kaldırıldı."
+        },
+        "error": {
+          "title": "Şablonu yayından kaldıramadık.",
+          "message": "Tekrar yayından kaldırmayı deneyin veya daha sonra tekrar gelin. O zaman kaldıramazsanız bizimle iletişime geçin."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Şablonu sil",
+      "description": {
+        "prefix": "Şablonu silmek istediğinizden emin misiniz-",
+        "suffix": "? Şablonla ilgili tüm veriler kalıcı olarak kaldırılacak. Bu işlem geri alınamaz."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Şablonu yayından kaldır",
+      "description": {
+        "prefix": "Şablonu yayından kaldırmak istediğinizden emin misiniz-",
+        "suffix": "? Şablon marketplace'den kaldırılacak ve diğerleri için artık mevcut olmayacak."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Yeni şablon ekle",
+        "project": "Yeni şablon ekle"
+      },
+      "label": {
+        "project": "Bir proje şablonu seçin",
+        "page": "Şablon seç"
+      },
+      "tooltip": {
+        "work_item": "Bir iş öğesi şablonu seçin"
+      },
+      "no_results": {
+        "work_item": "Şablon bulunamadı.",
+        "project": "Şablon bulunamadı."
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Durumuna göre projeler",
+    "active_users": "Aktif kullanıcılar",
+    "intake_trends": "Alım Eğilimleri",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Henüz veri yok",
+        "description": "Döngü ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için döngülere iş öğeleri ekleyin."
+      },
+      "module_progress": {
+        "title": "Henüz veri yok",
+        "description": "Modül ilerleme analizleri burada görünecek. İlerlemesini izlemeye başlamak için modüllere iş öğeleri ekleyin."
+      },
+      "intake_trends": {
+        "title": "Henüz veri yok",
+        "description": "Intake eğilim analizleri burada görünecek. Eğilimleri izlemeye başlamak için intake'e iş öğeleri ekleyin."
+      }
+    },
+    "upgrade_to_plan": "{tab} sekmesini açmak için {plan} planına geçin"
+  }
+}

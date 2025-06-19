@@ -25,6 +25,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -44,6 +45,7 @@ type TArguments = Pick<
   "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
 > & {
   enableHistory: boolean;
+  isSmoothCursorEnabled: boolean;
   editable: boolean;
 };
 
@@ -53,6 +55,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    isSmoothCursorEnabled,
     mentionHandler,
     placeholder,
     tabIndex,
@@ -169,7 +172,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           else return placeholder(editor.isFocused, editor.getHTML());
         }
 
-        return "Press '/' for commands...";
+        return "Press '/' for commands";
       },
       includeChildren: true,
     }),
@@ -188,6 +191,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       fileHandler,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(

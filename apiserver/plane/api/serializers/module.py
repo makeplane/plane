@@ -71,9 +71,16 @@ class ModuleSerializer(BaseSerializer):
         module_name = validated_data.get("name")
         if module_name:
             # Lookup for the module name in the module table for that project
-            if Module.objects.filter(name=module_name, project_id=project_id).exists():
+            module = Module.objects.filter(
+                name=module_name, project_id=project_id
+            ).first()
+
+            if module:
                 raise serializers.ValidationError(
-                    {"error": "Module with this name already exists"}
+                    {
+                        "id": str(module.id),
+                        "error": "Module with this name already exists",
+                    }
                 )
 
         module = Module.objects.create(**validated_data, project_id=project_id)

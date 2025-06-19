@@ -302,6 +302,8 @@ export const getComputedDisplayProperties = (
   modules: displayProperties?.modules ?? true,
   cycle: displayProperties?.cycle ?? true,
   issue_type: displayProperties?.issue_type ?? true,
+  customer_count: displayProperties.customer_count ?? true,
+  customer_request_count: displayProperties.customer_request_count ?? true,
 });
 
 /**
@@ -311,9 +313,11 @@ export const getComputedDisplayProperties = (
  */
 export const getIssuesShouldFallbackToServer = (queries: any) => {
   // If there is expand query and is not grouped then fallback to server
-  if (!isEmpty(queries.expand as string) && !queries.group_by) return true;
+  if (!isEmpty(queries?.expand as string) && !queries?.group_by) return true;
   // If query has mentions then fallback to server
-  if (!isEmpty(queries.mentions)) return true;
+  if (!isEmpty(queries?.mentions)) return true;
+  // If query has sub_issue as false then fallback to server
+  if (queries?.sub_issue === false) return true;
 
   return false;
 };
@@ -336,8 +340,8 @@ export const generateWorkItemLink = ({
   isEpic?: boolean;
 }): string => {
   const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };

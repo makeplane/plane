@@ -1,9 +1,7 @@
 import { Extensions } from "@tiptap/core";
-import React from "react";
-// plane imports
-import { cn } from "@plane/utils";
+import React, { useMemo } from "react";
 // components
-import { DocumentContentLoader, PageRenderer } from "@/components/editors";
+import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -33,44 +31,54 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     handleEditorReady,
     id,
     mentionHandler,
+    pageRestorationInProgress,
     placeholder,
     realtimeConfig,
     serverHandler,
     tabIndex,
+    titleRef,
     user,
+    updatePageProperties,
+    isSmoothCursorEnabled = false,
   } = props;
 
-  const extensions: Extensions = [];
-
-  if (embedHandler?.issue) {
-    extensions.push(
-      WorkItemEmbedExtension({
-        widgetCallback: embedHandler.issue.widgetCallback,
-      })
-    );
-  }
+  const extensions: Extensions = useMemo(() => {
+    const ext: Extensions = [];
+    if (embedHandler?.issue) {
+      ext.push(
+        WorkItemEmbedExtension({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        })
+      );
+    }
+    return ext;
+  }, [embedHandler]);
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
-    disabledExtensions,
-    editable,
-    editorClassName,
-    embedHandler,
-    extensions,
-    fileHandler,
-    flaggedExtensions,
-    forwardedRef,
-    handleEditorReady,
-    id,
-    mentionHandler,
-    onChange,
-    onTransaction,
-    placeholder,
-    realtimeConfig,
-    serverHandler,
-    tabIndex,
-    user,
-  });
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
+    useCollaborativeEditor({
+      disabledExtensions,
+      editable,
+      editorClassName,
+      embedHandler,
+      extensions,
+      fileHandler,
+      flaggedExtensions,
+      forwardedRef,
+      handleEditorReady,
+      id,
+      isSmoothCursorEnabled,
+      mentionHandler,
+      onChange,
+      onTransaction,
+      placeholder,
+      realtimeConfig,
+      serverHandler,
+      tabIndex,
+      titleRef,
+      updatePageProperties,
+      user,
+    });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -78,13 +86,11 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
 
-  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
-    "max-w-[1152px]": displayConfig.wideLayout,
-  });
-
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader className={blockWidthClassName} />;
+  if (!isIndexedDbSynced) {
+    return null;
+  }
 
   return (
     <PageRenderer
@@ -92,8 +98,10 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       bubbleMenuEnabled={bubbleMenuEnabled}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+      titleEditor={titleEditor}
+      editorContainerClassName={editorContainerClassNames}
       id={id}
+      isLoading={(!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress}
       tabIndex={tabIndex}
     />
   );
