@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, Table } from "@tanstack/react-table";
-import { mkConfig, generateCsv, download } from "export-to-csv";
+import { ColumnDef, RowData, Table } from "@tanstack/react-table";
+import { mkConfig } from "export-to-csv";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -18,8 +18,8 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IChartResponse } from "@plane/types";
-import { TBarItem, TChart, TChartData, TChartDatum } from "@plane/types/src/charts";
+import { ExportConfig } from "@plane/types";
+import { TBarItem, TChart, TChartDatum } from "@plane/types/src/charts";
 // plane web components
 import { Button } from "@plane/ui";
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
@@ -29,9 +29,16 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 import AnalyticsEmptyState from "../empty-state";
+import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
 import { generateBarColor } from "./utils";
+
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    export: ExportConfig<TData>;
+  }
+}
 
 interface Props {
   x_axis: ChartXAxisProperty;
@@ -146,11 +153,25 @@ const PriorityChart = observer((props: Props) => {
       {
         accessorKey: "name",
         header: () => xAxisLabel,
+        meta: {
+          export: {
+            key: xAxisLabel,
+            value: (row) => row.original.name,
+            label: xAxisLabel,
+          },
+        },
       },
       {
         accessorKey: "count",
         header: () => <div className="text-right">Count</div>,
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
+        meta: {
+          export: {
+            key: "Count",
+            value: (row) => row.original.count,
+            label: "Count",
+          },
+        },
       },
     ],
     [xAxisLabel]
@@ -163,39 +184,17 @@ const PriorityChart = observer((props: Props) => {
             accessorKey: key,
             header: () => <div className="text-right">{parsedData.schema[key]}</div>,
             cell: ({ row }) => <div className="text-right">{row.original[key]}</div>,
+            meta: {
+              export: {
+                key,
+                value: (row) => row.original[key],
+                label: parsedData.schema[key],
+              },
+            },
           }))
         : [],
     [parsedData]
   );
-
-  const csvConfig = mkConfig({
-    fieldSeparator: ",",
-    filename: `${workspaceSlug}-analytics`,
-    decimalSeparator: ".",
-    useKeysAsHeaders: true,
-  });
-
-  const exportCSV = (rows: Row<TChartDatum>[]) => {
-    const rowData = rows.map((row) => {
-      const hiddenFields = ["key", "avatar_url", "assignee_id", "project_id"];
-      const otherFields = Object.keys(row.original).filter(
-        (key) => key !== "name" && key !== "count" && !hiddenFields.includes(key) && !key.includes("id")
-      );
-      return {
-        name: row.original.name,
-        count: row.original.count,
-        ...otherFields.reduce(
-          (acc, key) => {
-            acc[parsedData?.schema[key] ?? key] = row.original[key];
-            return acc;
-          },
-          {} as Record<string, string | number>
-        ),
-      };
-    });
-    const csv = generateCsv(csvConfig)(rowData);
-    download(csvConfig)(csv);
-  };
 
   return (
     <div className="flex flex-col gap-12 ">
@@ -217,8 +216,8 @@ const PriorityChart = observer((props: Props) => {
             }}
             yAxis={{
               key: "count",
-              label: yAxisLabel,
-              offset: -40,
+              label: t("common.no_of", { entity: yAxisLabel.replace("_", " ") }),
+              offset: -60,
               dx: -26,
             }}
           />
@@ -230,7 +229,7 @@ const PriorityChart = observer((props: Props) => {
               <Button
                 variant="accent-primary"
                 prependIcon={<Download className="h-3.5 w-3.5" />}
-                onClick={() => exportCSV(table.getFilteredRowModel().rows)}
+                onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               >
                 <div>{t("exporter.csv.short_description")}</div>
               </Button>

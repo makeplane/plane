@@ -8,9 +8,9 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import {
   useEventTracker,

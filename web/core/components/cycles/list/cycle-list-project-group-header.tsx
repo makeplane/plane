@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react";
 // icons
 import { Row, Logo } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { useProject } from "@/hooks/store/use-project";
 
 type Props = {

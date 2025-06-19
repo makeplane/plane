@@ -7,10 +7,10 @@ import { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 // components
+import { getPageName } from "@plane/utils";
 import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
@@ -110,7 +110,7 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <PageDetailsHeaderExtraActions page={page} />
+        <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

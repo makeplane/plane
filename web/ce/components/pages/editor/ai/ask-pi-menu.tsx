@@ -3,9 +3,9 @@ import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-rea
 // ui
 import { Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 

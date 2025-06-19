@@ -22,10 +22,8 @@ import {
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake, EpicIcon } from "@plane/ui";
+import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types

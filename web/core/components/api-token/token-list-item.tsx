@@ -5,8 +5,8 @@ import { XCircle } from "lucide-react";
 import { IApiToken } from "@plane/types";
 // components
 import { Tooltip } from "@plane/ui";
+import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
 import { DeleteApiTokenModal } from "@/components/api-token";
-import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@/helpers/date-time.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // helpers

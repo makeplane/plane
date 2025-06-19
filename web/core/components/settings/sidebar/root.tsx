@@ -37,7 +37,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
 
   return (
     <div
-      className={cn("flex w-[250px] flex-col gap-2 flex-shrink-0 pb-5", {
+      className={cn("flex w-[250px] flex-col gap-2 flex-shrink-0 overflow-y-scroll h-full md:pt-page-y ", {
         "absolute left-0 top-[42px] z-50 h-fit max-h-[400px] overflow-scroll bg-custom-background-100 border border-custom-border-100 rounded shadow-sm p-4":
           isMobile,
       })}
@@ -45,9 +45,9 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full">
+      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll">
         {categories.map((category) => (
-          <div key={category} className="py-3 h-full">
+          <div key={category} className="py-3">
             <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>
             {groupedSettings[category].length > 0 && (
               <div className="relative flex flex-col gap-0.5 h-full mt-2">

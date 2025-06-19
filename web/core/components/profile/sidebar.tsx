@@ -15,12 +15,10 @@ import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
+import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

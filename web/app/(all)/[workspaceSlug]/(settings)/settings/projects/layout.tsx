@@ -36,7 +36,7 @@ const ProjectSettingsLayout = observer((props: Props) => {
       <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
         <div className="relative flex h-full w-full">
           <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-          {children}
+          <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
         </div>
       </ProjectAuthWrapper>
     </>

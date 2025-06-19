@@ -3,10 +3,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane imports
+import { getNumberCount } from "@plane/utils";
 // components
-import { CountChip } from "@/components/common";
-// helpers
-import { getNumberCount } from "@/helpers/string.helper";
+import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 
