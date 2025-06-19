@@ -11,7 +11,7 @@ import { TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plan
 // plane ui
 import { Button, Collapsible } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import { CustomerPropertiesEmptyState } from "@/plane-web/components/customers/settings/properties";
 import { IssuePropertyList, TCustomPropertyOperations } from "@/plane-web/components/issue-types";
@@ -121,7 +121,7 @@ export const CustomerCustomPropertiesRoot: FC = observer(() => {
                 containerRef={containerRef}
                 lastElementRef={lastElementRef}
                 properties={properties}
-                isUpdateAllowed
+                isUpdateAllowed={false}
               />
               <div className={cn("flex items-center py-2 px-4", !isAnyPropertiesAvailable && "justify-center")}>
                 <Button

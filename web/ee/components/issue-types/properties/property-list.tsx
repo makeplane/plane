@@ -60,7 +60,7 @@ export const IssuePropertyList: FC<TIssuePropertyList> = observer((props) => {
               ref={index === issuePropertyCreateList.length - 1 ? lastElementRef : undefined}
               issuePropertyCreateListData={issueProperty}
               customPropertyOperations={customPropertyOperations}
-              isUpdateAllowed={isUpdateAllowed}
+              isUpdateAllowed
             />
           </IssuePropertyOptionsProvider>
         ))}
