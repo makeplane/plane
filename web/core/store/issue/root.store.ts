@@ -14,6 +14,7 @@ import {
   TeamViewIssuesFilter,
 } from "@/plane-web/store/issue/team-views";
 // root store
+import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
 // issues data store
@@ -32,7 +33,7 @@ import {
   IProjectViewIssues,
   ProjectViewIssues,
 } from "./project-views";
-import { WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues, IWorkspaceIssuesFilter } from "./workspace";
+import { WorkspaceIssuesFilter, IWorkspaceIssuesFilter } from "./workspace";
 import {
   IWorkspaceDraftIssues,
   IWorkspaceDraftIssuesFilter,
