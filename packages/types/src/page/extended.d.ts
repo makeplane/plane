@@ -5,7 +5,7 @@ export type TCollaborator = {
   color: string;
   id?: string;
   photoUrl?: string;
-  clientId?: string;
+  clientId?: number;
 };
 
 export type TPageSharedUser = {
