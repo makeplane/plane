@@ -1,17 +1,15 @@
 "use client";
 
 import { useState, FC } from "react";
-import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
 import { useTranslation } from "@plane/i18n";
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-// services
-import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +24,6 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   // router params
-  const { workspaceSlug } = useParams();
   const { t } = useTranslation();
 
   const handleClose = () => {
@@ -35,12 +32,10 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug) return;
-
     setDeleteLoading(true);
 
     await apiTokenService
-      .deleteApiToken(workspaceSlug.toString(), tokenId)
+      .destroy(tokenId)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -49,7 +44,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
         });
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST(workspaceSlug.toString()),
+          API_TOKENS_LIST,
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );

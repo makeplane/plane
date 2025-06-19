@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
@@ -10,6 +10,7 @@ import {
   EIssueFilterType,
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  EIssueLayoutTypes
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
@@ -34,6 +35,7 @@ import {
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
 export const GlobalIssuesHeader = observer(() => {
   // states
@@ -54,6 +56,7 @@ export const GlobalIssuesHeader = observer(() => {
 
   const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
 
+  const activeLayout = issueFilters?.displayFilters?.layout;
   const viewDetails = getViewDetailsById(globalViewId.toString());
 
   const handleFiltersUpdate = useCallback(
@@ -111,6 +114,20 @@ export const GlobalIssuesHeader = observer(() => {
     [workspaceSlug, updateFilters, globalViewId]
   );
 
+  const handleLayoutChange = useCallback(
+    (layout: EIssueLayoutTypes) => {
+      if (!workspaceSlug || !globalViewId) return;
+      updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_FILTERS,
+        { layout: layout },
+        globalViewId.toString()
+      );
+    },
+    [workspaceSlug, updateFilters, globalViewId]
+  );
+
   const isLocked = viewDetails?.is_locked;
 
   const isDefaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
@@ -136,6 +153,10 @@ export const GlobalIssuesHeader = observer(() => {
   const switcherOptions = [...defaultOptions, ...workspaceOptions].filter(
     (option) => option !== undefined
   ) as ICustomSearchSelectOption[];
+  const currentLayoutFilters = useMemo(() => {
+    const layout = activeLayout ?? EIssueLayoutTypes.SPREADSHEET;
+    return ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues[layout];
+  }, [activeLayout]);
 
   return (
     <>
@@ -173,13 +194,18 @@ export const GlobalIssuesHeader = observer(() => {
         <Header.RightItem>
           {!isLocked ? (
             <>
+              <GlobalViewLayoutSelection
+                onChange={handleLayoutChange}
+                selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
+                workspaceSlug={workspaceSlug.toString()}
+              />
               <FiltersDropdown
                 title={t("common.filters")}
                 placement="bottom-end"
                 isFiltersApplied={isIssueFilterActive(issueFilters)}
               >
                 <FilterSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
+                  layoutDisplayFiltersOptions={currentLayoutFilters}
                   filters={issueFilters?.filters ?? {}}
                   handleFiltersUpdate={handleFiltersUpdate}
                   displayFilters={issueFilters?.displayFilters ?? {}}
@@ -190,7 +216,7 @@ export const GlobalIssuesHeader = observer(() => {
               </FiltersDropdown>
               <FiltersDropdown title={t("common.display")} placement="bottom-end">
                 <DisplayFiltersSelection
-                  layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
+                  layoutDisplayFiltersOptions={currentLayoutFilters}
                   displayFilters={issueFilters?.displayFilters ?? {}}
                   handleDisplayFiltersUpdate={handleDisplayFilters}
                   displayProperties={issueFilters?.displayProperties ?? {}}

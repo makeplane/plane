@@ -1,5 +1,5 @@
 import { Extensions } from "@tiptap/core";
-import { forwardRef, MutableRefObject } from "react";
+import React, { forwardRef, MutableRefObject } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -13,30 +13,9 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import {
-  EditorReadOnlyRefApi,
-  TDisplayConfig,
-  TExtensions,
-  TReadOnlyFileHandler,
-  TReadOnlyMentionHandler,
-} from "@/types";
+import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
-interface IDocumentReadOnlyEditor {
-  disabledExtensions: TExtensions[];
-  id: string;
-  initialValue: string;
-  containerClassName: string;
-  displayConfig?: TDisplayConfig;
-  editorClassName?: string;
-  embedHandler: any;
-  fileHandler: TReadOnlyFileHandler;
-  tabIndex?: number;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: TReadOnlyMentionHandler;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-}
-
-const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) => {
   const {
     containerClassName,
     disabledExtensions,
@@ -44,6 +23,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName = "",
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     id,
     forwardedRef,
     handleEditorReady,
@@ -64,6 +44,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -87,7 +68,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps>((props, ref) => (
   <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 
