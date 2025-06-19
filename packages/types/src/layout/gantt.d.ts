@@ -22,14 +22,6 @@ export interface IBlockUpdateData {
   target_date?: string;
 }
 
-export type IBlockUpdatePayload = IBlockUpdateData & {
-  sort_order?: {
-    destinationIndex: number;
-    newSortOrder: number;
-    sourceIndex: number;
-  };
-};
-
 export interface IBlockUpdateDependencyData {
   id: string;
   start_date?: string;
