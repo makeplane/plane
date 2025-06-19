@@ -1,6 +1,7 @@
 import { EUserProjectRoles } from "@plane/constants";
-import type { IUser, IUserLite, IWorkspace, TLogoProps, TStateGroups } from "..";
+import type { IUser, IUserLite, IWorkspace, TLogoProps, TProjectExtended, TStateGroups } from "..";
 import { TUserPermissions } from "../enums";
+import type { TProjectIssuesSearchParams as TProjectIssuesSearchParamsExtended } from "./project-extended";
 
 export interface IPartialProject {
   id: string;
@@ -114,7 +115,7 @@ export interface GithubRepositoriesResponse {
   total_count: number;
 }
 
-export type TProjectIssuesSearchParams = {
+export type TProjectIssuesSearchParams = TProjectIssuesSearchParamsExtended & {
   search: string;
   parent?: boolean;
   issue_relation?: boolean;
@@ -144,4 +145,4 @@ export interface ISearchIssueResponse {
 
 export type TPartialProject = IPartialProject;
 
-export type TProject =  TPartialProject & IProject;
+export type TProject = TPartialProject & IProject & TProjectExtended;

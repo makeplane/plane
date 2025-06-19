@@ -16,6 +16,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
     fileHandler,
     bubbleMenuEnabled = true,
     extensions: externalExtensions = [],
+    isSmoothCursorEnabled,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -35,7 +36,7 @@ const RichTextEditor = (props: IRichTextEditor) => {
   }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler]);
 
   return (
-    <EditorWrapper {...props} extensions={getExtensions()}>
+    <EditorWrapper {...props} extensions={getExtensions()} isSmoothCursorEnabled={isSmoothCursorEnabled}>
       {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
     </EditorWrapper>
   );

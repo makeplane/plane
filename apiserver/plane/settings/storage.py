@@ -12,12 +12,14 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class S3Storage(S3Boto3Storage):
+    file_overwrite = True
+
     def url(self, name, parameters=None, expire=None, http_method=None):
         return name
 
     """S3 storage class to generate presigned URLs for S3 objects"""
 
-    def __init__(self, request=None):
+    def __init__(self, request=None, is_server=False):
         # Get the AWS credentials and bucket name from the environment
         self.aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
         # Use the AWS_SECRET_ACCESS_KEY environment variable for the secret key
@@ -38,18 +40,31 @@ class S3Storage(S3Boto3Storage):
             else:
                 endpoint_protocol = request.scheme if request else "http"
             # Create an S3 client for MinIO
-            self.s3_client = boto3.client(
-                "s3",
-                aws_access_key_id=self.aws_access_key_id,
-                aws_secret_access_key=self.aws_secret_access_key,
-                region_name=self.aws_region,
-                endpoint_url=(
-                    f"{endpoint_protocol}://{request.get_host()}"
-                    if request
-                    else self.aws_s3_endpoint_url
-                ),
-                config=boto3.session.Config(signature_version="s3v4"),
-            )
+
+            if is_server:
+                # Create an S3 client for MinIO
+                self.s3_client = boto3.client(
+                    "s3",
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                    endpoint_url=self.aws_s3_endpoint_url,
+                    config=boto3.session.Config(signature_version="s3v4"),
+                )
+            else:
+                # Create an S3 client for MinIO
+                self.s3_client = boto3.client(
+                    "s3",
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                    endpoint_url=(
+                        f"{endpoint_protocol}://{request.get_host()}"
+                        if request
+                        else self.aws_s3_endpoint_url
+                    ),
+                    config=boto3.session.Config(signature_version="s3v4"),
+                )
         else:
             # Create an S3 client
             self.s3_client = boto3.client(
@@ -170,3 +185,40 @@ class S3Storage(S3Boto3Storage):
             return None
 
         return response
+
+    def upload_file(
+        self,
+        file_obj,
+        object_name: str,
+        content_type: str = None,
+        extra_args: dict = {},
+    ) -> bool:
+        """Upload a file directly to S3"""
+        try:
+            if content_type:
+                extra_args["ContentType"] = content_type
+
+            self.s3_client.upload_fileobj(
+                file_obj,
+                self.aws_storage_bucket_name,
+                object_name,
+                ExtraArgs=extra_args,
+            )
+            return True
+        except ClientError as e:
+            log_exception(e)
+            return False
+
+    def delete_files(self, object_names):
+        """Delete an S3 object"""
+        try:
+            self.s3_client.delete_objects(
+                Bucket=self.aws_storage_bucket_name,
+                Delete={
+                    "Objects": [{"Key": object_name} for object_name in object_names]
+                },
+            )
+            return True
+        except ClientError as e:
+            log_exception(e)
+            return False

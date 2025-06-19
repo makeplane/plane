@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from plane.db.models import UserFavorite, Cycle, Module, Issue, IssueView, Page, Project
+from plane.ee.models import Dashboard
 
 
 class ProjectFavoriteLiteSerializer(serializers.ModelSerializer):
@@ -41,6 +42,12 @@ class ViewFavoriteSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "logo_props", "project_id"]
 
 
+class DashboardFavoriteLiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dashboard
+        fields = ["id", "name"]
+
+
 def get_entity_model_and_serializer(entity_type):
     entity_map = {
         "cycle": (Cycle, CycleFavoriteLiteSerializer),
@@ -49,6 +56,7 @@ def get_entity_model_and_serializer(entity_type):
         "view": (IssueView, ViewFavoriteSerializer),
         "page": (Page, PageFavoriteLiteSerializer),
         "project": (Project, ProjectFavoriteLiteSerializer),
+        "workspace_dashboard": (Dashboard, DashboardFavoriteLiteSerializer),
         "folder": (None, None),
     }
     return entity_map.get(entity_type, (None, None))

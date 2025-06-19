@@ -10,13 +10,14 @@ import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
+import { PageSyncingBadge } from "@/components/pages/header/syncing-badge";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
-import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
+import { CollaboratorsList, PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
@@ -110,6 +111,8 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
+        <PageSyncingBadge syncStatus={page.isSyncingWithServer} />
+        <CollaboratorsList page={page} className="bottom-1" />
         <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
