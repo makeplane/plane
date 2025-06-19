@@ -112,7 +112,7 @@ def slug_validator(value):
 
 
 class Workspace(BaseModel):
-    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.TextField(verbose_name="Logo", blank=True, null=True)
