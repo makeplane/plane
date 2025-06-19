@@ -15,12 +15,11 @@ import { TIssue } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { GptAssistantPopover } from "@/components/core";
 import { RichTextEditor } from "@/components/editor";
 // helpers
-import { getDescriptionPlaceholderI18n } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEditorAsset, useInstance, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
@@ -225,7 +224,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             )}
           />
           <div className="border-0.5 z-10 flex items-center justify-end gap-2 p-3">
-            {issueName && issueName.trim() !== "" && config?.has_openai_configured && (
+            {issueName && issueName.trim() !== "" && config?.has_llm_configured && (
               <button
                 type="button"
                 className={`flex items-center gap-1 rounded bg-custom-background-90 hover:bg-custom-background-80 px-1.5 py-1 text-xs ${
@@ -244,7 +243,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                 )}
               </button>
             )}
-            {config?.has_openai_configured && projectId && (
+            {config?.has_llm_configured && projectId && (
               <GptAssistantPopover
                 isOpen={gptAssistantModal}
                 handleClose={() => {

@@ -3,23 +3,19 @@
 import { useState } from "react";
 import omit from "lodash/omit";
 import { observer } from "mobx-react";
-// icons
-import { Pencil, Trash2 } from "lucide-react";
-// types
-import { EIssuesStoreType,EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { useParams, usePathname } from "next/navigation";
+// plane imports
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TIssue } from "@plane/types";
-// ui
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
-// constant
-// helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
-import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-// types
+import { useEventTracker, useUserPermissions } from "@/hooks/store";
+// local imports
 import { IQuickActionProps } from "../list/list-view-types";
+import { useDraftIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -32,6 +28,9 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     placements = "bottom-end",
     parentRef,
   } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -39,56 +38,52 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { setTrackElement } = useEventTracker();
-  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
-
-  const { t } = useTranslation();
   // derived values
-  const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
+  const activeLayout = "Draft Issues";
   // auth
   const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+    allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug?.toString(),
+      issue.project_id ?? undefined
+    ) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
+
+  const isDraftIssue = pathname?.includes("draft-issues") || false;
 
   const duplicateIssuePayload = omit(
     {
       ...issue,
       name: `${issue.name} (copy)`,
-      is_draft: true,
+      is_draft: isDraftIssue ? false : issue.is_draft,
+      sourceIssueId: issue.id,
     },
     ["id"]
   );
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      title: "edit",
-      icon: Pencil,
-      action: () => {
-        setTrackElement(activeLayout);
-        setIssueToEdit(issue);
-        setCreateUpdateIssueModal(true);
-      },
-      shouldRender: isEditingAllowed,
-    },
-    {
-      key: "delete",
-      title: "delete",
-      icon: Trash2,
-      action: () => {
-        setTrackElement(activeLayout);
-        setDeleteIssueModal(true);
-      },
-      shouldRender: isDeletingAllowed,
-    },
-  ];
+  // Menu items and modals using helper
+  const menuItemProps: MenuItemFactoryProps = {
+    issue,
+    workspaceSlug: workspaceSlug?.toString(),
+    activeLayout,
+    isEditingAllowed,
+    isDeletingAllowed,
+    isDraftIssue,
+    setTrackElement,
+    setIssueToEdit,
+    setCreateUpdateIssueModal,
+    setDeleteIssueModal,
+    handleDelete,
+    handleUpdate,
+    storeType: EIssuesStoreType.DRAFT,
+  };
 
-  // check if any of the menu items should render
-  const shouldRenderQuickAction = MENU_ITEMS.some((item) => item.shouldRender);
-
-  if (!shouldRenderQuickAction) return <></>;
+  const MENU_ITEMS = useDraftIssueMenuItems(menuItemProps);
 
   return (
     <>
+      {/* Modals */}
       <DeleteIssueModal
         data={issue}
         isOpen={deleteIssueModal}
@@ -106,17 +101,17 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
           if (issueToEdit && handleUpdate) await handleUpdate(data);
         }}
         storeType={EIssuesStoreType.DRAFT}
-        isDraft
+        isDraft={isDraftIssue}
       />
+
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
         ellipsis
+        placement={placements}
         customButton={customActionButton}
         portalElement={portalElement}
-        placement={placements}
         menuItemsClassName="z-[14]"
         maxHeight="lg"
-        useCaptureForOutsideClick
         closeOnSelect
       >
         {MENU_ITEMS.map((item) => {
@@ -140,7 +135,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{t(item.title ?? "")}</h5>
+                <h5>{item.title}</h5>
                 {item.description && (
                   <p
                     className={cn("text-custom-text-300 whitespace-pre-line", {

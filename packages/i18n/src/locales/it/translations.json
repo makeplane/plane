@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Impossibile rimuovere il progetto dai preferiti. Per favore, riprova.",
   "project_created_successfully": "Progetto creato con successo",
   "project_created_successfully_description": "Progetto creato con successo. Ora puoi iniziare ad aggiungere elementi di lavoro.",
+  "project_name_already_taken": "Il nome del progetto è già stato utilizzato.",
+  "project_identifier_already_taken": "L'identificatore del progetto è già stato utilizzato.",
   "project_cover_image_alt": "Immagine di copertina del progetto",
   "name_is_required": "Il nome è obbligatorio",
   "title_should_be_less_than_255_characters": "Il titolo deve contenere meno di 255 caratteri",
@@ -743,7 +745,8 @@
         "message": "Qualcosa è andato storto. Per favore, riprova."
       },
       "required": "Questo campo è obbligatorio",
-      "entity_required": "{entity} è obbligatorio"
+      "entity_required": "{entity} è obbligatorio",
+      "restricted_entity": "{entity} è limitato"
     },
     "update_link": "Aggiorna link",
     "attach": "Allega",
@@ -846,6 +849,7 @@
     "live": "Live",
     "change_history": "Cronologia modifiche",
     "coming_soon": "Prossimamente",
+    "member": "Membro",
     "members": "Membri",
     "you": "Tu",
     "upgrade_cta": {
@@ -863,7 +867,21 @@
     "view": "Visualizza",
     "deactivated_user": "Utente disattivato",
     "apply": "Applica",
-    "applying": "Applicazione"
+    "applying": "Applicazione",
+    "users": "Utenti",
+    "admins": "Amministratori",
+    "guests": "Ospiti",
+    "on_track": "In linea",
+    "off_track": "Fuori rotta",
+    "at_risk": "A rischio",
+    "timeline": "Cronologia",
+    "completion": "Completamento",
+    "upcoming": "In arrivo",
+    "completed": "Completato",
+    "in_progress": "In corso",
+    "planned": "Pianificato",
+    "paused": "In pausa",
+    "no_of": "N. di {entity}"
   },
   "chart": {
     "x_axis": "Asse X",
@@ -1078,7 +1096,9 @@
     "select": {
       "error": "Seleziona almeno un elemento di lavoro",
       "empty": "Nessun elemento di lavoro selezionato",
-      "add_selected": "Aggiungi gli elementi di lavoro selezionati"
+      "add_selected": "Aggiungi gli elementi di lavoro selezionati",
+      "select_all": "Seleziona tutto",
+      "deselect_all": "Deseleziona tutto"
     },
     "open_in_full_screen": "Apri l'elemento di lavoro a schermo intero"
   },
@@ -1106,6 +1126,18 @@
     "remove": {
       "success": "Sotto-elemento di lavoro rimosso con successo",
       "error": "Errore nella rimozione del sotto-elemento di lavoro"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Non hai sotto-elementi di lavoro che corrispondono ai filtri che hai applicato.",
+        "description": "Per vedere tutti i sotto-elementi di lavoro, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
+      },
+      "list_filters": {
+        "title": "Non hai elementi di lavoro che corrispondono ai filtri che hai applicato.",
+        "description": "Per vedere tutti gli elementi di lavoro, cancella tutti i filtri applicati.",
+        "action": "Cancella filtri"
+      }
     }
   },
   "view": {
@@ -1299,19 +1331,6 @@
       "custom": "Analisi personalizzata"
     },
     "empty_state": {
-      "general": {
-        "title": "Traccia il progresso, i carichi di lavoro e le assegnazioni. Individua tendenze, rimuovi gli ostacoli e accelera il lavoro",
-        "description": "Visualizza l'ambito rispetto alla domanda, le stime e il fenomeno del scope creep. Ottieni le prestazioni dei membri del team e dei team, e assicurati che il tuo progetto rispetti le scadenze.",
-        "primary_button": {
-          "text": "Inizia il tuo primo progetto",
-          "comic": {
-            "title": "Le analisi funzionano meglio con Cicli + Moduli",
-            "description": "Prima, definisci i tuoi elementi di lavoro in cicli e, se puoi, raggruppa quelli che si estendono per più di un ciclo in moduli. Dai un'occhiata ad entrambi nel menu di sinistra."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Gli elementi di lavoro assegnati a te, suddivisi per stato, verranno visualizzati qui.",
         "title": "Nessun dato disponibile"
@@ -1327,21 +1346,22 @@
     },
     "created_vs_resolved": "Creato vs Risolto",
     "customized_insights": "Approfondimenti personalizzati",
-    "backlog_work_items": "Elementi di lavoro nel backlog",
+    "backlog_work_items": "{entity} nel backlog",
     "active_projects": "Progetti attivi",
     "trend_on_charts": "Tendenza nei grafici",
     "all_projects": "Tutti i progetti",
     "summary_of_projects": "Riepilogo dei progetti",
     "project_insights": "Approfondimenti sul progetto",
-    "started_work_items": "Elementi di lavoro iniziati",
-    "total_work_items": "Totale elementi di lavoro",
+    "started_work_items": "{entity} iniziati",
+    "total_work_items": "Totale {entity}",
     "total_projects": "Progetti totali",
     "total_admins": "Totale amministratori",
     "total_users": "Totale utenti",
     "total_intake": "Entrate totali",
-    "un_started_work_items": "Elementi di lavoro non avviati",
+    "un_started_work_items": "{entity} non avviati",
     "total_guests": "Totale ospiti",
-    "completed_work_items": "Elementi di lavoro completati"
+    "completed_work_items": "{entity} completati",
+    "total": "Totale {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Progetto} other {Progetti}}",
@@ -2445,5 +2465,9 @@
     "last_edited_by": "Ultima modifica di",
     "previously_edited_by": "Precedentemente modificato da",
     "edited_by": "Modificato da"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane non si è avviato. Questo potrebbe essere dovuto al fatto che uno o più servizi Plane non sono riusciti ad avviarsi.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Scegli View Logs da setup.sh e dai log Docker per essere sicuro."
   }
 }

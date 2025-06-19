@@ -179,7 +179,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                             Q(issue_intake__status=1)
                             | Q(issue_intake__status=-1)
                             | Q(issue_intake__status=2)
-                            | Q(issue_intake__status=True),
+                            | Q(issue_intake__isnull=True),
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
@@ -205,7 +205,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         Q(issue_intake__status=1)
                         | Q(issue_intake__status=-1)
                         | Q(issue_intake__status=2)
-                        | Q(issue_intake__status=True),
+                        | Q(issue_intake__isnull=True),
                         archived_at__isnull=True,
                         is_draft=False,
                     ),

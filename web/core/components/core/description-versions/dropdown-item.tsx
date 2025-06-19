@@ -31,7 +31,7 @@ export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props)
         />
       </span>
       <p className="text-xs text-custom-text-200 flex items-center gap-1.5">
-        <span className="font-medium">{versionCreator?.display_name}</span>
+        <span className="font-medium">{versionCreator?.display_name ?? t("common.deactivated_user")}</span>
         <span>{calculateTimeAgo(version.last_saved_at)}</span>
       </p>
     </CustomMenu.MenuItem>

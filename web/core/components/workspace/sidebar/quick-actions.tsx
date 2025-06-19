@@ -7,10 +7,10 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -46,7 +46,9 @@ export const SidebarQuickActions = observer(() => {
 
   const handleMouseEnter = () => {
     // if enter before time out clear the timeout
-    timeoutRef?.current && clearTimeout(timeoutRef.current);
+    if (timeoutRef?.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setIsDraftButtonOpen(true);
   };
 

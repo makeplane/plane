@@ -85,7 +85,9 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
           {description && <p className="text-sm">{description}</p>}
         </div>
 
-        {assetPath && <Image src={assetPath} alt={title} width={384} height={250} lazyBoundary="100%" />}
+        {assetPath && (
+          <Image src={assetPath} alt={title} width={384} height={250} layout="responsive" lazyBoundary="100%" />
+        )}
 
         {hasButtons && (
           <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">

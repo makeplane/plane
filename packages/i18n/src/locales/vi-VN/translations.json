@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
   "project_created_successfully": "Dự án đã được tạo thành công",
   "project_created_successfully_description": "Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
+  "project_name_already_taken": "Tên dự án đã được sử dụng.",
+  "project_identifier_already_taken": "ID dự án đã được sử dụng.",
   "project_cover_image_alt": "Ảnh bìa dự án",
   "name_is_required": "Tên là bắt buộc",
   "title_should_be_less_than_255_characters": "Tiêu đề phải ít hơn 255 ký tự",
@@ -748,7 +750,8 @@
         "message": "Đã xảy ra lỗi. Vui lòng thử lại."
       },
       "required": "Trường này là bắt buộc",
-      "entity_required": "{entity} là bắt buộc"
+      "entity_required": "{entity} là bắt buộc",
+      "restricted_entity": "{entity} bị hạn chế"
     },
     "update_link": "Cập nhật liên kết",
     "attach": "Đính kèm",
@@ -848,6 +851,7 @@
     "live": "Trực tiếp",
     "change_history": "Lịch sử thay đổi",
     "coming_soon": "Sắp ra mắt",
+    "member": "Thành viên",
     "members": "Thành viên",
     "you": "Bạn",
     "upgrade_cta": {
@@ -865,7 +869,21 @@
     "view": "Xem",
     "deactivated_user": "Người dùng bị vô hiệu hóa",
     "apply": "Áp dụng",
-    "applying": "Đang áp dụng"
+    "applying": "Đang áp dụng",
+    "users": "Người dùng",
+    "admins": "Quản trị viên",
+    "guests": "Khách",
+    "on_track": "Đúng tiến độ",
+    "off_track": "Chệch hướng",
+    "at_risk": "Có nguy cơ",
+    "timeline": "Dòng thời gian",
+    "completion": "Hoàn thành",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang tiến hành",
+    "planned": "Đã lên kế hoạch",
+    "paused": "Tạm dừng",
+    "no_of": "Số lượng {entity}"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1080,7 +1098,9 @@
     "select": {
       "error": "Vui lòng chọn ít nhất một mục công việc",
       "empty": "Chưa chọn mục công việc",
-      "add_selected": "Thêm mục công việc đã chọn"
+      "add_selected": "Thêm mục công việc đã chọn",
+      "select_all": "Chọn tất cả",
+      "deselect_all": "Bỏ chọn tất cả"
     },
     "open_in_full_screen": "Mở mục công việc trong chế độ toàn màn hình"
   },
@@ -1108,6 +1128,18 @@
     "remove": {
       "success": "Đã xóa mục công việc con thành công",
       "error": "Đã xảy ra lỗi khi xóa mục công việc con"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Bạn không có mục công việc con nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc con, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      },
+      "list_filters": {
+        "title": "Bạn không có mục công việc nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      }
     }
   },
   "view": {
@@ -1301,19 +1333,6 @@
       "custom": "Phân tích tùy chỉnh"
     },
     "empty_state": {
-      "general": {
-        "title": "Theo dõi tiến độ, khối lượng công việc và phân công. Khám phá xu hướng, loại bỏ rào cản và đẩy nhanh công việc",
-        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Nhận hiệu suất của thành viên nhóm và nhóm, đảm bảo dự án của bạn đúng tiến độ.",
-        "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
-          "comic": {
-            "title": "Phân tích hoạt động tốt nhất trong chu kỳ + mô-đun",
-            "description": "Đầu tiên, giới hạn mục công việc của bạn trong chu kỳ và nếu có thể, nhóm mục công việc kéo dài nhiều chu kỳ thành mô-đun. Xem cả hai trong thanh điều hướng bên trái."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
         "title": "Chưa có dữ liệu"
@@ -1329,21 +1348,22 @@
     },
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
     "customized_insights": "Thông tin chi tiết tùy chỉnh",
-    "backlog_work_items": "Các hạng mục công việc tồn đọng",
+    "backlog_work_items": "{entity} tồn đọng",
     "active_projects": "Dự án đang hoạt động",
     "trend_on_charts": "Xu hướng trên biểu đồ",
     "all_projects": "Tất cả dự án",
     "summary_of_projects": "Tóm tắt dự án",
     "project_insights": "Thông tin chi tiết dự án",
-    "started_work_items": "Hạng mục công việc đã bắt đầu",
-    "total_work_items": "Tổng số hạng mục công việc",
+    "started_work_items": "{entity} đã bắt đầu",
+    "total_work_items": "Tổng số {entity}",
     "total_projects": "Tổng số dự án",
     "total_admins": "Tổng số quản trị viên",
     "total_users": "Tổng số người dùng",
     "total_intake": "Tổng thu",
-    "un_started_work_items": "Hạng mục công việc chưa bắt đầu",
+    "un_started_work_items": "{entity} chưa bắt đầu",
     "total_guests": "Tổng số khách",
-    "completed_work_items": "Hạng mục công việc đã hoàn thành"
+    "completed_work_items": "{entity} đã hoàn thành",
+    "total": "Tổng số {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -2445,5 +2465,9 @@
     "last_edited_by": "Chỉnh sửa lần cuối bởi",
     "previously_edited_by": "Trước đây được chỉnh sửa bởi",
     "edited_by": "Được chỉnh sửa bởi"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Chọn View Logs từ setup.sh và log Docker để chắc chắn."
   }
 }

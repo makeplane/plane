@@ -27,10 +27,7 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
         create_preference_keys = []
 
-        keys = [
-            key
-            for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices
-        ]
+        keys = [key for key, _ in WorkspaceUserPreference.UserPreferenceKeys.choices]
 
         for preference in keys:
             if preference not in get_preference.values_list("key", flat=True):
@@ -39,7 +36,10 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
                 preference = WorkspaceUserPreference.objects.bulk_create(
                     [
                         WorkspaceUserPreference(
-                            key=key, user=request.user, workspace=workspace, sort_order=(65535 + (i*10000))
+                            key=key,
+                            user=request.user,
+                            workspace=workspace,
+                            sort_order=(65535 + (i * 10000)),
                         )
                         for i, key in enumerate(create_preference_keys)
                     ],
@@ -47,10 +47,13 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
                     ignore_conflicts=True,
                 )
 
-        preferences = WorkspaceUserPreference.objects.filter(
-            user=request.user, workspace_id=workspace.id
-        ).order_by("sort_order").values("key", "is_pinned", "sort_order")
-
+        preferences = (
+            WorkspaceUserPreference.objects.filter(
+                user=request.user, workspace_id=workspace.id
+            )
+            .order_by("sort_order")
+            .values("key", "is_pinned", "sort_order")
+        )
 
         user_preferences = {}
 
@@ -58,7 +61,7 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             user_preferences[(str(preference["key"]))] = {
                 "is_pinned": preference["is_pinned"],
                 "sort_order": preference["sort_order"],
-        }
+            }
         return Response(
             user_preferences,
             status=status.HTTP_200_OK,

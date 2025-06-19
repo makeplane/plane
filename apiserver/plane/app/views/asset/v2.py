@@ -707,3 +707,67 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
                 pass
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AssetCheckEndpoint(BaseAPIView):
+    """Endpoint to check if an asset exists."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        asset = FileAsset.all_objects.filter(
+            id=asset_id, workspace__slug=slug, deleted_at__isnull=True
+        ).exists()
+        return Response({"exists": asset}, status=status.HTTP_200_OK)
+
+
+class WorkspaceAssetDownloadEndpoint(BaseAPIView):
+    """Endpoint to generate a download link for an asset with content-disposition=attachment."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug, asset_id):
+        try:
+            asset = FileAsset.objects.get(
+                id=asset_id,
+                workspace__slug=slug,
+                is_uploaded=True,
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        storage = S3Storage(request=request)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition=f"attachment; filename={asset.asset.name}",
+        )
+
+        return HttpResponseRedirect(signed_url)
+
+
+class ProjectAssetDownloadEndpoint(BaseAPIView):
+    """Endpoint to generate a download link for an asset with content-disposition=attachment."""
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, asset_id):
+        try:
+            asset = FileAsset.objects.get(
+                id=asset_id,
+                workspace__slug=slug,
+                project_id=project_id,
+                is_uploaded=True,
+            )
+        except FileAsset.DoesNotExist:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        storage = S3Storage(request=request)
+        signed_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition=f"attachment; filename={asset.asset.name}",
+        )
+
+        return HttpResponseRedirect(signed_url)

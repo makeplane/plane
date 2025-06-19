@@ -11,13 +11,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { orderJoinedProjects } from "@/helpers/project.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 // plane web types
@@ -167,12 +165,17 @@ export const SidebarProjectsList: FC = observer(() => {
                 as="button"
                 type="button"
                 className={cn(
-                  "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                  "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
                   {
                     "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
                   }
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                aria-label={t(
+                  isAllProjectsListOpen
+                    ? "aria_labels.projects_sidebar.close_projects_menu"
+                    : "aria_labels.projects_sidebar.open_projects_menu"
+                )}
               >
                 <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
@@ -195,6 +198,7 @@ export const SidebarProjectsList: FC = observer(() => {
                           setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
                           setIsProjectModalOpen(true);
                         }}
+                        aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                       >
                         <Plus className="size-3" />
                       </button>
@@ -205,9 +209,14 @@ export const SidebarProjectsList: FC = observer(() => {
                     type="button"
                     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                     onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                    aria-label={t(
+                      isAllProjectsListOpen
+                        ? "aria_labels.projects_sidebar.close_projects_menu"
+                        : "aria_labels.projects_sidebar.open_projects_menu"
+                    )}
                   >
                     <ChevronRight
-                      className={cn("flex-shrink-0 size-4 transition-all", {
+                      className={cn("flex-shrink-0 size-3 transition-all", {
                         "rotate-90": isAllProjectsListOpen,
                       })}
                     />

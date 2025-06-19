@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Не вдалося видалити проєкт із вибраного. Спробуйте ще раз.",
   "project_created_successfully": "Проєкт успішно створено",
   "project_created_successfully_description": "Проєкт успішно створений. Тепер ви можете почати додавати робочі одиниці.",
+  "project_name_already_taken": "Назва проекту вже використовується.",
+  "project_identifier_already_taken": "Ідентифікатор проекту вже використовується.",
   "project_cover_image_alt": "Обкладинка проєкту",
   "name_is_required": "Назва є обов’язковою",
   "title_should_be_less_than_255_characters": "Назва має бути коротшою за 255 символів",
@@ -747,8 +749,9 @@
         "title": "Помилка!",
         "message": "Щось пішло не так. Будь ласка, спробуйте ще раз."
       },
-      "required": "Це поле є обов’язковим",
-      "entity_required": "{entity} є обов’язковим"
+      "required": "Це поле є обов'язковим",
+      "entity_required": "{entity} є обов'язковим",
+      "restricted_entity": "{entity} обмежено"
     },
     "update_link": "Оновити посилання",
     "attach": "Прикріпити",
@@ -849,6 +852,7 @@
     "live": "Наживо",
     "change_history": "Історія змін",
     "coming_soon": "Незабаром",
+    "member": "Учасник",
     "members": "Учасники",
     "you": "Ви",
     "upgrade_cta": {
@@ -866,7 +870,21 @@
     "view": "Подання",
     "deactivated_user": "Деактивований користувач",
     "apply": "Застосувати",
-    "applying": "Застосовується"
+    "applying": "Застосовується",
+    "users": "Користувачі",
+    "admins": "Адміністратори",
+    "guests": "Гості",
+    "on_track": "У межах графіку",
+    "off_track": "Поза графіком",
+    "at_risk": "Під загрозою",
+    "timeline": "Хронологія",
+    "completion": "Завершення",
+    "upcoming": "Майбутнє",
+    "completed": "Завершено",
+    "in_progress": "В процесі",
+    "planned": "Заплановано",
+    "paused": "Призупинено",
+    "no_of": "Кількість {entity}"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -1081,7 +1099,9 @@
     "select": {
       "error": "Виберіть принаймні одну робочу одиницю",
       "empty": "Не вибрано жодної робочої одиниці",
-      "add_selected": "Додати вибрані робочі одиниці"
+      "add_selected": "Додати вибрані робочі одиниці",
+      "select_all": "Вибрати всі",
+      "deselect_all": "Скасувати вибір усіх"
     },
     "open_in_full_screen": "Відкрити робочу одиницю на повний екран"
   },
@@ -1109,6 +1129,18 @@
     "remove": {
       "success": "Похідну робочу одиницю успішно вилучено",
       "error": "Помилка під час вилучення похідної одиниці"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Ви не маєте похідних робочих одиниць, які відповідають застосованим фільтрам.",
+        "description": "Щоб побачити всі похідні робочі одиниці, очистіть всі застосовані фільтри.",
+        "action": "Очистити фільтри"
+      },
+      "list_filters": {
+        "title": "Ви не маєте робочих одиниць, які відповідають застосованим фільтрам.",
+        "description": "Щоб побачити всі робочі одиниці, очистіть всі застосовані фільтри.",
+        "action": "Очистити фільтри"
+      }
     }
   },
   "view": {
@@ -1302,19 +1334,6 @@
       "custom": "Користувацька аналітика"
     },
     "empty_state": {
-      "general": {
-        "title": "Відстежуйте прогрес, навантаження й розподіл. Виявляйте тенденції, усувайте перешкоди й прискорюйте роботу",
-        "description": "Стежте за обсягом проти попиту, оцінками та обсягом. Визначайте ефективність учасників і команд, аби вчасно виконувати проєкти.",
-        "primary_button": {
-          "text": "Розпочніть перший проєкт",
-          "comic": {
-            "title": "Аналітика найкраще працює з Циклами + Модулями",
-            "description": "Спочатку обмежте роботу в часі через Цикли та згрупуйте робочі одиниці, які тривають довше, у Модулі. Все це в лівому меню."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут.",
         "title": "Ще немає даних"
@@ -1330,21 +1349,22 @@
     },
     "created_vs_resolved": "Створено vs Вирішено",
     "customized_insights": "Персоналізовані аналітичні дані",
-    "backlog_work_items": "Робочі елементи у беклозі",
+    "backlog_work_items": "{entity} у беклозі",
     "active_projects": "Активні проєкти",
     "trend_on_charts": "Тенденція на графіках",
     "all_projects": "Усі проєкти",
     "summary_of_projects": "Зведення проєктів",
     "project_insights": "Аналітика проєкту",
-    "started_work_items": "Розпочаті робочі елементи",
-    "total_work_items": "Усього робочих елементів",
+    "started_work_items": "Розпочаті {entity}",
+    "total_work_items": "Усього {entity}",
     "total_projects": "Усього проєктів",
     "total_admins": "Усього адміністраторів",
     "total_users": "Усього користувачів",
     "total_intake": "Загальний дохід",
-    "un_started_work_items": "Нерозпочаті робочі елементи",
+    "un_started_work_items": "Нерозпочаті {entity}",
     "total_guests": "Усього гостей",
-    "completed_work_items": "Завершені робочі елементи"
+    "completed_work_items": "Завершені {entity}",
+    "total": "Усього {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",
@@ -2447,5 +2467,9 @@
     "last_edited_by": "Останнє редагування",
     "previously_edited_by": "Раніше відредаговано",
     "edited_by": "Відредаговано"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустився. Це може бути через те, що один або декілька сервісів Plane не змогли запуститися.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Виберіть View Logs з setup.sh та логів Docker, щоб переконатися."
   }
 }

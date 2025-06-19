@@ -6,4 +6,5 @@ export * from "./time";
 export * from "./profile-setting-content-wrapper";
 export * from "./profile-setting-content-header";
 export * from "./form";
+export * from "./preferences/language-timezone";
 export * from "./start-of-week-preference";

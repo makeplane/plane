@@ -8,9 +8,9 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -175,8 +175,13 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}
+              aria-label={t(
+                isCollapsed
+                  ? "aria_labels.projects_sidebar.expand_sidebar"
+                  : "aria_labels.projects_sidebar.collapse_sidebar"
+              )}
             >
-              <MoveLeft className={`h-4 w-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
+              <MoveLeft className={`size-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>
           </Tooltip>
         </div>

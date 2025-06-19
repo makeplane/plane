@@ -29,6 +29,7 @@ from plane.db.models import (
 from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
 
+
 class ProjectInvitationsViewset(BaseViewSet):
     serializer_class = ProjectMemberInviteSerializer
     model = ProjectMemberInvite

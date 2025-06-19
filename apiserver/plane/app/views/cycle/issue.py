@@ -29,6 +29,7 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
 
+
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "无法从收藏中移除项目。请重试。",
   "project_created_successfully": "项目创建成功",
   "project_created_successfully_description": "项目创建成功。您现在可以开始添加工作项了。",
+  "project_name_already_taken": "项目名称已被使用。",
+  "project_identifier_already_taken": "项目标识符已被使用。",
   "project_cover_image_alt": "项目封面图片",
   "name_is_required": "名称为必填项",
   "title_should_be_less_than_255_characters": "标题应少于255个字符",
@@ -748,7 +750,8 @@
         "message": "发生错误。请重试。"
       },
       "required": "此字段为必填项",
-      "entity_required": "{entity}为必填项"
+      "entity_required": "{entity}为必填项",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新链接",
     "attach": "附加",
@@ -848,6 +851,7 @@
     "live": "实时",
     "change_history": "变更历史",
     "coming_soon": "即将推出",
+    "member": "成员",
     "members": "成员",
     "you": "你",
     "upgrade_cta": {
@@ -865,7 +869,21 @@
     "view": "查看",
     "deactivated_user": "已停用用户",
     "apply": "应用",
-    "applying": "应用中"
+    "applying": "应用中",
+    "users": "用户",
+    "admins": "管理员",
+    "guests": "访客",
+    "on_track": "进展顺利",
+    "off_track": "偏离轨道",
+    "at_risk": "有风险",
+    "timeline": "时间轴",
+    "completion": "完成",
+    "upcoming": "即将发生",
+    "completed": "已完成",
+    "in_progress": "进行中",
+    "planned": "已计划",
+    "paused": "暂停",
+    "no_of": "{entity} 的数量"
   },
   "chart": {
     "x_axis": "X轴",
@@ -1080,7 +1098,9 @@
     "select": {
       "error": "请至少选择一个工作项",
       "empty": "未选择工作项",
-      "add_selected": "添加所选工作项"
+      "add_selected": "添加所选工作项",
+      "select_all": "全选",
+      "deselect_all": "取消全选"
     },
     "open_in_full_screen": "在全屏中打开工作项"
   },
@@ -1108,6 +1128,18 @@
     "remove": {
       "success": "子工作项移除成功",
       "error": "移除子工作项时出错"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您没有符合您应用的过滤器的子工作项。",
+        "description": "要查看所有子工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      },
+      "list_filters": {
+        "title": "您没有符合您应用的过滤器的工作项。",
+        "description": "要查看所有工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      }
     }
   },
   "view": {
@@ -1301,19 +1333,6 @@
       "custom": "自定义分析"
     },
     "empty_state": {
-      "general": {
-        "title": "跟踪进度、工作量和分配。发现趋势、消除障碍并加快工作进度",
-        "description": "查看范围与需求、估算和范围蔓延。获取团队成员和团队的表现，确保您的项目按时运行。",
-        "primary_button": {
-          "text": "开始您的第一个项目",
-          "comic": {
-            "title": "分析在周期 + 模块中效果最佳",
-            "description": "首先，将您的工作项限定在周期中，如果可能的话，将跨越多个周期的工作项分组到模块中。在左侧导航栏中查看这两项。"
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "分配给您的工作项将按状态分类显示在此处。",
         "title": "暂无数据"
@@ -1329,21 +1348,22 @@
     },
     "created_vs_resolved": "已创建 vs 已解决",
     "customized_insights": "自定义洞察",
-    "backlog_work_items": "待办工作项",
+    "backlog_work_items": "待办的{entity}",
     "active_projects": "活跃项目",
     "trend_on_charts": "图表趋势",
     "all_projects": "所有项目",
     "summary_of_projects": "项目概览",
     "project_insights": "项目洞察",
-    "started_work_items": "已开始的工作项",
-    "total_work_items": "工作项总数",
+    "started_work_items": "已开始的{entity}",
+    "total_work_items": "{entity}总数",
     "total_projects": "项目总数",
     "total_admins": "管理员总数",
     "total_users": "用户总数",
     "total_intake": "总收入",
-    "un_started_work_items": "未开始的工作项",
+    "un_started_work_items": "未开始的{entity}",
     "total_guests": "访客总数",
-    "completed_work_items": "已完成的工作项"
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}总数"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
@@ -2427,5 +2447,9 @@
     "last_edited_by": "最后编辑者",
     "previously_edited_by": "之前编辑者",
     "edited_by": "编辑者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   }
 }

@@ -3,11 +3,11 @@ import { observer } from "mobx-react";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
+import { isInDateFormat } from "@plane/utils";
 import { DateFilterModal } from "@/components/core";
 import { FilterHeader, FilterOption } from "@/components/issues";
 
 // helpers
-import { isInDateFormat } from "@/helpers/date-time.helper";
 
 type Props = {
   appliedFilters: string[] | null;

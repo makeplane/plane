@@ -4,14 +4,14 @@ from plane.app.views import ApiTokenEndpoint, ServiceApiTokenEndpoint
 urlpatterns = [
     # API Tokens
     path(
-        "workspaces/<str:slug>/api-tokens/",
+        "users/api-tokens/",
         ApiTokenEndpoint.as_view(),
         name="api-tokens",
     ),
     path(
-        "workspaces/<str:slug>/api-tokens/<uuid:pk>/",
+        "users/api-tokens/<uuid:pk>/",
         ApiTokenEndpoint.as_view(),
-        name="api-tokens",
+        name="api-tokens-details",
     ),
     path(
         "workspaces/<str:slug>/service-api-tokens/",

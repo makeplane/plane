@@ -2,15 +2,14 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, Copy } from "lucide-react";
+import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
-import { calculateTimeAgo, getIconForLink } from "@plane/utils";
+import { calculateTimeAgo, getIconForLink, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -37,7 +36,9 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
   const linkDetail = getLinkById(linkId);
   if (!linkDetail) return <></>;
 
-  const Icon = getIconForLink(linkDetail.url);
+  // const Icon = getIconForLink(linkDetail.url);
+  const faviconUrl: string | undefined = linkDetail.metadata?.favicon;
+  const linkTitle: string | undefined = linkDetail.metadata?.title;
 
   const toggleIssueLinkModal = (modalToggle: boolean) => {
     toggleIssueLinkModalStore(modalToggle);
@@ -50,15 +51,21 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
         className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-custom-border-200 rounded"
       >
         <div className="flex items-center gap-2.5 truncate flex-grow">
-          <Icon className="size-4 flex-shrink-0 stroke-2 text-custom-text-350 group-hover:text-custom-text-100" />
+          {faviconUrl ? (
+            <img src={faviconUrl} alt="favicon" className="size-4" />
+          ) : (
+            <Link className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
+          )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
               href={linkDetail.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-sm cursor-pointer flex-grow"
+              className="truncate text-sm cursor-pointer flex-grow flex items-center gap-3"
             >
               {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
+
+              {linkTitle && linkTitle !== "" && <span className="text-custom-text-400 text-xs">{linkTitle}</span>}
             </a>
           </Tooltip>
         </div>

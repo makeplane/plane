@@ -11,8 +11,7 @@ from rest_framework.response import Response
 
 # Module import
 from plane.app.permissions import ROLE, allow_permission
-from plane.app.serializers import (ProjectLiteSerializer,
-                                   WorkspaceLiteSerializer)
+from plane.app.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
 from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
@@ -22,6 +21,7 @@ from ..base import BaseAPIView
 
 class LLMProvider:
     """Base class for LLM provider configurations"""
+
     name: str = ""
     models: List[str] = []
     default_model: str = ""
@@ -34,10 +34,12 @@ class LLMProvider:
             "default_model": cls.default_model,
         }
 
+
 class OpenAIProvider(LLMProvider):
     name = "OpenAI"
     models = ["gpt-3.5-turbo", "gpt-4o-mini", "gpt-4o", "o1-mini", "o1-preview"]
     default_model = "gpt-4o-mini"
+
 
 class AnthropicProvider(LLMProvider):
     name = "Anthropic"
@@ -49,14 +51,16 @@ class AnthropicProvider(LLMProvider):
         "claude-2.1",
         "claude-2",
         "claude-instant-1.2",
-        "claude-instant-1"
+        "claude-instant-1",
     ]
     default_model = "claude-3-sonnet-20240229"
+
 
 class GeminiProvider(LLMProvider):
     name = "Gemini"
     models = ["gemini-pro", "gemini-1.5-pro-latest", "gemini-pro-vision"]
     default_model = "gemini-pro"
+
 
 SUPPORTED_PROVIDERS = {
     "openai": OpenAIProvider,
@@ -64,25 +68,28 @@ SUPPORTED_PROVIDERS = {
     "gemini": GeminiProvider,
 }
 
+
 def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     """
     Helper to get LLM configuration values, returns:
         - api_key, model, provider
     """
-    api_key, provider_key, model = get_configuration_value([
-        {
-            "key": "LLM_API_KEY",
-            "default": os.environ.get("LLM_API_KEY", None),
-        },
-        {
-            "key": "LLM_PROVIDER",
-            "default": os.environ.get("LLM_PROVIDER", "openai"),
-        },
-        {
-            "key": "LLM_MODEL",
-            "default": os.environ.get("LLM_MODEL", None),
-        },
-    ])
+    api_key, provider_key, model = get_configuration_value(
+        [
+            {
+                "key": "LLM_API_KEY",
+                "default": os.environ.get("LLM_API_KEY", None),
+            },
+            {
+                "key": "LLM_PROVIDER",
+                "default": os.environ.get("LLM_PROVIDER", "openai"),
+            },
+            {
+                "key": "LLM_MODEL",
+                "default": os.environ.get("LLM_MODEL", None),
+            },
+        ]
+    )
 
     provider = SUPPORTED_PROVIDERS.get(provider_key.lower())
     if not provider:
@@ -99,16 +106,20 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
 
     # Validate model is supported by provider
     if model not in provider.models:
-        log_exception(ValueError(
-            f"Model {model} not supported by {provider.name}. "
-            f"Supported models: {', '.join(provider.models)}"
-        ))
+        log_exception(
+            ValueError(
+                f"Model {model} not supported by {provider.name}. "
+                f"Supported models: {', '.join(provider.models)}"
+            )
+        )
         return None, None, None
 
     return api_key, model, provider_key
 
 
-def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> Tuple[str | None, str | None]:
+def get_llm_response(
+    task, prompt, api_key: str, model: str, provider: str
+) -> Tuple[str | None, str | None]:
     """Helper to get LLM completion response"""
     final_text = task + "\n" + prompt
     try:
@@ -118,10 +129,7 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
 
         client = OpenAI(api_key=api_key)
         chat_completion = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "user", "content": final_text}
-            ]
+            model=model, messages=[{"role": "user", "content": final_text}]
         )
         text = chat_completion.choices[0].message.content
         return text, None
@@ -134,6 +142,7 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
             return None, f"Rate limit exceeded for {provider}"
         else:
             return None, f"Error occurred while generating response from {provider}"
+
 
 class GPTIntegrationEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -152,7 +161,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
                 {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
+        text, error = get_llm_response(
+            task, request.data.get("prompt", False), api_key, model, provider
+        )
         if not text and error:
             return Response(
                 {"error": "An internal error has occurred."},
@@ -190,7 +201,9 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
                 {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
+        text, error = get_llm_response(
+            task, request.data.get("prompt", False), api_key, model, provider
+        )
         if not text and error:
             return Response(
                 {"error": "An internal error has occurred."},

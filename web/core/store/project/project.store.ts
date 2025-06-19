@@ -7,7 +7,7 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCountParams } from "@plane/types";
 // helpers
-import { orderProjects, shouldFilterProject } from "@/helpers/project.helper";
+import { orderProjects, shouldFilterProject } from "@plane/utils";
 // services
 import { TProject, TPartialProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
@@ -293,7 +293,7 @@ export class ProjectStore implements IProjectStore {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
         });
         this.loader = "loaded";
-        this.fetchStatus = "partial";
+        if (!this.fetchStatus) this.fetchStatus = "partial";
       });
       return projectsResponse;
     } catch (error) {

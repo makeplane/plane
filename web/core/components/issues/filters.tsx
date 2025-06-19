@@ -10,15 +10,14 @@ import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
+import { isIssueFilterActive } from "@plane/utils";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
-import { ProjectAnalyticsModal } from "../analytics";
-import { WorkItemsModal } from "../analytics-v2/work-items/modal";
+import { WorkItemsModal } from "../analytics/work-items/modal";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -102,6 +101,7 @@ const HeaderFilters = observer((props: Props) => {
         isOpen={analyticsModal}
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
+        isEpic={storeType === EIssuesStoreType.EPIC}
       />
       <LayoutSelection
         layouts={[

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Tidak dapat menghapus proyek dari favorit. Silakan coba lagi.",
   "project_created_successfully": "Proyek berhasil dibuat",
   "project_created_successfully_description": "Proyek berhasil dibuat. Anda sekarang dapat mulai menambahkan item kerja ke dalamnya.",
+  "project_name_already_taken": "Nama proyek sudah digunakan",
+  "project_identifier_already_taken": "ID proyek sudah digunakan",
   "project_cover_image_alt": "Gambar sampul proyek",
   "name_is_required": "Nama diperlukan",
   "title_should_be_less_than_255_characters": "Judul harus kurang dari 255 karakter",
@@ -746,7 +748,8 @@
         "message": "Sesuatu telah salah. Silakan coba lagi."
       },
       "required": "Bidang ini diperlukan",
-      "entity_required": "{entity} diperlukan"
+      "entity_required": "{entity} diperlukan",
+      "restricted_entity": "{entity} dibatasi"
     },
     "update_link": "Perbarui tautan",
     "attach": "Lampirkan",
@@ -847,6 +850,7 @@
     "live": "Langsung",
     "change_history": "Riwayat Perubahan",
     "coming_soon": "Segera hadir",
+    "member": "Anggota",
     "members": "Anggota",
     "you": "Anda",
     "upgrade_cta": {
@@ -864,7 +868,21 @@
     "view": "Lihat",
     "deactivated_user": "Pengguna dinonaktifkan",
     "apply": "Terapkan",
-    "applying": "Terapkan"
+    "applying": "Terapkan",
+    "users": "Pengguna",
+    "admins": "Admin",
+    "guests": "Tamu",
+    "on_track": "Sesuai Jalur",
+    "off_track": "Menyimpang",
+    "at_risk": "Dalam risiko",
+    "timeline": "Linimasa",
+    "completion": "Penyelesaian",
+    "upcoming": "Mendatang",
+    "completed": "Selesai",
+    "in_progress": "Sedang berlangsung",
+    "planned": "Direncanakan",
+    "paused": "Dijedaikan",
+    "no_of": "Jumlah {entity}"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -1079,7 +1097,9 @@
     "select": {
       "error": "Silakan pilih setidaknya satu item kerja",
       "empty": "Tidak ada item kerja yang dipilih",
-      "add_selected": "Tambah item kerja yang dipilih"
+      "add_selected": "Tambah item kerja yang dipilih",
+      "select_all": "Pilih semua item kerja",
+      "deselect_all": "Batalkan pilihan semua item kerja"
     },
     "open_in_full_screen": "Buka item kerja dalam layar penuh"
   },
@@ -1107,6 +1127,18 @@
     "remove": {
       "success": "Sub-item kerja berhasil dihapus",
       "error": "Kesalahan saat menghapus sub-item kerja"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Anda tidak memiliki sub-item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua sub-item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      },
+      "list_filters": {
+        "title": "Anda tidak memiliki item kerja yang cocok dengan filter yang Anda terapkan.",
+        "description": "Untuk melihat semua item kerja, hapus semua filter yang diterapkan.",
+        "action": "Hapus filter"
+      }
     }
   },
   "view": {
@@ -1300,19 +1332,6 @@
       "custom": "Analitik Kustom"
     },
     "empty_state": {
-      "general": {
-        "title": "Lacak kemajuan, beban kerja, dan alokasi. Temukan tren, hilangkan penghalang, dan percepat pekerjaan",
-        "description": "Lihat lingkup dibandingkan permintaan, perkiraan, dan lingkup cree. Dapatkan kinerja oleh anggota tim dan tim, dan pastikan proyek Anda berjalan tepat waktu.",
-        "primary_button": {
-          "text": "Mulai proyek pertama Anda",
-          "comic": {
-            "title": "Analitik bekerja terbaik dengan Siklus + Modul",
-            "description": "Pertama, bagi item kerja Anda ke dalam Siklus dan, jika memungkinkan, kelompokkan item kerja yang menjangkau lebih dari satu siklus ke dalam Modul. Lihat kedua fungsi pada navigasi kiri."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini.",
         "title": "Belum ada data"
@@ -1328,21 +1347,22 @@
     },
     "created_vs_resolved": "Dibuat vs Diselesaikan",
     "customized_insights": "Wawasan yang Disesuaikan",
-    "backlog_work_items": "Item pekerjaan backlog",
+    "backlog_work_items": "{entity} backlog",
     "active_projects": "Proyek Aktif",
     "trend_on_charts": "Tren pada grafik",
     "all_projects": "Semua Proyek",
     "summary_of_projects": "Ringkasan Proyek",
     "project_insights": "Wawasan Proyek",
-    "started_work_items": "Item pekerjaan yang telah dimulai",
-    "total_work_items": "Total item pekerjaan",
+    "started_work_items": "{entity} yang telah dimulai",
+    "total_work_items": "Total {entity}",
     "total_projects": "Total Proyek",
     "total_admins": "Total Admin",
     "total_users": "Total Pengguna",
     "total_intake": "Total Pemasukan",
-    "un_started_work_items": "Item pekerjaan yang belum dimulai",
+    "un_started_work_items": "{entity} yang belum dimulai",
     "total_guests": "Total Tamu",
-    "completed_work_items": "Item pekerjaan yang telah selesai"
+    "completed_work_items": "{entity} yang telah selesai",
+    "total": "Total {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyek} other {Proyek}}",
@@ -2440,5 +2460,10 @@
     "last_edited_by": "Terakhir disunting oleh",
     "previously_edited_by": "Sebelumnya disunting oleh",
     "edited_by": "Disunting oleh"
-  }
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan Plane gagal untuk dimulai.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
+  },
+  "no_of": "Jumlah {entity}"
 }

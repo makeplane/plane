@@ -1,4 +1,4 @@
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
@@ -119,7 +119,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TIssueDetailWidget = "sub-issues" | "relations" | "links" | "attachments";
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
@@ -181,3 +181,10 @@ export type TPublicIssuesResponse = {
   extra_stats: null;
   results: TPublicIssueResponseResults;
 };
+
+export interface IWorkItemPeekOverview {
+  embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
+  is_draft?: boolean;
+  storeType?: EIssuesStoreType;
+}

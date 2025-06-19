@@ -461,14 +461,15 @@ module.exports = {
         "onboarding-gradient-200": "var( --gradient-onboarding-200)",
         "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
-    },
-    fontFamily: {
-      custom: ["Inter", "sans-serif"],
+      fontFamily: {
+        custom: ["Inter", "sans-serif"],
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
+    require("@tailwindcss/container-queries"),
     function ({ addUtilities }) {
       const newUtilities = {
         // Mobile screens

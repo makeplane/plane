@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -37,6 +37,7 @@ type Props = TDropdownProps & {
   filterAvailableStateIds?: boolean;
   isForWorkItemCreation?: boolean;
   alwaysAllowStateChange?: boolean;
+  iconSize?: string;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -60,6 +61,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
     stateIds,
+    iconSize = "size-4",
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -101,7 +103,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
         <StateGroupIcon
           stateGroup={state?.group ?? "backlog"}
           color={state?.color}
-          className="size-4 flex-shrink-0"
+          className={cn("flex-shrink-0", iconSize)}
           percentage={state?.order}
         />
         <span className="flex-grow truncate text-left">{state?.name}</span>
@@ -184,7 +186,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   <StateGroupIcon
                     stateGroup={selectedState?.group ?? "backlog"}
                     color={selectedState?.color ?? "rgba(var(--color-text-300))"}
-                    className="size-4 flex-shrink-0"
+                    className={cn("flex-shrink-0", iconSize)}
                     percentage={selectedState?.order}
                   />
                 )}

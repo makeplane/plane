@@ -136,45 +136,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
       ],
       display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
       display_filters: {
-        group_by: [
-          "state",
-          "cycle",
-          "module",
-          "state_detail.group",
-          "priority",
-          "labels",
-          "assignees",
-          "created_by",
-          null,
-        ],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
-        type: [null, "active", "backlog"],
-      },
-      extra_options: {
-        access: true,
-        values: ["show_empty_groups"],
-      },
-    },
-  },
-  draft_issues: {
-    list: {
-      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
-      display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
-      display_filters: {
-        group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
-        type: [null, "active", "backlog"],
-      },
-      extra_options: {
-        access: true,
-        values: ["show_empty_groups"],
-      },
-    },
-    kanban: {
-      filters: ["priority", "state_group", "cycle", "module", "labels", "start_date", "target_date", "issue_type"],
-      display_properties: ISSUE_DISPLAY_PROPERTIES_KEYS,
-      display_filters: {
-        group_by: ["state_detail.group", "cycle", "module", "priority", "project", "labels"],
+        group_by: ["state", "cycle", "module", "priority", "labels", "assignees", "created_by", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
         type: [null, "active", "backlog"],
       },
@@ -355,7 +317,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
   sub_work_items: {
     list: {
       display_properties: SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
-      filters: ["priority", "state", "project", "issue_type", "assignees", "start_date", "target_date"],
+      filters: ["priority", "state", "issue_type", "assignees", "start_date", "target_date"],
       display_filters: {
         order_by: ["-created_at", "-updated_at", "start_date", "-priority"],
         group_by: ["state", "priority", "assignees", null],

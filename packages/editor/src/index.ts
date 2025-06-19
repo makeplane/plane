@@ -36,5 +36,4 @@ export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 
 // types
-export type { CustomEditorProps } from "@/hooks/use-editor";
 export * from "@/types";

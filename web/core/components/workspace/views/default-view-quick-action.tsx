@@ -8,10 +8,8 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { TStaticViewTypes } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
   workspaceSlug: string;

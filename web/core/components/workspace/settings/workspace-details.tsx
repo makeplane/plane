@@ -9,12 +9,11 @@ import { ORGANIZATION_SIZE, WORKSPACE_UPDATED, EUserPermissions, EUserPermission
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
-import { copyUrlToClipboard } from "@plane/utils";
+import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
@@ -155,7 +154,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
