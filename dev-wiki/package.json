@@ -4,16 +4,16 @@
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "dev": "turbo run develop",
-    "develop": "next dev --port 3000",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
-    "export": "next export",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev:trace": "NEXT_TURBOPACK_TRACING=1 NEXT_CPU_PROF=1 next dev",
-    "view-trace": "next internal turbo-trace-server ./.next/trace"
+    "wiki-dev": "turbo run develop",
+    "wiki-develop": "next dev --port 3000",
+    "wiki-build": "next build",
+    "wiki-start": "next start",
+    "wiki-lint": "eslint . --ext .ts,.tsx",
+    "wiki-lint:errors": "eslint . --ext .ts,.tsx --quiet",
+    "wiki-export": "next export",
+    "wiki-clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "wiki-dev:trace": "NEXT_TURBOPACK_TRACING=1 NEXT_CPU_PROF=1 next dev",
+    "wiki-view-trace": "next internal turbo-trace-server ./.next/trace"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.3",
