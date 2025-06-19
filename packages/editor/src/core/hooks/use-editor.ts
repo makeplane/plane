@@ -1,8 +1,6 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions, useEditorState } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect } from "react";
+import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -19,42 +17,19 @@ import { scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import type { EditorRefApi, TEditorCommands, TFileHandler, TExtensions, TMentionHandler, TEditorAsset } from "@/types";
+import type { TEditorCommands, TEditorHookProps } from "@/types";
 
-interface CustomEditorProps {
-  editable: boolean;
-  editorClassName: string;
-  editorProps?: EditorProps;
-  enableHistory: boolean;
-  disabledExtensions: TExtensions[];
-  extensions?: Extensions;
-  fileHandler: TFileHandler;
-  forwardedRef?: MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id?: string;
-  initialValue?: string;
-  mentionHandler: TMentionHandler;
-  onAssetChange?: (assets: TEditorAsset[]) => void;
-  onChange?: (json: object, html: string) => void;
-  onTransaction?: () => void;
-  autofocus?: boolean;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: HocuspocusProvider;
-  tabIndex?: number;
-  // undefined when prop is not passed, null if intentionally passed to stop
-  // swr syncing
-  value?: string | null | undefined;
-}
-
-export const useEditor = (props: CustomEditorProps) => {
+export const useEditor = (props: TEditorHookProps) => {
   const {
+    autofocus = false,
     disabledExtensions,
     editable = true,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
     enableHistory,
     extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id = "",
@@ -64,10 +39,9 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
+    provider,
     tabIndex,
     value,
-    provider,
-    autofocus = false,
   } = props;
 
   const editor = useTiptapEditor(
@@ -89,6 +63,7 @@ export const useEditor = (props: CustomEditorProps) => {
           disabledExtensions,
           enableHistory,
           fileHandler,
+          flaggedExtensions,
           mentionHandler,
           placeholder,
           tabIndex,

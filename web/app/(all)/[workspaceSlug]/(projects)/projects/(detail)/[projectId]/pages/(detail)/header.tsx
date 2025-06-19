@@ -110,7 +110,7 @@ export const PageDetailsHeader = observer(() => {
         </div>
       </Header.LeftItem>
       <Header.RightItem>
-        <PageDetailsHeaderExtraActions page={page} />
+        <PageDetailsHeaderExtraActions page={page} storeType={storeType} />
         <PageHeaderActions page={page} storeType={storeType} />
       </Header.RightItem>
     </Header>

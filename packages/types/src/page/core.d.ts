@@ -1,9 +1,9 @@
-import { TLogoProps } from "./common";
-import { EPageAccess } from "./enums";
+import { TLogoProps } from "../common";
+import { EPageAccess } from "../enums";
+import { TPageExtended } from "./extended";
 
-export type TPage = {
+export type TPage = TPageExtended & {
   access: EPageAccess | undefined;
-  anchor?: string | null | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;
   created_at: Date | undefined;
@@ -16,7 +16,6 @@ export type TPage = {
   name: string | undefined;
   owned_by: string | undefined;
   project_ids?: string[] | undefined;
-  team: string | null | undefined;
   updated_at: Date | undefined;
   updated_by: string | undefined;
   workspace: string | undefined;

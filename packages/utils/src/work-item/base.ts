@@ -185,6 +185,7 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   sort_order: block?.sort_order,
   start_date: block?.start_date ?? undefined,
   target_date: block?.target_date ?? undefined,
+  project_id: block?.project_id ?? undefined,
 });
 
 export const formatTextList = (TextArray: string[]): string => {
@@ -260,7 +261,7 @@ export const getComputedDisplayFilters = (
   displayFilters: IIssueDisplayFilterOptions = {},
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
-  const filters = displayFilters || defaultValues;
+  const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
 
   return {
     calendar: {
