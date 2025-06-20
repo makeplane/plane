@@ -1,19 +1,20 @@
-# Third-Party Imports
-import strawberry
-from enum import Enum
-
 # Python Standard Library Imports
-from asgiref.sync import sync_to_async
+from enum import Enum
 from typing import Optional
 
-# Strawberry Imports
-from strawberry.scalars import JSON
+# Third-Party Imports
+import strawberry
+from asgiref.sync import sync_to_async
 
 # Django Imports
 from django.db.models import Count, F
 
+# Strawberry Imports
+from strawberry.scalars import JSON
+
 # Module Imports
 from plane.db.models import Issue
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 
 
 # Enum for grouping issues
@@ -65,11 +66,13 @@ async def issue_information_query_execute(
     if module is not None:
         issue_query = issue_query.filter(issue_module__module_id=module)
 
+    project_teamspace_filter = await project_member_filter_via_teamspaces(
+        user_id=user,
+        workspace_slug=slug,
+    )
     issue_query = (
-        issue_query.filter(
-            project__project_projectmember__member=user,
-            project__project_projectmember__is_active=True,
-        )
+        issue_query.filter(project_teamspace_filter.query)
+        .distinct()
         .filter(**filters)
         .order_by(orderBy, "-created_at")
     )

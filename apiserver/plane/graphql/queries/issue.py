@@ -24,6 +24,7 @@ from plane.db.models import (
     IssueUserProperty,
 )
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.issues.activity import IssuePropertyActivityType
@@ -137,6 +138,9 @@ class IssueQuery:
         cursor: Optional[str] = None,
         type: Optional[str] = "all",
     ) -> PaginatorResponse[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         filters = work_item_filters(filters)
 
         # Filter issues based on the type
@@ -145,17 +149,18 @@ class IssueQuery:
         elif type == "active":
             filters["state__group__in"] = ["unstarted", "started"]
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         issues = await sync_to_async(list)(
             Issue.issue_objects.filter(workspace__slug=slug, project_id=project)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
-            .distinct()
         )
 
         return paginate(results_object=issues, cursor=cursor)
@@ -167,13 +172,29 @@ class IssueQuery:
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> IssuesType:
         try:
-            issue_detail = await sync_to_async(Issue.issue_objects.get)(
-                workspace__slug=slug,
-                project_id=project,
-                id=issue,
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
+            user = info.context.user
+            user_id = str(user.id)
+
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=slug,
             )
+            issue_detail = await sync_to_async(list)(
+                Issue.issue_objects.filter(
+                    workspace__slug=slug,
+                    project_id=project,
+                    id=issue,
+                )
+                .filter(project_teamspace_filter.query)
+                .distinct()
+            )
+
+            if not issue_detail:
+                message = "Issue not found."
+                error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
+                raise GraphQLError(message, extensions=error_extensions)
+
+            issue_detail = issue_detail[0]
         except Exception:
             message = "Issue not found."
             error_extensions = {"code": "ISSUE_NOT_FOUND", "statusCode": 404}
@@ -197,13 +218,17 @@ class RecentIssuesQuery:
         extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
     )
     async def recent_issues(self, info: Info, slug: str) -> list[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         # Fetch the top 5 recent issue IDs from the activity table
         issue_ids_coroutine = sync_to_async(list)(
-            IssueActivity.objects.filter(workspace__slug=slug, actor=info.context.user)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            IssueActivity.objects.filter(workspace__slug=slug, actor=user)
+            .filter(project_teamspace_filter.query)
             .order_by("-created_at")
             .values_list("issue", flat=True)
             .distinct()
@@ -214,8 +239,7 @@ class RecentIssuesQuery:
         # Fetch the actual issues using the filtered issue IDs
         issues = await sync_to_async(list)(
             Issue.issue_objects.filter(workspace__slug=slug, pk__in=issue_ids).filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
+                project_teamspace_filter.query
             )[:5]
         )
 
@@ -230,9 +254,11 @@ class IssueUserPropertyQuery:
     async def issue_user_properties(
         self, info: Info, slug: str, project: strawberry.ID
     ) -> IssueUserPropertyType:
+        user = info.context.user
+
         def get_issue_user_property():
             issue_properties, _ = IssueUserProperty.objects.get_or_create(
-                workspace__slug=slug, project_id=project, user=info.context.user
+                workspace__slug=slug, project_id=project, user=user
             )
             return issue_properties
 
@@ -249,17 +275,23 @@ class IssuePropertiesActivityQuery:
     async def issue_property_activities(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssuePropertyActivityType]:
+        user = info.context.user
+        user_id = str(user.id)
+
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         issue_activities = await sync_to_async(list)(
             IssueActivity.objects.filter(
                 issue_id=issue, project_id=project, workspace__slug=slug
             )
             .filter(
                 ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
                 workspace__slug=slug,
             )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("actor", "workspace", "issue", "project")
             .order_by("created_at")
         )
@@ -275,15 +307,19 @@ class IssueCommentActivityQuery:
     async def issue_comment_activities(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> list[IssueCommentActivityType]:
+        user = info.context.user
+        user_id = str(user.id)
+
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         issue_comments = await sync_to_async(list)(
             IssueComment.objects.filter(
                 issue_id=issue, project_id=project, workspace__slug=slug
             )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
             .prefetch_related(
@@ -316,12 +352,14 @@ class WorkspaceIssuesQuery:
 
         filters = work_item_filters(filters)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         workspace_issues = await sync_to_async(list)(
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project__project_projectmember__member_id=user_id,
-                project__project_projectmember__is_active=True,
-            )
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(**filters)
             .select_related("actor", "issue", "project", "workspace")
             .order_by(orderBy, "-created_at")

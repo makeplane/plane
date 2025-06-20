@@ -12,6 +12,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import IssueRelation
 from plane.graphql.helpers import work_item_base_query
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.issues.relation import IssueRelationType
 
@@ -25,15 +26,20 @@ class IssueRelationQuery:
     async def issueRelation(
         self, info: Info, slug: str, project: strawberry.ID, issue: strawberry.ID
     ) -> IssueRelationType:
+        user = info.context.user
+        user_id = str(user.id)
+
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         # construct the issue relation query
         issue_relation_query = (
             IssueRelation.objects.filter(workspace__slug=slug)
             .filter(project__id=project)
             .filter(deleted_at__isnull=True)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(Q(issue_id=issue) | Q(related_issue=issue))
             .select_related("project")
             .select_related("workspace")

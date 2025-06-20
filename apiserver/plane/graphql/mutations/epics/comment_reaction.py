@@ -16,13 +16,13 @@ from strawberry.types import Info
 # Module imports
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import CommentReaction
-from plane.graphql.helpers import get_workspace, get_epic
+from plane.graphql.helpers import get_epic, get_workspace
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.issues.comment_reaction import (
     CommentReactionInput,
     CommentReactionType,
 )
-
 
 valid_reactions = [
     "128077",
@@ -41,6 +41,10 @@ def get_epic_comment_reactions_by_reaction(
     workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str
 ):
     try:
+        project_teamspace_filter = project_member_filter_via_teamspaces(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+        )
         comment_reactions = (
             CommentReaction.objects.filter(
                 workspace__slug=workspace_slug,
@@ -49,11 +53,7 @@ def get_epic_comment_reactions_by_reaction(
                 actor_id=user_id,
                 reaction=reaction,
             )
-            .filter(
-                project__project_projectmember__member=user_id,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
             .order_by("-created_at")
             .distinct()
         )
@@ -67,6 +67,10 @@ def get_epic_comment_reaction(
     workspace_slug: str, project_id: str, comment_id: str, user_id: str, reaction: str
 ):
     try:
+        project_teamspace_filter = project_member_filter_via_teamspaces(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+        )
         comment_reaction = (
             CommentReaction.objects.filter(
                 workspace__slug=workspace_slug,
@@ -75,11 +79,7 @@ def get_epic_comment_reaction(
                 actor_id=user_id,
                 reaction=reaction,
             )
-            .filter(
-                project__project_projectmember__member=user_id,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
             .order_by("-created_at")
             .distinct()
         )

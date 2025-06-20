@@ -21,6 +21,7 @@ from plane.graphql.helpers import (
     is_project_epics_enabled,
     work_item_base_query,
 )
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.relation import EpicRelationType
 
@@ -56,14 +57,16 @@ class EpicRelationQuery:
         )
         epic_id = str(epic_details.id)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+        )
         epic_work_item_relation_query = (
             IssueRelation.objects.filter(workspace__slug=workspace_slug)
             .filter(project__id=project_id)
             .filter(deleted_at__isnull=True)
-            .filter(
-                project__project_projectmember__member_id=user_id,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .filter(Q(issue_id=epic_id) | Q(related_issue=epic_id))
             .select_related("project")
             .select_related("workspace")

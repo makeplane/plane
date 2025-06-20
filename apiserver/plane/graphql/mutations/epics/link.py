@@ -17,20 +17,20 @@ from strawberry.exceptions import GraphQLError
 from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
-
 # Module imports
 from plane.db.models import IssueLink
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import (
+    get_workspace,
+    is_epic_feature_flagged,
+    is_project_epics_enabled,
+)
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.epics.link import (
     EpicLinkCreateInputType,
     EpicLinkType,
     EpicLinkUpdateInputType,
-)
-from plane.graphql.helpers import (
-    get_workspace,
-    is_project_epics_enabled,
-    is_epic_feature_flagged,
 )
 from plane.graphql.utils.roles import Roles
 
@@ -38,15 +38,15 @@ from plane.graphql.utils.roles import Roles
 def epic_link_base_query(
     workspace_id: str, project_id: str, epic_id: str, user_id: str
 ):
+    project_teamspace_filter = project_member_filter_via_teamspaces(
+        user_id=user_id,
+        workspace_slug=workspace_id,
+    )
     return (
         IssueLink.objects.filter(workspace_id=workspace_id)
         .filter(project_id=project_id)
         .filter(issue_id=epic_id)
-        .filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
+        .filter(project_teamspace_filter.query)
         .order_by("-created_at")
         .distinct()
     )

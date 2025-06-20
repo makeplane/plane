@@ -13,7 +13,11 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import CommentReaction, IssueComment
-from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
+from plane.graphql.helpers import (
+    is_epic_feature_flagged,
+    is_project_epics_enabled,
+    project_member_filter_via_teamspaces_async,
+)
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.comment import EpicCommentActivityType
 
@@ -35,16 +39,17 @@ class EpicCommentQuery:
         # check if the epic is enabled for the project
         await is_project_epics_enabled(workspace_slug=slug, project_id=project)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         epic_comments = await sync_to_async(list)(
             IssueComment.objects.filter(workspace__slug=slug)
             .filter(project__id=project)
             .filter(issue_id=epic)
             .filter(deleted_at__isnull=True)
-            .filter(
-                project__project_projectmember__member=user_id,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .order_by("created_at")
             .select_related("actor", "issue", "project", "workspace")
             .prefetch_related(

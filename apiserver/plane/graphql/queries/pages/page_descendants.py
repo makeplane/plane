@@ -11,6 +11,7 @@ from strawberry.types import Info
 
 # Module Imports
 from plane.db.models import Page
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.page import NestedParentPageLiteType
@@ -38,16 +39,26 @@ def pages_with_ids(user, slug, page_ids, project=None, filters=None) -> list[Pag
     )
 
     if project:
+        user_id = str(user.id)
+        page_base_query = {
+            "projects__project_projectmember__member_id": user_id,
+            "projects__project_projectmember__is_active": True,
+            "projects__archived_at__isnull": True,
+        }
+        project_teamspace_filter = project_member_filter_via_teamspaces(
+            user_id=user_id,
+            workspace_slug=slug,
+            related_field="projects__id",
+            query=page_base_query,
+        )
         page_query = page_query.filter(projects__id=project).filter(
-            projects__project_projectmember__member=user,
-            projects__project_projectmember__is_active=True,
-            projects__archived_at__isnull=True,
+            project_teamspace_filter.query
         )
 
     if filters:
         page_query = page_query.filter(**filters)
 
-    page_query = page_query.filter(id__in=page_ids)
+    page_query = page_query.filter(id__in=page_ids).distinct()
 
     return list(page_query.order_by("created_at"))
 

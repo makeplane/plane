@@ -11,33 +11,38 @@ from plane.graphql.helpers import (
     get_workspace,
     is_epic_feature_flagged,
     is_project_epics_enabled,
+    project_member_filter_via_teamspaces,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.epics.link import EpicLinkType
 
 
 def epic_link_base_query(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str
+    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
 ):
+    project_teamspace_filter = project_member_filter_via_teamspaces(
+        user_id=user_id,
+        workspace_slug=workspace_slug,
+    )
     return (
         IssueLink.objects.filter(workspace_id=workspace_id)
         .filter(project_id=project_id)
         .filter(issue_id=epic_id)
-        .filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
+        .filter(project_teamspace_filter.query)
+        .distinct()
     )
 
 
 @sync_to_async
-def get_epic_links(workspace_id: str, project_id: str, epic_id: str, user_id: str):
+def get_epic_links(
+    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
+):
     base_query = epic_link_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
         epic_id=epic_id,
         user_id=user_id,
+        workspace_slug=workspace_slug,
     )
 
     base_query.order_by("-created_at")
@@ -88,7 +93,11 @@ class EpicLinkQuery:
         workspace_id = str(workspace.id)
 
         epic_links = await get_epic_links(
-            workspace_id=workspace_id, project_id=project, epic_id=epic, user_id=user_id
+            workspace_id=workspace_id,
+            project_id=project,
+            epic_id=epic,
+            user_id=user_id,
+            workspace_slug=slug,
         )
 
         return epic_links

@@ -15,10 +15,10 @@ from django.db.models import Q
 from strawberry.permission import PermissionExtension
 from strawberry.types import Info
 
-from plane.db.models import Issue
-
 # Module Imports
+from plane.db.models import Issue
 from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.graphql.types.issues.base import IssueLiteType
 from plane.graphql.types.paginator import PaginatorResponse
@@ -56,6 +56,10 @@ class IssuesSearchQuery:
         user = info.context.user
         user_id = str(user.id)
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         issue_queryset = (
             Issue.objects.filter(workspace__slug=slug)
             # issue intake filters
@@ -73,11 +77,7 @@ class IssuesSearchQuery:
             .filter(deleted_at__isnull=True)
             # draft filters
             .filter(is_draft=False)
-            .filter(
-                project__project_projectmember__member=user_id,
-                project__project_projectmember__is_active=True,
-            )
-            .filter(project__archived_at__isnull=True)
+            .filter(project_teamspace_filter.query)
         )
 
         # epic filters

@@ -1,10 +1,11 @@
 from .base import (
-    WorkspaceType,
-    WorkspaceMemberType,
-    WorkspaceYourWorkType,
     WorkspaceCreateInputType,
-    WorkspaceUpdateInputType,
+    WorkspaceMemberType,
     WorkspaceSlugVerificationInputType,
+    WorkspaceType,
+    WorkspaceUpdateInputType,
+    WorkspaceYourWorkType,
 )
-from .license import WorkspaceLicenseType
+from .feature import WorkspaceFeatureType
 from .invite import WorkspaceInviteType
+from .license import WorkspaceLicenseType

@@ -17,6 +17,7 @@ from plane.graphql.helpers import (
     get_workspace,
     is_epic_feature_flagged,
     is_project_epics_enabled,
+    project_member_filter_via_teamspaces_async,
 )
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.issues.base import IssuesType
@@ -60,12 +61,14 @@ class EpicWorkItemsQuery:
             workspace_slug=workspace_slug, project_id=project_id, epic_id=epic
         )
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+        )
         work_items = await sync_to_async(list)(
             Issue.issue_objects.filter(workspace_id=workspace_id, parent_id=epic)
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by("-created_at")

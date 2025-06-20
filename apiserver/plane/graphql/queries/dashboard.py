@@ -31,7 +31,9 @@ class userInformationQuery:
     async def userInformation(
         self, info: Info, device_id: Optional[str] = None
     ) -> UserInformationType:
-        profile = await sync_to_async(Profile.objects.get)(user=info.context.user)
+        user = info.context.user
+
+        profile = await sync_to_async(Profile.objects.get)(user=user)
 
         # fetch workspace
         workspace = None
@@ -44,7 +46,7 @@ class userInformationQuery:
 
         if workspace is None:
             try:
-                workspace = await get_workspace(info.context.user)
+                workspace = await get_workspace(user)
             except Exception:
                 workspace = None
 
@@ -53,13 +55,13 @@ class userInformationQuery:
         if device_id is not None:
             try:
                 device_information = await sync_to_async(Device.objects.get)(
-                    user=info.context.user, device_id=device_id
+                    user=user, device_id=device_id
                 )
             except Exception:
                 device_information = None
 
         return UserInformationType(
-            user=info.context.user,
+            user=user,
             profile=profile,
             workspace=workspace,
             device_info=device_information,

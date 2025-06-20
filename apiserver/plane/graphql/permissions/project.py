@@ -4,21 +4,54 @@ from typing import Any, Optional
 # Third-Party Imports
 from asgiref.sync import sync_to_async
 
-
 # Strawberry Imports
-from strawberry.types import Info
 from strawberry.permission import BasePermission
+from strawberry.types import Info
 
 # Local Imports
-from plane.graphql.utils.roles import Roles
-from plane.graphql.utils.error_codes import ERROR_CODES
 from plane.db.models import ProjectMember
+from plane.ee.models import TeamspaceMember, TeamspaceProject
+from plane.graphql.types.feature_flag import FeatureFlagsTypesEnum
+from plane.graphql.utils.error_codes import ERROR_CODES
+from plane.graphql.utils.feature_flag import _validate_feature_flag
+from plane.graphql.utils.roles import Roles
 
 # Permission Mappings
 Admin = 20
 Member = 15
 Viewer = 10
 Guest = 5
+
+
+@sync_to_async
+def _validate_project_access_via_teamspaces(
+    user_id: str, workspace_slug: str, project_id: Optional[str] = None
+) -> bool:
+    feature_key = FeatureFlagsTypesEnum.TEAMSPACES.value
+    teamspace_feature_flagged = _validate_feature_flag(
+        workspace_slug=workspace_slug,
+        feature_key=feature_key,
+        user_id=user_id,
+    )
+
+    if teamspace_feature_flagged:
+        # Get all team ids where the user is a member
+        teamspace_ids = TeamspaceMember.objects.filter(
+            member_id=user_id, workspace__slug=workspace_slug
+        ).values_list("team_space_id", flat=True)
+
+        # Get all the projects in the respective teamspaces
+        teamspace_project_ids = TeamspaceProject.objects.filter(
+            team_space_id__in=teamspace_ids
+        ).values_list("project_id", flat=True)
+        teamspace_project_ids = [
+            str(project_id) for project_id in list(teamspace_project_ids)
+        ]
+
+        if project_id is not None and str(project_id) in teamspace_project_ids:
+            return True
+
+    return False
 
 
 class IsAuthenticated(BasePermission):
@@ -49,15 +82,21 @@ class ProjectBasePermission(IsAuthenticated):
             self.error_extensions = IsAuthenticated.error_extensions
             return False
 
-        return await sync_to_async(
+        workspace_slug = kwargs.get("slug")
+        project_id = kwargs.get("project")
+        user_id = str(self.user.id)
+
+        is_project_member_exists = await sync_to_async(
             ProjectMember.objects.filter(
-                workspace__slug=kwargs.get("slug"),
-                project_id=kwargs.get("project"),
-                member=self.user,
+                member_id=user_id,
+                workspace__slug=workspace_slug,
+                project_id=project_id,
                 is_active=True,
             ).exists,
             thread_sensitive=True,
         )()
+
+        return is_project_member_exists
 
 
 class ProjectMemberPermission(IsAuthenticated):
@@ -74,16 +113,28 @@ class ProjectMemberPermission(IsAuthenticated):
             self.error_extensions = IsAuthenticated.error_extensions
             return False
 
-        return await sync_to_async(
+        workspace_slug = kwargs.get("slug")
+        project_id = kwargs.get("project")
+        user_id = str(self.user.id)
+
+        is_project_member_exists = await sync_to_async(
             ProjectMember.objects.filter(
-                workspace__slug=kwargs.get("slug"),
-                member=self.user,
-                role__in=[Admin, Member],
-                project_id=kwargs.get("project"),
+                member_id=user_id,
+                workspace__slug=workspace_slug,
+                project_id=project_id,
                 is_active=True,
+                role__in=[Admin, Member],
             ).exists,
             thread_sensitive=True,
         )()
+
+        if not is_project_member_exists:
+            is_teamspace_member_exists = await _validate_project_access_via_teamspaces(
+                user_id=user_id, workspace_slug=workspace_slug, project_id=project_id
+            )
+            return is_teamspace_member_exists
+
+        return is_project_member_exists
 
 
 class ProjectAdminPermission(IsAuthenticated):
@@ -100,16 +151,28 @@ class ProjectAdminPermission(IsAuthenticated):
             self.error_extensions = IsAuthenticated.error_extensions
             return False
 
-        return await sync_to_async(
+        workspace_slug = kwargs.get("slug")
+        project_id = kwargs.get("project")
+        user_id = str(self.user.id)
+
+        is_project_member_exists = await sync_to_async(
             ProjectMember.objects.filter(
-                workspace__slug=kwargs.get("slug"),
-                member=self.user,
-                role__in=[Admin],
-                project_id=kwargs.get("project"),
+                member_id=user_id,
+                workspace__slug=workspace_slug,
+                project_id=project_id,
                 is_active=True,
+                role__in=[Admin],
             ).exists,
             thread_sensitive=True,
         )()
+
+        if not is_project_member_exists:
+            is_teamspace_member_exists = await _validate_project_access_via_teamspaces(
+                user_id=user_id, workspace_slug=workspace_slug, project_id=project_id
+            )
+            return is_teamspace_member_exists
+
+        return is_project_member_exists
 
 
 class ProjectPermission(IsAuthenticated):
@@ -133,13 +196,25 @@ class ProjectPermission(IsAuthenticated):
 
         allowed_roles = [role.value for role in self.roles]
 
-        return await sync_to_async(
+        workspace_slug = kwargs.get("slug")
+        project_id = kwargs.get("project")
+        user_id = str(self.user.id)
+
+        is_project_member_exists = await sync_to_async(
             ProjectMember.objects.filter(
-                member=self.user,
-                workspace__slug=kwargs.get("slug"),
-                project_id=kwargs.get("project"),
+                member_id=user_id,
+                workspace__slug=workspace_slug,
+                project_id=project_id,
                 is_active=True,
                 role__in=allowed_roles,
             ).exists,
             thread_sensitive=True,
         )()
+
+        if not is_project_member_exists:
+            is_teamspace_member_exists = await _validate_project_access_via_teamspaces(
+                user_id=user_id, workspace_slug=workspace_slug, project_id=project_id
+            )
+            return is_teamspace_member_exists
+
+        return is_project_member_exists

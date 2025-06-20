@@ -28,6 +28,7 @@ from plane.graphql.helpers import (
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.asset import FileAssetEntityType, FileAssetType
 from plane.graphql.types.epics.attachment import (
@@ -44,17 +45,18 @@ from plane.settings.storage import S3Storage
 def epic_attachment_base_query(
     workspace_id: str, project_id: str, epic_id: str, user_id: str
 ):
+    project_teamspace_filter = project_member_filter_via_teamspaces(
+        user_id=user_id,
+        workspace_slug=workspace_id,
+    )
     return (
         FileAsset.objects.filter(workspace_id=workspace_id)
         .filter(project_id=project_id)
         .filter(issue_id=epic_id)
         .filter(entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
         .filter(is_uploaded=True)
-        .filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
+        .filter(project_teamspace_filter.query)
+        .distinct()
     )
 
 

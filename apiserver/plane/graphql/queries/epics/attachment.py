@@ -16,36 +16,39 @@ from plane.graphql.helpers import (
     is_epic_feature_flagged,
     is_project_epics_enabled,
 )
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces
 from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.types.asset import FileAssetType
 
 
 def epic_attachment_base_query(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str
+    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
 ):
+    project_teamspace_filter = project_member_filter_via_teamspaces(
+        user_id=user_id,
+        workspace_slug=workspace_slug,
+    )
     return (
         FileAsset.objects.filter(workspace_id=workspace_id)
         .filter(project_id=project_id)
         .filter(issue_id=epic_id)
         .filter(entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT)
         .filter(is_uploaded=True)
-        .filter(
-            project__project_projectmember__member_id=user_id,
-            project__project_projectmember__is_active=True,
-            project__archived_at__isnull=True,
-        )
+        .filter(project_teamspace_filter.query)
+        .distinct()
     )
 
 
 @sync_to_async
 def get_epic_attachments(
-    workspace_id: str, project_id: str, epic_id: str, user_id: str
+    workspace_id: str, project_id: str, epic_id: str, user_id: str, workspace_slug: str
 ):
     base_query = epic_attachment_base_query(
         workspace_id=workspace_id,
         project_id=project_id,
         epic_id=epic_id,
         user_id=user_id,
+        workspace_slug=workspace_slug,
     )
 
     base_query.order_by("-created_at")
@@ -96,7 +99,11 @@ class EpicAttachmentQuery:
         workspace_id = str(workspace.id)
 
         issue_attachments = await get_epic_attachments(
-            workspace_id=workspace_id, project_id=project, epic_id=epic, user_id=user_id
+            workspace_id=workspace_id,
+            project_id=project,
+            epic_id=epic,
+            user_id=user_id,
+            workspace_slug=slug,
         )
 
         return issue_attachments

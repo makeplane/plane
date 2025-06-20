@@ -16,6 +16,7 @@ from strawberry.types import Info
 # Module Imports
 from plane.db.models import Issue, Module, ModuleUserProperties, UserFavorite
 from plane.graphql.bgtasks.recent_visited_task import recent_visited_task
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.project import ProjectBasePermission
 from plane.graphql.types.issues.base import (
     IssuesInformationObjectType,
@@ -42,6 +43,9 @@ class ModuleQuery:
         cursor: Optional[str] = None,
         ids: Optional[list[strawberry.ID]] = None,
     ) -> PaginatorResponse[ModuleType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         subquery = UserFavorite.objects.filter(
             user=info.context.user,
             entity_type="module",
@@ -49,12 +53,15 @@ class ModuleQuery:
             project_id=project,
         )
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         module_query = Module.objects.filter(
             workspace__slug=slug,
             project_id=project,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
         )
+        module_query = module_query.filter(project_teamspace_filter.query).distinct()
 
         if ids:
             module_query = module_query.filter(id__in=ids)
@@ -71,6 +78,9 @@ class ModuleQuery:
     async def module(
         self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> ModuleType:
+        user = info.context.user
+        user_id = str(user.id)
+
         fav_subquery = UserFavorite.objects.filter(
             workspace__slug=slug,
             project_id=project,
@@ -79,14 +89,18 @@ class ModuleQuery:
             entity_identifier=OuterRef("pk"),
         ).values("id")
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         module_query = (
             Module.objects.filter(
                 workspace__slug=slug,
                 project_id=project,
                 id=module,
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
             )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .annotate(is_favorite=Exists(fav_subquery))
             .annotate(favorite_id=Subquery(fav_subquery[:1]))
         )
@@ -115,12 +129,15 @@ class ModuleIssueUserPropertyQuery:
     async def moduleIssueUserProperties(
         self, info: Info, slug: str, project: strawberry.ID, module: strawberry.ID
     ) -> ModuleUserPropertyType:
+        user = info.context.user
+        user_id = str(user.id)
+
         def get_module_issue_user_property():
             module_properties, _ = ModuleUserProperties.objects.get_or_create(
                 workspace__slug=slug,
                 project_id=project,
                 module_id=module,
-                user=info.context.user,
+                user_id=user_id,
             )
             return module_properties
 
@@ -222,6 +239,9 @@ class ModuleIssueQuery:
         cursor: Optional[str] = None,
         type: Optional[str] = "all",
     ) -> PaginatorResponse[IssuesType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         filters = work_item_filters(filters)
 
         # Filter issues based on the type
@@ -230,6 +250,10 @@ class ModuleIssueQuery:
         elif type == "active":
             filters["state__group__in"] = ["unstarted", "started"]
 
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id,
+            workspace_slug=slug,
+        )
         module_issues = await sync_to_async(list)(
             Issue.issue_objects.filter(
                 workspace__slug=slug,
@@ -237,15 +261,12 @@ class ModuleIssueQuery:
                 issue_module__module_id=module,
                 issue_module__deleted_at__isnull=True,
             )
-            .filter(
-                project__project_projectmember__member=info.context.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "state", "parent")
             .prefetch_related("assignees", "labels")
             .order_by(orderBy, "-created_at")
             .filter(**filters)
-            .distinct()
         )
 
         return paginate(results_object=module_issues, cursor=cursor)

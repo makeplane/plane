@@ -1,31 +1,32 @@
+# Python Imports
+from typing import Optional
+
 # Third-Party Imports
 import strawberry
 from asgiref.sync import sync_to_async
-
-# Strawberry Imports
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
 
 # Django Imports
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 
+# Strawberry Imports
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
 # Module Imports
-from plane.graphql.types.notification import NotificationType
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
 from plane.db.models import (
     Issue,
-    Notification,
     IssueAssignee,
     IssueSubscriber,
+    Notification,
     WorkspaceMember,
 )
+from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
+from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.types.notification import NotificationType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
-
-# Typing Imports
-from typing import Optional
 
 
 @strawberry.type
@@ -44,18 +45,22 @@ class NotificationQuery:
         mentioned: Optional[bool] = False,
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[NotificationType]:
+        user = info.context.user
+        user_id = str(user.id)
+
         type_list = type.split(",")
         q_filters = Q()
-        filters = Q(
-            workspace__slug=slug,
-            project__project_projectmember__member=info.context.user,
-            project__project_projectmember__is_active=True,
-            receiver_id=info.context.user.id,
-        )
+
+        filters = Q(workspace__slug=slug, receiver_id=user_id)
 
         # Base QuerySet
+        project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+            user_id=user_id, workspace_slug=slug
+        )
         queryset = (
             Notification.objects.filter(filters)
+            .filter(project_teamspace_filter.query)
+            .distinct()
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
         )
@@ -96,19 +101,17 @@ class NotificationQuery:
         if "subscribed" in type_list:
             issue_ids = await sync_to_async(list)(
                 IssueSubscriber.objects.filter(
-                    workspace__slug=slug, subscriber_id=info.context.user.id
+                    workspace__slug=slug, subscriber_id=user_id
                 )
                 .annotate(
                     created=Exists(
-                        Issue.objects.filter(
-                            created_by=info.context.user, pk=OuterRef("issue_id")
-                        )
+                        Issue.objects.filter(created_by=user, pk=OuterRef("issue_id"))
                     )
                 )
                 .annotate(
                     assigned=Exists(
                         IssueAssignee.objects.filter(
-                            pk=OuterRef("issue_id"), assignee=info.context.user
+                            pk=OuterRef("issue_id"), assignee=user
                         )
                     )
                 )
@@ -121,7 +124,7 @@ class NotificationQuery:
         if "assigned" in type_list:
             issue_ids = await sync_to_async(list)(
                 IssueAssignee.objects.filter(
-                    workspace__slug=slug, assignee_id=info.context.user.id
+                    workspace__slug=slug, assignee_id=user_id
                 ).values_list("issue_id", flat=True)
             )
             q_filters |= Q(entity_identifier__in=issue_ids)
@@ -131,7 +134,7 @@ class NotificationQuery:
             has_permission = await sync_to_async(
                 WorkspaceMember.objects.filter(
                     workspace__slug=slug,
-                    member=info.context.user,
+                    member=user,
                     role__lt=15,
                     is_active=True,
                 ).exists
@@ -142,7 +145,7 @@ class NotificationQuery:
             else:
                 issue_ids = await sync_to_async(list)(
                     Issue.objects.filter(
-                        workspace__slug=slug, created_by=info.context.user
+                        workspace__slug=slug, created_by=user
                     ).values_list("pk", flat=True)
                 )
                 q_filters = Q(entity_identifier__in=issue_ids)
