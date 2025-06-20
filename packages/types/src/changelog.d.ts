@@ -1,13 +1,15 @@
+import { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
+
 export interface ChangelogItem {
   id: string;
   title: string;
   date: string;
   summary: string;
-  description: any;
+  description: SerializedEditorState;
   published: boolean;
 }
 
-export interface ChangelogPaginationData {
+export interface ChangelogDoc {
   docs: ChangelogItem[];
   hasNextPage: boolean;
   hasPrevPage: boolean;
@@ -18,4 +20,10 @@ export interface ChangelogPaginationData {
   prevPage: number | null;
   totalDocs: number;
   totalPages: number;
+}
+
+export interface TChangeLogConfig {
+  slug: string;
+  limit: number;
+  page: number;
 }

@@ -49,7 +49,7 @@ const inLineBlockConverter: InLineBlockConverterType = {
 
 const UploadJSXConverter: JSXConverters<any> = {
   upload: ({ node }) => {
-    if (node.value && node.value.url) {
+    if (node.value?.url) {
       return (
         <img src={node.value.url} alt={node.value.alt || "Uploaded image"} className="w-[100%] h-auto object-cover" />
       );

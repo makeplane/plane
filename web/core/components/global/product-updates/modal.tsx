@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { Megaphone } from "lucide-react";
 // plane imports
 import { ChangelogConfig } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -24,11 +25,11 @@ const changelogService = new ChangelogService();
 
 export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
   const { isOpen, handleClose } = props;
+  const { t } = useTranslation();
 
   // useSWR
-  const { data, isLoading } = useSWR(
-    isOpen ? `CHANGELOG_DATA_${ChangelogConfig.limit}_${ChangelogConfig.page}` : null,
-    () => changelogService.fetchChangelog(ChangelogConfig.slug, ChangelogConfig.limit, ChangelogConfig.page)
+  const { data, isLoading, error } = useSWR(isOpen ? `CHANGE_LOG` : null, () =>
+    changelogService.fetchChangelog(ChangelogConfig)
   );
 
   return (
@@ -39,6 +40,23 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
           <div className="flex justify-center items-center h-full">
             <LogoSpinner />
           </div>
+        ) : error ? (
+          <>
+            <div className="flex flex-col items-center justify-center w-full h-full mb-8">
+              <div className="text-lg font-medium">{t("we_are_having_trouble_fetching_the_updates")}</div>
+              <div className="text-sm text-custom-text-200">
+                {t("please_visit")}
+                <a
+                  href="https://go.plane.so/p-changelog"
+                  target="_blank"
+                  className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
+                >
+                  {t("our_changelogs")}
+                </a>{" "}
+                {t("for_the_latest_updates")}.
+              </div>
+            </div>
+          </>
         ) : (
           <>
             {data && data?.docs?.length > 0 ? (

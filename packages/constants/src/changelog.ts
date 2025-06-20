@@ -1,5 +1,5 @@
-// PAYLOAD_BASE_URL
-export const PAYLOAD_BASE_URL = process.env.NEXT_PUBLIC_PAYLOAD_BASE_URL || "https://preview.payload.plane.town";
+// CMS_BASE_URL
+export const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_BASE_URL || "https://content.plane.so";
 
 // Changelog Config
 export const ChangelogConfig = {
