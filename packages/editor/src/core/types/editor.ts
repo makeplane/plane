@@ -113,12 +113,8 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 }
 
-type TEmbedHandlerProps = {
-  embedHandler?: TEmbedConfig;
-};
-
 // editor props
-export interface IEditorProps extends TEmbedHandlerProps {
+export interface IEditorProps {
   autofocus?: boolean;
   bubbleMenuEnabled?: boolean;
   containerClassName?: string;
@@ -126,6 +122,7 @@ export interface IEditorProps extends TEmbedHandlerProps {
   disabledExtensions: TExtensions[];
   editorClassName?: string;
   extensions?: Extensions;
+  embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
