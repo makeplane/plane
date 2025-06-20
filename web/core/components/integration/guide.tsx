@@ -9,7 +9,7 @@ import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";
 // plane imports
-import { IMPORTERS_LIST } from "@plane/constants";
+import { IMPORTERS_LIST, IMPORTER_SERVICES_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IImporterService } from "@plane/types";
@@ -18,8 +18,7 @@ import { Button } from "@plane/ui";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui";
-// constants
-import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
+
 // hooks
 import { useUser } from "@/hooks/store";
 // assets

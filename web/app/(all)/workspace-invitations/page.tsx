@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
+// constants
+import { WORKSPACE_INVITATION } from "@plane/constants";
 // components
 import { LogoSpinner } from "@/components/common";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
-// constants
-import { WORKSPACE_INVITATION } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks

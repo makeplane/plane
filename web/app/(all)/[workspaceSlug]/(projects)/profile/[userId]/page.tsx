@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // types
-import { GROUP_CHOICES } from "@plane/constants";
+import { GROUP_CHOICES, USER_PROFILE_DATA } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserStateDistribution, TStateGroups } from "@plane/types";
 // components
@@ -16,8 +16,6 @@ import {
   ProfileStats,
   ProfileWorkload,
 } from "@/components/profile";
-// constants
-import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
 // services
 import { UserService } from "@/services/user.service";
 

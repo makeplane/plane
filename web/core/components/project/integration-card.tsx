@@ -4,13 +4,13 @@ import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
+// constants
+import { PROJECT_GITHUB_REPOSITORY } from "@plane/constants";
 import { IWorkspaceIntegration } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { SelectRepository, SelectChannel } from "@/components/integration";
-// constants
-import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
 // icons
 import GithubLogo from "@/public/logos/github-square.png";
 import SlackLogo from "@/public/services/slack.png";

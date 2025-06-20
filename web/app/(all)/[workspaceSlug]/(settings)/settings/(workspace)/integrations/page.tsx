@@ -2,15 +2,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// constants
+import { EUserPermissions, EUserPermissionsLevel, APP_INTEGRATIONS } from "@plane/constants";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 import { SingleIntegrationCard } from "@/components/integration";
 import { SettingsContentWrapper } from "@/components/settings";
 import { IntegrationAndImportExportBanner, IntegrationsSettingsLoader } from "@/components/ui";
-// constants
-import { APP_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // services
