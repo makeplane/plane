@@ -188,6 +188,7 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
 
     def accessible_to(self, user_id: UUID, slug: str):
         from plane.ee.models import TeamspaceProject, TeamspaceMember
+        from plane.db.models.project import ProjectMember
         from plane.payment.flags.flag_decorator import check_workspace_feature_flag
         from plane.payment.flags.flag import FeatureFlag
 
@@ -204,10 +205,16 @@ class WorkspaceQuerySet(SoftDeletionQuerySet):
                 member_id=user_id, workspace__slug=slug
             ).values_list("team_space_id", flat=True)
 
-            # Get all the projects in the respective teamspaces
-            teamspace_project_ids = TeamspaceProject.objects.filter(
-                team_space_id__in=teamspace_ids
+            member_project_ids = ProjectMember.objects.filter(
+                member_id=user_id, workspace__slug=slug, is_active=True
             ).values_list("project_id", flat=True)
+
+            # Get all the projects in the respective teamspaces
+            teamspace_project_ids = (
+                TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids)
+                .exclude(project_id__in=member_project_ids)
+                .values_list("project_id", flat=True)
+            )
 
             return self.filter(
                 Q(project_id__in=teamspace_project_ids) | Q(base_query),

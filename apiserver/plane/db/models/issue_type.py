@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Q
 
 # Module imports
-from .project import ProjectBaseModel
+from .project import ProjectBaseModel, ProjectMember
 from .base import BaseModel
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
 
@@ -32,10 +32,16 @@ class IssueTypeQuerySet(SoftDeletionQuerySet):
                 member_id=user_id, workspace__slug=slug
             ).values_list("team_space_id", flat=True)
 
-            # Get all the projects in the respective teamspaces
-            teamspace_project_ids = TeamspaceProject.objects.filter(
-                team_space_id__in=teamspace_ids
+            member_project_ids = ProjectMember.objects.filter(
+                member_id=user_id, workspace__slug=slug, is_active=True
             ).values_list("project_id", flat=True)
+
+            # Get all the projects in the respective teamspaces
+            teamspace_project_ids = (
+                TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids)
+                .exclude(project_id__in=member_project_ids)
+                .values_list("project_id", flat=True)
+            )
 
             return self.filter(
                 Q(project_issue_types__project_id__in=teamspace_project_ids)
