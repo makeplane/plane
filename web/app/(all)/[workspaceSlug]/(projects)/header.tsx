@@ -1,5 +1,6 @@
 "use client";
 
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Home } from "lucide-react";
@@ -16,17 +17,18 @@ import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 
-export const WorkspaceDashboardHeader = () => {
+export const WorkspaceDashboardHeader = observer(() => {
   // hooks
   const { captureEvent } = useEventTracker();
   const { resolvedTheme } = useTheme();
+
   const { t } = useTranslation();
 
   return (
     <>
       <Header>
         <Header.LeftItem>
-          <div>
+          <div className="flex items-center gap-2">
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
@@ -60,4 +62,4 @@ export const WorkspaceDashboardHeader = () => {
       </Header>
     </>
   );
-};
+});

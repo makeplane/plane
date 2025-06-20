@@ -12,11 +12,10 @@ import { useWorkspaceNotifications } from "@/hooks/store";
 
 type TNotificationAppSidebarOption = {
   workspaceSlug: string;
-  isSidebarCollapsed: boolean | undefined;
 };
 
 export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = observer((props) => {
-  const { workspaceSlug, isSidebarCollapsed } = props;
+  const { workspaceSlug } = props;
   // hooks
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();
 
@@ -32,9 +31,6 @@ export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = o
     : unreadNotificationsCount.total_unread_notifications_count;
 
   if (totalNotifications <= 0) return <></>;
-
-  if (isSidebarCollapsed)
-    return <div className="absolute right-2 top-1.5 h-2 w-2 rounded-full bg-custom-primary-300" />;
 
   return (
     <div className="ml-auto">

@@ -26,7 +26,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const { sidebarCollapsed, toggleSidebar } = useAppTheme();
+  const { sidebarCollapsed: isCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek } = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { config } = useInstance();
@@ -40,22 +40,11 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
     toggleIntercom(!isIntercomToggle);
   };
 
-  const isCollapsed = sidebarCollapsed || false;
-
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
-      <div
-        className={cn(
-          "flex w-full items-center justify-between px-2 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12 flex-shrink-0",
-          {
-            "flex-col h-auto py-1.5": isCollapsed,
-          }
-        )}
-      >
-        <div
-          className={`relative flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-evenly"}`}
-        >
+      <div className="flex w-full items-center justify-between px-2 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12 flex-shrink-0">
+        <div className="relative flex flex-shrink-0 items-center gap-1 justify-evenly">
           <CustomMenu
             customButton={
               <div
@@ -71,10 +60,10 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 </Tooltip>
               </div>
             }
-            customButtonClassName={`relative grid place-items-center rounded-md p-1.5 outline-none ${isCollapsed ? "w-full" : ""}`}
+            customButtonClassName="relative grid place-items-center rounded-md p-1.5 outline-none"
             menuButtonOnClick={() => !isNeedHelpOpen && setIsNeedHelpOpen(true)}
             onMenuClose={() => setIsNeedHelpOpen(false)}
-            placement={isCollapsed ? "left-end" : "top-end"}
+            placement="top-end"
             maxHeight="lg"
             closeOnSelect
           >
@@ -158,23 +147,18 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
             </div>
           </CustomMenu>
         </div>
-        <div
-          className={cn("w-full flex-grow px-0.5", {
-            hidden: isCollapsed,
-          })}
-        >
+        <div className="w-full flex-grow px-0.5">
           <WorkspaceEditionBadge />
         </div>
-        <div
-          className={`flex flex-shrink-0 items-center gap-1 ${isCollapsed ? "flex-col justify-center" : "justify-evenly"}`}
-        >
+        <div className="flex flex-shrink-0 items-center gap-1 justify-evenly">
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
             <button
               type="button"
-              className={`grid place-items-center rounded-md p-1 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
-                isCollapsed ? "w-full" : ""
-              }`}
-              onClick={() => toggleSidebar()}
+              className="grid place-items-center rounded-md p-1 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100"
+              onClick={() => {
+                if (sidebarPeek) toggleSidebarPeek(false);
+                toggleSidebar();
+              }}
               aria-label={t(
                 isCollapsed
                   ? "aria_labels.projects_sidebar.expand_sidebar"

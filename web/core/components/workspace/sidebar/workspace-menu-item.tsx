@@ -4,9 +4,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
-import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
@@ -34,8 +32,7 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
   // store hooks
-  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { isMobile } = usePlatformOS();
+  const { toggleSidebar } = useAppTheme();
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -50,33 +47,20 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
   const isActive = item.href === pathname;
 
   return (
-    <Tooltip
-      tooltipContent={t(item.labelTranslationKey)}
-      position="right"
-      className="ml-2"
-      disabled={!sidebarCollapsed}
-      isMobile={isMobile}
-    >
-      <Link href={item.href} onClick={() => handleLinkClick()}>
-        <SidebarNavItem
-          className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-          isActive={isActive}
-        >
-          <div className="flex items-center gap-1.5 py-[1px]">
-            <item.Icon
-              className={cn("size-4", {
-                "rotate-180": item.key === "active_cycles",
-              })}
-            />
-            {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
-          </div>
-          {!sidebarCollapsed && item.key === "active_cycles" && (
-            <div className="flex-shrink-0">
-              <UpgradeBadge />
-            </div>
-          )}
-        </SidebarNavItem>
-      </Link>
-    </Tooltip>
+    <Link href={item.href} onClick={() => handleLinkClick()}>
+      <SidebarNavItem isActive={isActive}>
+        <div className="flex items-center gap-1.5 py-[1px]">
+          <item.Icon
+            className={cn("size-4", {
+              "rotate-180": item.key === "active_cycles",
+            })}
+          />
+          <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+        </div>
+        <div className="flex-shrink-0">
+          <UpgradeBadge />
+        </div>
+      </SidebarNavItem>
+    </Link>
   );
 });
