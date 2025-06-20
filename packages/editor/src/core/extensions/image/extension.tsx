@@ -1,4 +1,3 @@
-import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
@@ -6,7 +5,7 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 import type { TFileHandler, TReadOnlyFileHandler } from "@/types";
 // local imports
 import { CustomImageNodeView } from "../custom-image/components/node-view";
-import { CustomImageExtensionOptions } from "../custom-image/types";
+import { ImageExtensionConfig } from "./extension-config";
 
 export type ImageExtensionStorage = {
   deletedImageSet: Map<string, boolean>;
@@ -21,7 +20,7 @@ export const ImageExtension = (props: Props) => {
   // derived values
   const { getAssetSrc } = fileHandler;
 
-  return BaseImageExtension.extend<Pick<CustomImageExtensionOptions, "getImageSource">, ImageExtensionStorage>({
+  return ImageExtensionConfig.extend({
     addOptions() {
       return {
         ...this.parent?.(),
@@ -43,21 +42,6 @@ export const ImageExtension = (props: Props) => {
       return {
         deletedImageSet: new Map<string, boolean>(),
         maxFileSize,
-      };
-    },
-
-    addAttributes() {
-      return {
-        ...this.parent?.(),
-        width: {
-          default: "35%",
-        },
-        height: {
-          default: null,
-        },
-        aspectRatio: {
-          default: null,
-        },
       };
     },
 
