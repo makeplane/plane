@@ -54,6 +54,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/:workspaceSlug/analytics",
+        destination: "/:workspaceSlug/analytics/overview",
+        permanent: true,
+      },
+      {
         source: "/:workspaceSlug/settings/api-tokens",
         destination: "/:workspaceSlug/settings/account/api-tokens",
         permanent: true,
