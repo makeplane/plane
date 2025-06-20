@@ -16,7 +16,7 @@ type Props = {
   disabledExtensions: TExtensions[];
 };
 
-export const PageRenderer = (props: IPageRenderer) => {
+export const PageRenderer = (props: Props) => {
   const {
     aiHandler,
     bubbleMenuEnabled,
@@ -27,7 +27,6 @@ export const PageRenderer = (props: IPageRenderer) => {
     tabIndex,
     disabledExtensions,
   } = props;
-
 
   return (
     <div className="frame-renderer flex-grow w-full">

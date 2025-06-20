@@ -103,6 +103,11 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
       continue;
     }
 
+    // Skip elements inside .data-embed
+    if (elem.closest(".data-embed") && !elem.matches(".data-embed")) {
+      continue;
+    }
+
     // apply general selector
     if (elem.matches(generalSelectors)) {
       return elem;
