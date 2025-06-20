@@ -148,7 +148,7 @@ export const RichTextNode = ({ description, id }: { description: SerializedEdito
 
     let node;
     while ((node = walker.nextNode())) {
-      if (node.nodeValue && node.nodeValue.includes("\u00A0")) {
+      if (node.nodeValue?.includes("\u00A0")) {
         // \u00A0 is the Unicode char for &nbsp;
         node.nodeValue = node.nodeValue.replace(/\u00A0/g, " "); // Replace all occurrences with a regular space
       }
