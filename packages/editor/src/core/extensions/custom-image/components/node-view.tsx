@@ -9,7 +9,7 @@ import type { CustomImageExtension, TCustomImageAttributes } from "../types";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
 
-export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension"> & {
+export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "updateAttributes"> & {
   extension: CustomImageExtension;
   getPos: () => number;
   editor: Editor;
@@ -51,11 +51,14 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   }, [resolvedSrc]);
 
   useEffect(() => {
-    if (!imgNodeSrc) return;
+    if (!imgNodeSrc) {
+      setResolvedSrc(undefined);
+      return;
+    }
 
     const getImageSource = async () => {
-      const url: string = await extension.options.getImageSource?.(imgNodeSrc);
-      setResolvedSrc(url as string);
+      const url = await extension.options.getImageSource?.(imgNodeSrc);
+      setResolvedSrc(url);
     };
     getImageSource();
   }, [imgNodeSrc, extension.options]);

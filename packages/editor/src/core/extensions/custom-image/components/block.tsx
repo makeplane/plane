@@ -88,7 +88,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
       const initialHeight = initialWidth / aspectRatioCalculated;
 
-      const initialComputedSize = {
+      const initialComputedSize: TCustomImageSize = {
         width: `${Math.round(initialWidth)}px` satisfies Pixel,
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatioCalculated,
@@ -113,7 +113,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       }
     }
     setInitialResizeComplete(true);
-  }, [nodeWidth, updateAttributesSafely, editorContainer, nodeAspectRatio]);
+  }, [nodeWidth, updateAttributesSafely, editorContainer, nodeAspectRatio, setEditorContainer]);
 
   // for real time resizing
   useLayoutEffect(() => {
