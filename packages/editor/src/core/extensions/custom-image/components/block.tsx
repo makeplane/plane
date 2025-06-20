@@ -262,7 +262,12 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           containerClassName={
             "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
           }
-          image={node.attrs}
+          image={{
+            width: size.width,
+            height: size.height,
+            aspectRatio: size.aspectRatio === null ? 1 : size.aspectRatio,
+            src: resolvedImageSrc,
+          }}
         />
       )}
       {selected && displayedImageSrc === resolvedImageSrc && (

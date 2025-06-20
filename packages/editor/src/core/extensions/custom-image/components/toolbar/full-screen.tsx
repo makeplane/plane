@@ -2,11 +2,14 @@ import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 // plane imports
 import { cn } from "@plane/utils";
-// local imports
-import { TCustomImageAttributes } from "../../types";
 
 type Props = {
-  image: TCustomImageAttributes;
+  image: {
+    width: string;
+    height: string;
+    aspectRatio: number;
+    src: string;
+  };
   isOpen: boolean;
   toggleFullScreenMode: (val: boolean) => void;
 };
@@ -28,7 +31,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const widthInNumber = useMemo(() => Number(width?.toString()?.replace("px", "")), [width]);
+  const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
 
   const setImageRef = useCallback(
     (node: HTMLImageElement | null) => {
@@ -39,7 +42,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
       const viewportWidth = window.innerWidth * 0.9;
       const viewportHeight = window.innerHeight * 0.75;
       const imageWidth = widthInNumber;
-      const imageHeight = imageWidth / (aspectRatio ?? 1);
+      const imageHeight = imageWidth / aspectRatio;
 
       const widthRatio = viewportWidth / imageWidth;
       const heightRatio = viewportHeight / imageHeight;
@@ -205,13 +208,13 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
           </button>
           <img
             ref={setImageRef}
-            src={src ?? undefined}
+            src={src}
             className="read-only-image rounded-lg"
             style={{
               width: `${widthInNumber * initialMagnification}px`,
               maxWidth: "none",
               maxHeight: "none",
-              aspectRatio: aspectRatio ?? 1,
+              aspectRatio,
               position: "relative",
               transform: `scale(${magnification})`,
               transformOrigin: "center",
@@ -241,7 +244,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
             </div>
             <button
               type="button"
-              onClick={() => window.open(src ?? undefined, "_blank")}
+              onClick={() => window.open(src, "_blank")}
               className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
             >
               <ExternalLink className="size-4" />
