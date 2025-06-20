@@ -1,5 +1,5 @@
 import { CMS_BASE_URL } from "@plane/constants";
-import { ChangelogDoc, TChangeLogConfig } from "@plane/types";
+import { ChangelogPaginationData, TChangeLogConfig } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export class ChangelogService extends APIService {
@@ -7,8 +7,8 @@ export class ChangelogService extends APIService {
     super(CMS_BASE_URL);
   }
 
-  async fetchChangelog(config: TChangeLogConfig): Promise<ChangelogDoc> {
-    const defaultDoc: ChangelogDoc = {
+  async fetchChangelog(config: TChangeLogConfig): Promise<ChangelogPaginationData> {
+    const defaultDoc: ChangelogPaginationData = {
       docs: [],
       hasNextPage: false,
       hasPrevPage: false,
