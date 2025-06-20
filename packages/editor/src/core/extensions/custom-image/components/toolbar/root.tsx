@@ -1,17 +1,13 @@
 import { useState } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
-// components
+// local imports
+import { TCustomImageAttributes } from "../../types";
 import { ImageFullScreenAction } from "./full-screen";
 
 type Props = {
   containerClassName?: string;
-  image: {
-    src: string;
-    height: string;
-    width: string;
-    aspectRatio: number;
-  };
+  image: TCustomImageAttributes;
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {

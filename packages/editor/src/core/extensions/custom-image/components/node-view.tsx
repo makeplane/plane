@@ -2,25 +2,26 @@ import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// extensions
-import { CustomImageBlock, CustomImageUploader, ImageAttributes } from "@/extensions/custom-image";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// local imports
+import type { CustomImageExtension, TCustomImageAttributes } from "../types";
+import { CustomImageBlock } from "./block";
+import { CustomImageUploader } from "./uploader";
 
-export type CustomBaseImageNodeViewProps = {
+export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension"> & {
+  extension: CustomImageExtension;
   getPos: () => number;
   editor: Editor;
   node: NodeViewProps["node"] & {
-    attrs: ImageAttributes;
+    attrs: TCustomImageAttributes;
   };
-  updateAttributes: (attrs: Partial<ImageAttributes>) => void;
+  updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
   selected: boolean;
 };
 
-export type CustomImageNodeProps = NodeViewProps & CustomBaseImageNodeViewProps;
-
-export const CustomImageNode = (props: CustomImageNodeProps) => {
-  const { getPos, editor, node, updateAttributes, selected } = props;
+export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
+  const { editor, extension, node } = props;
   const { src: imgNodeSrc } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
@@ -50,41 +51,34 @@ export const CustomImageNode = (props: CustomImageNodeProps) => {
   }, [resolvedSrc]);
 
   useEffect(() => {
+    if (!imgNodeSrc) return;
+
     const getImageSource = async () => {
-      // @ts-expect-error function not expected here, but will still work and don't remove await
-      const url: string = await editor?.commands?.getImageSource?.(imgNodeSrc);
+      const url: string = await extension.options.getImageSource?.(imgNodeSrc);
       setResolvedSrc(url as string);
     };
     getImageSource();
-  }, [imgNodeSrc]);
+  }, [imgNodeSrc, extension.options]);
 
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {(isUploaded || imageFromFileSystem) && !failedToLoadImage ? (
           <CustomImageBlock
-            imageFromFileSystem={imageFromFileSystem}
             editorContainer={editorContainer}
-            editor={editor}
-            src={resolvedSrc}
-            getPos={getPos}
-            node={node}
+            imageFromFileSystem={imageFromFileSystem}
             setEditorContainer={setEditorContainer}
             setFailedToLoadImage={setFailedToLoadImage}
-            selected={selected}
-            updateAttributes={updateAttributes}
+            src={resolvedSrc}
+            {...props}
           />
         ) : (
           <CustomImageUploader
-            editor={editor}
             failedToLoadImage={failedToLoadImage}
-            getPos={getPos}
             loadImageFromFileSystem={setImageFromFileSystem}
             maxFileSize={getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE).maxFileSize}
-            node={node}
             setIsUploaded={setIsUploaded}
-            selected={selected}
-            updateAttributes={updateAttributes}
+            {...props}
           />
         )}
       </div>
