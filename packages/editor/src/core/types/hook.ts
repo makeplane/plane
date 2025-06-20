@@ -23,6 +23,7 @@ export type TEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
     | "value"
+    | "embedHandler"
   > & {
     editable: boolean;
     enableHistory: boolean;
@@ -47,4 +48,4 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
 
 export type TReadOnlyEditorHookProps = TCoreHookProps &
   Pick<TEditorHookProps, "initialValue" | "provider"> &
-  Pick<IReadOnlyEditorProps, "fileHandler" | "forwardedRef" | "mentionHandler">;
+  Pick<IReadOnlyEditorProps, "fileHandler" | "forwardedRef" | "mentionHandler" | "embedHandler">;

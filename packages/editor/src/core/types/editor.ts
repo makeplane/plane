@@ -121,6 +121,7 @@ export interface IEditorProps {
   disabledExtensions: TExtensions[];
   editorClassName?: string;
   extensions?: Extensions;
+  embedHandler?: TEmbedConfig;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
@@ -145,7 +146,6 @@ export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -158,6 +158,7 @@ export interface IReadOnlyEditorProps
     | "containerClassName"
     | "disabledExtensions"
     | "flaggedExtensions"
+    | "embedHandler"
     | "displayConfig"
     | "editorClassName"
     | "extensions"
@@ -174,9 +175,7 @@ export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export type IRichTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
-export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
-  embedHandler: TEmbedConfig;
-}
+export type IDocumentReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export interface EditorEvents {
   beforeCreate: never;

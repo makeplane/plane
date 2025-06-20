@@ -95,6 +95,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
       tabIndex={tabIndex}
+      disabledExtensions={disabledExtensions}
     />
   );
 };

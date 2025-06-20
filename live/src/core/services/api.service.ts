@@ -14,6 +14,7 @@ export abstract class APIService {
     this.axiosInstance = axios.create({
       baseURL,
       withCredentials: true,
+      timeout: 20000,
     });
   }
 

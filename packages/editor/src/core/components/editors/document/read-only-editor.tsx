@@ -64,6 +64,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      disabledExtensions={disabledExtensions}
     />
   );
 };

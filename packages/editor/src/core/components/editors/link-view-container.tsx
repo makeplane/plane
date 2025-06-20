@@ -1,8 +1,11 @@
 import { autoUpdate, flip, hide, shift, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
 import { Editor, useEditorState } from "@tiptap/react";
 import { FC, useCallback, useEffect, useState } from "react";
-// components
+
 import { LinkView, LinkViewProps } from "@/components/links";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// components
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 interface LinkViewContainerProps {
   editor: Editor;
@@ -17,7 +20,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
   const editorState = useEditorState({
     editor,
     selector: ({ editor }: { editor: Editor }) => ({
-      linkExtensionStorage: editor.storage.link,
+      linkExtensionStorage: getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_LINK),
     }),
   });
 
@@ -46,7 +49,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   const handleLinkHover = useCallback(
     (event: MouseEvent) => {
-      if (!editor || editorState.linkExtensionStorage.isBubbleMenuOpen) return;
+      if (!editor || editorState.linkExtensionStorage?.isBubbleMenuOpen) return;
 
       // Find the closest anchor tag from the event target
       const target = (event.target as HTMLElement)?.closest("a");
@@ -109,7 +112,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   // Close link view when bubble menu opens
   useEffect(() => {
-    if (editorState.linkExtensionStorage.isBubbleMenuOpen && isOpen) {
+    if (editorState.linkExtensionStorage?.isBubbleMenuOpen && isOpen) {
       setIsOpen(false);
     }
   }, [editorState.linkExtensionStorage, isOpen]);
