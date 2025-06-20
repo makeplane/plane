@@ -112,7 +112,7 @@ export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containe
 
   // Close link view when bubble menu opens
   useEffect(() => {
-    if (editorState.linkExtensionStorage.isBubbleMenuOpen && isOpen) {
+    if (editorState.linkExtensionStorage?.isBubbleMenuOpen && isOpen) {
       setIsOpen(false);
     }
   }, [editorState.linkExtensionStorage, isOpen]);

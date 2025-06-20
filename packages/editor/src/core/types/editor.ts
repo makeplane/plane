@@ -129,6 +129,7 @@ export interface IEditorProps {
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
+  embedHandler?: TEmbedConfig;
   onChange?: (json: object, html: string) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
@@ -159,6 +160,7 @@ export interface IReadOnlyEditorProps
     | "containerClassName"
     | "disabledExtensions"
     | "flaggedExtensions"
+    | "embedHandler"
     | "displayConfig"
     | "editorClassName"
     | "extensions"
