@@ -2,23 +2,18 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
-  ChartDataType,
   GanttChartBlocksList,
   GanttChartSidebar,
-  IBlockUpdateData,
-  IBlockUpdateDependencyData,
-  IGanttBlock,
   MonthChartView,
   QuarterChartView,
-  TGanttViews,
   WeekChartView,
 } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
@@ -46,6 +41,7 @@ type Props = {
   enableReorder: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
   enableAddBlock: boolean | ((blockId: string) => boolean);
+  enableDependency: boolean | ((blockId: string) => boolean);
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -56,6 +52,7 @@ type Props = {
     targetDate?: Date
   ) => ChartDataType | undefined;
   quickAdd?: React.JSX.Element | undefined;
+  isEpic?: boolean;
 };
 
 export const GanttChartMainContent: React.FC<Props> = observer((props) => {
@@ -71,6 +68,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     enableReorder,
     enableAddBlock,
     enableSelection,
+    enableDependency,
     itemsContainerWidth,
     showAllBlocks,
     sidebarToRender,
@@ -79,6 +77,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     updateCurrentViewRenderPayload,
     quickAdd,
     updateBlockDates,
+    isEpic = false,
   } = props;
   // refs
   const ganttContainerRef = useRef<HTMLDivElement>(null);
@@ -159,7 +158,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
         entities={{
           [GANTT_SELECT_GROUP]: blockIds ?? [],
         }}
-        disabled={!isBulkOperationsEnabled}
+        disabled={!isBulkOperationsEnabled || isEpic}
       >
         {(helpers) => (
           <>
@@ -187,6 +186,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                 title={title}
                 quickAdd={quickAdd}
                 selectionHelpers={helpers}
+                isEpic={isEpic}
               />
               <div className="relative min-h-full h-max flex-shrink-0 flex-grow">
                 <ActiveChartView />
@@ -208,7 +208,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                       selectionHelpers={helpers}
                       ganttContainerRef={ganttContainerRef}
                     />
-                    <TimelineDependencyPaths />
+                    <TimelineDependencyPaths isEpic={isEpic} />
                     <TimelineDraggablePath />
                     <GanttChartBlocksList
                       blockIds={blockIds}
@@ -217,6 +217,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                       enableBlockRightResize={enableBlockRightResize}
                       enableBlockMove={enableBlockMove}
                       ganttContainerRef={ganttContainerRef}
+                      enableDependency={enableDependency}
                       showAllBlocks={showAllBlocks}
                       updateBlockDates={updateBlockDates}
                     />

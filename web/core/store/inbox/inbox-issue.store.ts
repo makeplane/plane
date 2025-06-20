@@ -1,9 +1,9 @@
 import clone from "lodash/clone";
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action } from "mobx";
-import { TIssue, TInboxIssue, TInboxIssueStatus, TInboxDuplicateIssueDetails } from "@plane/types";
+import { TInboxIssue, TInboxIssueStatus, EInboxIssueSource, EInboxIssueStatus } from "@plane/constants";
+import { TIssue, TInboxDuplicateIssueDetails } from "@plane/types";
 // helpers
-import { EInboxIssueStatus } from "@/helpers/inbox.helper";
 // local db
 import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
@@ -18,6 +18,7 @@ export interface IInboxIssueStore {
   status: TInboxIssueStatus;
   issue: Partial<TIssue>;
   snoozed_till: Date | undefined;
+  source: EInboxIssueSource | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
   duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined;
@@ -37,6 +38,7 @@ export class InboxIssueStore implements IInboxIssueStore {
   status: TInboxIssueStatus = EInboxIssueStatus.PENDING;
   issue: Partial<TIssue> = {};
   snoozed_till: Date | undefined;
+  source: EInboxIssueSource | undefined;
   duplicate_to: string | undefined;
   created_by: string | undefined;
   duplicate_issue_detail: TInboxDuplicateIssueDetails | undefined = undefined;
@@ -58,6 +60,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     this.snoozed_till = data?.snoozed_till || undefined;
     this.duplicate_to = data?.duplicate_to || undefined;
     this.created_by = data?.created_by || undefined;
+    this.source = data?.source || undefined;
     this.duplicate_issue_detail = data?.duplicate_issue_detail || undefined;
     this.workspaceSlug = workspaceSlug;
     this.projectId = projectId;
@@ -73,6 +76,7 @@ export class InboxIssueStore implements IInboxIssueStore {
       duplicate_to: observable,
       duplicate_issue_detail: observable,
       created_by: observable,
+      source: observable,
       // actions
       updateInboxIssueStatus: action,
       updateInboxIssueDuplicateTo: action,
@@ -98,7 +102,9 @@ export class InboxIssueStore implements IInboxIssueStore {
 
       // If issue accepted sync issue to local db
       if (status === EInboxIssueStatus.ACCEPTED) {
-        addIssueToPersistanceLayer(inboxIssue.issue);
+        const updatedIssue = { ...this.issue, ...inboxIssue.issue };
+        this.store.issue.issues.addIssue([updatedIssue]);
+        await addIssueToPersistanceLayer(updatedIssue);
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));

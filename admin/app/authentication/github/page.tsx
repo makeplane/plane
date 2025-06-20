@@ -5,12 +5,12 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// plane internal packages
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication";
 import { PageHeader } from "@/components/common";
-// helpers
-import { resolveGeneralTheme } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
@@ -44,7 +44,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `Github authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitHub authentication is now ${value ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -67,8 +67,8 @@ const InstanceGithubAuthenticationPage = observer(() => {
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
           <AuthenticationMethodCard
-            name="Github"
-            description="Allow members to login or sign up to plane with their Github accounts."
+            name="GitHub"
+            description="Allow members to login or sign up to plane with their GitHub accounts."
             icon={
               <Image
                 src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}

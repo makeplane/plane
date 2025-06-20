@@ -6,31 +6,34 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import {
+  DEFAULT_GLOBAL_VIEWS_LIST,
+  EIssueFilterType,
+  EIssuesStoreType,
+  EViewAccess,
+  GLOBAL_VIEW_UPDATED,
+ EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
-import { Header, EHeaderVariant } from "@plane/ui";
+import { Header, EHeaderVariant, Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
   globalViewId: string;
+  isLoading?: boolean;
 };
 
 export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
-  const { globalViewId } = props;
+  const { globalViewId, isLoading = false } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -154,14 +157,22 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
         }}
       />
 
-      <AppliedFiltersList
-        labels={workspaceLabels ?? undefined}
-        appliedFilters={appliedFilters ?? {}}
-        handleClearAllFilters={handleClearAllFilters}
-        handleRemoveFilter={handleRemoveFilter}
-        disableEditing={isLocked}
-        alwaysAllowEditing
-      />
+      {isLoading ? (
+        <Loader className="flex flex-wrap items-stretch gap-2 bg-custom-background-100 truncate my-auto">
+          <Loader.Item height="36px" width="150px" />
+          <Loader.Item height="36px" width="100px" />
+          <Loader.Item height="36px" width="300px" />
+        </Loader>
+      ) : (
+        <AppliedFiltersList
+          labels={workspaceLabels ?? undefined}
+          appliedFilters={appliedFilters ?? {}}
+          handleClearAllFilters={handleClearAllFilters}
+          handleRemoveFilter={handleRemoveFilter}
+          disableEditing={isLocked}
+          alwaysAllowEditing
+        />
+      )}
 
       {!isDefaultView ? (
         <UpdateViewComponent

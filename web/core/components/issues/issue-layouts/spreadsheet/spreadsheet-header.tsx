@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// constants
+import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // ui
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
-// constants
-import { SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 
@@ -21,6 +21,7 @@ interface Props {
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 }
 
 export const SpreadsheetHeader = observer((props: Props) => {
@@ -32,6 +33,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
     isEstimateEnabled,
     spreadsheetColumnsList,
     selectionHelpers,
+    isEpic = false,
   } = props;
   // router
   const { projectId } = useParams();
@@ -62,7 +64,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
                 />
               </div>
             )}
-            <span className="flex h-full w-full flex-grow items-center py-2.5">Issues</span>
+            <span className="flex h-full w-full flex-grow items-center py-2.5">{`${isEpic ? "Epics" : "Work items"}`}</span>
           </Row>
         </th>
 
@@ -74,6 +76,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
             displayFilters={displayFilters}
             handleDisplayFilterUpdate={handleDisplayFilterUpdate}
             isEstimateEnabled={isEstimateEnabled}
+            isEpic={isEpic}
           />
         ))}
       </tr>

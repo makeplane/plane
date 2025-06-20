@@ -3,7 +3,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Plus } from "lucide-react";
-// types
+// plane imports
+import {
+  DEFAULT_GLOBAL_VIEWS_LIST,
+  GLOBAL_VIEW_OPENED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { TStaticViewTypes } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -13,11 +19,8 @@ import {
   WorkspaceViewQuickActions,
 } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_OPENED } from "@/constants/event-tracker";
-import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // store hooks
 import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -34,13 +37,7 @@ const ViewTab = observer((props: { viewId: string }) => {
 
   return (
     <div ref={parentRef} className="relative">
-      <WorkspaceViewQuickActions
-        parentRef={parentRef}
-        view={view}
-        viewId={viewId}
-        globalViewId={globalViewId?.toString()}
-        workspaceSlug={workspaceSlug?.toString()}
-      />
+      <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={view} />
     </div>
   );
 });
@@ -48,7 +45,7 @@ const ViewTab = observer((props: { viewId: string }) => {
 const DefaultViewTab = (props: {
   tab: {
     key: TStaticViewTypes;
-    label: string;
+    i18n_label: string;
   };
 }) => {
   const { tab } = props;
@@ -60,12 +57,7 @@ const DefaultViewTab = (props: {
   if (!workspaceSlug || !globalViewId) return null;
   return (
     <div key={tab.key} ref={parentRef} className="relative">
-      <DefaultWorkspaceViewQuickActions
-        parentRef={parentRef}
-        globalViewId={globalViewId?.toString()}
-        workspaceSlug={workspaceSlug?.toString()}
-        view={tab}
-      />
+      <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={tab} />
     </div>
   );
 };

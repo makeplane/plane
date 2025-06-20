@@ -7,7 +7,8 @@ import {
   TIssueCommentReaction,
   TIssueLink,
   TIssueReaction,
-  TIssueDetailWidget,
+  TIssueServiceType,
+  TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
 import {
@@ -69,8 +70,8 @@ export interface IIssueDetail
   relationKey: TIssueRelationTypes | null;
   issueLinkData: TIssueLink | null;
   issueCrudOperationState: TIssueCrudOperationState;
-  openWidgets: TIssueDetailWidget[];
-  lastWidgetAction: TIssueDetailWidget | null;
+  openWidgets: TWorkItemWidgets[];
+  lastWidgetAction: TWorkItemWidgets | null;
   isCreateIssueModalOpen: boolean;
   isIssueLinkModalOpen: boolean;
   isParentIssueModalOpen: string | null;
@@ -94,9 +95,9 @@ export interface IIssueDetail
   toggleRelationModal: (issueId: string | null, relationType: TIssueRelationTypes | null) => void;
   toggleSubIssuesModal: (value: string | null) => void;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
-  setOpenWidgets: (state: TIssueDetailWidget[]) => void;
-  setLastWidgetAction: (action: TIssueDetailWidget) => void;
-  toggleOpenWidget: (state: TIssueDetailWidget) => void;
+  setOpenWidgets: (state: TWorkItemWidgets[]) => void;
+  setLastWidgetAction: (action: TWorkItemWidgets) => void;
+  toggleOpenWidget: (state: TWorkItemWidgets) => void;
   setRelationKey: (relationKey: TIssueRelationTypes | null) => void;
   setIssueCrudOperationState: (state: TIssueCrudOperationState) => void;
   // store
@@ -113,7 +114,7 @@ export interface IIssueDetail
   relation: IIssueRelationStore;
 }
 
-export class IssueDetail implements IIssueDetail {
+export abstract class IssueDetail implements IIssueDetail {
   // observables
   peekIssue: TPeekIssue | undefined = undefined;
   relationKey: TIssueRelationTypes | null = null;
@@ -130,8 +131,8 @@ export class IssueDetail implements IIssueDetail {
       issue: undefined,
     },
   };
-  openWidgets: TIssueDetailWidget[] = ["sub-issues", "links", "attachments"];
-  lastWidgetAction: TIssueDetailWidget | null = null;
+  openWidgets: TWorkItemWidgets[] = ["sub-work-items", "links", "attachments"];
+  lastWidgetAction: TWorkItemWidgets | null = null;
   isCreateIssueModalOpen: boolean = false;
   isIssueLinkModalOpen: boolean = false;
   isParentIssueModalOpen: string | null = null;
@@ -140,6 +141,8 @@ export class IssueDetail implements IIssueDetail {
   isRelationModalOpen: TIssueRelationModal | null = null;
   isSubIssuesModalOpen: string | null = null;
   attachmentDeleteModalId: string | null = null;
+  // service type
+  serviceType: TIssueServiceType;
   // store
   rootIssueStore: IIssueRootStore;
   issue: IIssueStore;
@@ -153,7 +156,7 @@ export class IssueDetail implements IIssueDetail {
   comment: IIssueCommentStore;
   commentReaction: IIssueCommentReactionStore;
 
-  constructor(rootStore: IIssueRootStore) {
+  constructor(rootStore: IIssueRootStore, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       peekIssue: observable,
@@ -191,16 +194,17 @@ export class IssueDetail implements IIssueDetail {
     });
 
     // store
+    this.serviceType = serviceType;
     this.rootIssueStore = rootStore;
-    this.issue = new IssueStore(this);
-    this.reaction = new IssueReactionStore(this);
-    this.attachment = new IssueAttachmentStore(rootStore);
-    this.activity = new IssueActivityStore(rootStore.rootStore as RootStore);
-    this.comment = new IssueCommentStore(this);
+    this.issue = new IssueStore(this, serviceType);
+    this.reaction = new IssueReactionStore(this, serviceType);
+    this.attachment = new IssueAttachmentStore(rootStore, serviceType);
+    this.activity = new IssueActivityStore(rootStore.rootStore as RootStore, serviceType);
+    this.comment = new IssueCommentStore(this, serviceType);
     this.commentReaction = new IssueCommentReactionStore(this);
-    this.subIssues = new IssueSubIssuesStore(this);
-    this.link = new IssueLinkStore(this);
-    this.subscription = new IssueSubscriptionStore(this);
+    this.subIssues = new IssueSubIssuesStore(this, serviceType);
+    this.link = new IssueLinkStore(this, serviceType);
+    this.subscription = new IssueSubscriptionStore(this, serviceType);
     this.relation = new IssueRelationStore(this);
   }
 
@@ -234,14 +238,14 @@ export class IssueDetail implements IIssueDetail {
     (this.isRelationModalOpen = { issueId, relationType });
   toggleSubIssuesModal = (issueId: string | null) => (this.isSubIssuesModalOpen = issueId);
   toggleDeleteAttachmentModal = (attachmentId: string | null) => (this.attachmentDeleteModalId = attachmentId);
-  setOpenWidgets = (state: TIssueDetailWidget[]) => {
+  setOpenWidgets = (state: TWorkItemWidgets[]) => {
     this.openWidgets = state;
     if (this.lastWidgetAction) this.lastWidgetAction = null;
   };
-  setLastWidgetAction = (action: TIssueDetailWidget) => {
+  setLastWidgetAction = (action: TWorkItemWidgets) => {
     this.openWidgets = [action];
   };
-  toggleOpenWidget = (state: TIssueDetailWidget) => {
+  toggleOpenWidget = (state: TWorkItemWidgets) => {
     if (this.openWidgets && this.openWidgets.includes(state))
       this.openWidgets = this.openWidgets.filter((s) => s !== state);
     else this.openWidgets = [state, ...this.openWidgets];
@@ -255,6 +259,8 @@ export class IssueDetail implements IIssueDetail {
     issueId: string,
     issueStatus: "DEFAULT" | "DRAFT" = "DEFAULT"
   ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
+  fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
+    this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
@@ -361,8 +367,9 @@ export class IssueDetail implements IIssueDetail {
     projectId: string,
     issueId: string,
     relationType: TIssueRelationTypes,
-    relatedIssue: string
-  ) => this.relation.removeRelation(workspaceSlug, projectId, issueId, relationType, relatedIssue);
+    relatedIssue: string,
+    updateLocally?: boolean
+  ) => this.relation.removeRelation(workspaceSlug, projectId, issueId, relationType, relatedIssue, updateLocally);
 
   // activity
   fetchActivities = async (workspaceSlug: string, projectId: string, issueId: string, loaderType?: TActivityLoader) =>

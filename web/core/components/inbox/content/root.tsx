@@ -1,13 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
 import { InboxIssueActionsHeader, InboxIssueMainContent } from "@/components/inbox";
 // hooks
 import { useProjectInbox, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -32,19 +33,19 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
   /// router
   const router = useAppRouter();
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
   const { data: currentUser } = useUser();
   const { currentTab, fetchInboxIssueById, getIssueInboxByIssueId, getIsIssueAvailable } = useProjectInbox();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-  const { allowPermissions, projectPermissionsByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
 
   // derived values
   const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
 
   useEffect(() => {
     if (!isIssueAvailable && inboxIssueId && !isNotificationEmbed) {
-      router.replace(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+      router.replace(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isIssueAvailable, isNotificationEmbed]);
@@ -66,7 +67,7 @@ export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
     allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
     inboxIssue?.issue.created_by === currentUser?.id;
 
-  const isGuest = projectPermissionsByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
+  const isGuest = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
   const isOwner = inboxIssue?.issue.created_by === currentUser?.id;
   const readOnly = !isOwner && isGuest;
 

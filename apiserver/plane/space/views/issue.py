@@ -179,7 +179,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                             Q(issue_intake__status=1)
                             | Q(issue_intake__status=-1)
                             | Q(issue_intake__status=2)
-                            | Q(issue_intake__status=True),
+                            | Q(issue_intake__isnull=True),
                             archived_at__isnull=True,
                             is_draft=False,
                         ),
@@ -205,7 +205,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                         Q(issue_intake__status=1)
                         | Q(issue_intake__status=-1)
                         | Q(issue_intake__status=2)
-                        | Q(issue_intake__status=True),
+                        | Q(issue_intake__isnull=True),
                         archived_at__isnull=True,
                         is_draft=False,
                     ),
@@ -701,6 +701,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     Case(
                         When(
                             votes__isnull=False,
+                            votes__deleted_at__isnull=True,
                             then=JSONObject(
                                 vote=F("votes__vote"),
                                 actor_details=JSONObject(
@@ -732,7 +733,11 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                         output_field=JSONField(),
                     ),
                     filter=Case(
-                        When(votes__isnull=False, then=True),
+                        When(
+                            votes__isnull=False,
+                            votes__deleted_at__isnull=True,
+                            then=True,
+                        ),
                         default=False,
                         output_field=JSONField(),
                     ),
@@ -742,6 +747,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     Case(
                         When(
                             issue_reactions__isnull=False,
+                            issue_reactions__deleted_at__isnull=True,
                             then=JSONObject(
                                 reaction=F("issue_reactions__reaction"),
                                 actor_details=JSONObject(
@@ -775,7 +781,11 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                         output_field=JSONField(),
                     ),
                     filter=Case(
-                        When(issue_reactions__isnull=False, then=True),
+                        When(
+                            issue_reactions__isnull=False,
+                            issue_reactions__deleted_at__isnull=True,
+                            then=True,
+                        ),
                         default=False,
                         output_field=JSONField(),
                     ),

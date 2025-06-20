@@ -1,14 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-// editor
-import { EditorRefApi } from "@plane/editor";
-// ui
+// plane imports
+import { TOOLBAR_ITEMS, ToolbarMenuItem, EditorRefApi } from "@plane/editor";
 import { Button, Tooltip } from "@plane/ui";
-// constants
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   executeCommand: (item: ToolbarMenuItem) => void;

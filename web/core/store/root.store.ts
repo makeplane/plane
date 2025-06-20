@@ -1,12 +1,16 @@
 import { enableStaticRendering } from "mobx-react";
+// plane imports
+import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 // plane web store
+import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
+import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
-import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.store";
 import { CycleStore, ICycleStore } from "./cycle.store";
 import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
+import { EditorAssetStore, IEditorAssetStore } from "./editor/asset.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
 import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { FavoriteStore, IFavoriteStore } from "./favorite.store";
@@ -24,6 +28,7 @@ import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store"
 import { IProjectRootStore, ProjectRootStore } from "./project";
 import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
 import { RouterStore, IRouterStore } from "./router.store";
+import { IStickyStore, StickyStore } from "./sticky/sticky.store";
 import { ThemeStore, IThemeStore } from "./theme.store";
 import { ITransientStore, TransientStore } from "./transient.store";
 import { IUserStore, UserStore } from "./user";
@@ -45,6 +50,7 @@ export class CoreRootStore {
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
+  analytics: IAnalyticsStore;
   projectPages: IProjectPageStore;
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
@@ -58,16 +64,18 @@ export class CoreRootStore {
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
   transient: ITransientStore;
+  stickyStore: IStickyStore;
+  editorAssetStore: IEditorAssetStore;
 
   constructor() {
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
-    this.user = new UserStore(this);
+    this.user = new UserStore(this as unknown as RootStore);
     this.theme = new ThemeStore();
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.memberRoot = new MemberRootStore(this);
+    this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
@@ -81,24 +89,27 @@ export class CoreRootStore {
     this.eventTracker = new EventTrackerStore(this);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.stickyStore = new StickyStore();
+    this.editorAssetStore = new EditorAssetStore();
+    this.analytics = new AnalyticsStore();
   }
 
   resetOnSignOut() {
     // handling the system theme when user logged out from the app
     localStorage.setItem("theme", "system");
-
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, FALLBACK_LANGUAGE);
     this.router = new RouterStore();
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
-    this.user = new UserStore(this);
+    this.user = new UserStore(this as unknown as RootStore);
     this.workspaceRoot = new WorkspaceRootStore(this);
     this.projectRoot = new ProjectRootStore(this);
-    this.memberRoot = new MemberRootStore(this);
+    this.memberRoot = new MemberRootStore(this as unknown as RootStore);
     this.cycle = new CycleStore(this);
     this.cycleFilter = new CycleFilterStore(this);
     this.module = new ModulesStore(this);
@@ -111,11 +122,13 @@ export class CoreRootStore {
     this.dashboard = new DashboardStore(this);
     this.eventTracker = new EventTrackerStore(this);
     this.projectInbox = new ProjectInboxStore(this);
-    this.projectPages = new ProjectPageStore(this);
+    this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
     this.transient = new TransientStore();
+    this.stickyStore = new StickyStore();
+    this.editorAssetStore = new EditorAssetStore();
   }
 }

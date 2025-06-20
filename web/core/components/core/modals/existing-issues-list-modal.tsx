@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { Rocket, Search, X } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -21,18 +23,22 @@ import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
 
 type Props = {
   workspaceSlug: string | undefined;
-  projectId: string | undefined;
+  projectId?: string;
   isOpen: boolean;
   handleClose: () => void;
   searchParams: Partial<TProjectIssuesSearchParams>;
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
   shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
+  selectedWorkItems?: ISearchIssueResponse[];
+  workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
 
 const projectService = new ProjectService();
 
 export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   const {
     workspaceSlug,
     projectId,
@@ -42,6 +48,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleOnSubmit,
     workspaceLevelToggle = false,
     shouldHideIssue,
+    selectedWorkItems,
+    workItemSearchServiceCallback,
   } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
@@ -66,8 +74,8 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     if (selectedIssues.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Please select at least one issue.",
+        title: t("toast.error"),
+        message: t("issue.select.error"),
       });
 
       return;
@@ -80,20 +88,39 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  useEffect(() => {
-    if (!isOpen || !workspaceSlug || !projectId) return;
+  const handleSearch = () => {
+    if (!isOpen || !workspaceSlug) return;
     setIsLoading(true);
-    projectService
-      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
-        search: debouncedSearchTerm,
-        ...searchParams,
-        workspace_search: isWorkspaceLevel,
-      })
+    const searchService =
+      workItemSearchServiceCallback ??
+      (projectId
+        ? projectService.projectIssuesSearch.bind(projectService, workspaceSlug?.toString(), projectId?.toString())
+        : undefined);
+    if (!searchService) return;
+    searchService({
+      search: debouncedSearchTerm,
+      ...searchParams,
+      workspace_search: isWorkspaceLevel,
+    })
       .then((res) => setIssues(res))
       .finally(() => {
         setIsSearching(false);
         setIsLoading(false);
       });
+  };
+
+  const handleSelectIssues = () => {
+    setSelectedIssues((prevData) => (prevData.length === filteredIssues.length ? [] : [...filteredIssues]));
+  };
+
+  useEffect(() => {
+    if (selectedWorkItems) {
+      setSelectedIssues(selectedWorkItems);
+    }
+  }, [isOpen, selectedWorkItems]);
+
+  useEffect(() => {
+    handleSearch();
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
 
   const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));
@@ -140,7 +167,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     />
                     <Combobox.Input
                       className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
-                      placeholder="Type to search..."
+                      placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       tabIndex={baseTabIndex}
@@ -174,7 +201,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                       </div>
                     ) : (
                       <div className="w-min whitespace-nowrap rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-                        No issues selected
+                        {t("issue.select.empty")}
                       </div>
                     )}
                     {workspaceLevelToggle && (
@@ -193,7 +220,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                             onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
                             className="flex-shrink-0"
                           >
-                            Workspace Level
+                            {t("common.workspace_level")}
                           </button>
                         </div>
                       </Tooltip>
@@ -204,6 +231,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     static
                     className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
                   >
+                    {/* TODO: Translate here */}
                     {searchTerm !== "" && (
                       <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
                         Search results for{" "}
@@ -269,7 +297,13 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                                     <span className="truncate">{issue.name}</span>
                                   </div>
                                   <a
-                                    href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+                                    href={generateWorkItemLink({
+                                      workspaceSlug,
+                                      projectId: issue?.project_id,
+                                      issueId: issue?.id,
+                                      projectIdentifier: issue.project__identifier,
+                                      sequenceId: issue?.sequence_id,
+                                    })}
                                     target="_blank"
                                     className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
                                     rel="noopener noreferrer"
@@ -286,15 +320,31 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </Combobox.Options>
                 </Combobox>
-                <div className="flex items-center justify-end gap-2 p-3">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    Cancel
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="link-primary"
+                    size="sm"
+                    onClick={handleSelectIssues}
+                    disabled={filteredIssues.length === 0}
+                  >
+                    {selectedIssues.length === issues.length
+                      ? t("issue.select.deselect_all")
+                      : t("issue.select.select_all")}
                   </Button>
-                  {selectedIssues.length > 0 && (
-                    <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
-                      {isSubmitting ? "Adding..." : "Add selected issues"}
+                  <div className="flex items-center justify-end gap-2 p-3">
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      {t("common.cancel")}
                     </Button>
-                  )}
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={onSubmit}
+                      loading={isSubmitting}
+                      disabled={isSubmitting || selectedIssues.length === 0}
+                    >
+                      {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
+                    </Button>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

@@ -1,12 +1,12 @@
 "use client";
 
 import { Copy } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
@@ -19,12 +19,13 @@ type Props = {
 export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const copyApiToken = (token: string) => {
     copyTextToClipboard(token).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Token copied to clipboard.",
+        title: `${t("success")}!`,
+        message: t("workspace_settings.token_copied"),
       })
     );
   };
@@ -32,11 +33,8 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
   return (
     <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">Key created</h3>
-        <p className="text-sm text-custom-text-400">
-          Copy and save this secret key in Plane Pages. You can{"'"}t see this key after you hit Close. A CSV file
-          containing the key has been downloaded.
-        </p>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{t("workspace_settings.key_created")}</h3>
+        <p className="text-sm text-custom-text-400">{t("workspace_settings.copy_key")}</p>
       </div>
       <button
         type="button"
@@ -50,10 +48,12 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       </button>
       <div className="mt-6 flex items-center justify-between">
         <p className="text-xs text-custom-text-400">
-          {tokenDetails.expired_at ? `Expires ${renderFormattedDate(tokenDetails.expired_at)}` : "Never expires"}
+          {tokenDetails.expired_at
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
+            : "Never expires"}
         </p>
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Close
+          {t("close")}
         </Button>
       </div>
     </div>

@@ -25,7 +25,7 @@ const Titles: TAuthHeaderDetails = {
   },
   [EAuthModes.SIGN_UP]: {
     header: "View, comment, and do more",
-    subHeader: "Sign up or log in to work with Plane Issues and Pages.",
+    subHeader: "Sign up or log in to work with Plane work items and Pages.",
   },
 };
 
@@ -38,7 +38,7 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
     }
 
     return {
-      header: "Comment or react to issues",
+      header: "Comment or react to work itemss",
       subHeader: "Use plane to add your valuable inputs to features.",
     };
   };

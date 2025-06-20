@@ -3,9 +3,9 @@ import sortBy from "lodash/sortBy";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { EUserPermissions } from "@plane/constants";
 import { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // types
@@ -30,6 +30,7 @@ export interface IWorkspaceMemberStore {
   workspaceMemberInvitationIds: string[] | null;
   memberMap: Record<string, IWorkspaceMembership> | null;
   // computed actions
+  getWorkspaceMemberIds: (workspaceSlug: string) => string[];
   getSearchedWorkspaceMemberIds: (searchQuery: string) => string[] | null;
   getSearchedWorkspaceInvitationIds: (searchQuery: string) => string[] | null;
   getWorkspaceMemberDetails: (workspaceMemberId: string) => IWorkspaceMember | null;
@@ -95,14 +96,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   get workspaceMemberIds() {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
-    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
-    members = sortBy(members, [
-      (m) => m.member !== this.userStore?.data?.id,
-      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
-    ]);
-    //filter out bots
-    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
-    return memberIds;
+
+    return this.getWorkspaceMemberIds(workspaceSlug);
   }
 
   get memberMap() {
@@ -116,6 +111,17 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!workspaceSlug) return null;
     return this.workspaceMemberInvitations?.[workspaceSlug]?.map((inv) => inv.id);
   }
+
+  getWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
+    let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
+    members = sortBy(members, [
+      (m) => m.member !== this.userStore?.data?.id,
+      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+    ]);
+    //filter out bots
+    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
+    return memberIds;
+  });
 
   /**
    * @description get the list of all the user ids that match the search query of all the members of the current workspace
@@ -217,7 +223,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
-    const originalProjectMemberData = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+    const originalProjectMemberData = { ...this.workspaceMemberMap?.[workspaceSlug]?.[userId] };
     try {
       runInAction(() => {
         set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);

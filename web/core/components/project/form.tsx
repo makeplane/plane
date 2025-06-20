@@ -3,6 +3,8 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
+import { NETWORK_CHOICES, PROJECT_UPDATED } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
 // plane ui
@@ -16,24 +18,20 @@ import {
   CustomEmojiIconPicker,
   EmojiIconPickerTypes,
   Tooltip,
-  // CustomSearchSelect,
 } from "@plane/ui";
+import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
-// constants
-import { PROJECT_UPDATED } from "@/constants/event-tracker";
-import { NETWORK_CHOICES } from "@/constants/project";
+import { TimezoneSelect } from "@/components/global";
+import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-// import { TTimezone, TIME_ZONES } from "@/constants/timezones";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
@@ -43,6 +41,7 @@ export interface IProjectDetailsForm {
 const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, projectId, isAdmin } = props;
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +49,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
   const { isMobile } = usePlatformOS();
+
   // form info
   const {
     handleSubmit,
@@ -68,20 +68,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   });
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
-  // const getTimeZoneLabel = (timezone: TTimezone | undefined) => {
-  //   if (!timezone) return undefined;
-  //   return (
-  //     <div className="flex gap-1.5">
-  //       <span className="text-custom-text-400">{timezone.gmtOffset}</span>
-  //       <span className="text-custom-text-200">{timezone.name}</span>
-  //     </div>
-  //   );
-  // };
-  // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-  //   value: timeZone.value,
-  //   query: timeZone.name + " " + timeZone.gmtOffset + " " + timeZone.value,
-  //   content: getTimeZoneLabel(timeZone),
-  // }));
   const coverImage = watch("cover_image_url");
 
   useEffect(() => {
@@ -119,8 +105,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Project updated successfully",
+          title: t("toast.success"),
+          message: t("project_settings.general.toast.success"),
         });
       })
       .catch((error) => {
@@ -130,8 +116,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Project could not be updated. Please try again.",
+          title: t("toast.error"),
+          message: error?.error ?? t("project_settings.general.toast.error"),
         });
       });
   };
@@ -146,7 +132,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       description: formData.description,
 
       logo_props: formData.logo_props,
-      // timezone: formData.timezone,
+      timezone: formData.timezone,
     };
     // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
     if (formData.cover_image_url?.startsWith("http")) {
@@ -158,7 +144,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       await projectService
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
         .then(async (res) => {
-          if (res.exists) setError("identifier", { message: "Identifier already exists" });
+          if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
           else await handleUpdateChange(payload);
         });
     else await handleUpdateChange(payload);
@@ -172,7 +158,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img
-          src={getFileURL(coverImage ?? "")}
+          src={getFileURL(
+            coverImage ??
+              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+          )}
           alt="Project cover image"
           className="h-44 w-full rounded-md object-cover"
         />
@@ -219,7 +208,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
-                  {currentNetwork?.label}
+                  {currentNetwork && t(currentNetwork?.i18n_label)}
                 </span>
               </span>
             </div>
@@ -231,10 +220,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 name="cover_image_url"
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
-                    label="Change cover"
+                    label={t("change_cover")}
                     control={control}
                     onChange={onChange}
-                    value={value}
+                    value={value ?? null}
                     disabled={!isAdmin}
                     projectId={project.id}
                   />
@@ -246,12 +235,12 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       </div>
       <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Project name</h4>
+          <h4 className="text-sm">{t("common.project_name")}</h4>
           <Controller
             control={control}
             name="name"
             rules={{
-              required: "Name is required",
+              required: t("name_is_required"),
               maxLength: {
                 value: 255,
                 message: "Project name should be less than 255 characters",
@@ -267,7 +256,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
                 className="rounded-md !p-3 font-medium"
-                placeholder="Project name"
+                placeholder={t("common.project_name")}
                 disabled={!isAdmin}
               />
             )}
@@ -275,7 +264,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           <span className="text-xs text-red-500">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Description</h4>
+          <h4 className="text-sm">{t("description")}</h4>
           <Controller
             name="description"
             control={control}
@@ -284,7 +273,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 id="description"
                 name="description"
                 value={value}
-                placeholder="Enter project description"
+                placeholder={t("project_description_placeholder")}
                 onChange={onChange}
                 className="min-h-[102px] text-sm font-medium"
                 hasError={Boolean(errors?.description)}
@@ -301,17 +290,15 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 control={control}
                 name="identifier"
                 rules={{
-                  required: "Project ID is required",
-                  validate: (value) =>
-                    /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) ||
-                    "Only Alphanumeric & Non-latin characters are allowed.",
+                  required: t("project_id_is_required"),
+                  validate: (value) => /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("project_id_allowed_char"),
                   minLength: {
                     value: 1,
-                    message: "Project ID must at least be of 1 character",
+                    message: t("project_id_min_char"),
                   },
                   maxLength: {
                     value: 5,
-                    message: "Project ID must at most be of 5 characters",
+                    message: t("project_id_max_char"),
                   },
                 }}
                 render={({ field: { value, ref } }) => (
@@ -323,7 +310,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     onChange={handleIdentifierChange}
                     ref={ref}
                     hasError={Boolean(errors.identifier)}
-                    placeholder="Enter project ID"
+                    placeholder={t("project_settings.general.enter_project_id")}
                     className="w-full font-medium"
                     disabled={!isAdmin}
                   />
@@ -331,7 +318,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent="Helps you identify issues in the project uniquely. Max 5 characters."
+                tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
                 className="text-sm"
                 position="right-top"
               >
@@ -343,7 +330,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm">Network</h4>
+            <h4 className="text-sm">{t("workspace_projects.network.label")}</h4>
             <Controller
               name="network"
               control={control}
@@ -357,11 +344,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                       <div className="flex items-center gap-1">
                         {selectedNetwork ? (
                           <>
-                            <selectedNetwork.icon className="h-3.5 w-3.5" />
-                            {selectedNetwork.label}
+                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
+                            {t(selectedNetwork.i18n_label)}
                           </>
                         ) : (
-                          <span className="text-custom-text-400">Select network</span>
+                          <span className="text-custom-text-400">{t("select_network")}</span>
                         )}
                       </div>
                     }
@@ -373,10 +360,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     {NETWORK_CHOICES.map((network) => (
                       <CustomSelect.Option key={network.key} value={network.key}>
                         <div className="flex items-start gap-2">
-                          <network.icon className="h-3.5 w-3.5" />
+                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                           <div className="-mt-1">
-                            <p>{network.label}</p>
-                            <p className="text-xs text-custom-text-400">{network.description}</p>
+                            <p>{t(network.i18n_label)}</p>
+                            <p className="text-xs text-custom-text-400">{t(network.description)}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
@@ -386,39 +373,35 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               }}
             />
           </div>
-          {/* <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
-            <h4 className="text-sm">Project Timezone</h4>
+          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
+            <h4 className="text-sm">{t("common.project_timezone")}</h4>
             <Controller
               name="timezone"
               control={control}
-              rules={{ required: "Please select a timezone" }}
+              rules={{ required: t("project_settings.general.please_select_a_timezone") }}
               render={({ field: { value, onChange } }) => (
-                <CustomSearchSelect
-                  value={value}
-                  label={
-                    value
-                      ? (getTimeZoneLabel(TIME_ZONES.find((t) => t.value === value)) ?? value)
-                      : "Select a timezone"
-                  }
-                  options={timeZoneOptions}
-                  onChange={onChange}
-                  buttonClassName={errors.timezone ? "border-red-500" : "border-none"}
-                  className="rounded-md border-[0.5px] !border-custom-border-200"
-                  optionsClassName="w-72"
-                  input
-                />
+                <>
+                  <TimezoneSelect
+                    value={value}
+                    onChange={(value: string) => {
+                      onChange(value);
+                    }}
+                    error={Boolean(errors.timezone)}
+                    buttonClassName="border-none"
+                  />
+                </>
               )}
             />
             {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
-          </div> */}
+          </div>
         </div>
         <div className="flex items-center justify-between py-2">
           <>
             <Button variant="primary" type="submit" loading={isLoading} disabled={!isAdmin}>
-              {isLoading ? "Updating..." : "Update project"}
+              {isLoading ? `${t("updating")}...` : t("common.update_project")}
             </Button>
             <span className="text-sm italic text-custom-sidebar-text-400">
-              Created on {renderFormattedDate(project?.created_at)}
+              {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>
         </div>

@@ -3,7 +3,7 @@ from django.db.models import Count, F, Sum, Q
 from django.db.models.functions import ExtractMonth
 from django.utils import timezone
 from django.db.models.functions import Concat
-from django.db.models import Case, When, Value
+from django.db.models import Case, When, Value, OuterRef, Func
 from django.db import models
 
 # Third party imports
@@ -15,7 +15,16 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.app.serializers import AnalyticViewSerializer
 from plane.app.views.base import BaseAPIView, BaseViewSet
 from plane.bgtasks.analytic_plot_export import analytic_export_task
-from plane.db.models import AnalyticView, Issue, Workspace
+from plane.db.models import (
+    AnalyticView,
+    Issue,
+    Workspace,
+    Project,
+    ProjectMember,
+    Cycle,
+    Module,
+)
+
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
 from plane.app.permissions import allow_permission, ROLE
@@ -441,3 +450,74 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class ProjectStatsEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def get(self, request, slug):
+        fields = request.GET.get("fields", "").split(",")
+        project_ids = request.GET.get("project_ids", "")
+
+        valid_fields = {
+            "total_issues",
+            "completed_issues",
+            "total_members",
+            "total_cycles",
+            "total_modules",
+        }
+        requested_fields = set(filter(None, fields)) & valid_fields
+
+        if not requested_fields:
+            requested_fields = valid_fields
+
+        projects = Project.objects.filter(workspace__slug=slug)
+        if project_ids:
+            projects = projects.filter(id__in=project_ids.split(","))
+
+        annotations = {}
+        if "total_issues" in requested_fields:
+            annotations["total_issues"] = (
+                Issue.issue_objects.filter(project_id=OuterRef("pk"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
+        if "completed_issues" in requested_fields:
+            annotations["completed_issues"] = (
+                Issue.issue_objects.filter(
+                    project_id=OuterRef("pk"), state__group="completed"
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
+        if "total_cycles" in requested_fields:
+            annotations["total_cycles"] = (
+                Cycle.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
+        if "total_modules" in requested_fields:
+            annotations["total_modules"] = (
+                Module.objects.filter(project_id=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
+        if "total_members" in requested_fields:
+            annotations["total_members"] = (
+                ProjectMember.objects.filter(
+                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+
+        projects = projects.annotate(**annotations).values("id", *requested_fields)
+        return Response(projects, status=status.HTTP_200_OK)

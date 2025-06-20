@@ -1,8 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
-// types
+// plane imports
+import { SitesIssueService } from "@plane/services";
 import { IssuePaginationOptions, TLoader } from "@plane/types";
-// services
-import IssueService from "@/services/issue.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 // types
@@ -24,7 +23,7 @@ export class IssueStore extends BaseIssuesStore implements IIssueStore {
   // root store
   rootStore: CoreRootStore;
   // services
-  issueService: IssueService;
+  issueService: SitesIssueService;
 
   constructor(_rootStore: CoreRootStore) {
     super(_rootStore);
@@ -36,7 +35,7 @@ export class IssueStore extends BaseIssuesStore implements IIssueStore {
     });
 
     this.rootStore = _rootStore;
-    this.issueService = new IssueService();
+    this.issueService = new SitesIssueService();
   }
 
   /**
@@ -59,7 +58,7 @@ export class IssueStore extends BaseIssuesStore implements IIssueStore {
 
       const params = this.rootStore.issueFilter.getFilterParams(options, anchor, undefined, undefined, undefined);
 
-      const response = await this.issueService.fetchPublicIssues(anchor, params);
+      const response = await this.issueService.list(anchor, params);
 
       // after fetching issues, call the base method to process the response further
       this.onfetchIssues(response, options);
@@ -86,7 +85,7 @@ export class IssueStore extends BaseIssuesStore implements IIssueStore {
         subGroupId
       );
       // call the fetch issues API with the params for next page in issues
-      const response = await this.issueService.fetchPublicIssues(anchor, params);
+      const response = await this.issueService.list(anchor, params);
 
       // after the next page of issues are fetched, call the base method to process the response
       this.onfetchNexIssues(response, groupId, subGroupId);

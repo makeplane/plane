@@ -12,8 +12,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane constants
+import { EIssueLayoutTypes, ALL_ISSUES, EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import { ALL_ISSUES } from "@plane/constants";
 import {
   TIssue,
   TIssueGroupByOptions,
@@ -28,16 +29,14 @@ import {
   TGroupedIssueCount,
   TPaginationData,
   TBulkOperationsPayload,
+  IBlockUpdateDependencyData,
 } from "@plane/types";
-// components
-import { IBlockUpdateDependencyData } from "@/components/gantt-chart";
-// constants
-import { EIssueLayoutTypes, ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
-import { convertToISODateString } from "@/helpers/date-time.helper";
+import { convertToISODateString } from "@plane/utils";
 // local-db
 import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
+import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueDraftService, IssueService } from "@/services/issue";
@@ -114,14 +113,14 @@ export interface IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
-  updateIssueDates(workspaceSlug: string, projectId: string, updates: IBlockUpdateDependencyData[]): Promise<void>;
+  updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
-const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
+export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   project: "project_id",
   state: "state_id",
-  "state_detail.group": "state_id" as keyof TIssue, // state_detail.group is only being used for state_group display,
+  "state_detail.group": "state_id", // state_detail.group is only being used for state_group display,
   priority: "priority",
   labels: "label_ids",
   created_by: "created_by",
@@ -129,6 +128,7 @@ const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
   target_date: "target_date",
   cycle: "cycle_id",
   module: "module_ids",
+  team_project: "project_id",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -136,12 +136,13 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   cycle: "cycle_id",
   module: "module_ids",
   state: "state_id",
-  "state_detail.group": "state_group" as keyof TIssue, // state_detail.group is only being used for state_group display,
+  "state_detail.group": "state__group", // state_detail.group is only being used for state_group display,
   priority: "priority",
   labels: "label_ids",
   created_by: "created_by",
   assignees: "assignee_ids",
   target_date: "target_date",
+  team_project: "project_id",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on
@@ -200,7 +201,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   // API Abort controller
   controller: AbortController;
 
-  constructor(_rootStore: IIssueRootStore, issueFilterStore: IBaseIssueFilterStore, isArchived = false) {
+  constructor(
+    _rootStore: IIssueRootStore,
+    issueFilterStore: IBaseIssueFilterStore,
+    isArchived = false,
+    serviceType = EIssueServiceType.ISSUES
+  ) {
     makeObservable(this, {
       // observable
       loader: observable,
@@ -254,7 +260,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     this.isArchived = isArchived;
 
-    this.issueService = new IssueService();
+    this.issueService = new IssueService(serviceType);
     this.issueArchiveService = new IssueArchiveService();
     this.issueDraftService = new IssueDraftService();
     this.moduleService = new ModuleService();
@@ -289,6 +295,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // Temporary code to fix no load order by
     if (
       this.rootIssueStore.rootStore.user.localDBEnabled &&
+      this.rootIssueStore.rootStore.router.projectId &&
       layout !== EIssueLayoutTypes.SPREADSHEET &&
       orderBy &&
       Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
@@ -663,6 +670,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const issueBeforeRemoval = clone(this.rootIssueStore.issues.getIssueById(issueId));
     // update parent stats optimistically
     this.updateParentStats(issueBeforeRemoval, undefined);
+
     // Male API call
     await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
     // Remove from Respective issue Id list
@@ -790,7 +798,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     runInAction(() => {
       issueIds.forEach((issueId) => {
         const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
-        if (!issueBeforeUpdate) throw new Error("Issue not found");
+        if (!issueBeforeUpdate) throw new Error("Work item not found");
         Object.keys(data.properties).forEach((key) => {
           const property = key as keyof TBulkOperationsPayload["properties"];
           const propertyValue = data.properties[property];
@@ -818,9 +826,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   async updateIssueDates(
     workspaceSlug: string,
-    projectId: string,
-    updates: { id: string; start_date?: string; target_date?: string }[]
+    updates: { id: string; start_date?: string; target_date?: string }[],
+    projectId?: string
   ) {
+    if(!projectId) return;
     const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
     try {
       const getIssueById = this.rootIssueStore.issues.getIssueById;
@@ -1585,11 +1594,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if unGrouped, then return the path as ALL_ISSUES along with orderByUpdates
     if (!this.issueGroupKey) return action ? [{ path: [ALL_ISSUES], action }, ...orderByUpdates] : orderByUpdates;
 
-    const issueGroupKey = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
+    const issueGroupKeyValue = issue?.[this.issueGroupKey] as string | string[] | null | undefined;
     const issueBeforeUpdateGroupKey = issueBeforeUpdate?.[this.issueGroupKey] as string | string[] | null | undefined;
     // if grouped, the get the Difference between the two issue properties (this.issueGroupKey) on which groupBy is performed
     const groupActionsArray = getDifference(
-      this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
+      this.getArrayStringArray(issue, issueGroupKeyValue, this.groupBy),
       this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
       action
     );
@@ -1623,7 +1632,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         groupActionsArray,
         subGroupActionsArray,
         this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateGroupKey, this.groupBy),
-        this.getArrayStringArray(issue, issueGroupKey, this.groupBy),
+        this.getArrayStringArray(issue, issueGroupKeyValue, this.groupBy),
         this.getArrayStringArray(issueBeforeUpdate, issueBeforeUpdateSubGroupKey, this.subGroupBy),
         this.getArrayStringArray(issue, issueSubGroupKey, this.subGroupBy)
       ),
@@ -1681,12 +1690,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     return issueKeyActions;
   }
 
-  /**
-   * get the groupByKey issue property on which actions are to be decided in the form of array
-   * @param value
-   * @param groupByKey
-   * @returns an array of issue property values
-   */
+  // /**
+  //  * Normalizes group values into a consistent string array format
+  //  * @param issueObject - The issue object to extract values from
+  //  * @param value - The raw value (string, array, or null/undefined)
+  //  * @param groupByKey - The group by key to handle special cases
+  //  * @returns Normalized array of string values
+  //  */
   getArrayStringArray = (
     issueObject: Partial<TIssue> | undefined,
     value: string | string[] | undefined | null,
@@ -1699,9 +1709,23 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if array return the array
     if (Array.isArray(value)) return value;
 
-    // if the groupKey is state group then return the group based on state_id
+    return this.getDefaultGroupValue(issueObject, value, groupByKey);
+  };
+
+  // /**
+  //  * Gets the default value for a group when the primary value is empty
+  //  * @param issueObject - The issue object to extract fallback values from
+  //  * @param groupByKey - The group by key to determine fallback logic
+  //  * @returns Default group value as string array
+  //  */
+  private getDefaultGroupValue = (
+    issueObject: Partial<TIssue>,
+    value: string,
+    groupByKey?: TIssueGroupByOptions
+  ): string[] => {
+    // Handle special case for state group
     if (groupByKey === "state_detail.group") {
-      return [this.rootIssueStore.rootStore.state.stateMap?.[value]?.group];
+      return [this.rootIssueStore.rootStore.state.stateMap?.[value]?.group ?? issueObject.state__group];
     }
 
     return [value];
@@ -1983,7 +2007,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
 
       default:
-        return getIssueIds(array);
+        return workItemSortWithOrderByExtended(array, key);
     }
   };
 

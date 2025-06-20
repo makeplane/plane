@@ -3,18 +3,16 @@
 import { ReactNode } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { SWRConfig } from "swr";
-// ui
+// plane imports
+import { ADMIN_BASE_PATH, DEFAULT_SWR_CONFIG } from "@plane/constants";
 import { Toast } from "@plane/ui";
-// constants
-import { SWR_CONFIG } from "@/constants/swr-config";
-// helpers
-import { ASSET_PREFIX, resolveGeneralTheme } from "@/helpers/common.helper";
+import { resolveGeneralTheme } from "@plane/utils";
 // lib
 import { InstanceProvider } from "@/lib/instance-provider";
 import { StoreProvider } from "@/lib/store-provider";
 import { UserProvider } from "@/lib/user-provider";
 // styles
-import "./globals.css";
+import "@/styles/globals.css";
 
 const ToastWithTheme = () => {
   const { resolvedTheme } = useTheme();
@@ -22,6 +20,7 @@ const ToastWithTheme = () => {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const ASSET_PREFIX = ADMIN_BASE_PATH;
   return (
     <html lang="en">
       <head>
@@ -34,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`antialiased`}>
         <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
           <ToastWithTheme />
-          <SWRConfig value={SWR_CONFIG}>
+          <SWRConfig value={DEFAULT_SWR_CONFIG}>
             <StoreProvider>
               <InstanceProvider>
                 <UserProvider>{children}</UserProvider>

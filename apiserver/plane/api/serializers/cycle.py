@@ -1,9 +1,11 @@
 # Third party imports
+import pytz
 from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
 from plane.db.models import Cycle, CycleIssue
+from plane.utils.timezone_converter import convert_to_utc
 
 
 class CycleSerializer(BaseSerializer):
@@ -17,6 +19,14 @@ class CycleSerializer(BaseSerializer):
     completed_estimates = serializers.FloatField(read_only=True)
     started_estimates = serializers.FloatField(read_only=True)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        project = self.context.get("project")
+        if project and project.timezone:
+            project_timezone = pytz.timezone(project.timezone)
+            self.fields["start_date"].timezone = project_timezone
+            self.fields["end_date"].timezone = project_timezone
+
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -24,6 +34,29 @@ class CycleSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("end_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed end date")
+
+        if (
+            data.get("start_date", None) is not None
+            and data.get("end_date", None) is not None
+        ):
+            project_id = self.initial_data.get("project_id") or (
+                self.instance.project_id
+                if self.instance and hasattr(self.instance, "project_id")
+                else None
+            )
+
+            if not project_id:
+                raise serializers.ValidationError("Project ID is required")
+
+            data["start_date"] = convert_to_utc(
+                date=str(data.get("start_date").date()),
+                project_id=project_id,
+                is_start_date=True,
+            )
+            data["end_date"] = convert_to_utc(
+                date=str(data.get("end_date", None).date()),
+                project_id=project_id,
+            )
         return data
 
     class Meta:

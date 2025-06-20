@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
-// Plane
-import { cn } from "@plane/editor";
+// plane utils
+import { cn } from "@plane/utils";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //

@@ -2,24 +2,17 @@
 
 import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-// services
 import { Eye, EyeOff } from "lucide-react";
+// plane internal packages
+import { API_BASE_URL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
+import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common";
 // helpers
-import {
-  authErrorHandler,
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-} from "@/helpers/authentication.helper";
-
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { AuthService } from "@/services/auth.service";
+import { authErrorHandler } from "@/lib/auth-helpers";
+// local components
 import { AuthBanner } from "../authentication";
-// ui
-// icons
 
 // service initialization
 const authService = new AuthService();
@@ -61,7 +54,7 @@ export const InstanceSignInForm: FC = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -102,7 +95,7 @@ export const InstanceSignInForm: FC = (props) => {
 
   useEffect(() => {
     if (errorCode) {
-      const errorDetail = authErrorHandler(errorCode?.toString() as EAuthenticationErrorCodes);
+      const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
       if (errorDetail) {
         setErrorInfo(errorDetail);
       }

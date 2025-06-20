@@ -3,7 +3,8 @@ from django.utils import timezone
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.fields.related import OneToOneRel
+
 
 # Third party imports
 from celery import shared_task
@@ -11,32 +12,101 @@ from celery import shared_task
 
 @shared_task
 def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
+    """
+    Soft delete related objects for a given model instance
+    """
+    # Get the model class using app registry
     model_class = apps.get_model(app_label, model_name)
-    instance = model_class.all_objects.get(pk=instance_pk)
-    related_fields = instance._meta.get_fields()
-    for field in related_fields:
-        if field.one_to_many or field.one_to_one:
-            try:
-                # Check if the field has CASCADE on delete
-                if (
-                    hasattr(field, "remote_field")
-                    and hasattr(field.remote_field, "on_delete")
-                    and field.remote_field.on_delete == models.CASCADE
-                ):
-                    if field.one_to_many:
-                        related_objects = getattr(instance, field.name).all()
-                    elif field.one_to_one:
-                        related_object = getattr(instance, field.name)
-                        related_objects = (
-                            [related_object] if related_object is not None else []
-                        )
 
-                    for obj in related_objects:
-                        if obj:
-                            obj.deleted_at = timezone.now()
-                            obj.save(using=using)
-            except ObjectDoesNotExist:
-                pass
+    # Get the instance using all_objects to ensure we can get even if it's already soft deleted
+    try:
+        instance = model_class.all_objects.get(pk=instance_pk)
+    except model_class.DoesNotExist:
+        return
+
+    # Get all related fields that are reverse relationships
+    all_related = [
+        f
+        for f in instance._meta.get_fields()
+        if (f.one_to_many or f.one_to_one) and f.auto_created and not f.concrete
+    ]
+
+    # Handle each related field
+    for relation in all_related:
+        related_name = relation.get_accessor_name()
+
+        # Skip if the relation doesn't exist
+        if not hasattr(instance, related_name):
+            continue
+
+        # Get the on_delete behavior name
+        on_delete_name = (
+            relation.on_delete.__name__
+            if hasattr(relation.on_delete, "__name__")
+            else ""
+        )
+
+        if on_delete_name == "DO_NOTHING":
+            continue
+
+        elif on_delete_name == "SET_NULL":
+            # Handle SET_NULL relationships
+            if isinstance(relation, OneToOneRel):
+                # For OneToOne relationships
+                related_obj = getattr(instance, related_name, None)
+                if related_obj and isinstance(related_obj, models.Model):
+                    setattr(related_obj, relation.remote_field.name, None)
+                    related_obj.save(update_fields=[relation.remote_field.name])
+            else:
+                # For other relationships
+                related_queryset = getattr(instance, related_name).all()
+                related_queryset.update(**{relation.remote_field.name: None})
+
+        else:
+            # Handle CASCADE and other delete behaviors
+            try:
+                if relation.one_to_one:
+                    # Handle OneToOne relationships
+                    related_obj = getattr(instance, related_name, None)
+                    if related_obj:
+                        if hasattr(related_obj, "deleted_at"):
+                            if not related_obj.deleted_at:
+                                related_obj.deleted_at = timezone.now()
+                                related_obj.save()
+                                # Recursively handle related objects
+                                soft_delete_related_objects(
+                                    related_obj._meta.app_label,
+                                    related_obj._meta.model_name,
+                                    related_obj.pk,
+                                    using,
+                                )
+                else:
+                    # Handle other relationships
+                    related_queryset = getattr(instance, related_name)(
+                        manager="objects"
+                    ).all()
+
+                    for related_obj in related_queryset:
+                        if hasattr(related_obj, "deleted_at"):
+                            if not related_obj.deleted_at:
+                                related_obj.deleted_at = timezone.now()
+                                related_obj.save()
+                                # Recursively handle related objects
+                                soft_delete_related_objects(
+                                    related_obj._meta.app_label,
+                                    related_obj._meta.model_name,
+                                    related_obj.pk,
+                                    using,
+                                )
+            except Exception as e:
+                # Log the error or handle as needed
+                print(f"Error handling relation {related_name}: {str(e)}")
+                continue
+
+    # Finally, soft delete the instance itself if it hasn't been deleted yet
+    if hasattr(instance, "deleted_at") and not instance.deleted_at:
+        instance.deleted_at = timezone.now()
+        instance.save()
 
 
 # @shared_task

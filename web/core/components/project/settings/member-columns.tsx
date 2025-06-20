@@ -1,24 +1,18 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-import { Trash2 } from "lucide-react";
+import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
-// plane types
-import { IUser, IWorkspaceMember } from "@plane/types";
-// plane ui
-import { CustomSelect, PopoverMenu, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { ROLE } from "@/constants/workspace";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
+// plane imports
+import { ROLE, EUserPermissions, EUserProjectRoles } from "@plane/constants";
+import { IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
+import { CustomMenu, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useUser } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 
-export interface RowData {
+export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;
-  role: EUserPermissions;
 }
 
 type NameProps = {
@@ -45,11 +39,11 @@ export const NameColumn: React.FC<NameProps> = (props) => {
     <Disclosure>
       {({}) => (
         <div className="relative group">
-          <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
-            <div className="flex items-center gap-x-4 gap-y-2 flex-1">
+          <div className="flex items-center gap-2 w-72">
+            <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
+                  <span className="relative flex size-4 items-center justify-center rounded-full capitalize text-white">
                     <img
                       src={getFileURL(avatar_url)}
                       className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -59,30 +53,30 @@ export const NameColumn: React.FC<NameProps> = (props) => {
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white">
+                  <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 capitalize text-white text-xs">
                     {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
               )}
               {first_name} {last_name}
             </div>
-
             {(isAdmin || id === currentUser?.id) && (
-              <PopoverMenu
-                data={[""]}
-                keyExtractor={(item) => item}
-                popoverClassName="justify-end"
-                buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
-                render={() => (
+              <CustomMenu
+                ellipsis
+                buttonClassName="p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                optionsClassName="p-1.5"
+                placement="bottom-end"
+              >
+                <CustomMenu.MenuItem>
                   <div
-                    className="flex items-center gap-x-3 cursor-pointer"
+                    className="flex items-center gap-x-1 cursor-pointer text-red-600 font-medium"
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
-                    <Trash2 className="size-3.5 align-middle" />
+                    <CircleMinus className="flex-shrink-0 size-3.5" />
                     {rowData.member?.id === currentUser?.id ? "Leave " : "Remove "}
                   </div>
-                )}
-              />
+                </CustomMenu.MenuItem>
+              </CustomMenu>
             )}
           </div>
         </div>
@@ -92,76 +86,82 @@ export const NameColumn: React.FC<NameProps> = (props) => {
 };
 
 export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
-  const { rowData, currentProjectRole, projectId, workspaceSlug } = props;
+  const { rowData, projectId, workspaceSlug } = props;
+  // store hooks
+  const {
+    project: { updateMemberRole },
+    workspace: { getWorkspaceMemberDetails },
+  } = useMember();
+  const { data: currentUser } = useUser();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   // form info
   const {
     control,
     formState: { errors },
   } = useForm();
-  // store hooks
-  const {
-    project: { updateMember, getProjectMemberDetails },
-    workspace: { getWorkspaceMemberDetails },
-  } = useMember();
-  const { data: currentUser } = useUser();
-
   // derived values
+  const roleLabel = ROLE[rowData.original_role ?? EUserPermissions.GUEST];
   const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isProjectAdminOrGuest = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(rowData.role);
-  const isWorkspaceMember = [EUserPermissions.MEMBER].includes(
+  const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
     Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
   );
-  const isCurrentUserProjectMember = currentUser
-    ? getProjectMemberDetails(currentUser.id)?.role === EUserPermissions.MEMBER
+  const isCurrentUserWorkspaceAdmin = currentUser
+    ? [EUserPermissions.ADMIN].includes(
+        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
+      )
     : false;
-  const isRoleNonEditable =
-    isCurrentUser || (isProjectAdminOrGuest && !isWorkspaceMember) || isCurrentUserProjectMember;
+  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
+  const isCurrentUserProjectAdmin = currentProjectRole
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    : false;
+
+  // logic
+  // Workspace admin can change his own role
+  // Project admin can change any role except his own and workspace admin's role
+  const isRoleEditable =
+    (isCurrentUserWorkspaceAdmin && isCurrentUser) ||
+    (isCurrentUserProjectAdmin && !isRowDataWorkspaceAdmin && !isCurrentUser);
   const checkCurrentOptionWorkspaceRole = (value: string) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role as EUserPermissions | undefined;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuest = [EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
 
     return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
+      Object.entries(ROLE).filter(([key]) => !isGuest || parseInt(key) === EUserPermissions.GUEST)
     );
   };
 
   return (
     <>
-      {isRoleNonEditable ? (
-        <div className="w-32 flex ">
-          <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
-        </div>
-      ) : (
+      {isRoleEditable ? (
         <Controller
           name="role"
           control={control}
           rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
+          render={() => (
             <CustomSelect
-              value={value}
-              onChange={(value: EUserPermissions) => {
+              value={rowData.original_role}
+              onChange={async (value: EUserProjectRoles) => {
                 if (!workspaceSlug) return;
+                await updateMemberRole(workspaceSlug.toString(), projectId.toString(), rowData.member.id, value).catch(
+                  (err) => {
+                    console.log(err, "err");
+                    const error = err.error;
+                    const errorString = Array.isArray(error) ? error[0] : error;
 
-                updateMember(workspaceSlug.toString(), projectId.toString(), rowData.member.id, {
-                  role: value as unknown as EUserPermissions, // Cast value to unknown first, then to EUserPermissions
-                }).catch((err) => {
-                  console.log(err, "err");
-                  const error = err.error;
-                  const errorString = Array.isArray(error) ? error[0] : error;
-
-                  setToast({
-                    type: TOAST_TYPE.ERROR,
-                    title: "Error!",
-                    message: errorString ?? "An error occurred while updating member role. Please try again.",
-                  });
-                });
+                    setToast({
+                      type: TOAST_TYPE.ERROR,
+                      title: "You can’t change this role yet.",
+                      message: errorString ?? "An error occurred while updating member role. Please try again.",
+                    });
+                  }
+                );
               }}
               label={
                 <div className="flex ">
-                  <span>{ROLE[rowData.role as keyof typeof ROLE]}</span>
+                  <span>{roleLabel}</span>
                 </div>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
@@ -169,17 +169,18 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               optionsClassName="w-full"
               input
             >
-              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => {
-                if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
-                return (
-                  <CustomSelect.Option key={key} value={key}>
-                    {label}
-                  </CustomSelect.Option>
-                );
-              })}
+              {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (
+                <CustomSelect.Option key={key} value={key}>
+                  {label}
+                </CustomSelect.Option>
+              ))}
             </CustomSelect>
           )}
         />
+      ) : (
+        <div className="w-32 flex ">
+          <span>{roleLabel}</span>
+        </div>
       )}
     </>
   );

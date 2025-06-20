@@ -18,8 +18,9 @@ from plane.api.serializers import IntakeIssueSerializer, IssueSerializer
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
-
+from plane.utils.host import base_host
 from .base import BaseAPIView
+from plane.db.models.intake import SourceType
 
 
 class IntakeIssueAPIEndpoint(BaseAPIView):
@@ -109,16 +110,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                 {"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Create or get state
-        state, _ = State.objects.get_or_create(
-            name="Triage",
-            group="triage",
-            description="Default state for managing all Intake Issues",
-            project_id=project_id,
-            color="#ff7700",
-            is_triage=True,
-        )
-
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -128,7 +119,6 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             ),
             priority=request.data.get("issue", {}).get("priority", "none"),
             project_id=project_id,
-            state=state,
         )
 
         # create an intake issue
@@ -136,7 +126,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
             intake_id=intake.id,
             project_id=project_id,
             issue=issue,
-            source=request.data.get("source", "IN-APP"),
+            source=SourceType.IN_APP,
         )
         # Create an Issue Activity
         issue_activity.delay(
@@ -308,7 +298,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
                     current_instance=current_instance,
                     epoch=int(timezone.now().timestamp()),
                     notification=False,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                     intake=str(intake_issue.id),
                 )
 

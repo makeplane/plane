@@ -37,6 +37,7 @@ export interface IInstance {
 }
 
 export interface IInstanceConfig {
+  enable_signup: boolean;
   is_workspace_creation_disabled: boolean;
   is_google_enabled: boolean;
   is_github_enabled: boolean;
@@ -48,7 +49,7 @@ export interface IInstanceConfig {
   posthog_api_key: string | undefined;
   posthog_host: string | undefined;
   has_unsplash_configured: boolean;
-  has_openai_configured: boolean;
+  has_llm_configured: boolean;
   file_size_limit: number | undefined;
   is_smtp_configured: boolean;
   app_base_url: string | undefined;
@@ -72,9 +73,7 @@ export interface IInstanceAdmin {
   user_detail: IUserLite;
 }
 
-export type TInstanceIntercomConfigurationKeys =
-  | "IS_INTERCOM_ENABLED"
-  | "INTERCOM_APP_ID";
+export type TInstanceIntercomConfigurationKeys = "IS_INTERCOM_ENABLED" | "INTERCOM_APP_ID";
 
 export type TInstanceConfigurationKeys =
   | TInstanceAIConfigurationKeys

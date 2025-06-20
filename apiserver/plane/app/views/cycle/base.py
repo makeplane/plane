@@ -1,5 +1,7 @@
 # Python imports
 import json
+import pytz
+
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -45,13 +47,14 @@ from plane.db.models import (
     User,
     Project,
     ProjectMember,
+    UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
-
-# Module imports
+from plane.utils.host import base_host
 from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.timezone_converter import convert_to_utc, user_timezone_converter
 
 
 class CycleViewSet(BaseViewSet):
@@ -67,6 +70,19 @@ class CycleViewSet(BaseViewSet):
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
         )
+
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -101,6 +117,7 @@ class CycleViewSet(BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -113,18 +130,32 @@ class CycleViewSet(BaseViewSet):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__id",
+                    distinct=True,
+                    filter=Q(
+                        issue_cycle__issue__state__group__in=["cancelled"],
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
             .annotate(
                 status=Case(
                     When(
-                        Q(start_date__lte=timezone.now())
-                        & Q(end_date__gte=timezone.now()),
+                        Q(start_date__lte=current_time_in_utc)
+                        & Q(end_date__gte=current_time_in_utc),
                         then=Value("CURRENT"),
                     ),
-                    When(start_date__gt=timezone.now(), then=Value("UPCOMING")),
-                    When(end_date__lt=timezone.now(), then=Value("COMPLETED")),
+                    When(start_date__gt=current_time_in_utc, then=Value("UPCOMING")),
+                    When(end_date__lt=current_time_in_utc, then=Value("COMPLETED")),
                     When(
                         Q(start_date__isnull=True) & Q(end_date__isnull=True),
                         then=Value("DRAFT"),
@@ -160,10 +191,22 @@ class CycleViewSet(BaseViewSet):
         # Update the order by
         queryset = queryset.order_by("-is_favorite", "-created_at")
 
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+
+        # Fetch project for the specific record or pass project_id dynamically
+        project_timezone = project.timezone
+
+        # Convert the current time (timezone.now()) to the project's timezone
+        local_tz = pytz.timezone(project_timezone)
+        current_time_in_project_tz = timezone.now().astimezone(local_tz)
+
+        # Convert project local time back to UTC for comparison (start_date is stored in UTC)
+        current_time_in_utc = current_time_in_project_tz.astimezone(pytz.utc)
+
         # Current Cycle
         if cycle_view == "current":
             queryset = queryset.filter(
-                start_date__lte=timezone.now(), end_date__gte=timezone.now()
+                start_date__lte=current_time_in_utc, end_date__gte=current_time_in_utc
             )
 
             data = queryset.values(
@@ -186,11 +229,14 @@ class CycleViewSet(BaseViewSet):
                 "is_favorite",
                 "total_issues",
                 "completed_issues",
+                "cancelled_issues",
                 "assignee_ids",
                 "status",
                 "version",
                 "created_by",
             )
+            datetime_fields = ["start_date", "end_date"]
+            data = user_timezone_converter(data, datetime_fields, project_timezone)
 
             if data:
                 return Response(data, status=status.HTTP_200_OK)
@@ -215,12 +261,15 @@ class CycleViewSet(BaseViewSet):
             # meta fields
             "is_favorite",
             "total_issues",
+            "cancelled_issues",
             "completed_issues",
             "assignee_ids",
             "status",
             "version",
             "created_by",
         )
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -232,7 +281,9 @@ class CycleViewSet(BaseViewSet):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleWriteSerializer(data=request.data)
+            serializer = CycleWriteSerializer(
+                data=request.data, context={"project_id": project_id}
+            )
             if serializer.is_valid():
                 serializer.save(project_id=project_id, owned_by=request.user)
                 cycle = (
@@ -267,6 +318,15 @@ class CycleViewSet(BaseViewSet):
                     .first()
                 )
 
+                # Fetch the project timezone
+                project = Project.objects.get(id=self.kwargs.get("project_id"))
+                project_timezone = project.timezone
+
+                datetime_fields = ["start_date", "end_date"]
+                cycle = user_timezone_converter(
+                    cycle, datetime_fields, project_timezone
+                )
+
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -275,7 +335,7 @@ class CycleViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(cycle, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -319,7 +379,9 @@ class CycleViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleWriteSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleWriteSerializer(
+            cycle, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             cycle = queryset.values(
@@ -349,6 +411,13 @@ class CycleViewSet(BaseViewSet):
                 "created_by",
             ).first()
 
+            # Fetch the project timezone
+            project = Project.objects.get(id=self.kwargs.get("project_id"))
+            project_timezone = project.timezone
+
+            datetime_fields = ["start_date", "end_date"]
+            cycle = user_timezone_converter(cycle, datetime_fields, project_timezone)
+
             # Send the model activity
             model_activity.delay(
                 model_name="cycle",
@@ -357,7 +426,7 @@ class CycleViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             return Response(cycle, status=status.HTTP_200_OK)
@@ -417,6 +486,11 @@ class CycleViewSet(BaseViewSet):
             )
 
         queryset = queryset.first()
+        # Fetch the project timezone
+        project = Project.objects.get(id=self.kwargs.get("project_id"))
+        project_timezone = project.timezone
+        datetime_fields = ["start_date", "end_date"]
+        data = user_timezone_converter(data, datetime_fields, project_timezone)
 
         recent_visited_task.delay(
             slug=slug,
@@ -465,7 +539,7 @@ class CycleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         # TODO: Soft delete the cycle break the onetoone relationship with cycle issue
         cycle.delete()
@@ -477,6 +551,13 @@ class CycleViewSet(BaseViewSet):
             entity_identifier=pk,
             project_id=project_id,
         ).delete()
+        # Delete the cycle from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="cycle",
+        ).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -491,6 +572,14 @@ class CycleDateCheckEndpoint(BaseAPIView):
                 {"error": "Start date and end date both are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        start_date = convert_to_utc(
+            date=str(start_date), project_id=project_id, is_start_date=True
+        )
+        end_date = convert_to_utc(
+            date=str(end_date),
+            project_id=project_id,
+        )
 
         # Check if any cycle intersects in the given interval
         cycles = Cycle.objects.filter(
@@ -574,6 +663,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -638,6 +728,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
                 )
             )
         )
+        old_cycle = old_cycle.first()
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -756,7 +847,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             )
 
             estimate_completion_chart = burndown_plot(
-                queryset=old_cycle.first(),
+                queryset=old_cycle,
                 slug=slug,
                 project_id=project_id,
                 plot_type="points",
@@ -903,7 +994,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
 
         # Pass the new_cycle queryset to burndown_plot
         completion_chart = burndown_plot(
-            queryset=old_cycle.first(),
+            queryset=old_cycle,
             slug=slug,
             project_id=project_id,
             plot_type="issues",
@@ -915,12 +1006,12 @@ class TransferCycleIssueEndpoint(BaseAPIView):
         ).first()
 
         current_cycle.progress_snapshot = {
-            "total_issues": old_cycle.first().total_issues,
-            "completed_issues": old_cycle.first().completed_issues,
-            "cancelled_issues": old_cycle.first().cancelled_issues,
-            "started_issues": old_cycle.first().started_issues,
-            "unstarted_issues": old_cycle.first().unstarted_issues,
-            "backlog_issues": old_cycle.first().backlog_issues,
+            "total_issues": old_cycle.total_issues,
+            "completed_issues": old_cycle.completed_issues,
+            "cancelled_issues": old_cycle.cancelled_issues,
+            "started_issues": old_cycle.started_issues,
+            "unstarted_issues": old_cycle.unstarted_issues,
+            "backlog_issues": old_cycle.backlog_issues,
             "distribution": {
                 "labels": label_distribution_data,
                 "assignees": assignee_distribution_data,
@@ -985,7 +1076,7 @@ class TransferCycleIssueEndpoint(BaseAPIView):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
@@ -1028,6 +1119,13 @@ class CycleUserPropertiesEndpoint(BaseAPIView):
 class CycleProgressEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, cycle_id):
+        cycle = Cycle.objects.filter(
+            workspace__slug=slug, project_id=project_id, id=cycle_id
+        ).first()
+        if not cycle:
+            return Response(
+                {"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND
+            )
         aggregate_estimates = (
             Issue.issue_objects.filter(
                 estimate_point__estimate__type="points",
@@ -1078,53 +1176,60 @@ class CycleProgressEndpoint(BaseAPIView):
                 ),
             )
         )
+        if cycle.progress_snapshot:
+            backlog_issues = cycle.progress_snapshot.get("backlog_issues", 0)
+            unstarted_issues = cycle.progress_snapshot.get("unstarted_issues", 0)
+            started_issues = cycle.progress_snapshot.get("started_issues", 0)
+            cancelled_issues = cycle.progress_snapshot.get("cancelled_issues", 0)
+            completed_issues = cycle.progress_snapshot.get("completed_issues", 0)
+            total_issues = cycle.progress_snapshot.get("total_issues", 0)
+        else:
+            backlog_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+                state__group="backlog",
+            ).count()
 
-        backlog_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-            state__group="backlog",
-        ).count()
+            unstarted_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+                state__group="unstarted",
+            ).count()
 
-        unstarted_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-            state__group="unstarted",
-        ).count()
+            started_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+                state__group="started",
+            ).count()
 
-        started_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-            state__group="started",
-        ).count()
+            cancelled_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+                state__group="cancelled",
+            ).count()
 
-        cancelled_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-            state__group="cancelled",
-        ).count()
+            completed_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+                state__group="completed",
+            ).count()
 
-        completed_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-            state__group="completed",
-        ).count()
-
-        total_issues = Issue.issue_objects.filter(
-            issue_cycle__cycle_id=cycle_id,
-            issue_cycle__deleted_at__isnull=True,
-            workspace__slug=slug,
-            project_id=project_id,
-        ).count()
+            total_issues = Issue.issue_objects.filter(
+                issue_cycle__cycle_id=cycle_id,
+                issue_cycle__deleted_at__isnull=True,
+                workspace__slug=slug,
+                project_id=project_id,
+            ).count()
 
         return Response(
             {
@@ -1183,6 +1288,25 @@ class CycleAnalyticsEndpoint(BaseAPIView):
             return Response(
                 {"error": "Cycle has no start or end date"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # this will tell whether the issues were transferred to the new cycle
+        """ 
+        if the issues were transferred to the new cycle, then the progress_snapshot will be present
+        return the progress_snapshot data in the analytics for each date
+            
+        else issues were not transferred to the new cycle then generate the stats from the cycle isssue bridge tables
+        """
+
+        if cycle.progress_snapshot:
+            distribution = cycle.progress_snapshot.get("distribution", {})
+            return Response(
+                {
+                    "labels": distribution.get("labels", []),
+                    "assignees": distribution.get("assignees", []),
+                    "completion_chart": distribution.get("completion_chart", {}),
+                },
+                status=status.HTTP_200_OK,
             )
 
         estimate_type = Project.objects.filter(

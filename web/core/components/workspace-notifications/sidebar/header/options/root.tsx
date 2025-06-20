@@ -1,12 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
+// plane imports
+import { ENotificationLoader, ENotificationQueryParamType, NOTIFICATIONS_READ } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Spinner, Tooltip } from "@plane/ui";
 // components
 import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
 // constants
-import { NOTIFICATIONS_READ } from "@/constants/event-tracker";
-import { ENotificationLoader, ENotificationQueryParamType } from "@/constants/notification";
 // hooks
 import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -21,6 +22,7 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
   const { isMobile } = usePlatformOS();
   const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
   const { captureEvent } = useEventTracker();
+  const { t } = useTranslation();
 
   const refreshNotifications = async () => {
     if (loader) return;
@@ -44,7 +46,7 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
   return (
     <div className="relative flex justify-center items-center gap-2 text-sm">
       {/* mark all notifications as read*/}
-      <Tooltip tooltipContent="Mark all as read" isMobile={isMobile} position="bottom">
+      <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <div
           className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
           onClick={() => {
@@ -61,7 +63,7 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
       </Tooltip>
 
       {/* refetch current notifications */}
-      <Tooltip tooltipContent="Refresh" isMobile={isMobile} position="bottom">
+      <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
         <div
           className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
           onClick={refreshNotifications}

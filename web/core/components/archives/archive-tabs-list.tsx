@@ -2,10 +2,32 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-// constants
-import { ARCHIVES_TAB_LIST } from "@/constants/archives";
+// types
+import { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store";
+
+const ARCHIVES_TAB_LIST: {
+  key: string;
+  label: string;
+  shouldRender: (projectDetails: IProject) => boolean;
+}[] = [
+  {
+    key: "issues",
+    label: "Work items",
+    shouldRender: () => true,
+  },
+  {
+    key: "cycles",
+    label: "Cycles",
+    shouldRender: (projectDetails) => projectDetails.cycle_view,
+  },
+  {
+    key: "modules",
+    label: "Modules",
+    shouldRender: (projectDetails) => projectDetails.module_view,
+  },
+];
 
 export const ArchiveTabsList: FC = observer(() => {
   // router

@@ -2,17 +2,16 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// types
+// plane package imports
+import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions } from "@plane/types";
-// ui
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
-import { EmptyStateType } from "@/constants/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useProjectState } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
@@ -23,9 +22,10 @@ export type ActiveCycleProgressProps = {
 
 export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
   const { handleFiltersUpdate, cycle } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { groupedProjectStates } = useProjectState();
-
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -41,16 +41,17 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
         backlog: cycle?.backlog_issues,
       }
     : {};
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/progress" });
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-base text-custom-text-300 font-semibold">Progress</h3>
+          <h3 className="text-base text-custom-text-300 font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
             <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
-                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Issues" : "Issue"
+                cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
             </span>
           )}
@@ -83,7 +84,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
                       <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
                     </div>
                     <span className="text-custom-text-300">{`${groupedIssues[group]} ${
-                      groupedIssues[group] > 1 ? "Issues" : "Issue"
+                      groupedIssues[group] > 1 ? "Work items" : "Work item"
                     }`}</span>
                   </div>
                 </div>
@@ -94,7 +95,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
             <span className="flex items-center gap-2 text-sm text-custom-text-300">
               <span>
                 {`${cycle.cancelled_issues} cancelled ${
-                  cycle.cancelled_issues > 1 ? "issues are" : "issue is"
+                  cycle.cancelled_issues > 1 ? "work items are" : "work item is"
                 } excluded from this report.`}{" "}
               </span>
             </span>
@@ -102,7 +103,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
         </div>
       ) : (
         <div className="flex items-center justify-center h-full w-full">
-          <EmptyState type={EmptyStateType.ACTIVE_CYCLE_PROGRESS_EMPTY_STATE} layout="screen-simple" size="sm" />
+          <SimpleEmptyState title={t("active_cycle.empty_state.progress.title")} assetPath={resolvedPath} />
         </div>
       )}
     </div>

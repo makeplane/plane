@@ -11,7 +11,7 @@ env:
 
 jobs:
   sync_changes:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       pull-requests: write
       contents: read

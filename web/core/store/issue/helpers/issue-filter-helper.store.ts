@@ -1,6 +1,13 @@
 import isEmpty from "lodash/isEmpty";
-import { EIssueGroupByToServerOptions, EServerGroupByToFilterOptions } from "@plane/constants";
-// types
+// plane constants
+import {
+  EIssueGroupByToServerOptions,
+  EServerGroupByToFilterOptions,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  EIssueFilterType,
+  ENABLE_ISSUE_DEPENDENCIES,
+} from "@plane/constants";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -12,14 +19,10 @@ import {
   TIssueParams,
   TStaticViewTypes,
 } from "@plane/types";
-// constants
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType } from "@/constants/issue";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // lib
 import { storage } from "@/lib/local-storage";
-// plane-web
-import { ENABLE_ISSUE_DEPENDENCIES } from "@/plane-web/constants";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -93,6 +96,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
       start_date: filters?.start_date || undefined,
       target_date: filters?.target_date || undefined,
       project: filters?.project || undefined,
+      team_project: filters?.team_project || undefined,
       subscriber: filters?.subscriber || undefined,
       issue_type: filters?.issue_type || undefined,
       // display filters
@@ -142,6 +146,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
     start_date: filters?.start_date || null,
     target_date: filters?.target_date || null,
     project: filters?.project || null,
+    team_project: filters?.team_project || null,
     subscriber: filters?.subscriber || null,
     issue_type: filters?.issue_type || null,
   });

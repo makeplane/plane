@@ -3,21 +3,19 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
-// editor
+// plane imports
 import { EditorRefApi } from "@plane/editor";
-// ui
+import { SitesFileService } from "@plane/services";
+import { TIssuePublicComment } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
 import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 // services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
-// types
-import { Comment } from "@/types/issue";
+const fileService = new SitesFileService();
 
-const defaultValues: Partial<Comment> = {
+const defaultValues: Partial<TIssuePublicComment> = {
   comment_html: "",
 };
 
@@ -43,9 +41,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
     watch,
     formState: { isSubmitting },
     reset,
-  } = useForm<Comment>({ defaultValues });
+  } = useForm<TIssuePublicComment>({ defaultValues });
 
-  const onSubmit = async (formData: Comment) => {
+  const onSubmit = async (formData: TIssuePublicComment) => {
     if (!anchor || !issueId || isSubmitting || !formData.comment_html) return;
 
     await addIssueComment(anchor, issueId, formData)
@@ -92,7 +90,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               onChange={(comment_json, comment_html) => onChange(comment_html)}
               isSubmitting={isSubmitting}
               placeholder="Add comment..."
-              uploadFile={async (file) => {
+              uploadFile={async (blockId, file) => {
                 const { asset_id } = await uploadCommentAsset(file, anchor);
                 setUploadAssetIds((prev) => [...prev, asset_id]);
                 return asset_id;

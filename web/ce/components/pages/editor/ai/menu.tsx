@@ -1,15 +1,15 @@
 "use client";
 
-import React, { RefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // plane web constants
 import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
 // plane web services
@@ -18,10 +18,10 @@ import { AskPiMenu } from "./ask-pi-menu";
 const aiService = new AIService();
 
 type Props = {
-  editorRef: RefObject<EditorRefApi>;
+  editorRef: EditorRefApi | null;
   isOpen: boolean;
   onClose: () => void;
-  projectId: string;
+  workspaceId: string;
   workspaceSlug: string;
 };
 
@@ -59,7 +59,7 @@ const TONES_LIST = [
 ];
 
 export const EditorAIMenu: React.FC<Props> = (props) => {
-  const { editorRef, isOpen, onClose, projectId, workspaceSlug } = props;
+  const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
   const [response, setResponse] = useState<string | undefined>(undefined);
@@ -73,7 +73,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   };
   // handle task click
   const handleClick = async (key: AI_EDITOR_TASKS) => {
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selection || activeTask === key) return;
     setActiveTask(key);
     if (key === AI_EDITOR_TASKS.ASK_ANYTHING) return;
@@ -86,7 +86,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   };
   // handle re-generate response
   const handleRegenerate = async () => {
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selection || !activeTask) return;
     setIsRegenerating(true);
     await handleGenerateResponse({
@@ -104,7 +104,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   // handle re-generate response
   const handleToneChange = async (key: string) => {
     const selectedTone = TONES_LIST.find((t) => t.key === key);
-    const selection = editorRef.current?.getSelectedText();
+    const selection = editorRef?.getSelectedText();
     if (!selectedTone || !selection || !activeTask) return;
     setResponse(undefined);
     setIsRegenerating(false);
@@ -123,7 +123,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
   // handle replace selected text with the response
   const handleInsertText = (insertOnNextLine: boolean) => {
     if (!response) return;
-    editorRef.current?.insertText(response, insertOnNextLine);
+    editorRef?.insertText(response, insertOnNextLine);
     onClose();
   };
 
@@ -193,7 +193,6 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
               handleInsertText={handleInsertText}
               handleRegenerate={handleRegenerate}
               isRegenerating={isRegenerating}
-              projectId={projectId}
               response={response}
               workspaceSlug={workspaceSlug}
             />
@@ -217,8 +216,8 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                       initialValue={response}
                       containerClassName="!p-0 border-none"
                       editorClassName="!pl-0"
+                      workspaceId={workspaceId}
                       workspaceSlug={workspaceSlug}
-                      projectId={projectId}
                     />
                     <div className="mt-3 flex items-center gap-4">
                       <button

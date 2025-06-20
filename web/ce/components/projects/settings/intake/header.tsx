@@ -5,13 +5,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
-import { Breadcrumbs, Button, Intake, Header } from "@plane/ui";
+import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, Logo } from "@/components/common";
 import { InboxIssueCreateModalRoot } from "@/components/inbox";
 // hooks
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectInboxHeader: FC = observer(() => {
   // states
@@ -20,6 +22,7 @@ export const ProjectInboxHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { currentProjectDetails, loader: currentProjectDetailsLoader } = useProject();
   const { loader } = useProjectInbox();
@@ -33,34 +36,20 @@ export const ProjectInboxHeader: FC = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div className="flex items-center gap-4">
-          <Breadcrumbs isLoading={currentProjectDetailsLoader}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={currentProjectDetails?.name ?? "Project"}
-                  icon={
-                    currentProjectDetails && (
-                      <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-                        <Logo logo={currentProjectDetails?.logo_props} size={16} />
-                      </span>
-                    )
-                  }
-                />
-              }
-            />
-
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Intake" icon={<Intake className="h-4 w-4 text-custom-text-300" />} />}
+        <div className="flex items-center gap-4 flex-grow border">
+          <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+              projectId={projectId?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.INTAKE}
+              isLast
             />
           </Breadcrumbs>
 
           {loader === "pagination-loading" && (
             <div className="flex items-center gap-1.5 text-custom-text-300">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
-              <p className="text-sm">Syncing...</p>
+              <p className="text-sm">{t("syncing")}...</p>
             </div>
           )}
         </div>
@@ -76,7 +65,7 @@ export const ProjectInboxHeader: FC = observer(() => {
             />
 
             <Button variant="primary" size="sm" onClick={() => setCreateIssueModal(true)}>
-              Add issue
+              {t("add_work_item")}
             </Button>
           </div>
         ) : (

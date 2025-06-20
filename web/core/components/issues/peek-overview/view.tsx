@@ -1,5 +1,11 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// constants
+import { EIssueServiceType } from "@plane/constants";
+// types
+import { TNameDescriptionLoader } from "@plane/types";
+// components
+import { cn } from "@plane/utils";
 import {
   DeleteIssueModal,
   IssuePeekOverviewHeader,
@@ -13,7 +19,6 @@ import {
   IssueDetailWidgets,
 } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
@@ -49,7 +54,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
@@ -62,6 +67,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     toggleArchiveIssueModal,
     issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
+  const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {
@@ -75,7 +81,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen) {
           removeRoutePeekId();
         }
       }
@@ -181,7 +187,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived || isLocalDBIssueDescription}
+                        disabled={disabled || isLocalDBIssueDescription}
                         isArchived={is_archived}
                         isSubmitting={isSubmitting}
                         setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -193,6 +199,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           disabled={disabled || is_archived}
+                          issueServiceType={EIssueServiceType.ISSUES}
                         />
                       </div>
 
@@ -220,7 +227,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             projectId={projectId}
                             issueId={issueId}
                             issueOperations={issueOperations}
-                            disabled={disabled || is_archived || isLocalDBIssueDescription}
+                            disabled={disabled || isLocalDBIssueDescription}
                             isArchived={is_archived}
                             isSubmitting={isSubmitting}
                             setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -232,6 +239,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               projectId={projectId}
                               issueId={issueId}
                               disabled={disabled}
+                              issueServiceType={EIssueServiceType.ISSUES}
                             />
                           </div>
 

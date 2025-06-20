@@ -1,8 +1,14 @@
 import { Command } from "lucide-react";
 // helpers
-import { substringMatch } from "@/helpers/string.helper";
+import { substringMatch } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web helpers
+import {
+  getAdditionalShortcutsList,
+  getCommonShortcutsList,
+  getNavigationShortcutsList,
+} from "@/plane-web/helpers/command-palette";
 
 type Props = {
   searchQuery: string;
@@ -16,26 +22,14 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
     {
       key: "navigation",
       title: "Navigation",
-      shortcuts: [{ keys: "Ctrl,K", description: "Open command menu" }],
+      shortcuts: getNavigationShortcutsList(),
     },
     {
       key: "common",
       title: "Common",
-      shortcuts: [
-        { keys: "P", description: "Create project" },
-        { keys: "C", description: "Create issue" },
-        { keys: "Q", description: "Create cycle" },
-        { keys: "M", description: "Create module" },
-        { keys: "V", description: "Create view" },
-        { keys: "D", description: "Create page" },
-        { keys: "Delete", description: "Bulk delete issues" },
-        { keys: "Shift,/", description: "Open shortcuts guide" },
-        {
-          keys: platform === "MacOS" ? "Ctrl,control,C" : "Ctrl,Alt,C",
-          description: "Copy issue URL from the issue details page",
-        },
-      ],
+      shortcuts: getCommonShortcutsList(platform),
     },
+    ...getAdditionalShortcutsList(),
   ];
 
   const filteredShortcuts = KEYBOARD_SHORTCUTS.map((category) => {
@@ -69,7 +63,11 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
                           <div key={key} className="flex items-center gap-1">
                             {key === "Ctrl" ? (
                               <div className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 text-[10px] text-custom-text-200">
-                                { platform === "MacOS" ? <Command className="h-2.5 w-2.5 text-custom-text-200" /> : 'Ctrl'}
+                                {platform === "MacOS" ? (
+                                  <Command className="h-2.5 w-2.5 text-custom-text-200" />
+                                ) : (
+                                  "Ctrl"
+                                )}
                               </div>
                             ) : (
                               <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 text-[10px] text-custom-text-200">

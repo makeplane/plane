@@ -3,6 +3,9 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q, UUIDField, Value, F, Case, When, JSONField, CharField
 from django.db.models.functions import Coalesce, JSONObject, Concat
+from django.db.models import QuerySet
+
+from typing import List, Optional, Dict, Any, Union
 
 # Module imports
 from plane.db.models import (
@@ -17,12 +20,24 @@ from plane.db.models import (
 )
 
 
-def issue_queryset_grouper(queryset, group_by, sub_group_by):
+def issue_queryset_grouper(
+    queryset: QuerySet[Issue], group_by: Optional[str], sub_group_by: Optional[str]
+) -> QuerySet[Issue]:
     FIELD_MAPPER = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
         "module_ids": "issue_module__module_id",
     }
+
+    GROUP_FILTER_MAPPER = {
+        "assignees__id": Q(issue_assignee__deleted_at__isnull=True),
+        "labels__id": Q(label_issue__deleted_at__isnull=True),
+        "issue_module__module_id": Q(issue_module__deleted_at__isnull=True),
+    }
+
+    for group_key in [group_by, sub_group_by]:
+        if group_key in GROUP_FILTER_MAPPER:
+            queryset = queryset.filter(GROUP_FILTER_MAPPER[group_key])
 
     annotations_map = {
         "assignee_ids": (
@@ -50,7 +65,9 @@ def issue_queryset_grouper(queryset, group_by, sub_group_by):
     return queryset.annotate(**default_annotations)
 
 
-def issue_on_results(issues, group_by, sub_group_by):
+def issue_on_results(
+    issues: QuerySet[Issue], group_by: Optional[str], sub_group_by: Optional[str]
+) -> List[Dict[str, Any]]:
     FIELD_MAPPER = {
         "labels__id": "label_ids",
         "assignees__id": "assignee_ids",
@@ -91,6 +108,7 @@ def issue_on_results(issues, group_by, sub_group_by):
             Case(
                 When(
                     votes__isnull=False,
+                    votes__deleted_at__isnull=True,
                     then=JSONObject(
                         vote=F("votes__vote"),
                         actor_details=JSONObject(
@@ -117,13 +135,14 @@ def issue_on_results(issues, group_by, sub_group_by):
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(votes__isnull=False),
+            filter=Q(votes__isnull=False, votes__deleted_at__isnull=True),
             distinct=True,
         ),
         reaction_items=ArrayAgg(
             Case(
                 When(
                     issue_reactions__isnull=False,
+                    issue_reactions__deleted_at__isnull=True,
                     then=JSONObject(
                         reaction=F("issue_reactions__reaction"),
                         actor_details=JSONObject(
@@ -150,7 +169,9 @@ def issue_on_results(issues, group_by, sub_group_by):
                 default=None,
                 output_field=JSONField(),
             ),
-            filter=Q(issue_reactions__isnull=False),
+            filter=Q(
+                issue_reactions__isnull=False, issue_reactions__deleted_at__isnull=True
+            ),
             distinct=True,
         ),
     ).values(*required_fields, "vote_items", "reaction_items")
@@ -158,7 +179,12 @@ def issue_on_results(issues, group_by, sub_group_by):
     return issues
 
 
-def issue_group_values(field, slug, project_id=None, filters=dict):
+def issue_group_values(
+    field: str,
+    slug: str,
+    project_id: Optional[str] = None,
+    filters: Dict[str, Any] = {},
+) -> List[Union[str, Any]]:
     if field == "state_id":
         queryset = State.objects.filter(
             is_triage=False, workspace__slug=slug

@@ -1,29 +1,31 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// types
+import { EIssueFilterType, EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
-// hooks
-// components
+// ui
 import { Header, EHeaderVariant } from "@plane/ui";
+// components
 import { AppliedFiltersList, SaveFilterView } from "@/components/issues";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
+// hooks
 import { useLabel, useProjectState, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web constants
 
-// types
+type TProjectAppliedFiltersRootProps = {
+  storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
+};
 
-export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
+export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps> = observer((props) => {
+  const { storeType = EIssuesStoreType.PROJECT } = props;
   // router
-  const { workspaceSlug, projectId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-  };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { projectLabels } = useLabel();
   const {
     issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  } = useIssues(storeType);
   const { allowPermissions } = useUserPermissions();
 
   const { projectStates } = useProjectState();
@@ -79,13 +81,14 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
           states={projectStates}
+          alwaysAllowEditing
         />
       </Header.LeftItem>
       <Header.RightItem>
         {isEditingAllowed && (
           <SaveFilterView
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
             filterParams={{
               filters: appliedFilters,
               display_filters: issueFilters?.displayFilters,

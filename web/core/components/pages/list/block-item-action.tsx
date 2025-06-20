@@ -4,59 +4,36 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // ui
-import { Avatar, FavoriteStar, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
+import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { PageQuickActions } from "@/components/pages/dropdowns";
+import { PageActions } from "@/components/pages";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
-import { useMember, usePage } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
+import { usePageOperations } from "@/hooks/use-page-operations";
+// plane web hooks
+import { EPageStoreType } from "@/plane-web/hooks/store";
+// store
+import { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
-  workspaceSlug: string;
-  projectId: string;
-  pageId: string;
+  page: TPageInstance;
   parentRef: React.RefObject<HTMLElement>;
+  storeType: EPageStoreType;
 };
 
 export const BlockItemAction: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, pageId, parentRef } = props;
+  const { page, parentRef, storeType } = props;
   // store hooks
-  const page = usePage(pageId);
   const { getUserDetails } = useMember();
+  // page operations
+  const { pageOperations } = usePageOperations({
+    page,
+  });
   // derived values
-  const {
-    access,
-    created_at,
-    is_favorite,
-    owned_by,
-    canCurrentUserFavoritePage,
-    addToFavorites,
-    removePageFromFavorites,
-  } = page;
+  const { access, created_at, is_favorite, owned_by, canCurrentUserFavoritePage } = page;
   const ownerDetails = owned_by ? getUserDetails(owned_by) : undefined;
-
-  // handlers
-  const handleFavorites = () => {
-    if (is_favorite) {
-      removePageFromFavorites().then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Page removed from favorites.",
-        })
-      );
-    } else {
-      addToFavorites().then(() =>
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Page added to favorites.",
-        })
-      );
-    }
-  };
 
   return (
     <>
@@ -87,17 +64,26 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleFavorites();
+            pageOperations.toggleFavorite();
           }}
           selected={is_favorite}
         />
       )}
 
       {/* quick actions dropdown */}
-      <PageQuickActions
-        parentRef={parentRef}
+      <PageActions
+        optionsOrder={[
+          "open-in-new-tab",
+          "copy-link",
+          "make-a-copy",
+          "toggle-lock",
+          "toggle-access",
+          "archive-restore",
+          "delete",
+        ]}
         page={page}
-        pageLink={`${workspaceSlug}/projects/${projectId}/pages/${pageId}`}
+        parentRef={parentRef}
+        storeType={storeType}
       />
     </>
   );

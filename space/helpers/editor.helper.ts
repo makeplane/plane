@@ -1,12 +1,10 @@
-// plane editor
-import { TFileHandler } from "@plane/editor";
-// constants
-import { MAX_FILE_SIZE } from "@/constants/common";
-// helpers
-import { getFileURL } from "@/helpers/file.helper";
+// plane imports
+import { MAX_FILE_SIZE } from "@plane/constants";
+import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
+import { SitesFileService } from "@plane/services";
+import { getFileURL } from "@plane/utils";
 // services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
+const sitesFileService = new SitesFileService();
 
 /**
  * @description generate the file source using assetId
@@ -19,8 +17,34 @@ export const getEditorAssetSrc = (anchor: string, assetId: string): string | und
 
 type TArgs = {
   anchor: string;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
   workspaceId: string;
+};
+
+/**
+ * @description this function returns the file handler required by the read-only editors
+ */
+export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "workspaceId">): TReadOnlyFileHandler => {
+  const { anchor, workspaceId } = args;
+
+  return {
+    checkIfAssetExists: async () => true,
+    getAssetSrc: async (path) => {
+      if (!path) return "";
+      if (path?.startsWith("http")) {
+        return path;
+      } else {
+        return getEditorAssetSrc(anchor, path) ?? "";
+      }
+    },
+    restore: async (src: string) => {
+      if (src?.startsWith("http")) {
+        await sitesFileService.restoreOldEditorAsset(workspaceId, src);
+      } else {
+        await sitesFileService.restoreNewAsset(anchor, src);
+      }
+    },
+  };
 };
 
 /**
@@ -31,52 +55,22 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
   const { anchor, uploadFile, workspaceId } = args;
 
   return {
-    getAssetSrc: async (path) => {
-      if (!path) return "";
-      if (path?.startsWith("http")) {
-        return path;
-      } else {
-        return getEditorAssetSrc(anchor, path) ?? "";
-      }
-    },
+    ...getReadOnlyEditorFileHandlers({
+      anchor,
+      workspaceId,
+    }),
+    assetsUploadStatus: {},
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
-        await fileService.deleteOldEditorAsset(workspaceId, src);
+        await sitesFileService.deleteOldEditorAsset(workspaceId, src);
       } else {
-        await fileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
+        await sitesFileService.deleteNewAsset(getEditorAssetSrc(anchor, src) ?? "");
       }
     },
-    restore: async (src: string) => {
-      if (src?.startsWith("http")) {
-        await fileService.restoreOldEditorAsset(workspaceId, src);
-      } else {
-        await fileService.restoreNewAsset(anchor, src);
-      }
-    },
-    cancel: fileService.cancelUpload,
+    cancel: sitesFileService.cancelUpload,
     validation: {
       maxFileSize: MAX_FILE_SIZE,
-    },
-  };
-};
-
-/**
- * @description this function returns the file handler required by the read-only editors
- */
-export const getReadOnlyEditorFileHandlers = (
-  args: Pick<TArgs, "anchor">
-): { getAssetSrc: TFileHandler["getAssetSrc"] } => {
-  const { anchor } = args;
-
-  return {
-    getAssetSrc: async (path) => {
-      if (!path) return "";
-      if (path?.startsWith("http")) {
-        return path;
-      } else {
-        return getEditorAssetSrc(anchor, path) ?? "";
-      }
     },
   };
 };

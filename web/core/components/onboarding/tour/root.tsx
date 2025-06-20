@@ -5,11 +5,11 @@ import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // ui
+import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { TourSidebar } from "@/components/onboarding";
 // constants
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@/constants/event-tracker";
 // hooks
 import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
 // assets
@@ -26,7 +26,7 @@ type Props = {
   onComplete: () => void;
 };
 
-export type TTourSteps = "welcome" | "issues" | "cycles" | "modules" | "views" | "pages";
+export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
 
 const TOUR_STEPS: {
   key: TTourSteps;
@@ -37,10 +37,10 @@ const TOUR_STEPS: {
   nextStep?: TTourSteps;
 }[] = [
   {
-    key: "issues",
-    title: "Plan with issues",
+    key: "work-items",
+    title: "Plan with work items",
     description:
-      "The issue is the building block of the Plane. Most concepts in Plane are either associated with issues and their properties.",
+      "The work item is the building block of the Plane. Most concepts in Plane are either associated with work items and their properties.",
     image: IssuesTour,
     nextStep: "cycles",
   },
@@ -50,7 +50,7 @@ const TOUR_STEPS: {
     description:
       "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
     image: CyclesTour,
-    prevStep: "issues",
+    prevStep: "work-items",
     nextStep: "modules",
   },
   {
@@ -65,7 +65,7 @@ const TOUR_STEPS: {
     key: "views",
     title: "Views",
     description:
-      "Create custom filters to display only the issues that matter to you. Save and share your filters in just a few clicks.",
+      "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
     image: ViewsTour,
     prevStep: "modules",
     nextStep: "pages",
@@ -73,7 +73,7 @@ const TOUR_STEPS: {
   {
     key: "pages",
     title: "Document with pages",
-    description: "Use Pages to quickly jot down issues when you're in a meeting or starting a day.",
+    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
     image: PagesTour,
     prevStep: "views",
   },
@@ -113,7 +113,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     variant="primary"
                     onClick={() => {
                       captureEvent(PRODUCT_TOUR_STARTED);
-                      setStep("issues");
+                      setStep("work-items");
                     }}
                   >
                     Take a Product Tour
@@ -162,7 +162,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     </Button>
                   )}
                   {currentStep?.nextStep && (
-                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "issues")}>
+                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
                       Next
                     </Button>
                   )}

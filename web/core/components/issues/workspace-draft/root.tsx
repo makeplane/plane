@@ -3,15 +3,19 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane imports
+import { EDraftIssuePaginationType } from "@plane/constants";
+import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants/src/user";
+import { useTranslation } from "@plane/i18n";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { cn } from "@plane/utils";
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
+
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
-import { useCommandPalette, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
@@ -24,18 +28,28 @@ type TWorkspaceDraftIssuesRoot = {
 
 export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
   const { workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { loader, paginationInfo, fetchIssues, issueIds } = useWorkspaceDraftIssues();
   const { workspaceProjectIds } = useProject();
   const { toggleCreateProjectModal } = useCommandPalette();
+  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const hasMemberLevelPermission = allowPermissions(
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
+  );
+  const noProjectResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
 
   // fetching issues
   const { isLoading } = useSWR(
-    workspaceSlug && issueIds.length <= 0 ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
-    workspaceSlug && issueIds.length <= 0 ? async () => await fetchIssues(workspaceSlug, "init-loader") : null
+    workspaceSlug ? `WORKSPACE_DRAFT_ISSUES_${workspaceSlug}` : null,
+    workspaceSlug ? async () => await fetchIssues(workspaceSlug, "init-loader") : null,
+    { revalidateOnFocus: false, revalidateIfStale: false }
   );
 
   // handle nest issues
@@ -50,12 +64,22 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
 
   if (workspaceProjectIds?.length === 0)
     return (
-      <EmptyState
-        type={EmptyStateType.WORKSPACE_NO_PROJECTS}
+      <DetailedEmptyState
         size="sm"
-        primaryButtonOnClick={() => {
-          toggleCreateProjectModal(true);
-        }}
+        title={t("workspace_projects.empty_state.no_projects.title")}
+        description={t("workspace_projects.empty_state.no_projects.description")}
+        assetPath={noProjectResolvedPath}
+        customPrimaryButton={
+          <ComicBoxButton
+            label={t("workspace_projects.empty_state.no_projects.primary_button.text")}
+            title={t("workspace_projects.empty_state.no_projects.primary_button.comic.title")}
+            description={t("workspace_projects.empty_state.no_projects.primary_button.comic.description")}
+            onClick={() => {
+              toggleCreateProjectModal(true);
+            }}
+            disabled={!hasMemberLevelPermission}
+          />
+        }
       />
     );
 

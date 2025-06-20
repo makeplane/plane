@@ -8,7 +8,7 @@
   -moz-user-select: text;
   -ms-user-select: text;
   user-select: text;
-  outline: none;
+  outline: none !important;
   cursor: text;
   font-family: var(--font-style);
   font-size: var(--font-size-regular);
@@ -25,7 +25,7 @@
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: rgb(var(--color-text-400));
+  color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -34,7 +34,7 @@
 .ProseMirror p.is-empty::before {
   content: attr(data-placeholder);
   float: left;
-  color: rgb(var(--color-text-400));
+  color: var(--color-placeholder);
   pointer-events: none;
   height: 0;
 }
@@ -105,23 +105,27 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  border: 1px solid rgba(var(--color-border-300)) !important;
+  border: 1px solid rgba(var(--color-text-100), 0.2) !important;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
-  background-color: rgba(var(--color-background-80)) !important;
+.ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
+  background-color: rgba(var(--color-text-100), 0.1);
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"][checked] {
+.ProseMirror[contenteditable="false"] input[type="checkbox"] {
+  pointer-events: none;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
   background-color: rgba(var(--color-primary-100)) !important;
   border-color: rgba(var(--color-primary-100)) !important;
   color: white !important;
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"][checked]:hover {
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
   background-color: rgba(var(--color-primary-300)) !important;
   border-color: rgba(var(--color-primary-300)) !important;
 }
@@ -141,7 +145,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   position: relative;
   -webkit-appearance: none;
   appearance: none;
-  background-color: rgb(var(--color-background-100));
+  background-color: transparent;
   margin: 0;
   cursor: pointer;
   width: 0.8rem;
@@ -150,10 +154,6 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   border: 1.5px solid rgb(var(--color-text-100));
   margin-right: 0.2rem;
   margin-top: 0.15rem;
-
-  &:hover {
-    background-color: rgb(var(--color-background-80));
-  }
 
   &:active {
     background-color: rgb(var(--color-background-90));
@@ -174,7 +174,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
   }
 
-  &[checked]::before {
+  &:checked::before {
     transform: scale(1) translate(-50%, -50%);
   }
 }
@@ -192,7 +192,7 @@ ul[data-type="taskList"] li > div {
 
 ul[data-type="taskList"] li[data-checked="true"] {
   & > div > p.editor-paragraph-block {
-    color: rgb(var(--color-text-400));
+    color: var(--color-placeholder);
   }
 
   [data-text-color] {
@@ -252,7 +252,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 
 div[data-type="horizontalRule"] {
   line-height: 0;
-  padding: 0.25rem 0;
+  padding: var(--divider-padding-top) 0 var(--divider-padding-bottom) 0;
   margin-top: 0;
   margin-bottom: 0;
 
@@ -335,10 +335,10 @@ p.editor-paragraph-block {
 /* tailwind typography */
 .prose :where(h1.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-1-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-1-padding-bottom);
   font-size: var(--font-size-h1);
   line-height: var(--line-height-h1);
   font-weight: 600;
@@ -346,10 +346,10 @@ p.editor-paragraph-block {
 
 .prose :where(h2.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-2-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-2-padding-bottom);
   font-size: var(--font-size-h2);
   line-height: var(--line-height-h2);
   font-weight: 600;
@@ -357,10 +357,10 @@ p.editor-paragraph-block {
 
 .prose :where(h3.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-3-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-3-padding-bottom);
   font-size: var(--font-size-h3);
   line-height: var(--line-height-h3);
   font-weight: 600;
@@ -368,10 +368,10 @@ p.editor-paragraph-block {
 
 .prose :where(h4.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 28px;
+    padding-top: var(--heading-4-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-4-padding-bottom);
   font-size: var(--font-size-h4);
   line-height: var(--line-height-h4);
   font-weight: 600;
@@ -379,10 +379,10 @@ p.editor-paragraph-block {
 
 .prose :where(h5.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-5-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-5-padding-bottom);
   font-size: var(--font-size-h5);
   line-height: var(--line-height-h5);
   font-weight: 600;
@@ -390,10 +390,10 @@ p.editor-paragraph-block {
 
 .prose :where(h6.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   &:not(:first-child) {
-    padding-top: 20px;
+    padding-top: var(--heading-6-padding-top);
   }
 
-  padding-bottom: 4px;
+  padding-bottom: var(--heading-6-padding-bottom);
   font-size: var(--font-size-h6);
   line-height: var(--line-height-h6);
   font-weight: 600;
@@ -405,15 +405,17 @@ p.editor-paragraph-block {
   }
 
   &:not(:first-child) {
-    padding-top: 4px;
+    padding-top: var(--paragraph-padding-top);
   }
 
-  &:last-child {
-    padding-bottom: 4px;
-  }
+  &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
+    &:last-child {
+      padding-bottom: var(--paragraph-padding-bottom);
+    }
 
-  &:not(:last-child) {
-    padding-bottom: 8px;
+    &:not(:last-child) {
+      padding-bottom: var(--paragraph-padding-between);
+    }
   }
 
   font-size: var(--font-size-regular);
@@ -421,7 +423,7 @@ p.editor-paragraph-block {
 }
 
 p.editor-paragraph-block + p.editor-paragraph-block {
-  padding-top: 8px !important;
+  padding-top: var(--paragraph-padding-between) !important;
 }
 
 .prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,

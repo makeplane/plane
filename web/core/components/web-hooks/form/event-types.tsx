@@ -1,4 +1,5 @@
 // types
+import { useTranslation } from "@plane/i18n";
 import { TWebhookEventTypes } from "@plane/types";
 
 type Props = {
@@ -6,23 +7,24 @@ type Props = {
   onChange: (value: TWebhookEventTypes) => void;
 };
 
-const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; label: string }[] = [
+const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; i18n_label: string }[] = [
   {
     key: "all",
-    label: "Send me everything",
+    i18n_label: "workspace_settings.settings.webhooks.options.all",
   },
   {
     key: "individual",
-    label: "Select individual events",
+    i18n_label: "workspace_settings.settings.webhooks.options.individual",
   },
 ];
 
 export const WebhookOptions: React.FC<Props> = (props) => {
   const { value, onChange } = props;
+  const { t } = useTranslation();
 
   return (
     <>
-      <h6 className="text-sm font-medium">Which events would you like to trigger this webhook?</h6>
+      <h6 className="text-sm font-medium">{t("workspace_settings.settings.webhooks.modal.question")}</h6>
       <div className="space-y-3">
         {WEBHOOK_EVENT_TYPES.map((option) => (
           <div key={option.key} className="flex items-center gap-2">
@@ -34,7 +36,7 @@ export const WebhookOptions: React.FC<Props> = (props) => {
               onChange={() => onChange(option.key)}
             />
             <label className="text-sm" htmlFor={option.key}>
-              {option.label}
+              {t(option.i18n_label)}
             </label>
           </div>
         ))}

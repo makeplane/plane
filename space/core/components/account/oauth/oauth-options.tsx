@@ -21,7 +21,7 @@ export const OAuthOptions: React.FC = observer(() => {
             <GoogleOAuthButton text="Sign in with Google" />
           </div>
         )}
-        {config?.is_github_enabled && <GithubOAuthButton text="Sign in with Github" />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Sign in with GitHub" />}
         {config?.is_gitlab_enabled && <GitlabOAuthButton text="Sign in with GitLab" />}
       </div>
     </>

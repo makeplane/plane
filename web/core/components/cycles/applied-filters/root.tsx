@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 // hooks
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 // components
 // helpers
@@ -26,6 +27,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   if (!appliedFilters) return null;
 
@@ -77,7 +79,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
-            Clear all
+            {t("common.clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>

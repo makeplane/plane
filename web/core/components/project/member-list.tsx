@@ -3,17 +3,23 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
-// hooks
-// components
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
+// components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
-// ui
 import { MembersSettingsLoader } from "@/components/ui";
+// hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
-export const ProjectMemberList: React.FC = observer(() => {
+type TProjectMemberListProps = {
+  projectId: string;
+  workspaceSlug: string;
+};
+
+export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((props) => {
+  const { projectId, workspaceSlug } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,27 +29,36 @@ export const ProjectMemberList: React.FC = observer(() => {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
   const { allowPermissions } = useUserPermissions();
-  const searchedMembers = (projectMemberIds ?? []).filter((userId) => {
-    const memberDetails = getProjectMemberDetails(userId);
 
-    if (!memberDetails?.member) return false;
+  const { t } = useTranslation();
+
+  const searchedProjectMembers = (projectMemberIds ?? []).filter((userId) => {
+    const memberDetails = projectId ? getProjectMemberDetails(userId, projectId.toString()) : null;
+
+    if (!memberDetails?.member || !memberDetails.original_role) return false;
 
     const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
     const displayName = memberDetails?.member.display_name.toLowerCase();
 
     return displayName?.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
   });
-  const memberDetails = searchedMembers?.map((memberId) => getProjectMemberDetails(memberId));
+  const memberDetails = searchedProjectMembers?.map((memberId) =>
+    projectId ? getProjectMemberDetails(memberId, projectId.toString()) : null
+  );
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <>
-      <SendProjectInvitationModal isOpen={inviteModal} onClose={() => setInviteModal(false)} />
-
-      <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5 overflow-x-hidden">
-        <h4 className="text-xl font-medium">Members</h4>
-        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
+      <SendProjectInvitationModal
+        isOpen={inviteModal}
+        onClose={() => setInviteModal(false)}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
+      />
+      <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-custom-border-100">
+        <div className="text-base font-semibold">{t("common.members")}</div>
+        <div className="ml-auto flex items-center justify-start gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2 py-1">
           <Search className="h-3.5 w-3.5" />
           <input
             className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
@@ -56,12 +71,13 @@ export const ProjectMemberList: React.FC = observer(() => {
         {isAdmin && (
           <Button
             variant="primary"
+            size="sm"
             onClick={() => {
               setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
               setInviteModal(true);
             }}
           >
-            Add member
+            {t("add_member")}
           </Button>
         )}
       </div>
@@ -69,10 +85,15 @@ export const ProjectMemberList: React.FC = observer(() => {
         <MembersSettingsLoader />
       ) : (
         <div className="divide-y divide-custom-border-100 overflow-scroll">
-          {searchedMembers.length !== 0 && <ProjectMemberListItem memberDetails={memberDetails ?? []} />}
-
-          {searchedMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">No matching members</h4>
+          {searchedProjectMembers.length !== 0 && (
+            <ProjectMemberListItem
+              memberDetails={memberDetails ?? []}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
+          {searchedProjectMembers.length === 0 && (
+            <h4 className="text-sm mt-16 text-center text-custom-text-400">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

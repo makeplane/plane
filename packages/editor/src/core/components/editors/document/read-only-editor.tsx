@@ -1,35 +1,21 @@
-import { forwardRef, MutableRefObject } from "react";
+import { Extensions } from "@tiptap/core";
+import React, { forwardRef, MutableRefObject } from "react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { IssueWidget } from "@/extensions";
+import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, IMentionHighlight, TDisplayConfig, TExtensions, TFileHandler } from "@/types";
+import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
-interface IDocumentReadOnlyEditor {
-  disabledExtensions: TExtensions[];
-  id: string;
-  initialValue: string;
-  containerClassName: string;
-  displayConfig?: TDisplayConfig;
-  editorClassName?: string;
-  embedHandler: any;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
-  tabIndex?: number;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-}
-
-const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
+const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) => {
   const {
     containerClassName,
     disabledExtensions,
@@ -37,16 +23,17 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName = "",
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     id,
     forwardedRef,
     handleEditorReady,
     initialValue,
     mentionHandler,
   } = props;
-  const extensions = [];
+  const extensions: Extensions = [];
   if (embedHandler?.issue) {
     extensions.push(
-      IssueWidget({
+      WorkItemEmbedExtension({
         widgetCallback: embedHandler.issue.widgetCallback,
       })
     );
@@ -57,6 +44,7 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
     editorClassName,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -71,15 +59,16 @@ const DocumentReadOnlyEditor = (props: IDocumentReadOnlyEditor) => {
 
   return (
     <PageRenderer
+      bubbleMenuEnabled={false}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={editorContainerClassName}
+      editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
     />
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditor>((props, ref) => (
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps>((props, ref) => (
   <DocumentReadOnlyEditor {...props} forwardedRef={ref as MutableRefObject<EditorReadOnlyRefApi | null>} />
 ));
 

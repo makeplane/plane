@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 import { CopyIcon, CheckIcon } from "lucide-react";
+import { useState } from "react";
 // ui
 import { Tooltip } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 
 // we just have ts support for now
 const lowlight = createLowlight(common);
@@ -27,7 +27,7 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
       await navigator.clipboard.writeText(node.textContent);
       setCopied(true);
       setTimeout(() => setCopied(false), 1000);
-    } catch (error) {
+    } catch {
       setCopied(false);
     }
     e.preventDefault();

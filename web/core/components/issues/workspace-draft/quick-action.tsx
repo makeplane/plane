@@ -1,10 +1,11 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 export interface Props {
   parentRef: React.RefObject<HTMLElement>;
@@ -13,6 +14,8 @@ export interface Props {
 
 export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props) => {
   const { parentRef, MENU_ITEMS } = props;
+
+  const { t } = useTranslation();
 
   return (
     <>
@@ -44,7 +47,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props)
           >
             {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
             <div>
-              <h5>{item.title}</h5>
+              <h5>{t(item.title || "")}</h5>
               {item.description && (
                 <p
                   className={cn("text-custom-text-300 whitespace-pre-line", {

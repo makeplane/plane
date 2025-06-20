@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { STATE_DELETED } from "@plane/constants";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { STATE_DELETED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useProjectState } from "@/hooks/store";
 
@@ -55,7 +55,7 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message:
-              "This state contains some issues within it, please move them to some other state to delete this state.",
+              "This state contains some work items within it, please move them to some other state to delete this state.",
           });
         else
           setToast({

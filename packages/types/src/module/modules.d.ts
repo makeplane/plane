@@ -117,3 +117,8 @@ export type SelectModuleType =
   | undefined;
 
 export type TModulePlotType = "burndown" | "points";
+
+export type TPublicModule = {
+  id: string;
+  name: string;
+};

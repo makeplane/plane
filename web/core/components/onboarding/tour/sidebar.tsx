@@ -8,26 +8,32 @@ import { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;
+  label: string;
   Icon: any;
 }[] = [
   {
-    key: "issues",
+    key: "work-items",
+    label: "Work items",
     Icon: LayersIcon,
   },
   {
     key: "cycles",
+    label: "Cycles",
     Icon: ContrastIcon,
   },
   {
     key: "modules",
+    label: "Modules",
     Icon: DiceIcon,
   },
   {
     key: "views",
+    label: "Views",
     Icon: Layers,
   },
   {
     key: "pages",
+    label: "Pages",
     Icon: FileText,
   },
 ];
@@ -57,7 +63,7 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
           role="button"
         >
           <option.Icon className="h-4 w-4" aria-hidden="true" />
-          {option.key}
+          {option.label}
         </h5>
       ))}
     </div>

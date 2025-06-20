@@ -65,7 +65,7 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          You can save this issue to Drafts so you can come back to it later.{" "}
+                          You can save this work item to Drafts so you can come back to it later.{" "}
                         </p>
                       </div>
                     </div>

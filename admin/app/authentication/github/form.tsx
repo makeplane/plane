@@ -4,10 +4,11 @@ import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   CodeBlock,
@@ -17,8 +18,6 @@ import {
   TControllerInputFormField,
   TCopyField,
 } from "@/components/common";
-// helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -44,6 +43,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
     defaultValues: {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
+      GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
     },
   });
 
@@ -94,6 +94,15 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       error: Boolean(errors.GITHUB_CLIENT_SECRET),
       required: true,
     },
+    {
+      key: "GITHUB_ORGANIZATION_ID",
+      type: "text",
+      label: "Organization ID",
+      description: <>The organization github ID.</>,
+      placeholder: "123456789",
+      error: Boolean(errors.GITHUB_ORGANIZATION_ID),
+      required: false,
+    },
   ];
 
   const GITHUB_SERVICE_FIELD: TCopyField[] = [
@@ -103,8 +112,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: originURL,
       description: (
         <>
-          We will auto-generate this. Paste this into the{" "}
-          <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
+          We will auto-generate this. Paste this into the <CodeBlock darkerShade>Authorized origin URL</CodeBlock> field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -123,8 +131,8 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/github/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into your{" "}
-          <CodeBlock darkerShade>Authorized Callback URI</CodeBlock> field{" "}
+          We will auto-generate this. Paste this into your <CodeBlock darkerShade>Authorized Callback URI</CodeBlock>{" "}
+          field{" "}
           <a
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
@@ -152,6 +160,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         reset({
           GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
           GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
+          GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
         });
       })
       .catch((err) => console.error(err));

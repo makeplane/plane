@@ -4,13 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_CREATED, E_ONBOARDING } from "@plane/constants";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { E_ONBOARDING, WORKSPACE_CREATED } from "@/constants/event-tracker";
 // hooks
 import { useEventTracker, useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
@@ -31,6 +30,8 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
   // states
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { updateUserProfile } = useUserProfile();
   const { fetchCurrentUserSettings } = useUserSettings();
@@ -64,8 +65,8 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             .then(async (workspaceResponse) => {
               setToast({
                 type: TOAST_TYPE.SUCCESS,
-                title: "Success!",
-                message: "Workspace created successfully.",
+                title: t("workspace_creation.toast.success.title"),
+                message: t("workspace_creation.toast.success.message"),
               });
               captureWorkspaceEvent({
                 eventName: WORKSPACE_CREATED,
@@ -90,8 +91,8 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
               });
               setToast({
                 type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Workspace could not be created. Please try again.",
+                title: t("workspace_creation.toast.error.title"),
+                message: t("workspace_creation.toast.error.message"),
               });
             });
         } else setSlugError(true);
@@ -99,8 +100,8 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred while creating workspace. Please try again.",
+          title: t("workspace_creation.toast.error.title"),
+          message: t("workspace_creation.toast.error.message"),
         })
       );
   };
@@ -144,10 +145,8 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
         </>
       )}
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">Create a workspace</h3>
-        <p className="font-medium text-onboarding-text-400">
-          To start using Plane, you need to create or join a workspace.
-        </p>
+        <h3 className="text-3xl font-bold text-onboarding-text-100">{t("workspace_creation.heading")}</h3>
+        <p className="font-medium text-onboarding-text-400">{t("workspace_creation.subheading")}</p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
@@ -155,19 +154,18 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
-            Name your workspace
+            {t("workspace_creation.form.name.label")}
           </label>
           <Controller
             control={control}
             name="name"
             rules={{
-              required: "This is a required field.",
+              required: t("common.errors.required"),
               validate: (value) =>
-                /^[\w\s-]*$/.test(value) ||
-                `Workspaces names can contain only (" "), ( - ), ( _ ) and alphanumeric characters.`,
+                /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
               maxLength: {
                 value: 80,
-                message: "Limit your name to 80 characters.",
+                message: t("workspace_creation.errors.validation.name_length"),
               },
             }}
             render={({ field: { value, ref, onChange } }) => (
@@ -184,7 +182,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                       shouldValidate: true,
                     });
                   }}
-                  placeholder="Something familiar and recognizable is always best."
+                  placeholder={t("workspace_creation.form.name.placeholder")}
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   className="w-full border-onboarding-border-100 placeholder:text-custom-text-400"
@@ -200,16 +198,16 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
-            Set your workspace&apos;s URL
+            {t("workspace_creation.form.url.label")}
           </label>
           <Controller
             control={control}
             name="slug"
             rules={{
-              required: "This is a required field.",
+              required: t("common.errors.required"),
               maxLength: {
                 value: 48,
-                message: "Limit your URL to 48 characters.",
+                message: t("workspace_creation.errors.validation.url_length"),
               },
             }}
             render={({ field: { value, ref, onChange } }) => (
@@ -231,16 +229,18 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="workspace-name"
+                  placeholder={t("workspace_creation.form.url.placeholder")}
                   className="w-full border-none !px-0"
                 />
               </div>
             )}
           />
-          <p className="text-sm text-onboarding-text-300">You can only edit the slug of the URL</p>
-          {slugError && <p className="-mt-3 text-sm text-red-500">This URL is taken. Try something else.</p>}
+          <p className="text-sm text-onboarding-text-300">{t("workspace_creation.form.url.edit_slug")}</p>
+          {slugError && (
+            <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+          )}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{`URLs can contain only ( - ), ( _ ) and alphanumeric characters.`}</p>
+            <p className="text-sm text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
           {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
@@ -250,20 +250,20 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             className="text-sm text-onboarding-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
-            How many people will use this workspace?
+            {t("workspace_creation.form.organization_size.label")}
           </label>
           <div className="w-full">
             <Controller
               name="organization_size"
               control={control}
-              rules={{ required: "This is a required field." }}
+              rules={{ required: t("common.errors.required") }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select a range</span>
+                      <span className="text-custom-text-400">{t("workspace_creation.form.organization_size.placeholder")}</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-onboarding-border-100 !shadow-none !rounded-md"
@@ -284,7 +284,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
-          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+          {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
       </form>
     </div>

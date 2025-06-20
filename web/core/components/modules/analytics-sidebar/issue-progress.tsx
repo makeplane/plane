@@ -6,20 +6,19 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EIssueFilterType, EIssuesStoreType, EEstimateSystem } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
+// constants
+// helpers
+import { getDate } from "@plane/utils";
 import ProgressChart from "@/components/core/sidebar/progress-chart";
 import { ModuleProgressStats } from "@/components/modules";
-// constants
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useModule, useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-
 type TModuleAnalyticsProgress = {
   workspaceSlug: string;
   projectId: string;
@@ -27,8 +26,8 @@ type TModuleAnalyticsProgress = {
 };
 
 const moduleBurnDownChartOptions = [
-  { value: "burndown", label: "Issues" },
-  { value: "points", label: "Points" },
+  { value: "burndown", i18n_label: "issues" },
+  { value: "points", i18n_label: "points" },
 ];
 
 export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
@@ -46,6 +45,8 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
   } = useIssues(EIssuesStoreType.MODULE);
   // state
   const [loader, setLoader] = useState(false);
+
+  const { t } = useTranslation();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -154,7 +155,7 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
             {isModuleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-custom-text-200 text-sm">Progress</div>
+                  <div className="font-medium text-custom-text-200 text-sm">{t("progress")}</div>
                   {progressHeaderPercentage > 0 && (
                     <div className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
                   )}
@@ -165,14 +166,16 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                       <CustomSelect
                         value={plotType}
                         label={
-                          <span>{moduleBurnDownChartOptions.find((v) => v.value === plotType)?.label ?? "None"}</span>
+                          <span>
+                            {t(moduleBurnDownChartOptions.find((v) => v.value === plotType)?.i18n_label || "none")}
+                          </span>
                         }
                         onChange={onChange}
                         maxHeight="lg"
                       >
                         {moduleBurnDownChartOptions.map((item) => (
                           <CustomSelect.Option key={item.value} value={item.value}>
-                            {item.label}
+                            {t(item.i18n_label)}
                           </CustomSelect.Option>
                         ))}
                       </CustomSelect>
@@ -195,8 +198,8 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
                   <AlertCircle height={14} width={14} className="text-custom-text-200" />
                   <span className="text-xs italic text-custom-text-200">
                     {moduleDetails?.start_date && moduleDetails?.target_date
-                      ? "This module isn't active yet."
-                      : "Invalid date. Please enter valid date."}
+                      ? t("project_module.empty_state.sidebar.in_active")
+                      : t("project_module.empty_state.sidebar.invalid_date")}
                   </span>
                 </div>
               </div>
@@ -206,33 +209,19 @@ export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((p
               <Disclosure.Panel className="space-y-4">
                 {/* progress burndown chart */}
                 <div>
-                  <div className="relative flex items-center gap-2">
-                    <div className="flex items-center justify-center gap-1 text-xs">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                      <span>Ideal</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1 text-xs">
-                      <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                      <span>Current</span>
-                    </div>
-                  </div>
                   {moduleStartDate && moduleEndDate && completionChartDistributionData && (
                     <Fragment>
                       {plotType === "points" ? (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalEstimatePoints}
                           plotTitle={"points"}
                         />
                       ) : (
                         <ProgressChart
                           distribution={completionChartDistributionData}
-                          startDate={moduleStartDate}
-                          endDate={moduleEndDate}
                           totalIssues={totalIssues}
-                          plotTitle={"issues"}
+                          plotTitle={"work items"}
                         />
                       )}
                     </Fragment>

@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   activeVersion: string | null;
@@ -40,7 +40,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "absolute inset-0 z-20 size-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "absolute inset-0 z-[16] size-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }

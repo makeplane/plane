@@ -12,6 +12,7 @@ export * from "./calendar";
 export * from "./gantt";
 export * from "./kanban";
 export * from "./spreadsheet";
+export * from "./layout-icon";
 
 // properties
 export * from "./properties";
@@ -21,4 +22,3 @@ export * from "./save-filter-view";
 
 // quick add
 export * from "./quick-add";
-

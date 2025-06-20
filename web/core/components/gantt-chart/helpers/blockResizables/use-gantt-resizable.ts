@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 // Plane
-import { setToast } from "@plane/ui";
+import type { IBlockUpdateDependencyData, IGanttBlock } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { DEFAULT_BLOCK_WIDTH, SIDEBAR_WIDTH } from "../../constants";
-import { IBlockUpdateDependencyData, IGanttBlock } from "../../types";
 
 export const useGanttResizable = (
   block: IGanttBlock,
@@ -103,7 +103,7 @@ export const useGanttResizable = (
       const deltaWidth = Math.round((width - (block.position?.width ?? 0)) / dayWidth) * dayWidth;
 
       // call update blockPosition
-      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth, dragDirection !== "move");
+      if (deltaWidth || deltaLeft) updateBlockPosition(block.id, deltaLeft, deltaWidth);
     };
 
     // remove event listeners and call updateBlockDates
@@ -119,10 +119,14 @@ export const useGanttResizable = (
         (dragDirection === "left" && !block.start_date) || (dragDirection === "right" && !block.target_date);
 
       try {
-        const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock, dragDirection !== "move");
-        updateBlockDates && updateBlockDates(blockUpdates);
-      } catch (e) {
-        setToast;
+        const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock);
+        if (updateBlockDates) updateBlockDates(blockUpdates);
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error",
+          message: "Something went wrong while updating block dates",
+        });
       }
 
       setIsDragging(false);

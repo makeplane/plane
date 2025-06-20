@@ -86,11 +86,17 @@ class EntityAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file type is allowed
-        allowed_types = ["image/jpeg", "image/png", "image/webp"]
+        allowed_types = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/jpg",
+            "image/gif",
+        ]
         if type not in allowed_types:
             return Response(
                 {
-                    "error": "Invalid file type. Only JPEG and PNG files are allowed.",
+                    "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
                     "status": False,
                 },
                 status=status.HTTP_400_BAD_REQUEST,

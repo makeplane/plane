@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/react";
-import tippy, { Instance } from "tippy.js";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import tippy, { Instance } from "tippy.js";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 interface BlockMenuProps {
   editor: Editor;
@@ -34,6 +36,7 @@ export const BlockMenu = (props: BlockMenuProps) => {
       menuRef.current.remove();
       menuRef.current.style.visibility = "visible";
 
+      // @ts-expect-error - Tippy types are incorrect
       popup.current = tippy(document.body, {
         getReferenceClientRect: null,
         content: menuRef.current,
@@ -101,7 +104,8 @@ export const BlockMenu = (props: BlockMenuProps) => {
       key: "duplicate",
       label: "Duplicate",
       isDisabled:
-        editor.state.selection.content().content.firstChild?.type.name === "image" || editor.isActive("imageComponent"),
+        editor.state.selection.content().content.firstChild?.type.name === CORE_EXTENSIONS.IMAGE ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
       onClick: (e) => {
         e.preventDefault();
         e.stopPropagation();

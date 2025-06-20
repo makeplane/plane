@@ -47,11 +47,18 @@ class Webhook(BaseModel):
         return f"{self.workspace.slug} {self.url}"
 
     class Meta:
-        unique_together = ["workspace", "url"]
+        unique_together = ["workspace", "url", "deleted_at"]
         verbose_name = "Webhook"
         verbose_name_plural = "Webhooks"
         db_table = "webhooks"
         ordering = ("-created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "url"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="webhook_url_unique_url_when_deleted_at_null",
+            )
+        ]
 
 
 class WebhookLog(BaseModel):
@@ -59,7 +66,7 @@ class WebhookLog(BaseModel):
         "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
     )
     # Associated webhook
-    webhook = models.ForeignKey(Webhook, on_delete=models.CASCADE, related_name="logs")
+    webhook = models.UUIDField()
 
     # Basic request details
     event_type = models.CharField(max_length=255, blank=True, null=True)
@@ -82,4 +89,4 @@ class WebhookLog(BaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.event_type} {str(self.webhook.url)}"
+        return f"{self.event_type} {str(self.webhook)}"

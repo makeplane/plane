@@ -1,13 +1,15 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { ISearchIssueResponse, TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-
+// plane web imports
+import { WorkItemAdditionalWidgetModals } from "@/plane-web/components/issues/issue-detail-widgets/modals";
+// local imports
 import { IssueLinkCreateUpdateModal } from "../issue-detail/links/create-update-link-modal";
 // helpers
 import { useLinkOperations } from "./links/helper";
@@ -17,10 +19,12 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  issueServiceType: TIssueServiceType;
+  hideWidgets?: TWorkItemWidgets[];
 };
 
 export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets } = props;
   // store hooks
   const {
     isIssueLinkModalOpen,
@@ -38,11 +42,11 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
     createRelation,
     issueCrudOperationState,
     setIssueCrudOperationState,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // helper hooks
-  const subIssueOperations = useSubIssueOperations();
-  const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId);
+  const subIssueOperations = useSubIssueOperations(issueServiceType);
+  const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
 
   // handlers
   const handleIssueCrudState = (
@@ -62,7 +66,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
 
   const handleExistingIssuesModalClose = () => {
     handleIssueCrudState("existing", null, null);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
     toggleSubIssuesModal(null);
   };
 
@@ -77,12 +81,12 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   const handleCreateUpdateModalClose = () => {
     handleIssueCrudState("create", null, null);
     toggleCreateIssueModal(false);
-    setLastWidgetAction("sub-issues");
+    setLastWidgetAction("sub-work-items");
   };
 
   const handleCreateUpdateModalOnSubmit = async (_issue: TIssue) => {
     if (_issue.parent_id) {
-      await subIssueOperations.addSubIssue(workspaceSlug, projectId, issueId, [_issue.id]);
+      await subIssueOperations.addSubIssue(workspaceSlug, projectId, _issue.parent_id, [_issue.id]);
     }
   };
 
@@ -104,7 +108,7 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }
@@ -121,7 +125,10 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
   };
 
   // helpers
-  const createUpdateModalData = { parent_id: issueCrudOperationState?.create?.parentIssueId };
+  const createUpdateModalData: Partial<TIssue> = {
+    parent_id: issueCrudOperationState?.create?.parentIssueId,
+    project_id: projectId,
+  };
 
   const existingIssuesModalSearchParams = {
     sub_issue: true,
@@ -130,20 +137,27 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
 
   // render conditions
   const shouldRenderExistingIssuesModal =
+    !hideWidgets?.includes("sub-work-items") &&
     issueCrudOperationState?.existing?.toggle &&
     issueCrudOperationState?.existing?.parentIssueId &&
     isSubIssuesModalOpen;
 
   const shouldRenderCreateUpdateModal =
-    issueCrudOperationState?.create?.toggle && issueCrudOperationState?.create?.parentIssueId && isCreateIssueModalOpen;
+    !hideWidgets?.includes("sub-work-items") &&
+    issueCrudOperationState?.create?.toggle &&
+    issueCrudOperationState?.create?.parentIssueId &&
+    isCreateIssueModalOpen;
 
   return (
     <>
-      <IssueLinkCreateUpdateModal
-        isModalOpen={isIssueLinkModalOpen}
-        handleOnClose={handleIssueLinkModalOnClose}
-        linkOperations={handleLinkOperations}
-      />
+      {!hideWidgets?.includes("links") && (
+        <IssueLinkCreateUpdateModal
+          isModalOpen={isIssueLinkModalOpen}
+          handleOnClose={handleIssueLinkModalOnClose}
+          linkOperations={handleLinkOperations}
+          issueServiceType={issueServiceType}
+        />
+      )}
 
       {shouldRenderCreateUpdateModal && (
         <CreateUpdateIssueModal
@@ -166,14 +180,24 @@ export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
         />
       )}
 
-      <ExistingIssuesListModal
-        workspaceSlug={workspaceSlug}
+      {!hideWidgets?.includes("relations") && (
+        <ExistingIssuesListModal
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          isOpen={isRelationModalOpen?.issueId === issueId && isRelationModalOpen?.relationType === relationKey}
+          handleClose={handleRelationOnClose}
+          searchParams={{ issue_relation: true, issue_id: issueId }}
+          handleOnSubmit={handleExistingIssueModalOnSubmit}
+          workspaceLevelToggle
+        />
+      )}
+
+      <WorkItemAdditionalWidgetModals
+        hideWidgets={hideWidgets ?? []}
+        issueServiceType={issueServiceType}
         projectId={projectId}
-        isOpen={isRelationModalOpen?.issueId === issueId && isRelationModalOpen?.relationType === relationKey}
-        handleClose={handleRelationOnClose}
-        searchParams={{ issue_relation: true, issue_id: issueId }}
-        handleOnSubmit={handleExistingIssueModalOnSubmit}
-        workspaceLevelToggle
+        workItemId={issueId}
+        workspaceSlug={workspaceSlug}
       />
     </>
   );

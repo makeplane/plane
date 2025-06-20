@@ -1,6 +1,6 @@
 // services
+import { API_BASE_URL } from "@plane/constants";
 import type { IIssueFiltersResponse } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
 import { APIService } from "@/services/api.service";
 // types
 
@@ -42,6 +42,26 @@ export class IssueFiltersService extends APIService {
     data: Partial<IIssueFiltersResponse>
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // epic issue filters
+  async fetchProjectEpicFilters(workspaceSlug: string, projectId: string): Promise<IIssueFiltersResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async patchProjectEpicFilters(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IIssueFiltersResponse>
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/epics-user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

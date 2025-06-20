@@ -1,9 +1,9 @@
 import { FC, useState, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
+import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   searchQuery: string;

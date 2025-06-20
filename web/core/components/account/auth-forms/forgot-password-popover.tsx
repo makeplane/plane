@@ -2,6 +2,8 @@ import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { X } from "lucide-react";
 import { Popover } from "@headlessui/react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 
 export const ForgotPasswordPopover = () => {
   // popper-js refs
@@ -19,6 +21,8 @@ export const ForgotPasswordPopover = () => {
       },
     ],
   });
+  // plane hooks
+  const { t } = useTranslation();
 
   return (
     <Popover className="relative">
@@ -28,7 +32,7 @@ export const ForgotPasswordPopover = () => {
           ref={setReferenceElement}
           className="text-xs font-medium text-custom-primary-100 outline-none"
         >
-          Forgot your password?
+          {t("auth.common.forgot_password")}
         </button>
       </Popover.Button>
       <Popover.Panel className="fixed z-10">
@@ -40,11 +44,14 @@ export const ForgotPasswordPopover = () => {
             {...attributes.popper}
           >
             <span className="flex-shrink-0">🤥</span>
-            <p className="text-xs">
-              We see that your god hasn{"'"}t enabled SMTP, we will not be able to send a password reset link
-            </p>
-            <button type="button" className="flex-shrink-0" onClick={() => close()}>
-              <X className="h-3 w-3 text-onboarding-text-200" />
+            <p className="text-xs">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
+            <button
+              type="button"
+              className="flex-shrink-0 size-3 grid place-items-center"
+              onClick={() => close()}
+              aria-label={t("aria_labels.auth_forms.close_popover")}
+            >
+              <X className="size-3 text-onboarding-text-200" />
             </button>
           </div>
         )}

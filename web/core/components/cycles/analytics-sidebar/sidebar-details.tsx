@@ -4,15 +4,16 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { LayersIcon, SquareUser, Users } from "lucide-react";
 // plane types
+import { EEstimateSystem } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   projectId: string;
@@ -24,6 +25,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
   // hooks
   const { getUserDetails } = useMember();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
+  const { t } = useTranslation();
 
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase();
@@ -32,10 +34,10 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
   const issueCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)
       ? cycleDetails?.progress_snapshot?.total_issues === 0
-        ? "0 Issue"
+        ? `0 ${t("common.work_item")}`
         : `${cycleDetails?.progress_snapshot?.completed_issues}/${cycleDetails?.progress_snapshot?.total_issues}`
       : cycleDetails?.total_issues === 0
-        ? "0 Issue"
+        ? `0 ${t("common.work_item")}`
         : `${cycleDetails?.completed_issues}/${cycleDetails?.total_issues}`;
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const cycleOwnerDetails = cycleDetails ? getUserDetails(cycleDetails.owned_by_id) : undefined;
@@ -51,10 +53,10 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
   const issueEstimatePointCount =
     isCompleted && !isEmpty(cycleDetails?.progress_snapshot)
       ? cycleDetails?.progress_snapshot.total_issues === 0
-        ? "0 Issue"
+        ? `0 ${t("common.work_item")}`
         : `${cycleDetails?.progress_snapshot.completed_estimate_points}/${cycleDetails?.progress_snapshot.total_estimate_points}`
       : cycleDetails?.total_issues === 0
-        ? "0 Issue"
+        ? `0 ${t("common.work_item")}`
         : `${cycleDetails?.completed_estimate_points}/${cycleDetails?.total_estimate_points}`;
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -70,7 +72,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
             <SquareUser className="h-4 w-4" />
-            <span className="text-base">Lead</span>
+            <span className="text-base">{t("lead")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-sm">
             <div className="flex items-center gap-2.5">
@@ -83,7 +85,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
             <Users className="h-4 w-4" />
-            <span className="text-base">Members</span>
+            <span className="text-base">{t("members")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-sm">
             <div className="flex items-center gap-2.5">
@@ -104,7 +106,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
                   </AvatarGroup>
                 </>
               ) : (
-                <span className="px-1.5 text-sm text-custom-text-300">No assignees</span>
+                <span className="px-1.5 text-sm text-custom-text-300">{t("no_assignee")}</span>
               )}
             </div>
           </div>
@@ -113,7 +115,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
             <LayersIcon className="h-4 w-4" />
-            <span className="text-base">Issues</span>
+            <span className="text-base">{t("work_items")}</span>
           </div>
           <div className="flex w-3/5 items-center">
             <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
@@ -123,11 +125,11 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         {/**
          * NOTE: Render this section when estimate points of he projects is enabled and the estimate system is points
          */}
-        {isEstimatePointValid && (
+        {isEstimatePointValid && !isCompleted && (
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />
-              <span className="text-base">Points</span>
+              <span className="text-base">{t("points")}</span>
             </div>
             <div className="flex w-3/5 items-center">
               <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>

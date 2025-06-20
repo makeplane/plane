@@ -1,65 +1,62 @@
-import type {
-  IProjectViewProps,
-  IUser,
-  IUserLite,
-  IUserMemberLite,
-  IWorkspace,
-  IWorkspaceLite,
-  TLogoProps,
-  TStateGroups,
-} from "..";
+import { EUserProjectRoles } from "@plane/constants";
+import type { IUser, IUserLite, IWorkspace, TLogoProps, TStateGroups } from "..";
 import { TUserPermissions } from "../enums";
 
-export interface IProject {
-  archive_in: number;
+export interface IPartialProject {
+  id: string;
+  name: string;
+  identifier: string;
+  sort_order: number | null;
+  logo_props: TLogoProps;
+  member_role?: TUserPermissions | EUserProjectRoles | null;
   archived_at: string | null;
-  archived_issues: number;
-  archived_sub_issues: number;
-  close_in: number;
-  created_at: Date;
-  created_by: string;
-  // only for uploading the cover image
-  cover_image_asset?: null;
-  cover_image?: string;
-  // only for rendering the cover image
-  cover_image_url: readonly string;
+  workspace: IWorkspace | string;
   cycle_view: boolean;
   issue_views_view: boolean;
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
-  default_assignee: IUser | string | null;
-  default_state: string | null;
-  description: string;
-  draft_issues: number;
-  draft_sub_issues: number;
-  estimate: string | null;
-  guest_view_all_features: boolean;
-  id: string;
-  identifier: string;
-  anchor: string | null;
-  is_favorite: boolean;
-  is_issue_type_enabled: boolean;
-  is_member: boolean;
-  is_time_tracking_enabled: boolean;
-  logo_props: TLogoProps;
-  member_role: TUserPermissions | null;
-  members: IProjectMemberLite[];
-  name: string;
-  network: number;
-  project_lead: IUserLite | string | null;
-  sort_order: number | null;
-  sub_issues: number;
-  total_cycles: number;
-  total_issues: number;
-  total_members: number;
-  total_modules: number;
-  updated_at: Date;
-  updated_by: string;
-  workspace: IWorkspace | string;
-  workspace_detail: IWorkspaceLite;
-  timezone: string;
+  guest_view_all_features?: boolean;
+  project_lead?: IUserLite | string | null;
+  network?: number;
+  // Timestamps
+  created_at?: Date;
+  updated_at?: Date;
+  // actor
+  created_by?: string;
+  updated_by?: string;
 }
+
+export interface IProject extends IPartialProject {
+  archive_in?: number;
+  close_in?: number;
+  // only for uploading the cover image
+  cover_image_asset?: null;
+  cover_image?: string;
+  // only for rendering the cover image
+  readonly cover_image_url?: string;
+  default_assignee?: IUser | string | null;
+  default_state?: string | null;
+  description?: string;
+  estimate?: string | null;
+  anchor?: string | null;
+  is_favorite?: boolean;
+  members?: string[];
+  timezone?: string;
+}
+
+export type TProjectAnalyticsCountParams = {
+  project_ids?: string;
+  fields?: string;
+};
+
+export type TProjectAnalyticsCount = Pick<IProject, "id"> & {
+  total_issues?: number;
+  completed_issues?: number;
+  total_cycles?: number;
+  total_members?: number;
+  total_modules?: number;
+};
 
 export interface IProjectLite {
   id: string;
@@ -85,33 +82,24 @@ export interface IProjectMemberLite {
   member_id: string;
 }
 
-export interface IProjectMember {
-  id: string;
-  member: IUserMemberLite;
-  project: IProjectLite;
-  workspace: IWorkspaceLite;
-  comment: string;
-  role: TUserPermissions;
-
-  preferences: ProjectPreferences;
-
-  view_props: IProjectViewProps;
-  default_props: IProjectViewProps;
-
-  created_at: Date;
-  updated_at: Date;
-  created_by: string;
-  updated_by: string;
-}
-
-export interface IProjectMembership {
-  id: string;
+export type TProjectMembership = {
   member: string;
-  role: TUserPermissions;
-}
+  role: TUserPermissions | EUserProjectRoles;
+} & (
+  | {
+      id: string;
+      original_role: EUserProjectRoles;
+      created_at: string;
+    }
+  | {
+      id: null;
+      original_role: null;
+      created_at: null;
+    }
+);
 
 export interface IProjectBulkAddFormData {
-  members: { role: TUserPermissions; member_id: string }[];
+  members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
 
 export interface IGithubRepository {
@@ -136,6 +124,7 @@ export type TProjectIssuesSearchParams = {
   issue_id?: string;
   workspace_search: boolean;
   target_date?: string;
+  epic?: boolean;
 };
 
 export interface ISearchIssueResponse {
@@ -152,3 +141,7 @@ export interface ISearchIssueResponse {
   workspace__slug: string;
   type_id: string;
 }
+
+export type TPartialProject = IPartialProject;
+
+export type TProject =  TPartialProject & IProject;

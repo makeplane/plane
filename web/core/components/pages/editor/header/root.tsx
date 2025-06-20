@@ -1,86 +1,70 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
-// components
-import { Header, EHeaderVariant } from "@plane/ui";
-import { PageEditorMobileHeaderRoot, PageExtraOptions, PageSummaryPopover, PageToolbar } from "@/components/pages";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// hooks
-import { usePageFilters } from "@/hooks/use-page-filters";
+import { SmilePlus } from "lucide-react";
+// plane imports
+import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { cn } from "@plane/utils";
 // store
-import { IPage } from "@/store/pages/page";
+import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
-  editorReady: boolean;
-  editorRef: React.RefObject<EditorRefApi>;
-  handleDuplicatePage: () => void;
-  page: IPage;
-  readOnlyEditorReady: boolean;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
-  setSidePeekVisible: (sidePeekState: boolean) => void;
-  sidePeekVisible: boolean;
+  page: TPageInstance;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const {
-    editorReady,
-    editorRef,
-    handleDuplicatePage,
-    page,
-    readOnlyEditorReady,
-    readOnlyEditorRef,
-    setSidePeekVisible,
-    sidePeekVisible,
-  } = props;
+  const { page } = props;
+  // states
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // derived values
-  const { isContentEditable } = page;
-  // page filters
-  const { isFullWidth } = usePageFilters();
-
-  if (!editorRef.current && !readOnlyEditorRef.current) return null;
+  const { isContentEditable, logo_props, name, updatePageLogo } = page;
+  const isLogoSelected = !!logo_props?.in_use;
+  const isTitleEmpty = !name || name.trim() === "";
 
   return (
     <>
-      <Header variant={EHeaderVariant.SECONDARY} showOnMobile={false}>
-        <Header.LeftItem className="gap-0 w-full">
-          {(editorReady || readOnlyEditorReady) && (
-            <div
-              className={cn("flex-shrink-0 my-auto", {
-                "w-40 lg:w-56": !isFullWidth,
-                "w-[5%]": isFullWidth,
-              })}
-            >
-              <PageSummaryPopover
-                editorRef={isContentEditable ? editorRef.current : readOnlyEditorRef.current}
-                isFullWidth={isFullWidth}
-                sidePeekVisible={sidePeekVisible}
-                setSidePeekVisible={setSidePeekVisible}
-              />
-            </div>
-          )}
-          {(editorReady || readOnlyEditorReady) && isContentEditable && editorRef.current && (
-            <PageToolbar editorRef={editorRef?.current} />
-          )}
-        </Header.LeftItem>
-        <PageExtraOptions
-          editorRef={editorRef}
-          handleDuplicatePage={handleDuplicatePage}
-          page={page}
-          readOnlyEditorRef={readOnlyEditorRef}
-        />
-      </Header>
-      <div className="md:hidden">
-        <PageEditorMobileHeaderRoot
-          editorRef={editorRef}
-          readOnlyEditorRef={readOnlyEditorRef}
-          editorReady={editorReady}
-          readOnlyEditorReady={readOnlyEditorReady}
-          handleDuplicatePage={handleDuplicatePage}
-          page={page}
-          sidePeekVisible={sidePeekVisible}
-          setSidePeekVisible={setSidePeekVisible}
-        />
+      <div className="h-[48px] flex items-end text-left">
+        {!isLogoSelected && (
+          <div
+            className={cn("opacity-0 group-hover/page-header:opacity-100 transition-all duration-200", {
+              "opacity-100": isTitleEmpty,
+            })}
+          >
+            <EmojiIconPicker
+              isOpen={isLogoPickerOpen}
+              handleToggle={(val) => setIsLogoPickerOpen(val)}
+              className="flex items-center justify-center"
+              buttonClassName="flex items-center justify-center"
+              label={
+                <button
+                  type="button"
+                  className={cn(
+                    "flex items-center gap-1 p-1 rounded font-medium text-sm hover:bg-custom-background-80 text-custom-text-300 outline-none transition-colors",
+                    {
+                      "bg-custom-background-80": isLogoPickerOpen,
+                    }
+                  )}
+                >
+                  <SmilePlus className="flex-shrink-0 size-4" />
+                  Icon
+                </button>
+              }
+              onChange={updatePageLogo}
+              defaultIconColor={
+                logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
+              }
+              defaultOpen={
+                logo_props?.in_use && logo_props?.in_use === "emoji"
+                  ? EmojiIconPickerTypes.EMOJI
+                  : EmojiIconPickerTypes.ICON
+              }
+              disabled={!isContentEditable}
+            />
+          </div>
+        )}
       </div>
+      <PageEditorHeaderLogoPicker className="flex-shrink-0 w-full mt-2 flex" page={page} />
     </>
   );
 });

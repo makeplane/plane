@@ -1,32 +1,41 @@
 import React from "react";
-// editor
-import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
+// plane imports
+import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditorProps, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
+import { cn } from "@plane/utils";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
-// hooks
-import { useMention } from "@/hooks/use-mention";
+// store hooks
+import { useMember } from "@/hooks/store";
 
-type LiteTextReadOnlyEditorWrapperProps = Omit<
-  ILiteTextReadOnlyEditor,
-  "disabledExtensions" | "fileHandler" | "mentionHandler"
+type LiteTextReadOnlyEditorWrapperProps = MakeOptional<
+  Omit<ILiteTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
+  workspaceId: string;
 };
 
 export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, LiteTextReadOnlyEditorWrapperProps>(
-  ({ anchor, ...props }, ref) => {
-    const { mentionHighlights } = useMention();
+  ({ anchor, workspaceId, disabledExtensions, flaggedExtensions, ...props }, ref) => {
+    const { getMemberById } = useMember();
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
-        disabledExtensions={[]}
+        disabledExtensions={disabledExtensions ?? []}
+        flaggedExtensions={flaggedExtensions ?? []}
         fileHandler={getReadOnlyEditorFileHandlers({
           anchor,
+          workspaceId,
         })}
         mentionHandler={{
-          highlights: mentionHighlights,
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({
+            display_name: getMemberById(id)?.member__display_name ?? "",
+          }),
         }}
         {...props}
         // overriding the customClassName to add relative class passed

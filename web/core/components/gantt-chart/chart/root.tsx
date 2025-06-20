@@ -1,15 +1,18 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EStartOfTheWeek } from "@plane/constants";
 // components
+import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
+import { cn } from "@plane/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
+import { useUserProfile } from "@/hooks/store";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
-import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "../types";
 import {
   getNumberOfDaysBetweenTwoDates,
   IMonthBlock,
@@ -34,6 +37,7 @@ type ChartViewRootProps = {
   enableReorder: boolean | ((blockId: string) => boolean);
   enableAddBlock: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
+  enableDependency: boolean | ((blockId: string) => boolean);
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   loadMoreBlocks?: () => void;
@@ -41,6 +45,7 @@ type ChartViewRootProps = {
   canLoadMoreBlocks?: boolean;
   quickAdd?: React.JSX.Element | undefined;
   showToday: boolean;
+  isEpic?: boolean;
 };
 
 const timelineViewHelpers = {
@@ -66,11 +71,13 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     enableReorder,
     enableAddBlock,
     enableSelection,
+    enableDependency,
     bottomSpacing,
     showAllBlocks,
     quickAdd,
     showToday,
     updateBlockDates,
+    isEpic = false,
   } = props;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState(0);
@@ -85,6 +92,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     updateRenderView,
     updateAllBlocksOnChartChangeWhileDragging,
   } = useTimeLineChartStore();
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
 
   const updateCurrentViewRenderPayload = (side: null | "left" | "right", view: TGanttViews, targetDate?: Date) => {
     const selectedCurrentView: TGanttViews = view;
@@ -96,7 +105,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     if (selectedCurrentViewData === undefined) return;
 
     const currentViewHelpers = timelineViewHelpers[selectedCurrentView];
-    const currentRender = currentViewHelpers.generateChart(selectedCurrentViewData, side, targetDate);
+    const currentRender = currentViewHelpers.generateChart(selectedCurrentViewData, side, targetDate, startOfWeek);
     const mergeRenderPayloads = currentViewHelpers.mergeRenderPayloads as (
       a: IWeekBlock[] | IMonthView | IMonthBlock[],
       b: IWeekBlock[] | IMonthView | IMonthBlock[]
@@ -197,6 +206,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         enableReorder={enableReorder}
         enableSelection={enableSelection}
         enableAddBlock={enableAddBlock}
+        enableDependency={enableDependency}
         itemsContainerWidth={itemsContainerWidth}
         showAllBlocks={showAllBlocks}
         sidebarToRender={sidebarToRender}
@@ -204,6 +214,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         updateCurrentViewRenderPayload={updateCurrentViewRenderPayload}
         quickAdd={quickAdd}
         updateBlockDates={updateBlockDates}
+        isEpic={isEpic}
       />
     </div>
   );

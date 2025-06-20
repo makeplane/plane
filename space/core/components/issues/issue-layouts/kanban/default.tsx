@@ -94,7 +94,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                 <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
                   <HeaderGroupByCard
                     groupBy={groupBy}
-                    icon={subList.icon}
+                    icon={subList.icon as any}
                     title={subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                   />

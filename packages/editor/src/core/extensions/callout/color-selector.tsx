@@ -1,8 +1,8 @@
 import { Ban, ChevronDown } from "lucide-react";
+// plane utils
+import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
-// helpers
-import { cn } from "@/helpers/common";
 
 type Props = {
   disabled: boolean;

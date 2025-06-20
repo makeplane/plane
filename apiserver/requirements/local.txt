@@ -2,4 +2,4 @@
 # debug toolbar
 django-debug-toolbar==4.3.0
 # formatter
-ruff==0.4.2
+ruff==0.9.7

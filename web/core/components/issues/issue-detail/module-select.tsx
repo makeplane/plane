@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // hooks
 // components
+import { cn } from "@plane/utils";
 import { ModuleDropdown } from "@/components/dropdowns";
 // ui
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { useIssueDetail } from "@/hooks/store";
 // types
 import type { TIssueOperations } from "./root";
@@ -22,6 +23,7 @@ type TIssueModuleSelect = {
 
 export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) => {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
+  const { t } = useTranslation();
   // states
   const [isUpdating, setIsUpdating] = useState(false);
   // store hooks
@@ -59,7 +61,7 @@ export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) 
         projectId={projectId}
         value={issue?.module_ids ?? []}
         onChange={handleIssueModuleChange}
-        placeholder="No module"
+        placeholder={t("module.no_module")}
         disabled={disableSelect}
         className="group h-full w-full"
         buttonContainerClassName="w-full rounded"

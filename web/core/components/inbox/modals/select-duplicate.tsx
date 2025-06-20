@@ -4,18 +4,16 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// icons
-// components
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse } from "@plane/types";
-// ui
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
+// components
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useProject } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { ProjectService } from "@/services/project";
 
@@ -30,18 +28,19 @@ const projectService = new ProjectService();
 
 export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, onSubmit, value } = props;
-
-  const [query, setQuery] = useState("");
-
+  // router
   const { workspaceSlug, projectId, issueId } = useParams();
-
-  // hooks
-  const { getProjectById } = useProject();
-
+  // states
+  const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
+  // hooks
+  const { getProjectById } = useProject();
+  const { t } = useTranslation();
+  // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
+  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
@@ -75,7 +74,9 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const issueList =
     filteredIssues.length > 0 ? (
       <li className="p-2">
-        {query === "" && <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>}
+        {query === "" && (
+          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work item</h2>
+        )}
         <ul className="text-sm text-custom-text-100">
           {filteredIssues.map((issue) => {
             const stateColor = issue.state__color || "";
@@ -110,12 +111,11 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       </li>
     ) : (
       <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-        <EmptyState
-          type={
-            query === "" ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
-          }
-          layout="screen-simple"
-        />
+        {query === "" ? (
+          <SimpleEmptyState title={t("issue_relation.empty_state.no_issues.title")} assetPath={issuesResolvedPath} />
+        ) : (
+          <SimpleEmptyState title={t("issue_relation.empty_state.search.title")} assetPath={searchResolvedPath} />
+        )}
       </div>
     );
 

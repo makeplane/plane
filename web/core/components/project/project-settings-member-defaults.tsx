@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
-// ui
 import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { MemberSelect } from "@/components/project";
@@ -14,18 +15,37 @@ import { MemberSelect } from "@/components/project";
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-
-// types
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
   default_assignee: null,
 };
 
-export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
-  // router
-  const { workspaceSlug, projectId } = useParams();
+type TDefaultSettingItemProps = {
+  title: string;
+  description: string;
+  children: ReactNode;
+};
+
+const DefaultSettingItem: React.FC<TDefaultSettingItemProps> = ({ title, description, children }) => (
+  <div className="flex items-center justify-between gap-x-2">
+    <div className="flex flex-col gap-0.5">
+      <h4 className="text-sm font-medium">{title}</h4>
+      <p className="text-xs text-custom-text-300">{description}</p>
+    </div>
+    <div className="w-full max-w-48 sm:max-w-64">{children}</div>
+  </div>
+);
+
+type TProjectSettingsMemberDefaultsProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ProjectSettingsMemberDefaults: React.FC<TProjectSettingsMemberDefaultsProps> = observer((props) => {
+  const { workspaceSlug, projectId } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
@@ -34,15 +54,15 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail?.slug,
+    workspaceSlug,
     currentProjectDetails?.id
   );
   // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
   useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
-    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId) : null,
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
 
   useEffect(() => {
@@ -68,7 +88,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       ...formData,
     });
 
-    await updateProject(workspaceSlug.toString(), projectId.toString(), {
+    await updateProject(workspaceSlug, projectId, {
       default_assignee:
         formData.default_assignee === "none"
           ? null
@@ -78,9 +98,9 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
     })
       .then(() => {
         setToast({
-          title: "Success!",
+          title: `${t("success")}!`,
           type: TOAST_TYPE.SUCCESS,
-          message: "Project updated successfully",
+          message: t("project_settings.general.toast.success"),
         });
       })
       .catch((err) => {
@@ -91,14 +111,14 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const toggleGuestViewAllIssues = async (value: boolean) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateProject(workspaceSlug.toString(), projectId.toString(), {
+    updateProject(workspaceSlug, projectId, {
       guest_view_all_features: value,
     })
       .then(() => {
         setToast({
-          title: "Success!",
+          title: `${t("success")}!`,
           type: TOAST_TYPE.SUCCESS,
-          message: "Project updated successfully",
+          message: t("project_settings.general.toast.success"),
         });
       })
       .catch((err) => {
@@ -107,82 +127,64 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   };
 
   return (
-    <>
-      <div className="flex items-center border-b border-custom-border-100 pb-3.5">
-        <h3 className="text-xl font-medium">Defaults</h3>
-      </div>
-
-      <div className="flex w-full flex-col gap-2 pb-4">
-        <div className="flex w-full items-center gap-4 py-4">
-          <div className="flex w-1/2 flex-col gap-2">
-            <h4 className="text-sm">Project lead</h4>
-            <div className="">
-              {currentProjectDetails ? (
-                <Controller
-                  control={control}
-                  name="project_lead"
-                  render={({ field: { value } }) => (
-                    <MemberSelect
-                      value={value}
-                      onChange={(val: string) => {
-                        submitChanges({ project_lead: val });
-                      }}
-                      isDisabled={!isAdmin}
-                    />
-                  )}
-                />
-              ) : (
-                <Loader className="h-9 w-full">
-                  <Loader.Item width="100%" height="100%" />
-                </Loader>
-              )}
-            </div>
-          </div>
-
-          <div className="flex w-1/2 flex-col gap-2">
-            <h4 className="text-sm">Default assignee</h4>
-            <div className="">
-              {currentProjectDetails ? (
-                <Controller
-                  control={control}
-                  name="default_assignee"
-                  render={({ field: { value } }) => (
-                    <MemberSelect
-                      value={value}
-                      onChange={(val: string) => {
-                        submitChanges({ default_assignee: val });
-                      }}
-                      isDisabled={!isAdmin}
-                    />
-                  )}
-                />
-              ) : (
-                <Loader className="h-9 w-full">
-                  <Loader.Item width="100%" height="100%" />
-                </Loader>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      {currentProjectDetails && (
-        <div className="relative pb-4 flex justify-between items-center gap-3">
-          <div className="space-y-1">
-            <h3 className="text-lg font-medium text-custom-text-100">
-              Grant view access to all issues for guest users:
-            </h3>
-            <p className="text-sm text-custom-text-200">
-              This will allow guests to have view access to all the project issues.
-            </p>
-          </div>
-          <ToggleSwitch
-            value={currentProjectDetails?.guest_view_all_features}
-            onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
-            disabled={!isAdmin}
-            size="md"
+    <div className="flex flex-col gap-y-6 my-6">
+      <DefaultSettingItem title="Project Lead" description="Select the project lead for the project.">
+        {currentProjectDetails ? (
+          <Controller
+            control={control}
+            name="project_lead"
+            render={({ field: { value } }) => (
+              <MemberSelect
+                value={value}
+                onChange={(val: string) => {
+                  submitChanges({ project_lead: val });
+                }}
+                isDisabled={!isAdmin}
+              />
+            )}
           />
-        </div>
+        ) : (
+          <Loader className="h-9 w-full">
+            <Loader.Item width="100%" height="100%" />
+          </Loader>
+        )}
+      </DefaultSettingItem>
+      <DefaultSettingItem title="Default Assignee" description="Select the default assignee for the project.">
+        {currentProjectDetails ? (
+          <Controller
+            control={control}
+            name="default_assignee"
+            render={({ field: { value } }) => (
+              <MemberSelect
+                value={value}
+                onChange={(val: string) => {
+                  submitChanges({ default_assignee: val });
+                }}
+                isDisabled={!isAdmin}
+              />
+            )}
+          />
+        ) : (
+          <Loader className="h-9 w-full">
+            <Loader.Item width="100%" height="100%" />
+          </Loader>
+        )}
+      </DefaultSettingItem>
+      {currentProjectDetails && (
+        <DefaultSettingItem
+          title="Guest access"
+          description="This will allow guests to have view access to all the project work items."
+        >
+          <div className="flex items-center justify-end">
+            <ToggleSwitch
+              value={!!currentProjectDetails?.guest_view_all_features}
+              onChange={() => toggleGuestViewAllIssues(!currentProjectDetails?.guest_view_all_features)}
+              disabled={!isAdmin}
+              size="sm"
+            />
+          </div>
+        </DefaultSettingItem>
       )}
-    </>
+    </div>
   );
 });

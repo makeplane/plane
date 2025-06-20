@@ -1,0 +1,15 @@
+{
+  "name": "@plane/services",
+  "version": "0.26.1",
+  "license": "AGPL-3.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+  },
+  "dependencies": {
+    "@plane/constants": "*",
+    "axios": "^1.8.3"
+  }
+}

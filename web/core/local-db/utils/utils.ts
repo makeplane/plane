@@ -1,4 +1,3 @@
-import { captureException } from "@sentry/nextjs";
 import pick from "lodash/pick";
 import { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
@@ -15,7 +14,6 @@ export const logError = (e: any) => {
     e = parseSQLite3Error(e);
   }
   console.error(e);
-  captureException(e);
 };
 export const logInfo = console.info;
 
@@ -64,9 +62,10 @@ export const updatePersistentLayer = async (issueIds: string | string[]) => {
   issueIds.forEach(async (issueId) => {
     const dbIssue = await persistence.getIssue(issueId);
     const issue = rootStore.issue.issues.getIssueById(issueId);
+    const updatedIssue = dbIssue ? { ...dbIssue, ...issue } : issue;
 
-    if (issue) {
-      addIssueToPersistanceLayer(issue);
+    if (updatedIssue) {
+      addIssueToPersistanceLayer(updatedIssue);
     }
   });
 };
@@ -160,24 +159,48 @@ const parseSQLite3Error = (error: any) => {
   return error;
 };
 
-export const clearOPFS = async () => {
-  const storageManager = window.navigator.storage;
-  const fileSystemDirectoryHandle = await storageManager.getDirectory();
+export const isChrome = () => {
   const userAgent = navigator.userAgent;
-  const isChrome = userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+  return userAgent.includes("Chrome") && !userAgent.includes("Edg") && !userAgent.includes("OPR");
+};
 
-  if (isChrome) {
-    await (fileSystemDirectoryHandle as any).remove({ recursive: true });
+export const clearOPFS = async (force = false) => {
+  const storageManager = window.navigator.storage;
+  const root = await storageManager.getDirectory();
+
+  if (force && isChrome()) {
+    await (root as any).remove({ recursive: true });
     return;
   }
+  // ts-ignore
+  for await (const entry of (root as any)?.values()) {
+    if (entry.kind === "directory" && entry.name.startsWith(".ahp-")) {
+      // A lock with the same name as the directory protects it from
+      // being deleted.
 
-  const entries = await (fileSystemDirectoryHandle as any).entries();
-  for await (const entry of entries) {
-    const [name] = entry;
-    try {
-      await fileSystemDirectoryHandle.removeEntry(name);
-    } catch (e) {
-      console.log("Error", e);
+      if (force) {
+        // don't wait for the lock
+        try {
+          await root.removeEntry(entry.name, { recursive: true });
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        await navigator.locks.request(entry.name, { ifAvailable: true }, async (lock) => {
+          if (lock) {
+            log?.(`Deleting temporary directory ${entry.name}`);
+            try {
+              await root.removeEntry(entry.name, { recursive: true });
+            } catch (e) {
+              console.log(e);
+            }
+          } else {
+            log?.(`Temporary directory ${entry.name} is in use`);
+          }
+        });
+      }
+    } else {
+      root.removeEntry(entry.name);
     }
   }
 };

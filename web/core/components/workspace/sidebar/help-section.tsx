@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -24,6 +25,7 @@ export interface WorkspaceHelpSectionProps {
 export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
+  const { t } = useTranslation();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
@@ -83,7 +85,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
               >
                 <FileText className="h-3.5 w-3.5 text-custom-text-200" size={14} />
-                <span className="text-xs">Documentation</span>
+                <span className="text-xs">{t("documentation")}</span>
               </a>
             </CustomMenu.MenuItem>
             {config?.intercom_app_id && config?.is_intercom_enabled && (
@@ -94,7 +96,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                   className="flex w-full items-center gap-x-2 rounded text-xs hover:bg-custom-background-80"
                 >
                   <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
-                  <span className="text-xs">Message support</span>
+                  <span className="text-xs">{t("message_support")}</span>
                 </button>
               </CustomMenu.MenuItem>
             )}
@@ -105,7 +107,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
               >
                 <User className="h-3.5 w-3.5 text-custom-text-200" size={14} />
-                <span className="text-xs">Contact sales</span>
+                <span className="text-xs">{t("contact_sales")}</span>
               </a>
             </CustomMenu.MenuItem>
             <div className="my-1 border-t border-custom-border-200" />
@@ -117,7 +119,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 }}
                 className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
               >
-                <span className="racking-tight">Hyper Mode</span>
+                <span className="racking-tight">{t("hyper_mode")}</span>
                 <ToggleSwitch
                   value={canUseLocalDB}
                   onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
@@ -130,7 +132,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 onClick={() => toggleShortcutModal(true)}
                 className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
               >
-                <span className="text-xs">Keyboard shortcuts</span>
+                <span className="text-xs">{t("keyboard_shortcuts")}</span>
               </button>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
@@ -139,7 +141,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 onClick={() => setProductUpdatesModalOpen(true)}
                 className="flex w-full items-center justify-start text-xs hover:bg-custom-background-80"
               >
-                <span className="text-xs">What&apos;s new</span>
+                <span className="text-xs">{t("whats_new")}</span>
               </button>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem>
@@ -173,8 +175,13 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 isCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}
+              aria-label={t(
+                isCollapsed
+                  ? "aria_labels.projects_sidebar.expand_sidebar"
+                  : "aria_labels.projects_sidebar.collapse_sidebar"
+              )}
             >
-              <MoveLeft className={`h-4 w-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
+              <MoveLeft className={`size-4 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
             </button>
           </Tooltip>
         </div>

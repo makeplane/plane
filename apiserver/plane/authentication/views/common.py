@@ -44,10 +44,23 @@ class ChangePasswordEndpoint(APIView):
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
 
-        old_password = request.data.get("old_password", False)
+        # If the user password is not autoset then we need to check the old passwords
+        if not user.is_password_autoset:
+            old_password = request.data.get("old_password", False)
+            if not old_password:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["MISSING_PASSWORD"],
+                    error_message="MISSING_PASSWORD",
+                    payload={"error": "Old password is missing"},
+                )
+                return Response(
+                    exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # Get the new password
         new_password = request.data.get("new_password", False)
 
-        if not old_password or not new_password:
+        if not new_password:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["MISSING_PASSWORD"],
                 error_message="MISSING_PASSWORD",
@@ -55,7 +68,8 @@ class ChangePasswordEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        if not user.check_password(old_password):
+        # If the user password is not autoset then we need to check the old passwords
+        if not user.is_password_autoset and not user.check_password(old_password):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INCORRECT_OLD_PASSWORD"],
                 error_message="INCORRECT_OLD_PASSWORD",

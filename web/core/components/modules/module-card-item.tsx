@@ -5,7 +5,17 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { Info, SquareUser } from "lucide-react";
-// ui
+// plane package imports
+import {
+  MODULE_STATUS,
+  PROGRESS_STATE_GROUPS_DETAILS,
+  MODULE_FAVORITED,
+  MODULE_UNFAVORITED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
+} from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
 import {
   Card,
@@ -17,24 +27,18 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
-// constants
-import { PROGRESS_STATE_GROUPS_DETAILS } from "@/constants/common";
-import { MODULE_FAVORITED, MODULE_UNFAVORITED } from "@/constants/event-tracker";
-import { MODULE_STATUS } from "@/constants/module";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   moduleId: string;
@@ -55,6 +59,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
   const { captureEvent } = useEventTracker();
 
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
+
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -72,6 +79,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
+        if (!storedValue) toggleFavoriteMenu(true);
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
@@ -177,11 +185,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const issueCount = module
     ? !moduleTotalIssues || moduleTotalIssues === 0
-      ? `0 Issue`
+      ? `0 work items`
       : moduleTotalIssues === moduleCompletedIssues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? `s` : ``}`
-        : `${moduleCompletedIssues}/${moduleTotalIssues} Issues`
-    : `0 Issue`;
+        ? `${moduleTotalIssues} Work item${moduleTotalIssues > 1 ? `s` : ``}`
+        : `${moduleCompletedIssues}/${moduleTotalIssues} Work items`
+    : `0 work items`;
 
   const moduleLeadDetails = moduleDetails.lead_id ? getUserDetails(moduleDetails.lead_id) : undefined;
 
@@ -219,7 +227,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">

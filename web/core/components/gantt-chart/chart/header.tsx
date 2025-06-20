@@ -1,16 +1,17 @@
 import { observer } from "mobx-react";
 import { Expand, Shrink } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // plane
+import type { TGanttViews } from "@plane/types";
 import { Row } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { VIEWS_LIST } from "@/components/gantt-chart/data";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { GANTT_BREADCRUMBS_HEIGHT } from "../constants";
-import { TGanttViews } from "../types";
 
 type Props = {
   blockIds: string[];
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const GanttChartHeader: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
     props;
   // chart hook
@@ -35,7 +37,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
     >
       <div className="ml-auto">
         <div className="ml-auto text-sm font-medium">
-          {blockIds ? `${blockIds.length} ${loaderTitle}` : "Loading..."}
+          {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
 
@@ -49,7 +51,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
             })}
             onClick={() => handleChartView(chartView?.key)}
           >
-            {chartView?.title}
+            {t(chartView?.i18n_title)}
           </div>
         ))}
       </div>
@@ -60,7 +62,7 @@ export const GanttChartHeader: React.FC<Props> = observer((props) => {
           className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
           onClick={handleToday}
         >
-          Today
+          {t("common.today")}
         </button>
       )}
 

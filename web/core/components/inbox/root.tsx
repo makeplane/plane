@@ -1,18 +1,19 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
+// plane imports
+import { EInboxIssueCurrentTab } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Intake } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { cn } from "@plane/utils";
+import { SimpleEmptyState } from "@/components/empty-state";
 import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
 import { InboxLayoutLoader } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TInboxIssueRoot = {
   workspaceSlug: string;
@@ -26,8 +27,12 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
+  // derived values
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;
@@ -96,7 +101,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
           />
         ) : (
           <div className="w-full h-full relative flex justify-center items-center">
-            <EmptyState type={EmptyStateType.INBOX_DETAIL_EMPTY_STATE} layout="screen-simple" />
+            <SimpleEmptyState title={t("inbox_issue.empty_state.detail.title")} assetPath={resolvedPath} />
           </div>
         )}
       </div>

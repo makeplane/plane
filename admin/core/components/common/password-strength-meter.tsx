@@ -1,14 +1,9 @@
 "use client";
 
 import { FC, useMemo } from "react";
-// import { CircleCheck } from "lucide-react";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import {
-  E_PASSWORD_STRENGTH,
-  // PASSWORD_CRITERIA,
-  getPasswordStrength,
-} from "@/helpers/password.helper";
+// plane internal packages
+import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import { cn, getPasswordStrength } from "@plane/utils";
 
 type TPasswordStrengthMeter = {
   password: string;

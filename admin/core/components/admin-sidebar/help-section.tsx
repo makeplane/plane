@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
-// ui
+// plane internal packages
+import { WEB_BASE_URL } from "@plane/constants";
 import { DiscordIcon, GithubIcon, Tooltip } from "@plane/ui";
-// helpers
-import { WEB_BASE_URL, cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";
 // assets
+// eslint-disable-next-line import/order
 import packageJson from "package.json";
 
 const helpOptions = [

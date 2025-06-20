@@ -18,4 +18,7 @@ export * from "./member-list-item";
 export * from "./project-settings-member-defaults";
 export * from "./send-project-invitation-modal";
 export * from "./confirm-project-member-remove";
+export * from "./multi-select-modal";
+export * from "./search-projects";
+export * from "./project-network-icon";
 export * from "@/plane-web/components/projects/create/root";

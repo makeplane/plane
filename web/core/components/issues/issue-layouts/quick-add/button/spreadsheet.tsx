@@ -1,11 +1,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TQuickAddIssueButton } from "../root";
 
 export const SpreadsheetAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
-  const { onClick } = props;
-
+  const { onClick, isEpic = false } = props;
+  const { t } = useTranslation();
   return (
     <div className="flex items-center">
       <button
@@ -14,7 +15,7 @@ export const SpreadsheetAddIssueButton: FC<TQuickAddIssueButton> = observer((pro
         onClick={onClick}
       >
         <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-        <span className="text-sm font-medium">New Issue</span>
+        <span className="text-sm font-medium">{isEpic ? t("epic.add.label") : t("issue.add.label")}</span>
       </button>
     </div>
   );

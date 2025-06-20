@@ -1,30 +1,30 @@
-"use client"; ``
+"use client";
 
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
+// plane constants
+import { EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
+// plane types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
-import { EIssuesStoreType, ISSUE_PRIORITIES } from "@/constants/issue";
-import { useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store";
 // ui
 // types
 // constants
 
-type Props = {
-  closePalette: () => void;
-  issue: TIssue;
-};
+type Props = { closePalette: () => void; issue: TIssue };
 
 export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { closePalette, issue } = props;
   // router params
-  const { workspaceSlug, projectId } = useParams();
-  const {
-    issues: { updateIssue },
-  } = useIssues(EIssuesStoreType.PROJECT);
+  const { workspaceSlug } = useParams();
+  // store hooks
+  const { updateIssue } = useIssueDetail(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  // derived values
+  const projectId = issue?.project_id;
 
   const submitChanges = async (formData: Partial<TIssue>) => {
     if (!workspaceSlug || !projectId || !issue) return;

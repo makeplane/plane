@@ -4,6 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { Tab } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 import {
   IIssueFilterOptions,
   IIssueFilters,
@@ -13,11 +14,10 @@ import {
   TStateGroups,
 } from "@plane/types";
 import { Avatar, StateGroupIcon } from "@plane/ui";
+import { cn, getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -73,6 +73,7 @@ type TStateStatComponent = {
 
 export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
   const { distribution, isEditable, filters, handleFiltersUpdate } = props;
+  const { t } = useTranslation();
   return (
     <div>
       {distribution && distribution.length > 0 ? (
@@ -104,7 +105,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                     <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                       <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                     </div>
-                    <span>No assignee</span>
+                    <span>{t("no_assignee")}</span>
                   </div>
                 }
                 completed={assignee?.completed ?? 0}
@@ -117,7 +118,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
             <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
           </div>
-          <h6 className="text-base text-custom-text-300">No assignees yet</h6>
+          <h6 className="text-base text-custom-text-300">{t("no_assignees_yet")}</h6>
         </div>
       )}
     </div>
@@ -135,14 +136,14 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
               <SingleProgressStats
                 key={label.id}
                 title={
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="block h-3 w-3 rounded-full"
+                  <div className="flex items-center gap-2 truncate">
+                    <div
+                      className="h-3 w-3 rounded-full flex-shrink-0"
                       style={{
                         backgroundColor: label.color ?? "transparent",
                       }}
                     />
-                    <span className="text-xs">{label.title ?? "No labels"}</span>
+                    <p className="text-xs text-ellipsis truncate">{label.title ?? "No labels"}</p>
                   </div>
                 }
                 completed={label.completed}

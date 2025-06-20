@@ -27,6 +27,11 @@ from plane.app.views import (
     WorkspaceFavoriteEndpoint,
     WorkspaceFavoriteGroupEndpoint,
     WorkspaceDraftIssueViewSet,
+    QuickLinkViewSet,
+    UserRecentVisitViewSet,
+    WorkspaceHomePreferenceViewSet,
+    WorkspaceStickyViewSet,
+    WorkspaceUserPreferenceViewSet,
 )
 
 
@@ -212,5 +217,57 @@ urlpatterns = [
         "workspaces/<str:slug>/draft-to-issue/<uuid:draft_id>/",
         WorkspaceDraftIssueViewSet.as_view({"post": "create_draft_to_issue"}),
         name="workspace-drafts-issues",
+    ),
+    # quick link
+    path(
+        "workspaces/<str:slug>/quick-links/",
+        QuickLinkViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-quick-links",
+    ),
+    path(
+        "workspaces/<str:slug>/quick-links/<uuid:pk>/",
+        QuickLinkViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-quick-links",
+    ),
+    # Widgets
+    path(
+        "workspaces/<str:slug>/home-preferences/",
+        WorkspaceHomePreferenceViewSet.as_view(),
+        name="workspace-home-preference",
+    ),
+    path(
+        "workspaces/<str:slug>/home-preferences/<str:key>/",
+        WorkspaceHomePreferenceViewSet.as_view(),
+        name="workspace-home-preference",
+    ),
+    path(
+        "workspaces/<str:slug>/recent-visits/",
+        UserRecentVisitViewSet.as_view({"get": "list"}),
+        name="workspace-recent-visits",
+    ),
+    path(
+        "workspaces/<str:slug>/stickies/",
+        WorkspaceStickyViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-sticky",
+    ),
+    path(
+        "workspaces/<str:slug>/stickies/<uuid:pk>/",
+        WorkspaceStickyViewSet.as_view(
+            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+        ),
+        name="workspace-sticky",
+    ),
+    # User Preference
+    path(
+        "workspaces/<str:slug>/sidebar-preferences/",
+        WorkspaceUserPreferenceViewSet.as_view(),
+        name="workspace-user-preference",
+    ),
+    path(
+        "workspaces/<str:slug>/sidebar-preferences/<str:key>/",
+        WorkspaceUserPreferenceViewSet.as_view(),
+        name="workspace-user-preference",
     ),
 ]

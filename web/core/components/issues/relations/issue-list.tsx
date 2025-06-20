@@ -2,35 +2,38 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { RelationIssueListItem } from "@/components/issues/relations";
 // Plane-web
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   issueIds: string[];
   relationKey: TIssueRelationTypes;
-  issueOperations: TRelationIssueOperations;
-  handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
+  handleIssueCrudState: (
+    key: "update" | "delete" | "removeRelation",
+    issueId: string,
+    issue?: TIssue | null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => void;
   disabled?: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const RelationIssueList: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
     issueId,
     issueIds,
     relationKey,
     disabled = false,
-    issueOperations,
     handleIssueCrudState,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
 
   return (
@@ -41,13 +44,12 @@ export const RelationIssueList: FC<Props> = observer((props) => {
           <RelationIssueListItem
             key={relationIssueId}
             workspaceSlug={workspaceSlug}
-            projectId={projectId}
             issueId={issueId}
             relationKey={relationKey}
             relationIssueId={relationIssueId}
             disabled={disabled}
             handleIssueCrudState={handleIssueCrudState}
-            issueOperations={issueOperations}
+            issueServiceType={issueServiceType}
           />
         ))}
     </div>

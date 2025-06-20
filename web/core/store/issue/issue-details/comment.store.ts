@@ -5,7 +5,7 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // services
-import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap } from "@plane/types";
+import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
 import { IssueCommentService } from "@/services/issue";
 // types
 import { IIssueDetail } from "./root.store";
@@ -50,12 +50,13 @@ export class IssueCommentStore implements IIssueCommentStore {
   loader: TCommentLoader = "fetch";
   comments: TIssueCommentIdMap = {};
   commentMap: TIssueCommentMap = {};
+  serviceType;
   // root store
   rootIssueDetail: IIssueDetail;
   // services
   issueCommentService;
 
-  constructor(rootStore: IIssueDetail) {
+  constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -68,9 +69,10 @@ export class IssueCommentStore implements IIssueCommentStore {
       removeComment: action,
     });
     // root store
+    this.serviceType = serviceType;
     this.rootIssueDetail = rootStore;
     // services
-    this.issueCommentService = new IssueCommentService();
+    this.issueCommentService = new IssueCommentService(serviceType);
   }
 
   // helper methods
@@ -152,6 +154,11 @@ export class IssueCommentStore implements IIssueCommentStore {
         commentId,
         data
       );
+
+      runInAction(() => {
+        set(this.commentMap, [commentId, "updated_at"], response.updated_at);
+        set(this.commentMap, [commentId, "edited_at"], response.edited_at);
+      });
 
       return response;
     } catch (error) {

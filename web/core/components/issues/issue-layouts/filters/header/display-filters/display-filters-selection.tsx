@@ -1,7 +1,12 @@
 import React from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueGroupByOptions } from "@plane/types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  ILayoutDisplayFiltersOptions,
+  TIssueGroupByOptions,
+} from "@plane/types";
 // components
 import {
   FilterDisplayProperties,
@@ -10,8 +15,6 @@ import {
   FilterOrderBy,
   FilterSubGroupBy,
 } from "@/components/issues";
-// types
-import { ILayoutDisplayFiltersOptions } from "@/constants/issue";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
@@ -22,6 +25,7 @@ type Props = {
   ignoreGroupedFilters?: Partial<TIssueGroupByOptions>[];
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
+  isEpic?: boolean;
 };
 
 export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
@@ -34,6 +38,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     ignoreGroupedFilters = [],
     cycleViewDisabled = false,
     moduleViewDisabled = false,
+    isEpic = false,
   } = props;
 
   const isDisplayFilterEnabled = (displayFilter: keyof IIssueDisplayFilterOptions) =>
@@ -58,6 +63,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
             handleUpdate={handleDisplayPropertiesUpdate}
             cycleViewDisabled={cycleViewDisabled}
             moduleViewDisabled={moduleViewDisabled}
+            isEpic={isEpic}
           />
         </div>
       )}

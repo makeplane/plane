@@ -1,1 +1,0 @@
-export  {NotificationsSidebar} from 'ce/components/workspace-notifications'

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { NETWORK_CHOICES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// constants
-import { NETWORK_CHOICES } from "@/constants/project";
+import { ProjectNetworkIcon } from "@/components/project";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -15,9 +17,10 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
+  const { t } = useTranslation();
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const filteredOptions = NETWORK_CHOICES.filter((a) => a.label.includes(searchQuery.toLowerCase()));
+  const filteredOptions = NETWORK_CHOICES.filter((a) => a.i18n_label.includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -34,8 +37,8 @@ export const FilterAccess: React.FC<Props> = observer((props) => {
                 key={access.key}
                 isChecked={appliedFilters?.includes(`${access.key}`) ? true : false}
                 onClick={() => handleUpdate(`${access.key}`)}
-                icon={<access.icon className="h-3 w-3" />}
-                title={access.label}
+                icon={<ProjectNetworkIcon iconKey={access.iconKey} />}
+                title={t(access.i18n_label)}
               />
             ))
           ) : (

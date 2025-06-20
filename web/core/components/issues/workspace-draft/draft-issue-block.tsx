@@ -4,13 +4,13 @@ import { omit } from "lodash";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // types
+import { EIssuesStoreType } from "@plane/constants";
 import { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { Row, TContextMenuItem, Tooltip } from "@plane/ui";
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helper
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useProject, useWorkspaceDraftIssues } from "@/hooks/store";
 // plane-web components
@@ -57,7 +57,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: "edit",
       icon: Pencil,
       action: () => {
         setIssueToEdit(issue);
@@ -66,7 +66,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "make-a-copy",
-      title: "Make a copy",
+      title: "make_a_copy",
       icon: Copy,
       action: () => {
         setCreateUpdateIssueModal(true);
@@ -74,7 +74,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "move-to-issues",
-      title: "Move to project",
+      title: "move_to_project",
       icon: SquareStackIcon,
       action: () => {
         setMoveToIssue(true);
@@ -84,7 +84,7 @@ export const DraftIssueBlock: FC<Props> = observer((props) => {
     },
     {
       key: "delete",
-      title: "Delete",
+      title: "delete",
       icon: Trash2,
       action: () => {
         setDeleteIssueModal(true);

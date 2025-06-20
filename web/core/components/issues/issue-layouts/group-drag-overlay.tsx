@@ -1,12 +1,13 @@
+import { useRef } from "react";
 import { AlertCircle } from "lucide-react";
-// Plane
+// plane imports
+import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
-// constants
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
-// Plane-web
-import { WorkFlowDisabledMessage } from "@/plane-web/components/workflow";
+import { cn } from "@plane/utils";
+// plane web imports
+import { WorkFlowDisabledOverlay } from "@/plane-web/components/workflow";
 
 type Props = {
   dragColumnOrientation: "justify-start" | "justify-center" | "justify-end";
@@ -16,6 +17,7 @@ type Props = {
   dropErrorMessage?: string;
   orderBy: TIssueOrderByOptions | undefined;
   isDraggingOverColumn: boolean;
+  isEpic?: boolean;
 };
 
 export const GroupDragOverlay = (props: Props) => {
@@ -27,34 +29,42 @@ export const GroupDragOverlay = (props: Props) => {
     dropErrorMessage,
     orderBy,
     isDraggingOverColumn,
+    isEpic = false,
   } = props;
+  // hooks
+  const { t } = useTranslation();
+  // refs
+  const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
-  const readableOrderBy = ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.title;
+  const readableOrderBy = t(
+    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey || ""
+  );
 
   return (
     <div
+      ref={messageContainerRef}
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-overlay ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
         {
           "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
+          "bg-red-200/60": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }
       )}
     >
       {workflowDisabledSource ? (
-        <WorkFlowDisabledMessage parentStateId={workflowDisabledSource} className="my-2" />
+        <WorkFlowDisabledOverlay
+          messageContainerRef={messageContainerRef}
+          workflowDisabledSource={workflowDisabledSource}
+          shouldOverlayBeVisible={shouldOverlayBeVisible}
+        />
       ) : (
         <div
-          className={cn(
-            "p-3 my-8 flex flex-col rounded items-center",
-            {
-              "text-custom-text-200": shouldOverlayBeVisible,
-            },
-            {
-              "text-custom-text-error": isDropDisabled,
-            }
-          )}
+          className={cn("p-3 my-8 flex flex-col rounded items-center", {
+            "text-custom-text-200": shouldOverlayBeVisible,
+            "text-custom-text-error": isDropDisabled,
+          })}
         >
           {dropErrorMessage ? (
             <div className="flex items-center">
@@ -65,10 +75,10 @@ export const GroupDragOverlay = (props: Props) => {
             <>
               {readableOrderBy && (
                 <span>
-                  The layout is ordered by <span className="font-semibold">{readableOrderBy}</span>.
+                  {t("issue.layouts.ordered_by_label")} <span className="font-semibold">{t(readableOrderBy)}</span>.
                 </span>
               )}
-              <span>Drop here to move the issue.</span>
+              <span>{t("entity.drop_here_to_move", { entity: isEpic ? "epic" : "work item" })}</span>
             </>
           )}
         </div>

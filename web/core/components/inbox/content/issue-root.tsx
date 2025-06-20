@@ -1,13 +1,16 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// plane types
-import { TIssue } from "@plane/types";
-// plane ui
+// plane imports
+import { EInboxIssueSource, ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { EditorRefApi } from "@plane/editor";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { getTextContent } from "@plane/utils";
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { InboxIssueContentProperties } from "@/components/inbox/content";
 import {
   IssueDescriptionInput,
@@ -17,37 +20,45 @@ import {
   TIssueOperations,
   IssueAttachmentRoot,
 } from "@/components/issues";
-// constants
-import { ISSUE_ARCHIVED, ISSUE_DELETED } from "@/constants/event-tracker";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
 // hooks
-import { useEventTracker, useIssueDetail, useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useEventTracker, useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// services
+import { IntakeWorkItemVersionService } from "@/services/inbox";
+// stores
 import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// services init
+const intakeWorkItemVersionService = new IntakeWorkItemVersionService();
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore;
   isEditable: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: Dispatch<SetStateAction<"submitting" | "submitted" | "saved">>;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
-  const pathname = usePathname();
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
-  // hooks
+  // navigation
+  const pathname = usePathname();
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  // store hooks
   const { data: currentUser } = useUser();
-  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-  const { captureIssueEvent } = useEventTracker();
+  const { getUserDetails } = useMember();
   const { loader } = useProjectInbox();
   const { getProjectById } = useProject();
   const { removeIssue, archiveIssue } = useIssueDetail();
+  // reload confirmation
+  const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
+  // event tracker
+  const { captureIssueEvent } = useEventTracker();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -60,16 +71,21 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
-  // dervied values
+  // derived values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
 
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectId, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug,
+    projectDetails?.workspace.toString(),
+    projectId,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   if (!issue) return <></>;
 
@@ -86,23 +102,23 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           setToast({
             title: "Success!",
             type: TOAST_TYPE.SUCCESS,
-            message: "Issue deleted successfully",
+            message: "Work item deleted successfully",
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: _issueId, state: "SUCCESS", element: "Issue detail page" },
+            payload: { id: _issueId, state: "SUCCESS", element: "Work item detail page" },
             path: pathname,
           });
         } catch (error) {
-          console.log("Error in deleting issue:", error);
+          console.log("Error in deleting work item:", error);
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: "Issue delete failed",
+            message: "Work item delete failed",
           });
           captureIssueEvent({
             eventName: ISSUE_DELETED,
-            payload: { id: _issueId, state: "FAILED", element: "Issue detail page" },
+            payload: { id: _issueId, state: "FAILED", element: "Work item detail page" },
             path: pathname,
           });
         }
@@ -111,7 +127,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         try {
           await inboxIssue.updateIssue(data);
           captureIssueEvent({
-            eventName: "Inbox issue updated",
+            eventName: "Inbox work item updated",
             payload: { ...data, state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -119,14 +135,14 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             },
             path: pathname,
           });
-        } catch (error) {
+        } catch {
           setToast({
-            title: "Issue update failed",
+            title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
-            message: "Issue update failed",
+            message: "Work item update failed",
           });
           captureIssueEvent({
-            eventName: "Inbox issue updated",
+            eventName: "Inbox work item updated",
             payload: { state: "SUCCESS", element: "Inbox" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -141,14 +157,14 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
+            payload: { id: issueId, state: "SUCCESS", element: "Work item details page" },
             path: pathname,
           });
         } catch (error) {
           console.log("Error in archiving issue:", error);
           captureIssueEvent({
             eventName: ISSUE_ARCHIVED,
-            payload: { id: issueId, state: "FAILED", element: "Issue details page" },
+            payload: { id: issueId, state: "FAILED", element: "Work item details page" },
             path: pathname,
           });
         }
@@ -190,6 +206,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <IssueDescriptionInput
+            editorRef={editorRef}
             workspaceSlug={workspaceSlug}
             projectId={issue.project_id}
             issueId={issue.id}
@@ -202,14 +219,39 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           />
         )}
 
-        {currentUser && (
-          <IssueReaction
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            issueId={issue.id}
-            currentUser={currentUser}
-          />
-        )}
+        <div className="flex items-center justify-between gap-2">
+          {currentUser && (
+            <IssueReaction
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issue.id}
+              currentUser={currentUser}
+            />
+          )}
+          {isEditable && (
+            <DescriptionVersionsRoot
+              className="flex-shrink-0"
+              entityInformation={{
+                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                createdByDisplayName:
+                  inboxIssue.source === EInboxIssueSource.FORMS
+                    ? "Intake Form user"
+                    : (getUserDetails(issue.created_by ?? "")?.display_name ?? ""),
+                id: issue.id,
+                isRestoreDisabled: !isEditable,
+              }}
+              fetchHandlers={{
+                listDescriptionVersions: (issueId) =>
+                  intakeWorkItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                retrieveDescriptionVersion: (issueId, versionId) =>
+                  intakeWorkItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+              }}
+              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+            />
+          )}
+        </div>
       </div>
 
       <IssueAttachmentRoot

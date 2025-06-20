@@ -3,11 +3,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
+import { EIssuesStoreType } from "@plane/constants";
 import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "@/components/issues";
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";
 // hooks
-import { EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "../../hooks/use-issue-layout-store";
 // constants

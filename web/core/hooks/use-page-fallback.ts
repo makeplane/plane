@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import { EditorRefApi, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
 // plane types
 import { TDocumentPayload } from "@plane/types";
 // hooks
@@ -8,7 +8,7 @@ import useAutoSave from "@/hooks/use-auto-save";
 
 type TArgs = {
   editorRef: React.RefObject<EditorRefApi>;
-  fetchPageDescription: () => Promise<any>;
+  fetchPageDescription: () => Promise<ArrayBuffer>;
   hasConnectionFailed: boolean;
   updatePageDescription: (data: TDocumentPayload) => Promise<void>;
 };
@@ -21,28 +21,35 @@ export const usePageFallback = (args: TArgs) => {
     const editor = editorRef.current;
     if (!editor) return;
 
-    const latestEncodedDescription = await fetchPageDescription();
-    const latestDecodedDescription = latestEncodedDescription
-      ? new Uint8Array(latestEncodedDescription)
-      : new Uint8Array();
+    try {
+      const latestEncodedDescription = await fetchPageDescription();
+      let latestDecodedDescription: Uint8Array;
+      if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
+        latestDecodedDescription = new Uint8Array(latestEncodedDescription);
+      } else {
+        latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString("<p></p>");
+      }
 
-    editor.setProviderDocument(latestDecodedDescription);
-    const { binary, html, json } = editor.getDocument();
-    if (!binary || !json) return;
-    const encodedBinary = Buffer.from(binary).toString("base64");
+      editor.setProviderDocument(latestDecodedDescription);
+      const { binary, html, json } = editor.getDocument();
+      if (!binary || !json) return;
+      const encodedBinary = Buffer.from(binary).toString("base64");
 
-    await updatePageDescription({
-      description_binary: encodedBinary,
-      description_html: html,
-      description: json,
-    });
-  }, [hasConnectionFailed]);
+      await updatePageDescription({
+        description_binary: encodedBinary,
+        description_html: html,
+        description: json,
+      });
+    } catch (error) {
+      console.error("Error in updating description using fallback logic:", error);
+    }
+  }, [editorRef, fetchPageDescription, hasConnectionFailed, updatePageDescription]);
 
   useEffect(() => {
     if (hasConnectionFailed) {
       handleUpdateDescription();
     }
-  }, [hasConnectionFailed]);
+  }, [handleUpdateDescription, hasConnectionFailed]);
 
   useAutoSave(handleUpdateDescription);
 };

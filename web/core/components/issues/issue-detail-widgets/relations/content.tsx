@@ -1,7 +1,10 @@
 "use client";
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { TIssue, TIssueRelationIdMap } from "@plane/types";
+// plane imports
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
 import { RelationIssueList } from "@/components/issues";
@@ -10,6 +13,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 import { TIssueRelationTypes } from "@/plane-web/types";
 // helper
@@ -17,27 +21,30 @@ import { useRelationOperations } from "./helper";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   disabled: boolean;
+  issueServiceType?: TIssueServiceType;
 };
 
 type TIssueCrudState = { toggle: boolean; issueId: string | undefined; issue: TIssue | undefined };
 
 export type TRelationObject = {
   key: TIssueRelationTypes;
-  label: string;
+  i18n_label: string;
   className: string;
   icon: (size: number) => React.ReactElement;
   placeholder: string;
 };
 
 export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled = false } = props;
+  const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
     update: TIssueCrudState;
     delete: TIssueCrudState;
+    removeRelation: TIssueCrudState & { relationKey: string | undefined; relationIssueId: string | undefined };
   }>({
     update: {
       toggle: false,
@@ -49,31 +56,47 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
       issueId: undefined,
       issue: undefined,
     },
+    removeRelation: {
+      toggle: false,
+      issueId: undefined,
+      issue: undefined,
+      relationKey: undefined,
+      relationIssueId: undefined,
+    },
   });
 
   // store hooks
   const {
-    relation: { getRelationsByIssueId },
+    relation: { getRelationsByIssueId, removeRelation },
     toggleDeleteIssueModal,
     toggleCreateIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
 
   // helper
   const issueOperations = useRelationOperations();
+  const epicOperations = useRelationOperations(EIssueServiceType.EPICS);
 
   // derived values
   const relations = getRelationsByIssueId(issueId);
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
 
-  const handleIssueCrudState = (key: "update" | "delete", _issueId: string | null, issue: TIssue | null = null) => {
-    setIssueCrudState({
-      ...issueCrudState,
+  const handleIssueCrudState = (
+    key: "update" | "delete" | "removeRelation",
+    _issueId: string | null,
+    issue: TIssue | null = null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => {
+    setIssueCrudState((prevState) => ({
+      ...prevState,
       [key]: {
-        toggle: !issueCrudState[key].toggle,
+        toggle: !prevState[key].toggle,
         issueId: _issueId,
         issue: issue,
+        relationKey: relationKey,
+        relationIssueId: relationIssueId,
       },
-    });
+    }));
   };
 
   // if relations are not available, return null
@@ -89,7 +112,7 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
         relationKey: relationKey,
         issueIds: issueIds,
         icon: issueRelationOption?.icon,
-        label: issueRelationOption?.label,
+        label: issueRelationOption?.i18n_label ? t(issueRelationOption?.i18n_label) : "",
         className: issueRelationOption?.className,
       };
     });
@@ -122,13 +145,12 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
             >
               <RelationIssueList
                 workspaceSlug={workspaceSlug}
-                projectId={projectId}
                 issueId={issueId}
                 relationKey={relation.relationKey}
                 issueIds={relation.issueIds}
                 disabled={disabled}
-                issueOperations={issueOperations}
                 handleIssueCrudState={handleIssueCrudState}
+                issueServiceType={issueServiceType}
               />
             </Collapsible>
           </div>
@@ -143,24 +165,71 @@ export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
             toggleDeleteIssueModal(null);
           }}
           data={issueCrudState?.delete?.issue as TIssue}
-          onSubmit={async () =>
-            await issueOperations.remove(workspaceSlug, projectId, issueCrudState?.delete?.issue?.id as string)
-          }
+          onSubmit={async () => {
+            if (
+              issueCrudState.removeRelation.issueId &&
+              issueCrudState.removeRelation.issue?.project_id &&
+              issueCrudState.removeRelation.relationKey &&
+              issueCrudState.removeRelation.relationIssueId
+            ) {
+              await removeRelation(
+                workspaceSlug,
+                issueCrudState.removeRelation.issue.project_id,
+                issueCrudState.removeRelation.issueId,
+                issueCrudState.removeRelation.relationKey as TIssueRelationTypes,
+                issueCrudState.removeRelation.relationIssueId,
+                true
+              );
+            }
+            if (
+              issueCrudState.delete.issue &&
+              issueCrudState.delete.issue.id &&
+              issueCrudState.delete.issue.project_id
+            ) {
+              const deleteOperation = !!issueCrudState.delete.issue?.is_epic
+                ? epicOperations.remove
+                : issueOperations.remove;
+              await deleteOperation(
+                workspaceSlug,
+                issueCrudState.delete.issue?.project_id,
+                issueCrudState?.delete?.issue?.id
+              );
+            }
+          }}
+          isEpic={!!issueCrudState.delete.issue?.is_epic}
         />
       )}
 
       {shouldRenderIssueUpdateModal && (
-        <CreateUpdateIssueModal
-          isOpen={issueCrudState?.update?.toggle}
-          onClose={() => {
-            handleIssueCrudState("update", null, null);
-            toggleCreateIssueModal(false);
-          }}
-          data={issueCrudState?.update?.issue ?? undefined}
-          onSubmit={async (_issue: TIssue) => {
-            await issueOperations.update(workspaceSlug, projectId, _issue.id, _issue);
-          }}
-        />
+        <>
+          {!!issueCrudState?.update?.issue?.is_epic ? (
+            <CreateUpdateEpicModal
+              isOpen={issueCrudState?.update?.toggle}
+              onClose={() => {
+                handleIssueCrudState("update", null, null);
+                toggleCreateIssueModal(false);
+              }}
+              data={issueCrudState?.update?.issue ?? undefined}
+              onSubmit={async (_issue: TIssue) => {
+                if (!_issue.id || !_issue.project_id) return;
+                await epicOperations.update(workspaceSlug, _issue.project_id, _issue.id, _issue);
+              }}
+            />
+          ) : (
+            <CreateUpdateIssueModal
+              isOpen={issueCrudState?.update?.toggle}
+              onClose={() => {
+                handleIssueCrudState("update", null, null);
+                toggleCreateIssueModal(false);
+              }}
+              data={issueCrudState?.update?.issue ?? undefined}
+              onSubmit={async (_issue: TIssue) => {
+                if (!_issue.id || !_issue.project_id) return;
+                await issueOperations.update(workspaceSlug, _issue.project_id, _issue.id, _issue);
+              }}
+            />
+          )}
+        </>
       )}
     </>
   );

@@ -7,15 +7,15 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
+import { AuthService } from "@plane/services";
 import { Avatar, Button } from "@plane/ui";
+import { getFileURL } from "@plane/utils";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useUser } from "@/hooks/store";
-// services
-import { AuthService } from "@/services/auth.service";
 
 const authService = new AuthService();
 

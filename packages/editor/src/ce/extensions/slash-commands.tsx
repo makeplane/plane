@@ -1,11 +1,9 @@
 // extensions
-import { TSlashCommandAdditionalOption } from "@/extensions";
+import type { TSlashCommandAdditionalOption } from "@/extensions";
 // types
-import { TExtensions } from "@/types";
+import type { IEditorProps } from "@/types";
 
-type Props = {
-  disabledExtensions: TExtensions[];
-};
+type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions">;
 
 export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCommandAdditionalOption[] => {
   const {} = props;

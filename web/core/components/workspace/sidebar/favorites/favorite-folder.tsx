@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { DragLocationHistory, ElementDragPayload, DropTargetRecord } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import {
+  DragLocationHistory,
+  ElementDragPayload,
+  DropTargetRecord,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
@@ -13,18 +17,18 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-
-// plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
-// ui
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 import { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// constants
+// local imports
 import { FavoriteRoot } from "./favorite-items";
 import { getCanDrop, getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
@@ -34,14 +38,14 @@ type Props = {
   favorite: IFavorite;
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
   handleRemoveFromFavoritesFolder: (favoriteId: string) => void;
-  handleDrop: (self: DropTargetRecord,source: ElementDragPayload, location: DragLocationHistory) => void;
+  handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
 export const FavoriteFolder: React.FC<Props> = (props) => {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-
+  const { getGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -49,10 +53,17 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const [isDragging, setIsDragging] = useState(false);
   const [folderToRename, setFolderToRename] = useState<string | boolean | null>(null);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
-
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const elementRef = useRef<HTMLDivElement | null>(null);
+  // translation
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (favorite.children === undefined && workspaceSlug) {
+      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+    }
+  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -65,7 +76,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
         element,
         getInitialData: () => initialData,
         onDragStart: () => setIsDragging(true),
-        onGenerateDragPreview: ({ nativeSetDragImage }) =>{
+        onGenerateDragPreview: ({ nativeSetDragImage }) => {
           setCustomNativeDragPreview({
             getOffset: pointerOutsideOfPreview({ x: "0px", y: "0px" }),
             render: ({ container }) => {
@@ -84,44 +95,42 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
           });
         },
         onDrop: () => {
-          setIsDragging(false)
+          setIsDragging(false);
         }, // canDrag: () => isDraggable,
       }),
       dropTargetForElements({
         element,
         canDrop: ({ source }) => getCanDrop(source, favorite, false),
-        getData: ({ input, element }) =>{
-
+        getData: ({ input, element }) => {
           const blockedStates: InstructionType[] = [];
-          if(!isLastChild){
-            blockedStates.push('reorder-below');
+          if (!isLastChild) {
+            blockedStates.push("reorder-below");
           }
 
-          return attachInstruction(initialData,{
+          return attachInstruction(initialData, {
             input,
             element,
             currentLevel: 0,
             indentPerLevel: 0,
-            mode: isLastChild ? 'last-in-group' : 'standard',
-            block: blockedStates
-          })
+            mode: isLastChild ? "last-in-group" : "standard",
+            block: blockedStates,
+          });
         },
-        onDrag: ({source, self, location}) => {
-          const instruction = getInstructionFromPayload(self,source, location);
+        onDrag: ({ source, self, location }) => {
+          const instruction = getInstructionFromPayload(self, source, location);
           setInstruction(instruction);
         },
         onDragLeave: () => {
           setInstruction(undefined);
         },
-        onDrop: ({ self, source, location})=>{
+        onDrop: ({ self, source, location }) => {
           setInstruction(undefined);
-          handleDrop(self, source,location);
-        }
+          handleDrop(self, source, location);
+        },
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, favorite.id ]);
-
+  }, [isDragging, favorite.id, isLastChild, favorite.id]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
@@ -140,11 +149,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
               "bg-custom-sidebar-background-80 opacity-60": isDragging,
-              "border-[2px] border-custom-primary-100" : instruction === 'make-child'
+              "border-[2px] border-custom-primary-100": instruction === "make-child",
             })}
           >
             {/* draggable drop top indicator */}
-            <DropIndicator isVisible={instruction === "reorder-above"}/>
+            <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
@@ -166,20 +175,20 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "justify-center": isSidebarCollapsed,
                   })}
                 >
-                  <Disclosure.Button as="button" className="size-8 aspect-square flex-shrink-0 grid place-items-center">
-                    <div className="size-4 grid place-items-center flex-shrink-0">
-                      <FavoriteFolderIcon />
-                    </div>
-                  </Disclosure.Button>
+                  <Tooltip tooltipContent={favorite.name} position="right" isMobile={isMobile}>
+                    <Disclosure.Button
+                      as="button"
+                      className="size-8 aspect-square flex-shrink-0 grid place-items-center"
+                    >
+                      <div className="size-4 grid place-items-center flex-shrink-0">
+                        <FavoriteFolderIcon />
+                      </div>
+                    </Disclosure.Button>
+                  </Tooltip>
                 </div>
               ) : (
                 <>
-                  <Tooltip
-                    tooltipContent={`${favorite.name}`}
-                    position="right"
-                    disabled={!isSidebarCollapsed}
-                    isMobile={isMobile}
-                  >
+                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
                     <div className="flex-grow flex truncate">
                       <Disclosure.Button
                         as="button"
@@ -222,11 +231,11 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       <span
                         ref={actionSectionRef}
                         className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                        onClick={() => setIsMenuActive(!isMenuActive)}
                       >
-                        <MoreHorizontal className="size-4" />
+                        <MoreHorizontal className="size-3" />
                       </span>
                     }
+                    menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
                     className={cn(
                       "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
                       {
@@ -235,6 +244,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     )}
                     customButtonClassName="grid place-items-center"
                     placement="bottom-start"
+                    ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
                   >
                     <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
                       <span className="flex items-center justify-start gap-2">
@@ -258,9 +268,12 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         "inline-block": isMenuActive,
                       }
                     )}
+                    aria-label={t(
+                      open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
+                    )}
                   >
                     <ChevronRight
-                      className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                      className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                         "rotate-90": open,
                       })}
                     />
@@ -283,7 +296,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     "px-2": !isSidebarCollapsed,
                   })}
                 >
-                  {orderBy(favorite.children,'sequence','desc').map((child,index) => (
+                  {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
                     <FavoriteRoot
                       key={child.id}
                       workspaceSlug={workspaceSlug.toString()}
@@ -298,7 +311,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
               </Transition>
             )}
             {/* draggable drop bottom indicator */}
-            { isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
+            {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
           </div>
         )}
       </Disclosure>

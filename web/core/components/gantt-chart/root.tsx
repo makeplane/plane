@@ -1,9 +1,10 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // components
-import { ChartViewRoot, IBlockUpdateData, IBlockUpdateDependencyData } from "@/components/gantt-chart";
+import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
+import { ChartViewRoot } from "./chart/root";
 
 type GanttChartRootProps = {
   border?: boolean;
@@ -23,9 +24,11 @@ type GanttChartRootProps = {
   enableReorder?: boolean | ((blockId: string) => boolean);
   enableAddBlock?: boolean | ((blockId: string) => boolean);
   enableSelection?: boolean | ((blockId: string) => boolean);
+  enableDependency?: boolean | ((blockId: string) => boolean);
   bottomSpacing?: boolean;
   showAllBlocks?: boolean;
   showToday?: boolean;
+  isEpic?: boolean;
 };
 
 export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
@@ -45,11 +48,13 @@ export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
     enableReorder = false,
     enableAddBlock = false,
     enableSelection = false,
+    enableDependency = false,
     bottomSpacing = false,
     showAllBlocks = false,
     showToday = true,
     quickAdd,
     updateBlockDates,
+    isEpic = false,
   } = props;
 
   const { setBlockIds } = useTimeLineChartStore();
@@ -76,11 +81,13 @@ export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
       enableReorder={enableReorder}
       enableAddBlock={enableAddBlock}
       enableSelection={enableSelection}
+      enableDependency={enableDependency}
       bottomSpacing={bottomSpacing}
       showAllBlocks={showAllBlocks}
       quickAdd={quickAdd}
       showToday={showToday}
       updateBlockDates={updateBlockDates}
+      isEpic={isEpic}
     />
   );
 });

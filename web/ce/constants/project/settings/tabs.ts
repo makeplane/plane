@@ -1,72 +1,72 @@
 // icons
+import { EUserPermissions } from "@plane/constants";
 import { SettingIcon } from "@/components/icons/attachment";
 // types
 import { Props } from "@/components/icons/types";
 // constants
-import { EUserPermissions } from "../../user-permissions";
 
 export const PROJECT_SETTINGS = {
   general: {
     key: "general",
-    label: "General",
-    href: `/settings`,
+    i18n_label: "common.general",
+    href: ``,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/`,
     Icon: SettingIcon,
   },
   members: {
     key: "members",
-    label: "Members",
-    href: `/settings/members`,
-    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
+    i18n_label: "common.members",
+    href: `/members`,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/members/`,
     Icon: SettingIcon,
   },
   features: {
     key: "features",
-    label: "Features",
-    href: `/settings/features`,
+    i18n_label: "common.features",
+    href: `/features`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/features/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/`,
     Icon: SettingIcon,
   },
   states: {
     key: "states",
-    label: "States",
-    href: `/settings/states`,
+    i18n_label: "common.states",
+    href: `/states`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/states/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/states/`,
     Icon: SettingIcon,
   },
   labels: {
     key: "labels",
-    label: "Labels",
-    href: `/settings/labels`,
+    i18n_label: "common.labels",
+    href: `/labels`,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/labels/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/labels/`,
     Icon: SettingIcon,
   },
   estimates: {
     key: "estimates",
-    label: "Estimates",
-    href: `/settings/estimates`,
+    i18n_label: "common.estimates",
+    href: `/estimates`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/estimates/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/estimates/`,
     Icon: SettingIcon,
   },
   automations: {
     key: "automations",
-    label: "Automations",
-    href: `/settings/automations`,
+    i18n_label: "project_settings.automations.label",
+    href: `/automations`,
     access: [EUserPermissions.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/automations/`,
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/automations/`,
     Icon: SettingIcon,
   },
 };
 
 export const PROJECT_SETTINGS_LINKS: {
   key: string;
-  label: string;
+  i18n_label: string;
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;

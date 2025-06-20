@@ -3,8 +3,11 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import {
   DateDropdown,
@@ -14,17 +17,14 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect, IssueParentSelect } from "@/components/issues";
+import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
-import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
-import { IssueWorklogProperty } from "@/plane-web/components/issues";
+import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
+import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import type { TIssueOperations } from "./root";
 
 type Props = {
@@ -36,6 +36,7 @@ type Props = {
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -64,13 +65,13 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     <>
       <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
-          <h5 className="mt-6 text-sm font-medium">Properties</h5>
+          <h5 className="mt-6 text-sm font-medium">{t("common.properties")}</h5>
           {/* TODO: render properties using a common component */}
           <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
-                <span>State</span>
+                <span>{t("common.state")}</span>
               </div>
               <StateDropdown
                 value={issue?.state_id}
@@ -89,14 +90,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Users className="h-4 w-4 flex-shrink-0" />
-                <span>Assignees</span>
+                <span>{t("common.assignees")}</span>
               </div>
               <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
-                placeholder="Add assignees"
+                placeholder={t("issue.add.assignee")}
                 multiple
                 buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
                 className="group w-3/5 flex-grow"
@@ -113,7 +114,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
-                <span>Priority</span>
+                <span>{t("common.priority")}</span>
               </div>
               <PriorityDropdown
                 value={issue?.priority}
@@ -130,7 +131,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <UserCircle2 className="h-4 w-4 flex-shrink-0" />
-                  <span>Created by</span>
+                  <span>{t("common.created_by")}</span>
                 </div>
                 <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
@@ -142,10 +143,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarClock className="h-4 w-4 flex-shrink-0" />
-                <span>Start date</span>
+                <span>{t("common.order_by.start_date")}</span>
               </div>
               <DateDropdown
-                placeholder="Add start date"
+                placeholder={t("issue.add.start_date")}
                 value={issue.start_date}
                 onChange={(val) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
@@ -168,10 +169,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
-                <span>Due date</span>
+                <span>{t("common.order_by.due_date")}</span>
               </div>
               <DateDropdown
-                placeholder="Add due date"
+                placeholder={t("issue.add.due_date")}
                 value={issue.target_date}
                 onChange={(val) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
@@ -198,7 +199,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <Triangle className="h-4 w-4 flex-shrink-0" />
-                  <span>Estimate</span>
+                  <span>{t("common.estimate")}</span>
                 </div>
                 <EstimateDropdown
                   value={issue?.estimate_point ?? undefined}
@@ -211,7 +212,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   className="group w-3/5 flex-grow"
                   buttonContainerClassName="w-full text-left"
                   buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
-                  placeholder="None"
+                  placeholder={t("common.none")}
                   hideIcon
                   dropdownArrow
                   dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -223,7 +224,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                   <DiceIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Modules</span>
+                  <span>{t("common.modules")}</span>
                 </div>
                 <IssueModuleSelect
                   className="w-3/5 flex-grow"
@@ -240,7 +241,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <ContrastIcon className="h-4 w-4 flex-shrink-0" />
-                  <span>Cycle</span>
+                  <span>{t("common.cycle")}</span>
                 </div>
                 <IssueCycleSelect
                   className="w-3/5 flex-grow"
@@ -256,9 +257,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
-                <span>Parent</span>
+                <span>{t("common.parent")}</span>
               </div>
-              <IssueParentSelect
+              <IssueParentSelectRoot
                 className="h-full w-3/5 flex-grow"
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
@@ -271,7 +272,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex min-h-8 gap-2">
               <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
-                <span>Labels</span>
+                <span>{t("common.labels")}</span>
               </div>
               <div className="h-full min-h-8 w-3/5 flex-grow">
                 <IssueLabel
@@ -290,15 +291,13 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               disabled={!isEditable}
             />
 
-            {issue.type_id && (
-              <IssueAdditionalPropertyValuesUpdate
-                issueId={issueId}
-                issueTypeId={issue.type_id}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-                isDisabled={!isEditable}
-              />
-            )}
+            <WorkItemAdditionalSidebarProperties
+              workItemId={issue.id}
+              workItemTypeId={issue.type_id}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              isEditable={isEditable}
+            />
           </div>
         </div>
       </div>

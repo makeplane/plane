@@ -7,15 +7,14 @@ import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
+// plane imports
+import { ETabIndices, LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@plane/constants";
 // types
 import type { IIssueLabel, IState } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "@/constants/label";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -116,7 +115,13 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSubmit(onSubmit)(e);
+                  }}
+                >
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Create Label

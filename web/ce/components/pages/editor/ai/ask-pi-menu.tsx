@@ -3,23 +3,28 @@ import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-rea
 // ui
 import { Tooltip } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { RichTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
+// hooks
+import { useWorkspace } from "@/hooks/store";
 
 type Props = {
   handleInsertText: (insertOnNextLine: boolean) => void;
   handleRegenerate: () => Promise<void>;
   isRegenerating: boolean;
-  projectId: string;
   response: string | undefined;
   workspaceSlug: string;
 };
 
 export const AskPiMenu: React.FC<Props> = (props) => {
-  const { handleInsertText, handleRegenerate, isRegenerating, projectId, response, workspaceSlug } = props;
+  const { handleInsertText, handleRegenerate, isRegenerating, response, workspaceSlug } = props;
   // states
   const [query, setQuery] = useState("");
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  // derived values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
 
   return (
     <>
@@ -41,8 +46,8 @@ export const AskPiMenu: React.FC<Props> = (props) => {
               initialValue={response}
               containerClassName="!p-0 border-none"
               editorClassName="!pl-0"
+              workspaceId={workspaceId}
               workspaceSlug={workspaceSlug}
-              projectId={projectId}
             />
             <div className="mt-3 flex items-center gap-4">
               <button

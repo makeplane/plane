@@ -1,27 +1,26 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { ExternalLink, LinkIcon } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 // ui
 import { TStaticViewTypes } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
-
 type Props = {
-  parentRef: React.RefObject<HTMLElement>;
   workspaceSlug: string;
-  globalViewId: string | undefined;
   view: {
     key: TStaticViewTypes;
-    label: string;
+    i18n_label: string;
   };
 };
 
 export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, globalViewId, view, workspaceSlug } = props;
+  const { workspaceSlug, view } = props;
+
+  const { t } = useTranslation();
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
   const handleCopyText = () =>
@@ -38,56 +37,24 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
     },
   ];
 
   return (
     <>
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-
       <CustomMenu
-        customButton={
-          <>
-            {view.key === globalViewId ? (
-              <span
-                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                  view.key === globalViewId
-                    ? "border-custom-primary-100 text-custom-primary-100"
-                    : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-                }`}
-              >
-                {view.label}
-              </span>
-            ) : (
-              <Link
-                key={view.key}
-                id={`global-view-${view.key}`}
-                href={`/${workspaceSlug}/workspace-views/${view.key}`}
-              >
-                <span
-                  className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 p-3 text-sm font-medium outline-none ${
-                    view.key === globalViewId
-                      ? "border-custom-primary-100 text-custom-primary-100"
-                      : "border-transparent hover:border-custom-border-200 hover:text-custom-text-400"
-                  }`}
-                >
-                  {view.label}
-                </span>
-              </Link>
-            )}
-          </>
-        }
+        ellipsis
         placement="bottom-end"
-        menuItemsClassName="z-20"
         closeOnSelect
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -110,7 +77,7 @@ export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props
             >
               {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
               <div>
-                <h5>{item.title}</h5>
+                <h5>{t(item.title || "")}</h5>
                 {item.description && (
                   <p
                     className={cn("text-custom-text-300 whitespace-pre-line", {

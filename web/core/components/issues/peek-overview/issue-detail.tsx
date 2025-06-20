@@ -1,22 +1,30 @@
 "use-client";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { EditorRefApi } from "@plane/editor";
+import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { getTextContent } from "@plane/utils";
+import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
-// store hooks
-import { useIssueDetail, useProject, useUser } from "@/hooks/store";
 // hooks
+import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // plane web components
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
 import { IssueTypeSwitcher } from "@/plane-web/components/issues";
-// local components
+// plane web hooks
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+// services
+import { WorkItemVersionService } from "@/services/issue";
+// local components
 import { IssueDescriptionInput } from "../description-input";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
+// services init
+const workItemVersionService = new WorkItemVersionService();
 
 interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
@@ -25,19 +33,22 @@ interface IPeekOverviewIssueDetails {
   issueOperations: TIssueOperations;
   disabled: boolean;
   isArchived: boolean;
-  isSubmitting: "submitting" | "submitted" | "saved";
-  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
+  isSubmitting: TNameDescriptionLoader;
+  setIsSubmitting: (value: TNameDescriptionLoader) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
   const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getProjectById } = useProject();
-  // hooks
+  const { getUserDetails } = useMember();
+  // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
 
   useEffect(() => {
@@ -55,11 +66,16 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
   const issue = issueId ? getIssueById(issueId) : undefined;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
   // debounced duplicate issues swr
-  const { duplicateIssues } = useDebouncedDuplicateIssues(projectDetails?.workspace.toString(), projectDetails?.id, {
-    name: issue?.name,
-    description_html: getTextContent(issue?.description_html),
-    issueId: issue?.id,
-  });
+  const { duplicateIssues } = useDebouncedDuplicateIssues(
+    workspaceSlug,
+    projectDetails?.workspace.toString(),
+    projectDetails?.id,
+    {
+      name: issue?.name,
+      description_html: getTextContent(issue?.description_html),
+      issueId: issue?.id,
+    }
+  );
 
   if (!issue || !issue.project_id) return <></>;
 
@@ -100,31 +116,63 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer(
         isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
-        disabled={disabled}
+        disabled={disabled || isArchived}
         value={issue.name}
         containerClassName="-ml-3"
       />
 
       <IssueDescriptionInput
+        editorRef={editorRef}
         workspaceSlug={workspaceSlug}
         projectId={issue.project_id}
         issueId={issue.id}
         initialValue={issueDescription}
-        disabled={disabled}
+        disabled={disabled || isArchived}
         issueOperations={issueOperations}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         containerClassName="-ml-3 border-none"
       />
 
-      {currentUser && (
-        <IssueReaction
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          currentUser={currentUser}
-          disabled={isArchived}
-        />
-      )}
+      <div className="flex items-center justify-between gap-2">
+        {currentUser && (
+          <IssueReaction
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issueId}
+            currentUser={currentUser}
+            disabled={isArchived}
+          />
+        )}
+        {!disabled && (
+          <DescriptionVersionsRoot
+            className="flex-shrink-0"
+            entityInformation={{
+              createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+              createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
+              id: issueId,
+              isRestoreDisabled: disabled || isArchived,
+            }}
+            fetchHandlers={{
+              listDescriptionVersions: (issueId) =>
+                workItemVersionService.listDescriptionVersions(
+                  workspaceSlug,
+                  issue.project_id?.toString() ?? "",
+                  issueId
+                ),
+              retrieveDescriptionVersion: (issueId, versionId) =>
+                workItemVersionService.retrieveDescriptionVersion(
+                  workspaceSlug,
+                  issue.project_id?.toString() ?? "",
+                  issueId,
+                  versionId
+                ),
+            }}
+            handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+            projectId={issue.project_id}
+            workspaceSlug={workspaceSlug}
+          />
+        )}
+      </div>
     </div>
   );
 });

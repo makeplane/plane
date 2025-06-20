@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models, transaction
+from django.db import models, transaction, connection
 from django.utils import timezone
 from django.db.models import Q
 from django import apps
@@ -16,6 +16,7 @@ from plane.utils.html_processor import strip_tags
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
+from plane.utils.uuid import convert_uuid_to_integer
 
 
 def get_default_properties():
@@ -208,11 +209,18 @@ class Issue(ProjectBaseModel):
 
         if self._state.adding:
             with transaction.atomic():
-                last_sequence = (
-                    IssueSequence.objects.filter(project=self.project)
-                    .select_for_update()
-                    .aggregate(largest=models.Max("sequence"))["largest"]
-                )
+                # Create a lock for this specific project using an advisory lock
+                # This ensures only one transaction per project can execute this code at a time
+                lock_key = convert_uuid_to_integer(self.project.id)
+
+                with connection.cursor() as cursor:
+                    # Get an exclusive lock using the project ID as the lock key
+                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+
+                # Get the last sequence for the project
+                last_sequence = IssueSequence.objects.filter(
+                    project=self.project
+                ).aggregate(largest=models.Max("sequence"))["largest"]
                 self.sequence_id = last_sequence + 1 if last_sequence else 1
                 # Strip the html tags using html parser
                 self.description_stripped = (
@@ -466,6 +474,7 @@ class IssueComment(ProjectBaseModel):
     )
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    edited_at = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.comment_stripped = (
@@ -660,9 +669,6 @@ class IssueVote(ProjectBaseModel):
 
 
 class IssueVersion(ProjectBaseModel):
-    issue = models.ForeignKey(
-        "db.Issue", on_delete=models.CASCADE, related_name="versions"
-    )
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -670,14 +676,11 @@ class IssueVersion(ProjectBaseModel):
         ("low", "Low"),
         ("none", "None"),
     )
+
     parent = models.UUIDField(blank=True, null=True)
     state = models.UUIDField(blank=True, null=True)
     estimate_point = models.UUIDField(blank=True, null=True)
     name = models.CharField(max_length=255, verbose_name="Issue Name")
-    description = models.JSONField(blank=True, default=dict)
-    description_html = models.TextField(blank=True, default="<p></p>")
-    description_stripped = models.TextField(blank=True, null=True)
-    description_binary = models.BinaryField(null=True)
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -686,7 +689,9 @@ class IssueVersion(ProjectBaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
+    assignees = ArrayField(models.UUIDField(), blank=True, default=list)
     sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
+    labels = ArrayField(models.UUIDField(), blank=True, default=list)
     sort_order = models.FloatField(default=65535)
     completed_at = models.DateTimeField(null=True)
     archived_at = models.DateField(null=True)
@@ -694,14 +699,26 @@ class IssueVersion(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     type = models.UUIDField(blank=True, null=True)
-    last_saved_at = models.DateTimeField(default=timezone.now)
-    owned_by = models.UUIDField()
-    assignees = ArrayField(models.UUIDField(), blank=True, default=list)
-    labels = ArrayField(models.UUIDField(), blank=True, default=list)
     cycle = models.UUIDField(null=True, blank=True)
     modules = ArrayField(models.UUIDField(), blank=True, default=list)
-    properties = models.JSONField(default=dict)
-    meta = models.JSONField(default=dict)
+    properties = models.JSONField(default=dict)  # issue properties
+    meta = models.JSONField(default=dict)  # issue meta
+    last_saved_at = models.DateTimeField(default=timezone.now)
+
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="versions"
+    )
+    activity = models.ForeignKey(
+        "db.IssueActivity",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="versions",
+    )
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_versions",
+    )
 
     class Meta:
         verbose_name = "Issue Version"
@@ -721,37 +738,91 @@ class IssueVersion(ProjectBaseModel):
 
             Module = apps.get_model("db.Module")
             CycleIssue = apps.get_model("db.CycleIssue")
+            IssueAssignee = apps.get_model("db.IssueAssignee")
+            IssueLabel = apps.get_model("db.IssueLabel")
 
             cycle_issue = CycleIssue.objects.filter(issue=issue).first()
 
             cls.objects.create(
                 issue=issue,
-                parent=issue.parent,
-                state=issue.state,
-                point=issue.point,
-                estimate_point=issue.estimate_point,
+                parent=issue.parent_id,
+                state=issue.state_id,
+                estimate_point=issue.estimate_point_id,
                 name=issue.name,
-                description=issue.description,
-                description_html=issue.description_html,
-                description_stripped=issue.description_stripped,
-                description_binary=issue.description_binary,
                 priority=issue.priority,
                 start_date=issue.start_date,
                 target_date=issue.target_date,
+                assignees=list(
+                    IssueAssignee.objects.filter(issue=issue).values_list(
+                        "assignee_id", flat=True
+                    )
+                ),
                 sequence_id=issue.sequence_id,
+                labels=list(
+                    IssueLabel.objects.filter(issue=issue).values_list(
+                        "label_id", flat=True
+                    )
+                ),
                 sort_order=issue.sort_order,
                 completed_at=issue.completed_at,
                 archived_at=issue.archived_at,
                 is_draft=issue.is_draft,
                 external_source=issue.external_source,
                 external_id=issue.external_id,
-                type=issue.type,
-                last_saved_at=issue.last_saved_at,
-                assignees=issue.assignees,
-                labels=issue.labels,
-                cycle=cycle_issue.cycle if cycle_issue else None,
-                modules=Module.objects.filter(issue=issue).values_list("id", flat=True),
+                type=issue.type_id,
+                cycle=cycle_issue.cycle_id if cycle_issue else None,
+                modules=list(
+                    Module.objects.filter(issue=issue).values_list("id", flat=True)
+                ),
+                properties={},
+                meta={},
+                last_saved_at=timezone.now(),
                 owned_by=user,
+            )
+            return True
+        except Exception as e:
+            log_exception(e)
+            return False
+
+
+class IssueDescriptionVersion(ProjectBaseModel):
+    issue = models.ForeignKey(
+        "db.Issue", on_delete=models.CASCADE, related_name="description_versions"
+    )
+    description_binary = models.BinaryField(null=True)
+    description_html = models.TextField(blank=True, default="<p></p>")
+    description_stripped = models.TextField(blank=True, null=True)
+    description_json = models.JSONField(default=dict, blank=True)
+    last_saved_at = models.DateTimeField(default=timezone.now)
+    owned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_description_versions",
+    )
+
+    class Meta:
+        verbose_name = "Issue Description Version"
+        verbose_name_plural = "Issue Description Versions"
+        db_table = "issue_description_versions"
+
+    @classmethod
+    def log_issue_description_version(cls, issue, user):
+        try:
+            """
+            Log the issue description version
+            """
+            cls.objects.create(
+                workspace_id=issue.workspace_id,
+                project_id=issue.project_id,
+                created_by_id=issue.created_by_id,
+                updated_by_id=issue.updated_by_id,
+                owned_by_id=user,
+                last_saved_at=timezone.now(),
+                issue_id=issue.id,
+                description_binary=issue.description_binary,
+                description_html=issue.description_html,
+                description_stripped=issue.description_stripped,
+                description_json=issue.description,
             )
             return True
         except Exception as e:

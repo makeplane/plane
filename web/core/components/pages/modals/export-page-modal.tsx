@@ -4,19 +4,16 @@ import { useState } from "react";
 import { PageProps, pdf } from "@react-pdf/renderer";
 import { Controller, useForm } from "react-hook-form";
 // plane editor
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // plane ui
 import { Button, CustomSelect, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { PDFDocument } from "@/components/editor";
-// helpers
-import {
-  replaceCustomComponentsFromHTMLContent,
-  replaceCustomComponentsFromMarkdownContent,
-} from "@/helpers/editor.helper";
+// hooks
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 
 type Props = {
-  editorRef: EditorRefApi | EditorReadOnlyRefApi | null;
+  editorRef: EditorRefApi | null;
   isOpen: boolean;
   onClose: () => void;
   pageTitle: string;
@@ -104,6 +101,9 @@ export const ExportPageModal: React.FC<Props> = (props) => {
   const { control, reset, watch } = useForm<TFormValues>({
     defaultValues,
   });
+  // parse editor content
+  const { replaceCustomComponentsFromHTMLContent, replaceCustomComponentsFromMarkdownContent } =
+    useParseEditorContent();
   // derived values
   const selectedExportFormat = watch("export_format");
   const selectedPageFormat = watch("page_format");
@@ -179,6 +179,7 @@ export const ExportPageModal: React.FC<Props> = (props) => {
       });
       handleClose();
     } catch (error) {
+      console.error("Error in exporting page:", error);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

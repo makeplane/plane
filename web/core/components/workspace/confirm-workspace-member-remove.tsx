@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // hooks
 import { useUser } from "@/hooks/store";
@@ -25,6 +26,7 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
   const [isRemoving, setIsRemoving] = useState(false);
   // store hooks
   const { data: currentUser } = useUser();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -80,11 +82,11 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
                           <p className="text-sm text-custom-text-200">
-                            Are you sure you want to leave the workspace? You will no longer have access to this
-                            workspace. This action cannot be undone.
+                            {t("workspace_settings.settings.members.leave_confirmation")}
                           </p>
                         ) : (
                           <p className="text-sm text-custom-text-200">
+                            {/* TODO: Add translation here */}
                             Are you sure you want to remove member-{" "}
                             <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have
                             access to this workspace. This action cannot be undone.
@@ -96,16 +98,16 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isRemoving}>
                     {currentUser?.id === userDetails.id
                       ? isRemoving
-                        ? "Leaving"
-                        : "Leave"
+                        ? t("leaving")
+                        : t("leave")
                       : isRemoving
-                        ? "Removing"
-                        : "Remove"}
+                        ? t("removing")
+                        : t("remove")}
                   </Button>
                 </div>
               </Dialog.Panel>

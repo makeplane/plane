@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { X } from "lucide-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject } from "@plane/types";
 // plane ui
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
+import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
 // components
 import { ImagePickerPopover } from "@/components/core";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+// plane web imports
+import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
 type Props = {
   handleClose: () => void;
@@ -21,6 +22,7 @@ type Props = {
 const ProjectCreateHeader: React.FC<Props> = (props) => {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
+  const { t } = useTranslation();
   // derived values
   const coverImage = watch("cover_image_url");
 
@@ -33,10 +35,12 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
         <img
           src={getFileURL(coverImage)}
           className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
-          alt="Project cover image"
+          alt={t("project_cover_image_alt")}
         />
       )}
-
+      <div className="absolute left-2.5 top-2.5">
+        <ProjectTemplateSelect handleModalClose={handleClose} />
+      </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
           <X className="h-5 w-5 text-white" />
@@ -48,10 +52,10 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover
-              label="Change Cover"
+              label={t("change_cover")}
               onChange={onChange}
               control={control}
-              value={value}
+              value={value ?? null}
               tabIndex={getIndex("cover_image")}
             />
           )}

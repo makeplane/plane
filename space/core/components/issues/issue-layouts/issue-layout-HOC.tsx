@@ -26,7 +26,7 @@ export const IssueLayoutHOC = observer((props: Props) => {
   }
 
   if (getGroupIssueCount(undefined, undefined, false) === 0) {
-    return <div className="flex w-full h-full items-center justify-center">No Issues Found</div>;
+    return <div className="flex w-full h-full items-center justify-center">No work items Found</div>;
   }
 
   return <>{props.children}</>;

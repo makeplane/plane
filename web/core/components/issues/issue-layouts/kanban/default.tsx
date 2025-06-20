@@ -1,5 +1,7 @@
 import { MutableRefObject } from "react";
 import { observer } from "mobx-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -18,10 +20,11 @@ import { ContentWrapper } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { KanbanColumnLoader } from "@/components/ui";
 // hooks
-import { useCycle, useKanbanView, useLabel, useMember, useModule, useProject, useProjectState } from "@/hooks/store";
+import { useKanbanView } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
+import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 import { TRenderQuickActions } from "../list/list-view-types";
 import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateCardHeight } from "../utils";
 // components
@@ -58,6 +61,7 @@ export interface IKanBan {
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
   subGroupIndex?: number;
+  isEpic?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -86,31 +90,24 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     isDropDisabled,
     dropErrorMessage,
     subGroupIndex = 0,
+    isEpic = false,
   } = props;
-
+  // i18n
+  const { t } = useTranslation();
+  // store hooks
   const storeType = useIssueStoreType();
-
-  const member = useMember();
-  const project = useProject();
-  const label = useLabel();
-  const cycle = useCycle();
-  const moduleInfo = useModule();
-  const projectState = useProjectState();
   const issueKanBanView = useKanbanView();
-
+  // derived values
   const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
 
-  const list = getGroupByColumns(
-    group_by as GroupByColumnTypes,
-    project,
-    cycle,
-    moduleInfo,
-    label,
-    projectState,
-    member,
-    true,
-    isWorkspaceLevel(storeType)
-  );
+  const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
+
+  const list = getGroupByColumns({
+    groupBy: group_by as GroupByColumnTypes,
+    includeNone: true,
+    isWorkspaceLevel: isWorkspaceLevel(storeType),
+    isEpic: isEpic,
+  });
 
   if (!list) return null;
 
@@ -143,7 +140,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const isSubGroup = !!sub_group_id && sub_group_id !== "null";
 
   return (
-    <ContentWrapper className={`flex-row relative gap-4 py-4`}>
+    <ContentWrapper className={`flex-row relative gap-4 !pt-2 !pb-0`}>
       {list &&
         list.length > 0 &&
         list.map((subList: IGroupByColumn, groupIndex) => {
@@ -165,7 +162,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
               } `}
             >
               {sub_group_by === null && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1 mb-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
                   <HeaderGroupByCard
                     sub_group_by={sub_group_by}
                     group_by={group_by}
@@ -174,10 +171,15 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     title={subList.name}
                     count={getGroupIssueCount(subList.id, undefined, false) ?? 0}
                     issuePayload={subList.payload}
-                    disableIssueCreation={disableIssueCreation || isGroupByCreatedBy}
+                    disableIssueCreation={
+                      disableIssueCreation ||
+                      isGroupByCreatedBy ||
+                      getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
+                    }
                     addIssuesToView={addIssuesToView}
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
+                    isEpic={isEpic}
                   />
                 </div>
               )}
@@ -221,6 +223,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
                     scrollableContainerRef={scrollableContainerRef}
                     loadMoreIssues={loadMoreIssues}
                     handleOnDrop={handleOnDrop}
+                    isEpic={isEpic}
                   />
                 </RenderIfVisible>
               )}

@@ -5,6 +5,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .issue import IssueStateSerializer
 from plane.db.models import Cycle, CycleIssue, CycleUserProperties
+from plane.utils.timezone_converter import convert_to_utc
 
 
 class CycleWriteSerializer(BaseSerializer):
@@ -15,6 +16,24 @@ class CycleWriteSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("end_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed end date")
+        if (
+            data.get("start_date", None) is not None
+            and data.get("end_date", None) is not None
+        ):
+            project_id = (
+                self.initial_data.get("project_id", None)
+                or (self.instance and self.instance.project_id)
+                or self.context.get("project_id", None)
+            )
+            data["start_date"] = convert_to_utc(
+                date=str(data.get("start_date").date()),
+                project_id=project_id,
+                is_start_date=True,
+            )
+            data["end_date"] = convert_to_utc(
+                date=str(data.get("end_date", None).date()),
+                project_id=project_id,
+            )
         return data
 
     class Meta:

@@ -161,8 +161,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     if (otherProps.state_group) {
       sql += `LEFT JOIN states ON i.state_id = states.id `;
     }
-    sql += `WHERE i.project_id = '${projectId}'
-    `;
+    sql += `WHERE 1=1 `;
+    if (projectId) {
+      sql += ` AND i.project_id = '${projectId}'
+      `;
+    }
     sql += `${singleFilterConstructor(otherProps)}) 
     `;
     return sql;
@@ -212,8 +215,11 @@ export const getFilteredRowsForGrouping = (projectId: string, queries: any) => {
     `;
   }
 
-  sql += ` WHERE i.project_id = '${projectId}'
-  `;
+  sql += ` WHERE 1=1  `;
+  if (projectId) {
+    sql += ` AND i.project_id = '${projectId}'
+    `;
+  }
   sql += singleFilterConstructor(otherProps);
 
   sql += `)

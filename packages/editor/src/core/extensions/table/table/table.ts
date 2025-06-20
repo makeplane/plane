@@ -19,11 +19,14 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
-
-import { tableControls } from "@/extensions/table/table/table-controls";
-import { TableView } from "@/extensions/table/table/table-view";
-import { createTable } from "@/extensions/table/table/utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "@/extensions/table/table/utilities/delete-table-when-all-cells-selected";
+import { Decoration } from "@tiptap/pm/view";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { tableControls } from "./table-controls";
+import { TableView } from "./table-view";
+import { createTable } from "./utilities/create-table";
+import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 
@@ -38,8 +41,13 @@ export interface TableOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    table: {
-      insertTable: (options?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => ReturnType;
+    [CORE_EXTENSIONS.TABLE]: {
+      insertTable: (options?: {
+        rows?: number;
+        cols?: number;
+        withHeaderRow?: boolean;
+        columnWidth?: number;
+      }) => ReturnType;
       addColumnBefore: () => ReturnType;
       addColumnAfter: () => ReturnType;
       deleteColumn: () => ReturnType;
@@ -74,7 +82,7 @@ declare module "@tiptap/core" {
 }
 
 export const Table = Node.create({
-  name: "table",
+  name: CORE_EXTENSIONS.TABLE,
 
   addOptions() {
     return {
@@ -108,9 +116,9 @@ export const Table = Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false, columnWidth = 150 } = {}) =>
         ({ tr, dispatch, editor }) => {
-          const node = createTable(editor.schema, rows, cols, withHeaderRow);
+          const node = createTable(editor.schema, rows, cols, withHeaderRow, undefined, columnWidth);
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 
@@ -214,8 +222,8 @@ export const Table = Node.create({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.isActive("table")) {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
+        if (this.editor.isActive(CORE_EXTENSIONS.TABLE)) {
+          if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
             return false;
           }
           if (this.editor.commands.goToNextCell()) {
@@ -244,7 +252,7 @@ export const Table = Node.create({
     return ({ editor, getPos, node, decorations }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations as any, editor, getPos as () => number);
+      return new TableView(node, cellMinWidth, decorations as Decoration[], editor, getPos as () => number);
     };
   },
 

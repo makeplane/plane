@@ -1,8 +1,8 @@
-import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
+import { useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
@@ -11,46 +11,29 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type {
-  EditorReadOnlyRefApi,
-  IMentionHighlight,
-  TExtensions,
-  TDocumentEventsServer,
-  TFileHandler,
-} from "@/types";
+import type { TReadOnlyEditorHookProps } from "@/types";
 
-interface CustomReadOnlyEditorProps {
-  disabledExtensions: TExtensions[];
-  editorClassName: string;
-  editorProps?: EditorProps;
-  extensions?: any;
-  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  initialValue?: string;
-  fileHandler: Pick<TFileHandler, "getAssetSrc">;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: {
-    highlights: () => Promise<IMentionHighlight[]>;
-  };
-  provider?: HocuspocusProvider;
-}
-
-export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = (props: TReadOnlyEditorHookProps) => {
   const {
     disabledExtensions,
-    initialValue,
-    editorClassName,
-    forwardedRef,
-    extensions = [],
+    editorClassName = "",
     editorProps = {},
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
+    forwardedRef,
     handleEditorReady,
+    initialValue,
     mentionHandler,
     provider,
   } = props;
 
-  const editor = useCustomEditor({
+  const editor = useTiptapEditor({
     editable: false,
+    immediatelyRender: true,
+    shouldRerenderOnTransaction: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+    parseOptions: { preserveWhitespace: true },
     editorProps: {
       ...CoreReadOnlyEditorProps({
         editorClassName,
@@ -63,10 +46,9 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     extensions: [
       ...CoreReadOnlyEditorExtensions({
         disabledExtensions,
-        mentionConfig: {
-          mentionHighlights: mentionHandler.highlights,
-        },
         fileHandler,
+        flaggedExtensions,
+        mentionHandler,
       }),
       ...extensions,
     ],
@@ -78,26 +60,24 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (initialValue === null || initialValue === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: "full" });
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: true });
   }, [editor, initialValue]);
-
-  const editorRef: MutableRefObject<Editor | null> = useRef(null);
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: (emitUpdate = false) => {
-      editorRef.current?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
+      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
-    setEditorValue: (content: string) => {
-      editorRef.current?.commands.setContent(content, false, { preserveWhitespace: "full" });
+    setEditorValue: (content: string, emitUpdate = false) => {
+      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
     getMarkDown: (): string => {
-      const markdownOutput = editorRef.current?.storage.markdown.getMarkdown();
+      const markdownOutput = editor?.storage.markdown.getMarkdown();
       return markdownOutput;
     },
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
-      const documentHTML = editorRef.current?.getHTML() ?? "<p></p>";
-      const documentJSON = editorRef.current?.getJSON() ?? null;
+      const documentHTML = editor?.getHTML() ?? "<p></p>";
+      const documentJSON = editor?.getJSON() ?? null;
 
       return {
         binary: documentBinary,
@@ -106,35 +86,19 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
       };
     },
     scrollSummary: (marking: IMarking): void => {
-      if (!editorRef.current) return;
-      scrollSummary(editorRef.current, marking);
+      if (!editor) return;
+      scrollSummary(editor, marking);
     },
     getDocumentInfo: () => ({
-      characters: editorRef?.current?.storage?.characterCount?.characters?.() ?? 0,
-      paragraphs: getParagraphCount(editorRef?.current?.state),
-      words: editorRef?.current?.storage?.characterCount?.words?.() ?? 0,
+      characters: editor.storage?.characterCount?.characters?.() ?? 0,
+      paragraphs: getParagraphCount(editor.state),
+      words: editor.storage?.characterCount?.words?.() ?? 0,
     }),
-    onHeadingChange: (callback: (headings: IMarking[]) => void) => {
-      // Subscribe to update event emitted from headers extension
-      editorRef.current?.on("update", () => {
-        callback(editorRef.current?.storage.headingList.headings);
-      });
-      // Return a function to unsubscribe to the continuous transactions of
-      // the editor on unmounting the component that has subscribed to this
-      // method
-      return () => {
-        editorRef.current?.off("update");
-      };
-    },
-    emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
-    listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
-    getHeadings: () => editorRef?.current?.storage.headingList.headings,
   }));
 
   if (!editor) {
     return null;
   }
 
-  editorRef.current = editor;
   return editor;
 };

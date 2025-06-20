@@ -7,10 +7,10 @@ import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // Plane
 import { ISearchIssueResponse } from "@plane/types";
 import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -50,7 +50,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }
@@ -115,7 +115,13 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link
-                        href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues/${currentIssue.id}`}
+                        href={generateWorkItemLink({
+                          workspaceSlug,
+                          projectId: projectDetails?.id,
+                          issueId: currentIssue.id,
+                          projectIdentifier: projectDetails?.identifier,
+                          sequenceId: currentIssue?.sequence_id,
+                        })}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs font-medium"

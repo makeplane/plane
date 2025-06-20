@@ -12,6 +12,7 @@
       "@/styles/*": ["src/styles/*"],
       "@/plane-editor/*": ["src/ce/*"]
     },
+    "strictNullChecks": true,
     "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*", "index.d.ts"],

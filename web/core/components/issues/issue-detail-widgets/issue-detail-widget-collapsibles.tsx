@@ -1,6 +1,8 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import {
   AttachmentsCollapsible,
@@ -11,6 +13,7 @@ import {
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // Plane-web
+import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 
 type Props = {
@@ -18,31 +21,33 @@ type Props = {
   projectId: string;
   issueId: string;
   disabled: boolean;
+  issueServiceType: TIssueServiceType;
+  hideWidgets?: TWorkItemWidgets[];
 };
 
 export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, disabled } = props;
+  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // store hooks
   const {
     issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
-    attachment: { getAttachmentsUploadStatusByIssueId },
+    attachment: { getAttachmentsCountByIssueId, getAttachmentsUploadStatusByIssueId },
     relation: { getRelationCountByIssueId },
-  } = useIssueDetail();
-
+  } = useIssueDetail(issueServiceType);
   // derived values
   const issue = getIssueById(issueId);
   const subIssues = subIssuesByIssueId(issueId);
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
-
   // render conditions
-  const shouldRenderSubIssues = !!subIssues && subIssues.length > 0;
-  const shouldRenderRelations = issueRelationsCount > 0;
-  const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0;
+  const shouldRenderSubIssues = !!subIssues && subIssues.length > 0 && !hideWidgets?.includes("sub-work-items");
+  const shouldRenderRelations = issueRelationsCount > 0 && !hideWidgets?.includes("relations");
+  const shouldRenderLinks = !!issue?.link_count && issue?.link_count > 0 && !hideWidgets?.includes("links");
   const attachmentUploads = getAttachmentsUploadStatusByIssueId(issueId);
+  const attachmentsCount = getAttachmentsCountByIssueId(issueId);
   const shouldRenderAttachments =
-    (!!issue?.attachment_count && issue?.attachment_count > 0) || (!!attachmentUploads && attachmentUploads.length > 0);
+    attachmentsCount > 0 ||
+    (!!attachmentUploads && attachmentUploads.length > 0 && !hideWidgets?.includes("attachments"));
 
   return (
     <div className="flex flex-col">
@@ -52,18 +57,25 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          issueServiceType={issueServiceType}
         />
       )}
       {shouldRenderRelations && (
         <RelationsCollapsible
           workspaceSlug={workspaceSlug}
-          projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          issueServiceType={issueServiceType}
         />
       )}
       {shouldRenderLinks && (
-        <LinksCollapsible workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
+        <LinksCollapsible
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
       )}
       {shouldRenderAttachments && (
         <AttachmentsCollapsible
@@ -71,8 +83,17 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
           projectId={projectId}
           issueId={issueId}
           disabled={disabled}
+          issueServiceType={issueServiceType}
         />
       )}
+      <WorkItemAdditionalWidgetCollapsibles
+        disabled={disabled}
+        hideWidgets={hideWidgets ?? []}
+        issueServiceType={issueServiceType}
+        projectId={projectId}
+        workItemId={issueId}
+        workspaceSlug={workspaceSlug}
+      />
     </div>
   );
 });

@@ -1,11 +1,12 @@
 import { useFormContext } from "react-hook-form";
+// plane imports
+import { ETabIndices } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 
 type Props = {
   handleClose: () => void;
@@ -13,6 +14,7 @@ type Props = {
 };
 
 const ProjectCreateButtons: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { handleClose, isMobile = false } = props;
   const {
     formState: { isSubmitting },
@@ -23,10 +25,10 @@ const ProjectCreateButtons: React.FC<Props> = (props) => {
   return (
     <div className="flex justify-end gap-2 py-4 border-t border-custom-border-100">
       <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
-        Cancel
+        {t("common.cancel")}
       </Button>
       <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={getIndex("submit")}>
-        {isSubmitting ? "Creating" : "Create project"}
+        {isSubmitting ? t("creating") : t("create_project")}
       </Button>
     </div>
   );

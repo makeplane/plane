@@ -8,26 +8,41 @@ import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // icons
 import { RefreshCw } from "lucide-react";
+// plane imports
+import { IMPORTERS_LIST } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IImporterService } from "@plane/types";
 // ui
 import { Button } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
-import { IMPORTERS_LIST } from "@/constants/workspace";
 // hooks
 import { useUser } from "@/hooks/store";
+// assets
+import GithubLogo from "@/public/services/github.png";
+import JiraLogo from "@/public/services/jira.svg";
 // services
 import { IntegrationService } from "@/services/integrations";
 
 // services
 const integrationService = new IntegrationService();
 
+const getImporterLogo = (provider: string) => {
+  switch (provider) {
+    case "github":
+      return GithubLogo;
+    case "jira":
+      return JiraLogo;
+    default:
+      return "";
+  }
+};
+
+// FIXME: [Deprecated] Remove this component
 const IntegrationGuide = observer(() => {
   // states
   const [refreshing, setRefreshing] = useState(false);
@@ -39,6 +54,8 @@ const IntegrationGuide = observer(() => {
   const provider = searchParams.get("provider");
   // store hooks
   const { data: currentUser } = useUser();
+
+  const { t } = useTranslation();
 
   const { data: importerServices } = useSWR(
     workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
@@ -65,8 +82,8 @@ const IntegrationGuide = observer(() => {
               <div className="h-full w-full space-y-1">
                 <div className="text-lg font-medium">Relocation Guide</div>
                 <div className="text-sm">
-                  You can now transfer all the issues that you{"'"}ve created in other tracking
-                  services. This tool will guide you to relocate the issue to Plane.
+                  You can now transfer all the work items that you{"'"}ve created in other tracking
+                  services. This tool will guide you to relocate the work item to Plane.
                 </div>
               </div>
               <a
@@ -87,11 +104,16 @@ const IntegrationGuide = observer(() => {
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image src={service.logo} layout="fill" objectFit="cover" alt={`${service.title} Logo`} />
+                    <Image
+                      src={getImporterLogo(service?.provider)}
+                      layout="fill"
+                      objectFit="cover"
+                      alt={`${t(service.i18n_title)} Logo`}
+                    />
                   </div>
                   <div>
-                    <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
+                    <h3 className="flex items-center gap-4 text-sm font-medium">{t(service.i18n_title)}</h3>
+                    <p className="text-sm tracking-tight text-custom-text-200">{t(service.i18n_description)}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
@@ -137,7 +159,7 @@ const IntegrationGuide = observer(() => {
                     </div>
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" />
+                      {/* <EmptyState type={EmptyStateType.WORKSPACE_SETTINGS_IMPORT} size="sm" /> */}
                     </div>
                   )
                 ) : (

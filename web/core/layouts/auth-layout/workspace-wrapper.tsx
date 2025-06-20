@@ -8,54 +8,58 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
-
+// ui
 import { LogOut } from "lucide-react";
-// hooks
-import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+// components
+import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";
-import { useMember, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+// hooks
+import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
-export interface IWorkspaceAuthWrapper {
+interface IWorkspaceAuthWrapper {
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
-  const { children } = props;
+  const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
   // next themes
   const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
+  const { fetchPartialProjects } = useProject();
   const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
-  const { workspaces } = useWorkspace();
+  const { workspaces, fetchSidebarNavigationPreferences } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
     useUserPermissions();
+  const { fetchWorkspaceStates } = useProjectState();
   // derived values
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
+  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
 
   // fetching user workspace information
   useSWR(
@@ -71,8 +75,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug && currentWorkspace ? () => fetchProjects(workspaceSlug.toString()) : null,
+    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
@@ -89,6 +93,19 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
       : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetch workspace states
+  useSWR(
+    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // fetch workspace sidebar preferences
+  useSWR(
+    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -116,11 +133,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   };
 
-  // derived values
-  const currentWorkspaceInfo = workspaceSlug && workspaceInfoBySlug(workspaceSlug.toString());
-
   // if list of workspaces are not there then we have to render the spinner
-  if (allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -137,7 +151,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <Image src={planeLogo} className="h-[26px] w-full" alt="Plane logo" />
+              <Image src={planeLogo} height={26} className="h-[26px]" alt="Plane logo" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>
@@ -160,14 +174,24 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
-              {allWorkspaces && allWorkspaces.length > 1 && (
-                <Link href="/">
-                  <Button>Go Home</Button>
+              {allWorkspaces && allWorkspaces.length > 0 && (
+                <Link href="/" className={cn(getButtonStyling("primary", "md"))}>
+                  Go Home
                 </Link>
               )}
-              <Link href="/profile">
-                <Button variant="neutral-primary">Visit Profile</Button>
-              </Link>
+              {allWorkspaces?.length > 0 && (
+                <Link
+                  href={`/${allWorkspaces[0].slug}/settings/account`}
+                  className={cn(getButtonStyling("neutral-primary", "md"))}
+                >
+                  Visit Profile
+                </Link>
+              )}
+              {allWorkspaces && allWorkspaces.length === 0 && (
+                <Link href={`/`} className={cn(getButtonStyling("neutral-primary", "md"))}>
+                  Create new workspace
+                </Link>
+              )}
             </div>
           </div>
 

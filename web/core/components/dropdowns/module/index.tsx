@@ -3,10 +3,12 @@
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, X } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, DiceIcon, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useModule } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -185,6 +187,8 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -235,6 +239,7 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -252,11 +257,12 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Module"
+            tooltipHeading={t("common.module")}
             tooltipContent={
               Array.isArray(value)
                 ? `${value
@@ -292,7 +298,6 @@ export const ModuleDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       onKeyDown={handleKeyDown}
       button={comboButton}

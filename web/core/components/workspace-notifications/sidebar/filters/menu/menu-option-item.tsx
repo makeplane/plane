@@ -3,10 +3,10 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
-// constants
-import { ENotificationFilterType } from "@/constants/notification";
+// plane imports
+import { ENotificationFilterType } from "@plane/constants";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store";
 

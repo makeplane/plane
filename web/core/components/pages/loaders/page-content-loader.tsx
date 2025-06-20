@@ -1,19 +1,20 @@
 "use client";
 
-// ui
+// plane imports
 import { Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 
-export const PageContentLoader = () => (
-  <div className="relative w-full h-full flex flex-col">
-    {/* header */}
-    <div className="px-16 flex-shrink-0 relative flex items-center justify-between h-12 border-b border-custom-border-100">
-      {/* left options */}
-      <Loader className="flex-shrink-0 w-[280px]">
-        <Loader.Item width="26px" height="26px" />
-      </Loader>
+type Props = {
+  className?: string;
+};
 
-      {/* editor options */}
-      <div className="w-full relative flex items-center divide-x divide-custom-border-100">
+export const PageContentLoader = (props: Props) => {
+  const { className } = props;
+
+  return (
+    <div className={cn("relative size-full flex flex-col", className)}>
+      {/* header */}
+      <div className="flex-shrink-0 w-full h-12 border-b border-custom-border-100 relative flex items-center divide-x divide-custom-border-100">
         <Loader className="relative flex items-center gap-1 pr-2">
           <Loader.Item width="26px" height="26px" />
           <Loader.Item width="26px" height="26px" />
@@ -37,56 +38,48 @@ export const PageContentLoader = () => (
         </Loader>
       </div>
 
-      {/* right options */}
-      <Loader className="w-full relative flex justify-end items-center gap-1">
-        <Loader.Item width="60px" height="26px" />
-        <Loader.Item width="40px" height="26px" />
-        <Loader.Item width="26px" height="26px" />
-        <Loader.Item width="26px" height="26px" />
-      </Loader>
-    </div>
-
-    {/* content */}
-    <div className="px-16 w-full h-full overflow-hidden relative flex">
-      {/* editor loader */}
-      <div className="w-full h-full py-5">
-        <Loader className="relative space-y-4">
-          <Loader.Item width="50%" height="36px" />
-          <div className="space-y-2">
-            <div className="py-2">
-              <Loader.Item width="100%" height="36px" />
-            </div>
-            <Loader.Item width="80%" height="22px" />
-            <div className="relative flex items-center gap-2">
-              <Loader.Item width="30px" height="30px" />
-              <Loader.Item width="30%" height="22px" />
-            </div>
-            <div className="py-2">
-              <Loader.Item width="60%" height="36px" />
-            </div>
-            <Loader.Item width="70%" height="22px" />
-            <Loader.Item width="30%" height="22px" />
-            <div className="relative flex items-center gap-2">
-              <Loader.Item width="30px" height="30px" />
-              <Loader.Item width="30%" height="22px" />
-            </div>
-            <div className="py-2">
-              <Loader.Item width="50%" height="30px" />
-            </div>
-            <Loader.Item width="100%" height="22px" />
-            <div className="py-2">
-              <Loader.Item width="30%" height="30px" />
-            </div>
-            <Loader.Item width="30%" height="22px" />
-            <div className="relative flex items-center gap-2">
+      {/* content */}
+      <div className="size-full pt-[64px] overflow-hidden relative flex">
+        {/* editor loader */}
+        <div className="size-full py-5">
+          <Loader className="relative space-y-4">
+            <Loader.Item width="50%" height="36px" />
+            <div className="space-y-2">
               <div className="py-2">
+                <Loader.Item width="100%" height="36px" />
+              </div>
+              <Loader.Item width="80%" height="22px" />
+              <div className="relative flex items-center gap-2">
                 <Loader.Item width="30px" height="30px" />
+                <Loader.Item width="30%" height="22px" />
+              </div>
+              <div className="py-2">
+                <Loader.Item width="60%" height="36px" />
+              </div>
+              <Loader.Item width="70%" height="22px" />
+              <Loader.Item width="30%" height="22px" />
+              <div className="relative flex items-center gap-2">
+                <Loader.Item width="30px" height="30px" />
+                <Loader.Item width="30%" height="22px" />
+              </div>
+              <div className="py-2">
+                <Loader.Item width="50%" height="30px" />
+              </div>
+              <Loader.Item width="100%" height="22px" />
+              <div className="py-2">
+                <Loader.Item width="30%" height="30px" />
               </div>
               <Loader.Item width="30%" height="22px" />
+              <div className="relative flex items-center gap-2">
+                <div className="py-2">
+                  <Loader.Item width="30px" height="30px" />
+                </div>
+                <Loader.Item width="30%" height="22px" />
+              </div>
             </div>
-          </div>
-        </Loader>
+          </Loader>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};

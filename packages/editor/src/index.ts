@@ -9,7 +9,6 @@ import "./styles/drag-drop.css";
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
-  CollaborativeDocumentReadOnlyEditorWithRef,
   DocumentReadOnlyEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
@@ -25,7 +24,7 @@ export * from "@/constants/common";
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/editor-commands";
-export * from "@/helpers/yjs";
+export * from "@/helpers/yjs-utils";
 export * from "@/extensions/table/table";
 
 // components
@@ -37,5 +36,4 @@ export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 
 // types
-export type { CustomEditorProps } from "@/hooks/use-editor";
 export * from "@/types";

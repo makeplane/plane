@@ -1,15 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane editor
+// plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-// plane types
-import { IUserLite, TPageVersion } from "@plane/types";
-// plane ui
+import { TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
-// helpers
-import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 // hooks
-import { useMember, useMention, useUser } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor";
+import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -24,27 +23,22 @@ export type TVersionEditorProps = {
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
+  // store hooks
+  const { getUserDetails } = useMember();
   // params
   const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { data: currentUser } = useUser();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds },
-  } = useMember();
-  // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const projectMemberIds = projectId ? getProjectMemberIds(projectId.toString()) : [];
-  const projectMemberDetails = projectMemberIds?.map((id) => getUserDetails(id) as IUserLite);
+  const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
+  // editor flaggings
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  // editor config
+  const { getReadOnlyEditorFileHandlers } = useEditorConfig();
   // issue-embed
-  const { issueEmbedProps } = useIssueEmbed(workspaceSlug?.toString() ?? "", projectId?.toString() ?? "");
-  // use-mention
-  const { mentionHighlights } = useMention({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+  const { issueEmbedProps } = useIssueEmbed({
     projectId: projectId?.toString() ?? "",
-    members: projectMemberDetails,
-    user: currentUser ?? undefined,
+    workspaceSlug: workspaceSlug?.toString() ?? "",
   });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
@@ -52,6 +46,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   const displayConfig: TDisplayConfig = {
     fontSize,
     fontStyle,
+    wideLayout: true,
   };
 
   if (!isCurrentVersionActive && !versionDetails)
@@ -104,15 +99,18 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
-      disabledExtensions={disabledExtensions}
+      disabledExtensions={documentEditorExtensions.disabled}
+      flaggedExtensions={documentEditorExtensions.flagged}
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({
         projectId: projectId?.toString() ?? "",
+        workspaceId: workspaceDetails?.id ?? "",
         workspaceSlug: workspaceSlug?.toString() ?? "",
       })}
       mentionHandler={{
-        highlights: mentionHighlights,
+        renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       embedHandler={{
         issue: {

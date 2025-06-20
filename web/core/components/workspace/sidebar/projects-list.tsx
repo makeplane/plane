@@ -7,39 +7,36 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Briefcase, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
-import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { orderJoinedProjects } from "@/helpers/project.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
-// plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
 export const SidebarProjectsList: FC = observer(() => {
-  // get local storage data for isFavoriteProjectsListOpen and isAllProjectsListOpen
-  const isAllProjectsListOpenInLocalStorage = localStorage.getItem("isAllProjectsListOpen");
   // states
 
-  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(isAllProjectsListOpenInLocalStorage === "true");
+  const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(true);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
+  const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { sidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
-  const { getProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
+  const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -54,8 +51,8 @@ export const SidebarProjectsList: FC = observer(() => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("project_link_copied_to_clipboard"),
       });
     });
   };
@@ -70,7 +67,7 @@ export const SidebarProjectsList: FC = observer(() => {
 
     const joinedProjectsList: TProject[] = [];
     joinedProjects.map((projectId) => {
-      const projectDetails = getProjectById(projectId);
+      const projectDetails = getPartialProjectById(projectId);
       if (projectDetails) joinedProjectsList.push(projectDetails);
     });
 
@@ -84,8 +81,8 @@ export const SidebarProjectsList: FC = observer(() => {
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
   };
@@ -168,19 +165,24 @@ export const SidebarProjectsList: FC = observer(() => {
                 as="button"
                 type="button"
                 className={cn(
-                  "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                  "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
                   {
                     "!text-center w-8 px-2 py-1.5 justify-center": isCollapsed,
                   }
                 )}
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                aria-label={t(
+                  isAllProjectsListOpen
+                    ? "aria_labels.projects_sidebar.close_projects_menu"
+                    : "aria_labels.projects_sidebar.open_projects_menu"
+                )}
               >
-                <Tooltip tooltipHeading="YOUR PROJECTS" tooltipContent="" position="right" disabled={!isCollapsed}>
+                <Tooltip tooltipHeading={t("projects")} tooltipContent="" position="right" disabled={!isCollapsed}>
                   <>
                     {isCollapsed ? (
                       <Briefcase className="flex-shrink-0 size-3" />
                     ) : (
-                      <span className="text-xs font-semibold">YOUR PROJECTS</span>
+                      <span className="text-sm font-semibold">{t("projects")}</span>
                     )}
                   </>
                 </Tooltip>
@@ -188,7 +190,7 @@ export const SidebarProjectsList: FC = observer(() => {
               {!isCollapsed && (
                 <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                   {isAuthorizedUser && (
-                    <Tooltip tooltipHeading="Create project" tooltipContent="">
+                    <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                       <button
                         type="button"
                         className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
@@ -196,6 +198,7 @@ export const SidebarProjectsList: FC = observer(() => {
                           setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
                           setIsProjectModalOpen(true);
                         }}
+                        aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                       >
                         <Plus className="size-3" />
                       </button>
@@ -206,9 +209,14 @@ export const SidebarProjectsList: FC = observer(() => {
                     type="button"
                     className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                     onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
+                    aria-label={t(
+                      isAllProjectsListOpen
+                        ? "aria_labels.projects_sidebar.close_projects_menu"
+                        : "aria_labels.projects_sidebar.open_projects_menu"
+                    )}
                   >
                     <ChevronRight
-                      className={cn("flex-shrink-0 size-4 transition-all", {
+                      className={cn("flex-shrink-0 size-3 transition-all", {
                         "rotate-90": isAllProjectsListOpen,
                       })}
                     />
@@ -225,26 +233,35 @@ export const SidebarProjectsList: FC = observer(() => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
+              {loader === "init-loader" && (
+                <Loader className="w-full space-y-1.5">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <Loader.Item key={index} height="28px" />
+                  ))}
+                </Loader>
+              )}
               {isAllProjectsListOpen && (
                 <Disclosure.Panel
                   as="div"
-                  className={cn("space-y-1", {
+                  className={cn("flex flex-col gap-0.5", {
                     "space-y-0 ml-0": isCollapsed,
                   })}
                   static
                 >
-                  {joinedProjects.map((projectId, index) => (
-                    <SidebarProjectsListItem
-                      key={projectId}
-                      projectId={projectId}
-                      handleCopyText={() => handleCopyText(projectId)}
-                      projectListType={"JOINED"}
-                      disableDrag={false}
-                      disableDrop={false}
-                      isLastChild={index === joinedProjects.length - 1}
-                      handleOnProjectDrop={handleOnProjectDrop}
-                    />
-                  ))}
+                  <>
+                    {joinedProjects.map((projectId, index) => (
+                      <SidebarProjectsListItem
+                        key={projectId}
+                        projectId={projectId}
+                        handleCopyText={() => handleCopyText(projectId)}
+                        projectListType={"JOINED"}
+                        disableDrag={false}
+                        disableDrop={false}
+                        isLastChild={index === joinedProjects.length - 1}
+                        handleOnProjectDrop={handleOnProjectDrop}
+                      />
+                    ))}
+                  </>
                 </Disclosure.Panel>
               )}
             </Transition>
@@ -265,7 +282,7 @@ export const SidebarProjectsList: FC = observer(() => {
               toggleCreateProjectModal(true);
             }}
           >
-            {!isCollapsed && "Add project"}
+            {!isCollapsed && t("add_project")}
           </button>
         )}
       </div>

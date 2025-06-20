@@ -2,11 +2,12 @@
 
 import { observer } from "mobx-react";
 import { Layers, Link, Paperclip } from "lucide-react";
-// types
-import { cn } from "@plane/editor";
+// plane types
 import { IIssueDisplayProperties } from "@plane/types";
+// plane ui
 import { Tooltip } from "@plane/ui";
-// ui
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import {
   IssueBlockDate,
@@ -136,7 +137,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
-        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
+        <Tooltip tooltipHeading="Sub-work items" tooltipContent={`${issue.sub_issues_count}`}>
           <div
             className={cn(
               "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",

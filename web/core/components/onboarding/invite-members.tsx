@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import {
@@ -15,22 +16,21 @@ import {
   useForm,
 } from "react-hook-form";
 // icons
+import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
-import { Listbox, Transition } from "@headlessui/react";
+import { Listbox } from "@headlessui/react";
+// plane imports
+import { ROLE, ROLE_DETAILS, MEMBER_INVITED, EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
 // ui
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
-import { MEMBER_INVITED } from "@/constants/event-tracker";
-import { ROLE, ROLE_DETAILS } from "@/constants/workspace";
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
+import { getUserRole } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
-import useDynamicDropdownPosition from "@/hooks/use-dynamic-dropdown";
-// plane web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // assets
@@ -87,7 +87,7 @@ const placeholderEmails = [
   "thomas.selfridge@frstflt.com",
   "albert.zahm@frstflt.com",
 ];
-const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
+const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
   const {
     control,
     index,
@@ -101,12 +101,10 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
     watch,
   } = props;
 
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
+  const { t } = useTranslation();
 
   const email = watch(`emails.${index}.email`);
 
@@ -133,6 +131,18 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
       }
     }
   };
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-end",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
 
   return (
     <div>
@@ -177,15 +187,13 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                 value={value}
                 onChange={(val) => {
                   onChange(val);
-                  setIsDropdownOpen(false);
                   setValue(`emails.${index}.role_active`, true);
                 }}
                 className="w-full flex-shrink-0 text-left"
               >
                 <Listbox.Button
                   type="button"
-                  ref={buttonRef}
-                  onClick={() => setIsDropdownOpen((prev) => !prev)}
+                  ref={setReferenceElement}
                   className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-onboarding-border-100"
                 >
                   <span
@@ -207,45 +215,37 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
                   />
                 </Listbox.Button>
 
-                <Transition
-                  show={isDropdownOpen}
-                  as={React.Fragment}
-                  enter="transition ease-out duration-100"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Listbox.Options
-                    ref={dropdownRef}
-                    className="fixed z-10 mt-1 h-fit w-48 sm:w-60 overflow-y-auto rounded-md border border-onboarding-border-100 bg-onboarding-background-200 shadow-sm focus:outline-none"
+                <Listbox.Options as="div">
+                  <div
+                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-onboarding-border-100 bg-onboarding-background-200 shadow-sm focus:outline-none"
+                    ref={setPopperElement}
+                    style={styles.popper}
+                    {...attributes.popper}
                   >
-                    <div className="space-y-1 p-2">
-                      {Object.entries(ROLE_DETAILS).map(([key, value]) => (
-                        <Listbox.Option
-                          key={key}
-                          value={parseInt(key)}
-                          className={({ active, selected }) =>
-                            `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                              active || selected ? "bg-onboarding-background-400/40" : ""
-                            } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
-                          }
-                        >
-                          {({ selected }) => (
-                            <div className="flex items-center text-wrap gap-2 p-1">
-                              <div className="flex flex-col">
-                                <div className="text-sm font-medium">{value.title}</div>
-                                <div className="flex text-xs text-custom-text-300">{value.description}</div>
-                              </div>
-                              {selected && <Check className="h-4 w-4 shrink-0" />}
+                    {Object.entries(ROLE_DETAILS).map(([key, value]) => (
+                      <Listbox.Option
+                        as="div"
+                        key={key}
+                        value={parseInt(key)}
+                        className={({ active, selected }) =>
+                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                            active || selected ? "bg-onboarding-background-400/40" : ""
+                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                        }
+                      >
+                        {({ selected }) => (
+                          <div className="flex items-center text-wrap gap-2 p-1">
+                            <div className="flex flex-col">
+                              <div className="text-sm font-medium">{t(value.i18n_title)}</div>
+                              <div className="flex text-xs text-custom-text-300">{t(value.i18n_description)}</div>
                             </div>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </div>
-                  </Listbox.Options>
-                </Transition>
+                            {selected && <Check className="h-4 w-4 shrink-0" />}
+                          </div>
+                        )}
+                      </Listbox.Option>
+                    ))}
+                  </div>
+                </Listbox.Options>
               </Listbox>
             )}
           />
@@ -268,7 +268,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = (props) => {
       )}
     </div>
   );
-};
+});
 
 export const InviteMembers: React.FC<Props> = (props) => {
   const { finishOnboarding, totalSteps, workspace } = props;

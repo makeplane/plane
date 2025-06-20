@@ -5,7 +5,7 @@ import { IIssueDisplayProperties } from "@plane/types";
 // ui
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 
@@ -50,7 +50,7 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
       navigator.clipboard.writeText(identifier).then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Issue ID copied to clipboard",
+          title: "Work item ID copied to clipboard",
         });
       });
     }

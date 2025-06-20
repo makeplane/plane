@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { ArchiveRestoreIcon, ExternalLink, Link, Trash2 } from "lucide-react";
 // ui
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ContextMenu, CustomMenu } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
-// constants
-import { EIssuesStoreType } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
+// helper
+import { useArchivedIssueMenuItems, MenuItemFactoryProps } from "./helper";
 
 export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
   const {
@@ -45,78 +42,37 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
   // auth
   const isEditingAllowed =
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isRestoringAllowed = handleRestore && isEditingAllowed;
+  const isRestoringAllowed =
+    handleRestore && allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
-  const issueLink = `${workspaceSlug}/projects/${issue.project_id}/archives/issues/${issue.id}`;
-
-  const handleOpenInNewTab = () => window.open(`/${issueLink}`, "_blank");
-  const handleCopyIssueLink = () =>
-    copyUrlToClipboard(issueLink).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: "Issue link copied to clipboard",
-      })
-    );
-  const handleIssueRestore = async () => {
-    if (!handleRestore) return;
-    await handleRestore()
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your issue can be found in project issues.",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Issue could not be restored. Please try again.",
-        });
-      });
+  // Menu items and modals using helper
+  const menuItemProps: MenuItemFactoryProps = {
+    issue,
+    workspaceSlug: workspaceSlug?.toString(),
+    activeLayout,
+    isEditingAllowed,
+    isDeletingAllowed: isEditingAllowed,
+    isRestoringAllowed: !!isRestoringAllowed,
+    setTrackElement,
+    setIssueToEdit: () => {},
+    setCreateUpdateIssueModal: () => {},
+    setDeleteIssueModal,
+    handleRestore,
+    handleDelete,
   };
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "restore",
-      title: "Restore",
-      icon: ArchiveRestoreIcon,
-      action: handleIssueRestore,
-      shouldRender: isRestoringAllowed,
-    },
-    {
-      key: "open-in-new-tab",
-      title: "Open in new tab",
-      icon: ExternalLink,
-      action: handleOpenInNewTab,
-    },
-    {
-      key: "copy-link",
-      title: "Copy link",
-      icon: Link,
-      action: handleCopyIssueLink,
-    },
-    {
-      key: "delete",
-      title: "Delete",
-      icon: Trash2,
-      action: () => {
-        setTrackElement(activeLayout);
-        setDeleteIssueModal(true);
-      },
-      shouldRender: isEditingAllowed,
-    },
-  ];
+  const MENU_ITEMS = useArchivedIssueMenuItems(menuItemProps);
 
   return (
     <>
+      {/* Modals */}
       <DeleteIssueModal
         data={issue}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
+
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
       <CustomMenu
         ellipsis

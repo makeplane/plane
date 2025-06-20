@@ -5,6 +5,8 @@ import unset from "lodash/unset";
 import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { EDraftIssuePaginationType } from "@plane/constants";
 import {
   TWorkspaceDraftIssue,
   TWorkspaceDraftPaginationInfo,
@@ -19,9 +21,8 @@ import {
   TBulkOperationsPayload,
 } from "@plane/types";
 // constants
-import { EDraftIssuePaginationType } from "@/constants/workspace-drafts";
 // helpers
-import { getCurrentDateTimeInISO, convertToISODateString } from "@/helpers/date-time.helper";
+import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
 // local-db
 import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
@@ -233,8 +234,12 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         if (results && results.length > 0) {
           // adding issueIds
           const issueIds = results.map((issue) => issue.id);
+          const existingIssueIds = this.issueMapIds[workspaceSlug] ?? [];
+          // new issueIds
+          const newIssueIds = issueIds.filter((issueId) => !existingIssueIds.includes(issueId));
           this.addIssue(results);
-          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [...issueIds, ...existingIssueIds]);
+          // issue map update
+          update(this.issueMapIds, [workspaceSlug], (existingIssueIds = []) => [...newIssueIds, ...existingIssueIds]);
           this.loader = undefined;
         } else {
           this.loader = "empty-state";
@@ -352,7 +357,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
         }
 
         // sync issue to local db
-        addIssueToPersistanceLayer(response);
+        addIssueToPersistanceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);

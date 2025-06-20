@@ -6,12 +6,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IWebhook } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { csvDownload } from "@/helpers/download.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useWebhook, useWorkspace } from "@/hooks/store";
 // types
@@ -35,6 +35,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
   const { currentWorkspace } = useWorkspace();
   const { currentWebhook, regenerateSecretKey, webhookSecretKey } = useWebhook();
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   const handleCopySecretKey = () => {
     if (!webhookSecretKey) return;
 
@@ -42,15 +43,15 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Secret key copied to clipboard.",
+          title: `${t("success")!}`,
+          message: t("workspace_settings.settings.webhooks.toasts.secret_key_copied.message"),
         })
       )
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Error occurred while copying secret key.",
+          title: `${t("error")}!`,
+          message: t("workspace_settings.settings.webhooks.toasts.secret_key_not_copied.message"),
         })
       );
   };
@@ -64,7 +65,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
+          title: `${t("success")!}`,
           message: "New key regenerated successfully.",
         });
 
@@ -76,8 +77,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
+          title: `${t("error")}!`,
+          message: err?.error ?? t("something_went_wrong_please_try_again"),
         })
       )
       .finally(() => setIsRegenerating(false));
@@ -94,8 +95,14 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
     <>
       {(data || webhookSecretKey) && (
         <div className="space-y-2">
-          {webhookId && <div className="text-sm font-medium">Secret key</div>}
-          <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
+          {webhookId && (
+            <div className="text-sm font-medium">
+              {t("workspace_settings.settings.webhooks.modal.secret_key.title")}
+            </div>
+          )}
+          <div className="text-xs text-custom-text-400">
+            {t("workspace_settings.settings.webhooks.modal.secret_key.message")}
+          </div>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 h-8">
               <div className="select-none overflow-hidden font-medium">
@@ -125,7 +132,7 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
               <div>
                 <Button onClick={handleRegenerateSecretKey} variant="accent-primary" loading={isRegenerating}>
                   <RefreshCw className="h-3 w-3" />
-                  {isRegenerating ? "Re-generating..." : "Re-generate key"}
+                  {isRegenerating ? `${t("re_generating")}...` : t("re_generate_key")}
                 </Button>
               </div>
             )}

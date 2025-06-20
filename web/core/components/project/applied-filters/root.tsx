@@ -1,11 +1,14 @@
 "use client";
 
 import { X } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 // ui
 import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
 // components
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import {
   AppliedAccessFilters,
   AppliedDateFilters,
@@ -13,7 +16,6 @@ import {
   AppliedProjectDisplayFilters,
 } from "@/components/project";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 
 type Props = {
   appliedFilters: TProjectFilters;
@@ -30,6 +32,7 @@ const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["created_at"];
 
 export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const {
     appliedFilters,
     appliedDisplayFilters,
@@ -95,7 +98,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
         {/* Applied display filters */}
         {appliedDisplayFilters.length > 0 && (
           <Tag key="project_display_filters">
-            <span className="text-xs text-custom-text-300">Projects</span>
+            <span className="text-xs text-custom-text-300">{t("projects.label", { count: 2 })}</span>
             <AppliedProjectDisplayFilters
               editable={isEditingAllowed}
               values={appliedDisplayFilters}
@@ -106,7 +109,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
         {isEditingAllowed && (
           <button type="button" onClick={handleClearAllFilters}>
             <Tag>
-              Clear all
+              {t("common.clear_all")}
               <X size={12} strokeWidth={2} />
             </Tag>
           </button>

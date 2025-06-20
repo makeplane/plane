@@ -1,9 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-// ui
-import { cn } from "@plane/editor";
+// plane ui
 import { ContrastIcon, Tooltip } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 //hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssueOrderByOptions } from "@plane/types";
 
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// types
-import { ISSUE_ORDER_BY_OPTIONS } from "@/constants/issue";
-// constants
 
 type Props = {
   selectedOrderBy: TIssueOrderByOptions | undefined;
@@ -16,6 +15,8 @@ type Props = {
 
 export const FilterOrderBy: React.FC<Props> = observer((props) => {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
+  // hooks
+  const { t } = useTranslation();
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
@@ -24,7 +25,7 @@ export const FilterOrderBy: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title="Order by"
+        title={t("common.order_by.label")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -35,7 +36,7 @@ export const FilterOrderBy: React.FC<Props> = observer((props) => {
               key={orderBy?.key}
               isChecked={activeOrderBy === orderBy?.key ? true : false}
               onClick={() => handleUpdate(orderBy.key)}
-              title={orderBy.title}
+              title={t(orderBy.titleTranslationKey)}
               multiple={false}
             />
           ))}

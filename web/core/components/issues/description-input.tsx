@@ -4,24 +4,27 @@ import { FC, useCallback, useEffect, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// types
-import { TIssue } from "@plane/types";
+// plane imports
+import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
-// ui
 import { Loader } from "@plane/ui";
 // components
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
 import { TIssueOperations } from "@/components/issues/issue-detail";
 // helpers
-import { getDescriptionPlaceholder } from "@/helpers/issue.helper";
 // hooks
-import { useWorkspace } from "@/hooks/store";
-// services
-import { FileService } from "@/services/file.service";
-const fileService = new FileService();
+import { useEditorAsset, useWorkspace } from "@/hooks/store";
+// plane web services
+import { WorkspaceService } from "@/plane-web/services";
+const workspaceService = new WorkspaceService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
+  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
+  editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -29,13 +32,15 @@ export type IssueDescriptionInputProps = {
   disabled?: boolean;
   issueOperations: TIssueOperations;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
-  setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting: (initialValue: TNameDescriptionLoader) => void;
   swrIssueDescription?: string | null | undefined;
 };
 
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     containerClassName,
+    editorReadOnlyRef,
+    editorRef,
     workspaceSlug,
     projectId,
     issueId,
@@ -46,17 +51,24 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     setIsSubmitting,
     placeholder,
   } = props;
-
+  // states
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issueId,
+    description_html: initialValue,
+  });
+  // store hooks
+  const { uploadEditorAsset } = useEditorAsset();
+  const { getWorkspaceBySlug } = useWorkspace();
+  // derived values
+  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString();
+  // form info
   const { handleSubmit, reset, control } = useForm<TIssue>({
     defaultValues: {
       description_html: initialValue,
     },
   });
-
-  const [localIssueDescription, setLocalIssueDescription] = useState({
-    id: issueId,
-    description_html: initialValue,
-  });
+  // i18n
+  const { t } = useTranslation();
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -66,10 +78,6 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     },
     [workspaceSlug, projectId, issueId, issueOperations]
   );
-
-  const { getWorkspaceBySlug } = useWorkspace();
-  // computed values
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id as string;
 
   // reset form values
   useEffect(() => {
@@ -94,6 +102,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     [handleSubmit, issueId]
   );
 
+  if (!workspaceId) return null;
+
   return (
     <>
       {localIssueDescription.description_html ? (
@@ -116,34 +126,47 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                   debouncedFormSave();
                 }}
                 placeholder={
-                  placeholder ? placeholder : (isFocused, value) => getDescriptionPlaceholder(isFocused, value)
+                  placeholder
+                    ? placeholder
+                    : (isFocused, value) => t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
+                }
+                searchMentionCallback={async (payload) =>
+                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                    ...payload,
+                    project_id: projectId?.toString() ?? "",
+                    issue_id: issueId?.toString(),
+                  })
                 }
                 containerClassName={containerClassName}
-                uploadFile={async (file) => {
+                uploadFile={async (blockId, file) => {
                   try {
-                    const { asset_id } = await fileService.uploadProjectAsset(
-                      workspaceSlug,
-                      projectId,
-                      {
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
                         entity_identifier: issueId,
                         entity_type: EFileAssetType.ISSUE_DESCRIPTION,
                       },
-                      file
-                    );
+                      file,
+                      projectId,
+                      workspaceSlug,
+                    });
                     return asset_id;
                   } catch (error) {
-                    console.log("Error in uploading issue asset:", error);
+                    console.log("Error in uploading work item asset:", error);
                     throw new Error("Asset upload failed. Please try again later.");
                   }
                 }}
+                ref={editorRef}
               />
             ) : (
               <RichTextReadOnlyEditor
                 id={issueId}
                 initialValue={localIssueDescription.description_html ?? ""}
                 containerClassName={containerClassName}
+                workspaceId={workspaceId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                ref={editorReadOnlyRef}
               />
             )
           }

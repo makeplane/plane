@@ -25,7 +25,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store hooks
   const { joinProject } = useUserPermissions();
-  const { fetchProjects } = useProject();
+  const { fetchProjectDetails } = useProject();
   // router
   const router = useAppRouter();
 
@@ -35,7 +35,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
     joinProject(workspaceSlug, project.id)
       .then(() => {
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
-        fetchProjects(workspaceSlug);
+        fetchProjectDetails(workspaceSlug, project.id);
         handleClose();
       })
       .finally(() => {

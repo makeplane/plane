@@ -1,14 +1,13 @@
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
+// plane constants
+import { EIssueLayoutTypes, SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
 import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
 import { MultipleSelectGroup } from "@/components/core";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "@/components/issues";
-// constants
-import { EIssueLayoutTypes } from "@/constants/issue";
-import { SPREADSHEET_PROPERTY_LIST, SPREADSHEET_SELECT_GROUP } from "@/constants/spreadsheet";
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
@@ -34,6 +33,7 @@ type Props = {
   enableQuickCreateIssue?: boolean;
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
+  isEpic?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -51,6 +51,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     canLoadMoreIssues,
     loadMoreIssues,
     isWorkspaceLevel = false,
+    isEpic = false,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
@@ -85,7 +86,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         entities={{
           [SPREADSHEET_SELECT_GROUP]: issueIds,
         }}
-        disabled={!isBulkOperationsEnabled}
+        disabled={!isBulkOperationsEnabled || isEpic}
       >
         {(helpers) => (
           <>
@@ -105,6 +106,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 loadMoreIssues={loadMoreIssues}
                 spreadsheetColumnsList={spreadsheetColumnsList}
                 selectionHelpers={helpers}
+                isEpic={isEpic}
               />
             </div>
             <div className="border-t border-custom-border-100">
@@ -114,6 +116,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     layout={EIssueLayoutTypes.SPREADSHEET}
                     QuickAddButton={SpreadsheetAddIssueButton}
                     quickAddCallback={quickAddCallback}
+                    isEpic={isEpic}
                   />
                 )}
               </div>

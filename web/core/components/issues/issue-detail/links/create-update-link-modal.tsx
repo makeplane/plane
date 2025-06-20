@@ -3,8 +3,9 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 // plane types
-import type { TIssueLinkEditableFields } from "@plane/types";
+import type { TIssueLinkEditableFields, TIssueServiceType } from "@plane/types";
 // plane ui
 import { Button, Input, ModalCore } from "@plane/ui";
 // hooks
@@ -22,6 +23,7 @@ export type TIssueLinkCreateEditModal = {
   isModalOpen: boolean;
   handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
+  issueServiceType: TIssueServiceType;
 };
 
 const defaultValues: TIssueLinkCreateFormFieldOptions = {
@@ -30,8 +32,9 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
 };
 
 export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
-  // props
-  const { isModalOpen, handleOnClose, linkOperations } = props;
+  const { isModalOpen, handleOnClose, linkOperations, issueServiceType } = props;
+  // i18n
+  const { t } = useTranslation();
   // react hook form
   const {
     formState: { errors, isSubmitting },
@@ -42,7 +45,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
     defaultValues,
   });
   // store hooks
-  const { issueLinkData: preloadedData, setIssueLinkData } = useIssueDetail();
+  const { issueLinkData: preloadedData, setIssueLinkData } = useIssueDetail(issueServiceType);
 
   const onClose = () => {
     setIssueLinkData(null);
@@ -68,11 +71,13 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">{preloadedData?.id ? "Update" : "Add"} link</h3>
+          <h3 className="text-xl font-medium text-custom-text-200">
+            {preloadedData?.id ? t("common.update_link") : t("common.add_link")}
+          </h3>
           <div className="mt-2 space-y-3">
             <div>
               <label htmlFor="url" className="mb-2 text-custom-text-200">
-                URL
+                {t("common.url")}
               </label>
               <Controller
                 control={control}
@@ -88,17 +93,17 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}
-                    placeholder="Type or paste a URL"
+                    placeholder={t("common.type_or_paste_a_url")}
                     className="w-full"
                   />
                 )}
               />
-              {errors.url && <span className="text-xs text-red-500">URL is invalid</span>}
+              {errors.url && <span className="text-xs text-red-500">{t("common.url_is_invalid")}</span>}
             </div>
             <div>
               <label htmlFor="title" className="mb-2 text-custom-text-200">
-                Display title
-                <span className="text-[10px] block">Optional</span>
+                {t("common.display_title")}
+                <span className="text-[10px] block">{t("common.optional")}</span>
               </label>
               <Controller
                 control={control}
@@ -111,7 +116,7 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.title)}
-                    placeholder="What you'd like to see this link as"
+                    placeholder={t("common.link_title_placeholder")}
                     className="w-full"
                   />
                 )}
@@ -121,10 +126,18 @@ export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observe
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={onClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {preloadedData?.id ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"} link
+            {`${
+              preloadedData?.id
+                ? isSubmitting
+                  ? t("common.updating")
+                  : t("common.update")
+                : isSubmitting
+                  ? t("common.adding")
+                  : t("common.add")
+            } ${t("common.link")}`}
           </Button>
         </div>
       </form>

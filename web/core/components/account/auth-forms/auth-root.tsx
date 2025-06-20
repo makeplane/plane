@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "@plane/i18n";
 import { IEmailCheckData } from "@plane/types";
 // components
 import {
@@ -51,6 +52,8 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isExistingEmail, setIsExistingEmail] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { config } = useInstance();
 

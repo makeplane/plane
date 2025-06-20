@@ -6,7 +6,7 @@ import json
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Exists, F, Func, OuterRef, Prefetch, Q, Subquery
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
@@ -25,12 +25,9 @@ from plane.app.serializers import (
 from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
 from plane.db.models import (
     UserFavorite,
-    Cycle,
     Intake,
     DeployBoard,
     IssueUserProperty,
-    Issue,
-    Module,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -39,9 +36,10 @@ from plane.db.models import (
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 
 
 class ProjectViewSet(BaseViewSet):
@@ -74,36 +72,6 @@ class ProjectViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                is_member=Exists(
-                    ProjectMember.objects.filter(
-                        member=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                        is_active=True,
-                    )
-                )
-            )
-            .annotate(
-                total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False, is_active=True
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_cycles=Cycle.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                total_modules=Module.objects.filter(project_id=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
@@ -133,7 +101,7 @@ class ProjectViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
-    def list(self, request, slug):
+    def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
@@ -173,6 +141,75 @@ class ProjectViewSet(BaseViewSet):
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
+    def list(self, request, slug):
+        sort_order = ProjectMember.objects.filter(
+            member=self.request.user,
+            project_id=OuterRef("pk"),
+            workspace__slug=self.kwargs.get("slug"),
+            is_active=True,
+        ).values("sort_order")
+
+        projects = (
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related(
+                "workspace", "workspace__owner", "default_assignee", "project_lead"
+            )
+            .annotate(
+                member_role=ProjectMember.objects.filter(
+                    project_id=OuterRef("pk"),
+                    member_id=self.request.user.id,
+                    is_active=True,
+                ).values("role")
+            )
+            .annotate(inbox_view=F("intake_view"))
+            .annotate(sort_order=Subquery(sort_order))
+            .distinct()
+        ).values(
+            "id",
+            "name",
+            "identifier",
+            "sort_order",
+            "logo_props",
+            "member_role",
+            "archived_at",
+            "workspace",
+            "cycle_view",
+            "issue_views_view",
+            "module_view",
+            "page_view",
+            "inbox_view",
+            "guest_view_all_features",
+            "project_lead",
+            "network",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=5
+        ).exists():
+            projects = projects.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=15
+        ).exists():
+            projects = projects.filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | Q(network=2)
+            )
+        return Response(projects, status=status.HTTP_200_OK)
+
+    @allow_permission(
+        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
+    )
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
@@ -182,58 +219,6 @@ class ProjectViewSet(BaseViewSet):
             )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
-            .annotate(
-                total_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk")
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues=Issue.issue_objects.filter(
-                    project_id=self.kwargs.get("pk"), parent__isnull=False
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                archived_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"), archived_at__isnull=False
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                archived_sub_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    archived_at__isnull=False,
-                    parent__isnull=False,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                draft_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"), is_draft=True
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                draft_sub_issues=Issue.objects.filter(
-                    project_id=self.kwargs.get("pk"),
-                    is_draft=True,
-                    parent__isnull=False,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
         ).first()
 
         if project is None:
@@ -290,14 +275,14 @@ class ProjectViewSet(BaseViewSet):
                 states = [
                     {
                         "name": "Backlog",
-                        "color": "#A3A3A3",
+                        "color": "#60646C",
                         "sequence": 15000,
                         "group": "backlog",
                         "default": True,
                     },
                     {
                         "name": "Todo",
-                        "color": "#3A3A3A",
+                        "color": "#60646C",
                         "sequence": 25000,
                         "group": "unstarted",
                     },
@@ -309,13 +294,13 @@ class ProjectViewSet(BaseViewSet):
                     },
                     {
                         "name": "Done",
-                        "color": "#16A34A",
+                        "color": "#46A758",
                         "sequence": 45000,
                         "group": "completed",
                     },
                     {
                         "name": "Cancelled",
-                        "color": "#EF4444",
+                        "color": "#9AA4BC",
                         "sequence": 55000,
                         "group": "cancelled",
                     },
@@ -347,7 +332,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
                 serializer = ProjectListSerializer(project)
@@ -356,8 +341,11 @@ class ProjectViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    {
+                        "name": "The project name is already taken",
+                        "code": "PROJECT_NAME_ALREADY_EXIST",
+                    },
+                    status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
             return Response(
@@ -365,8 +353,11 @@ class ProjectViewSet(BaseViewSet):
             )
         except serializers.ValidationError:
             return Response(
-                {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                {
+                    "identifier": "The project identifier is already taken",
+                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                },
+                status=status.HTTP_409_CONFLICT,
             )
 
     def partial_update(self, request, slug, pk=None):
@@ -416,16 +407,6 @@ class ProjectViewSet(BaseViewSet):
                             is_default=True,
                         )
 
-                    # Create the triage state in Backlog group
-                    State.objects.get_or_create(
-                        name="Triage",
-                        group="triage",
-                        description="Default state for managing all Intake Issues",
-                        project_id=pk,
-                        color="#ff7700",
-                        is_triage=True,
-                    )
-
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 model_activity.delay(
@@ -435,7 +416,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=current_instance,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -445,7 +426,7 @@ class ProjectViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
@@ -454,7 +435,7 @@ class ProjectViewSet(BaseViewSet):
         except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def destroy(self, request, slug, pk):
@@ -470,9 +451,21 @@ class ProjectViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
         ):
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=pk, workspace__slug=slug)
             project.delete()
-
+            webhook_activity.delay(
+                event="project",
+                verb="deleted",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=base_host(request=request, is_app=True),
+                event_id=project.id,
+                old_identifier=None,
+                new_identifier=None,
+            )
             # Delete the project members
             DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
 

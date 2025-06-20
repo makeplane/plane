@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 
 type Props = {
   issue: TIssue;
@@ -20,25 +21,28 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props
   // hooks
   const { workspaceSlug } = useParams();
   // derived values
+  const isEpic = issue?.is_epic;
   const subIssueCount = issue?.sub_issues_count ?? 0;
 
   const redirectToIssueDetail = () => {
     router.push(
-      `/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}#sub-issues`
+      `/${workspaceSlug?.toString()}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}${isEpic ? "epics" : "issues"}/${issue.id}#sub-issues`
     );
   };
+
+  const label = `${subIssueCount} sub-work item${subIssueCount !== 1 ? "s" : ""}`;
 
   return (
     <Row
       onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
-        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 py-1 text-xs hover:bg-custom-background-80 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+        "flex h-11 w-full items-center border-b-[0.5px] border-custom-border-200 py-1 text-xs hover:bg-custom-background-90 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-90",
         {
           "cursor-pointer": subIssueCount,
         }
       )}
     >
-      {subIssueCount} {subIssueCount === 1 ? "sub-issue" : "sub-issues"}
+      {isEpic ? <IssueStats issueId={issue.id} /> : label}
     </Row>
   );
 });

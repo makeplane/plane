@@ -2,18 +2,19 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
 // types
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
-import { PROJECT_AUTOMATION_MONTHS } from "@/constants/project";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -23,19 +24,22 @@ const initialValues: Partial<IProject> = { archive_in: 1 };
 
 export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const { handleChange } = props;
+  // router
+  const { workspaceSlug } = useParams();
   // states
   const [monthModal, setmonthModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   const { currentProjectDetails } = useProject();
 
   const isAdmin = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    currentProjectDetails?.workspace_detail?.slug,
+    workspaceSlug?.toString(),
     currentProjectDetails?.id
-  );
+);
 
   return (
     <>
@@ -53,9 +57,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
               <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-custom-text-100" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">Auto-archive closed issues</h4>
+              <h4 className="text-sm font-medium">{t("project_settings.automations.auto-archive.title")}</h4>
               <p className="text-sm tracking-tight text-custom-text-200">
-                Plane will auto archive issues that have been completed or canceled.
+                {t("project_settings.automations.auto-archive.description")}
               </p>
             </div>
           </div>
@@ -75,7 +79,9 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
           currentProjectDetails.archive_in !== 0 && (
             <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
-                <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
+                <div className="w-1/2 text-sm font-medium">
+                  {t("project_settings.automations.auto-archive.duration")}
+                </div>
                 <div className="w-1/2">
                   <CustomSelect
                     value={currentProjectDetails?.archive_in}
@@ -90,8 +96,8 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                   >
                     <>
                       {PROJECT_AUTOMATION_MONTHS.map((month) => (
-                        <CustomSelect.Option key={month.label} value={month.value}>
-                          <span className="text-sm">{month.label}</span>
+                        <CustomSelect.Option key={month.i18n_label} value={month.value}>
+                          <span className="text-sm">{t(month.i18n_label, { months: month.value })}</span>
                         </CustomSelect.Option>
                       ))}
 
@@ -100,7 +106,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                         className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
-                        Customize time range
+                        {t("common.customize_time_range")}
                       </button>
                     </>
                   </CustomSelect>

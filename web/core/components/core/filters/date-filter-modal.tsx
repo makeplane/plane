@@ -1,17 +1,14 @@
 "use client";
 import { Fragment } from "react";
-
-import { DayPicker } from "react-day-picker";
 import { Controller, useForm } from "react-hook-form";
 
 import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
-import { Button } from "@plane/ui";
+import { Button, Calendar } from "@plane/ui";
 
-import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@/helpers/date-time.helper";
+import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
 import { DateFilterSelect } from "./date-filter-select";
-
 type Props = {
   title: string;
   handleClose: () => void;
@@ -96,7 +93,11 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         const dateValue = getDate(value);
                         const date2Value = getDate(watch("date2"));
                         return (
-                          <DayPicker
+                          <Calendar
+                            classNames={{
+                              root: ` border border-custom-border-200 p-3 rounded-md`,
+                            }}
+                            captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
                             onSelect={(date) => {
@@ -105,7 +106,6 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                             }}
                             mode="single"
                             disabled={date2Value ? [{ after: date2Value }] : undefined}
-                            className="border border-custom-border-200 p-3 rounded-md"
                           />
                         );
                       }}
@@ -118,7 +118,11 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                           const dateValue = getDate(value);
                           const date1Value = getDate(watch("date1"));
                           return (
-                            <DayPicker
+                            <Calendar
+                              classNames={{
+                                root: ` border border-custom-border-200 p-3 rounded-md`,
+                              }}
+                              captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}
                               onSelect={(date) => {
@@ -127,7 +131,6 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                               }}
                               mode="single"
                               disabled={date1Value ? [{ before: date1Value }] : undefined}
-                              className="border border-custom-border-200 p-3 rounded-md"
                             />
                           );
                         }}

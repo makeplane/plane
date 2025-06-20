@@ -6,19 +6,18 @@ import { useParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
-// types
+// plane imports
+import { EIssuesStoreType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, IUser } from "@plane/types";
-// ui
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { EmptyState } from "@/components/empty-state";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { EIssuesStoreType } from "@/constants/issue";
+import { SimpleEmptyState } from "@/components/empty-state";
 // hooks
 import { useIssues } from "@/hooks/store";
 import useDebounce from "@/hooks/use-debounce";
 // services
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
@@ -39,16 +38,19 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
-  // hooks
-  const {
-    issues: { removeBulkIssues },
-  } = useIssues(EIssuesStoreType.PROJECT);
   // states
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
+  // hooks
+  const {
+    issues: { removeBulkIssues },
+  } = useIssues(EIssuesStoreType.PROJECT);
+  const { t } = useTranslation();
+  // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
+  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
+  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
@@ -88,7 +90,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one issue.",
+        message: "Please select at least one work item.",
       });
       return;
     }
@@ -100,7 +102,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Issues deleted successfully!",
+          message: "Work items deleted successfully!",
         });
         handleClose();
       })
@@ -117,7 +119,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issues to delete</h2>
+          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select work items to delete</h2>
         )}
         <ul className="text-sm text-custom-text-200">
           {issues.map((issue) => (
@@ -131,12 +133,11 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
       </li>
     ) : (
       <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
-        <EmptyState
-          type={
-            query === "" ? EmptyStateType.ISSUE_RELATION_EMPTY_STATE : EmptyStateType.ISSUE_RELATION_SEARCH_EMPTY_STATE
-          }
-          layout="screen-simple"
-        />
+        {query === "" ? (
+          <SimpleEmptyState title={t("issue_relation.empty_state.no_issues.title")} assetPath={issuesResolvedPath} />
+        ) : (
+          <SimpleEmptyState title={t("issue_relation.empty_state.search.title")} assetPath={searchResolvedPath} />
+        )}
       </div>
     );
 
@@ -203,7 +204,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
                         Cancel
                       </Button>
                       <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
-                        {isSubmitting ? "Deleting..." : "Delete selected issues"}
+                        {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>
                   )}

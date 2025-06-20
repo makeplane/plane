@@ -375,8 +375,11 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         state_distribution = (
             Issue.issue_objects.filter(
+                (
+                    Q(assignees__in=[user_id])
+                    & Q(issue_assignee__deleted_at__isnull=True)
+                ),
                 workspace__slug=slug,
-                assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
             )
@@ -391,8 +394,11 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         priority_distribution = (
             Issue.issue_objects.filter(
+                (
+                    Q(assignees__in=[user_id])
+                    & Q(issue_assignee__deleted_at__isnull=True)
+                ),
                 workspace__slug=slug,
-                assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
             )
@@ -426,8 +432,11 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         assigned_issues_count = (
             Issue.issue_objects.filter(
+                (
+                    Q(assignees__in=[user_id])
+                    & Q(issue_assignee__deleted_at__isnull=True)
+                ),
                 workspace__slug=slug,
-                assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
             )
@@ -438,8 +447,11 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
         pending_issues_count = (
             Issue.issue_objects.filter(
                 ~Q(state__group__in=["completed", "cancelled"]),
+                (
+                    Q(assignees__in=[user_id])
+                    & Q(issue_assignee__deleted_at__isnull=True)
+                ),
                 workspace__slug=slug,
-                assignees__in=[user_id],
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
             )
@@ -449,8 +461,11 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
 
         completed_issues_count = (
             Issue.issue_objects.filter(
+                (
+                    Q(assignees__in=[user_id])
+                    & Q(issue_assignee__deleted_at__isnull=True)
+                ),
                 workspace__slug=slug,
-                assignees__in=[user_id],
                 state__group="completed",
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,

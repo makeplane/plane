@@ -1,8 +1,9 @@
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
-import { TIssueReaction } from "./issue_reaction";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
+import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
 
 // new issue structure types
 
@@ -39,6 +40,7 @@ export type TBaseIssue = {
   updated_by: string;
 
   is_draft: boolean;
+  is_epic?: boolean;
 };
 
 export type IssueRelation = {
@@ -62,6 +64,7 @@ export type TIssue = TBaseIssue & {
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
+  state__group?: string | null;
 };
 
 export type TIssueMap = {
@@ -116,8 +119,72 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TIssueDetailWidget =
-  | "sub-issues"
-  | "relations"
-  | "links"
-  | "attachments";
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+
+export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
+
+export interface IPublicIssue
+  extends Pick<
+    TIssue,
+    | "description_html"
+    | "created_at"
+    | "updated_at"
+    | "created_by"
+    | "id"
+    | "name"
+    | "priority"
+    | "state_id"
+    | "project_id"
+    | "sequence_id"
+    | "sort_order"
+    | "start_date"
+    | "target_date"
+    | "cycle_id"
+    | "module_ids"
+    | "label_ids"
+    | "assignee_ids"
+    | "attachment_count"
+    | "sub_issues_count"
+    | "link_count"
+    | "estimate_point"
+  > {
+  comments: TIssuePublicComment[];
+  reaction_items: IIssuePublicReaction[];
+  vote_items: IPublicVote[];
+}
+
+type TPublicIssueResponseResults =
+  | IPublicIssue[]
+  | {
+      [key: string]: {
+        results:
+          | IPublicIssue[]
+          | {
+              [key: string]: {
+                results: IPublicIssue[];
+                total_results: number;
+              };
+            };
+        total_results: number;
+      };
+    };
+
+export type TPublicIssuesResponse = {
+  grouped_by: string;
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  prev_page_results: boolean;
+  total_count: number;
+  count: number;
+  total_pages: number;
+  extra_stats: null;
+  results: TPublicIssueResponseResults;
+};
+
+export interface IWorkItemPeekOverview {
+  embedIssue?: boolean;
+  embedRemoveCurrentNotification?: () => void;
+  is_draft?: boolean;
+  storeType?: EIssuesStoreType;
+}

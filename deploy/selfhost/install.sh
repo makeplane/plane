@@ -5,9 +5,12 @@ RELEASE_TAG=${RELEASE_TAG:-v0.22-dev}
 SCRIPT_DIR=$PWD
 SERVICE_FOLDER=plane-app
 PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
-export APP_RELEASE="stable"
-export DOCKERHUB_USER=makeplane
+export APP_RELEASE=stable
+export DOCKERHUB_USER=artifacts.plane.so/makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
+export GH_REPO=makeplane/plane
+export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
+export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deploy/selfhost"
 
 CPU_ARCH=$(uname -m)
 OS_NAME=$(uname)
@@ -16,13 +19,6 @@ UPPER_CPU_ARCH=$(tr '[:lower:]' '[:upper:]' <<< "$CPU_ARCH")
 mkdir -p $PLANE_INSTALL_DIR/archive
 DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
 DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
-
-SED_PREFIX=()
-if [ "$OS_NAME" == "Darwin" ]; then
-  SED_PREFIX=("-i" "")
-else
-  SED_PREFIX=("-i")
-fi
 
 function print_header() {
 clear
@@ -58,6 +54,17 @@ function spinner() {
         printf "\b\b\b\b\b\b" >&2
     done
     printf "    \b\b\b\b" >&2
+}
+
+function checkLatestRelease(){
+    echo "Checking for the latest release..." >&2
+    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    if [ -z "$latest_release" ]; then
+        echo "Failed to check for the latest release. Exiting..." >&2
+        exit 1
+    fi
+
+    echo $latest_release    
 }
 
 function initialize(){
@@ -131,8 +138,12 @@ function updateEnvFile() {
             echo "$key=$value" >> "$file"
             return
         else 
-            # if key exists, update the value
-            sed "${SED_PREFIX[@]}" "s/^$key=.*/$key=$value/g" "$file"
+            if [ "$OS_NAME" == "Darwin" ]; then
+                value=$(echo "$value" | sed 's/|/\\|/g')
+                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
+            else
+                sed -i "s/^$key=.*/$key=$value/g" "$file"
+            fi
         fi
     else
         echo "File not found: $file"
@@ -185,7 +196,7 @@ function buildYourOwnImage() {
     local PLANE_TEMP_CODE_DIR=~/tmp/plane
     rm -rf $PLANE_TEMP_CODE_DIR
     mkdir -p $PLANE_TEMP_CODE_DIR
-    REPO=https://github.com/makeplane/plane.git
+    REPO=https://github.com/$GH_REPO.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
     cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
@@ -206,6 +217,10 @@ function buildYourOwnImage() {
 function install() {
     echo "Begin Installing Plane"
     echo ""
+
+    if [ "$APP_RELEASE" == "stable" ]; then
+        export APP_RELEASE=$(checkLatestRelease)
+    fi
 
     local build_image=$(initialize)
 
@@ -235,16 +250,48 @@ function download() {
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
 
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/docker-compose.yaml  https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/docker-compose.yml?$(date +%s)
-    if [ $? -ne 0 ]; then
-        echo "Failed to download the docker-compose.yaml file. Exiting..."
-        exit 1
+    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
+    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+    if [ "$STATUS" -eq 200 ]; then
+        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+    else
+        # Fallback to download from the raw github url
+        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
+        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+        if [ "$STATUS" -eq 200 ]; then
+            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+        else
+            echo "Failed to download docker-compose.yml. HTTP Status: $STATUS"
+            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml"
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            exit 1
+        fi
     fi
 
-    curl -H 'Cache-Control: no-cache, no-store' -s -o $PLANE_INSTALL_DIR/variables-upgrade.env https://raw.githubusercontent.com/makeplane/plane/$BRANCH/deploy/selfhost/variables.env?$(date +%s)
-    if [ $? -ne 0 ]; then
-        echo "Failed to download the variables.env file. Exiting..."
-        exit 1
+    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
+    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+    if [ "$STATUS" -eq 200 ]; then
+        echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
+    else
+        # Fallback to download from the raw github url
+        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
+        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
+        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+        if [ "$STATUS" -eq 200 ]; then
+            echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
+        else
+            echo "Failed to download variables.env. HTTP Status: $STATUS"
+            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env"
+            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            exit 1
+        fi
     fi
 
     if [ -f "$DOCKER_ENV_PATH" ];
@@ -322,7 +369,7 @@ function startServices() {
 
     local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
     local idx2=0
-    while ! docker logs $api_container_id 2>&1 | grep -m 1 -i "Application startup complete" | grep -q ".";
+    while ! docker exec $api_container_id python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" > /dev/null 2>&1;
     do
         local message=">> Waiting for API Service to Start"
         local dots=$(printf '%*s' $idx2 | tr ' ' '.')    
@@ -347,6 +394,34 @@ function restartServices() {
     startServices
 }
 function upgrade() {
+    local latest_release=$(checkLatestRelease)
+
+    echo ""
+    echo "Current release: $APP_RELEASE"
+
+    if [ "$latest_release" == "$APP_RELEASE" ]; then
+        echo ""
+        echo "You are already using the latest release"
+        exit 0
+    fi
+
+    echo "Latest release: $latest_release"
+    echo ""
+
+    # Check for confirmation to upgrade
+    echo "Do you want to upgrade to the latest release ($latest_release)?"
+    read -p "Continue? [y/N]: " confirm
+
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Exiting..."
+        exit 0
+    fi
+
+    export APP_RELEASE=$latest_release
+
+    echo "Upgrading Plane to the latest release..."
+    echo ""
+
     echo "***** STOPPING SERVICES ****"
     stopServices
 
@@ -385,12 +460,13 @@ function viewLogs(){
         echo "   8) Redis"
         echo "   9) Postgres"
         echo "   10) Minio"
+        echo "   11) RabbitMQ"
         echo "   0) Back to Main Menu"
         echo 
         read -p "Service: " DOCKER_SERVICE_NAME
 
-        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 10 )); do
-            echo "Invalid selection. Please enter a number between 1 and 11."
+        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
+            echo "Invalid selection. Please enter a number between 0 and 11."
             read -p "Service: " DOCKER_SERVICE_NAME
         done
 
@@ -409,6 +485,7 @@ function viewLogs(){
                 8) viewSpecificLogs "plane-redis";;
                 9) viewSpecificLogs "plane-db";;
                 10) viewSpecificLogs "plane-minio";;
+                11) viewSpecificLogs "plane-mq";;
                 0) askForAction;;
                 *) echo "INVALID SERVICE NAME SUPPLIED";;
             esac
@@ -427,49 +504,76 @@ function viewLogs(){
             redis) viewSpecificLogs "plane-redis";;
             postgres) viewSpecificLogs "plane-db";;
             minio) viewSpecificLogs "plane-minio";;
+            rabbitmq) viewSpecificLogs "plane-mq";;
             *) echo "INVALID SERVICE NAME SUPPLIED";;
         esac
     else
         echo "INVALID SERVICE NAME SUPPLIED"
     fi
 }
-function backupSingleVolume() {
-    backupFolder=$1
-    selectedVolume=$2
-    # Backup data from Docker volume to the backup folder
-    # docker run --rm -v "$selectedVolume":/source -v "$backupFolder":/backup busybox sh -c 'cp -r /source/* /backup/'
-    local tobereplaced="plane-app_"
-    local replacewith=""
+function backup_container_dir() {
+    local BACKUP_FOLDER=$1
+    local CONTAINER_NAME=$2
+    local CONTAINER_DATA_DIR=$3
+    local SERVICE_FOLDER=$4
 
-    local svcName="${selectedVolume//$tobereplaced/$replacewith}"
+    echo "Backing up $CONTAINER_NAME data..."
+    local CONTAINER_ID=$(/bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps -q $CONTAINER_NAME")
+    if [ -z "$CONTAINER_ID" ]; then
+        echo "Error: $CONTAINER_NAME container not found. Make sure the services are running."
+        return 1
+    fi
 
-    docker run --rm \
-        -e TAR_NAME="$svcName" \
-        -v "$selectedVolume":/"$svcName" \
-        -v "$backupFolder":/backup \
-        busybox sh -c 'tar -czf "/backup/${TAR_NAME}.tar.gz" /${TAR_NAME}'
+    # Create a temporary directory for the backup
+    mkdir -p "$BACKUP_FOLDER/$SERVICE_FOLDER"
+
+    # Copy the data directory from the running container
+    echo "Copying $CONTAINER_NAME data directory..."
+    docker cp -q "$CONTAINER_ID:$CONTAINER_DATA_DIR/." "$BACKUP_FOLDER/$SERVICE_FOLDER/"
+    local cp_status=$?
+
+    if [ $cp_status -ne 0 ]; then
+        echo "Error: Failed to copy $SERVICE_FOLDER data"
+        rm -rf $BACKUP_FOLDER/$SERVICE_FOLDER
+        return 1
+    fi
+
+    # Create tar.gz of the data
+    cd "$BACKUP_FOLDER"
+    tar -czf "${SERVICE_FOLDER}.tar.gz" "$SERVICE_FOLDER/"
+    local tar_status=$?
+    if [ $tar_status -eq 0 ]; then
+        rm -rf "$SERVICE_FOLDER/"
+    fi
+    cd - > /dev/null
+
+    if [ $tar_status -ne 0 ]; then
+        echo "Error: Failed to create tar archive"
+        return 1
+    fi
+
+    echo "Successfully backed up $SERVICE_FOLDER data"
 }
+
 function backupData() {
     local datetime=$(date +"%Y%m%d-%H%M")
     local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
     mkdir -p "$BACKUP_FOLDER"
 
-    volumes=$(docker volume ls -f "name=$SERVICE_FOLDER" --format "{{.Name}}" | grep -E "_pgdata|_redisdata|_uploads")
-    # Check if there are any matching volumes
-    if [ -z "$volumes" ]; then
-        echo "No volumes found starting with '$SERVICE_FOLDER'"
+    # Check if docker-compose.yml exists
+    if [ ! -f "$DOCKER_FILE_PATH" ]; then
+        echo "Error: docker-compose.yml not found at $DOCKER_FILE_PATH"
         exit 1
     fi
 
-    for vol in $volumes; do
-        echo "Backing Up $vol"
-        backupSingleVolume "$BACKUP_FOLDER" "$vol"
-    done
+    backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
 
     echo ""
     echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
     echo ""
-
 }
 function askForAction() {
     local DEFAULT_ACTION=$1
@@ -556,7 +660,7 @@ if [ -f "$DOCKER_ENV_PATH" ]; then
     CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
 
     if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=makeplane
+        DOCKERHUB_USER=artifacts.plane.so/makeplane
         updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
     fi
 

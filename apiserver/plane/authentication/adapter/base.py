@@ -15,7 +15,8 @@ from plane.db.models import Profile, User, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
-from plane.authentication.utils.host import base_host
+from plane.utils.host import base_host
+from plane.utils.ip_address import get_client_ip
 
 
 class Adapter:
@@ -108,7 +109,7 @@ class Adapter:
         user.last_login_medium = self.provider
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
-        user.last_login_ip = self.request.META.get("REMOTE_ADDR")
+        user.last_login_ip = get_client_ip(request=self.request)
         user.last_login_uagent = self.request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         # If user is not active, send the activation email and set the user as active

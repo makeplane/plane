@@ -5,8 +5,9 @@ import { computedFn } from "mobx-utils";
 // types
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
-import { buildTree } from "@/helpers/array.helper";
+import { buildTree } from "@plane/utils";
 // services
+import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";
 // store
 import { CoreRootStore } from "./root.store";
@@ -22,6 +23,7 @@ export interface ILabelStore {
   workspaceLabels: IIssueLabel[] | undefined;
   //computed actions
   getProjectLabels: (projectId: string | undefined | null) => IIssueLabel[] | undefined;
+  getProjectLabelIds: (projectId: string | undefined | null) => string[] | undefined;
   getLabelById: (labelId: string) => IIssueLabel | null;
   // fetch actions
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<IIssueLabel[]>;
@@ -117,6 +119,18 @@ export class LabelStore implements ILabelStore {
       Object.values(this.labelMap).filter((label) => label?.project_id === projectId),
       "sort_order"
     );
+  });
+
+  /**
+   * Returns the label ids for a specific project
+   * @param projectId
+   * @returns string[]
+   */
+  getProjectLabelIds = computedFn((projectId: string | undefined | null) => {
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
+    if (!workspaceSlug || !projectId || !(this.fetchedMap[projectId] || this.fetchedMap[workspaceSlug]))
+      return undefined;
+    return this.getProjectLabels(projectId)?.map((label) => label.id) ?? [];
   });
 
   /**
@@ -275,6 +289,7 @@ export class LabelStore implements ILabelStore {
       runInAction(() => {
         delete this.labelMap[labelId];
       });
+      syncIssuesWithDeletedLabels([labelId]);
     });
   };
 }

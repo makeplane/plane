@@ -1,4 +1,4 @@
-import { IWorkspaceLite, TIssue, TIssuePriorities, TStateGroups } from "@plane/types";
+import { IWorkspaceLite, TIssue, TIssuePriorities, TStateGroups, TIssuePublicComment } from "@plane/types";
 
 export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 export type TIssueLayoutOptions = {
@@ -58,7 +58,7 @@ export interface IIssue
     | "link_count"
     | "estimate_point"
   > {
-  comments: Comment[];
+  comments: TIssuePublicComment[];
   reaction_items: IIssueReaction[];
   vote_items: IVote[];
 }
@@ -104,33 +104,6 @@ export interface IIssueLabel {
 export interface IVote {
   vote: -1 | 1;
   actor_details: ActorDetail;
-}
-
-export interface Comment {
-  actor_detail: ActorDetail;
-  access: string;
-  actor: string;
-  attachments: any[];
-  comment_html: string;
-  comment_reactions: {
-    actor_detail: ActorDetail;
-    comment: string;
-    id: string;
-    reaction: string;
-  }[];
-  comment_stripped: string;
-  created_at: Date;
-  created_by: string;
-  id: string;
-  is_member: boolean;
-  issue: string;
-  issue_detail: IssueDetail;
-  project: string;
-  project_detail: ProjectDetail;
-  updated_at: Date;
-  updated_by: string;
-  workspace: string;
-  workspace_detail: IWorkspaceLite;
 }
 
 export interface IIssueReaction {

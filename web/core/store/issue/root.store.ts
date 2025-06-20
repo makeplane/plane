@@ -1,15 +1,26 @@
 import isEmpty from "lodash/isEmpty";
 import { autorun, makeObservable, observable } from "mobx";
-import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite } from "@plane/types";
+// types
+import { EIssueServiceType } from "@plane/constants";
+import { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
+// plane web store
+import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
+import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
+import {
+  ITeamViewIssues,
+  ITeamViewIssuesFilter,
+  TeamViewIssues,
+  TeamViewIssuesFilter,
+} from "@/plane-web/store/issue/team-views";
 // root store
+import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
+import { RootStore } from "@/plane-web/store/root.store";
 import { IWorkspaceMembership } from "@/store/member/workspace-member.store";
-import { CoreRootStore } from "../root.store";
-import { IStateStore, StateStore } from "../state.store";
 // issues data store
 import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
 import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
 import { IDraftIssuesFilter, DraftIssuesFilter, IDraftIssues, DraftIssues } from "./draft";
-import { IIssueDetail, IssueDetail } from "./issue-details/root.store";
 import { IIssueStore, IssueStore } from "./issue.store";
 import { ICalendarStore, CalendarStore } from "./issue_calendar_view.store";
 import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
@@ -22,7 +33,7 @@ import {
   IProjectViewIssues,
   ProjectViewIssues,
 } from "./project-views";
-import { WorkspaceIssuesFilter, IWorkspaceIssues, WorkspaceIssues, IWorkspaceIssuesFilter } from "./workspace";
+import { WorkspaceIssuesFilter, IWorkspaceIssuesFilter } from "./workspace";
 import {
   IWorkspaceDraftIssues,
   IWorkspaceDraftIssuesFilter,
@@ -33,6 +44,7 @@ import {
 export interface IIssueRootStore {
   currentUserId: string | undefined;
   workspaceSlug: string | undefined;
+  teamspaceId: string | undefined;
   projectId: string | undefined;
   cycleId: string | undefined;
   moduleId: string | undefined;
@@ -49,11 +61,13 @@ export interface IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined;
   cycleMap: Record<string, ICycle> | undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -64,6 +78,9 @@ export interface IIssueRootStore {
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
 
+  teamIssuesFilter: ITeamIssuesFilter;
+  teamIssues: ITeamIssues;
+
   projectIssuesFilter: IProjectIssuesFilter;
   projectIssues: IProjectIssues;
 
@@ -72,6 +89,9 @@ export interface IIssueRootStore {
 
   moduleIssuesFilter: IModuleIssuesFilter;
   moduleIssues: IModuleIssues;
+
+  teamViewIssuesFilter: ITeamViewIssuesFilter;
+  teamViewIssues: ITeamViewIssues;
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
@@ -84,11 +104,15 @@ export interface IIssueRootStore {
 
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
+
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
 }
 
 export class IssueRootStore implements IIssueRootStore {
   currentUserId: string | undefined = undefined;
   workspaceSlug: string | undefined = undefined;
+  teamspaceId: string | undefined = undefined;
   projectId: string | undefined = undefined;
   cycleId: string | undefined = undefined;
   moduleId: string | undefined = undefined;
@@ -105,11 +129,13 @@ export class IssueRootStore implements IIssueRootStore {
   moduleMap: Record<string, IModule> | undefined = undefined;
   cycleMap: Record<string, ICycle> | undefined = undefined;
 
-  rootStore: CoreRootStore;
+  rootStore: RootStore;
+  serviceType: TIssueServiceType;
 
   issues: IIssueStore;
 
   issueDetail: IIssueDetail;
+  epicDetail: IIssueDetail;
 
   workspaceIssuesFilter: IWorkspaceIssuesFilter;
   workspaceIssues: IWorkspaceIssues;
@@ -120,6 +146,9 @@ export class IssueRootStore implements IIssueRootStore {
   profileIssuesFilter: IProfileIssuesFilter;
   profileIssues: IProfileIssues;
 
+  teamIssuesFilter: ITeamIssuesFilter;
+  teamIssues: ITeamIssues;
+
   projectIssuesFilter: IProjectIssuesFilter;
   projectIssues: IProjectIssues;
 
@@ -128,6 +157,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   moduleIssuesFilter: IModuleIssuesFilter;
   moduleIssues: IModuleIssues;
+
+  teamViewIssuesFilter: ITeamViewIssuesFilter;
+  teamViewIssues: ITeamViewIssues;
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
@@ -141,9 +173,13 @@ export class IssueRootStore implements IIssueRootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: ICalendarStore;
 
-  constructor(rootStore: CoreRootStore) {
+  projectEpicsFilter: IProjectEpicsFilter;
+  projectEpics: IProjectEpics;
+
+  constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
+      teamspaceId: observable.ref,
       projectId: observable.ref,
       cycleId: observable.ref,
       moduleId: observable.ref,
@@ -161,11 +197,13 @@ export class IssueRootStore implements IIssueRootStore {
       cycleMap: observable,
     });
 
+    this.serviceType = serviceType;
     this.rootStore = rootStore;
 
     autorun(() => {
       if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
       if (this.workspaceSlug !== rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
+      if (this.teamspaceId !== rootStore.router.teamspaceId) this.teamspaceId = rootStore.router.teamspaceId;
       if (this.projectId !== rootStore.router.projectId) this.projectId = rootStore.router.projectId;
       if (this.cycleId !== rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
       if (this.moduleId !== rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
@@ -187,7 +225,8 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issues = new IssueStore();
 
-    this.issueDetail = new IssueDetail(this);
+    this.issueDetail = new IssueDetail(this, EIssueServiceType.ISSUES);
+    this.epicDetail = new IssueDetail(this, EIssueServiceType.EPICS);
 
     this.workspaceIssuesFilter = new WorkspaceIssuesFilter(this);
     this.workspaceIssues = new WorkspaceIssues(this, this.workspaceIssuesFilter);
@@ -201,11 +240,17 @@ export class IssueRootStore implements IIssueRootStore {
     this.projectIssuesFilter = new ProjectIssuesFilter(this);
     this.projectIssues = new ProjectIssues(this, this.projectIssuesFilter);
 
+    this.teamIssuesFilter = new TeamIssuesFilter(this);
+    this.teamIssues = new TeamIssues(this, this.teamIssuesFilter);
+
     this.cycleIssuesFilter = new CycleIssuesFilter(this);
     this.cycleIssues = new CycleIssues(this, this.cycleIssuesFilter);
 
     this.moduleIssuesFilter = new ModuleIssuesFilter(this);
     this.moduleIssues = new ModuleIssues(this, this.moduleIssuesFilter);
+
+    this.teamViewIssuesFilter = new TeamViewIssuesFilter(this);
+    this.teamViewIssues = new TeamViewIssues(this, this.teamViewIssuesFilter);
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
     this.projectViewIssues = new ProjectViewIssues(this, this.projectViewIssuesFilter);
@@ -218,5 +263,8 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new CalendarStore();
+
+    this.projectEpicsFilter = new ProjectEpicsFilter(this);
+    this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);
   }
 }

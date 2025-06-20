@@ -1,5 +1,7 @@
 "use client";
 import { useMemo } from "react";
+import { EIssueServiceType } from "@plane/constants";
+import { TIssueServiceType } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
@@ -24,11 +26,12 @@ export type TAttachmentHelpers = {
 export const useAttachmentOperations = (
   workspaceSlug: string,
   projectId: string,
-  issueId: string
+  issueId: string,
+  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TAttachmentHelpers => {
   const {
     attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { captureIssueEvent } = useEventTracker();
 
   const attachmentOperations: TAttachmentOperations = useMemo(

@@ -1,6 +1,9 @@
 import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
@@ -46,7 +49,7 @@ export interface LinkOptions {
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
-    link: {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: {
       /**
        * Set a link mark
        */
@@ -73,8 +76,13 @@ declare module "@tiptap/core" {
   }
 }
 
-export const CustomLinkExtension = Mark.create<LinkOptions>({
-  name: "link",
+export type CustomLinkStorage = {
+  isPreviewOpen: boolean;
+  posToInsert: { from: number; to: number };
+};
+
+export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
+  name: CORE_EXTENSIONS.CUSTOM_LINK,
 
   priority: 1000,
 
@@ -241,5 +249,13 @@ export const CustomLinkExtension = Mark.create<LinkOptions>({
     }
 
     return plugins;
+  },
+
+  addStorage() {
+    return {
+      isPreviewOpen: false,
+      isBubbleMenuOpen: false,
+      posToInsert: { from: 0, to: 0 },
+    };
   },
 });

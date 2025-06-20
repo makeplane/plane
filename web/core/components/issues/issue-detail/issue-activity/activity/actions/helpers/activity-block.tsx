@@ -4,11 +4,12 @@ import { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // hooks
 import { Tooltip } from "@plane/ui";
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
+import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // components
+import { IssueCreatorDisplay } from "@/plane-web/components/issues";
 import { IssueUser } from "../";
 // helpers
 
@@ -41,14 +42,18 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
       <div className="w-full truncate text-custom-text-200">
-        <IssueUser activityId={activityId} customUserName={customUserName} />
+        {!activity?.field && activity?.verb === "created" ? (
+          <IssueCreatorDisplay activityId={activityId} customUserName={customUserName} />
+        ) : (
+          <IssueUser activityId={activityId} customUserName={customUserName} />
+        )}
         <span> {children} </span>
         <span>
           <Tooltip
             isMobile={isMobile}
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
-            <span className="whitespace-nowrap"> {calculateTimeAgo(activity.created_at)}</span>
+            <span className="whitespace-nowrap text-custom-text-350"> {calculateTimeAgo(activity.created_at)}</span>
           </Tooltip>
         </span>
       </div>

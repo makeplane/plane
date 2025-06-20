@@ -15,14 +15,15 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
+import { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
+import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { InboxIssueStatus } from "@/components/inbox";
-import { IssueUpdateStatus } from "@/components/issues";
+import { NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
 // hooks
+import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
@@ -30,7 +31,7 @@ import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 type Props = {
   workspaceSlug: string;
   inboxIssue: IInboxIssueStore | undefined;
-  isSubmitting: "submitting" | "submitted" | "saved";
+  isSubmitting: TNameDescriptionLoader;
   handleInboxIssueNavigation: (direction: "next" | "prev") => void;
   canMarkAsAccepted: boolean;
   canMarkAsDeclined: boolean;
@@ -76,12 +77,24 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
     handleActionWithPermission,
   } = props;
   const router = useAppRouter();
+  const { getProjectIdentifierById } = useProject();
+
   const issue = inboxIssue?.issue;
   const currentInboxIssueId = issue?.id;
   // days left for snooze
   const numberOfDaysLeft = findHowManyDaysLeft(inboxIssue?.snoozed_till);
 
   if (!issue || !inboxIssue) return null;
+
+  const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: currentInboxIssueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+  });
 
   return (
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
@@ -117,7 +130,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
         <div className="flex items-center gap-4">
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
           <div className="flex items-center justify-end w-full">
-            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
         <div className="ml-auto">
@@ -126,19 +139,15 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
               <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                 <div className="flex items-center gap-2">
                   <Link size={14} strokeWidth={2} />
-                  Copy issue link
+                  Copy work item link
                 </div>
               </CustomMenu.MenuItem>
             )}
             {isAcceptedOrDeclined && (
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
-                }
-              >
+              <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <ExternalLink size={14} strokeWidth={2} />
-                  Open issue
+                  Open work item
                 </div>
               </CustomMenu.MenuItem>
             )}
@@ -148,7 +157,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     handleIssueSnoozeAction,
-                    "Only project admins can snooze/Un-snooze issues"
+                    "Only project admins can snooze/Un-snooze work items"
                   )
                 }
               >
@@ -164,7 +173,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setSelectDuplicateIssue(true),
-                    "Only project admins can mark issues as duplicate"
+                    "Only project admins can mark work items as duplicate"
                   )
                 }
               >
@@ -180,7 +189,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setAcceptIssueModal(true),
-                    "Only project admins can accept issues"
+                    "Only project admins can accept work items"
                   )
                 }
               >
@@ -196,7 +205,7 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
                   handleActionWithPermission(
                     isProjectAdmin,
                     () => setDeclineIssueModal(true),
-                    "Only project admins can deny issues"
+                    "Only project admins can deny work items"
                   )
                 }
               >

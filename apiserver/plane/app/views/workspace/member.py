@@ -1,5 +1,6 @@
 # Django imports
 from django.db.models import Count, Q, OuterRef, Subquery, IntegerField
+from django.utils import timezone
 from django.db.models.functions import Coalesce
 
 # Third party modules
@@ -68,10 +69,11 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if workspace_member.role > int(request.data.get("role")):
-            _ = ProjectMember.objects.filter(
+        # If a user is moved to a guest role he can't have any other role in projects
+        if "role" in request.data and int(request.data.get("role")) == 5:
+            ProjectMember.objects.filter(
                 workspace__slug=slug, member_id=workspace_member.member_id
-            ).update(role=int(request.data.get("role")))
+            ).update(role=5)
 
         serializer = WorkSpaceMemberSerializer(
             workspace_member, data=request.data, partial=True
@@ -132,7 +134,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False)
+        ).update(is_active=False, updated_at=timezone.now())
 
         workspace_member.is_active = False
         workspace_member.save()
@@ -193,7 +195,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
             workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False)
+        ).update(is_active=False, updated_at=timezone.now())
 
         # # Deactivate the user
         workspace_member.is_active = False

@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hook
+import { EIssuesStoreType } from "@plane/constants";
 import { ModuleIssueQuickActions } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 // components
 // types

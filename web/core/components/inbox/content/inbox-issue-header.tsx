@@ -15,7 +15,11 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel, EInboxIssueStatus } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import {
   DeclineIssueModal,
@@ -25,15 +29,12 @@ import {
   InboxIssueStatus,
   SelectDuplicateInboxIssueModal,
 } from "@/components/inbox";
-import { CreateUpdateIssueModal, IssueUpdateStatus } from "@/components/issues";
+import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
-import { EInboxIssueStatus } from "@/helpers/inbox.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+//
 // hooks
 import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 
@@ -41,7 +42,7 @@ type TInboxIssueActionsHeader = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore | undefined;
-  isSubmitting: "submitting" | "submitted" | "saved";
+  isSubmitting: TNameDescriptionLoader;
   isMobileSidebar: boolean;
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
@@ -70,6 +71,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const { data: currentUser } = useUser();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
+  const { t } = useTranslation();
 
   const router = useAppRouter();
   const { getProjectById } = useProject();
@@ -101,8 +103,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
-  const issueLink = `${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`;
-  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
+  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/intake/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -119,9 +120,9 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     if (!isNotificationEmbed) {
       if (nextOrPreviousIssueId)
         router.push(
-          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
+          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
         );
-      else router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+      else router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}`);
     }
   };
 
@@ -153,7 +154,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
-      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
     });
   };
 
@@ -171,8 +172,8 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     copyUrlToClipboard(path).then(() =>
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: "Issue link copied to clipboard",
+        title: t("common.link_copied"),
+        message: t("common.copied_to_clipboard"),
       })
     );
 
@@ -189,7 +190,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           : (currentIssueIndex - 1 + filteredInboxIssueIds.length) % filteredInboxIssueIds.length;
       const nextIssueId = filteredInboxIssueIds[nextIssueIndex];
       if (!nextIssueId) return;
-      router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${nextIssueId}`);
+      router.push(`/${workspaceSlug}/projects/${projectId}/intake?inboxIssueId=${nextIssueId}`);
     },
     [currentInboxIssueId, currentIssueIndex, filteredInboxIssueIds, projectId, router, workspaceSlug]
   );
@@ -226,6 +227,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   if (!inboxIssue) return null;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug?.toString(),
+    projectId: issue?.project_id,
+    issueId: currentInboxIssueId,
+    projectIdentifier: currentProjectDetails?.identifier,
+    sequenceId: issue?.sequence_id,
+  });
+
   return (
     <>
       <>
@@ -242,10 +251,12 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           beforeFormSubmit={handleInboxIssueAccept}
           withDraftIssueWrapper={false}
           fetchIssueDetails={false}
-          modalTitle={`Move ${currentProjectDetails?.identifier}-${issue?.sequence_id} to project issues`}
+          modalTitle={t("inbox_issue.actions.move", {
+            value: `${currentProjectDetails?.identifier}-${issue?.sequence_id}`,
+          })}
           primaryButtonText={{
-            default: "Add to project",
-            loading: "Adding",
+            default: t("add_to_project"),
+            loading: t("adding"),
           }}
         />
         <DeclineIssueModal
@@ -282,7 +293,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           )}
           <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />
           <div className="flex items-center justify-end w-full">
-            <IssueUpdateStatus isSubmitting={isSubmitting} />
+            <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
           </div>
         </div>
 
@@ -318,11 +329,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     handleActionWithPermission(
                       isProjectAdmin,
                       () => setAcceptIssueModal(true),
-                      "Only project admins can accept issues"
+                      t("inbox_issue.errors.accept_permission")
                     )
                   }
                 >
-                  Accept
+                  {t("inbox_issue.actions.accept")}
                 </Button>
               </div>
             )}
@@ -338,11 +349,11 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                     handleActionWithPermission(
                       isProjectAdmin,
                       () => setDeclineIssueModal(true),
-                      "Only project admins can deny issues"
+                      t("inbox_issue.errors.decline_permission")
                     )
                   }
                 >
-                  Decline
+                  {t("inbox_issue.actions.decline")}
                 </Button>
               </div>
             )}
@@ -353,19 +364,13 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   prependIcon={<Link className="h-2.5 w-2.5" />}
                   size="sm"
-                  onClick={() => handleCopyIssueLink(issueLink)}
+                  onClick={() => handleCopyIssueLink(workItemLink)}
                 >
-                  Copy issue link
+                  {t("inbox_issue.actions.copy")}
                 </Button>
-                <ControlLink
-                  href={`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`}
-                  onClick={() =>
-                    router.push(`/${workspaceSlug}/projects/${issue?.project_id}/issues/${currentInboxIssueId}`)
-                  }
-                  target="_self"
-                >
+                <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
                   <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
-                    Open issue
+                    {t("inbox_issue.actions.open")}
                   </Button>
                 </ControlLink>
               </div>
@@ -379,15 +384,15 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                           handleActionWithPermission(
                             isProjectAdmin,
                             handleIssueSnoozeAction,
-                            "Only project admins can snooze/Un-snooze issues"
+                            t("inbox_issue.errors.snooze_permission")
                           )
                         }
                       >
                         <div className="flex items-center gap-2">
                           <Clock size={14} strokeWidth={2} />
                           {inboxIssue?.snoozed_till && numberOfDaysLeft && numberOfDaysLeft > 0
-                            ? "Un-snooze"
-                            : "Snooze"}
+                            ? t("inbox_issue.actions.unsnooze")
+                            : t("inbox_issue.actions.snooze")}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
@@ -397,27 +402,27 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                           handleActionWithPermission(
                             isProjectAdmin,
                             () => setSelectDuplicateIssue(true),
-                            "Only project admins can mark issues as duplicate"
+                            "Only project admins can mark work item as duplicate"
                           )
                         }
                       >
                         <div className="flex items-center gap-2">
                           <FileStack size={14} strokeWidth={2} />
-                          Mark as duplicate
+                          {t("inbox_issue.actions.mark_as_duplicate")}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(intakeIssueLink)}>
                       <div className="flex items-center gap-2">
                         <Copy size={14} strokeWidth={2} />
-                        Copy issue link
+                        {t("inbox_issue.actions.copy")}
                       </div>
                     </CustomMenu.MenuItem>
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
                           <Trash2 size={14} strokeWidth={2} />
-                          Delete
+                          {t("inbox_issue.actions.delete")}
                         </div>
                       </CustomMenu.MenuItem>
                     )}
@@ -433,7 +438,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
         <InboxIssueActionsMobileHeader
           inboxIssue={inboxIssue}
           isSubmitting={isSubmitting}
-          handleCopyIssueLink={() => handleCopyIssueLink(issueLink)}
+          handleCopyIssueLink={() => handleCopyIssueLink(workItemLink)}
           setAcceptIssueModal={setAcceptIssueModal}
           setDeclineIssueModal={setDeclineIssueModal}
           handleIssueSnoozeAction={handleIssueSnoozeAction}

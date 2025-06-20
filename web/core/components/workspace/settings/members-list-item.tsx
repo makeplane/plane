@@ -4,15 +4,16 @@ import { FC } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // ui
+import { WORKSPACE_MEMBER_LEAVE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMember } from "@plane/types";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // constants
-import { WORKSPACE_MEMBER_LEAVE } from "@/constants/event-tracker";
 // hooks
-import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useMember, useUser, useUserPermissions, useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useMemberColumns } from "@/plane-web/components/workspace/settings/useMemberColumns";
 
@@ -32,24 +33,28 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   } = useMember();
   const { leaveWorkspace } = useUserPermissions();
   const { captureEvent } = useEventTracker();
+  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
+  const { t } = useTranslation();
   // derived values
 
   const handleLeaveWorkspace = async () => {
     if (!workspaceSlug || !currentUser) return;
 
     await leaveWorkspace(workspaceSlug.toString())
-      .then(() => {
+      .then(async () => {
+        await fetchCurrentUserSettings();
+        router.push(getWorkspaceRedirectionUrl());
         captureEvent(WORKSPACE_MEMBER_LEAVE, {
           state: "SUCCESS",
           element: "Workspace settings members page",
         });
-        router.push("/profile");
       })
       .catch((err: any) =>
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.error || "Something went wrong. Please try again.",
+          message: err?.error || t("something_went_wrong_please_try_again"),
         })
       );
   };
@@ -61,7 +66,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: err?.error || "Something went wrong. Please try again.",
+        message: err?.error || t("something_went_wrong_please_try_again"),
       })
     );
   };
@@ -82,7 +87,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   if (isEmpty(columns)) return <MembersLayoutLoader />;
 
   return (
-    <div className="border-t border-custom-border-100">
+    <div className="border-t border-custom-border-100 grid">
       {removeMemberModal && (
         <ConfirmWorkspaceMemberRemove
           isOpen={removeMemberModal.member.id.length > 0}
@@ -99,9 +104,9 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         data={(memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0"
+        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
         tHeadTrClassName="divide-x-0"
       />
     </div>

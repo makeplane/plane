@@ -1,6 +1,6 @@
 import { useState } from "react";
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { ImageFullScreenAction } from "./full-screen";
 

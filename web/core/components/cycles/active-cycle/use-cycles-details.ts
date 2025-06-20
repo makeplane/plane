@@ -2,9 +2,9 @@ import { useCallback } from "react";
 import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
+import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { IIssueFilterOptions } from "@plane/types";
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";
-import { EIssueFilterType, EIssuesStoreType } from "@/constants/issue";
 import { useCycle, useIssues } from "@/hooks/store";
 
 interface IActiveCycleDetails {
@@ -30,21 +30,23 @@ const useCyclesDetails = (props: IActiveCycleDetails) => {
 
   // fetch cycle details
   useSWR(
-    workspaceSlug && projectId && cycle ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS` : null,
-    workspaceSlug && projectId && cycle ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id) : null,
+    workspaceSlug && projectId && cycle?.id ? `PROJECT_ACTIVE_CYCLE_${projectId}_PROGRESS_${cycle.id}` : null,
+    workspaceSlug && projectId && cycle?.id ? () => fetchActiveCycleProgress(workspaceSlug, projectId, cycle.id) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.distribution ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION` : null,
-    workspaceSlug && projectId && cycle && !cycle?.distribution
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_DURATION_${cycle.id}`
+      : null,
+    workspaceSlug && projectId && cycle?.id && !cycle?.distribution
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "issues")
       : null
   );
   useSWR(
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution
-      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION`
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution
+      ? `PROJECT_ACTIVE_CYCLE_${projectId}_ESTIMATE_DURATION_${cycle.id}`
       : null,
-    workspaceSlug && projectId && cycle && !cycle?.estimate_distribution
+    workspaceSlug && projectId && cycle?.id && !cycle?.estimate_distribution
       ? () => fetchActiveCycleAnalytics(workspaceSlug, projectId, cycle.id, "points")
       : null
   );

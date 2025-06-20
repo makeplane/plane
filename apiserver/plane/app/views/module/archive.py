@@ -28,7 +28,7 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import ModuleDetailSerializer
 from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 
 
 # Module imports

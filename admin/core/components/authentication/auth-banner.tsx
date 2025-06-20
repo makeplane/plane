@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { Info, X } from "lucide-react";
-// helpers
-import { TAuthErrorInfo } from "@/helpers/authentication.helper";
+// plane constants
+import { TAdminAuthErrorInfo } from "@plane/constants";
 
 type TAuthBanner = {
-  bannerData: TAuthErrorInfo | undefined;
-  handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
+  bannerData: TAdminAuthErrorInfo | undefined;
+  handleBannerData?: (bannerData: TAdminAuthErrorInfo | undefined) => void;
 };
 
 export const AuthBanner: FC<TAuthBanner> = (props) => {

@@ -1,11 +1,12 @@
 import { RefObject } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // components
+import type { ChartDataType, IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core";
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
@@ -23,9 +24,11 @@ type Props = {
   title: string;
   quickAdd?: React.JSX.Element | undefined;
   selectionHelpers: TSelectionHelper;
+  isEpic?: boolean;
 };
 
 export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const {
     blockIds,
     blockUpdateHandler,
@@ -38,6 +41,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     title,
     quickAdd,
     selectionHelpers,
+    isEpic = false,
   } = props;
 
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(GANTT_SELECT_GROUP) === "empty";
@@ -75,7 +79,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
           )}
           <h6>{title}</h6>
         </div>
-        <h6>Duration</h6>
+        <h6>{t("common.duration")}</h6>
       </Row>
 
       <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">
@@ -90,6 +94,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             ganttContainerRef,
             loadMoreBlocks,
             selectionHelpers,
+            isEpic,
           })}
       </Row>
       {quickAdd ? quickAdd : null}

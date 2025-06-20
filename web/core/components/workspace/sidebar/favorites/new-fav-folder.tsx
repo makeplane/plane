@@ -2,8 +2,9 @@ import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useOutsideClickDetector } from "@plane/hooks";
+import { useTranslation } from "@plane/i18n";
 // plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
 // plane ui
 import { FavoriteFolderIcon, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
@@ -24,6 +25,7 @@ type TProps = {
 };
 export const NewFavoriteFolder = observer((props: TProps) => {
   const { setCreateNewFolder, actionType, defaultName, favoriteId } = props;
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { addFavorite, updateFavorite, existingFolders } = useFavorite();
 
@@ -42,8 +44,8 @@ export const NewFavoriteFolder = observer((props: TProps) => {
     if (existingFolders.includes(formData.name))
       return setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Folder already exists",
+        title: t("error"),
+        message: t("folder_already_exists"),
       });
     formData = {
       entity_type: "folder",
@@ -56,23 +58,23 @@ export const NewFavoriteFolder = observer((props: TProps) => {
     if (formData.name === "")
       return setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Folder name cannot be empty",
+        title: t("error"),
+        message: t("folder_name_cannot_be_empty"),
       });
 
     addFavorite(workspaceSlug.toString(), formData)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite created successfully.",
+          title: t("success"),
+          message: t("favorite_created_successfully"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong!",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
     setCreateNewFolder(false);
@@ -84,8 +86,8 @@ export const NewFavoriteFolder = observer((props: TProps) => {
     if (existingFolders.includes(formData.name))
       return setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Folder already exists",
+        title: t("error"),
+        message: t("folder_already_exists"),
       });
     const payload = {
       name: formData.name.trim(),
@@ -94,23 +96,23 @@ export const NewFavoriteFolder = observer((props: TProps) => {
     if (formData.name.trim() === "")
       return setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Folder name cannot be empty",
+        title: t("error"),
+        message: t("folder_name_cannot_be_empty"),
       });
 
     updateFavorite(workspaceSlug.toString(), favoriteId, payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite updated successfully.",
+          title: t("success"),
+          message: t("favorite_updated_successfully"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong!",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
     setCreateNewFolder(false);
@@ -132,7 +134,14 @@ export const NewFavoriteFolder = observer((props: TProps) => {
           name="name"
           control={control}
           rules={{ required: true }}
-          render={({ field }) => <Input className="w-full" placeholder="New folder" {...field} />}
+          render={({ field }) => (
+            <Input
+              className="w-full"
+              placeholder={t("new_folder")}
+              aria-label={t("aria_labels.projects_sidebar.enter_folder_name")}
+              {...field}
+            />
+          )}
         />
       </form>
     </div>

@@ -3,21 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate } from "@plane/types";
 // types
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { CalendarIssueBlocks, ICalendarDate } from "@/components/issues";
+import { cn, renderFormattedPayloadDate } from "@plane/utils";
+import { CalendarIssueBlocks } from "@/components/issues/issue-layouts/calendar";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 // helpers
 import { MONTHS_LIST } from "@/constants/calendar";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // types
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
@@ -25,7 +25,12 @@ import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   date: ICalendarDate;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
@@ -38,6 +43,7 @@ type Props = {
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -45,6 +51,8 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
@@ -65,6 +73,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     selectedDate,
     handleDragAndDrop,
     setSelectedDate,
+    canEditProperties,
+    isEpic = false,
   } = props;
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
@@ -105,13 +115,18 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: "Error!",
-                message: "Due date cannot be before the start date of the issue.",
+                message: "Due date cannot be before the start date of the work item.",
               });
               return;
             }
           }
 
-          handleDragAndDrop(sourceData?.id, sourceData?.date, destinationData?.date);
+          handleDragAndDrop(
+            sourceData?.id,
+            issueDetails?.project_id ?? undefined,
+            sourceData?.date,
+            destinationData?.date
+          );
           highlightIssueOnDrop(source?.element?.id, false);
         },
       })
@@ -176,6 +191,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               enableQuickIssueCreate={enableQuickIssueCreate}
               quickAddCallback={quickAddCallback}
               readOnly={readOnly}
+              canEditProperties={canEditProperties}
+              isEpic={isEpic}
             />
           </div>
         </div>

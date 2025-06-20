@@ -16,7 +16,7 @@
 .table-wrapper table th {
   min-width: 1em;
   border: 1px solid rgba(var(--color-border-200));
-  padding: 10px 20px;
+  padding: 7px 10px;
   vertical-align: top;
   box-sizing: border-box;
   position: relative;
@@ -48,7 +48,7 @@
 /* table dropdown */
 .table-wrapper table .column-resize-handle {
   position: absolute;
-  right: -2px;
+  right: 0;
   top: 0;
   width: 2px;
   height: 100%;

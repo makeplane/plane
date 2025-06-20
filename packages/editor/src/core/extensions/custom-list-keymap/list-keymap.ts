@@ -1,4 +1,6 @@
 import { Extension } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { handleBackspace, handleDelete } from "@/extensions/custom-list-keymap/list-helpers";
 
@@ -31,10 +33,10 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
     addKeyboardShortcuts() {
       return {
         Tab: () => {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem")) {
-            if (this.editor.commands.sinkListItem("listItem")) {
+          if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+            if (this.editor.commands.sinkListItem(CORE_EXTENSIONS.LIST_ITEM)) {
               return true;
-            } else if (this.editor.commands.sinkListItem("taskItem")) {
+            } else if (this.editor.commands.sinkListItem(CORE_EXTENSIONS.TASK_ITEM)) {
               return true;
             }
             return true;
@@ -46,10 +48,14 @@ export const ListKeymap = ({ tabIndex }: { tabIndex?: number }) =>
           return true;
         },
         "Shift-Tab": () => {
-          if (this.editor.commands.liftListItem("listItem")) {
+          if (this.editor.commands.liftListItem(CORE_EXTENSIONS.LIST_ITEM)) {
             return true;
-          } else if (this.editor.commands.liftListItem("taskItem")) {
+          } else if (this.editor.commands.liftListItem(CORE_EXTENSIONS.TASK_ITEM)) {
             return true;
+          }
+          // if tabIndex is set, we don't want to handle Tab key
+          if (tabIndex !== undefined && tabIndex !== null) {
+            return false;
           }
           return true;
         },

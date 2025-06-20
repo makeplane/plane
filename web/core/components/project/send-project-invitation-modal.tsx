@@ -2,26 +2,24 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// ui
+// plane imports
+import { ROLE, PROJECT_MEMBER_ADDED, EUserPermissions } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { PROJECT_MEMBER_ADDED } from "@/constants/event-tracker";
-import { ROLE } from "@/constants/workspace";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
-// plane-web constants
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
+  projectId: string;
+  workspaceSlug: string;
 };
 
 type member = {
@@ -43,14 +41,14 @@ const defaultValues: FormValues = {
 };
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, onClose, onSuccess } = props;
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  const { isOpen, onClose, onSuccess, projectId, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const { captureEvent } = useEventTracker();
-  const { projectUserInfo } = useUserPermissions();
+  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
-    project: { projectMemberIds, bulkAddMembersToProject },
+    project: { getProjectMemberDetails, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
   // form info
@@ -62,17 +60,15 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     handleSubmit,
     control,
   } = useForm<FormValues>();
-
   const { fields, append, remove } = useFieldArray({
     control,
     name: "members",
   });
-
-  const currentProjectRole = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()]?.role;
-
+  // derived values
+  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
-    const isInvited = projectMemberIds?.find((u) => u === userId);
-
+    const projectMemberDetails = getProjectMemberDetails(userId, projectId);
+    const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
     return !isInvited;
   });
 
@@ -175,7 +171,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
     if (!value || !currentMemberWorkspaceRole) return ROLE;
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(currentMemberWorkspaceRole);
+    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
+      currentMemberWorkspaceRole as EUserPermissions
+    );
 
     return Object.fromEntries(
       Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
@@ -212,10 +210,12 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                      Invite members
+                      {t("project_settings.members.invite_members.title")}
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>
+                      <p className="text-sm text-custom-text-200">
+                        {t("project_settings.members.invite_members.sub_heading")}
+                      </p>
                     </div>
 
                     <div className="mb-3 space-y-4">
@@ -339,16 +339,16 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />
-                      Add more
+                      {t("common.add_more")}
                     </button>
                     <div className="flex items-center gap-2">
                       <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                        Cancel
+                        {t("cancel")}
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting
-                          ? `${fields && fields.length > 1 ? "Adding members..." : "Adding member..."}`
-                          : `${fields && fields.length > 1 ? "Add members" : "Add member"}`}
+                          ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
+                          : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}
                       </Button>
                     </div>
                   </div>

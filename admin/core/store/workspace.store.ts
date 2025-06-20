@@ -1,8 +1,8 @@
 import set from "lodash/set";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
+// plane imports
+import { InstanceWorkspaceService } from "@plane/services";
 import { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
-// services
-import { WorkspaceService } from "@/services/workspace.service";
 // root store
 import { CoreRootStore } from "@/store/root.store";
 
@@ -29,7 +29,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   workspaces: Record<string, IWorkspace> = {};
   paginationInfo: TPaginationInfo | undefined = undefined;
   // services
-  workspaceService;
+  instanceWorkspaceService;
 
   constructor(private store: CoreRootStore) {
     makeObservable(this, {
@@ -48,7 +48,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       // curd actions
       createWorkspace: action,
     });
-    this.workspaceService = new WorkspaceService();
+    this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
 
   // computed
@@ -84,7 +84,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       } else {
         this.loader = "init-loader";
       }
-      const paginatedWorkspaceData = await this.workspaceService.getWorkspaces();
+      const paginatedWorkspaceData = await this.instanceWorkspaceService.list();
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData;
         results.forEach((workspace: IWorkspace) => {
@@ -109,7 +109,7 @@ export class WorkspaceStore implements IWorkspaceStore {
     if (!this.paginationInfo || this.paginationInfo.next_page_results === false) return [];
     try {
       this.loader = "pagination";
-      const paginatedWorkspaceData = await this.workspaceService.getWorkspaces(this.paginationInfo.next_cursor);
+      const paginatedWorkspaceData = await this.instanceWorkspaceService.list(this.paginationInfo.next_cursor);
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData;
         results.forEach((workspace: IWorkspace) => {
@@ -135,7 +135,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   createWorkspace = async (data: IWorkspace): Promise<IWorkspace> => {
     try {
       this.loader = "mutation";
-      const workspace = await this.workspaceService.createWorkspace(data);
+      const workspace = await this.instanceWorkspaceService.create(data);
       runInAction(() => {
         set(this.workspaces, [workspace.id], workspace);
       });

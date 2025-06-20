@@ -5,24 +5,19 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 // constants
-import { ORGANIZATION_SIZE } from "@plane/constants";
-// types
+import { ORGANIZATION_SIZE, WORKSPACE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-// ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
-// constants
-import { WORKSPACE_UPDATED } from "@/constants/event-tracker";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -39,6 +34,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const { captureWorkspaceEvent } = useEventTracker();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+  const { t } = useTranslation();
 
   // form info
   const {
@@ -158,7 +154,7 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`w-full overflow-y-auto md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
@@ -190,10 +186,10 @@ export const WorkspaceDetails: FC = observer(() => {
                 {workspaceLogo && workspaceLogo !== "" ? (
                   <>
                     <Pencil className="h-3 w-3" />
-                    Edit logo
+                    {t("workspace_settings.settings.general.edit_logo")}
                   </>
                 ) : (
-                  "Upload logo"
+                  t("workspace_settings.settings.general.upload_logo")
                 )}
               </button>
             )}
@@ -203,15 +199,15 @@ export const WorkspaceDetails: FC = observer(() => {
         <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">Workspace name</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
                 rules={{
-                  required: "Name is required",
+                  required: t("workspace_settings.settings.general.errors.name.required"),
                   maxLength: {
                     value: 80,
-                    message: "Workspace name should not exceed 80 characters",
+                    message: t("workspace_settings.settings.general.errors.name.max_length"),
                   },
                 }}
                 render={({ field: { value, onChange, ref } }) => (
@@ -223,7 +219,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.name)}
-                    placeholder="Name"
+                    placeholder={t("workspace_settings.settings.general.name")}
                     className="w-full rounded-md font-medium"
                     disabled={!isAdmin}
                   />
@@ -232,7 +228,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Company size</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.company_size")}</h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -240,7 +236,10 @@ export const WorkspaceDetails: FC = observer(() => {
                   <CustomSelect
                     value={value}
                     onChange={onChange}
-                    label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
+                    label={
+                      ORGANIZATION_SIZE.find((c) => c === value) ??
+                      t("workspace_settings.settings.general.errors.company_size.select_a_range")
+                    }
                     optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
@@ -257,7 +256,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Workspace URL</h4>
+              <h4 className="text-sm">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"
@@ -284,7 +283,7 @@ export const WorkspaceDetails: FC = observer(() => {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
-                {isLoading ? "Updating" : "Update workspace"}
+                {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
               </Button>
             </div>
           )}

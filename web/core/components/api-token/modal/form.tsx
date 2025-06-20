@@ -5,15 +5,14 @@ import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
 import { Calendar } from "lucide-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-
 type Props = {
   handleClose: () => void;
   neverExpires: boolean;
@@ -50,18 +49,19 @@ const defaultValues: Partial<IApiToken> = {
   expired_at: null,
 };
 
-const getExpiryDate = (val: string): string | null | undefined => {
+const getExpiryDate = (val: string): Date | null | undefined => {
   const today = new Date();
-
   const dateToAdd = EXPIRY_DATE_OPTIONS.find((option) => option.key === val)?.value;
-
-  if (dateToAdd) {
-    const expiryDate = add(today, dateToAdd);
-
-    return renderFormattedDate(expiryDate);
-  }
-
+  if (dateToAdd) return add(today, dateToAdd);
   return null;
+};
+
+const getFormattedDate = (date: Date): Date => {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  return add(date, { hours, minutes, seconds });
 };
 
 export const CreateApiTokenForm: React.FC<Props> = (props) => {
@@ -76,6 +76,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     reset,
     watch,
   } = useForm<IApiToken>({ defaultValues });
+  // hooks
+  const { t } = useTranslation();
 
   const handleFormSubmit = async (data: IApiToken) => {
     // if never expires is toggled off, and the user has not selected a custom date or a predefined date, show an error
@@ -94,12 +96,13 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
     // if never expires is toggled on, set expired_at to null
     if (neverExpires) payload.expired_at = null;
     // if never expires is toggled off, and the user has selected a custom date, set expired_at to the custom date
-    else if (data.expired_at === "custom") payload.expired_at = renderFormattedPayloadDate(customDate);
+    else if (data.expired_at === "custom") {
+      payload.expired_at = customDate && getFormattedDate(customDate).toISOString();
+    }
     // if never expires is toggled off, and the user has selected a predefined date, set expired_at to the predefined date
     else {
       const expiryDate = getExpiryDate(data.expired_at ?? "");
-
-      if (expiryDate) payload.expired_at = renderFormattedPayloadDate(new Date(expiryDate));
+      if (expiryDate) payload.expired_at = expiryDate.toISOString();
     }
 
     await onSubmit(payload).then(() => {
@@ -111,23 +114,27 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
   const today = new Date();
   const tomorrow = add(today, { days: 1 });
   const expiredAt = watch("expired_at");
+  const expiryDate = getExpiryDate(expiredAt ?? "");
+  const customDateFormatted = customDate && getFormattedDate(customDate);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create token</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {t("workspace_settings.settings.api_tokens.create_token")}
+        </h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
               control={control}
               name="label"
               rules={{
-                required: "Title is required",
+                required: t("title_is_required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: t("title_should_be_less_than_255_characters"),
                 },
-                validate: (val) => val.trim() !== "" || "Title is required",
+                validate: (val) => val.trim() !== "" || t("title_is_required"),
               }}
               render={({ field: { value, onChange } }) => (
                 <Input
@@ -135,7 +142,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   value={value}
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
-                  placeholder="Title"
+                  placeholder={t("title")}
                   className="w-full text-base"
                 />
               )}
@@ -150,7 +157,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
-                placeholder="Description"
+                placeholder={t("description")}
                 className="w-full text-base resize-none min-h-24"
               />
             )}
@@ -214,10 +221,10 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
               <span className="text-xs text-custom-text-400">
                 {expiredAt === "custom"
                   ? customDate
-                    ? `Expires ${renderFormattedDate(customDate)}`
+                    ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
                     : null
                   : expiredAt
-                    ? `Expires ${getExpiryDate(expiredAt ?? "")}`
+                    ? `Expires ${renderFormattedDate(expiryDate ?? "")} at ${renderFormattedTime(expiryDate ?? "")}`
                     : null}
               </span>
             )}
@@ -229,14 +236,16 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
           <div className="flex cursor-pointer items-center justify-center">
             <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
           </div>
-          <span className="text-xs">Never expires</span>
+          <span className="text-xs">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Generating" : "Generate token"}
+            {isSubmitting
+              ? t("workspace_settings.settings.api_tokens.generating")
+              : t("workspace_settings.settings.api_tokens.generate_token")}
           </Button>
         </div>
       </div>

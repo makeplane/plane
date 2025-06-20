@@ -1,23 +1,23 @@
 import cloneDeep from "lodash/cloneDeep";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
+import { EUserPermissions, API_BASE_URL } from "@plane/constants";
 // types
 import { IUser } from "@plane/types";
 import { TUserPermissions } from "@plane/types/src/enums";
-// constants
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-import { EUserPermissions } from "@/plane-web/constants/user-permissions";
+// plane web imports
+import { RootStore } from "@/plane-web/store/root.store";
+import { IUserPermissionStore, UserPermissionStore } from "@/plane-web/store/user/permission.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
-import { CoreRootStore } from "@/store/root.store";
 import { IAccountStore } from "@/store/user/account.store";
 import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
-import { IUserPermissionStore, UserPermissionStore } from "./permissions.store";
+// local imports
 import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
 
 type TUserErrorStatus = {
@@ -41,6 +41,10 @@ export interface IUserStore {
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser | undefined>;
   handleSetPassword: (csrfToken: string, data: { password: string }) => Promise<IUser | undefined>;
   deactivateAccount: () => Promise<void>;
+  changePassword: (
+    csrfToken: string,
+    payload: { old_password?: string; new_password: string }
+  ) => Promise<IUser | undefined>;
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
@@ -64,7 +68,7 @@ export class UserStore implements IUserStore {
   userService: UserService;
   authService: AuthService;
 
-  constructor(private store: CoreRootStore) {
+  constructor(private store: RootStore) {
     // stores
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
@@ -89,6 +93,7 @@ export class UserStore implements IUserStore {
       updateCurrentUser: action,
       handleSetPassword: action,
       deactivateAccount: action,
+      changePassword: action,
       reset: action,
       signOut: action,
       // computed
@@ -200,6 +205,23 @@ export class UserStore implements IUserStore {
     }
   };
 
+  changePassword = async (
+    csrfToken: string,
+    payload: {
+      old_password?: string;
+      new_password: string;
+    }
+  ): Promise<IUser | undefined> => {
+    try {
+      const user = await this.userService.changePassword(csrfToken, payload);
+      if (this.data) set(this.data, ["is_password_autoset"], false);
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   /**
    * @description deactivates the current user
    * @returns {Promise<void>}
@@ -231,7 +253,7 @@ export class UserStore implements IUserStore {
    */
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
-    await persistence.clearStorage();
+    await persistence.clearStorage(true);
     this.store.resetOnSignOut();
   };
 
@@ -243,8 +265,7 @@ export class UserStore implements IUserStore {
   fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
     const { workspaceSlug } = this.store.router;
 
-    const allWorkspaceProjectRoles =
-      this.permission.workspaceProjectsPermissions && this.permission.workspaceProjectsPermissions[workspaceSlug || ""];
+    const allWorkspaceProjectRoles = this.permission.getProjectRolesByWorkspaceSlug(workspaceSlug || "");
 
     const userPermissions =
       (allWorkspaceProjectRoles &&

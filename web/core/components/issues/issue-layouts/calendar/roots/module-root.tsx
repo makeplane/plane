@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 // components
+import { EIssuesStoreType } from "@plane/constants";
 import { ModuleIssueQuickActions } from "@/components/issues";
 // types
 // constants
-import { EIssuesStoreType } from "@/constants/issue";
 import { useIssues } from "@/hooks/store";
 import { BaseCalendarRoot } from "../base-calendar-root";
 

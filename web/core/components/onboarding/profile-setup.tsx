@@ -6,19 +6,19 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2, E_PASSWORD_STRENGTH } from "@plane/constants";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { getFileURL, getPasswordStrength } from "@plane/utils";
 import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
-import { USER_DETAILS, E_ONBOARDING_STEP_1, E_ONBOARDING_STEP_2 } from "@/constants/event-tracker";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
 // hooks
 import { useEventTracker, useUser, useUserProfile } from "@/hooks/store";
 // assets
@@ -91,6 +91,8 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
     password: false,
     retypePassword: false,
   });
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -413,7 +415,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                   <>
                     <div className="space-y-1">
                       <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
-                        Set a password (optional)
+                        Set a password ({t("common.optional")})
                       </label>
                       <Controller
                         control={control}
@@ -454,7 +456,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
-                        Confirm password (optional)
+                        {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                       </label>
                       <Controller
                         control={control}
@@ -473,7 +475,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                               onChange={onChange}
                               ref={ref}
                               hasError={Boolean(errors.confirm_password)}
-                              placeholder="Confirm password..."
+                              placeholder={t("auth.common.password.confirm_password.placeholder")}
                               className="w-full border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                             />
                             {showPassword.retypePassword ? (

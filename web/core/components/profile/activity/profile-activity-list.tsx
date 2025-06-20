@@ -4,6 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 // icons
 import { History, MessageSquare } from "lucide-react";
+import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
@@ -11,8 +12,6 @@ import { ActivitySettingsLoader } from "@/components/ui";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // services
@@ -81,8 +80,8 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                         </div>
                       )}
 
-                      <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
-                        <MessageSquare className="h-6 w-6 !text-2xl text-custom-text-200" aria-hidden="true" />
+                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-custom-background-80 text-custom-text-200 ring-white">
+                        <MessageSquare className="!text-2xl text-custom-text-200" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
@@ -103,7 +102,8 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
                           containerClassName="text-xs bg-custom-background-100"
-                          workspaceSlug={activityItem?.workspace_detail?.slug.toString() ?? ""}
+                          workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
+                          workspaceSlug={activityItem?.workspace_detail?.slug?.toString() ?? ""}
                           projectId={activityItem.project ?? ""}
                         />
                       </div>
@@ -112,16 +112,7 @@ export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
                 </div>
               );
 
-            const message =
-              activityItem.verb === "created" &&
-              !["cycles", "modules", "attachment", "link", "estimate"].includes(activityItem.field) &&
-              !activityItem.field ? (
-                <span>
-                  created <IssueLink activity={activityItem} />
-                </span>
-              ) : (
-                <ActivityMessage activity={activityItem} showIssue />
-              );
+            const message = <ActivityMessage activity={activityItem} showIssue />;
 
             if ("field" in activityItem && activityItem.field !== "updated_by")
               return (

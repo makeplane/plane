@@ -24,6 +24,7 @@ from plane.db.models import (
     ProjectMember,
     Project,
     CycleIssue,
+    UserRecentVisit,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -116,7 +117,7 @@ class WorkspaceViewViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission(
-        allowed_roles=[], level="WORKSPACE", creator=True, model=IssueView
+        allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView
     )
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
@@ -431,7 +432,7 @@ class IssueViewViewSet(BaseViewSet):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         serializer = IssueViewSerializer(issue_view)
@@ -495,6 +496,13 @@ class IssueViewViewSet(BaseViewSet):
                 entity_identifier=pk,
                 entity_type="view",
             ).delete()
+            # Delete the page from recent visit
+            UserRecentVisit.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                entity_identifier=pk,
+                entity_name="view",
+            ).delete(soft=False)
         else:
             return Response(
                 {"error": "Only admin or owner can delete the view"},

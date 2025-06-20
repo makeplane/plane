@@ -2,23 +2,25 @@
 
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
+// plane imports
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
-// ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@/constants/label";
-// hooks
-import { useLabel } from "@/hooks/store";
-// types
 
-type Props = {
+export type TLabelOperationsCallbacks = {
+  createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
+  updateLabel: (labelId: string, data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
+};
+
+type TCreateUpdateLabelInlineProps = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
+  labelOperationsCallbacks: TLabelOperationsCallbacks;
   labelToUpdate?: IIssueLabel;
   onClose?: () => void;
 };
@@ -29,12 +31,8 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const CreateUpdateLabelInline = observer(
-  forwardRef<HTMLFormElement, Props>(function CreateUpdateLabelInline(props, ref) {
-    const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
-    // router
-    const { workspaceSlug, projectId } = useParams();
-    // store hooks
-    const { createLabel, updateLabel } = useLabel();
+  forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
+    const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {
       handleSubmit,
@@ -48,6 +46,8 @@ export const CreateUpdateLabelInline = observer(
       defaultValues,
     });
 
+    const { t } = useTranslation();
+
     const handleClose = () => {
       setLabelForm(false);
       reset(defaultValues);
@@ -55,9 +55,10 @@ export const CreateUpdateLabelInline = observer(
     };
 
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (isSubmitting) return;
 
-      await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+      await labelOperationsCallbacks
+        .createLabel(formData)
         .then(() => {
           handleClose();
           reset(defaultValues);
@@ -66,17 +67,17 @@ export const CreateUpdateLabelInline = observer(
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.detail ?? error.error ?? "Something went wrong. Please try again later.",
+            message: error?.detail ?? error.error ?? t("common.something_went_wrong"),
           });
           reset(formData);
         });
     };
 
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (!labelToUpdate?.id || isSubmitting) return;
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
+      await labelOperationsCallbacks
+        .updateLabel(labelToUpdate.id, formData)
         .then(() => {
           reset(defaultValues);
           handleClose();
@@ -85,10 +86,18 @@ export const CreateUpdateLabelInline = observer(
           setToast({
             title: "Oops!",
             type: TOAST_TYPE.ERROR,
-            message: error?.error ?? "Error while updating the label",
+            message: error?.error ?? t("project_settings.labels.toast.error"),
           });
           reset(formData);
         });
+    };
+
+    const handleFormSubmit = (formData: IIssueLabel) => {
+      if (isUpdating) {
+        handleLabelUpdate(formData);
+      } else {
+        handleLabelCreate(formData);
+      }
     };
 
     /**
@@ -116,12 +125,8 @@ export const CreateUpdateLabelInline = observer(
 
     return (
       <>
-        <form
+        <div
           ref={ref}
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
-          }}
           className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
         >
           <div className="flex-shrink-0">
@@ -173,10 +178,10 @@ export const CreateUpdateLabelInline = observer(
               control={control}
               name="name"
               rules={{
-                required: "Label title is required",
+                required: t("project_settings.labels.label_title_is_required"),
                 maxLength: {
                   value: 255,
-                  message: "Label name should not exceed 255 characters",
+                  message: t("project_settings.labels.label_max_char"),
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
@@ -189,19 +194,27 @@ export const CreateUpdateLabelInline = observer(
                   onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Label title"
+                  placeholder={t("project_settings.labels.label_title")}
                   className="w-full"
                 />
               )}
             />
           </div>
           <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
-            Cancel
+            {t("cancel")}
           </Button>
-          <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
-            {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
+          <Button
+            variant="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              handleSubmit(handleFormSubmit)();
+            }}
+            size="sm"
+            loading={isSubmitting}
+          >
+            {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           </Button>
-        </form>
+        </div>
         {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
       </>
     );

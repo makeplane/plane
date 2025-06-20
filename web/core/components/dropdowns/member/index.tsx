@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, LucideIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -23,9 +24,11 @@ type Props = {
   onClose?: () => void;
   renderByDefault?: boolean;
   optionsClassName?: string;
+  memberIds?: string[];
 } & MemberDropdownProps;
 
 export const MemberDropdown: React.FC<Props> = observer((props) => {
+  const { t } = useTranslation();
   const {
     button,
     buttonClassName,
@@ -40,7 +43,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     multiple,
     onChange,
     onClose,
-    placeholder = "Members",
+    placeholder = t("members"),
     tooltipContent,
     placement,
     projectId,
@@ -50,6 +53,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     value,
     icon,
     renderByDefault = true,
+    memberIds,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -86,7 +90,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
         if (value.length === 1) {
           return getUserDetails(value[0])?.display_name || placeholder;
         } else {
-          return showUserDetails ? `${value.length} members` : "";
+          return showUserDetails ? `${value.length} ${t("members").toLocaleLowerCase()}` : "";
         }
       } else {
         return placeholder;
@@ -109,6 +113,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -126,12 +131,15 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <DropdownButton
             className={cn("text-xs", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
-            tooltipContent={tooltipContent ?? `${value?.length ?? 0} assignee${value?.length !== 1 ? "s" : ""}`}
+            tooltipContent={
+              tooltipContent ?? `${value?.length ?? 0} ${value?.length !== 1 ? t("assignees") : t("assignee")}`
+            }
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
@@ -155,7 +163,6 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       onChange={dropdownOnChange}
       onKeyDown={handleKeyDown}
@@ -165,6 +172,7 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     >
       {isOpen && (
         <MemberOptions
+          memberIds={memberIds}
           optionsClassName={optionsClassName}
           isOpen={isOpen}
           projectId={projectId}

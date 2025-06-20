@@ -2,28 +2,31 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 // components
+import { calculateTotalFilters } from "@plane/utils";
 import { ArchivedCyclesView, CycleAppliedFiltersList } from "@/components/cycles";
-import { EmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state";
 import { CycleModuleListLayout } from "@/components/ui";
-// constants
-import { EmptyStateType } from "@/constants/empty-state";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useCycle, useCycleFilter } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { fetchArchivedCycles, currentProjectArchivedCycleIds, loader } = useCycle();
   // cycle filters hook
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useCycleFilter();
   // derived values
   const totalArchivedCycles = currentProjectArchivedCycleIds?.length ?? 0;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/archived/empty-cycles" });
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_CYCLES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -64,7 +67,11 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
       )}
       {totalArchivedCycles === 0 ? (
         <div className="h-full place-items-center">
-          <EmptyState type={EmptyStateType.PROJECT_ARCHIVED_NO_CYCLES} />
+          <DetailedEmptyState
+            title={t("project_cycles.empty_state.archived.title")}
+            description={t("project_cycles.empty_state.archived.description")}
+            assetPath={resolvedPath}
+          />
         </div>
       ) : (
         <div className="relative h-full w-full overflow-auto">

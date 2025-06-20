@@ -88,7 +88,7 @@ jobs:
 
   full_build_push:
     if: ${{ needs.branch_build_setup.outputs.do_full_build == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
       BUILD_TYPE: full
@@ -148,7 +148,7 @@ jobs:
 
   slim_build_push:
     if: ${{ needs.branch_build_setup.outputs.do_slim_build == 'true' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
       BUILD_TYPE: slim

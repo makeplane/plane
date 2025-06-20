@@ -120,9 +120,7 @@ export interface CycleIssueResponse {
   sub_issues_count: number;
 }
 
-export type SelectCycleType =
-  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type CycleDateCheckData = {
   start_date: string;
@@ -132,3 +130,22 @@ export type CycleDateCheckData = {
 
 export type TCycleEstimateType = "issues" | "points";
 export type TCyclePlotType = "burndown" | "burnup";
+
+export type TPublicCycle = {
+  id: string;
+  name: string;
+  status: string;
+};
+
+export type TProgressChartData = {
+  date: string;
+  scope: number;
+  completed: number;
+  backlog: number;
+  started: number;
+  unstarted: number;
+  cancelled: number;
+  pending: number;
+  ideal: number;
+  actual: number;
+}[];

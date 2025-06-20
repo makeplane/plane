@@ -9,15 +9,17 @@ import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+// plane-web
+import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 
@@ -33,6 +35,7 @@ interface IHeaderGroupByCard {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
+  isEpic?: boolean;
 }
 
 export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
@@ -48,6 +51,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     addIssuesToView,
     selectionHelpers,
     handleCollapsedGroups,
+    isEpic = false,
   } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -77,13 +81,13 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Issues added to the cycle successfully.",
+        message: "Work items added to the cycle successfully.",
       });
     } catch (error) {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Selected issues could not be added to the cycle. Please try again.",
+        message: "Selected work items could not be added to the cycle. Please try again.",
       });
     }
   };
@@ -134,7 +138,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
                   setIsOpen(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Create issue</span>
+                <span className="flex items-center justify-start gap-2">Create work item</span>
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
@@ -142,7 +146,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
                   setOpenExistingIssueListModal(true);
                 }}
               >
-                <span className="flex items-center justify-start gap-2">Add an existing issue</span>
+                <span className="flex items-center justify-start gap-2">Add an existing work item</span>
               </CustomMenu.MenuItem>
             </CustomMenu>
           ) : (
@@ -157,13 +161,17 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             </div>
           ))}
 
-        <CreateUpdateIssueModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          data={issuePayload}
-          storeType={storeType}
-          isDraft={isDraftIssue}
-        />
+        {isEpic ? (
+          <CreateUpdateEpicModal isOpen={isOpen} onClose={() => setIsOpen(false)} data={issuePayload} />
+        ) : (
+          <CreateUpdateIssueModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            data={issuePayload}
+            storeType={storeType}
+            isDraft={isDraftIssue}
+          />
+        )}
 
         {renderExistingIssueModal && (
           <ExistingIssuesListModal

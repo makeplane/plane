@@ -1,5 +1,6 @@
 # Python imports
 from django.utils import timezone
+from django.db import DatabaseError
 
 # Third party imports
 from celery import shared_task
@@ -22,8 +23,12 @@ def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slu
         ).first()
 
         if recent_visited:
-            recent_visited.visited_at = timezone.now()
-            recent_visited.save(update_fields=["visited_at"])
+            # Check if the database is available
+            try:
+                recent_visited.visited_at = timezone.now()
+                recent_visited.save(update_fields=["visited_at"])
+            except DatabaseError:
+                pass
         else:
             recent_visited_count = UserRecentVisit.objects.filter(
                 user_id=user_id, workspace_id=workspace.id

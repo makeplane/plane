@@ -3,9 +3,10 @@
 import { observer } from "mobx-react";
 // icons
 import { LucideIcon, Users } from "lucide-react";
-// ui
-import { cn } from "@plane/editor";
+// plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 //

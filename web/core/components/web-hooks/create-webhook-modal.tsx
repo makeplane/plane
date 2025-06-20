@@ -3,11 +3,14 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 // types
+import { useTranslation } from "@plane/i18n";
 import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { csvDownload } from "@/helpers/download.helper";
+import { csvDownload } from "@plane/utils";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 // components
 import { WebhookForm } from "./form";
 import { GeneratedHookDetails } from "./generated-hook-details";
@@ -34,6 +37,7 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
   const [generatedWebhook, setGeneratedKey] = useState<IWebhook | null>(null);
   // router
   const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
 
   const handleCreateWebhook = async (formData: IWebhook, webhookEventType: TWebhookEventTypes) => {
     if (!workspaceSlug) return;
@@ -65,8 +69,8 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
       .then(({ webHook, secretKey }) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Webhook created successfully.",
+          title: t("workspace_settings.settings.webhooks.toasts.created.title"),
+          message: t("workspace_settings.settings.webhooks.toasts.created.message"),
         });
 
         setGeneratedKey(webHook);
@@ -77,8 +81,8 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Something went wrong. Please try again.",
+          title: t("workspace_settings.settings.webhooks.toasts.not_created.title"),
+          message: error?.error ?? t("workspace_settings.settings.webhooks.toasts.not_created.message"),
         });
       });
   };
@@ -91,16 +95,12 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
     }, 350);
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen && !generatedWebhook) handleClose();
+  });
+
   return (
-    <ModalCore
-      isOpen={isOpen}
-      handleClose={() => {
-        if (!generatedWebhook) handleClose();
-      }}
-      position={EModalPosition.TOP}
-      width={EModalWidth.XXL}
-      className="p-4 pb-0"
-    >
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL} className="p-4 pb-0">
       {!generatedWebhook ? (
         <WebhookForm onSubmit={handleCreateWebhook} handleClose={handleClose} />
       ) : (

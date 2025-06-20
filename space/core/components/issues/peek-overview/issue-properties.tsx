@@ -3,14 +3,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CalendarCheck2, Signal } from "lucide-react";
-// ui
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn, getIssuePriorityFilters } from "@plane/utils";
 // components
 import { Icon } from "@/components/ui";
-// constants
-import { issuePriorityFilter } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
@@ -25,6 +24,8 @@ type Props = {
 };
 
 export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDetails, mode }) => {
+  // hooks
+  const { t } = useTranslation();
   const { getStateById } = useStates();
   const state = getStateById(issueDetails?.state_id ?? undefined);
 
@@ -32,7 +33,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
 
   const { project_details } = usePublish(anchor?.toString());
 
-  const priority = issueDetails.priority ? issuePriorityFilter(issueDetails.priority) : null;
+  const priority = issueDetails.priority ? getIssuePriorityFilters(issueDetails.priority) : null;
 
   const handleCopyLink = () => {
     const urlToCopy = window.location.href;
@@ -41,7 +42,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
       setToast({
         type: TOAST_TYPE.INFO,
         title: "Link copied!",
-        message: "Issue link copied to clipboard",
+        message: "Work item link copied to clipboard",
       });
     });
   };
@@ -96,7 +97,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
                   <Icon iconName={priority?.icon} />
                 </span>
               )}
-              <span>{priority?.title ?? "None"}</span>
+              <span>{t(priority?.titleTranslationKey || "common.none")}</span>
             </div>
           </div>
         </div>

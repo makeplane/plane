@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
-// types
-import { ISSUE_GROUP_BY_OPTIONS } from "@/constants/issue";
 // constants
 
 type Props = {
@@ -15,6 +15,9 @@ type Props = {
 };
 
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
+  // hooks
+  const { t } = useTranslation();
+
   const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -40,7 +43,7 @@ export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
                 key={subGroupBy?.key}
                 isChecked={selectedSubGroupBy === subGroupBy?.key ? true : false}
                 onClick={() => handleUpdate(subGroupBy.key)}
-                title={subGroupBy.title}
+                title={t(subGroupBy.titleTranslationKey)}
                 multiple={false}
               />
             );

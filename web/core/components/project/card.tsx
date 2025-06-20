@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
-// types
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import type { IProject } from "@plane/types";
-// ui
 import {
   Avatar,
   AvatarGroup,
@@ -20,20 +21,14 @@ import {
   TContextMenuItem,
   FavoriteStar,
 } from "@plane/ui";
+import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   project: IProject;
@@ -51,21 +46,28 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
+  const { getUserDetails } = useMember();
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   const { allowPermissions } = useUserPermissions();
   // hooks
   const { isMobile } = usePlatformOS();
   // derived values
-  const projectMembersIds = project.members?.map((member) => member.member_id);
+  const projectMembersIds = project.members;
   const shouldRenderFavorite = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
   // auth
-  const isOwner = project.member_role === EUserPermissions.ADMIN;
-  const isMember = project.member_role === EUserPermissions.MEMBER;
+  const isMemberOfProject = !!project.member_role;
+  const hasAdminRole = project.member_role === EUserPermissions.ADMIN;
+  const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -76,6 +78,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        actionItems: () => {
+          if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+          return <></>;
+        },
       },
       error: {
         title: "Error!",
@@ -115,24 +121,24 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}, { showProgressBar: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, {}, { showProgressBar: false }),
       title: "Settings",
       icon: Settings,
-      shouldRender: !isArchived && (isOwner || isMember),
+      shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
     },
     {
       key: "join",
       action: () => setJoinProjectModal(true),
       title: "Join",
       icon: UserPlus,
-      shouldRender: !project.is_member && !isArchived,
+      shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
       icon: ExternalLink,
-      shouldRender: project.is_member && !isArchived,
+      shouldRender: !isMemberOfProject && !isArchived,
     },
     {
       key: "copy-link",
@@ -146,14 +152,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       action: () => setRestoreProject(true),
       title: "Restore",
       icon: ArchiveRestoreIcon,
-      shouldRender: isArchived && isOwner,
+      shouldRender: isArchived && hasAdminRole,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
       icon: Trash2,
-      shouldRender: isArchived && isOwner,
+      shouldRender: isArchived && hasAdminRole,
     },
   ];
 
@@ -188,13 +194,13 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
         ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
-          if (!project.is_member || isArchived) {
+          if (!isMemberOfProject || isArchived) {
             e.preventDefault();
             e.stopPropagation();
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
-        data-prevent-nprogress={!project.is_member || isArchived}
+        data-prevent-nprogress={!isMemberOfProject || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -249,7 +255,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       if (project.is_favorite) handleRemoveFromFavorites();
                       else handleAddToFavorites();
                     }}
-                    selected={project.is_favorite}
+                    selected={!!project.is_favorite}
                   />
                 )}
               </div>
@@ -281,14 +287,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                   <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
-                        const member = project.members?.find((m) => m.member_id === memberId);
+                        const member = getUserDetails(memberId);
                         if (!member) return null;
                         return (
-                          <Avatar
-                            key={member.id}
-                            name={member.member__display_name}
-                            src={getFileURL(member.member__avatar_url)}
-                          />
+                          <Avatar key={member.id} name={member.display_name} src={getFileURL(member.avatar_url)} />
                         );
                       })}
                     </AvatarGroup>
@@ -300,7 +302,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
             </div>
             {isArchived ? (
-              isOwner && (
+              hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
                     className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
@@ -329,14 +331,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
               )
             ) : (
               <>
-                {project.is_member &&
-                  (isOwner || isMember ? (
+                {isMemberOfProject &&
+                  (hasAdminRole || hasMemberRole ? (
                     <Link
                       className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
-                      href={`/${workspaceSlug}/projects/${project.id}/settings`}
+                      href={`/${workspaceSlug}/settings/projects/${project.id}`}
                     >
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
@@ -346,7 +348,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       Joined
                     </span>
                   ))}
-                {!project.is_member && (
+                {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
                       variant="link-primary"

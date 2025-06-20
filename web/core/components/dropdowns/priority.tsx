@@ -5,14 +5,14 @@ import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { ISSUE_PRIORITIES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown, PriorityIcon, Tooltip } from "@plane/ui";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -71,11 +71,12 @@ const BorderButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={priorityDetails?.title ?? t("common.none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -153,11 +154,12 @@ const BackgroundButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={t(priorityDetails?.key ?? "none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -201,7 +203,9 @@ const BackgroundButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -236,11 +240,12 @@ const TransparentButton = (props: ButtonProps) => {
   };
 
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
 
   return (
     <Tooltip
-      tooltipHeading="Priority"
-      tooltipContent={priorityDetails?.title ?? "None"}
+      tooltipHeading={t("priority")}
+      tooltipContent={priorityDetails?.title ?? t("common.none")}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -285,7 +290,9 @@ const TransparentButton = (props: ButtonProps) => {
           ) : (
             <SignalHigh className="size-3" />
           ))}
-        {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
+        {!hideText && (
+          <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
+        )}
         {dropdownArrow && (
           <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
@@ -295,6 +302,8 @@ const TransparentButton = (props: ButtonProps) => {
 };
 
 export const PriorityDropdown: React.FC<Props> = (props) => {
+  //hooks
+  const { t } = useTranslation();
   const {
     button,
     buttonClassName,
@@ -308,7 +317,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     highlightUrgent = true,
     onChange,
     onClose,
-    placeholder = "Priority",
+    placeholder = t("common.priority"),
     placement,
     showTooltip = false,
     tabIndex,
@@ -336,6 +345,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       },
     ],
   });
+
   // next-themes
   // TODO: remove this after new theming implementation
   const { resolvedTheme } = useTheme();
@@ -384,6 +394,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -401,6 +412,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <ButtonToRender
             priority={value ?? undefined}
@@ -425,7 +437,6 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn(
         "h-full",
         {
@@ -456,7 +467,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
@@ -482,7 +493,7 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
                   </Combobox.Option>
                 ))
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">No matching results</p>
+                <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
               )}
             </div>
           </div>

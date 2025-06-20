@@ -1,5 +1,7 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
@@ -21,38 +23,40 @@ type TAuthHeader = {
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "Log in or sign up",
+      header: "auth.sign_in.header.step.email.header",
       subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Log in or sign up",
-      subHeader: "Use your email-password combination to log in.",
+      header: "auth.sign_in.header.step.password.header",
+      subHeader: "auth.sign_in.header.step.password.sub_header",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Log in or Sign up",
-      subHeader: "Log in using a unique code sent to the email address above.",
+      header: "auth.sign_in.header.step.unique_code.header",
+      subHeader: "auth.sign_in.header.step.unique_code.sub_header",
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "Sign up",
+      header: "auth.sign_up.header.step.email.header",
       subHeader: "",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "Sign up",
-      subHeader: "Sign up using an email-password combination.",
+      header: "auth.sign_up.header.step.password.header",
+      subHeader: "auth.sign_up.header.step.password.sub_header",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "Sign up",
-      subHeader: "Sign up using a unique code sent to the email address above.",
+      header: "auth.sign_up.header.step.unique_code.header",
+      subHeader: "auth.sign_up.header.step.unique_code.sub_header",
     },
   },
 };
 
 const workSpaceService = new WorkspaceService();
 
-export const AuthHeader: FC<TAuthHeader> = (props) => {
+export const AuthHeader: FC<TAuthHeader> = observer((props) => {
   const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep, children } = props;
+  // plane imports
+  const { t } = useTranslation();
 
   const { data: invitation, isLoading } = useSWR(
     workspaceSlug && invitationId ? `WORKSPACE_INVITATION_${workspaceSlug}_${invitationId}` : null,
@@ -74,13 +78,12 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
       return {
         header: (
           <div className="relative inline-flex items-center gap-2">
-            Join <WorkspaceLogo logo={workspace?.logo} name={workspace?.name} classNames="w-8 h-9 flex-shrink-0" />{" "}
+            {t("common.join")}{" "}
+            <WorkspaceLogo logo={workspace?.logo_url} name={workspace?.name} classNames="size-9 flex-shrink-0" />{" "}
             {workspace.name}
           </div>
         ),
-        subHeader: `${
-          mode == EAuthModes.SIGN_UP ? "Create an account" : "Sign in"
-        } to start managing work with your team.`,
+        subHeader: mode == EAuthModes.SIGN_UP ? "auth.sign_up.header.label" : "auth.sign_in.header.label",
       };
     }
 
@@ -99,10 +102,12 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
   return (
     <>
       <div className="space-y-1 text-center">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">{header}</h3>
-        <p className="font-medium text-onboarding-text-400">{subHeader}</p>
+        <h1 className="text-3xl font-bold text-onboarding-text-100">
+          {typeof header === "string" ? t(header) : header}
+        </h1>
+        <p className="font-medium text-onboarding-text-400">{t(subHeader)}</p>
       </div>
       {children}
     </>
   );
-};
+});

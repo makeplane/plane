@@ -4,10 +4,9 @@ import React, { useState } from "react";
 import { Controller, Control } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";
-// ui
+// plane internal packages
 import { Input } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   control: Control<any>;
@@ -37,9 +36,7 @@ export const ControllerInput: React.FC<Props> = (props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-custom-text-300">
-        {label}
-      </h4>
+      <h4 className="text-sm text-custom-text-300">{label}</h4>
       <div className="relative">
         <Controller
           control={control}

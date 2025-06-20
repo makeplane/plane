@@ -1,7 +1,8 @@
 {
   "name": "@plane/editor",
-  "version": "0.24.0",
+  "version": "0.26.1",
   "description": "Core Editor that powers Plane",
+  "license": "AGPL-3.0",
   "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -12,14 +13,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs",
-      "module": "./dist/index.mjs"
+      "import": "./dist/index.mjs"
     },
     "./lib": {
       "require": "./dist/lib.js",
       "types": "./dist/lib.d.mts",
-      "import": "./dist/lib.mjs",
-      "module": "./dist/lib.mjs"
+      "import": "./dist/lib.mjs"
     }
   },
   "scripts": {
@@ -27,6 +26,7 @@
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
@@ -35,55 +35,54 @@
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
-    "@hocuspocus/provider": "^2.13.5",
-    "@plane/helpers": "*",
+    "@hocuspocus/provider": "^2.15.0",
+    "@plane/types": "*",
     "@plane/ui": "*",
-    "@tiptap/core": "^2.1.13",
-    "@tiptap/extension-blockquote": "^2.1.13",
-    "@tiptap/extension-character-count": "^2.6.5",
-    "@tiptap/extension-collaboration": "^2.3.2",
-    "@tiptap/extension-image": "^2.1.13",
-    "@tiptap/extension-list-item": "^2.1.13",
-    "@tiptap/extension-mention": "^2.1.13",
-    "@tiptap/extension-placeholder": "^2.3.0",
-    "@tiptap/extension-task-item": "^2.1.13",
-    "@tiptap/extension-task-list": "^2.1.13",
-    "@tiptap/extension-text-align": "^2.8.0",
-    "@tiptap/extension-text-style": "^2.7.1",
-    "@tiptap/extension-underline": "^2.1.13",
-    "@tiptap/pm": "^2.1.13",
-    "@tiptap/react": "^2.1.13",
-    "@tiptap/starter-kit": "^2.1.13",
-    "@tiptap/suggestion": "^2.0.13",
+    "@plane/utils": "*",
+    "@tiptap/core": "2.10.4",
+    "@tiptap/extension-blockquote": "2.10.4",
+    "@tiptap/extension-character-count": "2.11.0",
+    "@tiptap/extension-collaboration": "2.11.0",
+    "@tiptap/extension-image": "2.11.0",
+    "@tiptap/extension-list-item": "2.11.0",
+    "@tiptap/extension-mention": "2.11.0",
+    "@tiptap/extension-placeholder": "2.11.0",
+    "@tiptap/extension-task-item": "2.11.0",
+    "@tiptap/extension-task-list": "2.11.0",
+    "@tiptap/extension-text-align": "2.11.0",
+    "@tiptap/extension-text-style": "2.11.0",
+    "@tiptap/extension-underline": "2.11.0",
+    "@tiptap/html": "2.11.0",
+    "@tiptap/pm": "2.11.0",
+    "@tiptap/react": "2.11.0",
+    "@tiptap/starter-kit": "2.11.0",
+    "@tiptap/suggestion": "2.11.0",
     "class-variance-authority": "^0.7.0",
-    "clsx": "^1.2.1",
     "highlight.js": "^11.8.0",
     "jsx-dom-cjs": "^8.0.3",
     "linkifyjs": "^4.1.3",
     "lowlight": "^3.0.0",
-    "lucide-react": "^0.378.0",
+    "lucide-react": "^0.469.0",
     "prosemirror-codemark": "^0.4.2",
     "prosemirror-utils": "^1.2.2",
-    "react-moveable": "^0.54.2",
-    "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
-    "tiptap-markdown": "^0.8.9",
+    "tiptap-markdown": "^0.8.10",
     "uuid": "^10.0.0",
     "y-indexeddb": "^9.0.12",
-    "y-prosemirror": "^1.2.5",
+    "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
-    "yjs": "^13.6.15"
+    "yjs": "^13.6.20"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@types/node": "18.15.3",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "postcss": "^8.4.38",
-    "tailwind-config-custom": "*",
-    "tsup": "^7.2.0",
-    "typescript": "5.3.3"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   },
   "keywords": [
     "editor",

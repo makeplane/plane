@@ -30,7 +30,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
       <>
         {activity.verb === "created" ? (
           <>
-            <span>added this issue to the module </span>
+            <span>added this work item to the module </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
@@ -54,7 +54,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
           </>
         ) : (
           <>
-            <span>removed the issue from the module </span>
+            <span>removed the work item from the module </span>
             <a
               href={`/${activity.workspace_detail?.slug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"

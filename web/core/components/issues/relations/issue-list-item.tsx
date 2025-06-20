@@ -4,10 +4,14 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
 // Plane
-import { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // components
+import { generateWorkItemLink } from "@plane/utils";
 import { RelationIssueProperty } from "@/components/issues/relations";
+// helpers
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -15,31 +19,37 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
+// local imports
+import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
-  projectId: string;
   issueId: string;
   relationKey: TIssueRelationTypes;
   relationIssueId: string;
   disabled: boolean;
-  issueOperations: TRelationIssueOperations;
-  handleIssueCrudState: (key: "update" | "delete", issueId: string, issue?: TIssue | null) => void;
+  handleIssueCrudState: (
+    key: "update" | "delete" | "removeRelation",
+    issueId: string,
+    issue?: TIssue | null,
+    relationKey?: TIssueRelationTypes | null,
+    relationIssueId?: string | null
+  ) => void;
+  issueServiceType?: TIssueServiceType;
 };
 
 export const RelationIssueListItem: FC<Props> = observer((props) => {
   const {
     workspaceSlug,
-    projectId,
     issueId,
     relationKey,
     relationIssueId,
     disabled = false,
-    issueOperations,
     handleIssueCrudState,
+    issueServiceType = EIssueServiceType.ISSUES,
   } = props;
+
+  const { t } = useTranslation();
 
   // store hooks
   const {
@@ -47,23 +57,39 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     removeRelation,
     toggleCreateIssueModal,
     toggleDeleteIssueModal,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const project = useProject();
   const { getProjectStates } = useProjectState();
-  const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
-
   // derived values
   const issue = getIssueById(relationIssueId);
+  const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
+  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
+  const projectId = issue?.project_id;
   const currentIssueStateDetail =
     (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
     undefined;
+  if (!issue || !projectId) return <></>;
 
-  if (!issue) return <></>;
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug: workspaceSlug.toString(),
+    projectId: issue?.project_id,
+    issueId: issue?.id,
+    projectIdentifier: projectDetail?.identifier,
+    sequenceId: issue?.sequence_id,
+    isEpic: issue?.is_epic,
+  });
 
   // handlers
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
+  const handleIssuePeekOverview = (issue: TIssue) => {
+    if (issue.is_epic) {
+      // open epics in new tab
+      window.open(workItemLink, "_blank");
+      return;
+    }
+    handleRedirection(workspaceSlug, issue, isMobile);
+  };
 
   const handleEditIssue = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -77,12 +103,13 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     e.preventDefault();
     handleIssueCrudState("delete", relationIssueId, issue);
     toggleDeleteIssueModal(relationIssueId);
+    handleIssueCrudState("removeRelation", issueId, issue, relationKey, relationIssueId);
   };
 
   const handleCopyIssueLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
-    issueOperations.copyText(`${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`);
+    issueOperations.copyLink(workItemLink);
   };
 
   const handleRemoveRelation = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -95,7 +122,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     <div key={relationIssueId}>
       <ControlLink
         id={`issue-${issue.id}`}
-        href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
+        href={workItemLink}
         onClick={() => handleIssuePeekOverview(issue)}
         className="w-full cursor-pointer"
       >
@@ -137,6 +164,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 issueId={relationIssueId}
                 disabled={disabled}
                 issueOperations={issueOperations}
+                issueServiceType={issueServiceType}
               />
             </div>
             <div className="flex-shrink-0 text-sm">
@@ -145,7 +173,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Edit issue</span>
+                      <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -153,7 +181,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 <CustomMenu.MenuItem onClick={handleCopyIssueLink}>
                   <div className="flex items-center gap-2">
                     <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span>Copy issue link</span>
+                    <span>{t("common.actions.copy_link")}</span>
                   </div>
                 </CustomMenu.MenuItem>
 
@@ -161,7 +189,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleRemoveRelation}>
                     <div className="flex items-center gap-2">
                       <X className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Remove relation</span>
+                      <span>{t("common.actions.remove_relation")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}
@@ -170,7 +198,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={handleDeleteIssue}>
                     <div className="flex items-center gap-2">
                       <Trash className="h-3.5 w-3.5" strokeWidth={2} />
-                      <span>Delete issue</span>
+                      <span>{t("common.actions.delete")}</span>
                     </div>
                   </CustomMenu.MenuItem>
                 )}

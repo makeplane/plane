@@ -1,19 +1,27 @@
 import { observer } from "mobx-react";
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData } from "@plane/types";
+import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
+import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { CalendarDayTile } from "@/components/issues";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+//
+// hooks
+import { useUserProfile } from "@/hooks/store";
 // types
+import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
 import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 import { TRenderQuickActions } from "../list/list-view-types";
-import { ICalendarDate, ICalendarWeek } from "./types";
 
 type Props = {
-  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
+  issuesFilterStore:
+    | IProjectIssuesFilter
+    | IModuleIssuesFilter
+    | ICycleIssuesFilter
+    | IProjectViewIssuesFilter
+    | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
   week: ICalendarWeek | undefined;
@@ -26,6 +34,7 @@ type Props = {
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
+    issueProjectId: string | undefined,
     sourceDate: string | undefined,
     destinationDate: string | undefined
   ) => Promise<void>;
@@ -33,6 +42,8 @@ type Props = {
   readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
@@ -53,21 +64,36 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     readOnly = false,
     selectedDate,
     setSelectedDate,
+    canEditProperties,
+    isEpic = false,
   } = props;
+  // hooks
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
 
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
   const showWeekends = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   if (!week) return null;
 
+  const shouldShowDay = (dayDate: Date) => {
+    if (showWeekends) return true;
+    const day = dayDate.getDay();
+    return !(day === 0 || day === 6);
+  };
+
+  const sortedWeekDays = getOrderedDays(Object.values(week), (item) => item.date.getDay(), startOfWeek);
+
   return (
     <div
-      className={`grid divide-custom-border-200 md:divide-x-[0.5px] ${showWeekends ? "grid-cols-7" : "grid-cols-5"} ${
-        calendarLayout === "month" ? "" : "h-full"
-      }`}
+      className={cn("grid divide-custom-border-200 md:divide-x-[0.5px]", {
+        "grid-cols-7": showWeekends,
+        "grid-cols-5": !showWeekends,
+        "h-full": calendarLayout !== "month",
+      })}
     >
-      {Object.values(week).map((date: ICalendarDate) => {
-        if (!showWeekends && (date.date.getDay() === 0 || date.date.getDay() === 6)) return null;
+      {sortedWeekDays.map((date: ICalendarDate) => {
+        if (!shouldShowDay(date.date)) return null;
 
         return (
           <CalendarDayTile
@@ -88,6 +114,8 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             addIssuesToView={addIssuesToView}
             readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
+            canEditProperties={canEditProperties}
+            isEpic={isEpic}
           />
         );
       })}

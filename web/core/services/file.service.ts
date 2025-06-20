@@ -1,8 +1,9 @@
+import { AxiosRequestConfig } from "axios";
 // plane types
+import { API_BASE_URL } from "@plane/constants";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
+import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -64,7 +65,8 @@ export class FileService extends APIService {
   async uploadWorkspaceAsset(
     workspaceSlug: string,
     data: TFileEntityInfo,
-    file: File
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
     const fileMetaData = getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
@@ -74,7 +76,11 @@ export class FileService extends APIService {
       .then(async (response) => {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
         await this.updateWorkspaceAssetUploadStatus(workspaceSlug.toString(), signedURLResponse.asset_id);
         return signedURLResponse;
       })
@@ -103,6 +109,20 @@ export class FileService extends APIService {
       });
   }
 
+  async updateBulkWorkspaceAssetsUploadStatus(
+    workspaceSlug: string,
+    entityId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/${entityId}/bulk/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async updateBulkProjectAssetsUploadStatus(
     workspaceSlug: string,
     projectId: string,
@@ -122,7 +142,8 @@ export class FileService extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: TFileEntityInfo,
-    file: File
+    file: File,
+    uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
     const fileMetaData = getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/`, {
@@ -132,7 +153,11 @@ export class FileService extends APIService {
       .then(async (response) => {
         const signedURLResponse: TFileSignedURLResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
-        await this.fileUploadService.uploadFile(signedURLResponse.upload_data.url, fileUploadPayload);
+        await this.fileUploadService.uploadFile(
+          signedURLResponse.upload_data.url,
+          fileUploadPayload,
+          uploadProgressHandler
+        );
         await this.updateProjectAssetUploadStatus(workspaceSlug, projectId, signedURLResponse.asset_id);
         return signedURLResponse;
       })
@@ -205,6 +230,19 @@ export class FileService extends APIService {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async checkIfAssetExists(
+    workspaceSlug: string,
+    assetId: string
+  ): Promise<{
+    exists: boolean;
+  }> {
+    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

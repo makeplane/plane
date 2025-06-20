@@ -4,6 +4,8 @@ import set from "lodash/set";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+// plane imports
+import { ENotificationTab, ENotificationLoader, ENotificationQueryParamType, TNotificationTab } from "@plane/constants";
 import {
   TNotification,
   TNotificationFilter,
@@ -12,15 +14,8 @@ import {
   TNotificationPaginatedInfoQueryParams,
   TUnreadNotificationsCount,
 } from "@plane/types";
-// constants
-import {
-  ENotificationLoader,
-  ENotificationQueryParamType,
-  ENotificationTab,
-  TNotificationTab,
-} from "@/constants/notification";
 // helpers
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch } from "@plane/utils";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store
@@ -50,7 +45,7 @@ export interface IWorkspaceNotificationStore {
   // actions
   setCurrentNotificationTab: (tab: TNotificationTab) => void;
   setCurrentSelectedNotificationId: (notificationId: string | undefined) => void;
-  setUnreadNotificationsCount: (type: "increment" | "decrement") => void;
+  setUnreadNotificationsCount: (type: "increment" | "decrement", newCount?: number) => void;
   getUnreadNotificationsCount: (workspaceSlug: string) => Promise<TUnreadNotificationsCount | undefined>;
   getNotifications: (
     workspaceSlug: string,
@@ -62,7 +57,7 @@ export interface IWorkspaceNotificationStore {
 
 export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
   // constants
-  paginatedCount = 30;
+  paginatedCount = 300;
   // observables
   loader: TNotificationLoader = undefined;
   unreadNotificationsCount: TUnreadNotificationsCount = {
@@ -84,7 +79,7 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
     read: false,
   };
 
-  constructor(private store: CoreRootStore) {
+  constructor(protected store: CoreRootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
@@ -285,16 +280,22 @@ export class WorkspaceNotificationStore implements IWorkspaceNotificationStore {
    * @param { "increment" | "decrement" } type
    * @returns { void }
    */
-  setUnreadNotificationsCount = (type: "increment" | "decrement"): void => {
+  setUnreadNotificationsCount = (type: "increment" | "decrement", newCount: number = 1): void => {
+    const validCount = Math.max(0, Math.abs(newCount));
+
     switch (this.currentNotificationTab) {
       case ENotificationTab.ALL:
-        update(this.unreadNotificationsCount, "total_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + 1 : count - 1
+        update(
+          this.unreadNotificationsCount,
+          "total_unread_notifications_count",
+          (count: number) => +Math.max(0, type === "increment" ? count + validCount : count - validCount)
         );
         break;
       case ENotificationTab.MENTIONS:
-        update(this.unreadNotificationsCount, "mention_unread_notifications_count", (count: 0) =>
-          type === "increment" ? count + 1 : count - 1
+        update(
+          this.unreadNotificationsCount,
+          "mention_unread_notifications_count",
+          (count: number) => +Math.max(0, type === "increment" ? count + validCount : count - validCount)
         );
         break;
       default:

@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
 import { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
+import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import {
   DateDropdown,
@@ -18,8 +19,6 @@ import {
   StateDropdown,
 } from "@/components/dropdowns";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useProjectState, useProject, useProjectEstimates, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -160,16 +159,14 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
 
       {/* label */}
 
-      <div className="h-5" onClick={handleEventPropagation}>
-        <IssuePropertyLabels
-          projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
-          defaultOptions={defaultLabelOptions}
-          onChange={handleLabel}
-          renderByDefault={isMobile}
-          hideDropdownArrow
-        />
-      </div>
+      <IssuePropertyLabels
+        projectId={issue?.project_id || null}
+        value={issue?.label_ids || null}
+        defaultOptions={defaultLabelOptions}
+        onChange={handleLabel}
+        renderByDefault={isMobile}
+        hideDropdownArrow
+      />
 
       {/* start date */}
       <div className="h-5" onClick={handleEventPropagation}>

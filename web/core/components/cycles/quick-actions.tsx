@@ -6,26 +6,28 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
   cycleId: string;
   projectId: string;
   workspaceSlug: string;
+  customClassName?: string;
 };
 
 export const CycleQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, cycleId, projectId, workspaceSlug } = props;
+  const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
   // states
@@ -36,10 +38,15 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { getCycleById, restoreCycle } = useCycle();
+  const { t } = useTranslation();
   // derived values
   const cycleDetails = getCycleById(cycleId);
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
+  const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
+  const transferrableIssuesCount = cycleDetails
+    ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
+    : 0;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -48,13 +55,15 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     projectId
   );
 
+  const { isEndCycleModalOpen, setEndCycleModalOpen, endCycleContextMenu } = useEndCycle(isCurrentCycle);
+
   const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
     copyUrlToClipboard(cycleLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Cycle link copied to clipboard.",
+        title: t("common.link_copied"),
+        message: t("common.link_copied_to_clipboard"),
       });
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
@@ -71,16 +80,16 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your cycle can be found in project cycles.",
+          title: t("project_cycles.action.restore.success.title"),
+          message: t("project_cycles.action.restore.success.description"),
         });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Cycle could not be restored. Please try again.",
+          title: t("project_cycles.action.restore.failed.title"),
+          message: t("project_cycles.action.restore.failed.description"),
         })
       );
 
@@ -92,7 +101,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: t("edit"),
       icon: Pencil,
       action: handleEditCycle,
       shouldRender: isEditingAllowed && !isCompleted && !isArchived,
@@ -100,22 +109,22 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
       shouldRender: !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
       shouldRender: !isArchived,
     },
     {
       key: "archive",
       action: handleArchiveCycle,
-      title: "Archive",
-      description: isCompleted ? undefined : "Only completed cycles can\nbe archived.",
+      title: t("archive"),
+      description: isCompleted ? undefined : t("project_cycles.only_completed_cycles_can_be_archived"),
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",
@@ -125,18 +134,20 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "restore",
       action: handleRestoreCycle,
-      title: "Restore",
+      title: t("restore"),
       icon: ArchiveRestoreIcon,
       shouldRender: isEditingAllowed && isArchived,
     },
     {
       key: "delete",
       action: handleDeleteCycle,
-      title: "Delete",
+      title: t("delete"),
       icon: Trash2,
       shouldRender: isEditingAllowed && !isCompleted && !isArchived,
     },
   ];
+
+  if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
 
   return (
     <>
@@ -163,10 +174,21 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />
+          {isCurrentCycle && (
+            <EndCycleModal
+              isOpen={isEndCycleModalOpen}
+              handleClose={() => setEndCycleModalOpen(false)}
+              cycleId={cycleId}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
+              transferrableIssuesCount={transferrableIssuesCount}
+              cycleName={cycleDetails.name}
+            />
+          )}
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg" buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

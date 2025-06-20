@@ -1,12 +1,15 @@
-import { TIssue } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
+import { EIssueServiceType, API_BASE_URL } from "@plane/constants";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 // constants
 
 export class IssueArchiveService extends APIService {
-  constructor() {
+  private serviceType: TIssueServiceType;
+
+  constructor(serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     super(API_BASE_URL);
+    this.serviceType = serviceType;
   }
 
   async getArchivedIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<any> {
@@ -30,7 +33,7 @@ export class IssueArchiveService extends APIService {
   ): Promise<{
     archived_at: string;
   }> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -38,7 +41,7 @@ export class IssueArchiveService extends APIService {
   }
 
   async restoreIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -51,7 +54,7 @@ export class IssueArchiveService extends APIService {
     issueId: string,
     queries?: any
   ): Promise<TIssue> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/archive/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/archive/`, {
       params: queries,
     })
       .then((response) => response?.data)

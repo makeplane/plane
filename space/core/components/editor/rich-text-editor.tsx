@@ -1,40 +1,47 @@
 import React, { forwardRef } from "react";
-// editor
-import { EditorRefApi, IMentionHighlight, IRichTextEditor, RichTextEditorWithRef } from "@plane/editor";
+// plane imports
+import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
+// components
+import { EditorMentionsRoot } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// store hooks
+import { useMember } from "@/hooks/store";
 
 interface RichTextEditorWrapperProps
-  extends Omit<IRichTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
-  uploadFile: (file: File) => Promise<string>;
+  extends MakeOptional<
+    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions"
+  > {
+  anchor: string;
+  uploadFile: TFileHandler["upload"];
+  workspaceId: string;
 }
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { containerClassName, uploadFile, ...rest } = props;
-  // store hooks
-
-  // use-mention
-
-  // file size
-
+  const { anchor, containerClassName, uploadFile, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
+  const { getMemberById } = useMember();
   return (
     <RichTextEditorWithRef
       mentionHandler={{
-        highlights: function (): Promise<IMentionHighlight[]> {
-          throw new Error("Function not implemented.");
-        },
-        suggestions: undefined,
+        renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        getMentionedEntityDetails: (id: string) => ({
+          display_name: getMemberById(id)?.member__display_name ?? "",
+        }),
       }}
       ref={ref}
-      disabledExtensions={[]}
+      disabledExtensions={disabledExtensions ?? []}
       fileHandler={getEditorFileHandlers({
+        anchor,
         uploadFile,
-        workspaceId: "",
-        anchor: "",
+        workspaceId,
       })}
+      flaggedExtensions={flaggedExtensions ?? []}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[50vh] border border-gray-100 rounded-md pl-3 pb-3 overflow-y-scroll"
+      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      displayConfig={{ fontSize: "large-font" }}
     />
   );
 });

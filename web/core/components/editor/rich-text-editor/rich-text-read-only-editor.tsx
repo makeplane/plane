@@ -1,38 +1,52 @@
+"use client";
+
 import React from "react";
-// editor
-import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
+// plane imports
+import { EditorReadOnlyRefApi, IRichTextReadOnlyEditorProps, RichTextReadOnlyEditorWithRef } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
+// components
+import { cn } from "@plane/utils";
+import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
-import { useMention } from "@/hooks/store";
+import { useEditorConfig } from "@/hooks/editor";
+// store hooks
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-type RichTextReadOnlyEditorWrapperProps = Omit<
-  IRichTextReadOnlyEditor,
-  "disabledExtensions" | "fileHandler" | "mentionHandler"
+type RichTextReadOnlyEditorWrapperProps = MakeOptional<
+  Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
+  workspaceId: string;
   workspaceSlug: string;
   projectId?: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ workspaceSlug, projectId, ...props }, ref) => {
-    const { mentionHighlights } = useMention({});
+  ({ workspaceId, workspaceSlug, projectId, disabledExtensions: additionalDisabledExtensions, ...props }, ref) => {
+    // store hooks
+    const { getUserDetails } = useMember();
+
     // editor flaggings
-    const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    // editor config
+    const { getReadOnlyEditorFileHandlers } = useEditorConfig();
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions}
+        disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+        flaggedExtensions={richTextEditorExtensions.flagged}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
+          workspaceId,
           workspaceSlug,
         })}
         mentionHandler={{
-          highlights: mentionHighlights,
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
+          getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         {...props}
         // overriding the containerClassName to add relative class passed

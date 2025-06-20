@@ -3,17 +3,18 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+// constant
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE, EViewAccess } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // components
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
-import { EViewAccess } from "@/constants/views";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpers/issue.helper";
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 import { AccessController } from "@/plane-web/components/views/access-controller";
@@ -30,11 +31,16 @@ const defaultValues: Partial<IWorkspaceView> = {
   description: "",
   access: EViewAccess.PUBLIC,
   display_properties: getComputedDisplayProperties(),
-  display_filters: getComputedDisplayFilters(),
+  display_filters: getComputedDisplayFilters({
+    layout: EIssueLayoutTypes.SPREADSHEET,
+    order_by: "-created_at",
+  }),
 };
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  // i18n
+  const { t } = useTranslation();
   // store hooks
   const { workspaceLabels } = useLabel();
   const {
@@ -107,17 +113,19 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Create"} View</h3>
+        <h3 className="text-xl font-medium text-custom-text-200">
+          {data ? t("view.update.label") : t("view.create.label")}
+        </h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
               control={control}
               name="name"
               rules={{
-                required: "Title is required",
+                required: t("form.title.required"),
                 maxLength: {
                   value: 255,
-                  message: "Title should be less than 255 characters",
+                  message: t("form.title.max_length", { length: 255 }),
                 },
               }}
               render={({ field: { value, onChange, ref } }) => (
@@ -129,7 +137,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  placeholder="Title"
+                  placeholder={t("common.title")}
                   className="w-full text-base"
                 />
               )}
@@ -145,7 +153,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   id="description"
                   name="description"
                   value={value}
-                  placeholder="Description"
+                  placeholder={t("common.description")}
                   onChange={onChange}
                   className="w-full text-base resize-none min-h-24"
                   hasError={Boolean(errors?.description)}
@@ -160,7 +168,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               control={control}
               name="filters"
               render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title={t("common.filters")}>
                   <FilterSelection
                     filters={filters ?? {}}
                     handleFiltersUpdate={(key, value) => {
@@ -180,7 +188,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                         [key]: newValues,
                       });
                     }}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
                     labels={workspaceLabels ?? undefined}
                     memberIds={workspaceMemberIds ?? undefined}
                   />
@@ -197,9 +205,9 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   control={control}
                   name="display_properties"
                   render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
-                    <FiltersDropdown title="Display">
+                    <FiltersDropdown title={t("common.display")}>
                       <DisplayFiltersSelection
-                        layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
+                        layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
                         displayFilters={displayFilters ?? {}}
                         handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                           onDisplayFiltersChange({
@@ -237,10 +245,16 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("common.cancel")}
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating" : "Update View") : isSubmitting ? "Creating" : "Create View"}
+          {data
+            ? isSubmitting
+              ? t("common.updating")
+              : t("view.update.label")
+            : isSubmitting
+              ? t("common.creating")
+              : t("view.create.label")}
         </Button>
       </div>
     </form>

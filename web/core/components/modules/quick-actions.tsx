@@ -5,27 +5,29 @@ import { observer } from "mobx-react";
 
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useEventTracker, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
   moduleId: string;
   projectId: string;
   workspaceSlug: string;
+  customClassName?: string;
 };
 
 export const ModuleQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, moduleId, projectId, workspaceSlug } = props;
+  const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
   // states
@@ -37,6 +39,8 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
 
   const { getModuleById, restoreModule } = useModule();
+
+  const { t } = useTranslation();
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isArchived = !!moduleDetails?.archived_at;
@@ -95,7 +99,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "edit",
-      title: "Edit",
+      title: t("edit"),
       icon: Pencil,
       action: handleEditModule,
       shouldRender: isEditingAllowed && !isArchived,
@@ -103,22 +107,22 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "open-new-tab",
       action: handleOpenInNewTab,
-      title: "Open in new tab",
+      title: t("open_in_new_tab"),
       icon: ExternalLink,
       shouldRender: !isArchived,
     },
     {
       key: "copy-link",
       action: handleCopyText,
-      title: "Copy link",
+      title: t("copy_link"),
       icon: LinkIcon,
       shouldRender: !isArchived,
     },
     {
       key: "archive",
       action: handleArchiveModule,
-      title: "Archive",
-      description: isInArchivableGroup ? undefined : "Only completed or canceled\nmodule can be archived.",
+      title: t("archive"),
+      description: isInArchivableGroup ? undefined : t("project_module.quick_actions.archive_module_description"),
       icon: ArchiveIcon,
       className: "items-start",
       iconClassName: "mt-1",
@@ -128,14 +132,14 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
     {
       key: "restore",
       action: handleRestoreModule,
-      title: "Restore",
+      title: t("restore"),
       icon: ArchiveRestoreIcon,
       shouldRender: isEditingAllowed && isArchived,
     },
     {
       key: "delete",
       action: handleDeleteModule,
-      title: "Delete",
+      title: t("delete"),
       icon: Trash2,
       shouldRender: isEditingAllowed,
     },
@@ -163,7 +167,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

@@ -4,17 +4,21 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ChevronDown, ListFilter } from "lucide-react";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { TProjectFilters } from "@plane/types";
 // hooks
+import { calculateTotalFilters } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues/issue-layouts";
 import { ProjectFiltersSelection, ProjectOrderByDropdown } from "@/components/project/dropdowns";
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useProjectFilter } from "@/hooks/store";
 
 export const ProjectsListMobileHeader = observer(() => {
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug } = useParams();
   const {
@@ -63,12 +67,12 @@ export const ProjectsListMobileHeader = observer(() => {
       <div className="border-l border-custom-border-200 flex justify-around w-full">
         <FiltersDropdown
           icon={<ListFilter className="h-3 w-3" />}
-          title="Filters"
+          title={t("common.filters")}
           placement="bottom-end"
           menuButton={
             <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
               <ListFilter className="h-3 w-3" />
-              Filters
+              {t("common.filters")}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           }

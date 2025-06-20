@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { CYCLE_STATUS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TCycleGroups } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // types
-import { CYCLE_STATUS } from "@/constants/cycle";
 // constants
 
 type Props = {
@@ -17,7 +18,8 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
-
+  //hooks
+  const { t } = useTranslation();
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const filteredOptions = CYCLE_STATUS.filter((p) => p.value.includes(searchQuery.toLowerCase()));
 
@@ -36,7 +38,7 @@ export const FilterStatus: React.FC<Props> = observer((props) => {
                 key={status.value}
                 isChecked={appliedFilters?.includes(status.value) ? true : false}
                 onClick={() => handleUpdate(status.value)}
-                title={status.title}
+                title={t(status.i18n_title)}
               />
             ))
           ) : (

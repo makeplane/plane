@@ -90,17 +90,7 @@ class ProjectLiteSerializer(BaseSerializer):
 
 
 class ProjectListSerializer(DynamicBaseSerializer):
-    total_issues = serializers.IntegerField(read_only=True)
-    archived_issues = serializers.IntegerField(read_only=True)
-    archived_sub_issues = serializers.IntegerField(read_only=True)
-    draft_issues = serializers.IntegerField(read_only=True)
-    draft_sub_issues = serializers.IntegerField(read_only=True)
-    sub_issues = serializers.IntegerField(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
-    total_members = serializers.IntegerField(read_only=True)
-    total_cycles = serializers.IntegerField(read_only=True)
-    total_modules = serializers.IntegerField(read_only=True)
-    is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
@@ -113,14 +103,9 @@ class ProjectListSerializer(DynamicBaseSerializer):
         if project_members is not None:
             # Filter members by the project ID
             return [
-                {
-                    "id": member.id,
-                    "member_id": member.member_id,
-                    "member__display_name": member.member.display_name,
-                    "member__avatar": member.member.avatar,
-                    "member__avatar_url": member.member.avatar_url,
-                }
+                member.member_id
                 for member in project_members
+                if member.is_active and not member.member.is_bot
             ]
         return []
 
@@ -134,10 +119,6 @@ class ProjectDetailSerializer(BaseSerializer):
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
-    total_members = serializers.IntegerField(read_only=True)
-    total_cycles = serializers.IntegerField(read_only=True)
-    total_modules = serializers.IntegerField(read_only=True)
-    is_member = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.IntegerField(read_only=True)
     anchor = serializers.CharField(read_only=True)
@@ -167,10 +148,13 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer):
+class ProjectMemberRoleSerializer(DynamicBaseSerializer): 
+    original_role = serializers.IntegerField(source='role', read_only=True)
+
     class Meta:
         model = ProjectMember
-        fields = ("id", "role", "member", "project")
+        fields = ("id", "role", "member", "project", "original_role", "created_at")
+        read_only_fields = ["original_role", "created_at"]
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):

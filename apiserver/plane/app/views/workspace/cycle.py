@@ -10,6 +10,7 @@ from plane.app.views.base import BaseAPIView
 from plane.db.models import Cycle
 from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.cycle import CycleSerializer
+from plane.utils.timezone_converter import user_timezone_converter
 
 
 class WorkspaceCyclesEndpoint(BaseAPIView):
@@ -29,6 +30,7 @@ class WorkspaceCyclesEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )

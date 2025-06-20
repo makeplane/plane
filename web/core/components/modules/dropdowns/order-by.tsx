@@ -1,12 +1,13 @@
 "use client";
 
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { MODULE_ORDER_BY_OPTIONS } from "@/constants/module";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // types
 // constants
 
@@ -17,6 +18,8 @@ type Props = {
 
 export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
   const { onChange, value } = props;
+  // hooks
+  const { t } = useTranslation();
 
   const orderByDetails = MODULE_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
@@ -28,7 +31,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       customButton={
         <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
-          {orderByDetails?.label}
+          {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDown className="size-3" strokeWidth={2} />
         </div>
       }
@@ -45,7 +48,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
             else onChange(option.key);
           }}
         >
-          {option.label}
+          {t(option.i18n_label)}
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}

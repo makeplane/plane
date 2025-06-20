@@ -23,6 +23,8 @@ import {
   Palette,
   AlignCenter,
 } from "lucide-react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import {
   insertHorizontalRule,
@@ -35,12 +37,7 @@ import {
   toggleBold,
   toggleBulletList,
   toggleCodeBlock,
-  toggleHeadingFive,
-  toggleHeadingFour,
-  toggleHeadingOne,
-  toggleHeadingSix,
-  toggleHeadingThree,
-  toggleHeadingTwo,
+  toggleHeading,
   toggleItalic,
   toggleOrderedList,
   toggleStrike,
@@ -65,63 +62,49 @@ export type EditorMenuItem<T extends TEditorCommands> = {
 export const TextItem = (editor: Editor): EditorMenuItem<"text"> => ({
   key: "text",
   name: "Text",
-  isActive: () => editor.isActive("paragraph"),
+  isActive: () => editor.isActive(CORE_EXTENSIONS.PARAGRAPH),
   command: () => setText(editor),
   icon: CaseSensitive,
 });
 
-export const HeadingOneItem = (editor: Editor): EditorMenuItem<"h1"> => ({
-  key: "h1",
-  name: "Heading 1",
-  isActive: () => editor.isActive("heading", { level: 1 }),
-  command: () => toggleHeadingOne(editor),
-  icon: Heading1,
+type SupportedHeadingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+
+const HeadingItem = <T extends SupportedHeadingLevels>(
+  editor: Editor,
+  level: 1 | 2 | 3 | 4 | 5 | 6,
+  key: T,
+  name: string,
+  icon: LucideIcon
+): EditorMenuItem<T> => ({
+  key,
+  name,
+  isActive: () => editor.isActive(CORE_EXTENSIONS.HEADING, { level }),
+  command: () => toggleHeading(editor, level),
+  icon,
 });
 
-export const HeadingTwoItem = (editor: Editor): EditorMenuItem<"h2"> => ({
-  key: "h2",
-  name: "Heading 2",
-  isActive: () => editor.isActive("heading", { level: 2 }),
-  command: () => toggleHeadingTwo(editor),
-  icon: Heading2,
-});
+export const HeadingOneItem = (editor: Editor): EditorMenuItem<"h1"> =>
+  HeadingItem(editor, 1, "h1", "Heading 1", Heading1);
 
-export const HeadingThreeItem = (editor: Editor): EditorMenuItem<"h3"> => ({
-  key: "h3",
-  name: "Heading 3",
-  isActive: () => editor.isActive("heading", { level: 3 }),
-  command: () => toggleHeadingThree(editor),
-  icon: Heading3,
-});
+export const HeadingTwoItem = (editor: Editor): EditorMenuItem<"h2"> =>
+  HeadingItem(editor, 2, "h2", "Heading 2", Heading2);
 
-export const HeadingFourItem = (editor: Editor): EditorMenuItem<"h4"> => ({
-  key: "h4",
-  name: "Heading 4",
-  isActive: () => editor.isActive("heading", { level: 4 }),
-  command: () => toggleHeadingFour(editor),
-  icon: Heading4,
-});
+export const HeadingThreeItem = (editor: Editor): EditorMenuItem<"h3"> =>
+  HeadingItem(editor, 3, "h3", "Heading 3", Heading3);
 
-export const HeadingFiveItem = (editor: Editor): EditorMenuItem<"h5"> => ({
-  key: "h5",
-  name: "Heading 5",
-  isActive: () => editor.isActive("heading", { level: 5 }),
-  command: () => toggleHeadingFive(editor),
-  icon: Heading5,
-});
+export const HeadingFourItem = (editor: Editor): EditorMenuItem<"h4"> =>
+  HeadingItem(editor, 4, "h4", "Heading 4", Heading4);
 
-export const HeadingSixItem = (editor: Editor): EditorMenuItem<"h6"> => ({
-  key: "h6",
-  name: "Heading 6",
-  isActive: () => editor.isActive("heading", { level: 6 }),
-  command: () => toggleHeadingSix(editor),
-  icon: Heading6,
-});
+export const HeadingFiveItem = (editor: Editor): EditorMenuItem<"h5"> =>
+  HeadingItem(editor, 5, "h5", "Heading 5", Heading5);
+
+export const HeadingSixItem = (editor: Editor): EditorMenuItem<"h6"> =>
+  HeadingItem(editor, 6, "h6", "Heading 6", Heading6);
 
 export const BoldItem = (editor: Editor): EditorMenuItem<"bold"> => ({
   key: "bold",
   name: "Bold",
-  isActive: () => editor?.isActive("bold"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.BOLD),
   command: () => toggleBold(editor),
   icon: BoldIcon,
 });
@@ -129,7 +112,7 @@ export const BoldItem = (editor: Editor): EditorMenuItem<"bold"> => ({
 export const ItalicItem = (editor: Editor): EditorMenuItem<"italic"> => ({
   key: "italic",
   name: "Italic",
-  isActive: () => editor?.isActive("italic"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.ITALIC),
   command: () => toggleItalic(editor),
   icon: ItalicIcon,
 });
@@ -137,7 +120,7 @@ export const ItalicItem = (editor: Editor): EditorMenuItem<"italic"> => ({
 export const UnderLineItem = (editor: Editor): EditorMenuItem<"underline"> => ({
   key: "underline",
   name: "Underline",
-  isActive: () => editor?.isActive("underline"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.UNDERLINE),
   command: () => toggleUnderline(editor),
   icon: UnderlineIcon,
 });
@@ -145,7 +128,7 @@ export const UnderLineItem = (editor: Editor): EditorMenuItem<"underline"> => ({
 export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough"> => ({
   key: "strikethrough",
   name: "Strikethrough",
-  isActive: () => editor?.isActive("strike"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.STRIKETHROUGH),
   command: () => toggleStrike(editor),
   icon: StrikethroughIcon,
 });
@@ -153,7 +136,7 @@ export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough
 export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> => ({
   key: "bulleted-list",
   name: "Bulleted list",
-  isActive: () => editor?.isActive("bulletList"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.BULLET_LIST),
   command: () => toggleBulletList(editor),
   icon: ListIcon,
 });
@@ -161,7 +144,7 @@ export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> 
 export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"> => ({
   key: "numbered-list",
   name: "Numbered list",
-  isActive: () => editor?.isActive("orderedList"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.ORDERED_LIST),
   command: () => toggleOrderedList(editor),
   icon: ListOrderedIcon,
 });
@@ -169,7 +152,7 @@ export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"
 export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
   key: "to-do-list",
   name: "To-do list",
-  isActive: () => editor.isActive("taskItem"),
+  isActive: () => editor.isActive(CORE_EXTENSIONS.TASK_ITEM),
   command: () => toggleTaskList(editor),
   icon: CheckSquare,
 });
@@ -177,7 +160,7 @@ export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
 export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
   key: "quote",
   name: "Quote",
-  isActive: () => editor?.isActive("blockquote"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.BLOCKQUOTE),
   command: () => toggleBlockquote(editor),
   icon: TextQuote,
 });
@@ -185,7 +168,7 @@ export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
 export const CodeItem = (editor: Editor): EditorMenuItem<"code"> => ({
   key: "code",
   name: "Code",
-  isActive: () => editor?.isActive("code") || editor?.isActive("codeBlock"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.CODE_INLINE) || editor?.isActive(CORE_EXTENSIONS.CODE_BLOCK),
   command: () => toggleCodeBlock(editor),
   icon: CodeIcon,
 });
@@ -193,7 +176,7 @@ export const CodeItem = (editor: Editor): EditorMenuItem<"code"> => ({
 export const TableItem = (editor: Editor): EditorMenuItem<"table"> => ({
   key: "table",
   name: "Table",
-  isActive: () => editor?.isActive("table"),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.TABLE),
   command: () => insertTableCommand(editor),
   icon: TableIcon,
 });
@@ -201,9 +184,8 @@ export const TableItem = (editor: Editor): EditorMenuItem<"table"> => ({
 export const ImageItem = (editor: Editor): EditorMenuItem<"image"> => ({
   key: "image",
   name: "Image",
-  isActive: () => editor?.isActive("image") || editor?.isActive("imageComponent"),
-  command: ({ savedSelection }) =>
-    insertImage({ editor, event: "insert", pos: savedSelection?.from ?? editor.state.selection.from }),
+  isActive: () => editor?.isActive(CORE_EXTENSIONS.IMAGE) || editor?.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE),
+  command: () => insertImage({ editor, event: "insert", pos: editor.state.selection.from }),
   icon: ImageIcon,
 });
 
@@ -211,7 +193,7 @@ export const HorizontalRuleItem = (editor: Editor) =>
   ({
     key: "divider",
     name: "Divider",
-    isActive: () => editor?.isActive("horizontalRule"),
+    isActive: () => editor?.isActive(CORE_EXTENSIONS.HORIZONTAL_RULE),
     command: () => insertHorizontalRule(editor),
     icon: MinusSquare,
   }) as const;
@@ -219,24 +201,33 @@ export const HorizontalRuleItem = (editor: Editor) =>
 export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => ({
   key: "text-color",
   name: "Color",
-  isActive: ({ color }) => editor.isActive("customColor", { color }),
-  command: ({ color }) => toggleTextColor(color, editor),
+  isActive: (props) => editor.isActive(CORE_EXTENSIONS.CUSTOM_COLOR, { color: props?.color }),
+  command: (props) => {
+    if (!props) return;
+    toggleTextColor(props.color, editor);
+  },
   icon: Palette,
 });
 
 export const BackgroundColorItem = (editor: Editor): EditorMenuItem<"background-color"> => ({
   key: "background-color",
   name: "Background color",
-  isActive: ({ color }) => editor.isActive("customColor", { backgroundColor: color }),
-  command: ({ color }) => toggleBackgroundColor(color, editor),
+  isActive: (props) => editor.isActive(CORE_EXTENSIONS.CUSTOM_COLOR, { backgroundColor: props?.color }),
+  command: (props) => {
+    if (!props) return;
+    toggleBackgroundColor(props.color, editor);
+  },
   icon: Palette,
 });
 
 export const TextAlignItem = (editor: Editor): EditorMenuItem<"text-align"> => ({
   key: "text-align",
   name: "Text align",
-  isActive: ({ alignment }) => editor.isActive({ textAlign: alignment }),
-  command: ({ alignment }) => setTextAlign(alignment, editor),
+  isActive: (props) => editor.isActive({ textAlign: props?.alignment }),
+  command: (props) => {
+    if (!props) return;
+    setTextAlign(props.alignment, editor);
+  },
   icon: AlignCenter,
 });
 

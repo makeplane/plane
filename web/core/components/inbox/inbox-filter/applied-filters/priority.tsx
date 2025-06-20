@@ -3,15 +3,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { ISSUE_PRIORITIES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssuePriorities } from "@plane/types";
 import { PriorityIcon, Tag } from "@plane/ui";
-// constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // hooks
 import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.priority || [];
@@ -26,7 +27,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">Priority</div>
+      <div className="text-xs text-custom-text-200">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;

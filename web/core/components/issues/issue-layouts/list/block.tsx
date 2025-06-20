@@ -6,22 +6,25 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 // types
 import { TIssue, IIssueDisplayProperties, TIssueMap } from "@plane/types";
 // ui
 import { Spinner, Tooltip, ControlLink, setToast, TOAST_TYPE, Row } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 // types
+import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -40,6 +43,7 @@ interface IssueBlockProps {
   isCurrentBlockDragging: boolean;
   setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
+  isEpic?: boolean;
 }
 
 export const IssueBlock = observer((props: IssueBlockProps) => {
@@ -59,6 +63,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     isCurrentBlockDragging,
     setIsCurrentBlockDragging,
     canDrag,
+    isEpic = false,
   } = props;
   // ref
   const issueRef = useRef<HTMLDivElement | null>(null);
@@ -69,7 +74,12 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
-  const { getIsIssuePeeked, peekIssue, setPeekIssue, subIssues: subIssuesStore } = useIssueDetail();
+  const {
+    getIsIssuePeeked,
+    peekIssue,
+    setPeekIssue,
+    subIssues: subIssuesStore,
+  } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -85,8 +95,11 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
       isArchived: !!issue.archived_at,
     });
 
+  // derived values
   const issue = issuesMap[issueId];
   const subIssuesCount = issue?.sub_issues_count ?? 0;
+  const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
+  const isDraggingAllowed = canDrag && canEditIssueProperties;
 
   const { isMobile } = usePlatformOS();
 
@@ -98,7 +111,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     return combine(
       draggable({
         element,
-        canDrag: () => canDrag,
+        canDrag: () => isDraggingAllowed,
         getInitialData: () => ({ id: issueId, type: "ISSUE", groupId }),
         onDragStart: () => {
           setIsCurrentBlockDragging(true);
@@ -108,11 +121,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
         },
       })
     );
-  }, [canDrag, issueId, groupId, setIsCurrentBlockDragging]);
+  }, [isDraggingAllowed, issueId, groupId, setIsCurrentBlockDragging]);
 
   if (!issue) return null;
 
-  const canEditIssueProperties = canEditProperties(issue.project_id ?? undefined);
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
@@ -138,10 +150,19 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   //TODO: add better logic. This is to have a min width for ID/Key based on the length of project identifier
   const keyMinWidth = displayProperties?.key ? (projectIdentifier?.length ?? 0) * 7 : 0;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issue?.project_id,
+    issueId,
+    projectIdentifier,
+    sequenceId: issue?.sequence_id,
+    isEpic,
+    isArchived: !!issue?.archived_at,
+  });
   return (
     <ControlLink
       id={`issue-${issue.id}`}
-      href={`/${workspaceSlug}/projects/${issue.project_id}/${issue.archived_at ? "archives/" : ""}issues/${issue.id}`}
+      href={workItemLink}
       onClick={() => handleIssuePeekOverview(issue)}
       className="w-full cursor-pointer"
       disabled={!!issue?.tempId || issue?.is_draft}
@@ -161,24 +182,26 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
           }
         )}
         onDragStart={() => {
-          if (!canDrag) {
+          if (!isDraggingAllowed) {
             setToast({
               type: TOAST_TYPE.WARNING,
-              title: "Cannot move issue",
-              message: "Drag and drop is disabled for the current grouping",
+              title: "Cannot move work item",
+              message: !canEditIssueProperties
+                ? "You are not allowed to move this work item"
+                : "Drag and drop is disabled for the current grouping",
             });
           }
         }}
       >
-        <div className="flex w-full truncate">
+        <div className="flex gap-2 w-full truncate">
           <div className="flex flex-grow items-center gap-0.5 truncate">
             <div className="flex items-center gap-1" style={isSubIssue ? { marginLeft } : {}}>
               {/* select checkbox */}
-              {projectId && canSelectIssues && (
+              {projectId && canSelectIssues && !isEpic && (
                 <Tooltip
                   tooltipContent={
                     <>
-                      Only issues within the current
+                      Only work items within the current
                       <br />
                       project can be selected.
                     </>
@@ -216,7 +239,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
 
               {/* sub-issues chevron */}
               <div className="size-4 grid place-items-center flex-shrink-0">
-                {subIssuesCount > 0 && (
+                {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
                     className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
@@ -244,8 +267,17 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
             </Tooltip>
+            {isEpic && displayProperties && (
+              <WithDisplayPropertiesHOC
+                displayProperties={displayProperties}
+                displayPropertyKey="sub_issue_count"
+                shouldRenderProperty={(properties) => !!properties.sub_issue_count}
+              >
+                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+              </WithDisplayPropertiesHOC>
+            )}
           </div>
           {!issue?.tempId && (
             <div
@@ -271,6 +303,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 updateIssue={updateIssue}
                 displayProperties={displayProperties}
                 activeLayout="List"
+                isEpic={isEpic}
               />
               <div
                 className={cn("hidden", {

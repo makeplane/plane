@@ -32,8 +32,8 @@ export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
       <div className="w-full h-full">
         <EmptyState
           image={emptyIssue ?? undefined}
-          title="Issue does not exist"
-          description="The issue you are looking for does not exist, has been archived, or has been deleted."
+          title="Work item does not exist"
+          description="The work item you are looking for does not exist, has been archived, or has been deleted."
         />
       </div>
     </div>

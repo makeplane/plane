@@ -1,49 +1,26 @@
-// TODO: fix all warnings
+import { NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+// extension config
+import { TMentionExtensionOptions } from "./extension-config";
+// extension types
+import { EMentionComponentAttributeNames, TMentionComponentAttributes } from "./types";
 
-/* eslint-disable react/display-name */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { useEffect, useState } from "react";
-import { NodeViewWrapper } from "@tiptap/react";
-// helpers
-import { cn } from "@/helpers/common";
-// types
-import { IMentionHighlight } from "@/types";
-
-// eslint-disable-next-line import/no-anonymous-default-export
-export const MentionNodeView = (props) => {
-  // TODO: move it to web app
-  const [highlightsState, setHighlightsState] = useState<IMentionHighlight[]>();
-
-  useEffect(() => {
-    if (!props.extension.options.mentionHighlights) return;
-    const hightlights = async () => {
-      const userId = await props.extension.options.mentionHighlights?.();
-      setHighlightsState(userId);
-    };
-    hightlights();
-  }, [props.extension.options]);
-
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!props.node.attrs.redirect_uri) {
-      event.preventDefault();
-    }
+type Props = NodeViewProps & {
+  node: NodeViewProps["node"] & {
+    attrs: TMentionComponentAttributes;
   };
+};
 
+export const MentionNodeView = (props: Props) => {
+  const {
+    extension,
+    node: { attrs },
+  } = props;
   return (
     <NodeViewWrapper className="mention-component inline w-fit">
-      <a
-        href={props.node.attrs.redirect_uri || "#"}
-        target="_blank"
-        className={cn("mention rounded bg-custom-primary-100/20 px-1 py-0.5 font-medium text-custom-primary-100", {
-          "bg-yellow-500/20 text-yellow-500": highlightsState
-            ? highlightsState.includes(props.node.attrs.entity_identifier)
-            : false,
-          "cursor-pointer": !props.extension.options.readonly,
-        })}
-      >
-        @{props.node.attrs.label}
-      </a>
+      {(extension.options as TMentionExtensionOptions).renderComponent({
+        entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
+        entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
+      })}
     </NodeViewWrapper>
   );
 };

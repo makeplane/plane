@@ -25,6 +25,10 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    branches:
+      - preview
+      - canary
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -36,19 +40,13 @@ env:
 jobs:
   branch_build_setup:
     name: Build Setup
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       gh_branch_name: ${{ steps.set_env_variables.outputs.TARGET_BRANCH }}
       gh_buildx_driver: ${{ steps.set_env_variables.outputs.BUILDX_DRIVER }}
       gh_buildx_version: ${{ steps.set_env_variables.outputs.BUILDX_VERSION }}
       gh_buildx_platforms: ${{ steps.set_env_variables.outputs.BUILDX_PLATFORMS }}
       gh_buildx_endpoint: ${{ steps.set_env_variables.outputs.BUILDX_ENDPOINT }}
-      build_proxy: ${{ steps.changed_files.outputs.proxy_any_changed }}
-      build_apiserver: ${{ steps.changed_files.outputs.apiserver_any_changed }}
-      build_admin: ${{ steps.changed_files.outputs.admin_any_changed }}
-      build_space: ${{ steps.changed_files.outputs.space_any_changed }}
-      build_web: ${{ steps.changed_files.outputs.web_any_changed }}
-      build_live: ${{ steps.changed_files.outputs.live_any_changed }}
 
       dh_img_web: ${{ steps.set_env_variables.outputs.DH_IMG_WEB }}
       dh_img_space: ${{ steps.set_env_variables.outputs.DH_IMG_SPACE }}
@@ -158,22 +156,18 @@ jobs:
               - 'turbo.json'
 
   branch_build_push_admin:
-    if: ${{ needs.branch_build_setup.outputs.build_admin == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Admin Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Admin Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
@@ -184,22 +178,18 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_web:
-    if: ${{ needs.branch_build_setup.outputs.build_web == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Web Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Web Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
@@ -210,22 +200,18 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_space:
-    if: ${{ needs.branch_build_setup.outputs.build_space == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Space Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Space Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
@@ -236,22 +222,18 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_live:
-    if: ${{ needs.branch_build_setup.outputs.build_live == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Live Collaboration Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Live Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
@@ -262,22 +244,18 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_apiserver:
-    if: ${{ needs.branch_build_setup.outputs.build_apiserver == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push API Server Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Backend Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
           build-context: ./apiserver
@@ -288,22 +266,18 @@ jobs:
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
   branch_build_push_proxy:
-    if: ${{ needs.branch_build_setup.outputs.build_proxy == 'true' || github.event_name == 'workflow_dispatch' || needs.branch_build_setup.outputs.gh_branch_name == 'master' }}
     name: Build-Push Proxy Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     steps:
-      - id: checkout_files
-        name: Checkout Files
-        uses: actions/checkout@v4
       - name: Proxy Build and Push
-        uses: ./.github/actions/build-push-ce
+        uses: makeplane/actions/build-push@v1.0.0
         with:
           build-release: ${{ needs.branch_build_setup.outputs.build_release }}
           build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
           release-version: ${{ needs.branch_build_setup.outputs.release_version }}
-          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          docker-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
           build-context: ./caddy
@@ -313,35 +287,10 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
-  attach_assets_to_build:
-    if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
-    name: Attach Assets to Release
-    runs-on: ubuntu-20.04
-    needs: [branch_build_setup]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Update Assets
-        run: |
-          cp ./deploy/selfhost/install.sh deploy/selfhost/setup.sh
-
-      - name: Attach Assets
-        id: attach_assets
-        uses: actions/upload-artifact@v4
-        with:
-          name: selfhost-assets
-          retention-days: 2
-          path: |
-            ${{ github.workspace }}/deploy/selfhost/setup.sh
-            ${{ github.workspace }}/deploy/selfhost/restore.sh
-            ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
-            ${{ github.workspace }}/deploy/selfhost/variables.env
-
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Build Release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       [
         branch_build_setup,
@@ -351,7 +300,6 @@ jobs:
         branch_build_push_live,
         branch_build_push_apiserver,
         branch_build_push_proxy,
-        attach_assets_to_build,
       ]
     env:
       REL_VERSION: ${{ needs.branch_build_setup.outputs.release_version }}
@@ -362,6 +310,8 @@ jobs:
       - name: Update Assets
         run: |
           cp ./deploy/selfhost/install.sh deploy/selfhost/setup.sh
+          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deploy/selfhost/docker-compose.yml
+          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
 
       - name: Create Release
         id: create_release
@@ -376,6 +326,8 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ github.workspace }}/deploy/selfhost/setup.sh
+            ${{ github.workspace }}/deploy/selfhost/swarm.sh
             ${{ github.workspace }}/deploy/selfhost/restore.sh
+            ${{ github.workspace }}/deploy/selfhost/restore-airgapped.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env

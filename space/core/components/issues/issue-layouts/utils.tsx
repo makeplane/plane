@@ -3,6 +3,7 @@
 import isNil from "lodash/isNil";
 import { ContrastIcon } from "lucide-react";
 // types
+import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -14,7 +15,6 @@ import {
 import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // components
 // constants
-import { ISSUE_PRIORITIES } from "@/constants/issue";
 // stores
 import { ICycleStore } from "@/store/cycle.store";
 import { IIssueLabelStore } from "@/store/label.store";
@@ -50,7 +50,7 @@ export const getGroupByColumns = (
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
-      if (includeNone) return [{ id: `All Issues`, name: `All Issues`, payload: {}, icon: undefined }];
+      if (includeNone) return [{ id: `All Issues`, name: `All work items`, payload: {}, icon: undefined }];
   }
 };
 
@@ -117,7 +117,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
     name: state.name,
     icon: (
       <div className="h-3.5 w-3.5 rounded-full">
-        <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
+        <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.MD} />
       </div>
     ),
     payload: { state_id: state.id },

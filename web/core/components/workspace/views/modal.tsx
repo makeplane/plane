@@ -4,13 +4,13 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
-import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@/constants/event-tracker";
 // store hooks
 import { useEventTracker, useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

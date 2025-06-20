@@ -6,10 +6,11 @@ import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -34,6 +35,9 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
   stateIds?: string[];
   filterAvailableStateIds?: boolean;
+  isForWorkItemCreation?: boolean;
+  alwaysAllowStateChange?: boolean;
+  iconSize?: string;
 };
 
 export const StateDropdown: React.FC<Props> = observer((props) => {
@@ -57,7 +61,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
     stateIds,
-    filterAvailableStateIds = true,
+    iconSize = "size-4",
   } = props;
   // states
   const [query, setQuery] = useState("");
@@ -82,6 +86,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
+  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
   const statesList = stateIds
@@ -95,8 +100,13 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     query: `${state?.name}`,
     content: (
       <div className="flex items-center gap-2">
-        <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">{state?.name}</span>
+        <StateGroupIcon
+          stateGroup={state?.group ?? "backlog"}
+          color={state?.color}
+          className={cn("flex-shrink-0", iconSize)}
+          percentage={state?.order}
+        />
+        <span className="flex-grow truncate text-left">{state?.name}</span>
       </div>
     ),
   }));
@@ -139,11 +149,13 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           className={cn("clickable block h-full w-full outline-none", buttonContainerClassName)}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
       ) : (
         <button
+          tabIndex={tabIndex}
           ref={setReferenceElement}
           type="button"
           className={cn(
@@ -160,8 +172,8 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="State"
-            tooltipContent={selectedState?.name ?? "State"}
+            tooltipHeading={t("state")}
+            tooltipContent={selectedState?.name ?? t("state")}
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
@@ -174,11 +186,12 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                   <StateGroupIcon
                     stateGroup={selectedState?.group ?? "backlog"}
                     color={selectedState?.color ?? "rgba(var(--color-text-300))"}
-                    className="h-3 w-3 flex-shrink-0"
+                    className={cn("flex-shrink-0", iconSize)}
+                    percentage={selectedState?.order}
                   />
                 )}
                 {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-                  <span className="flex-grow truncate">{selectedState?.name ?? "State"}</span>
+                  <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
                 )}
                 {dropdownArrow && (
                   <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -195,7 +208,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={stateValue}
       onChange={dropdownOnChange}
@@ -220,7 +232,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("common.search.label")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
@@ -230,19 +242,18 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <StateOption
+                      {...props}
                       key={option.value}
                       option={option}
-                      projectId={projectId}
-                      filterAvailableStateIds={filterAvailableStateIds}
                       selectedValue={value}
                       className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-custom-text-400">No matches found</p>
+                  <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+                <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
               )}
             </div>
           </div>

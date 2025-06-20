@@ -1,15 +1,17 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // components
+import { isIssueFilterActive } from "@plane/utils";
 import { ArchiveTabsList } from "@/components/archives";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// constants
-import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@/constants/issue";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 
@@ -26,6 +28,8 @@ export const ArchivedIssuesHeader: FC = observer(() => {
   const {
     project: { projectMemberIds },
   } = useMember();
+  // i18n
+  const { t } = useTranslation();
   // for archived issues list layout is the only option
   const activeLayout = "list";
   // hooks
@@ -70,29 +74,27 @@ export const ArchivedIssuesHeader: FC = observer(() => {
       </div>
       {/* filter options */}
       <div className="flex items-center gap-2 px-8">
-        <FiltersDropdown title="Filters" placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+        <FiltersDropdown title={t("common.filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
           <FilterSelection
             filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}
             displayFilters={issueFilters?.displayFilters ?? {}}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.archived_issues[activeLayout] : undefined
+              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.archived_issues[activeLayout] : undefined
             }
             labels={projectLabels}
             memberIds={projectMemberIds ?? undefined}
             states={projectStates}
           />
         </FiltersDropdown>
-        <FiltersDropdown title="Display" placement="bottom-end">
+        <FiltersDropdown title={t("common.display")} placement="bottom-end">
           <DisplayFiltersSelection
             displayFilters={issueFilters?.displayFilters || {}}
             displayProperties={issueFilters?.displayProperties || {}}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-            layoutDisplayFiltersOptions={
-              activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
-            }
+            layoutDisplayFiltersOptions={activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined}
             cycleViewDisabled={!currentProjectDetails?.cycle_view}
             moduleViewDisabled={!currentProjectDetails?.module_view}
           />

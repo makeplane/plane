@@ -5,18 +5,18 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-// types
+// plane constants
+import { EIssueLayoutTypes, EIssueServiceType, ISSUE_CREATED } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue } from "@plane/types";
 // ui
 import { setPromiseToast } from "@plane/ui";
+import { cn, createIssuePayload } from "@plane/utils";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues";
 // constants
-import { ISSUE_CREATED } from "@/constants/event-tracker";
-import { EIssueLayoutTypes } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { createIssuePayload } from "@/helpers/issue.helper";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web components
@@ -29,9 +29,11 @@ export type TQuickAddIssueForm = {
   hasError: boolean;
   register: UseFormRegister<TIssue>;
   onSubmit: () => void;
+  isEpic: boolean;
 };
 
 export type TQuickAddIssueButton = {
+  isEpic?: boolean;
   onClick: () => void;
 };
 
@@ -44,6 +46,7 @@ type TQuickAddIssueRoot = {
   containerClassName?: string;
   setIsQuickAddOpen?: (isOpen: boolean) => void;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
+  isEpic?: boolean;
 };
 
 const defaultValues: Partial<TIssue> = {
@@ -60,7 +63,10 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     containerClassName = "",
     setIsQuickAddOpen,
     quickAddCallback,
+    isEpic = false,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
@@ -108,21 +114,23 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
     if (quickAddCallback) {
       const quickAddPromise = quickAddCallback(projectId.toString(), { ...payload });
       setPromiseToast<any>(quickAddPromise, {
-        loading: "Adding issue...",
+        loading: isEpic ? t("epic.adding") : t("issue.adding"),
         success: {
-          title: "Success!",
-          message: () => "Issue created successfully.",
+          title: t("common.success"),
+          message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
           actionItems: (data) => (
+            // TODO: Translate here
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
               issueId={data.id}
+              isEpic={isEpic}
             />
           ),
         },
         error: {
-          title: "Error!",
-          message: (err) => err?.message || "Some error occurred. Please try again.",
+          title: t("common.error.label"),
+          message: (err) => err?.message || t("common.error.message"),
         },
       });
 
@@ -164,10 +172,11 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
           register={register}
           onSubmit={handleSubmit(onSubmitHandler)}
           onClose={() => handleIsOpen(false)}
+          isEpic={isEpic}
         />
       ) : (
         <>
-          {QuickAddButton && <QuickAddButton onClick={() => handleIsOpen(true)} />}
+          {QuickAddButton && <QuickAddButton isEpic={isEpic} onClick={() => handleIsOpen(true)} />}
           {customQuickAddButton && <>{customQuickAddButton}</>}
           {!QuickAddButton && !customQuickAddButton && (
             <div
@@ -175,7 +184,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
               onClick={() => handleIsOpen(true)}
             >
               <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-              <span className="text-sm font-medium">New Issue</span>
+              <span className="text-sm font-medium">{t(`${isEpic ? "epic.new" : "issue.new"}`)}</span>
             </div>
           )}
         </>

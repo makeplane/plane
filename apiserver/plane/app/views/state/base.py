@@ -1,5 +1,9 @@
 # Python imports
 from itertools import groupby
+from collections import defaultdict
+
+# Django imports
+from django.db.utils import IntegrityError
 
 # Third party imports
 from rest_framework.response import Response
@@ -37,16 +41,53 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
-        serializer = StateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(project_id=project_id)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = StateSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(project_id=project_id)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The state name is already taken"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def partial_update(self, request, slug, project_id, pk):
+        try:
+            state = State.objects.get(
+                pk=pk, project_id=project_id, workspace__slug=slug
+            )
+            serializer = StateSerializer(state, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError as e:
+            if "already exists" in str(e):
+                return Response(
+                    {"name": "The state name is already taken"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
         states = StateSerializer(self.get_queryset(), many=True).data
+
+        grouped_states = defaultdict(list)
+        for state in states:
+            grouped_states[state["group"]].append(state)
+
+        for group, group_states in grouped_states.items():
+            count = len(group_states)
+
+            for index, state in enumerate(group_states, start=1):
+                state["order"] = index / count
+
         grouped = request.GET.get("grouped", False)
+
         if grouped == "true":
             state_dict = {}
             for key, value in groupby(
@@ -55,6 +96,7 @@ class StateViewSet(BaseViewSet):
             ):
                 state_dict[str(key)] = list(value)
             return Response(state_dict, status=status.HTTP_200_OK)
+
         return Response(states, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)

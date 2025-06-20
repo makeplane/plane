@@ -1,10 +1,11 @@
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TPageFilterProps } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
 
 type Props = {
@@ -19,6 +20,7 @@ const DATE_FILTERS = ["created_at"];
 
 export const PageAppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+  const { t } = useTranslation();
 
   if (!appliedFilters) return null;
   if (Object.keys(appliedFilters).length === 0) return null;
@@ -67,7 +69,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
-            Clear all
+            {t("common.clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>

@@ -1,4 +1,4 @@
-import { EViewAccess } from "@/constants/views";
+import { EViewAccess } from "@plane/constants";
 import {
   IWorkspaceViewProps,
   IIssueDisplayFilterOptions,

@@ -1,18 +1,15 @@
-import React, { useRef, useState } from "react";
-import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Info, Search } from "lucide-react";
+import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
-// plane helpers
-import { useOutsideClickDetector } from "@plane/helpers";
-// hooks
-import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-// helpers
+import { usePopper } from "react-popper";
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
+// local imports
 import { cn } from "../../helpers";
-// types
-import { ICustomSearchSelectProps } from "./helper";
-// local components
+import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { Tooltip } from "../tooltip";
+import { ICustomSearchSelectProps } from "./helper";
 
 export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const {
@@ -36,6 +33,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     optionsClassName = "",
     value,
     tabIndex,
+    noResultsMessage = "No matches found",
   } = props;
   const [query, setQuery] = useState("");
 
@@ -63,6 +61,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const openDropdown = () => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
+    if (onOpen) onOpen();
   };
 
   const closeDropdown = () => {
@@ -97,10 +96,14 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 text-xs ${disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
-                    }  ${customButtonClassName}`}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-1 text-xs",
+                    {
+                      "cursor-not-allowed text-custom-text-200": disabled,
+                      "cursor-pointer hover:bg-custom-background-80": !disabled,
+                    },
+                    customButtonClassName
+                  )}
                   onClick={toggleDropdown}
                 >
                   {customButton}
@@ -186,15 +189,13 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                                   {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                                   {option.tooltip && (
                                     <>
-                                      {
-                                        typeof option.tooltip === "string" ? (
-                                          <Tooltip tooltipContent={option.tooltip}>
-                                            <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
-                                          </Tooltip>
-                                        ) : (
-                                            option.tooltip
-                                        )
-                                      }
+                                      {typeof option.tooltip === "string" ? (
+                                        <Tooltip tooltipContent={option.tooltip}>
+                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                        </Tooltip>
+                                      ) : (
+                                        option.tooltip
+                                      )}
                                     </>
                                   )}
                                 </>
@@ -202,7 +203,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                             </Combobox.Option>
                           ))
                         ) : (
-                          <p className="text-custom-text-400 italic py-1 px-1.5">No matches found</p>
+                          <p className="text-custom-text-400 italic py-1 px-1.5">{noResultsMessage}</p>
                         )
                       ) : (
                         <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>

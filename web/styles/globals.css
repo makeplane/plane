@@ -1,4 +1,4 @@
-@import url("fonts/main.css");
+@import "@plane/propel/styles/fonts";
 
 @tailwind base;
 @tailwind components;
@@ -13,6 +13,23 @@
   .text-2\.5xl {
     font-size: 1.75rem;
     line-height: 2.25rem;
+  }
+}
+
+@layer utilities {
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out forwards;
   }
 }
 
@@ -76,25 +93,34 @@
     --color-border-primary: var(--color-primary-40);
     --color-border-error: var(--color-error-100);
 
-    --color-shadow-2xs: 0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+    --color-shadow-2xs:
+      0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
       0px 1px 2px 0px rgba(23, 23, 23, 0.14);
-    --color-shadow-xs: 0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-xs:
+      0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
       0px 1px 8px -1px rgba(16, 24, 40, 0.1);
-    --color-shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02),
-      0px 1px 12px 0px rgba(0, 0, 0, 0.12);
-    --color-shadow-rg: 0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
+    --color-shadow-sm:
+      0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12);
+    --color-shadow-rg:
+      0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
       0px 1px 12px 0px rgba(16, 24, 40, 0.04);
-    --color-shadow-md: 0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-md:
+      0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
       0px 1px 16px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-lg: 0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+    --color-shadow-lg:
+      0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
       0px 1px 24px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
+    --color-shadow-xl:
+      0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
       0px 0px 52px 0px rgba(16, 24, 40, 0.16);
-    --color-shadow-2xl: 0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+    --color-shadow-2xl:
+      0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
       0px 1px 32px 0px rgba(16, 24, 40, 0.12);
-    --color-shadow-3xl: 0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
+    --color-shadow-3xl:
+      0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
       0px 1px 48px 0px rgba(16, 24, 40, 0.12);
     --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+    --color-shadow-custom: 2px 2px 8px 2px rgba(234, 231, 250, 0.3);
 
     --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
     --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
@@ -155,6 +181,22 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-subscription-free-200: 69, 80, 104;
+    --color-subscription-free-400: 51, 59, 77;
+
+    --color-subscription-one-200: 101, 42, 14;
+    --color-subscription-one-400: 90, 37, 12;
+
+    --color-subscription-pro-200: 32, 128, 138;
+    --color-subscription-pro-400: 24, 96, 104;
+
+    --color-subscription-business-200: 142, 33, 87;
+    --color-subscription-business-400: 103, 24, 63;
+
+    --color-subscription-enterprise-200: 86, 5, 145;
+    --color-subscription-enterprise-400: 73, 4, 123;
   }
 
   [data-theme="light"] {
@@ -269,6 +311,22 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-subscription-free-200: 206, 213, 232;
+    --color-subscription-free-400: 152, 166, 206;
+
+    --color-subscription-one-200: 255, 148, 153;
+    --color-subscription-one-400: 200, 118, 121;
+
+    --color-subscription-pro-200: 12, 170, 192;
+    --color-subscription-pro-400: 9, 130, 154;
+
+    --color-subscription-business-200: 206, 34, 119;
+    --color-subscription-business-400: 140, 23, 81;
+
+    --color-subscription-enterprise-200: 182, 71, 255;
+    --color-subscription-enterprise-400: 134, 11, 203;
   }
 
   [data-theme="dark"] {
@@ -379,6 +437,53 @@
     --color-sidebar-border-300: var(--color-border-300); /* strong sidebar border- 1 */
     --color-sidebar-border-400: var(--color-border-400); /* strong sidebar border- 2 */
   }
+
+  /* stickies and editor colors */
+  :root {
+    /* text colors */
+    --editor-colors-gray-text: #5c5e63;
+    --editor-colors-peach-text: #ff5b59;
+    --editor-colors-pink-text: #f65385;
+    --editor-colors-orange-text: #fd9038;
+    --editor-colors-green-text: #0fc27b;
+    --editor-colors-light-blue-text: #17bee9;
+    --editor-colors-dark-blue-text: #266df0;
+    --editor-colors-purple-text: #9162f9;
+    /* end text colors */
+
+    /* background colors */
+    --editor-colors-gray-background: #d6d6d8;
+    --editor-colors-peach-background: #ffd5d7;
+    --editor-colors-pink-background: #fdd4e3;
+    --editor-colors-orange-background: #ffe3cd;
+    --editor-colors-green-background: #c3f0de;
+    --editor-colors-light-blue-background: #c5eff9;
+    --editor-colors-dark-blue-background: #c9dafb;
+    --editor-colors-purple-background: #e3d8fd;
+    /* end background colors */
+  }
+  /* background colors */
+  [data-theme*="light"] {
+    --editor-colors-gray-background: #d6d6d8;
+    --editor-colors-peach-background: #ffd5d7;
+    --editor-colors-pink-background: #fdd4e3;
+    --editor-colors-orange-background: #ffe3cd;
+    --editor-colors-green-background: #c3f0de;
+    --editor-colors-light-blue-background: #c5eff9;
+    --editor-colors-dark-blue-background: #c9dafb;
+    --editor-colors-purple-background: #e3d8fd;
+  }
+  [data-theme*="dark"] {
+    --editor-colors-gray-background: #404144;
+    --editor-colors-peach-background: #593032;
+    --editor-colors-pink-background: #562e3d;
+    --editor-colors-orange-background: #583e2a;
+    --editor-colors-green-background: #1d4a3b;
+    --editor-colors-light-blue-background: #1f495c;
+    --editor-colors-dark-blue-background: #223558;
+    --editor-colors-purple-background: #3d325a;
+  }
+  /* end background colors */
 }
 
 * {
@@ -468,6 +573,7 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 /* popover2 styling */
@@ -684,6 +790,14 @@ div.web-view-spinner div.bar12 {
   border: 3px solid rgba(0, 0, 0, 0);
 }
 
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
+}
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
+}
+
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
   height: 12px;
@@ -739,4 +853,103 @@ div.web-view-spinner div.bar12 {
 
 .epr-search-container > .epr-icn-search {
   color: rgb(var(--color-text-400)) !important;
+}
+
+/* Lock icon animations */
+@keyframes textSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+    max-width: 0px;
+  }
+  40% {
+    opacity: 0.7;
+    max-width: 60px;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    max-width: 60px;
+  }
+}
+
+@keyframes textFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+
+@keyframes lockIconAnimation {
+  0% {
+    transform: rotate(-5deg) scale(1);
+  }
+  25% {
+    transform: rotate(0deg) scale(1.15);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes unlockIconAnimation {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  40% {
+    transform: rotate(-8deg) scale(1.15);
+  }
+  80% {
+    transform: rotate(3deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-text-slide-in {
+  animation: textSlideIn 400ms ease-out forwards;
+}
+
+.animate-text-fade-out {
+  animation: textFadeOut 600ms ease-in 300ms forwards;
+}
+
+.animate-lock-icon {
+  animation: lockIconAnimation 600ms ease-out forwards;
+}
+
+.animate-unlock-icon {
+  animation: unlockIconAnimation 600ms ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 500ms ease-in 100ms forwards;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
 }

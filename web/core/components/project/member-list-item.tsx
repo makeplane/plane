@@ -1,56 +1,58 @@
 "use client";
 
 import { observer } from "mobx-react";
-
+// plane imports
+import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
-// constants
-import { PROJECT_MEMBER_LEAVE } from "@/constants/event-tracker";
-
 // hooks
-import { useEventTracker, useMember, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
-import { IProjectMemberDetails } from "@/store/member/project-member.store";
+// store
+import { IProjectMemberDetails } from "@/store/member/base-project-member.store";
 
 type Props = {
   memberDetails: (IProjectMemberDetails | null)[];
+  projectId: string;
+  workspaceSlug: string;
 };
 
 export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
-  const { memberDetails } = props;
-  const { columns, workspaceSlug, projectId, removeMemberModal, setRemoveMemberModal } = useProjectColumns();
-
+  const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
   // store hooks
   const { leaveProject } = useUserPermissions();
   const { data: currentUser } = useUser();
-  const { fetchProjects } = useProject();
   const {
     project: { removeMemberFromProject },
   } = useMember();
   const { captureEvent } = useEventTracker();
-  // const { isMobile } = usePlatformOS();
+  // helper hooks
+  const { columns, removeMemberModal, setRemoveMemberModal } = useProjectColumns({
+    projectId,
+    workspaceSlug,
+  });
 
   const handleRemove = async (memberId: string) => {
     if (!workspaceSlug || !projectId || !memberId) return;
 
     if (memberId === currentUser?.id) {
-      router.push(`/${workspaceSlug}/projects`);
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
+          router.push(`/${workspaceSlug}/projects`);
           captureEvent(PROJECT_MEMBER_LEAVE, {
             state: "SUCCESS",
             element: "Project settings members page",
           });
-          await fetchProjects(workspaceSlug.toString());
         })
         .catch((err) =>
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "Error!",
+            title: "You can’t leave this project yet.",
             message: err?.error || "Something went wrong. Please try again.",
           })
         );
@@ -58,14 +60,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: "You can’t remove the member from this project yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );
   };
 
   if (!memberDetails) return null;
-  removeMemberModal && console.log("removeMemberModal", JSON.parse(JSON.stringify(removeMemberModal?.member)));
   return (
     <>
       {removeMemberModal && (
@@ -81,9 +82,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         data={(memberDetails?.filter((member): member is IProjectMemberDetails => member !== null) ?? []) as any}
         keyExtractor={(rowData) => rowData?.member.id ?? ""}
         tHeadClassName="border-b border-custom-border-100"
-        thClassName="text-left font-medium divide-x-0"
+        thClassName="text-left font-medium divide-x-0 text-custom-text-400"
         tBodyClassName="divide-y-0"
-        tBodyTrClassName="divide-x-0"
+        tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"
         tHeadTrClassName="divide-x-0"
       />
     </>

@@ -15,6 +15,8 @@ from plane.app.serializers import IssueLinkSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
+from plane.utils.host import base_host
 
 
 class IssueLinkViewSet(BaseViewSet):
@@ -43,6 +45,9 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -52,8 +57,12 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
+
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -65,9 +74,14 @@ class IssueLinkViewSet(BaseViewSet):
         current_instance = json.dumps(
             IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
         )
+
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            crawl_work_item_link_title.delay(
+                serializer.data.get("id"), serializer.data.get("url")
+            )
+
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
@@ -77,8 +91,11 @@ class IssueLinkViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
+            issue_link = self.get_queryset().get(id=serializer.data.get("id"))
+            serializer = IssueLinkSerializer(issue_link)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -98,7 +115,7 @@ class IssueLinkViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

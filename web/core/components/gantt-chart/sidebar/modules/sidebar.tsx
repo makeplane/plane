@@ -1,9 +1,14 @@
 "use client";
 
+import { observer } from "mobx-react";
 // ui
+import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
+// hooks
+import { useTimeLineChart } from "@/hooks/use-timeline-chart";
+//
+import { ETimeLineTypeType } from "../../contexts";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { ModulesSidebarBlock } from "./block";
@@ -12,13 +17,14 @@ import { ModulesSidebarBlock } from "./block";
 type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  getBlockById: (id: string, currentViewData?: ChartDataType | undefined) => IGanttBlock;
   blockIds: string[];
   enableReorder: boolean;
 };
 
-export const ModuleGanttSidebar: React.FC<Props> = (props) => {
-  const { blockUpdateHandler, blockIds, getBlockById, enableReorder } = props;
+export const ModuleGanttSidebar: React.FC<Props> = observer((props) => {
+  const { blockUpdateHandler, blockIds, enableReorder } = props;
+
+  const { getBlockById } = useTimeLineChart(ETimeLineTypeType.MODULE);
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,
@@ -52,4 +58,4 @@ export const ModuleGanttSidebar: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+});

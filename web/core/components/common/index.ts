@@ -5,3 +5,6 @@ export * from "./logo-spinner";
 export * from "./logo";
 export * from "./pro-icon";
 export * from "./count-chip";
+export * from "./activity";
+export * from "./switcher-label";
+export * from "./page-access-icon";

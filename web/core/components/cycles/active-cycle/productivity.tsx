@@ -1,16 +1,17 @@
 import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { EmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { useCycle, useProjectEstimates } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { EstimateTypeDropdown } from "../dropdowns/estimate-type-dropdown";
 
 export type ActiveCycleProductivityProps = {
@@ -21,11 +22,13 @@ export type ActiveCycleProductivityProps = {
 
 export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // hooks
   const { getEstimateTypeByCycleId, setEstimateType } = useCycle();
-
   // derived values
   const estimateType: TCycleEstimateType = (cycle && getEstimateTypeByCycleId(cycle.id)) || "issues";
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/chart" });
 
   const onChange = async (value: TCycleEstimateType) => {
     if (!workspaceSlug || !projectId || !cycle || !cycle.id) return;
@@ -40,7 +43,9 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
     <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-custom-border-200 rounded-lg">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
-          <h3 className="text-base text-custom-text-300 font-semibold">Issue burndown</h3>
+          <h3 className="text-base text-custom-text-300 font-semibold">
+            {t("project_cycles.active_cycle.issue_burndown")}
+          </h3>
         </Link>
         <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
@@ -49,21 +54,11 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         {cycle.total_issues > 0 ? (
           <>
             <div className="h-full w-full px-2">
-              <div className="flex items-center justify-between gap-4 py-1 text-xs text-custom-text-300">
-                <div className="flex items-center gap-3 text-custom-text-300">
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#A9BBD0]" />
-                    <span>Ideal</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-[#4C8FFF]" />
-                    <span>Current</span>
-                  </div>
-                </div>
+              <div className="flex items-center justify-end gap-4 py-1 text-xs text-custom-text-300">
                 {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (
-                  <span>{`Pending issues - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
+                  <span>{`Pending work items - ${cycle.backlog_issues + cycle.unstarted_issues + cycle.started_issues}`}</span>
                 )}
               </div>
 
@@ -73,18 +68,14 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
                     {estimateType === "points" ? (
                       <ProgressChart
                         distribution={completionChartDistributionData}
-                        startDate={cycle.start_date ?? ""}
-                        endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_estimate_points || 0}
                         plotTitle={"points"}
                       />
                     ) : (
                       <ProgressChart
                         distribution={completionChartDistributionData}
-                        startDate={cycle.start_date ?? ""}
-                        endDate={cycle.end_date ?? ""}
                         totalIssues={cycle.total_issues || 0}
-                        plotTitle={"issues"}
+                        plotTitle={"work items"}
                       />
                     )}
                   </Fragment>
@@ -95,7 +86,7 @@ export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observe
         ) : (
           <>
             <div className="flex items-center justify-center h-full w-full">
-              <EmptyState type={EmptyStateType.ACTIVE_CYCLE_CHART_EMPTY_STATE} layout="screen-simple" size="sm" />
+              <SimpleEmptyState title={t("active_cycle.empty_state.chart.title")} assetPath={resolvedPath} />
             </div>
           </>
         )}

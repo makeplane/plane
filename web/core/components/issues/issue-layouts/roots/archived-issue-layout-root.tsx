@@ -4,9 +4,9 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // mobx store
 // components
+import { EIssuesStoreType } from "@plane/constants";
 import { LogoSpinner } from "@/components/common";
 import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
-import { EIssuesStoreType } from "@/constants/issue";
 // ui
 import { useIssues } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";

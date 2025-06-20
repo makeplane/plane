@@ -14,9 +14,11 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
   const {
     activity: { getActivityById },
   } = useIssueDetail();
-  const { projectLabels } = useLabel();
+  const { getLabelById } = useLabel();
 
   const activity = getActivityById(activityId);
+  const oldLabelColor = getLabelById(activity?.old_identifier ?? "")?.color;
+  const newLabelColor = getLabelById(activity?.new_identifier ?? "")?.color;
 
   if (!activity) return <></>;
   return (
@@ -29,11 +31,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
         {activity.old_value === "" ? `added a new label ` : `removed the label `}
         <LabelActivityChip
           name={activity.old_value === "" ? activity.new_value : activity.old_value}
-          color={
-            activity.old_value === ""
-              ? projectLabels?.find((l) => l.id === activity.new_identifier)?.color
-              : projectLabels?.find((l) => l.id === activity.old_identifier)?.color
-          }
+          color={activity.old_value === "" ? newLabelColor : oldLabelColor}
         />
         {showIssue && (activity.old_value === "" ? ` to ` : ` from `)}
         {showIssue && <IssueLink activityId={activityId} />}

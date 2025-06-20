@@ -10,7 +10,7 @@ import { IJiraImporterForm } from "@plane/types";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
-import { checkEmailValidity } from "@/helpers/string.helper";
+import { checkEmailValidity } from "@plane/utils";
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
 // types
 
@@ -66,7 +66,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
-          <p className="text-sm text-custom-text-200">If XXX-123 is your issue, then enter XXX</p>
+          <p className="text-sm text-custom-text-200">If XXX-123 is your work item, then enter XXX</p>
         </div>
         <div className="col-span-1">
           <Controller

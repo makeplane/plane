@@ -1,10 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane constants
+import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
 // types
 import { IIssueDisplayProperties } from "@plane/types";
-// constants
-import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
 // plane web helpers
 import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components
@@ -16,6 +18,7 @@ type Props = {
   handleUpdate: (updatedDisplayProperties: Partial<IIssueDisplayProperties>) => void;
   cycleViewDisabled?: boolean;
   moduleViewDisabled?: boolean;
+  isEpic?: boolean;
 };
 
 export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
@@ -25,7 +28,10 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
     handleUpdate,
     cycleViewDisabled = false,
     moduleViewDisabled = false,
+    isEpic = false,
   } = props;
+  // hooks
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   // states
@@ -45,12 +51,17 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
       default:
         return shouldRenderDisplayProperty({ workspaceSlug: workspaceSlug?.toString(), projectId, key: property.key });
     }
+  }).map((property) => {
+    if (isEpic && property.key === "sub_issue_count") {
+      return { ...property, titleTranslationKey: "issue.display.properties.work_item_count" };
+    }
+    return property;
   });
 
   return (
     <>
       <FilterHeader
-        title="Display Properties"
+        title={t("issue.display.properties.label")}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -72,7 +83,7 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
                   })
                 }
               >
-                {displayProperty.title}
+                {t(displayProperty.titleTranslationKey)}
               </button>
             </>
           ))}

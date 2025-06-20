@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TIssue, TPaginationData } from "@plane/types";
 // components
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TRenderQuickActions } from "../list/list-view-types";
 // types
@@ -22,6 +23,8 @@ type Props = {
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
   readOnly?: boolean;
   isMobileView?: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  isEpic?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
@@ -37,8 +40,11 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
     addIssuesToView,
     readOnly,
     isMobileView = false,
+    canEditProperties,
+    isEpic = false,
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
+  const { t } = useTranslation();
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -63,6 +69,8 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             issueId={issueId}
             quickActions={quickActions}
             isDragDisabled={isDragDisabled || isMobileView}
+            canEditProperties={canEditProperties}
+            isEpic={isEpic}
           />
         </div>
       ))}
@@ -81,6 +89,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             }}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
+            isEpic={isEpic}
           />
         </div>
       )}
@@ -92,7 +101,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
             className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 font-medium  hover:bg-custom-background-80 text-custom-primary-100 hover:text-custom-primary-200"
             onClick={() => loadMoreIssues(formattedDatePayload)}
           >
-            Load More
+            {t("common.load_more")}
           </button>
         </div>
       )}

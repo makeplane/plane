@@ -1,12 +1,12 @@
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { Copy, Pencil, Trash2 } from "lucide-react";
 // plane types
 import { ILinkDetails } from "@plane/types";
 // plane ui
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
+//
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -27,6 +27,8 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
   // platform os
   const { isMobile } = usePlatformOS();
 
+  const Icon = getIconForLink(link.url);
+
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
       setToast({
@@ -42,15 +44,12 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <LinkIcon className="h-3 w-3 flex-shrink-0" />
+            <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
-            <span
-              className="cursor-pointer truncate text-xs"
-              onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
-            >
+            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-xs">
               {link.title && link.title !== "" ? link.title : link.url}
-            </span>
+            </a>
           </Tooltip>
         </div>
 
@@ -68,14 +67,12 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
               <Pencil className="size-3 stroke-[1.5] text-custom-text-200" />
             </button>
           )}
-          <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="grid place-items-center p-1 hover:bg-custom-background-80"
+          <span
+            onClick={() => copyToClipboard(link.url)}
+            className="grid place-items-center p-1 hover:bg-custom-background-80 cursor-pointer"
           >
-            <ExternalLink className="size-3 stroke-[1.5] text-custom-text-200" />
-          </a>
+            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+          </span>
           {isEditingAllowed && (
             <button
               type="button"
@@ -92,9 +89,8 @@ export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="px-5">
-        <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
-          Added {calculateTimeAgo(link.created_at)}
-          <br />
+        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+          Added {calculateTimeAgo(link.created_at)}{" "}
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>
           )}

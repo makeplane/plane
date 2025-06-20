@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 // components
+import type { IGanttBlock } from "@plane/types";
 import { Row } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { MultipleSelectEntityAction } from "@/components/core";
 import { IssueGanttSidebarBlock } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -12,17 +13,17 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // constants
 import { BLOCK_HEIGHT, GANTT_SELECT_GROUP } from "../../constants";
 // types
-import { IGanttBlock } from "../../types";
 
 type Props = {
   block: IGanttBlock;
   enableSelection: boolean;
   isDragging: boolean;
   selectionHelpers?: TSelectionHelper;
+  isEpic?: boolean;
 };
 
 export const IssuesSidebarBlock = observer((props: Props) => {
-  const { block, enableSelection, isDragging, selectionHelpers } = props;
+  const { block, enableSelection, isDragging, selectionHelpers, isEpic = false } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();
   const { getIsIssuePeeked } = useIssueDetail();
@@ -73,7 +74,7 @@ export const IssuesSidebarBlock = observer((props: Props) => {
         )}
         <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
           <div className="flex-grow truncate">
-            <IssueGanttSidebarBlock issueId={block.data.id} />
+            <IssueGanttSidebarBlock issueId={block.data.id} isEpic={isEpic} />
           </div>
           {duration && (
             <div className="flex-shrink-0 text-sm text-custom-text-200">

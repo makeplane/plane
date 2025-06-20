@@ -3,6 +3,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
 import { Button } from "@plane/ui";
@@ -39,6 +40,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
   // store hooks
   const { webhookSecretKey } = useWebhook();
+  const { t } = useTranslation();
   // use form
   const {
     handleSubmit,
@@ -62,14 +64,18 @@ export const WebhookForm: FC<Props> = observer((props) => {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 ">
-        <div className="text-xl font-medium text-custom-text-200">{data ? "Webhook details" : "Create webhook"}</div>
+        <div className="text-xl font-medium text-custom-text-200">
+          {data
+            ? t("workspace_settings.settings.webhooks.modal.details")
+            : t("workspace_settings.settings.webhooks.modal.title")}
+        </div>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller
               control={control}
               name="url"
               rules={{
-                required: "URL is required",
+                required: t("workspace_settings.settings.webhooks.modal.error"),
               }}
               render={({ field: { onChange, value } }) => (
                 <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
@@ -88,17 +94,17 @@ export const WebhookForm: FC<Props> = observer((props) => {
         <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
           <Button type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Updating" : "Update"}
+            {isSubmitting ? t("updating") : t("update")}
           </Button>
         </div>
       ) : (
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-            Cancel
+            {t("cancel")}
           </Button>
           {!webhookSecretKey && (
-            <Button type="submit" variant="primary" size="sm" loading={isSubmitting}>
-              {isSubmitting ? "Creating" : "Create"}
+            <Button type="submit" variant="primary" size="sm" loading={isSubmitting} className="capitalize">
+              {isSubmitting ? t("common.creating") : t("common.create")}
             </Button>
           )}
         </div>

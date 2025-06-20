@@ -5,16 +5,23 @@ import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "luci
 import { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
-// constants
-import { PAGE_SORTING_KEY_OPTIONS } from "@/constants/page";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   onChange: (value: { key?: TPageFiltersSortKey; order?: TPageFiltersSortBy }) => void;
   sortBy: TPageFiltersSortBy;
   sortKey: TPageFiltersSortKey;
 };
+
+const PAGE_SORTING_KEY_OPTIONS: {
+  key: TPageFiltersSortKey;
+  label: string;
+}[] = [
+  { key: "name", label: "Name" },
+  { key: "created_at", label: "Date created" },
+  { key: "updated_at", label: "Date modified" },
+];
 
 export const PageOrderByDropdown: React.FC<Props> = (props) => {
   const { onChange, sortBy, sortKey } = props;

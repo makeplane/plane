@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+// plane internal packages
 import { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
-// helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 // plane admin components

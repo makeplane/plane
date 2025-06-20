@@ -1,12 +1,13 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 // types
-import { TExtensions } from "@/types";
+import type { IEditorProps } from "@/types";
 
-type Props = {
-  disabledExtensions: TExtensions[];
-};
+export type TCoreAdditionalExtensionsProps = Pick<
+  IEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+>;
 
-export const CoreEditorAdditionalExtensions = (props: Props): Extensions => {
+export const CoreEditorAdditionalExtensions = (props: TCoreAdditionalExtensionsProps): Extensions => {
   const {} = props;
   return [];
 };

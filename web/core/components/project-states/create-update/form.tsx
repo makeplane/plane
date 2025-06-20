@@ -1,9 +1,9 @@
 "use client";
 
-import { FormEvent, FC, useEffect, useState, useMemo } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
 import { IState } from "@plane/types";
-import { Button, Popover, Input } from "@plane/ui";
+import { Button, Popover, Input, TextArea } from "@plane/ui";
 
 type TStateForm = {
   data: Partial<IState>;
@@ -28,7 +28,7 @@ export const StateForm: FC<TStateForm> = (props) => {
     setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
-  const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const formSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     const name = formData?.name || undefined;
@@ -59,47 +59,49 @@ export const StateForm: FC<TStateForm> = (props) => {
   );
 
   return (
-    <form onSubmit={formSubmit} className="relative flex items-center gap-2">
+    <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
       {/* color */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 h-full mt-2">
         <Popover button={PopoverButton} panelClassName="mt-4 -ml-3">
           <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
       </div>
 
-      {/* title */}
-      <Input
-        id="name"
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={formData?.name}
-        onChange={(e) => handleFormData("name", e.target.value)}
-        hasError={(errors && Boolean(errors.name)) || false}
-        className="w-full"
-        maxLength={100}
-        autoFocus
-      />
+      <div className="w-full space-y-2">
+        {/* title */}
+        <Input
+          id="name"
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData?.name}
+          onChange={(e) => handleFormData("name", e.target.value)}
+          hasError={(errors && Boolean(errors.name)) || false}
+          className="w-full"
+          maxLength={100}
+          autoFocus
+        />
 
-      {/* description */}
-      <Input
-        id="description"
-        type="text"
-        name="description"
-        placeholder="Description"
-        value={formData?.description}
-        onChange={(e) => handleFormData("description", e.target.value)}
-        hasError={(errors && Boolean(errors.description)) || false}
-        className="w-full"
-      />
+        {/* description */}
+        <TextArea
+          id="description"
+          name="description"
+          placeholder="Describe this state for your members."
+          value={formData?.description}
+          onChange={(e) => handleFormData("description", e.target.value)}
+          hasError={(errors && Boolean(errors.description)) || false}
+          className="w-full text-sm min-h-14 resize-none"
+        />
 
-      <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
-        Cancel
-      </Button>
-
-      <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>
-        {buttonTitle}
-      </Button>
-    </form>
+        <div className="flex space-x-2 items-center">
+          <Button onClick={formSubmit} variant="primary" size="sm" disabled={buttonDisabled}>
+            {buttonTitle}
+          </Button>
+          <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
+            Cancel
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };

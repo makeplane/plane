@@ -1,15 +1,21 @@
-import { DeleteImage, RestoreImage, UploadImage } from "@/types";
+// plane imports
+import { TWebhookConnectionQueryParams } from "@plane/types";
 
-export type TFileHandler = {
+export type TReadOnlyFileHandler = {
+  checkIfAssetExists: (assetId: string) => Promise<boolean>;
   getAssetSrc: (path: string) => Promise<string>;
+  restore: (assetSrc: string) => Promise<void>;
+};
+
+export type TFileHandler = TReadOnlyFileHandler & {
+  assetsUploadStatus: Record<string, number>; // blockId => progress percentage
   cancel: () => void;
-  delete: DeleteImage;
-  upload: UploadImage;
-  restore: RestoreImage;
+  delete: (assetSrc: string) => Promise<void>;
+  upload: (blockId: string, file: File) => Promise<string>;
   validation: {
     /**
      * @description max file size in bytes
-     * @example enter 5242880( 5* 1024 * 1024) for 5MB
+     * @example enter 5242880(5 * 1024 * 1024) for 5MB
      */
     maxFileSize: number;
   };
@@ -19,7 +25,23 @@ export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
 export type TEditorFontSize = "small-font" | "large-font";
 
+export type TEditorLineSpacing = "regular" | "small";
+
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
   fontSize?: TEditorFontSize;
+  lineSpacing?: TEditorLineSpacing;
+  wideLayout?: boolean;
+};
+
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+  cookie?: string;
+};
+
+export type TRealtimeConfig = {
+  url: string;
+  queryParams: TWebhookConnectionQueryParams;
 };

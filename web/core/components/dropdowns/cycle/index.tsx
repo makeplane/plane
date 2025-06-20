@@ -3,10 +3,11 @@
 import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { ComboDropDown, ContrastIcon } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
@@ -26,6 +27,7 @@ type Props = TDropdownProps & {
   value: string | null;
   canRemoveCycle?: boolean;
   renderByDefault?: boolean;
+  currentCycleId?: string;
 };
 
 export const CycleDropdown: React.FC<Props> = observer((props) => {
@@ -49,7 +51,10 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     value,
     canRemoveCycle = true,
     renderByDefault = true,
+    currentCycleId,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
 
   const [isOpen, setIsOpen] = useState(false);
@@ -85,6 +90,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           {button}
         </button>
@@ -102,11 +108,12 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           )}
           onClick={handleOnClick}
           disabled={disabled}
+          tabIndex={tabIndex}
         >
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Cycle"
+            tooltipHeading={t("common.cycle")}
             tooltipContent={selectedName ?? placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
@@ -129,7 +136,6 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
-      tabIndex={tabIndex}
       className={cn("h-full", className)}
       value={value}
       onChange={dropdownOnChange}
@@ -145,6 +151,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
           placement={placement}
           referenceElement={referenceElement}
           canRemoveCycle={canRemoveCycle}
+          currentCycleId={currentCycleId}
         />
       )}
     </ComboDropDown>

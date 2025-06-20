@@ -6,10 +6,10 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
+import { DistributionUpdates, updateDistribution, orderModules, shouldFilterModule } from "@plane/utils";
 // helpers
-import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
-import { orderModules, shouldFilterModule } from "@/helpers/module.helper";
 // services
+import { syncIssuesWithDeletedModules } from "@/local-db/utils/load-workspace";
 import { ModuleService } from "@/services/module.service";
 import { ModuleArchiveService } from "@/services/module_archive.service";
 import { ProjectService } from "@/services/project";
@@ -27,10 +27,12 @@ export interface IModuleStore {
   projectModuleIds: string[] | null;
   projectArchivedModuleIds: string[] | null;
   // computed actions
+  getModulesFetchStatusByProjectId: (projectId: string) => boolean;
   getFilteredModuleIds: (projectId: string) => string[] | null;
   getFilteredArchivedModuleIds: (projectId: string) => string[] | null;
   getModuleById: (moduleId: string) => IModule | null;
   getModuleNameById: (moduleId: string) => string;
+  getProjectModuleDetails: (projectId: string) => IModule[] | null;
   getProjectModuleIds: (projectId: string) => string[] | null;
   getPlotTypeByModuleId: (moduleId: string) => TModulePlotType;
   // actions
@@ -151,6 +153,13 @@ export class ModulesStore implements IModuleStore {
   }
 
   /**
+   * Returns the fetch status for a specific project
+   * @param projectId
+   * @returns boolean
+   */
+  getModulesFetchStatusByProjectId = computedFn((projectId: string) => this.fetchedMap[projectId] ?? false);
+
+  /**
    * @description returns filtered module ids based on display filters and filters
    * @param {TModuleDisplayFilters} displayFilters
    * @param {TModuleFilters} filters
@@ -210,14 +219,23 @@ export class ModulesStore implements IModuleStore {
   getModuleNameById = computedFn((moduleId: string) => this.moduleMap?.[moduleId]?.name);
 
   /**
+   * @description returns list of module details of the project id passed as argument
+   * @param projectId
+   */
+  getProjectModuleDetails = computedFn((projectId: string) => {
+    if (!this.fetchedMap[projectId]) return null;
+    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m.archived_at);
+    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
+    return projectModules;
+  });
+
+  /**
    * @description returns list of module ids of the project id passed as argument
    * @param projectId
    */
   getProjectModuleIds = computedFn((projectId: string) => {
-    if (!this.fetchedMap[projectId]) return null;
-
-    let projectModules = Object.values(this.moduleMap).filter((m) => m.project_id === projectId && !m.archived_at);
-    projectModules = sortBy(projectModules, [(m) => m.sort_order]);
+    const projectModules = this.getProjectModuleDetails(projectId);
+    if (!projectModules) return null;
     const projectModuleIds = projectModules.map((m) => m.id);
     return projectModuleIds;
   });
@@ -281,7 +299,7 @@ export class ModulesStore implements IModuleStore {
         });
         return response;
       });
-    } catch (error) {
+    } catch {
       this.loader = false;
       return undefined;
     }
@@ -307,7 +325,7 @@ export class ModulesStore implements IModuleStore {
         });
         return projectModules;
       });
-    } catch (error) {
+    } catch {
       this.loader = false;
       return undefined;
     }
@@ -414,7 +432,6 @@ export class ModulesStore implements IModuleStore {
         set(this.moduleMap, [moduleId], { ...originalModuleDetails, ...data });
       });
       const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
-      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
       return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);
@@ -438,6 +455,7 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         delete this.moduleMap[moduleId];
         if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
+        syncIssuesWithDeletedModules([moduleId]);
       });
     });
   };

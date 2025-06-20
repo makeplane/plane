@@ -1,20 +1,20 @@
 import { Editor } from "@tiptap/core";
 import { AlignCenter, AlignLeft, AlignRight, LucideIcon } from "lucide-react";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { TextAlignItem } from "@/components/menus";
-// helpers
-import { cn } from "@/helpers/common";
 // types
 import { TEditorCommands } from "@/types";
+import { EditorStateType } from "./root";
 
 type Props = {
   editor: Editor;
-  onClose: () => void;
+  editorState: EditorStateType;
 };
 
 export const TextAlignmentSelector: React.FC<Props> = (props) => {
-  const { editor, onClose } = props;
-
+  const { editor, editorState } = props;
   const menuItem = TextAlignItem(editor);
 
   const textAlignmentOptions: {
@@ -32,10 +32,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "left",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "left",
-        }),
+      isActive: () => editorState.left,
     },
     {
       itemKey: "text-align",
@@ -45,10 +42,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "center",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "center",
-        }),
+      isActive: () => editorState.center,
     },
     {
       itemKey: "text-align",
@@ -58,10 +52,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
         menuItem.command({
           alignment: "right",
         }),
-      isActive: () =>
-        menuItem.isActive({
-          alignment: "right",
-        }),
+      isActive: () => editorState.right,
     },
   ];
 
@@ -74,7 +65,6 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
           onClick={(e) => {
             e.stopPropagation();
             item.command();
-            onClose();
           }}
           className={cn(
             "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",

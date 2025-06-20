@@ -2,7 +2,9 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { LayersIcon, Plus } from "lucide-react";
-import { TIssue } from "@plane/types";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
@@ -11,10 +13,13 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
+  issueServiceType: TIssueServiceType;
 };
 
 export const SubIssuesActionButton: FC<Props> = observer((props) => {
-  const { issueId, customButton, disabled = false } = props;
+  const { issueId, customButton, disabled = false, issueServiceType } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const {
     issue: { getIssueById },
@@ -22,7 +27,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
     toggleSubIssuesModal,
     setIssueCrudOperationState,
     issueCrudOperationState,
-  } = useIssueDetail();
+  } = useIssueDetail(issueServiceType);
   const { setTrackElement } = useEventTracker();
 
   // derived values
@@ -61,12 +66,12 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   // options
   const optionItems = [
     {
-      label: "Create new",
+      i18n_label: "common.create_new",
       icon: <Plus className="h-3 w-3" />,
       onClick: handleCreateNew,
     },
     {
-      label: "Add existing",
+      i18n_label: "common.add_existing",
       icon: <LayersIcon className="h-3 w-3" />,
       onClick: handleAddExisting,
     },
@@ -88,7 +93,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
         >
           <div className="flex items-center gap-2">
             {item.icon}
-            <span>{item.label}</span>
+            <span>{t(item.i18n_label)}</span>
           </div>
         </CustomMenu.MenuItem>
       ))}

@@ -1,8 +1,11 @@
 import clone from "lodash/clone";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+// plane imports
+import { SitesStateService } from "@plane/services";
 import { IState } from "@plane/types";
+// helpers
 import { sortStates } from "@/helpers/state.helper";
-import { StateService } from "@/services/state.service";
+// store
 import { CoreRootStore } from "./root.store";
 
 export interface IStateStore {
@@ -18,7 +21,7 @@ export interface IStateStore {
 
 export class StateStore implements IStateStore {
   states: IState[] | undefined = undefined;
-  stateService: StateService;
+  stateService: SitesStateService;
   rootStore: CoreRootStore;
 
   constructor(_rootStore: CoreRootStore) {
@@ -30,7 +33,7 @@ export class StateStore implements IStateStore {
       // fetch action
       fetchStates: action,
     });
-    this.stateService = new StateService();
+    this.stateService = new SitesStateService();
     this.rootStore = _rootStore;
   }
 
@@ -42,7 +45,7 @@ export class StateStore implements IStateStore {
   getStateById = (stateId: string | undefined) => this.states?.find((state) => state.id === stateId);
 
   fetchStates = async (anchor: string) => {
-    const statesResponse = await this.stateService.getStates(anchor);
+    const statesResponse = await this.stateService.list(anchor);
     runInAction(() => {
       this.states = statesResponse;
     });

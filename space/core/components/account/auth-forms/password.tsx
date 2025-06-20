@@ -3,14 +3,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
+// plane imports
 import { API_BASE_URL } from "@plane/constants";
+import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
 import { PasswordStrengthMeter } from "@/components/account";
 // helpers
 import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
-// services
-import { AuthService } from "@/services/auth.service";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
 

@@ -5,6 +5,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 // ui
 import { CustomMenu } from "@plane/ui";
+// helpers
+import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components
@@ -23,19 +25,24 @@ export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((pro
     issue: { getIssueById },
   } = useIssueDetail();
 
+  // derived values
   const issueDetail = (issueId && getIssueById(issueId)) || undefined;
   if (!issueDetail) return <></>;
 
   const projectDetails = (issueDetail.project_id && getProjectById(issueDetail.project_id)) || undefined;
 
+  const workItemLink = generateWorkItemLink({
+    workspaceSlug,
+    projectId: issueDetail?.project_id,
+    issueId: issueDetail?.id,
+    projectIdentifier: projectDetails?.identifier,
+    sequenceId: issueDetail?.sequence_id,
+  });
+
   return (
     <>
       <CustomMenu.MenuItem key={issueDetail.id}>
-        <Link
-          href={`/${workspaceSlug}/projects/${issueDetail?.project_id as string}/issues/${issueDetail.id}`}
-          target="_blank"
-          className="flex items-center gap-2 py-0.5"
-        >
+        <Link href={workItemLink} target="_blank" className="flex items-center gap-2 py-0.5">
           {issueDetail.project_id && projectDetails?.identifier && (
             <IssueIdentifier
               projectId={issueDetail.project_id}

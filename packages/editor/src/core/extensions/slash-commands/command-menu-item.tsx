@@ -1,5 +1,5 @@
-// helpers
-import { cn } from "@/helpers/common";
+// plane utils
+import { cn } from "@plane/utils";
 // types
 import { ISlashCommandItem } from "@/types";
 

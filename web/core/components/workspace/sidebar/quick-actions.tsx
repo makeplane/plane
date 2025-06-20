@@ -1,20 +1,24 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronUp, PenSquare, Search } from "lucide-react";
+import { PenSquare } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+// plane web components
+import { AppSearch } from "@/plane-web/components/workspace";
 
 export const SidebarQuickActions = observer(() => {
+  const { t } = useTranslation();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
@@ -25,7 +29,7 @@ export const SidebarQuickActions = observer(() => {
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
-  const { toggleCreateIssueModal, toggleCommandPaletteModal } = useCommandPalette();
+  const { toggleCreateIssueModal } = useCommandPalette();
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
@@ -42,7 +46,9 @@ export const SidebarQuickActions = observer(() => {
 
   const handleMouseEnter = () => {
     // if enter before time out clear the timeout
-    timeoutRef?.current && clearTimeout(timeoutRef.current);
+    if (timeoutRef?.current) {
+      clearTimeout(timeoutRef.current);
+    }
     setIsDraftButtonOpen(true);
   };
 
@@ -92,19 +98,11 @@ export const SidebarQuickActions = observer(() => {
           disabled={disabled}
         >
           <PenSquare className="size-4" />
-          {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
-        </button>
-        <button
-          className={cn(
-            "flex-shrink-0 size-8 aspect-square grid place-items-center rounded hover:bg-custom-sidebar-background-90 outline-none",
-            {
-              "border-[0.5px] border-custom-sidebar-border-300": !isSidebarCollapsed,
-            }
+          {!isSidebarCollapsed && (
+            <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
           )}
-          onClick={() => toggleCommandPaletteModal(true)}
-        >
-          <Search className="size-4 text-custom-sidebar-text-300" />
         </button>
+        <AppSearch />
       </div>
     </>
   );

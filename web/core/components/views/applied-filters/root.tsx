@@ -1,12 +1,13 @@
 import { X } from "lucide-react";
+import { EViewAccess } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TViewFilterProps } from "@plane/types";
 // components
 import { Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters } from "@/components/common/applied-filters";
 // constants
-import { EViewAccess } from "@/constants/views";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { AppliedAccessFilters } from "./access";
 // types
 
@@ -23,6 +24,7 @@ const VIEW_ACCESS_FILTERS = ["view_type"];
 
 export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+  const { t } = useTranslation();
 
   if (!appliedFilters) return null;
   if (Object.keys(appliedFilters).length === 0) return null;
@@ -76,7 +78,7 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
       {isEditingAllowed && (
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
-            Clear all
+            {t("common.clear_all")}
             <X size={12} strokeWidth={2} />
           </Tag>
         </button>

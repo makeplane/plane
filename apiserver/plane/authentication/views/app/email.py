@@ -19,6 +19,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+from plane.utils.path_validator import validate_next_path
 
 
 class SignInAuthEndpoint(View):
@@ -34,7 +35,7 @@ class SignInAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             # Base URL join
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
@@ -58,7 +59,7 @@ class SignInAuthEndpoint(View):
             params = exc.get_error_dict()
             # Next path
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -76,7 +77,7 @@ class SignInAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -92,7 +93,7 @@ class SignInAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -111,7 +112,7 @@ class SignInAuthEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = str(next_path)
+                path = str(validate_next_path(next_path))
             else:
                 path = get_redirection_path(user=user)
 
@@ -121,7 +122,7 @@ class SignInAuthEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "sign-in?" + urlencode(params)
             )
@@ -141,7 +142,7 @@ class SignUpAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -161,7 +162,7 @@ class SignUpAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -179,7 +180,7 @@ class SignUpAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -197,7 +198,7 @@ class SignUpAuthEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -216,7 +217,7 @@ class SignUpAuthEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = next_path
+                path = str(validate_next_path(next_path))
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
@@ -225,7 +226,7 @@ class SignUpAuthEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )

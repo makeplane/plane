@@ -1,13 +1,19 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { ImageIcon } from "lucide-react";
-// helpers
-import { cn } from "@/helpers/common";
-// hooks
-import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+// plane utils
+import { cn } from "@plane/utils";
+// constants
+import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustomBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// helpers
+import { EFileError } from "@/helpers/file";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// hooks
+import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 
-type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
+type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -36,9 +42,12 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
+        if (!imageEntityId) return;
         setIsUploaded(true);
         // Update the node view's src attribute post upload
-        updateAttributes({ src: url });
+        updateAttributes({
+          src: url,
+        });
         imageComponentImageFileMap?.delete(imageEntityId);
 
         const pos = getPos();
@@ -48,11 +57,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
         // only if the cursor is at the current image component, manipulate
         // the cursor position
-        if (currentNode && currentNode.type.name === "imageComponent" && currentNode.attrs.src === url) {
+        if (currentNode && currentNode.type.name === node.type.name && currentNode.attrs.src === url) {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
-          if (nextNode && nextNode.type.name === "paragraph") {
+          if (nextNode && nextNode.type.name === CORE_EXTENSIONS.PARAGRAPH) {
             // If there is a paragraph node after the image component, move the focus to the next node
             editor.commands.setTextSelection(pos + 1);
           } else {
@@ -64,23 +73,45 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     },
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
+
+  const uploadImageEditorCommand = useCallback(
+    async (file: File) => await editor?.commands.uploadImage(imageEntityId ?? "", file),
+    [editor, imageEntityId]
+  );
+
+  const handleProgressStatus = useCallback(
+    (isUploading: boolean) => {
+      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+    },
+    [editor]
+  );
+
+  const handleInvalidFile = useCallback((_error: EFileError, _file: File, message: string) => {
+    alert(message);
+  }, []);
+
   // hooks
-  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
-    editor,
-    loadImageFromFileSystem,
+  const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
+    acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
+    // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
+    editorCommand: uploadImageEditorCommand,
+    handleProgressStatus,
+    loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
+    onInvalidFile: handleInvalidFile,
     onUpload,
   });
+
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
-    maxFileSize,
     pos: getPos(),
+    type: "image",
     uploader: uploadFile,
   });
 
   // the meta data of the image component
   const meta = useMemo(
-    () => imageComponentImageFileMap?.get(imageEntityId),
+    () => imageComponentImageFileMap?.get(imageEntityId ?? ""),
     [imageComponentImageFileMap, imageEntityId]
   );
 
@@ -94,7 +125,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         if (meta.hasOpenedFileInputOnce) return;
         fileInputRef.current.click();
         hasTriggeredFilePickerRef.current = true;
-        imageComponentImageFileMap?.set(imageEntityId, { ...meta, hasOpenedFileInputOnce: true });
+        imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
   }, [meta, uploadFile, imageComponentImageFileMap]);
@@ -106,11 +137,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       if (!filesList) {
         return;
       }
-      await uploadFirstImageAndInsertRemaining({
+      await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
-        maxFileSize,
         pos: getPos(),
+        type: "image",
         uploader: uploadFile,
       });
     },
@@ -127,7 +158,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       return "Uploading...";
     }
 
-    if (draggedInside) {
+    if (draggedInside && editor.isEditable) {
       return "Drop image here";
     }
 
@@ -137,14 +168,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 hover:text-custom-text-200 bg-custom-background-90 hover:bg-custom-background-80 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
         {
-          "hover:text-custom-text-200 cursor-pointer": editor.isEditable,
-          "bg-custom-background-80 text-custom-text-200": draggedInside,
-          "text-custom-primary-200 bg-custom-primary-100/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200 border-custom-primary-200/10":
-            selected,
-          "text-red-500 cursor-default hover:text-red-500": failedToLoadImage,
-          "bg-red-500/10 hover:bg-red-500/10": failedToLoadImage && selected,
+          "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
+          "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
+          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+            selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage,
+          "hover:text-red-500": failedToLoadImage && editor.isEditable,
+          "bg-red-500/10": failedToLoadImage && selected,
+          "hover:bg-red-500/10": failedToLoadImage && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}
@@ -164,7 +197,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept=".jpg,.jpeg,.png,.webp"
+        accept={ACCEPTED_IMAGE_MIME_TYPES.join(",")}
         onChange={onFileChange}
         multiple
       />

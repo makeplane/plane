@@ -1,5 +1,9 @@
 # Python imports
+from django.db.models.functions import Ln
 import pytz
+import time
+from django.utils import timezone
+from typing import Optional, Any, Tuple, Dict
 
 # Django imports
 from django.conf import settings
@@ -147,6 +151,30 @@ class Workspace(BaseModel):
         if self.logo:
             return self.logo
         return None
+
+    def delete(
+        self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any
+    ):
+        """
+        Override the delete method to append epoch timestamp to the slug when soft deleting.
+
+        Args:
+            using: The database alias to use for the deletion.
+            soft: Whether to perform a soft delete (True) or hard delete (False).
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        """
+        # Call the parent class's delete method first
+        result = super().delete(using=using, soft=soft, *args, **kwargs)
+
+        # If it's a soft delete and the model still exists (not hard deleted)
+        if soft and hasattr(self, "deleted_at") and self.deleted_at:
+            # Use the deleted_at timestamp to update the slug
+            deletion_timestamp: int = int(self.deleted_at.timestamp())
+            self.slug = f"{self.slug}__{deletion_timestamp}"
+            self.save(update_fields=["slug"])
+
+        return result
 
     class Meta:
         verbose_name = "Workspace"
@@ -322,3 +350,106 @@ class WorkspaceUserProperties(BaseModel):
 
     def __str__(self):
         return f"{self.workspace.name} {self.user.email}"
+
+
+class WorkspaceUserLink(WorkspaceBaseModel):
+    title = models.CharField(max_length=255, null=True, blank=True)
+    url = models.TextField()
+    metadata = models.JSONField(default=dict)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="owner_workspace_user_link",
+    )
+
+    class Meta:
+        verbose_name = "Workspace User Link"
+        verbose_name_plural = "Workspace User Links"
+        db_table = "workspace_user_links"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.id} {self.url}"
+
+
+class WorkspaceHomePreference(BaseModel):
+    """Preference for the home page of a workspace for a user"""
+
+    class HomeWidgetKeys(models.TextChoices):
+        QUICK_LINKS = "quick_links", "Quick Links"
+        RECENTS = "recents", "Recents"
+        MY_STICKIES = "my_stickies", "My Stickies"
+        NEW_AT_PLANE = "new_at_plane", "New at Plane"
+        QUICK_TUTORIAL = "quick_tutorial", "Quick Tutorial"
+
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_home_preferences",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_user_home_preferences",
+    )
+    key = models.CharField(max_length=255)
+    is_enabled = models.BooleanField(default=True)
+    config = models.JSONField(default=dict)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        unique_together = ["workspace", "user", "key", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "key"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_home_preferences_unique_workspace_user_key_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace Home Preference"
+        verbose_name_plural = "Workspace Home Preferences"
+        db_table = "workspace_home_preferences"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.workspace.name} {self.user.email} {self.key}"
+
+
+class WorkspaceUserPreference(BaseModel):
+    """Preference for the workspace for a user"""
+
+    class UserPreferenceKeys(models.TextChoices):
+        VIEWS = "views", "Views"
+        ACTIVE_CYCLES = "active_cycles", "Active Cycles"
+        ANALYTICS = "analytics", "Analytics"
+        DRAFTS = "drafts", "Drafts"
+        YOUR_WORK = "your_work", "Your Work"
+        ARCHIVES = "archives", "Archives"
+
+    workspace = models.ForeignKey(
+        "db.Workspace",
+        on_delete=models.CASCADE,
+        related_name="workspace_user_preferences",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="workspace_user_preferences",
+    )
+    key = models.CharField(max_length=255)
+    is_pinned = models.BooleanField(default=False)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        unique_together = ["workspace", "user", "key", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "user", "key"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="workspace_user_preferences_unique_workspace_user_key_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Workspace User Preference"
+        verbose_name_plural = "Workspace User Preferences"
+        db_table = "workspace_user_preferences"
+        ordering = ("-created_at",)

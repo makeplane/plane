@@ -1,22 +1,24 @@
 import React from "react";
-// editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef } from "@plane/editor";
+// plane imports
+import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { MakeOptional } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
-import { IssueCommentToolbar } from "@/components/editor";
+import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
-// hooks
-import { useMention } from "@/hooks/use-mention";
 
 interface LiteTextEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends MakeOptional<
+    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions"
+  > {
   anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
-  uploadFile: (file: File) => Promise<string>;
+  uploadFile: TFileHandler["upload"];
 }
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
@@ -27,10 +29,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     isSubmitting = false,
     showSubmitButton = true,
     uploadFile,
+    disabledExtensions,
+    flaggedExtensions,
     ...rest
   } = props;
-  // use-mention
-  const { mentionHighlights } = useMention();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
     return !!ref && typeof ref === "object" && "current" in ref;
   }
@@ -42,15 +44,15 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={[]}
+        disabledExtensions={disabledExtensions ?? []}
+        flaggedExtensions={flaggedExtensions ?? []}
         fileHandler={getEditorFileHandlers({
           anchor,
           uploadFile,
           workspaceId,
         })}
         mentionHandler={{
-          highlights: mentionHighlights,
-          // suggestions disabled for now
+          renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         {...rest}
         // overriding the containerClassName to add relative class passed

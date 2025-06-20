@@ -6,10 +6,9 @@ import { IUser } from "@plane/types";
 // hooks
 // ui
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, formatTextList } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { renderEmoji } from "@/helpers/emoji.helper";
-import { formatTextList } from "@/helpers/issue.helper";
 import { useIssueDetail, useMember } from "@/hooks/store";
 // types
 import { ReactionSelector } from "./reaction-selector";
@@ -20,10 +19,11 @@ export type TIssueReaction = {
   issueId: string;
   currentUser: IUser;
   disabled?: boolean;
+  className?: string;
 };
 
 export const IssueReaction: FC<TIssueReaction> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, currentUser, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, currentUser, disabled = false, className = "" } = props;
   // hooks
   const {
     reaction: { getReactionsByIssueId, reactionsByUser, getReactionById },
@@ -92,7 +92,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
   };
 
   return (
-    <div className="relative mt-4 flex items-center gap-1.5">
+    <div className={cn("relative mt-4 flex items-center gap-1.5", className)}>
       {!disabled && (
         <ReactionSelector size="md" position="top" value={userReactions} onSelect={issueReactionOperations.react} />
       )}

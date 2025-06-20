@@ -1,11 +1,6 @@
 import { IProject, IProjectLite, IWorkspaceLite } from "@plane/types";
 
-export type TStateGroups =
-  | "backlog"
-  | "unstarted"
-  | "started"
-  | "completed"
-  | "cancelled";
+export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export interface IState {
   readonly id: string;
@@ -17,6 +12,7 @@ export interface IState {
   project_id: string;
   sequence: number;
   workspace_id: string;
+  order: number;
 }
 
 export interface IStateLite {
@@ -29,3 +25,11 @@ export interface IStateLite {
 export interface IStateResponse {
   [key: string]: IState[];
 }
+
+export type TStateOperationsCallbacks = {
+  createState: (data: Partial<IState>) => Promise<IState>;
+  updateState: (stateId: string, data: Partial<IState>) => Promise<IState | undefined>;
+  deleteState: (stateId: string) => Promise<void>;
+  moveStatePosition: (stateId: string, data: Partial<IState>) => Promise<void>;
+  markStateAsDefault: (stateId: string) => Promise<void>;
+};

@@ -2,17 +2,35 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ENotificationTab } from "@plane/constants";
 // components
-import { EmptyState } from "@/components/empty-state";
+import { useTranslation } from "@plane/i18n";
+import { SimpleEmptyState } from "@/components/empty-state";
 // constants
-import { EmptyStateType } from "@/constants/empty-state";
-import { ENotificationTab } from "@/constants/notification";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const NotificationEmptyState: FC = observer(() => {
+  // plane imports
+  const { t } = useTranslation();
   // derived values
-  const currentTabEmptyState = ENotificationTab.ALL
-    ? EmptyStateType.NOTIFICATION_ALL_EMPTY_STATE
-    : EmptyStateType.NOTIFICATION_MENTIONS_EMPTY_STATE;
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/notification" });
 
-  return <EmptyState type={currentTabEmptyState} layout="screen-simple" />;
+  return (
+    <>
+      {ENotificationTab.ALL ? (
+        <SimpleEmptyState
+          title={t("notification.empty_state.all.title")}
+          description={t("notification.empty_state.all.description")}
+          assetPath={resolvedPath}
+        />
+      ) : (
+        <SimpleEmptyState
+          title={t("notification.empty_state.mentions.title")}
+          description={t("notification.empty_state.mentions.description")}
+          assetPath={resolvedPath}
+        />
+      )}
+    </>
+  );
 });

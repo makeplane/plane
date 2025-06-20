@@ -1,8 +1,12 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Editor } from "@tiptap/core";
-import { Check, Link, Trash } from "lucide-react";
+import { Check, Link, Trash2 } from "lucide-react";
+import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react";
+// plane imports
+import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { cn, isValidHttpUrl } from "@/helpers/common";
+import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
 
 type Props = {
@@ -13,21 +17,25 @@ type Props = {
 
 export const BubbleMenuLinkSelector: FC<Props> = (props) => {
   const { editor, isOpen, setIsOpen } = props;
+  // states
+  const [error, setError] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onLinkSubmit = useCallback(() => {
+  const handleLinkSubmit = useCallback(() => {
     const input = inputRef.current;
-    const url = input?.value;
-    if (url && isValidHttpUrl(url)) {
-      setLinkEditor(editor, url);
+    if (!input) return;
+    const url = input.value;
+    if (!url) return;
+    const { isValid, url: validatedUrl } = isValidHttpUrl(url);
+    if (isValid) {
+      setLinkEditor(editor, validatedUrl);
       setIsOpen(false);
+      setError(false);
+    } else {
+      setError(true);
     }
   }, [editor, inputRef, setIsOpen]);
-
-  useEffect(() => {
-    inputRef.current && inputRef.current?.focus();
-  });
 
   return (
     <div className="relative h-full">
@@ -37,7 +45,7 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
           "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
           {
             "bg-custom-background-80": isOpen,
-            "text-custom-text-100": editor.isActive("link"),
+            "text-custom-text-100": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
         )}
         onClick={(e) => {
@@ -45,52 +53,62 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
           e.stopPropagation();
         }}
       >
-        <span>Link</span>
+        Link
         <Link className="flex-shrink-0 size-3" />
       </button>
       {isOpen && (
-        <div
-          className="dow-xl fixed top-full z-[99999] mt-1 flex w-60 overflow-hidden rounded border border-custom-border-300 bg-custom-background-100 animate-in fade-in slide-in-from-top-1"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              onLinkSubmit();
-            }
-          }}
-        >
-          <input
-            ref={inputRef}
-            type="url"
-            placeholder="Paste a link"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex-1 border-r border-custom-border-300 bg-custom-background-100 p-1 text-sm outline-none placeholder:text-custom-text-400"
-            defaultValue={editor.getAttributes("link").href || ""}
-          />
-          {editor.getAttributes("link").href ? (
-            <button
-              type="button"
-              className="flex items-center rounded-sm p-1 text-red-600 transition-all hover:bg-red-100 dark:hover:bg-red-800"
-              onClick={(e) => {
-                unsetLinkEditor(editor);
-                setIsOpen(false);
-                e.stopPropagation();
+        <div className="fixed top-full z-[99999] mt-1 w-60 animate-in fade-in slide-in-from-top-1 rounded bg-custom-background-100 shadow-custom-shadow-rg">
+          <div
+            className={cn("flex rounded border border-custom-border-300 transition-colors", {
+              "border-red-500": error,
+            })}
+          >
+            <input
+              ref={inputRef}
+              type="url"
+              placeholder="Enter or paste a link"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 border-r border-custom-border-300 bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
+              defaultValue={editor.getAttributes("link").href || ""}
+              onKeyDown={(e) => {
+                setError(false);
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleLinkSubmit();
+                }
               }}
-            >
-              <Trash className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              className="flex items-center rounded-sm p-1 text-custom-text-300 transition-all hover:bg-custom-background-90"
-              type="button"
-              onClick={(e) => {
-                onLinkSubmit();
-                e.stopPropagation();
-              }}
-            >
-              <Check className="h-4 w-4" />
-            </button>
+              onFocus={() => setError(false)}
+              autoFocus
+            />
+            {editor.getAttributes("link").href ? (
+              <button
+                type="button"
+                className="grid place-items-center rounded-sm p-1 text-red-500 hover:bg-red-500/20 transition-all"
+                onClick={(e) => {
+                  unsetLinkEditor(editor);
+                  setIsOpen(false);
+                  e.stopPropagation();
+                }}
+              >
+                <Trash2 className="size-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="h-full aspect-square grid place-items-center p-1 rounded-sm text-custom-text-300 hover:bg-custom-background-80 transition-all"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLinkSubmit();
+                }}
+              >
+                <Check className="size-4" />
+              </button>
+            )}
+          </div>
+          {error && (
+            <p className="text-xs text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+              Please enter a valid URL
+            </p>
           )}
         </div>
       )}

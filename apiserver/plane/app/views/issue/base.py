@@ -15,8 +15,6 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
-    Case,
-    When,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -46,6 +44,8 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    UserRecentVisit,
+    ModuleIssue,
 )
 from plane.utils.grouper import (
     issue_group_values,
@@ -56,10 +56,12 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from .. import BaseAPIView, BaseViewSet
-from plane.utils.user_timezone_converter import user_timezone_converter
+from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.webhook_task import model_activity
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.utils.host import base_host
 
 
 class IssueListEndpoint(BaseAPIView):
@@ -378,7 +380,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             issue = (
                 issue_queryset_grouper(
@@ -428,7 +430,14 @@ class IssueViewSet(BaseViewSet):
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
             )
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -540,7 +549,7 @@ class IssueViewSet(BaseViewSet):
             )
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the issue
         """
 
@@ -557,7 +566,7 @@ class IssueViewSet(BaseViewSet):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         recent_visited_task.delay(
@@ -624,11 +633,13 @@ class IssueViewSet(BaseViewSet):
             )
 
         current_instance = json.dumps(
-            IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
         )
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True)
+        serializer = IssueCreateSerializer(
+            issue, data=request.data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
@@ -640,7 +651,7 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             model_activity.delay(
                 model_name="issue",
@@ -649,7 +660,13 @@ class IssueViewSet(BaseViewSet):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=current_instance,
+                issue_id=str(serializer.data.get("id", None)),
+                user_id=request.user.id,
             )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -659,6 +676,13 @@ class IssueViewSet(BaseViewSet):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         issue.delete()
+        # delete the issue from recent visits
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="issue",
+        ).delete(soft=False)
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),
@@ -668,7 +692,8 @@ class IssueViewSet(BaseViewSet):
             current_instance={},
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
+            subscriber=False,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -716,6 +741,13 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
+        # First, delete all related cycle issues
+        CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Then, delete all related module issues
+        ModuleIssue.objects.filter(issue_id__in=issue_ids).delete()
+
+        # Finally, delete the issues themselves
         issues.delete()
 
         return Response(
@@ -912,9 +944,33 @@ class IssueDetailEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
+
+        # check for the project member role, if the role is 5 then check for the guest_view_all_features
+        #  if it is true then show all the issues else show only the issues created by the user
+        project_member_subquery = ProjectMember.objects.filter(
+            project_id=OuterRef("project_id"),
+            member=self.request.user,
+            is_active=True,
+        ).filter(
+            Q(role__gt=ROLE.GUEST.value) 
+            | Q(
+                role=ROLE.GUEST.value, project__guest_view_all_features=True
+            )
+        )
+
+        # Main issue query
         issue = (
             Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("workspace", "project", "state", "parent")
+            .filter(
+                Q(Exists(project_member_subquery))
+                | Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role=ROLE.GUEST.value,
+                    project__guest_view_all_features=False,
+                    created_by=self.request.user,
+                )
+            )
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
@@ -982,6 +1038,7 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+
         issue = issue.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
@@ -1003,8 +1060,16 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         """
         Validate that start date is before target date.
         """
+        from datetime import datetime
+
         start = new_start or current_start
         target = new_target or current_target
+
+        # Convert string dates to datetime objects if they're strings
+        if isinstance(start, str):
+            start = datetime.strptime(start, "%Y-%m-%d").date()
+        if isinstance(target, str):
+            target = datetime.strptime(target, "%Y-%m-%d").date()
 
         if start and target and start > target:
             return False
@@ -1076,3 +1141,188 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         return Response(
             {"message": "Issues updated successfully"}, status=status.HTTP_200_OK
         )
+
+
+class IssueMetaEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    def get(self, request, slug, project_id, issue_id):
+        issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
+            id=issue_id, project_id=project_id, workspace__slug=slug
+        )
+        return Response(
+            {
+                "sequence_id": issue.sequence_id,
+                "project_identifier": issue.project.identifier,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class IssueDetailIdentifierEndpoint(BaseAPIView):
+    def strict_str_to_int(self, s):
+        if not s.isdigit() and not (s.startswith("-") and s[1:].isdigit()):
+            raise ValueError("Invalid integer string")
+        return int(s)
+
+    def get(self, request, slug, project_identifier, issue_identifier):
+        # Check if the issue identifier is a valid integer
+        try:
+            issue_identifier = self.strict_str_to_int(issue_identifier)
+        except ValueError:
+            return Response(
+                {"error": "Invalid issue identifier"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Fetch the project
+        project = Project.objects.get(
+            identifier__iexact=project_identifier, workspace__slug=slug
+        )
+
+        # Check if the user is a member of the project
+        if not ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project.id,
+            member=request.user,
+            is_active=True,
+        ).exists():
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Fetch the issue
+        issue = (
+            Issue.issue_objects.filter(project_id=project.id)
+            .filter(workspace__slug=slug)
+            .select_related("workspace", "project", "state", "parent")
+            .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(issue=OuterRef("id")).values("cycle_id")[
+                        :1
+                    ]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(sequence_id=issue_identifier)
+            .annotate(
+                label_ids=Coalesce(
+                    ArrayAgg(
+                        "labels__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(labels__id__isnull=True)
+                            & Q(label_issue__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                assignee_ids=Coalesce(
+                    ArrayAgg(
+                        "assignees__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(assignees__id__isnull=True)
+                            & Q(assignees__member_project__is_active=True)
+                            & Q(issue_assignee__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                module_ids=Coalesce(
+                    ArrayAgg(
+                        "issue_module__module_id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(issue_module__module_id__isnull=True)
+                            & Q(issue_module__module__archived_at__isnull=True)
+                            & Q(issue_module__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("issue", "actor"),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_link",
+                    queryset=IssueLink.objects.select_related("created_by"),
+                )
+            )
+            .annotate(
+                is_subscribed=Exists(
+                    IssueSubscriber.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project.id,
+                        issue__sequence_id=issue_identifier,
+                        subscriber=request.user,
+                    )
+                )
+            )
+        ).first()
+
+        # Check if the issue exists
+        if not issue:
+            return Response(
+                {"error": "The required object does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        """
+        if the role is guest and guest_view_all_features is false and owned by is not
+        the requesting user then dont show the issue
+        """
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project.id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        recent_visited_task.delay(
+            slug=slug,
+            entity_name="issue",
+            entity_identifier=str(issue.id),
+            user_id=str(request.user.id),
+            project_id=str(project.id),
+        )
+
+        # Serialize the issue
+        serializer = IssueDetailSerializer(issue, expand=self.expand)
+        return Response(serializer.data, status=status.HTTP_200_OK)

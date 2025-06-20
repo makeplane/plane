@@ -3,22 +3,22 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-// components
+// plane imports
 import { EditorRefApi } from "@plane/editor";
+import { TIssuePublicComment } from "@plane/types";
+import { getFileURL } from "@plane/utils";
+// components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
-// types
-import { Comment } from "@/types/issue";
 
 type Props = {
   anchor: string;
-  comment: Comment;
+  comment: TIssuePublicComment;
 };
 
 export const CommentCard: React.FC<Props> = observer((props) => {
@@ -48,7 +48,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     deleteIssueComment(anchor, peekId, comment.id);
   };
 
-  const handleCommentUpdate = async (formData: Comment) => {
+  const handleCommentUpdate = async (formData: TIssuePublicComment) => {
     if (!anchor || !peekId) return;
     updateIssueComment(anchor, peekId, comment.id, formData);
     setIsEditing(false);
@@ -112,7 +112,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     onChange={(comment_json, comment_html) => onChange(comment_html)}
                     isSubmitting={isSubmitting}
                     showSubmitButton={false}
-                    uploadFile={async (file) => {
+                    uploadFile={async (blockId, file) => {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
                     }}
@@ -140,9 +140,13 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <div className={`${isEditing ? "hidden" : ""}`}>
             <LiteTextReadOnlyEditor
               anchor={anchor}
+              workspaceId={workspaceID?.toString() ?? ""}
               ref={showEditorRef}
               id={comment.id}
               initialValue={comment.comment_html}
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
             <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>

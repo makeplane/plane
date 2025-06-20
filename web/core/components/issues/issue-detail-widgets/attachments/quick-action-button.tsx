@@ -4,13 +4,14 @@ import React, { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
-// plane ui
+// plane imports
+import { TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-
+// local imports
 import { useAttachmentOperations } from "./helper";
 
 type Props = {
@@ -19,18 +20,24 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
+  issueServiceType: TIssueServiceType;
 };
 
 export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issueId, customButton, disabled = false } = props;
+  const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
-  const { setLastWidgetAction, fetchActivities } = useIssueDetail();
+  const { setLastWidgetAction, fetchActivities } = useIssueDetail(issueServiceType);
   // file size
   const { maxFileSize } = useFileSize();
   // operations
-  const { operations: attachmentOperations } = useAttachmentOperations(workspaceSlug, projectId, issueId);
+  const { operations: attachmentOperations } = useAttachmentOperations(
+    workspaceSlug,
+    projectId,
+    issueId,
+    issueServiceType
+  );
   // handlers
   const handleFetchPropertyActivities = useCallback(() => {
     fetchActivities(workspaceSlug, projectId, issueId);

@@ -29,7 +29,7 @@ class WebhookEndpoint(BaseAPIView):
             if "already exists" in str(e):
                 return Response(
                     {"error": "URL already exists for the workspace"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
             raise IntegrityError
 
@@ -120,7 +120,7 @@ class WebhookLogsEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
         webhook_logs = WebhookLog.objects.filter(
-            workspace__slug=slug, webhook_id=webhook_id
+            workspace__slug=slug, webhook=webhook_id
         )
         serializer = WebhookLogSerializer(webhook_logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -2,18 +2,19 @@
 
 import { FormEvent, useState } from "react";
 // types
-import { FileText } from "lucide-react";
+import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
+// plane imports
+import { ETabIndices, EPageAccess } from "@plane/constants";
+// i18n
+import { useTranslation } from "@plane/i18n";
 import { TPage } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
 import { Logo } from "@/components/common";
 // constants
 import { AccessField } from "@/components/common/access-field";
-import { EPageAccess, PAGE_ACCESS_SPECIFIERS } from "@/constants/page";
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -24,13 +25,25 @@ type Props = {
   handleFormSubmit: () => Promise<void>;
 };
 
+const PAGE_ACCESS_SPECIFIERS: {
+  key: EPageAccess;
+  i18n_label: string;
+  icon: LucideIcon;
+}[] = [
+  { key: EPageAccess.PUBLIC, i18n_label: "common.access.public", icon: Globe2 },
+  { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: Lock },
+];
+
 export const PageForm: React.FC<Props> = (props) => {
   const { formData, handleFormData, handleModalClose, handleFormSubmit } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+  const { t } = useTranslation();
   // state
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const i18n_access_label = PAGE_ACCESS_SPECIFIERS.find((access) => access.key === formData.access)?.i18n_label;
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_PAGE, isMobile);
 
@@ -121,9 +134,7 @@ export const PageForm: React.FC<Props> = (props) => {
             accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
             isMobile={isMobile}
           />
-          <h6 className="text-xs font-medium">
-            {PAGE_ACCESS_SPECIFIERS.find((access) => access.key === formData.access)?.label}
-          </h6>
+          <h6 className="text-xs font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>

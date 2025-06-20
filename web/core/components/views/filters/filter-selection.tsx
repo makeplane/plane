@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
+import { EViewAccess } from "@plane/constants";
 import { TViewFilterProps, TViewFilters } from "@plane/types";
 // components
 import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
 import { FilterOption } from "@/components/issues";
 // constants
-import { EViewAccess } from "@/constants/views";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components

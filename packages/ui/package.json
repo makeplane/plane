@@ -2,12 +2,12 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.24.0",
+  "version": "0.26.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "files": [
     "dist/**"
   ],
@@ -18,7 +18,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "peerDependencies": {
     "react": "^18.3.1",
@@ -30,13 +31,16 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
+    "@plane/hooks": "*",
+    "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
-    "@plane/helpers": "*",
+    "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.379.0",
+    "lucide-react": "^0.469.0",
     "react-color": "^2.19.3",
+    "react-day-picker": "9.5.0",
     "react-popper": "^2.3.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.0.0",
@@ -44,6 +48,9 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
+    "@plane/eslint-config": "*",
+    "@plane/tailwind-config": "*",
+    "@plane/typescript-config": "*",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-interactions": "^8.1.1",
     "@storybook/addon-links": "^8.1.1",
@@ -61,14 +68,10 @@
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.19",
     "classnames": "^2.3.2",
-    "@plane/eslint-config": "*",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
-    "tailwind-config-custom": "*",
-    "tailwindcss": "^3.4.3",
-    "@plane/typescript-config": "*",
-    "tsup": "^7.2.0",
-    "typescript": "5.3.3"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }

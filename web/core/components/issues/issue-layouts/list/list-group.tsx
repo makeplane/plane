@@ -4,9 +4,11 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { cn } from "@plane/editor";
-// plane packages
+// plane constants
+import { EIssueLayoutTypes, DRAG_ALLOWED_GROUPS } from "@plane/constants";
+// plane i18n
+import { useTranslation } from "@plane/i18n";
+// plane ui
 import {
   IGroupByColumn,
   TIssueMap,
@@ -17,10 +19,10 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 import { Row, setToast, TOAST_TYPE } from "@plane/ui";
+// plane utils
+import { cn } from "@plane/utils";
 // components
 import { ListLoaderItemRow } from "@/components/ui";
-// constants
-import { DRAG_ALLOWED_GROUPS, EIssueLayoutTypes } from "@/constants/issue";
 // hooks
 import { useProjectState } from "@/hooks/store";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
@@ -65,6 +67,7 @@ interface Props {
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
+  isEpic?: boolean;
 }
 
 export const ListGroup = observer((props: Props) => {
@@ -91,14 +94,14 @@ export const ListGroup = observer((props: Props) => {
     selectionHelpers,
     handleCollapsedGroups,
     collapsedGroups,
+    isEpic = false,
   } = props;
 
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
   const isExpanded = !collapsedGroups?.group_by.includes(group.id);
   const groupRef = useRef<HTMLDivElement | null>(null);
-
-  const { projectId } = useParams();
+  const { t } = useTranslation();
   const projectState = useProjectState();
 
   const {
@@ -107,7 +110,9 @@ export const ListGroup = observer((props: Props) => {
 
   const [intersectionElement, setIntersectionElement] = useState<HTMLDivElement | null>(null);
 
-  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState } = useWorkFlowFDragNDrop(group_by);
+  const { workflowDisabledSource, isWorkflowDropDisabled, handleWorkFlowState, getIsWorkflowWorkItemCreationDisabled } =
+    useWorkFlowFDragNDrop(group_by);
+  const isWorkflowIssueCreationDisabled = getIsWorkflowWorkItemCreationDisabled(group.id);
 
   const groupIssueCount = getGroupIssueCount(group.id, undefined, false) ?? 0;
   const nextPageResults = getPaginationData(group.id, undefined)?.nextPageResults;
@@ -129,7 +134,7 @@ export const ListGroup = observer((props: Props) => {
       }
       onClick={() => loadMoreIssues(group.id)}
     >
-      Load More &darr;
+      {t("common.load_more")} &darr;
     </div>
   );
 
@@ -208,10 +213,10 @@ export const ListGroup = observer((props: Props) => {
           if (!source || !destination) return;
 
           if (isWorkflowDropDisabled || group.isDropDisabled) {
-            group.dropErrorMessage &&
+            if (group.dropErrorMessage)
               setToast({
                 type: TOAST_TYPE.WARNING,
-                title: "Warning!",
+                title: t("common.warning"),
                 message: group.dropErrorMessage,
               });
             return;
@@ -237,9 +242,9 @@ export const ListGroup = observer((props: Props) => {
     isWorkflowDropDisabled,
   ]);
 
-  const isDragAllowed =
-    !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by) && canEditProperties(projectId?.toString());
+  const isDragAllowed = !!group_by && DRAG_ALLOWED_GROUPS.includes(group_by);
   const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
+  const isDropDisabled = isWorkflowDropDisabled || !!group.isDropDisabled;
 
   const isGroupByCreatedBy = group_by === "created_by";
   const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
@@ -249,7 +254,7 @@ export const ListGroup = observer((props: Props) => {
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
         "border-custom-primary-100": isDraggingOverColumn,
-        "border-custom-error-200": isDraggingOverColumn && !!group.isDropDisabled,
+        "border-custom-error-200": isDraggingOverColumn && isDropDisabled,
       })}
     >
       <Row
@@ -261,14 +266,17 @@ export const ListGroup = observer((props: Props) => {
           groupID={group.id}
           groupBy={group_by}
           icon={group.icon}
-          title={group.name || ""}
+          title={group.name}
           count={groupIssueCount}
           issuePayload={group.payload}
           canEditProperties={canEditProperties}
-          disableIssueCreation={disableIssueCreation || isGroupByCreatedBy || isCompletedCycle}
+          disableIssueCreation={
+            disableIssueCreation || isGroupByCreatedBy || isCompletedCycle || isWorkflowIssueCreationDisabled
+          }
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
           handleCollapsedGroups={handleCollapsedGroups}
+          isEpic={isEpic}
         />
       </Row>
       {shouldExpand && (
@@ -276,11 +284,12 @@ export const ListGroup = observer((props: Props) => {
           <GroupDragOverlay
             dragColumnOrientation={dragColumnOrientation}
             canOverlayBeVisible={canOverlayBeVisible}
-            isDropDisabled={isWorkflowDropDisabled || !!group.isDropDisabled}
+            isDropDisabled={isDropDisabled}
             workflowDisabledSource={workflowDisabledSource}
             dropErrorMessage={group.dropErrorMessage}
             orderBy={orderBy}
             isDraggingOverColumn={isDraggingOverColumn}
+            isEpic={isEpic}
           />
           {groupIssueIds && (
             <IssueBlocksList
@@ -295,22 +304,28 @@ export const ListGroup = observer((props: Props) => {
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!canOverlayBeVisible}
               selectionHelpers={selectionHelpers}
+              isEpic={isEpic}
             />
           )}
 
           {shouldLoadMore && (group_by ? <>{loadMore}</> : <ListLoaderItemRow ref={setIntersectionElement} />)}
 
-          {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
-            <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
-              <QuickAddIssueRoot
-                layout={EIssueLayoutTypes.LIST}
-                QuickAddButton={ListQuickAddIssueButton}
-                prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-                containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
-                quickAddCallback={quickAddCallback}
-              />
-            </div>
-          )}
+          {enableIssueQuickAdd &&
+            !disableIssueCreation &&
+            !isGroupByCreatedBy &&
+            !isCompletedCycle &&
+            !isWorkflowIssueCreationDisabled && (
+              <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
+                <QuickAddIssueRoot
+                  layout={EIssueLayoutTypes.LIST}
+                  QuickAddButton={ListQuickAddIssueButton}
+                  prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
+                  containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
+                  quickAddCallback={quickAddCallback}
+                  isEpic={isEpic}
+                />
+              </div>
+            )}
         </div>
       )}
     </div>

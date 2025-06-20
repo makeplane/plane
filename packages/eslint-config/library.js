@@ -5,7 +5,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   extends: ["prettier", "plugin:@typescript-eslint/recommended"],
-  plugins: ["react", "@typescript-eslint", "import"],
+  plugins: ["react", "react-hooks", "@typescript-eslint", "import"],
   globals: {
     React: true,
     JSX: true,
@@ -38,12 +38,36 @@ module.exports = {
     "react/self-closing-comp": ["error", { component: true, html: true }],
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
-    // "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-expressions": "warn",
     "@typescript-eslint/no-unused-vars": ["warn"],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
+    "import/order": [
+      "warn",
+      {
+        groups: ["builtin", "external", "internal", "parent", "sibling"],
+        pathGroups: [
+          {
+            pattern: "@plane/**",
+            group: "external",
+            position: "after",
+          },
+          {
+            pattern: "@/**",
+            group: "internal",
+            position: "before",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+      },
+    ],
   },
+
   ignorePatterns: [".*.js", "node_modules/", "dist/"],
 };

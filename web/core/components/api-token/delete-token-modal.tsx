@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, FC } from "react";
-import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
+import { useTranslation } from "@plane/i18n";
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
-// services
-import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -25,7 +24,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   // router params
-  const { workspaceSlug } = useParams();
+  const { t } = useTranslation();
 
   const handleClose = () => {
     onClose();
@@ -33,21 +32,19 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug) return;
-
     setDeleteLoading(true);
 
     await apiTokenService
-      .deleteApiToken(workspaceSlug.toString(), tokenId)
+      .destroy(tokenId)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Token deleted successfully.",
+          title: t("workspace_settings.settings.api_tokens.delete.success.title"),
+          message: t("workspace_settings.settings.api_tokens.delete.success.message"),
         });
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST(workspaceSlug.toString()),
+          API_TOKENS_LIST,
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );
@@ -57,8 +54,8 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
       .catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: err?.message ?? "Something went wrong. Please try again.",
+          title: t("workspace_settings.settings.api_tokens.delete.error.title"),
+          message: err?.message ?? t("workspace_settings.settings.api_tokens.delete.error.message"),
         })
       )
       .finally(() => setDeleteLoading(false));
@@ -70,12 +67,8 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
       handleSubmit={handleDeletion}
       isSubmitting={deleteLoading}
       isOpen={isOpen}
-      title="Delete API token"
-      content={
-        <>
-          Any application using this token will no longer have the access to Plane data. This action cannot be undone.
-        </>
-      }
+      title={t("workspace_settings.settings.api_tokens.delete.title")}
+      content={<>{t("workspace_settings.settings.api_tokens.delete.description")} </>}
     />
   );
 };

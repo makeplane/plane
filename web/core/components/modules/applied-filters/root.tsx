@@ -1,10 +1,11 @@
 import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 import { AppliedDateFilters, AppliedMembersFilters, AppliedStatusFilters } from "@/components/modules";
 // helpers
-import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 // types
 
 type Props = {
@@ -30,6 +31,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
     alwaysAllowEditing,
     isArchived = false,
   } = props;
+  const { t } = useTranslation();
 
   if (!appliedFilters && !isFavoriteFilterApplied) return null;
   if (Object.keys(appliedFilters).length === 0 && !isFavoriteFilterApplied) return null;
@@ -113,7 +115,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
         {isEditingAllowed && (
           <button type="button" onClick={handleClearAllFilters}>
             <Tag>
-              Clear all
+              {t("common.clear_all")}
               <X size={12} strokeWidth={2} />
             </Tag>
           </button>

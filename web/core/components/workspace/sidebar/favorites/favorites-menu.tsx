@@ -13,13 +13,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { IFavorite } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // constants
 
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -32,11 +34,11 @@ import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {
-  //state
+  // states
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
-
   const [isDragging, setIsDragging] = useState(false);
-
+  // navigation
+  const { workspaceSlug } = useParams();
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const {
@@ -47,17 +49,17 @@ export const SidebarFavoritesMenu = observer(() => {
     reOrderFavorite,
     moveFavoriteToFolder,
   } = useFavorite();
-  const { workspaceSlug } = useParams();
-
+  // translation
+  const { t } = useTranslation();
+  // platform hooks
   const { isMobile } = usePlatformOS();
-
   // local storage
-  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>("is_favorite_menu_open", false);
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const isFavoriteMenuOpen = !!storedValue;
   // refs
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const elementRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMoveToFolder = (sourceId: string, destinationId: string) => {
     moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
@@ -65,8 +67,8 @@ export const SidebarFavoritesMenu = observer(() => {
     }).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -87,33 +89,27 @@ export const SidebarFavoritesMenu = observer(() => {
     const sourceData = source.data as TargetData;
 
     if (!sourceData.id) return;
-
     if (isFolder) {
       // handle move to a new parent folder if dropped on a folder
       if (parentId && parentId !== sourceData.parentId) {
-        handleMoveToFolder(sourceData.id, parentId);
+        handleMoveToFolder(sourceData.id, parentId); /**parent id  */
       }
-      //handle remove from folder if dropped outside of the folder
-      if (parentId && parentId !== sourceData.parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
-
       // handle reordering at root level
       if (droppedFavId) {
         if (instruction != "make-child") {
-          handleReorder(sourceData.id, droppedFavId, instruction);
+          handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
         }
       }
     } else {
       //handling reordering for favorites
       if (droppedFavId) {
-        handleReorder(sourceData.id, droppedFavId, instruction);
+        handleReorder(sourceData.id, droppedFavId, instruction); /** sequence */
       }
+    }
 
-      // handle removal from folder if dropped outside a folder
-      if (!parentId && sourceData.isChild) {
-        handleRemoveFromFavoritesFolder(sourceData.id);
-      }
+    /**remove if dropped outside and source is a child */
+    if (!parentId && sourceData.isChild) {
+      handleRemoveFromFavoritesFolder(sourceData.id); /**parent null */
     }
   };
 
@@ -122,24 +118,25 @@ export const SidebarFavoritesMenu = observer(() => {
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Favorite removed successfully.",
+          title: t("success"),
+          message: t("favorite_removed_successfully"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Something went wrong!",
+          title: t("error"),
+          message: t("something_went_wrong"),
         });
       });
   };
+
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
     removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move favorite.",
+        title: t("error"),
+        message: t("failed_to_move_favorite"),
       });
     });
   };
@@ -149,12 +146,12 @@ export const SidebarFavoritesMenu = observer(() => {
       reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Failed reorder favorite",
+          title: t("error"),
+          message: t("failed_to_reorder_favorite"),
         });
       });
     },
-    [workspaceSlug, reOrderFavorite]
+    [workspaceSlug, reOrderFavorite, t]
   );
 
   useEffect(() => {
@@ -193,37 +190,68 @@ export const SidebarFavoritesMenu = observer(() => {
     <>
       <Disclosure as="div" defaultOpen ref={containerRef}>
         {!sidebarCollapsed && (
-          <Disclosure.Button
+          <div
             ref={elementRef}
-            as="button"
             className={cn(
-              "sticky top-0 bg-custom-sidebar-background-100 z-10 group/workspace-button w-full px-2 py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded text-xs font-semibold",
+              "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90",
               {
-                "bg-custom-sidebar-background-80 opacity-60": isDragging,
+                "p-0 justify-center w-fit mx-auto bg-custom-sidebar-background-90 hover:bg-custom-sidebar-background-80":
+                  sidebarCollapsed,
               }
             )}
           >
-            <span onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)} className="flex-1 text-start">
-              YOUR FAVORITES
-            </span>
-            <span className="flex flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded p-0.5 ">
-              <Tooltip tooltipHeading="Create folder" tooltipContent="">
-                <FolderPlus
+            <Disclosure.Button
+              as="button"
+              type="button"
+              className={cn(
+                "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+                {
+                  "!text-center w-8 px-2 py-1.5 justify-center": sidebarCollapsed,
+                  "bg-custom-sidebar-background-80 opacity-60": isDragging,
+                }
+              )}
+              onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
+              aria-label={t(
+                isFavoriteMenuOpen
+                  ? "aria_labels.projects_sidebar.close_favorites_menu"
+                  : "aria_labels.projects_sidebar.open_favorites_menu"
+              )}
+            >
+              <span className="text-sm font-semibold">{t("favorites")}</span>
+            </Disclosure.Button>
+            <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
+              <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
+                <button
+                  type="button"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
                   onClick={() => {
                     setCreateNewFolder(true);
                     if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
                   }}
-                  className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform")}
-                />
+                  aria-label={t("aria_labels.projects_sidebar.create_favorites_folder")}
+                >
+                  <FolderPlus className="size-3" />
+                </button>
               </Tooltip>
-              <ChevronRight
+              <Disclosure.Button
+                as="button"
+                type="button"
+                className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
                 onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
-                className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                  "rotate-90": isFavoriteMenuOpen,
-                })}
-              />
-            </span>
-          </Disclosure.Button>
+                aria-label={t(
+                  isFavoriteMenuOpen
+                    ? "aria_labels.projects_sidebar.close_favorites_menu"
+                    : "aria_labels.projects_sidebar.open_favorites_menu"
+                )}
+              >
+                <ChevronRight
+                  className={cn("flex-shrink-0 size-3 transition-all", {
+                    "rotate-90": isFavoriteMenuOpen,
+                  })}
+                />
+              </Disclosure.Button>
+            </div>
+          </div>
         )}
         <Transition
           show={isFavoriteMenuOpen}
@@ -246,40 +274,46 @@ export const SidebarFavoritesMenu = observer(() => {
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
                   {!sidebarCollapsed && (
-                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">No favorites yet</span>
+                    <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">
+                      {t("no_favorites_yet")}
+                    </span>
                   )}
                 </>
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")
                   .filter((fav) => !fav.parent)
                   .map((fav, index, { length }) => (
-                    <Tooltip
-                      key={fav.id}
-                      tooltipContent={fav?.entity_data ? fav.entity_data?.name : fav?.name}
-                      position="right"
-                      className="ml-2"
-                      disabled={!sidebarCollapsed}
-                      isMobile={isMobile}
-                    >
-                      {fav.is_folder ? (
-                        <FavoriteFolder
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
-                          handleDrop={handleDrop}
-                        />
-                      ) : (
-                        <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
-                          favorite={fav}
-                          isLastChild={index === length - 1}
-                          parentId={undefined}
-                          handleRemoveFromFavorites={handleRemoveFromFavorites}
-                          handleDrop={handleDrop}
-                        />
+                    <>
+                      {fav?.id && (
+                        <Tooltip
+                          key={fav?.id}
+                          tooltipContent={fav?.entity_data ? fav?.entity_data?.name : fav?.name}
+                          position="right"
+                          className="ml-2"
+                          disabled={!sidebarCollapsed}
+                          isMobile={isMobile}
+                        >
+                          {fav?.is_folder ? (
+                            <FavoriteFolder
+                              favorite={fav}
+                              isLastChild={index === length - 1}
+                              handleRemoveFromFavorites={handleRemoveFromFavorites}
+                              handleRemoveFromFavoritesFolder={handleRemoveFromFavoritesFolder}
+                              handleDrop={handleDrop}
+                            />
+                          ) : (
+                            <FavoriteRoot
+                              workspaceSlug={workspaceSlug.toString()}
+                              favorite={fav}
+                              isLastChild={index === length - 1}
+                              parentId={undefined}
+                              handleRemoveFromFavorites={handleRemoveFromFavorites}
+                              handleDrop={handleDrop}
+                            />
+                          )}
+                        </Tooltip>
                       )}
-                    </Tooltip>
+                    </>
                   ))
               )}
             </Disclosure.Panel>
@@ -287,11 +321,9 @@ export const SidebarFavoritesMenu = observer(() => {
         </Transition>
       </Disclosure>
 
-      <hr
-        className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
-          "opacity-0": !sidebarCollapsed || favoriteIds.length === 0,
-        })}
-      />
+      {sidebarCollapsed && favoriteIds.length > 0 && (
+        <hr className="flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1" />
+      )}
     </>
   );
 });

@@ -7,10 +7,10 @@ import { IWorkspaceIntegration } from "@plane/types";
 // hooks
 // components
 import { Button, CustomSearchSelect, ToggleSwitch } from "@plane/ui";
+import { truncateText } from "@plane/utils";
 import { SelectRepository, TFormValues, TIntegrationSteps } from "@/components/integration";
 // ui
 // helpers
-import { truncateText } from "@/helpers/string.helper";
 import { useProject } from "@/hooks/store";
 // types
 
@@ -43,7 +43,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
             <p className="text-xs text-custom-text-200">
-              Select the repository that you want the issues to be imported from.
+              Select the repository that you want the work items to be imported from.
             </p>
           </div>
           <div className="col-span-12 sm:col-span-4">
@@ -69,7 +69,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-xs text-custom-text-200">Select the project to import the issues to.</p>
+            <p className="text-xs text-custom-text-200">Select the project to import the work item to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {workspaceProjectIds && (
@@ -93,8 +93,8 @@ export const GithubImportData: FC<Props> = observer((props) => {
         </div>
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
-            <h4 className="font-semibold">Sync Issues</h4>
-            <p className="text-xs text-custom-text-200">Set whether you want to sync the issues or not.</p>
+            <h4 className="font-semibold">Sync work item</h4>
+            <p className="text-xs text-custom-text-200">Set whether you want to sync the work items or not.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller

@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Editor } from "@tiptap/core";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+// helpers
+import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // components
+import { ISlashCommandItem } from "@/types";
 import { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
 export type SlashCommandsMenuProps = {
+  editor: Editor;
   items: TSlashCommandSection[];
-  command: any;
+  command: (item: ISlashCommandItem) => void;
 };
 
-export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
+export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
   const { items: sections, command } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({
@@ -41,12 +46,12 @@ export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
           if (nextItem < 0) {
             nextSection = currentSection - 1;
             if (nextSection < 0) nextSection = sections.length - 1;
-            nextItem = sections[nextSection]?.items.length - 1;
+            nextItem = sections[nextSection]?.items?.length - 1;
           }
         }
         if (e.key === "ArrowDown") {
           nextItem = currentItem + 1;
-          if (nextItem >= sections[currentSection].items.length) {
+          if (nextItem >= sections[currentSection]?.items?.length) {
             nextSection = currentSection + 1;
             if (nextSection >= sections.length) nextSection = 0;
             nextItem = 0;
@@ -84,7 +89,28 @@ export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
     item?.scrollIntoView({ block: "nearest" });
   }, [sections, selectedIndex]);
 
-  const areSearchResultsEmpty = sections.map((s) => s.items.length).reduce((acc, curr) => acc + curr, 0) === 0;
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
+      if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return;
+      event.preventDefault();
+
+      if (event.key === "Enter") {
+        selectItem(selectedIndex.section, selectedIndex.item);
+        return;
+      }
+
+      const newIndex = getNextValidIndex({
+        event,
+        sections,
+        selectedIndex,
+      });
+      if (newIndex) {
+        setSelectedIndex(newIndex);
+      }
+    },
+  }));
+
+  const areSearchResultsEmpty = sections.map((s) => s.items?.length).reduce((acc, curr) => acc + curr, 0) === 0;
 
   if (areSearchResultsEmpty) return null;
 
@@ -98,7 +124,7 @@ export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
         <div key={section.key} className="space-y-2">
           {section.title && <h6 className="text-xs font-semibold text-custom-text-300">{section.title}</h6>}
           <div>
-            {section.items.map((item, itemIndex) => (
+            {section.items?.map((item, itemIndex) => (
               <CommandMenuItem
                 key={item.key}
                 isSelected={sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item}
@@ -122,4 +148,6 @@ export const SlashCommandsMenu = (props: SlashCommandsMenuProps) => {
       ))}
     </div>
   );
-};
+});
+
+SlashCommandsMenu.displayName = "SlashCommandsMenu";

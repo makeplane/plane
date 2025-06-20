@@ -2,12 +2,13 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
+import { ETabIndices } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Input } from "@plane/ui";
-// constants
-import { ETabIndices } from "@/constants/tab-indices";
 // helpers
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+import { getTabIndex } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -23,6 +24,7 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
   const { isMobile } = usePlatformOS();
 
   const { getIndex } = getTabIndex(ETabIndices.INTAKE_ISSUE_FORM, isMobile);
+  const { t } = useTranslation();
   return (
     <div className="space-y-1">
       <Input
@@ -31,13 +33,13 @@ export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
         type="text"
         value={data?.name}
         onChange={(e) => handleData("name", e.target.value)}
-        placeholder="Title"
+        placeholder={t("title")}
         className="w-full text-base"
         tabIndex={getIndex("name")}
         required
       />
       {isTitleLengthMoreThan255Character && (
-        <span className="text-xs text-red-500">Title should be less than 255 characters</span>
+        <span className="text-xs text-red-500">{t("title_should_be_less_than_255_characters")}</span>
       )}
     </div>
   );

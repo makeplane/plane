@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
+import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // types
 import { TIssueGroupByOptions } from "@plane/types";
 // constants
-import { DRAG_ALLOWED_GROUPS } from "@/constants/issue";
 // store
 import { IssueRootStore } from "./root.store";
 

@@ -6,8 +6,5 @@ export * from "./activity-comment-root";
 export * from "./activity/activity-list";
 export * from "./activity-filter";
 
-// issue comment
-export * from "./comments";
-
 // sort
 export * from "./sort-root";

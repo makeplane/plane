@@ -1,9 +1,9 @@
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// types
+// plane imports
+import { EStartOfTheWeek } from "@plane/constants";
+import { UserService } from "@plane/services";
 import { TUserProfile } from "@plane/types";
-// services
-import { UserService } from "@/services/user.service";
 // store
 import { CoreRootStore } from "@/store/root.store";
 
@@ -54,6 +54,8 @@ export class ProfileStore implements IProfileStore {
     has_billing_address: false,
     created_at: "",
     updated_at: "",
+    language: "",
+    start_of_the_week: EStartOfTheWeek.SUNDAY,
   };
 
   // services
@@ -84,7 +86,7 @@ export class ProfileStore implements IProfileStore {
         this.isLoading = true;
         this.error = undefined;
       });
-      const userProfile = await this.userService.getCurrentUserProfile();
+      const userProfile = await this.userService.profile();
       runInAction(() => {
         this.isLoading = false;
         this.data = userProfile;
@@ -115,7 +117,7 @@ export class ProfileStore implements IProfileStore {
           if (this.data) set(this.data, userKey, data[userKey]);
         });
       }
-      const userProfile = await this.userService.updateCurrentUserProfile(data);
+      const userProfile = await this.userService.updateProfile(data);
       return userProfile;
     } catch (error) {
       if (currentUserProfileData) {

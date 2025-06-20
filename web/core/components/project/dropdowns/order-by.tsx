@@ -1,12 +1,13 @@
 "use client";
 
 import { ArrowDownWideNarrow, Check, ChevronDown } from "lucide-react";
+import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TProjectOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu, getButtonStyling } from "@plane/ui";
 // helpers
-import { PROJECT_ORDER_BY_OPTIONS } from "@/constants/project";
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // types
 // constants
 
@@ -20,6 +21,7 @@ const DISABLED_ORDERING_OPTIONS = ["sort_order"];
 
 export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
   const { onChange, value, isMobile = false } = props;
+  const { t } = useTranslation();
 
   const orderByDetails = PROJECT_ORDER_BY_OPTIONS.find((option) => value?.includes(option.key));
 
@@ -34,13 +36,13 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
           {isMobile ? (
             <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
               <ArrowDownWideNarrow className="h-3 w-3" />
-              {orderByDetails?.label}
+              {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           ) : (
             <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-200")}>
               <ArrowDownWideNarrow className="h-3 w-3" />
-              {orderByDetails?.label}
+              {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDown className="h-3 w-3" strokeWidth={2} />
             </div>
           )}
@@ -59,7 +61,7 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
             else onChange(option.key);
           }}
         >
-          {option.label}
+          {option && t(option?.i18n_label)}
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}

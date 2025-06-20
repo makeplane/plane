@@ -2,15 +2,17 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Globe2, Lock, LucideIcon } from "lucide-react";
+import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, Tooltip } from "@plane/ui";
 // constants
+import { cn } from "@plane/utils";
 import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
-import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
-import { cn } from "@/helpers/common.helper";
 
 type Props = {
   accessSpecifier?: EIssueCommentAccessSpecifier;
@@ -46,6 +48,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
 export const IssueCommentToolbar: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const {
     accessSpecifier,
     executeCommand,
@@ -57,7 +60,6 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     showSubmitButton,
     editorRef,
   } = props;
-
   // State to manage active states of toolbar items
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
 
@@ -85,6 +87,9 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
     updateActiveStates();
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
+
+  const isEditorReadyToDiscard = editorRef?.isEditorReadyToDiscard();
+  const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
     <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
@@ -166,10 +171,10 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
               variant="primary"
               className="px-2.5 py-1.5 text-xs"
               onClick={handleSubmit}
-              disabled={isCommentEmpty}
+              disabled={isSubmitButtonDisabled}
               loading={isSubmitting}
             >
-              Comment
+              {t("common.comment")}
             </Button>
           </div>
         )}

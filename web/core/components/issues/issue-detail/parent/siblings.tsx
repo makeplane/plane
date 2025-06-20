@@ -48,7 +48,7 @@ export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) =>
         )
       ) : (
         <div className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
-          No sibling issues
+          No sibling work items
         </div>
       )}
     </div>

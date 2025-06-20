@@ -33,6 +33,7 @@ from plane.authentication.adapter.error import (
     AUTHENTICATION_ERROR_CODES,
     AuthenticationException,
 )
+from plane.utils.ip_address import get_client_ip
 
 
 class InstanceAdminEndpoint(BaseAPIView):
@@ -217,7 +218,7 @@ class InstanceAdminSignUpEndpoint(View):
             user.is_active = True
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
-            user.last_login_ip = request.META.get("REMOTE_ADDR")
+            user.last_login_ip = get_client_ip(request=request)
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
             user.save()
@@ -290,11 +291,12 @@ class InstanceAdminSignInEndpoint(View):
         # Fetch the user
         user = User.objects.filter(email=email).first()
 
-        # is_active
-        if not user.is_active:
+        # Error out if the user is not present
+        if not user:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DEACTIVATED"],
-                error_message="ADMIN_USER_DEACTIVATED",
+                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DOES_NOT_EXIST"],
+                error_message="ADMIN_USER_DOES_NOT_EXIST",
+                payload={"email": email},
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
@@ -302,12 +304,11 @@ class InstanceAdminSignInEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        # Error out if the user is not present
-        if not user:
+        # is_active
+        if not user.is_active:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DOES_NOT_EXIST"],
-                error_message="ADMIN_USER_DOES_NOT_EXIST",
-                payload={"email": email},
+                error_code=AUTHENTICATION_ERROR_CODES["ADMIN_USER_DEACTIVATED"],
+                error_message="ADMIN_USER_DEACTIVATED",
             )
             url = urljoin(
                 base_host(request=request, is_admin=True),
@@ -344,7 +345,7 @@ class InstanceAdminSignInEndpoint(View):
         user.is_active = True
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
-        user.last_login_ip = request.META.get("REMOTE_ADDR")
+        user.last_login_ip = get_client_ip(request=request)
         user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
         user.token_updated_at = timezone.now()
         user.save()

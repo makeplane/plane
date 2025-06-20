@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 // services
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { UserService } from "@/services/user.service";
 
 const userService = new UserService();
@@ -16,6 +17,8 @@ export const DownloadActivityButton = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   // router
   const { workspaceSlug, userId } = useParams();
+  //hooks
+  const { t } = useTranslation();
 
   const handleDownload = async () => {
     const today = renderFormattedPayloadDate(new Date());
@@ -52,7 +55,7 @@ export const DownloadActivityButton = () => {
 
   return (
     <Button onClick={handleDownload} loading={isDownloading}>
-      {isDownloading ? "Downloading" : "Download today's activity"}
+      {isDownloading ? t("profile.stats.recent_activity.button_loading") : t("profile.stats.recent_activity.button")}
     </Button>
   );
 };

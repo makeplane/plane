@@ -1,6 +1,7 @@
 import { FC } from "react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 
 type TUpgradeBadge = {
   className?: string;
@@ -9,6 +10,8 @@ type TUpgradeBadge = {
 
 export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
   const { className, size = "sm" } = props;
+
+  const { t } = useTranslation();
 
   return (
     <div
@@ -21,7 +24,7 @@ export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
         className
       )}
     >
-      Pro
+      {t("sidebar.pro")}
     </div>
   );
 };

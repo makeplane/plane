@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { getValidKeysFromObject } from "@/helpers/array.helper";
+import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
-import { IssueTypeActivity } from "@/plane-web/components/issues/issue-details";
+import { IssueTypeActivity, AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // local components
 import {
@@ -60,7 +60,9 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueAssigneeActivity {...componentDefaultProps} showIssue={false} />;
     case "priority":
       return <IssuePriorityActivity {...componentDefaultProps} showIssue={false} />;
-    case "estimate_point":
+    case "estimate_points":
+    case "estimate_categories":
+    case "estimate_point" /* This case is to handle all the older recorded activities for estimates. Field changed from  "estimate_point" -> `estimate_${estimate_type}`*/:
       return <IssueEstimateActivity {...componentDefaultProps} showIssue={false} />;
     case "parent":
       return <IssueParentActivity {...componentDefaultProps} showIssue={false} />;
@@ -82,11 +84,12 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueAttachmentActivity {...componentDefaultProps} showIssue={false} />;
     case "archived_at":
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
+    case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
     case "type":
       return <IssueTypeActivity {...componentDefaultProps} />;
     default:
-      return <></>;
+      return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
   }
 });

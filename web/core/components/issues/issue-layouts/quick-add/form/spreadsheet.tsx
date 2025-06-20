@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { TQuickAddIssueForm } from "../root";
 
 export const SpreadsheetQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, register, onSubmit } = props;
-
+  const { ref, projectDetail, register, onSubmit, isEpic } = props;
+  const { t } = useTranslation();
   return (
     <div className="pb-2">
       <form
@@ -16,15 +17,15 @@ export const SpreadsheetQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((pr
         <input
           type="text"
           autoComplete="off"
-          placeholder="Issue Title"
+          placeholder={isEpic ? t("epic.title.label") : t("issue.title.label")}
           {...register("name", {
-            required: "Issue title is required.",
+            required: isEpic ? t("epic.title.required") : t("issue.title.required"),
           })}
           className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-custom-text-200 outline-none"
         />
       </form>
       <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
-        Press {"'"}Enter{"'"} to add another issue
+        {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </p>
     </div>
   );

@@ -1,7 +1,6 @@
-// plane helpers
-import { sanitizeHTML } from "@plane/helpers";
-// plane ui
+// plane imports
 import { TEmojiLogoProps } from "@plane/ui";
+import { sanitizeHTML } from "@plane/utils";
 // types
 import {
   EAttributeNames,
@@ -12,11 +11,11 @@ import {
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   "data-logo-in-use": "emoji",
-  "data-icon-color": null,
-  "data-icon-name": null,
+  "data-icon-color": undefined,
+  "data-icon-name": undefined,
   "data-emoji-unicode": "128161",
   "data-emoji-url": "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png",
-  "data-background": null,
+  "data-background": undefined,
   "data-block-type": "callout-component",
 };
 
@@ -32,7 +31,7 @@ export const getStoredLogo = (): TStoredLogoValue => {
   };
 
   if (typeof window !== "undefined") {
-    const storedData = sanitizeHTML(localStorage.getItem("editor-calloutComponent-logo"));
+    const storedData = sanitizeHTML(localStorage.getItem("editor-calloutComponent-logo") ?? "");
     if (storedData) {
       let parsedData: TEmojiLogoProps;
       try {
@@ -69,7 +68,7 @@ export const updateStoredLogo = (value: TEmojiLogoProps): void => {
 // function to get the stored background color from local storage
 export const getStoredBackgroundColor = (): string | null => {
   if (typeof window !== "undefined") {
-    return sanitizeHTML(localStorage.getItem("editor-calloutComponent-background"));
+    return sanitizeHTML(localStorage.getItem("editor-calloutComponent-background") ?? "");
   }
   return null;
 };

@@ -2,16 +2,16 @@
 
 import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
-
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
+import { EProjectNetwork } from "@plane/types/src/enums";
 import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
-import { EmptyState } from "@/components/empty-state";
+import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
-//constants
-import { EmptyStateType } from "@/constants/empty-state";
 // hooks
 import {
   useCommandPalette,
@@ -26,23 +26,27 @@ import {
   useProjectView,
   useUserPermissions,
 } from "@/hooks/store";
+import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 interface IProjectAuthWrapper {
+  workspaceSlug: string;
+  projectId: string;
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
-  const { children } = props;
-  // store
-  // const { fetchInboxes } = useInbox();
+  const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
-  const { fetchUserProjectInfo, allowPermissions, projectUserInfo } = useUserPermissions();
+  const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
@@ -51,17 +55,32 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates, fetchProjectStateTransitions } = useProjectState();
+  const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-  // router
-  const { workspaceSlug, projectId } = useParams();
 
-  const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
+  // helper hooks
+  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+
+  // derived values
+  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
+  const projectMemberInfo = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
+  const hasPermissionToCurrentProject = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug.toString(),
+    projectId?.toString()
+  );
+  const isWorkspaceAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    workspaceSlug.toString()
+  );
 
   // Initialize module timeline chart
   useEffect(() => {
     initGantt();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useSWR(
@@ -105,12 +124,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // fetching project states
   useSWR(
     workspaceSlug && projectId ? `PROJECT_STATES_${workspaceSlug}_${projectId}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          fetchProjectStates(workspaceSlug.toString(), projectId.toString());
-          fetchProjectStateTransitions(workspaceSlug.toString(), projectId.toString());
-        }
-      : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
@@ -143,17 +157,14 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // derived values
-  const projectExists = projectId ? getProjectById(projectId.toString()) : null;
-  const hasPermissionToCurrentProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId?.toString()
+  // permissions
+  const canPerformEmptyStateActions = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.WORKSPACE
   );
 
   // check if the project member apis is loading
-  if (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null)
+  if (isParentLoading || (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null))
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -163,19 +174,33 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && projectId && hasPermissionToCurrentProject === false) return <JoinProject />;
+  if (
+    ((projectExists?.network && projectExists?.network !== EProjectNetwork.PRIVATE) || isWorkspaceAdmin) &&
+    projectId &&
+    hasPermissionToCurrentProject === false
+  )
+    return <JoinProject projectId={projectId} />;
 
   // check if the project info is not found.
-  if (!loader && !projectExists && projectId && !!hasPermissionToCurrentProject === false)
+  if (loader === "loaded" && projectId && !!hasPermissionToCurrentProject === false)
     return (
       <div className="grid h-screen place-items-center bg-custom-background-100">
-        <EmptyState
-          type={EmptyStateType.WORKSPACE_PROJECT_NOT_FOUND}
-          layout="screen-detailed"
-          primaryButtonOnClick={() => {
-            setTrackElement("Projects page empty state");
-            toggleCreateProjectModal(true);
-          }}
+        <DetailedEmptyState
+          title={t("workspace_projects.empty_state.general.title")}
+          description={t("workspace_projects.empty_state.general.description")}
+          assetPath={resolvedPath}
+          customPrimaryButton={
+            <ComicBoxButton
+              label={t("workspace_projects.empty_state.general.primary_button.text")}
+              title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
+              description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
+              onClick={() => {
+                setTrackElement("Project empty state");
+                toggleCreateProjectModal(true);
+              }}
+              disabled={!canPerformEmptyStateActions}
+            />
+          }
         />
       </div>
     );

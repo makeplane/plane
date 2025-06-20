@@ -2,10 +2,11 @@ import { FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-// types
+// plane internal packages
+import { API_BASE_URL } from "@plane/constants";
 import { IFormattedInstanceConfiguration, TInstanceGitlabAuthenticationConfigurationKeys } from "@plane/types";
-// ui
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import {
   CodeBlock,
@@ -15,8 +16,6 @@ import {
   TControllerInputFormField,
   TCopyField,
 } from "@/components/common";
-// helpers
-import { API_BASE_URL, cn } from "@/helpers/common.helper";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -117,8 +116,7 @@ export const InstanceGitlabConfigForm: FC<Props> = (props) => {
       url: `${originURL}/auth/gitlab/callback/`,
       description: (
         <>
-          We will auto-generate this. Paste this into the{" "}
-          <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
+          We will auto-generate this. Paste this into the <CodeBlock darkerShade>Redirect URI</CodeBlock> field of your{" "}
           <a
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"

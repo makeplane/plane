@@ -4,26 +4,30 @@ import { FC, useState } from "react";
 import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
+// plane-i18n
+import { EUserPermissions, EUserPermissionsLevel, EIssueServiceType } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // UI
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";
-import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
 
 export type TIssueSubscription = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  serviceType?: EIssueServiceType;
 };
 
 export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
+  const { t } = useTranslation();
   // hooks
   const {
     subscription: { getSubscriptionByIssueId },
     createSubscription,
     removeSubscription,
-  } = useIssueDetail();
+  } = useIssueDetail(serviceType);
   // state
   const [loading, setLoading] = useState(false);
   // hooks
@@ -44,16 +48,18 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
       else await createSubscription(workspaceSlug, projectId, issueId);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: `Issue ${isSubscribed ? `unsubscribed` : `subscribed`} successfully.!`,
+        title: t("toast.success"),
+        message: isSubscribed
+          ? t("issue.subscription.actions.unsubscribed")
+          : t("issue.subscription.actions.subscribed"),
       });
       setLoading(false);
-    } catch (error) {
+    } catch {
       setLoading(false);
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
+        title: t("toast.error"),
+        message: t("common.error.message"),
       });
     }
   };
@@ -73,16 +79,16 @@ export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
         variant="outline-primary"
         className="hover:!bg-custom-primary-100/20"
         onClick={handleSubscription}
-        disabled={!isEditable}
+        disabled={!isEditable || loading}
       >
         {loading ? (
           <span>
-            <span className="hidden sm:block">Loading...</span>
+            <span className="hidden sm:block">{t("common.loading")}</span>
           </span>
         ) : isSubscribed ? (
-          <div className="hidden sm:block">Unsubscribe</div>
+          <div className="hidden sm:block">{t("common.actions.unsubscribe")}</div>
         ) : (
-          <div className="hidden sm:block">Subscribe</div>
+          <div className="hidden sm:block">{t("common.actions.subscribe")}</div>
         )}
       </Button>
     </div>

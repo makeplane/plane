@@ -22,3 +22,15 @@ export type TLogoProps = {
     background_color?: string;
   };
 };
+
+export type TNameDescriptionLoader = "submitting" | "submitted" | "saved";
+
+export type TFetchStatus = "partial" | "complete" | undefined;
+
+export type ICustomSearchSelectOption = {
+  value: any;
+  query: string;
+  content: React.ReactNode;
+  disabled?: boolean;
+  tooltip?: string | React.ReactNode;
+};
