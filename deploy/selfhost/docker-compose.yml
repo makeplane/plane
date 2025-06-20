@@ -217,8 +217,11 @@ services:
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: artifacts.plane.so/makeplane/proxy-commercial:${APP_RELEASE_VERSION}
-    restart: unless-stopped
+    image: artifacts.plane.so/makeplane/plane-proxy:${APP_RELEASE_VERSION}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     environment:
       <<: *proxy-env
     ports:
