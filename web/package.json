@@ -21,6 +21,7 @@
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "@headlessui/react": "^1.7.3",
     "@intercom/messenger-js-sdk": "^0.0.12",
+    "@payloadcms/richtext-lexical": "^3.43.0",
     "@plane/constants": "*",
     "@plane/editor": "*",
     "@plane/hooks": "*",
