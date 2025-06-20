@@ -16,23 +16,32 @@ import { useCommandPalette, useEventTracker, useProject, useUserPermissions, use
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 
-const AnalyticsPage = observer(() => {
+type Props = {
+  params: {
+    tabId: string;
+  };
+};
+
+const AnalyticsPage = observer((props: Props) => {
+  // props
+  const { params } = props;
+  const { tabId } = params;
+
+  // hooks
   const router = useRouter();
-  const searchParams = useSearchParams();
+
   // plane imports
   const { t } = useTranslation();
+
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
+
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/analytics" });
-  // derived values
-  const pageTitle = currentWorkspace?.name
-    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
-    : undefined;
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
@@ -40,8 +49,11 @@ const AnalyticsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  // derived values
+  const pageTitle = currentWorkspace?.name
+    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+    : undefined;
   const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
-
   const tabs = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
@@ -49,13 +61,13 @@ const AnalyticsPage = observer(() => {
         label: tab.label,
         content: <tab.content />,
         onClick: () => {
-          router.push(`?tab=${tab.key}`);
+          router.push(`/${currentWorkspace?.slug}/analytics/${tab.key}`);
         },
         isDisabled: tab.isDisabled,
       })),
-    [ANALYTICS_TABS, router]
+    [ANALYTICS_TABS, router, currentWorkspace?.slug]
   );
-  const defaultTab = searchParams.get("tab") || ANALYTICS_TABS[0].key;
+  const defaultTab = tabId || ANALYTICS_TABS[0].key;
 
   return (
     <>
@@ -70,8 +82,9 @@ const AnalyticsPage = observer(() => {
                 defaultTab={defaultTab}
                 size="md"
                 tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
-                tabListClassName="my-2 max-w-36"
-                tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
+                tabListClassName="my-2 w-auto"
+                tabClassName="px-3"
+                tabPanelClassName="h-full overflow-hidden overflow-y-auto px-2"
                 storeInLocalStorage={false}
                 actions={<AnalyticsFilterActions />}
               />
