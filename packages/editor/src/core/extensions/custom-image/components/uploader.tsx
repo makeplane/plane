@@ -1,28 +1,30 @@
 import { ImageIcon } from "lucide-react";
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// extensions
-import { CustomBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
 // helpers
 import { EFileError } from "@/helpers/file";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
+// local imports
+import { getImageComponentImageFileMap } from "../utils";
+import type { CustomImageNodeViewProps } from "./node-view";
 
-type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
-  maxFileSize: number;
-  loadImageFromFileSystem: (file: string) => void;
+type CustomImageUploaderProps = CustomImageNodeViewProps & {
   failedToLoadImage: boolean;
+  loadImageFromFileSystem: (file: string) => void;
+  maxFileSize: number;
   setIsUploaded: (isUploaded: boolean) => void;
 };
 
 export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const {
     editor,
+    extension,
     failedToLoadImage,
     getPos,
     loadImageFromFileSystem,
@@ -71,12 +73,13 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
 
   const uploadImageEditorCommand = useCallback(
-    async (file: File) => await editor?.commands.uploadImage(imageEntityId ?? "", file),
-    [editor, imageEntityId]
+    async (file: File) => await extension.options.uploadImage?.(imageEntityId ?? "", file),
+    [extension.options, imageEntityId]
   );
 
   const handleProgressStatus = useCallback(
@@ -93,7 +96,6 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   // hooks
   const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
     acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
-    // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
     editorCommand: uploadImageEditorCommand,
     handleProgressStatus,
     loadFileFromFileSystem: loadImageFromFileSystem,
@@ -128,7 +130,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
     }
-  }, [meta, uploadFile, imageComponentImageFileMap]);
+  }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +165,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     }
 
     return "Add an image";
-  }, [draggedInside, failedToLoadImage, isImageBeingUploaded]);
+  }, [draggedInside, failedToLoadImage, isImageBeingUploaded, editor.isEditable]);
 
   return (
     <div
