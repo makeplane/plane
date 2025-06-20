@@ -46,9 +46,8 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
-  | "attachment"
-  | "external-embed"
-  | "rich-card";
+  | "attachment";
+
 export type TCommandExtraProps = {
   image: {
     savedSelection: Selection | null;
