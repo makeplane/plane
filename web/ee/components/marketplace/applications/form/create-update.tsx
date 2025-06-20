@@ -5,18 +5,23 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Camera } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
+// components
 import { RichTextEditor } from "@/components/editor";
 import { SettingsHeading } from "@/components/settings";
-import { getAssetIdFromUrl, getFileURL  } from "@plane/utils";
-import { useWorkspace, useEditorAsset, useUserProfile } from "@/hooks/store";
+// hooks
+import { useWorkspace, useEditorAsset } from "@/hooks/store";
+// plane web imports
 import { AppImageUploadModal } from "@/plane-web/components/common/modal";
 import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
+// local imports
 import { SelectCategories } from "./select-categories";
 import { UploadAppAttachments } from "./upload-attachments";
 
@@ -261,6 +266,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                       throw new Error("Asset upload failed. Please try again later.");
                     }
                   }}
+                  disabledExtensions={["attachments"]}
                 />
               )}
             />

@@ -392,6 +392,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             FileAsset.EntityTypeContext.WORKITEM_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.PAGE_TEMPLATE_DESCRIPTION,
             FileAsset.EntityTypeContext.INITIATIVE_DESCRIPTION,
+            FileAsset.EntityTypeContext.TEAM_SPACE_DESCRIPTION,
         }
 
         # Map entity type category to allowed types and error message
