@@ -84,11 +84,20 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
       setIsSubmitting(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error while submitting template",
-        message: error?.error,
-      });
+      switch (feature) {
+        case ESupportedFeatures.PROJECT_TEMPLATES:
+          // Handle payment related errors separately for project templates
+          if (error?.error_code === 1999) {
+            router.push(`/${selectedWorkspaceSlug}/settings/templates`);
+            break;
+          }
+        default:
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error while submitting",
+            message: error?.error,
+          });
+      }
       setIsSubmitting(false);
     }
   }, [feature, identifier, router, selectedWorkspaceSlug]);
