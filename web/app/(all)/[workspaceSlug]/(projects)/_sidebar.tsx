@@ -2,6 +2,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // hooks
 import { ResizableSidebar } from "@/components/sidebar";
@@ -20,9 +21,9 @@ export const ProjectAppSidebar: FC = observer(() => {
     isExtendedSidebarOpened,
     isAnySidebarDropdownOpen,
   } = useAppTheme();
-  const { storedValue, setValue } = useLocalStorage("sidebarWidth", 250);
+  const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
   // states
-  const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? 250);
+  const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 

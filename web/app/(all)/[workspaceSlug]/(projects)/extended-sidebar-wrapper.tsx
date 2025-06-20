@@ -3,6 +3,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "@plane/utils";
 // hooks
@@ -21,7 +22,7 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
   const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { sidebarPeek } = useAppTheme();
-  const { storedValue } = useLocalStorage("sidebarWidth", 250);
+  const { storedValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
 
   useExtendedSidebarOutsideClickDetector(extendedSidebarRef, handleClose, excludedElementId);
 
