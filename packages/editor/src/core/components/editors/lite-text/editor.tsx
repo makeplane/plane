@@ -19,7 +19,7 @@ const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
     return resolvedExtensions;
   }, [externalExtensions, disabledExtensions, onEnterKeyPress]);
 
-  return <EditorWrapper {...props} extensions={extensions} />;
+  return <EditorWrapper {...props} editable extensions={extensions} />;
 };
 
 const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditorProps>((props, ref) => (

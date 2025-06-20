@@ -8,7 +8,7 @@ import { EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // helpers
 // plane web constants
 import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
@@ -208,10 +208,11 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                 </span>
                 {response ? (
                   <div>
-                    <RichTextReadOnlyEditor
+                    <RichTextEditor
                       displayConfig={{
                         fontSize: "small-font",
                       }}
+                      editable={false}
                       id="editor-ai-response"
                       initialValue={response}
                       containerClassName="!p-0 border-none"

@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
-import { EditorReadOnlyRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TDescriptionVersion } from "@plane/types";
 import {
@@ -19,7 +19,7 @@ import {
 } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
-import { RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // hooks
 import { useMember, useWorkspace } from "@/hooks/store";
 
@@ -52,7 +52,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
     workspaceSlug,
   } = props;
   // refs
-  const editorRef = useRef<EditorReadOnlyRefApi>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const { getUserDetails } = useMember();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -131,7 +131,8 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
         {/* Version description */}
         <div className="mt-4 pb-4">
           {activeVersionDescription ? (
-            <RichTextReadOnlyEditor
+            <RichTextEditor
+              editable={false}
               containerClassName="p-0 !pl-0 border-none"
               editorClassName="pl-0"
               id={activeVersionId ?? ""}
