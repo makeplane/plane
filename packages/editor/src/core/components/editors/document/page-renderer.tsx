@@ -3,7 +3,7 @@ import { Editor } from "@tiptap/react";
 import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig, TExtensions } from "@/types";
+import { IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -13,7 +13,7 @@ type Props = {
   editorContainerClassName: string;
   id: string;
   tabIndex?: number;
-  disabledExtensions: TExtensions[];
+  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {

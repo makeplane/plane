@@ -113,8 +113,12 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
 }
 
+type TEmbedHandlerProps = {
+  embedHandler?: TEmbedConfig;
+};
+
 // editor props
-export interface IEditorProps {
+export interface IEditorProps extends TEmbedHandlerProps {
   autofocus?: boolean;
   bubbleMenuEnabled?: boolean;
   containerClassName?: string;
@@ -129,7 +133,6 @@ export interface IEditorProps {
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
-  embedHandler?: TEmbedConfig;
   onChange?: (json: object, html: string) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
@@ -147,7 +150,6 @@ export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   editable: boolean;
-  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -177,9 +179,7 @@ export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export type IRichTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
-export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
-  embedHandler: TEmbedConfig;
-}
+export type IDocumentReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export interface EditorEvents {
   beforeCreate: never;
