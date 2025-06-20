@@ -61,6 +61,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const openDropdown = () => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
+    if (onOpen) onOpen();
   };
 
   const closeDropdown = () => {
@@ -95,11 +96,14 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <button
                   ref={setReferenceElement}
                   type="button"
-                  className={`flex w-full items-center justify-between gap-1 text-xs ${
-                    disabled
-                      ? "cursor-not-allowed text-custom-text-200"
-                      : "cursor-pointer hover:bg-custom-background-80"
-                  }  ${customButtonClassName}`}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-1 text-xs",
+                    {
+                      "cursor-not-allowed text-custom-text-200": disabled,
+                      "cursor-pointer hover:bg-custom-background-80": !disabled,
+                    },
+                    customButtonClassName
+                  )}
                   onClick={toggleDropdown}
                 >
                   {customButton}

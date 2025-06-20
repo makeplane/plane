@@ -5,7 +5,7 @@ import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus"
 // types
 import { TAIHandler, TDisplayConfig, TExtensions } from "@/types";
 
-type IPageRenderer = {
+type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
@@ -27,6 +27,7 @@ export const PageRenderer = (props: IPageRenderer) => {
     tabIndex,
     disabledExtensions,
   } = props;
+
 
   return (
     <div className="frame-renderer flex-grow w-full">

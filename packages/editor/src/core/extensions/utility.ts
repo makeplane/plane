@@ -8,7 +8,7 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
-import { TExtensions, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands {
@@ -23,8 +23,7 @@ export interface UtilityExtensionStorage {
   uploadInProgress: boolean;
 }
 
-type Props = {
-  disabledExtensions: TExtensions[];
+type Props = Pick<IEditorProps, "disabledExtensions"> & {
   fileHandler: TFileHandler | TReadOnlyFileHandler;
   isEditable: boolean;
 };

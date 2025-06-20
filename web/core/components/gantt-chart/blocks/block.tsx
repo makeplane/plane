@@ -20,6 +20,7 @@ type Props = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  enableDependency: boolean;
   ganttContainerRef: RefObject<HTMLDivElement>;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
 };
@@ -33,6 +34,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
     enableBlockRightResize,
     enableBlockMove,
     ganttContainerRef,
+    enableDependency,
     updateBlockDates,
   } = props;
   // store hooks
@@ -90,6 +92,7 @@ export const GanttChartBlock: React.FC<Props> = observer((props) => {
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}
               enableBlockMove={enableBlockMove && !!isBlockComplete}
+              enableDependency={enableDependency}
               isMoving={isMoving}
               ganttContainerRef={ganttContainerRef}
             />

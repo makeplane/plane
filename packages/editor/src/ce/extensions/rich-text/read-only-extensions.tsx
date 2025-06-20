@@ -1,11 +1,11 @@
 import { AnyExtension, Extensions } from "@tiptap/core";
 // types
-import { TExtensions, TReadOnlyFileHandler } from "@/types";
+import { IReadOnlyEditorProps, TExtensions } from "@/types";
 
-export type TRichTextReadOnlyEditorAdditionalExtensionsProps = {
-  disabledExtensions: TExtensions[];
-  fileHandler: TReadOnlyFileHandler;
-};
+export type TRichTextReadOnlyEditorAdditionalExtensionsProps = Pick<
+  IReadOnlyEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+>;
 
 /**
  * Registry entry configuration for extensions
