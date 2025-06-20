@@ -13,6 +13,7 @@ import { TCollaborativeEditorHookProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
+    onChange,
     onTransaction,
     disabledExtensions,
     editable,
@@ -105,6 +106,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     forwardedRef,
     handleEditorReady,
     mentionHandler,
+    onChange,
     onTransaction,
     placeholder,
     provider,
