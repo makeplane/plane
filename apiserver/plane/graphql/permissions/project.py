@@ -96,6 +96,12 @@ class ProjectBasePermission(IsAuthenticated):
             thread_sensitive=True,
         )()
 
+        if not is_project_member_exists:
+            is_teamspace_member_exists = await _validate_project_access_via_teamspaces(
+                user_id=user_id, workspace_slug=workspace_slug, project_id=project_id
+            )
+            return is_teamspace_member_exists
+
         return is_project_member_exists
 
 
@@ -165,12 +171,6 @@ class ProjectAdminPermission(IsAuthenticated):
             ).exists,
             thread_sensitive=True,
         )()
-
-        if not is_project_member_exists:
-            is_teamspace_member_exists = await _validate_project_access_via_teamspaces(
-                user_id=user_id, workspace_slug=workspace_slug, project_id=project_id
-            )
-            return is_teamspace_member_exists
 
         return is_project_member_exists
 
