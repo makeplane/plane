@@ -54,9 +54,9 @@ export const SidebarMenuItems = observer(() => {
           className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
           id="extended-sidebar-toggle"
           aria-label={t(
-            isExtendedSidebarOpened
-              ? "aria_labels.projects_sidebar.open_extended_sidebar"
-              : "aria_labels.projects_sidebar.close_extended_sidebar"
+                     isExtendedSidebarOpened
+                       ? "aria_labels.projects_sidebar.close_extended_sidebar"
+                       : "aria_labels.projects_sidebar.open_extended_sidebar"
           )}
         >
           <Ellipsis className="flex-shrink-0 size-4" />
