@@ -23,7 +23,6 @@ import { useEventTracker } from "@/hooks/store";
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
 
 export type TQuickAddIssueForm = {
-  ref: React.RefObject<HTMLFormElement>;
   isOpen: boolean;
   projectDetail: IProject;
   hasError: boolean;

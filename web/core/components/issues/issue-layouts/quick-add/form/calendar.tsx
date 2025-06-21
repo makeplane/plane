@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { forwardRef } from "react";
 import { observer } from "mobx-react";
 import { TQuickAddIssueForm } from "../root";
 
-export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;
+export const CalendarQuickAddIssueForm = observer(forwardRef<HTMLFormElement, TQuickAddIssueForm>((props, ref) => {
+  const { isOpen, projectDetail, register, onSubmit, isEpic } = props;
 
   return (
     <div
@@ -29,4 +29,4 @@ export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props
       </form>
     </div>
   );
-});
+}));

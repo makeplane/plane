@@ -51,7 +51,10 @@ export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props
 
   if (!projectDetail) return <></>;
 
-  const QUICK_ADD_ISSUE_FORMS: Record<EIssueLayoutTypes, FC<TQuickAddIssueForm>> = {
+  const QUICK_ADD_ISSUE_FORMS: Record<
+    EIssueLayoutTypes,
+    React.ForwardRefExoticComponent<TQuickAddIssueForm & React.RefAttributes<HTMLFormElement>>
+  > = {
     [EIssueLayoutTypes.LIST]: ListQuickAddIssueForm,
     [EIssueLayoutTypes.KANBAN]: KanbanQuickAddIssueForm,
     [EIssueLayoutTypes.CALENDAR]: CalendarQuickAddIssueForm,

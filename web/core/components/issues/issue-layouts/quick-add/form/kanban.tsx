@@ -1,10 +1,10 @@
-import { FC } from "react";
+import { forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TQuickAddIssueForm } from "../root";
 
-export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, register, onSubmit, isEpic } = props;
+export const KanbanQuickAddIssueForm = observer(forwardRef<HTMLFormElement, TQuickAddIssueForm>((props, ref) => {
+  const { projectDetail, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
     <div className="m-1 overflow-hidden rounded shadow-custom-shadow-sm">
@@ -26,4 +26,4 @@ export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) 
       </div>
     </div>
   );
-});
+}));

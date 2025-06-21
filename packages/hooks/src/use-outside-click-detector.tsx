@@ -25,5 +25,5 @@ export const useOutsideClickDetector = (
     return () => {
       document.removeEventListener("mousedown", handleClick, useCapture);
     };
-  });
+  }, [ref, callback, useCapture]);
 };
