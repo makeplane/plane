@@ -1,11 +1,11 @@
-import { FC } from "react";
+import { forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { TQuickAddIssueForm } from "../root";
 
-export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
-  const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
+export const GanttQuickAddIssueForm = observer(forwardRef<HTMLFormElement, TQuickAddIssueForm>((props, ref) => {
+  const { projectDetail, hasError, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (
     <div className={cn("shadow-custom-shadow-sm", hasError && "border border-red-500/20 bg-red-500/10")}>
@@ -32,4 +32,4 @@ export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) =
       </div>
     </div>
   );
-});
+}));
