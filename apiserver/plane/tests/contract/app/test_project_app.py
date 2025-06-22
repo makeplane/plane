@@ -1,6 +1,7 @@
 import pytest
 from rest_framework import status
 import uuid
+from django.utils import timezone
 
 from plane.db.models import (
     Project,
@@ -39,7 +40,7 @@ class TestProjectBase:
 
         # Return the base project list URL.
         return base_url
-    
+
 
 @pytest.mark.contract
 class TestProjectAPIPost(TestProjectBase):
@@ -249,3 +250,154 @@ class TestProjectAPIPost(TestProjectBase):
         response_data = response.json()
         assert response_data["description"] == project_data["description"]
         assert response_data["network"] == project_data["network"]
+
+
+@pytest.mark.contract
+class TestProjectAPIGet(TestProjectBase):
+    """Test project GET operations"""
+
+    @pytest.mark.django_db
+    def test_list_projects_authenticated_admin(
+        self, session_client, workspace, create_user
+    ):
+        """Test listing projects as workspace admin"""
+        # Create a project
+        project = Project.objects.create(
+            name="Test Project", identifier="TP", workspace=workspace
+        )
+
+        # Add user as project member
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["name"] == "Test Project"
+        assert data[0]["identifier"] == "TP"
+
+    @pytest.mark.django_db
+    def test_list_projects_authenticated_guest(self, session_client, workspace):
+        """Test listing projects as workspace guest"""
+        # Create a guest user
+        guest_user = User.objects.create_user(
+            email="guest@example.com", username="guest"
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=guest_user, role=5, is_active=True
+        )
+
+        # Create projects
+        project1 = Project.objects.create(
+            name="Project 1", identifier="P1", workspace=workspace
+        )
+
+        Project.objects.create(name="Project 2", identifier="P2", workspace=workspace)
+
+        # Add guest to only one project
+        ProjectMember.objects.create(
+            project=project1, member=guest_user, role=10, is_active=True
+        )
+
+        session_client.force_authenticate(user=guest_user)
+
+        url = self.get_project_url(workspace.slug)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        # Guest should only see projects they're members of
+        assert len(data) == 1
+        assert data[0]["name"] == "Project 1"
+
+    @pytest.mark.django_db
+    def test_list_projects_unauthenticated(self, client, workspace):
+        """Test listing projects without authentication"""
+        url = self.get_project_url(workspace.slug)
+        response = client.get(url)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    @pytest.mark.django_db
+    def test_list_detail_projects(self, session_client, workspace, create_user):
+        """Test listing projects with detailed information"""
+        # Create a project
+        project = Project.objects.create(
+            name="Detailed Project",
+            identifier="DP",
+            workspace=workspace,
+            description="A detailed test project",
+        )
+
+        # Add user as project member
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, details=True)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["name"] == "Detailed Project"
+        assert data[0]["description"] == "A detailed test project"
+
+    @pytest.mark.django_db
+    def test_retrieve_project_success(self, session_client, workspace, create_user):
+        """Test retrieving a specific project"""
+        # Create a project
+        project = Project.objects.create(
+            name="Retrieve Test Project",
+            identifier="RTP",
+            workspace=workspace,
+            description="Test project for retrieval",
+        )
+
+        # Add user as project member
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_200_OK
+        data = response.json()
+        assert data["name"] == "Retrieve Test Project"
+        assert data["identifier"] == "RTP"
+        assert data["description"] == "Test project for retrieval"
+
+    @pytest.mark.django_db
+    def test_retrieve_project_not_found(self, session_client, workspace, create_user):
+        """Test retrieving a non-existent project"""
+        fake_uuid = uuid.uuid4()
+        url = self.get_project_url(workspace.slug, pk=fake_uuid)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.django_db
+    def test_retrieve_archived_project(self, session_client, workspace, create_user):
+        """Test retrieving an archived project"""
+        # Create an archived project
+        project = Project.objects.create(
+            name="Archived Project",
+            identifier="AP",
+            workspace=workspace,
+            archived_at=timezone.now(),
+        )
+
+        # Add user as project member
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.get(url)
+
+        assert response.status_code == status.HTTP_404_NOT_FOUND
