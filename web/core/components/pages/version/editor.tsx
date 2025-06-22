@@ -10,8 +10,6 @@ import { EditorMentionsRoot } from "@/components/editor";
 import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// store hooks
-import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";

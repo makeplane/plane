@@ -27,7 +27,6 @@ import {
   CustomTextAlignExtension,
   CustomTypographyExtension,
   ImageExtension,
-  ListKeymap,
   Table,
   TableCell,
   TableHeader,
@@ -53,16 +52,8 @@ type TArguments = Pick<
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const {
-    disabledExtensions,
-    enableHistory,
-    fileHandler,
-    flaggedExtensions,
-    mentionHandler,
-    placeholder,
-    tabIndex,
-    editable,
-  } = args;
+  const { disabledExtensions, enableHistory, fileHandler, flaggedExtensions, mentionHandler, placeholder, editable } =
+    args;
 
   const extensions = [
     StarterKit.configure({
@@ -162,7 +153,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomKeymap,
-    ListKeymap({ tabIndex }),
+    // ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
@@ -183,7 +174,45 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomCodeInlineExtension,
-    Markdown.configure({
+    Markdown.extend({
+      addMarkdownSerializerRules() {
+        return {
+          list: (state: { write: (text: string) => void; ensureNewLine: () => void; serializeFragment: (fragment: any) => string }, node: { attrs: Record<string, any>; content: any }) => {
+            // Custom serializer for flat-list nodes
+            const attrs = node.attrs as { kind?: string; order?: number; checked?: boolean; collapsed?: boolean };
+            const listKind = attrs.kind || "bullet";
+            const isChecked = attrs.checked;
+            const isCollapsed = attrs.collapsed;
+
+            // Serialize the content of this list item
+            const content = state.serializeFragment(node.content);
+
+            // Create the appropriate markdown based on list type
+            switch (listKind) {
+              case "task":
+                state.write(`- [${isChecked ? "x" : " "}] ${content}`);
+                break;
+              case "toggle": {
+                const togglePrefix = isCollapsed ? "▶" : "▼";
+                state.write(`- ${togglePrefix} ${content}`);
+                break;
+              }
+              case "ordered": {
+                const orderNum = attrs.order || 1;
+                state.write(`${orderNum}. ${content}`);
+                break;
+              }
+              case "bullet":
+              default:
+                state.write(`- ${content}`);
+                break;
+            }
+
+            state.ensureNewLine();
+          },
+        };
+      },
+    }).configure({
       html: true,
       transformCopiedText: false,
       transformPastedText: true,

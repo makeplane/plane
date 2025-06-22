@@ -82,28 +82,28 @@ export const CustomKeymap = Extension.create({
 
   addProseMirrorPlugins() {
     return [
-      new Plugin({
-        key: new PluginKey("ordered-list-merging"),
-        appendTransaction(transactions, oldState, newState) {
-          // Create a new transaction.
-          const newTr = newState.tr;
-
-          const joinableNodes = [
-            newState.schema.nodes[CORE_EXTENSIONS.ORDERED_LIST],
-            newState.schema.nodes[CORE_EXTENSIONS.TASK_LIST],
-            newState.schema.nodes[CORE_EXTENSIONS.BULLET_LIST],
-          ];
-
-          let joined = false;
-          for (const transaction of transactions) {
-            const anotherJoin = autoJoin(transaction, newTr, joinableNodes);
-            joined = anotherJoin || joined;
-          }
-          if (joined) {
-            return newTr;
-          }
-        },
-      }),
+      // new Plugin({
+      //   key: new PluginKey("ordered-list-merging"),
+      //   appendTransaction(transactions, oldState, newState) {
+      //     // Create a new transaction.
+      //     const newTr = newState.tr;
+      //
+      //     const joinableNodes = [
+      //       newState.schema.nodes[CORE_EXTENSIONS.ORDERED_LIST],
+      //       newState.schema.nodes[CORE_EXTENSIONS.TASK_LIST],
+      //       newState.schema.nodes[CORE_EXTENSIONS.BULLET_LIST],
+      //     ];
+      //
+      //     let joined = false;
+      //     for (const transaction of transactions) {
+      //       const anotherJoin = autoJoin(transaction, newTr, joinableNodes);
+      //       joined = anotherJoin || joined;
+      //     }
+      //     if (joined) {
+      //       return newTr;
+      //     }
+      //   },
+      // }),
     ];
   },
   addKeyboardShortcuts() {

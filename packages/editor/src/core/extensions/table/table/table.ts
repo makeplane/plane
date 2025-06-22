@@ -255,7 +255,7 @@ export const Table = Node.create({
       },
       "Shift-Tab": () => {
         if (this.editor.isActive("table")) {
-          if (this.editor.isActive("listItem") || this.editor.isActive("taskItem") || this.editor.isActive("list")) {
+          if (this.editor.isActive("list")) {
             return false;
           }
         }

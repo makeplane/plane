@@ -95,6 +95,7 @@ export const FlatListExtension = Node.create({
         const { selection } = editor.state;
         const { $from } = selection;
         if (editor.isActive(this.name)) {
+          console.log("shift tab");
           const dedentList = createDedentListCommand({ from: $from.pos });
           return dedentList(editor.state, editor.view.dispatch);
         }

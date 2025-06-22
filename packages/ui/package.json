@@ -34,7 +34,6 @@
     "@plane/hooks": "*",
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
-    "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
     "lodash": "^4.17.21",

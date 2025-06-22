@@ -39,8 +39,6 @@
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
-    "@tiptap/extension-bullet-list": "2.11.0",
-    "@tiptap/extension-ordered-list": "2.11.0",
     "@tiptap/core": "2.10.4",
     "@tiptap/extension-blockquote": "2.10.4",
     "@tiptap/extension-character-count": "2.11.0",
