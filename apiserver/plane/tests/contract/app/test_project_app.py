@@ -401,3 +401,219 @@ class TestProjectAPIGet(TestProjectBase):
         response = session_client.get(url)
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.contract
+class TestProjectAPIPatchDelete(TestProjectBase):
+    """Test project PATCH, and DELETE operations"""
+
+    @pytest.mark.django_db
+    def test_partial_update_project_success(
+        self, session_client, workspace, create_user
+    ):
+        """Test successful partial update of project"""
+        # Create a project
+        project = Project.objects.create(
+            name="Original Project",
+            identifier="OP",
+            workspace=workspace,
+            description="Original description",
+        )
+
+        # Add user as project administrator
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        update_data = {
+            "name": "Updated Project",
+            "description": "Updated description",
+            "cycle_view": True,
+            "module_view": False,
+        }
+
+        response = session_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+
+        # Verify project was updated
+        project.refresh_from_db()
+        assert project.name == "Updated Project"
+        assert project.description == "Updated description"
+        assert project.cycle_view is True
+        assert project.module_view is False
+
+    @pytest.mark.django_db
+    def test_partial_update_project_forbidden_non_admin(
+        self, session_client, workspace
+    ):
+        """Test that non-admin project members cannot update project"""
+        # Create a project
+        project = Project.objects.create(
+            name="Protected Project", identifier="PP", workspace=workspace
+        )
+
+        # Create a member user (not admin)
+        member_user = User.objects.create_user(
+            email="member@example.com", username="member"
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=member_user, role=15, is_active=True
+        )
+        ProjectMember.objects.create(
+            project=project, member=member_user, role=15, is_active=True
+        )
+
+        session_client.force_authenticate(user=member_user)
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        update_data = {"name": "Hacked Project"}
+
+        response = session_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @pytest.mark.django_db
+    def test_partial_update_duplicate_name_conflict(
+        self, session_client, workspace, create_user
+    ):
+        """Test updating project with duplicate name returns conflict"""
+        # Create two projects
+        Project.objects.create(name="Project One", identifier="P1", workspace=workspace)
+        project2 = Project.objects.create(
+            name="Project Two", identifier="P2", workspace=workspace
+        )
+
+        ProjectMember.objects.create(
+            project=project2, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project2.id)
+        update_data = {"name": "Project One"}  # Duplicate name
+
+        response = session_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    @pytest.mark.django_db
+    def test_partial_update_duplicate_identifier_conflict(
+        self, session_client, workspace, create_user
+    ):
+        """Test updating project with duplicate identifier returns conflict"""
+        # Create two projects
+        Project.objects.create(name="Project One", identifier="P1", workspace=workspace)
+        project2 = Project.objects.create(
+            name="Project Two", identifier="P2", workspace=workspace
+        )
+
+        ProjectMember.objects.create(
+            project=project2, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project2.id)
+        update_data = {"identifier": "P1"}  # Duplicate identifier
+
+        response = session_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+
+    @pytest.mark.django_db
+    def test_partial_update_invalid_data(self, session_client, workspace, create_user):
+        """Test partial update with invalid data"""
+        project = Project.objects.create(
+            name="Valid Project", identifier="VP", workspace=workspace
+        )
+
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        update_data = {"name": ""}
+
+        response = session_client.patch(url, update_data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_delete_project_success_project_admin(
+        self, session_client, workspace, create_user
+    ):
+        """Test successful project deletion by project admin"""
+        project = Project.objects.create(
+            name="Delete Me", identifier="DM", workspace=workspace
+        )
+
+        ProjectMember.objects.create(
+            project=project, member=create_user, role=20, is_active=True
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Project.objects.filter(id=project.id).exists()
+
+    @pytest.mark.django_db
+    def test_delete_project_success_workspace_admin(self, session_client, workspace):
+        """Test successful project deletion by workspace admin"""
+        # Create workspace admin user
+        workspace_admin = User.objects.create_user(
+            email="admin@example.com", username="admin"
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=workspace_admin, role=20, is_active=True
+        )
+
+        project = Project.objects.create(
+            name="Delete Me", identifier="DM", workspace=workspace
+        )
+
+        session_client.force_authenticate(user=workspace_admin)
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.delete(url)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Project.objects.filter(id=project.id).exists()
+
+    @pytest.mark.django_db
+    def test_delete_project_forbidden_non_admin(self, session_client, workspace):
+        """Test that non-admin users cannot delete projects"""
+        # Create a member user (not admin)
+        member_user = User.objects.create_user(
+            email="member@example.com", username="member"
+        )
+        WorkspaceMember.objects.create(
+            workspace=workspace, member=member_user, role=15, is_active=True
+        )
+
+        project = Project.objects.create(
+            name="Protected Project", identifier="PP", workspace=workspace
+        )
+
+        ProjectMember.objects.create(
+            project=project, member=member_user, role=15, is_active=True
+        )
+
+        session_client.force_authenticate(user=member_user)
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = session_client.delete(url)
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert Project.objects.filter(id=project.id).exists()
+
+    @pytest.mark.django_db
+    def test_delete_project_unauthenticated(self, client, workspace):
+        """Test unauthenticated project deletion"""
+        project = Project.objects.create(
+            name="Protected Project", identifier="PP", workspace=workspace
+        )
+
+        url = self.get_project_url(workspace.slug, pk=project.id)
+        response = client.delete(url)
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+        assert Project.objects.filter(id=project.id).exists()
