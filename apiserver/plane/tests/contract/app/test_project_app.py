@@ -1,5 +1,6 @@
 import pytest
 from rest_framework import status
+import uuid
 
 from plane.db.models import (
     Project,
@@ -11,17 +12,38 @@ from plane.db.models import (
 )
 
 
-@pytest.mark.contract
-class TestProjectAPIPost():
-    """Test project POST operations"""
-
-    def get_project_url(self, workspace_slug: str) -> str:
+class TestProjectBase:
+    def get_project_url(
+        self, workspace_slug: str, pk: uuid.UUID = None, details: bool = False
+    ) -> str:
         """
         Constructs the project endpoint URL for the given workspace as reverse() is
         unreliable due to  duplicate 'name' values in URL patterns ('api' and 'app').
+
+        Args:
+            workspace_slug (str): The slug of the workspace.
+            pk (uuid.UUID, optional): The primary key of a specific project.
+            details (bool, optional): If True, constructs the URL for the
+            project details endpoint. Defaults to False.
         """
-        
-        return f"/api/workspaces/{workspace_slug}/projects/"
+        # Establish the common base URL for all project-related endpoints.
+        base_url = f"/api/workspaces/{workspace_slug}/projects/"
+
+        # Specific project instance URL.
+        if pk:
+            return f"{base_url}{pk}/"
+
+        # Append 'details/' to the base URL.
+        if details:
+            return f"{base_url}details/"
+
+        # Return the base project list URL.
+        return base_url
+    
+
+@pytest.mark.contract
+class TestProjectAPIPost(TestProjectBase):
+    """Test project POST operations"""
 
     @pytest.mark.django_db
     def test_create_project_empty_data(self, session_client, workspace):
