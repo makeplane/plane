@@ -1,10 +1,12 @@
 import pytest
 from django.conf import settings
 from rest_framework.test import APIClient
+from rest_framework import status
 from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
+from django.urls import reverse
 
-from plane.db.models import User
+from plane.db.models import User, Workspace
 from plane.db.models.api import APIToken
 
 
@@ -118,3 +120,29 @@ def plane_server(live_server):
     Returns a live Django server for testing HTTP requests.
     """
     return live_server
+
+
+@pytest.fixture
+def workspace(session_client):
+    """
+    Create a new workspace via the API and return the
+    corresponding Workspace model instance.
+    """
+    workspace_data = {
+        "name": "Test Default Workspace",
+        "slug": "test-default-workspace-slug",
+        "company_name": "Test Default Company"
+    }
+    
+    url = reverse("workspace")
+    
+    # Make the API request to create the workspace
+    response = session_client.post(url, workspace_data, format="json")
+    
+    # Ensure the workspace was created successfully before the test runs
+    assert response.status_code == status.HTTP_201_CREATED, \
+        f"Failed to create workspace. Status: {response.status_code}, Response: {response.data}"
+
+    # Return the actual Workspace model instance for the test to use
+    created_workspace = Workspace.objects.get(pk=response.data["id"])
+    return created_workspace
