@@ -1,7 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { EEstimateSystem } from "@plane/constants";
+import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEstimate, useProjectEstimates } from "@/hooks/store";
 // plane web components
@@ -39,7 +40,16 @@ export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
     >
       <div className="space-y-1">
         <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
-        <p className="text-xs">{(estimatePointValues || [])?.join(", ")}</p>
+        <p className="text-xs">
+          {estimatePointValues
+            ?.map((estimatePointValue) => {
+              if (currentEstimate?.type === EEstimateSystem.TIME) {
+                return convertMinutesToHoursMinutesString(Number(estimatePointValue));
+              }
+              return estimatePointValue;
+            })
+            .join(", ")}
+        </p>
       </div>
       <EstimateListItemButtons {...props} />
     </div>

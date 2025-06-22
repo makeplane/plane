@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useMemo } from "react";
-import { AreaChart as CoreAreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import React, { useMemo, useState } from "react";
+import { Area, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, ComposedChart, CartesianGrid } from "recharts";
 // plane imports
-import { AXIS_LINE_CLASSNAME, LABEL_CLASSNAME } from "@plane/constants";
+import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
 import { TAreaChartProps } from "@plane/types";
 // local components
-import { CustomXAxisTick, CustomYAxisTick } from "../tick";
-import { CustomTooltip } from "../tooltip";
+import { getLegendProps } from "../components/legend";
+import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
+import { CustomTooltip } from "../components/tooltip";
 
 export const AreaChart = React.memo(<K extends string, T extends string>(props: TAreaChartProps<K, T>) => {
   const {
@@ -16,107 +16,181 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
     areas,
     xAxis,
     yAxis,
-    className = "w-full h-96",
+    className,
+    legend,
+    margin,
     tickCount = {
       x: undefined,
       y: 10,
     },
     showTooltip = true,
+    comparisonLine,
   } = props;
+  // states
+  const [activeArea, setActiveArea] = useState<string | null>(null);
+  const [activeLegend, setActiveLegend] = useState<string | null>(null);
+
   // derived values
-  const itemKeys = useMemo(() => areas.map((area) => area.key), [areas]);
-  const itemDotClassNames = useMemo(
-    () => areas.reduce((acc, area) => ({ ...acc, [area.key]: area.dotClassName }), {}),
-    [areas]
-  );
+  const { itemKeys, itemLabels, itemDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
+
+    for (const area of areas) {
+      keys.push(area.key);
+      labels[area.key] = area.label;
+      colors[area.key] = area.fill;
+    }
+
+    return { itemKeys: keys, itemLabels: labels, itemDotColors: colors };
+  }, [areas]);
 
   const renderAreas = useMemo(
     () =>
       areas.map((area) => (
         <Area
           key={area.key}
-          type="monotone"
+          type={area.smoothCurves ? "monotone" : "linear"}
           dataKey={area.key}
           stackId={area.stackId}
-          className={area.className}
-          stroke="inherit"
-          fill="inherit"
+          fill={area.fill}
+          opacity={!!activeLegend && activeLegend !== area.key ? 0.1 : 1}
+          fillOpacity={area.fillOpacity}
+          strokeOpacity={area.strokeOpacity}
+          stroke={area.strokeColor}
+          strokeWidth={2}
+          style={area.style}
+          dot={
+            area.showDot
+              ? {
+                  fill: area.fill,
+                  fillOpacity: 1,
+                }
+              : false
+          }
+          activeDot={{
+            stroke: area.fill,
+          }}
+          onMouseEnter={() => setActiveArea(area.key)}
+          onMouseLeave={() => setActiveArea(null)}
+          className="[&_path]:transition-opacity [&_path]:duration-200"
         />
       )),
-    [areas]
+    [activeLegend, areas]
   );
 
+  // create comparison line data for straight line from origin to last point
+  const comparisonLineData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    // get the last data point
+    const lastPoint = data[data.length - 1];
+    // for the y-value in the last point, use its yAxis key value
+    const lastYValue = lastPoint[yAxis.key] ?? 0;
+    // create data for a straight line that has points at each x-axis position
+    return data.map((item, index) => {
+      // calculate the y value for this point on the straight line
+      // using linear interpolation between (0,0) and (last_x, last_y)
+      const ratio = index / (data.length - 1);
+      const interpolatedValue = ratio * lastYValue;
+
+      return {
+        [xAxis.key]: item[xAxis.key],
+        comparisonLine: interpolatedValue,
+      };
+    });
+  }, [data, xAxis.key]);
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
-        <CoreAreaChart
-          width={500}
-          height={300}
+        <ComposedChart
           data={data}
           margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
+            top: margin?.top === undefined ? 5 : margin.top,
+            right: margin?.right === undefined ? 30 : margin.right,
+            bottom: margin?.bottom === undefined ? 5 : margin.bottom,
+            left: margin?.left === undefined ? 20 : margin.left,
           }}
-          reverseStackOrder
         >
+          <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
             tick={(props) => <CustomXAxisTick {...props} />}
-            tickLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            label={{
-              value: xAxis.label,
-              dy: 28,
-              className: LABEL_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
+            label={
+              xAxis.label && {
+                value: xAxis.label,
+                dy: 28,
+                className: AXIS_LABEL_CLASSNAME,
+              }
+            }
             tickCount={tickCount.x}
           />
           <YAxis
             domain={yAxis.domain}
-            tickLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            axisLine={{
-              stroke: "currentColor",
-              className: AXIS_LINE_CLASSNAME,
-            }}
-            label={{
-              value: yAxis.label,
-              angle: -90,
-              position: "bottom",
-              offset: -24,
-              dx: -16,
-              className: LABEL_CLASSNAME,
-            }}
+            tickLine={false}
+            axisLine={false}
+            label={
+              yAxis.label && {
+                value: yAxis.label,
+                angle: -90,
+                position: "bottom",
+                offset: yAxis.offset ?? -24,
+                dx: yAxis.dx ?? -16,
+                className: AXIS_LABEL_CLASSNAME,
+              }
+            }
             tick={(props) => <CustomYAxisTick {...props} />}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />
+          {legend && (
+            // @ts-expect-error recharts types are not up to date
+            <Legend
+              formatter={(value) => itemLabels[value]}
+              onMouseEnter={(payload) => setActiveLegend(payload.value)}
+              onMouseLeave={() => setActiveLegend(null)}
+              {...getLegendProps(legend)}
+            />
+          )}
           {showTooltip && (
             <Tooltip
-              cursor={{ fill: "currentColor", className: "text-custom-background-90/80 cursor-pointer" }}
+              cursor={{
+                stroke: "rgba(var(--color-text-300))",
+                strokeDasharray: "4 4",
+              }}
+              wrapperStyle={{
+                pointerEvents: "auto",
+              }}
               content={({ active, label, payload }) => (
                 <CustomTooltip
                   active={active}
+                  activeKey={activeArea}
                   label={label}
                   payload={payload}
                   itemKeys={itemKeys}
-                  itemDotClassNames={itemDotClassNames}
+                  itemLabels={itemLabels}
+                  itemDotColors={itemDotColors}
                 />
               )}
             />
           )}
           {renderAreas}
-        </CoreAreaChart>
+          {comparisonLine && (
+            <Line
+              data={comparisonLineData}
+              type="linear"
+              dataKey="comparisonLine"
+              stroke={comparisonLine.strokeColor}
+              fill={comparisonLine.strokeColor}
+              strokeWidth={2}
+              strokeDasharray={comparisonLine.dashedLine ? "4 4" : "none"}
+              activeDot={false}
+              legendType="none"
+              name="Comparison line"
+            />
+          )}
+        </ComposedChart>
       </ResponsiveContainer>
     </div>
   );

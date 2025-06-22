@@ -24,12 +24,10 @@ import {
   TextQuote,
   Underline,
 } from "lucide-react";
-// editor
+// plane imports
 import { TCommandExtraProps, TEditorCommands, TEditorFontStyle } from "@plane/editor";
-// ui
 import { MonospaceIcon, SansSerifIcon, SerifIcon } from "@plane/ui";
-// helpers
-import { convertRemToPixel } from "@/helpers/common.helper";
+import { convertRemToPixel } from "@plane/utils";
 
 type TEditorTypes = "lite" | "document" | "sticky";
 
@@ -94,7 +92,7 @@ export const TEXT_ALIGNMENT_ITEMS: ToolbarMenuItem<"text-align">[] = [
   },
 ];
 
-const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strike">[] = [
+const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strikethrough">[] = [
   {
     itemKey: "bold",
     renderKey: "bold",
@@ -120,7 +118,7 @@ const BASIC_MARK_ITEMS: ToolbarMenuItem<"bold" | "italic" | "underline" | "strik
     editors: ["lite", "document"],
   },
   {
-    itemKey: "strike",
+    itemKey: "strikethrough",
     renderKey: "strikethrough",
     name: "Strikethrough",
     icon: Strikethrough,

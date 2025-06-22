@@ -1,6 +1,7 @@
-import { EIssueServiceType } from "@plane/constants";
 // types
+import { EIssueServiceType, API_BASE_URL } from "@plane/constants";
 import {
+  TIssueParams,
   type IIssueDisplayProperties,
   type TBulkOperationsPayload,
   type TIssue,
@@ -11,8 +12,7 @@ import {
   type TIssueSubIssues,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { getIssuesShouldFallbackToServer } from "@/helpers/issue.helper";
+import { getIssuesShouldFallbackToServer } from "@plane/utils";
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 
@@ -75,7 +75,12 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string, queries?: any, config = {}): Promise<TIssuesResponse> {
+  async getIssues(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>,
+    config = {}
+  ): Promise<TIssuesResponse> {
     if (getIssuesShouldFallbackToServer(queries) || this.serviceType !== EIssueServiceType.ISSUES) {
       return await this.getIssuesFromServer(workspaceSlug, projectId, queries, config);
     }
@@ -261,9 +266,15 @@ export class IssueService extends APIService {
       });
   }
 
-  async subIssues(workspaceSlug: string, projectId: string, issueId: string): Promise<TIssueSubIssues> {
+  async subIssues(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<TIssueSubIssues> {
     return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "issues" : "sub-issues"}/`
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/${this.serviceType === EIssueServiceType.EPICS ? "issues" : "sub-issues"}/`,
+      { params: queries }
     )
       .then((response) => response?.data)
       .catch((error) => {

@@ -37,16 +37,15 @@ export const ProjectsBaseHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={t("workspace_projects.label", { count: 2 })}
                 icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />
-          {isArchived && <Breadcrumbs.BreadcrumbItem type="text" link={<BreadcrumbLink label="Archived" />} />}
+          {isArchived && <Breadcrumbs.Item component={<BreadcrumbLink label="Archived" />} />}
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>

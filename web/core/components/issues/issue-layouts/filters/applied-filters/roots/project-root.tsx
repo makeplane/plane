@@ -81,6 +81,7 @@ export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps
           handleRemoveFilter={handleRemoveFilter}
           labels={projectLabels ?? []}
           states={projectStates}
+          alwaysAllowEditing
         />
       </Header.LeftItem>
       <Header.RightItem>

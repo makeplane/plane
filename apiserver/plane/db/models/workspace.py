@@ -1,6 +1,9 @@
 # Python imports
 from django.db.models.functions import Ln
 import pytz
+import time
+from django.utils import timezone
+from typing import Optional, Any, Tuple, Dict
 
 # Django imports
 from django.conf import settings
@@ -148,6 +151,30 @@ class Workspace(BaseModel):
         if self.logo:
             return self.logo
         return None
+
+    def delete(
+        self, using: Optional[str] = None, soft: bool = True, *args: Any, **kwargs: Any
+    ):
+        """
+        Override the delete method to append epoch timestamp to the slug when soft deleting.
+
+        Args:
+            using: The database alias to use for the deletion.
+            soft: Whether to perform a soft delete (True) or hard delete (False).
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        """
+        # Call the parent class's delete method first
+        result = super().delete(using=using, soft=soft, *args, **kwargs)
+
+        # If it's a soft delete and the model still exists (not hard deleted)
+        if soft and hasattr(self, "deleted_at") and self.deleted_at:
+            # Use the deleted_at timestamp to update the slug
+            deletion_timestamp: int = int(self.deleted_at.timestamp())
+            self.slug = f"{self.slug}__{deletion_timestamp}"
+            self.save(update_fields=["slug"])
+
+        return result
 
     class Meta:
         verbose_name = "Workspace"
@@ -391,7 +418,7 @@ class WorkspaceHomePreference(BaseModel):
 class WorkspaceUserPreference(BaseModel):
     """Preference for the workspace for a user"""
 
-    class UserPreferenceKeys(models.TextChoices):        
+    class UserPreferenceKeys(models.TextChoices):
         VIEWS = "views", "Views"
         ACTIVE_CYCLES = "active_cycles", "Active Cycles"
         ANALYTICS = "analytics", "Analytics"

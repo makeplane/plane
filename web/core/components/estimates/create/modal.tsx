@@ -4,6 +4,8 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // types
+import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
 // ui
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -12,7 +14,6 @@ import { EstimateCreateStageOne, EstimatePointCreateRoot } from "@/components/es
 // hooks
 import { useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@/plane-web/constants/estimates";
 
 type TCreateEstimateModal = {
   workspaceSlug: string;
@@ -26,6 +27,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
   const { workspaceSlug, projectId, isOpen, handleClose } = props;
   // hooks
   const { createEstimate } = useProjectEstimates();
+  const { t } = useTranslation();
   // states
   const [estimateSystem, setEstimateSystem] = useState<TEstimateSystemKeys>(EEstimateSystem.POINTS);
   const [estimatePoints, setEstimatePoints] = useState<TEstimatePointsObject[] | undefined>(undefined);
@@ -95,16 +97,16 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Estimate created",
-          message: "A new estimate has been added in your project.",
+          title: t("project_settings.estimates.toasts.created.success.title"),
+          message: t("project_settings.estimates.toasts.created.success.message"),
         });
         handleClose();
       } catch (error) {
         setButtonLoader(false);
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Estimate creation failed",
-          message: "We were unable to create the new estimate, please try again.",
+          title: t("project_settings.estimates.toasts.created.error.title"),
+          message: t("project_settings.estimates.toasts.created.error.message"),
         });
       }
     } else {
@@ -119,8 +121,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
             delete newError[currentKey];
           } else {
             newError[currentKey].message =
-              newError[currentKey].message ||
-              "Estimate point can't be empty. Enter a value in each field or remove those you don't have values for.";
+              newError[currentKey].message || t("project_settings.estimates.validation.remove_empty");
           }
         });
         return newError;
@@ -152,9 +153,14 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 <ChevronLeft className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-100">New estimate system</div>
+            <div className="text-xl font-medium text-custom-text-100">{t("project_settings.estimates.new")}</div>
           </div>
-          <div className="text-xs text-gray-400">Step {renderEstimateStepsCount} of 2</div>
+          <div className="text-xs text-gray-400">
+            {t("project_settings.estimates.create.step", {
+              step: renderEstimateStepsCount,
+              total: 2,
+            })}
+          </div>
         </div>
 
         {/* estimate steps */}
@@ -190,11 +196,11 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
 
         <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
           <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           {estimatePoints && (
             <Button variant="primary" size="sm" onClick={handleCreateEstimate} disabled={buttonLoader}>
-              {buttonLoader ? `Creating` : `Create estimate`}
+              {buttonLoader ? t("common.creating") : t("project_settings.estimates.create.label")}
             </Button>
           )}
         </div>

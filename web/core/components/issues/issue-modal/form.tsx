@@ -13,8 +13,8 @@ import { useTranslation } from "@plane/i18n";
 import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset, cn, getTextContent, getChangedIssuefields, getTabIndex } from "@plane/utils";
 // components
-import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset } from "@plane/utils";
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
@@ -24,10 +24,6 @@ import {
 } from "@/components/issues/issue-modal/components";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getTextContent } from "@/helpers/editor.helper";
-import { getChangedIssuefields } from "@/helpers/issue-modal.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
@@ -61,6 +57,7 @@ export interface IssueFormProps {
   };
   isDuplicateModalOpen: boolean;
   handleDuplicateIssueModal: (isOpen: boolean) => void;
+  handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   storeType: EIssuesStoreType;
 }
@@ -86,6 +83,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     },
     isDuplicateModalOpen,
     handleDuplicateIssueModal,
+    handleDraftAndClose,
     isProjectSelectionDisabled = false,
     storeType,
   } = props;
@@ -235,14 +233,22 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
         setGptAssistantModal(false);
-        reset({
-          ...DEFAULT_WORK_ITEM_FORM_VALUES,
-          ...(isCreateMoreToggleEnabled ? { ...data } : {}),
-          project_id: getValues<"project_id">("project_id"),
-          type_id: getValues<"type_id">("type_id"),
-          description_html: data?.description_html ?? "<p></p>",
-        });
-        editorRef?.current?.clearEditor();
+        if (isCreateMoreToggleEnabled && workItemTemplateId) {
+          handleTemplateChange({
+            workspaceSlug: workspaceSlug?.toString(),
+            reset,
+            editorRef,
+          });
+        } else {
+          reset({
+            ...DEFAULT_WORK_ITEM_FORM_VALUES,
+            ...(isCreateMoreToggleEnabled ? { ...data } : {}),
+            project_id: getValues<"project_id">("project_id"),
+            type_id: getValues<"type_id">("type_id"),
+            description_html: data?.description_html ?? "<p></p>",
+          });
+          editorRef?.current?.clearEditor();
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -389,6 +395,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     <WorkItemTemplateSelect
                       projectId={projectId}
                       typeId={watch("type_id")}
+                      handleModalClose={() => {
+                        if (handleDraftAndClose) {
+                          handleDraftAndClose();
+                        } else {
+                          onClose();
+                        }
+                      }}
                       handleFormChange={handleFormChange}
                       renderChevron
                     />

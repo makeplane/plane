@@ -9,7 +9,7 @@ import { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, DragHandle } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // components
 import { LabelName } from "./label-name";
 
@@ -29,6 +29,7 @@ interface ILabelItemBlock {
   isLabelGroup?: boolean;
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
   disabled?: boolean;
+  draggable?: boolean;
 }
 
 export const LabelItemBlock = (props: ILabelItemBlock) => {
@@ -40,9 +41,10 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
     isLabelGroup,
     dragHandleRef,
     disabled = false,
+    draggable = true,
   } = props;
   // states
-  const [isMenuActive, setIsMenuActive] = useState(false);
+  const [isMenuActive, setIsMenuActive] = useState(true);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -51,7 +53,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        {!disabled && (
+        {!disabled && draggable && (
           <DragHandle
             className={cn("opacity-0 group-hover:opacity-100", {
               "opacity-100": isDragging,
@@ -65,7 +67,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
       {!disabled && (
         <div
           ref={actionSectionRef}
-          className={`absolute right-2.5 flex items-start gap-3.5 px-4 ${
+          className={`absolute right-2.5 flex items-center gap-2 px-4 ${
             isMenuActive || isLabelGroup
               ? "opacity-100"
               : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
@@ -77,7 +79,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
                 isVisible && (
                   <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
                     <span className="flex items-center justify-start gap-2">
-                      <CustomIcon className="h-4 w-4" />
+                      <CustomIcon className="size-4" />
                       <span>{text}</span>
                     </span>
                   </CustomMenu.MenuItem>
@@ -87,10 +89,10 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
           {!isLabelGroup && (
             <div className="py-0.5">
               <button
-                className="flex h-4 w-4 items-center justify-start gap-2"
+                className="flex size-5 items-center justify-center rounded hover:bg-custom-background-80"
                 onClick={() => handleLabelDelete(label)}
               >
-                <X className="h-4 w-4  flex-shrink-0 text-custom-sidebar-text-400" />
+                <X className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
               </button>
             </div>
           )}

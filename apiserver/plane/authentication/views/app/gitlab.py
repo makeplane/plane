@@ -16,6 +16,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
+from plane.utils.path_validator import validate_next_path
 
 
 class GitLabOauthInitiateEndpoint(View):
@@ -24,7 +25,7 @@ class GitLabOauthInitiateEndpoint(View):
         request.session["host"] = base_host(request=request, is_app=True)
         next_path = request.GET.get("next_path")
         if next_path:
-            request.session["next_path"] = str(next_path)
+            request.session["next_path"] = str(validate_next_path(next_path))
 
         # Check instance configuration
         instance = Instance.objects.first()
@@ -35,7 +36,7 @@ class GitLabOauthInitiateEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -49,7 +50,7 @@ class GitLabOauthInitiateEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(
                 base_host(request=request, is_app=True), "?" + urlencode(params)
             )
@@ -81,7 +82,7 @@ class GitLabCallbackEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(base_host, "?" + urlencode(params))
             return HttpResponseRedirect(url)
 
@@ -94,7 +95,7 @@ class GitLabCallbackEndpoint(View):
             user_login(request=request, user=user, is_app=True)
             # Get the redirection path
             if next_path:
-                path = next_path
+                path = str(validate_next_path(next_path))
             else:
                 path = get_redirection_path(user=user)
             # redirect to referer path
@@ -103,6 +104,6 @@ class GitLabCallbackEndpoint(View):
         except AuthenticationException as e:
             params = e.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(base_host, "?" + urlencode(params))
             return HttpResponseRedirect(url)

@@ -1,10 +1,11 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
-// type
+// plane imports
 import { IUserLite } from "@plane/types";
-// store
-import { CoreRootStore } from "../root.store";
-import { IProjectMemberStore, ProjectMemberStore } from "./project-member.store";
+// plane web imports
+import { IProjectMemberStore, ProjectMemberStore } from "@/plane-web/store/member/project-member.store";
+import { RootStore } from "@/plane-web/store/root.store";
+// local imports
 import { IWorkspaceMemberStore, WorkspaceMemberStore } from "./workspace-member.store";
 
 export interface IMemberRootStore {
@@ -25,7 +26,7 @@ export class MemberRootStore implements IMemberRootStore {
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
 
-  constructor(_rootStore: CoreRootStore) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       memberMap: observable,

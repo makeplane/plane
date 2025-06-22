@@ -1,16 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane editor
+// plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-// plane types
 import { TPageVersion } from "@plane/types";
-// plane ui
 import { Loader } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
-import { useWorkspace } from "@/hooks/store";
+import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // store hooks
 import { useMember } from "@/hooks/store";
@@ -36,7 +34,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // editor config
   const { getReadOnlyEditorFileHandlers } = useEditorConfig();
   // issue-embed
@@ -50,6 +48,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
   const displayConfig: TDisplayConfig = {
     fontSize,
     fontStyle,
+    wideLayout: true,
   };
 
   if (!isCurrentVersionActive && !versionDetails)
@@ -102,7 +101,8 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
-      disabledExtensions={disabledExtensions}
+      disabledExtensions={documentEditorExtensions.disabled}
+      flaggedExtensions={documentEditorExtensions.flagged}
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({

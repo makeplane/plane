@@ -1,6 +1,8 @@
 import { EditorState, Selection } from "@tiptap/pm/state";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 interface EditorClassNames {
   noBorder?: boolean;
@@ -38,29 +40,60 @@ export const findTableAncestor = (node: Node | null): HTMLTableElement | null =>
   return node as HTMLTableElement;
 };
 
-export const getTrimmedHTML = (html: string) => {
-  html = html.replace(/^(<p><\/p>)+/, "");
-  html = html.replace(/(<p><\/p>)+$/, "");
-  return html;
-};
+export const getTrimmedHTML = (html: string) =>
+  html
+    .replace(/^(?:<p><\/p>)+/g, "") // Remove from beginning
+    .replace(/(?:<p><\/p>)+$/g, ""); // Remove from end
 
-export const isValidHttpUrl = (string: string): boolean => {
-  let url: URL;
+export const isValidHttpUrl = (string: string): { isValid: boolean; url: string } => {
+  // List of potentially dangerous protocols to block
+  const blockedProtocols = ["javascript:", "data:", "vbscript:", "file:", "about:"];
 
+  // First try with the original string
   try {
-    url = new URL(string);
-  } catch (_) {
-    return false;
+    const url = new URL(string);
+
+    // Check for potentially dangerous protocols
+    const protocol = url.protocol.toLowerCase();
+    if (blockedProtocols.some((p) => protocol === p)) {
+      return {
+        isValid: false,
+        url: string,
+      };
+    }
+
+    // If URL has any valid protocol, return as is
+    if (url.protocol && url.protocol !== "") {
+      return {
+        isValid: true,
+        url: string,
+      };
+    }
+  } catch {
+    // Original string wasn't a valid URL - that's okay, we'll try with https
   }
 
-  return url.protocol === "http:" || url.protocol === "https:";
+  // Try again with https:// prefix
+  try {
+    const urlWithHttps = `https://${string}`;
+    new URL(urlWithHttps);
+    return {
+      isValid: true,
+      url: urlWithHttps,
+    };
+  } catch {
+    return {
+      isValid: false,
+      url: string,
+    };
+  }
 };
 
 export const getParagraphCount = (editorState: EditorState | undefined) => {
   if (!editorState) return 0;
   let paragraphCount = 0;
   editorState.doc.descendants((node) => {
-    if (node.type.name === "paragraph" && node.content.size > 0) paragraphCount++;
+    if (node.type.name === CORE_EXTENSIONS.PARAGRAPH && node.content.size > 0) paragraphCount++;
   });
   return paragraphCount;
 };

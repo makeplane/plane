@@ -7,10 +7,9 @@ import { usePopper } from "react-popper";
 import { ROLE } from "@plane/constants";
 // plane ui
 import { Avatar } from "@plane/ui";
+import { cn, getFileURL } from "@plane/utils";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 

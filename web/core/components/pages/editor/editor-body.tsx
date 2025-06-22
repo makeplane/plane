@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// document-editor
+import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -10,16 +10,14 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// plane types
+// plane imports
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
-// plane ui
-import { Row } from "@plane/ui";
+import { ERowVariant, Row } from "@plane/ui";
+import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { cn, LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
 import { useUser, useWorkspace, useMember } from "@/hooks/store";
@@ -31,6 +29,8 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageEditorHeaderRoot } from "./header";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -42,13 +42,12 @@ export type TEditorBodyHandlers = {
 
 type Props = {
   config: TEditorBodyConfig;
-  editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
+  editorForwardRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
-  handleEditorReady: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: (status: boolean) => void;
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
-  sidePeekVisible: boolean;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
 };
@@ -56,12 +55,11 @@ type Props = {
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
-    editorRef,
+    editorForwardRef,
     handleConnectionStatus,
     handleEditorReady,
     handlers,
     page,
-    sidePeekVisible,
     webhookConnectionParams,
     workspaceSlug,
   } = props;
@@ -71,7 +69,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, name: pageTitle, isContentEditable, updateTitle, editorRef } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
@@ -83,7 +81,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -91,8 +89,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       fontSize,
       fontStyle,
+      wideLayout: isFullWidth,
     }),
-    [fontSize, fontStyle]
+    [fontSize, fontStyle, isFullWidth]
   );
 
   const getAIMenu = useCallback(
@@ -147,74 +146,80 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: generateRandomColor(currentUser?.id ?? ""),
+      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
     }),
     [currentUser?.display_name, currentUser?.id]
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader />;
+  const blockWidthClassName = cn(
+    "block bg-transparent w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out",
+    {
+      "max-w-[1152px]": isFullWidth,
+    }
+  );
+
+  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
-    <div className="flex items-center h-full w-full overflow-y-auto">
-      <Row
-        className={cn("sticky top-0 hidden h-full flex-shrink-0 -translate-x-full py-5 duration-200 md:block", {
-          "translate-x-0": sidePeekVisible,
-          "w-[10rem] lg:w-[14rem]": !isFullWidth,
-          "w-[5%]": isFullWidth,
-        })}
-      >
-        {!isFullWidth && <PageContentBrowser editorRef={editorRef.current} />}
-      </Row>
-      <div
-        className={cn("size-full pt-5 duration-200", {
-          "md:w-[calc(100%-10rem)] xl:w-[calc(100%-28rem)]": !isFullWidth,
-          "md:w-[90%]": isFullWidth,
-        })}
-      >
-        <div className="size-full flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden">
-          <PageEditorTitle
-            editorRef={editorRef}
-            title={pageTitle}
-            updateTitle={updateTitle}
-            readOnly={!isContentEditable}
-          />
-          <CollaborativeDocumentEditorWithRef
-            editable={isContentEditable}
-            id={pageId}
-            fileHandler={config.fileHandler}
-            handleEditorReady={handleEditorReady}
-            ref={editorRef}
-            containerClassName="h-full p-0 pb-64"
-            displayConfig={displayConfig}
-            editorClassName="pl-10"
-            mentionHandler={{
-              searchCallback: async (query) => {
-                const res = await fetchMentions(query);
-                if (!res) throw new Error("Failed in fetching mentions");
-                return res;
-              },
-              renderComponent: (props) => <EditorMentionsRoot {...props} />,
-              getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-            }}
-            embedHandler={{
-              issue: issueEmbedProps,
-            }}
-            realtimeConfig={realtimeConfig}
-            serverHandler={serverHandler}
-            user={userConfig}
-            disabledExtensions={disabledExtensions}
-            aiHandler={{
-              menu: getAIMenu,
-            }}
-          />
+    <Row
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      variant={ERowVariant.HUGGING}
+    >
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
+        {/* table of content */}
+        <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+          <div className="sticky top-[72px]">
+            <div className="group/page-toc relative px-page-x">
+              <div className="cursor-pointer max-h-[50vh] overflow-hidden">
+                <PageContentBrowser editorRef={editorRef} showOutline />
+              </div>
+              <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                <PageContentBrowser editorRef={editorRef} />
+              </div>
+            </div>
+          </div>
         </div>
+        <div className="page-header-container group/page-header">
+          <div className={blockWidthClassName}>
+            <PageEditorHeaderRoot page={page} />
+            <PageEditorTitle
+              editorRef={editorRef}
+              readOnly={!isContentEditable}
+              title={pageTitle}
+              updateTitle={updateTitle}
+            />
+          </div>
+        </div>
+        <CollaborativeDocumentEditorWithRef
+          editable={isContentEditable}
+          id={pageId}
+          fileHandler={config.fileHandler}
+          handleEditorReady={handleEditorReady}
+          ref={editorForwardRef}
+          containerClassName="h-full p-0 pb-64"
+          displayConfig={displayConfig}
+          mentionHandler={{
+            searchCallback: async (query) => {
+              const res = await fetchMentions(query);
+              if (!res) throw new Error("Failed in fetching mentions");
+              return res;
+            },
+            renderComponent: (props) => <EditorMentionsRoot {...props} />,
+            getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+          }}
+          embedHandler={{
+            issue: issueEmbedProps,
+          }}
+          realtimeConfig={realtimeConfig}
+          serverHandler={serverHandler}
+          user={userConfig}
+          disabledExtensions={documentEditorExtensions.disabled}
+          flaggedExtensions={documentEditorExtensions.flagged}
+          aiHandler={{
+            menu: getAIMenu,
+          }}
+        />
       </div>
-      <div
-        className={cn("hidden xl:block flex-shrink-0 duration-200", {
-          "w-[10rem] lg:w-[14rem]": !isFullWidth,
-          "w-[5%]": isFullWidth,
-        })}
-      />
-    </div>
+    </Row>
   );
 });

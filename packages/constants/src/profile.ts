@@ -1,39 +1,53 @@
+export const PROFILE_SETTINGS = {
+  profile: {
+    key: "profile",
+    i18n_label: "profile.actions.profile",
+    href: `/settings/account`,
+    highlight: (pathname: string) => pathname === "/settings/account/",
+  },
+  security: {
+    key: "security",
+    i18n_label: "profile.actions.security",
+    href: `/settings/account/security`,
+    highlight: (pathname: string) => pathname === "/settings/account/security/",
+  },
+  activity: {
+    key: "activity",
+    i18n_label: "profile.actions.activity",
+    href: `/settings/account/activity`,
+    highlight: (pathname: string) => pathname === "/settings/account/activity/",
+  },
+  preferences: {
+    key: "preferences",
+    i18n_label: "profile.actions.preferences",
+    href: `/settings/account/preferences`,
+    highlight: (pathname: string) => pathname === "/settings/account/preferences",
+  },
+  notifications: {
+    key: "notifications",
+    i18n_label: "profile.actions.notifications",
+    href: `/settings/account/notifications`,
+    highlight: (pathname: string) => pathname === "/settings/account/notifications/",
+  },
+  "api-tokens": {
+    key: "api-tokens",
+    i18n_label: "profile.actions.api-tokens",
+    href: `/settings/account/api-tokens`,
+    highlight: (pathname: string) => pathname === "/settings/account/api-tokens/",
+  },
+};
 export const PROFILE_ACTION_LINKS: {
   key: string;
   i18n_label: string;
   href: string;
   highlight: (pathname: string) => boolean;
 }[] = [
-  {
-    key: "profile",
-    i18n_label: "profile.actions.profile",
-    href: `/profile`,
-    highlight: (pathname: string) => pathname === "/profile/",
-  },
-  {
-    key: "security",
-    i18n_label: "profile.actions.security",
-    href: `/profile/security`,
-    highlight: (pathname: string) => pathname === "/profile/security/",
-  },
-  {
-    key: "activity",
-    i18n_label: "profile.actions.activity",
-    href: `/profile/activity`,
-    highlight: (pathname: string) => pathname === "/profile/activity/",
-  },
-  {
-    key: "appearance",
-    i18n_label: "profile.actions.appearance",
-    href: `/profile/appearance`,
-    highlight: (pathname: string) => pathname.includes("/profile/appearance"),
-  },
-  {
-    key: "notifications",
-    i18n_label: "profile.actions.notifications",
-    href: `/profile/notifications`,
-    highlight: (pathname: string) => pathname === "/profile/notifications/",
-  },
+  PROFILE_SETTINGS["profile"],
+  PROFILE_SETTINGS["security"],
+  PROFILE_SETTINGS["activity"],
+  PROFILE_SETTINGS["preferences"],
+  PROFILE_SETTINGS["notifications"],
+  PROFILE_SETTINGS["api-tokens"],
 ];
 
 export const PROFILE_VIEWER_TAB = [
@@ -69,5 +83,72 @@ export const PROFILE_ADMINS_TAB = [
     route: "activity",
     i18n_label: "profile.tabs.activity",
     selected: "/activity/",
+  },
+];
+
+export const PREFERENCE_OPTIONS: {
+  id: string;
+  title: string;
+  description: string;
+}[] = [
+  {
+    id: "theme",
+    title: "theme",
+    description: "select_or_customize_your_interface_color_scheme",
+  },
+  {
+    id: "start_of_week",
+    title: "First day of the week",
+    description: "This will change how all calendars in your app look.",
+  },
+];
+
+/**
+ * @description The start of the week for the user
+ * @enum {number}
+ */
+export enum EStartOfTheWeek {
+  SUNDAY = 0,
+  MONDAY = 1,
+  TUESDAY = 2,
+  WEDNESDAY = 3,
+  THURSDAY = 4,
+  FRIDAY = 5,
+  SATURDAY = 6,
+}
+
+/**
+ * @description The options for the start of the week
+ * @type {Array<{value: EStartOfTheWeek, label: string}>}
+ * @constant
+ */
+export const START_OF_THE_WEEK_OPTIONS = [
+  {
+    value: EStartOfTheWeek.SUNDAY,
+    label: "Sunday",
+  },
+  {
+    value: EStartOfTheWeek.MONDAY,
+    label: "Monday",
+  },
+  {
+    value: EStartOfTheWeek.TUESDAY,
+    label: "Tuesday",
+  },
+  {
+    value: EStartOfTheWeek.WEDNESDAY,
+    label: "Wednesday",
+  },
+  {
+    value: EStartOfTheWeek.THURSDAY,
+    label: "Thursday",
+  },
+  {
+    value: EStartOfTheWeek.FRIDAY,
+    label: "Friday",
+  },
+  {
+    value: EStartOfTheWeek.SATURDAY,
+    label: "Saturday",
   },
 ];

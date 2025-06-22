@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
@@ -16,6 +17,11 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
   } = useHome();
   const { t } = useTranslation();
 
+  const handleCreateLinkModal = useCallback(() => {
+    toggleLinkModal(true);
+    setLinkData(undefined);
+  }, []);
+
   useSWR(
     workspaceSlug ? `HOME_LINKS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchLinks(workspaceSlug.toString()) : null,
@@ -32,15 +38,12 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
         handleOnClose={() => toggleLinkModal(false)}
         linkOperations={linkOperations}
         preloadedData={linkData}
-        setLinkData={setLinkData}
       />
       <div className="mb-2">
         <div className="flex items-center justify-between mb-4">
           <div className="text-base font-semibold text-custom-text-350">{t("home.quick_links.title_plural")}</div>
           <button
-            onClick={() => {
-              toggleLinkModal(true);
-            }}
+            onClick={handleCreateLinkModal}
             className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
           >
             <Plus className="size-4 my-auto" /> <span>{t("home.quick_links.add")}</span>

@@ -1,5 +1,7 @@
-// icons
-import { TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+// plane imports
+import { IProject, TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+// local imports
+import { RANDOM_EMOJI_CODES } from "./emoji";
 
 export type TNetworkChoiceIconKey = "Lock" | "Globe2";
 
@@ -132,3 +134,27 @@ export const PROJECT_ERROR_MESSAGES = {
     i18n_message: "workspace_projects.error.issue_delete",
   },
 };
+
+export const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
+  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
+  description: "",
+  logo_props: {
+    in_use: "emoji",
+    emoji: {
+      value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
+    },
+  },
+  identifier: "",
+  name: "",
+  network: 2,
+  project_lead: null,
+};
+
+export enum EProjectFeatureKey {
+  WORK_ITEMS = "work_items",
+  CYCLES = "cycles",
+  MODULES = "modules",
+  VIEWS = "views",
+  PAGES = "pages",
+  INTAKE = "intake",
+}

@@ -12,17 +12,18 @@ type Props = {
   actionButton?: React.ReactNode;
   section?: "settings" | "general";
   isProjectView?: boolean;
+  className?: string;
 };
 
 export const NotAuthorizedView: React.FC<Props> = observer((props) => {
-  const { actionButton, section = "general", isProjectView = false } = props;
+  const { actionButton, section = "general", isProjectView = false, className } = props;
 
   // assets
   const settingAsset = isProjectView ? ProjectNotAuthorizedImg : WorkspaceNotAuthorizedImg;
   const asset = section === "settings" ? settingAsset : Unauthorized;
 
   return (
-    <DefaultLayout>
+    <DefaultLayout className={className}>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
         <div className="h-44 w-72">
           <Image src={asset} height="176" width="288" alt="ProjectSettingImg" />

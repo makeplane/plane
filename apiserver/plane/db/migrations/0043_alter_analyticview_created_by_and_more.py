@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-from sentry_sdk import capture_exception
 import uuid
 
 
@@ -29,7 +28,6 @@ def create_issue_relation(apps, schema_editor):
         )
     except Exception as e:
         print(e)
-        capture_exception(e)
 
 
 def update_issue_priority_choice(apps, schema_editor):

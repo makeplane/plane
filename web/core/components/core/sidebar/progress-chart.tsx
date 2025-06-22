@@ -1,155 +1,65 @@
 import React from "react";
-import { eachDayOfInterval, isValid } from "date-fns";
-import { TModuleCompletionChartDistribution } from "@plane/types";
-// ui
-import { LineGraph } from "@/components/ui";
-// helpers
-import { getDate, renderFormattedDateWithoutYear } from "@/helpers/date-time.helper";
-//types
+// plane imports
+import { AreaChart } from "@plane/propel/charts/area-chart";
+import { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
+import { renderFormattedDateWithoutYear } from "@plane/utils";
 
 type Props = {
   distribution: TModuleCompletionChartDistribution;
-  startDate: string | Date;
-  endDate: string | Date;
   totalIssues: number;
   className?: string;
   plotTitle?: string;
 };
 
-const styleById = {
-  ideal: {
-    strokeDasharray: "6, 3",
-    strokeWidth: 1,
-  },
-  default: {
-    strokeWidth: 1,
-  },
-};
-
-const DashedLine = ({ series, lineGenerator, xScale, yScale }: any) =>
-  series.map(({ id, data, color }: any) => (
-    <path
-      key={id}
-      d={lineGenerator(
-        data.map((d: any) => ({
-          x: xScale(d.data.x),
-          y: yScale(d.data.y),
-        }))
-      )}
-      fill="none"
-      stroke={color ?? "#ddd"}
-      style={styleById[id as keyof typeof styleById] || styleById.default}
-    />
-  ));
-
-const ProgressChart: React.FC<Props> = ({
-  distribution,
-  startDate,
-  endDate,
-  totalIssues,
-  className = "",
-  plotTitle = "work items",
-}) => {
-  const chartData = Object.keys(distribution ?? []).map((key) => ({
-    currentDate: renderFormattedDateWithoutYear(key),
-    pending: distribution[key],
+const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className = "", plotTitle = "work items" }) => {
+  const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
+    name: renderFormattedDateWithoutYear(key),
+    current: distribution[key] ?? 0,
+    ideal: totalIssues * (1 - index / (Object.keys(distribution ?? []).length - 1)),
   }));
-
-  const generateXAxisTickValues = () => {
-    const start = getDate(startDate);
-    const end = getDate(endDate);
-
-    let dates: Date[] = [];
-    if (start && end && isValid(start) && isValid(end)) {
-      dates = eachDayOfInterval({ start, end });
-    }
-
-    if (dates.length === 0) return [];
-
-    const formattedDates = dates.map((d) => renderFormattedDateWithoutYear(d));
-    const firstDate = formattedDates[0];
-    const lastDate = formattedDates[formattedDates.length - 1];
-
-    if (formattedDates.length <= 2) return [firstDate, lastDate];
-
-    const middleDateIndex = Math.floor(formattedDates.length / 2);
-    const middleDate = formattedDates[middleDateIndex];
-
-    return [firstDate, middleDate, lastDate];
-  };
 
   return (
     <div className={`flex w-full items-center justify-center ${className}`}>
-      <LineGraph
-        animate
-        curve="monotoneX"
-        height="160px"
-        width="100%"
-        enableGridY={false}
-        lineWidth={1}
-        margin={{ top: 30, right: 30, bottom: 30, left: 30 }}
-        data={[
+      <AreaChart
+        data={chartData}
+        areas={[
           {
-            id: "pending",
-            color: "#3F76FF",
-            data:
-              chartData.length > 0
-                ? chartData.map((item, index) => ({
-                    index,
-                    x: item.currentDate,
-                    y: item.pending,
-                    color: "#3F76FF",
-                  }))
-                : [],
-            enableArea: true,
+            key: "current",
+            label: `Current ${plotTitle}`,
+            strokeColor: "#3F76FF",
+            fill: "#3F76FF33",
+            fillOpacity: 1,
+            showDot: true,
+            smoothCurves: true,
+            strokeOpacity: 1,
+            stackId: "bar-one",
           },
           {
-            id: "ideal",
-            color: "#a9bbd0",
-            fill: "transparent",
-            data:
-              chartData.length > 0
-                ? [
-                    {
-                      x: chartData[0].currentDate,
-                      y: totalIssues,
-                    },
-                    {
-                      x: chartData[chartData.length - 1].currentDate,
-                      y: 0,
-                    },
-                  ]
-                : [],
+            key: "ideal",
+            label: `Ideal ${plotTitle}`,
+            strokeColor: "#A9BBD0",
+            fill: "#A9BBD0",
+            fillOpacity: 0,
+            showDot: true,
+            smoothCurves: true,
+            strokeOpacity: 1,
+            stackId: "bar-two",
+            style: {
+              strokeDasharray: "6, 3",
+              strokeWidth: 1,
+            },
           },
         ]}
-        layers={["grid", "markers", "areas", DashedLine, "slices", "points", "axes", "legends"]}
-        axisBottom={{
-          tickValues: generateXAxisTickValues(),
-        }}
-        enablePoints={false}
-        enableArea
-        colors={(datum) => datum.color ?? "#3F76FF"}
-        customYAxisTickValues={[0, totalIssues]}
-        gridXValues={
-          chartData.length > 0 ? chartData.map((item, index) => (index % 2 === 0 ? item.currentDate : "")) : undefined
-        }
-        enableSlices="x"
-        sliceTooltip={(datum) => (
-          <div className="rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-            {datum.slice.points?.[1]?.data?.yFormatted ?? datum.slice.points[0].data.yFormatted}
-            <span className="text-custom-text-200"> {plotTitle} pending on </span>
-            {datum.slice.points[0].data.xFormatted}
-          </div>
-        )}
-        theme={{
-          background: "transparent",
-          axis: {
-            domain: {
-              line: {
-                stroke: "rgb(var(--color-border))",
-                strokeWidth: 1,
-              },
-            },
+        xAxis={{ key: "name", label: "Date" }}
+        yAxis={{ key: "current", label: "Completion" }}
+        margin={{ bottom: 30 }}
+        className="h-[370px] w-full"
+        legend={{
+          align: "center",
+          verticalAlign: "bottom",
+          layout: "horizontal",
+          wrapperStyles: {
+            marginTop: 20,
           },
         }}
       />

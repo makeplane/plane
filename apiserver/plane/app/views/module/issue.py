@@ -34,6 +34,7 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 
 # Module imports
 from .. import BaseViewSet
+from plane.utils.host import base_host
 
 
 class ModuleIssueViewSet(BaseViewSet):
@@ -221,7 +222,7 @@ class ModuleIssueViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             for issue in issues
         ]
@@ -261,7 +262,7 @@ class ModuleIssueViewSet(BaseViewSet):
                     current_instance=None,
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 for module in modules
             ]
@@ -280,11 +281,15 @@ class ModuleIssueViewSet(BaseViewSet):
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=json.dumps(
-                    {"module_name": module_issue.first().module.name if (module_issue.first() and module_issue.first().module) else None}
+                    {
+                        "module_name": module_issue.first().module.name
+                        if (module_issue.first() and module_issue.first().module)
+                        else None
+                    }
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             module_issue.delete()
 
@@ -309,7 +314,7 @@ class ModuleIssueViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         module_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

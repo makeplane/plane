@@ -4,44 +4,17 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ArchiveRestoreIcon,
-  CalendarClock,
-  ChevronDown,
-  ChevronRight,
-  Info,
-  LinkIcon,
-  Plus,
-  SquareUser,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { MODULE_STATUS, MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
 // plane types
-import {
-  MODULE_STATUS,
-  MODULE_LINK_CREATED,
-  MODULE_LINK_DELETED,
-  MODULE_LINK_UPDATED,
-  MODULE_UPDATED,
-  EUserPermissions,
-  EUserPermissionsLevel,
-} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import {
-  CustomMenu,
-  Loader,
-  LayersIcon,
-  CustomSelect,
-  ModuleStatusIcon,
-  TOAST_TYPE,
-  setToast,
-  ArchiveIcon,
-  TextArea,
-} from "@plane/ui";
+import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import {
   ArchiveModuleModal,
@@ -50,16 +23,9 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-
-// helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-
 const defaultValues: Partial<IModule> = {
   lead_id: "",
   member_ids: [],
@@ -83,23 +49,18 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
 
   // store hooks
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
 
-  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, restoreModule } =
-    useModule();
-  const { setTrackElement, captureModuleEvent, captureEvent } = useEventTracker();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
+  const { captureModuleEvent, captureEvent } = useEventTracker();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const moduleState = moduleDetails?.status?.toLocaleLowerCase();
-  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
-
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
@@ -176,24 +137,6 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       });
   };
 
-  const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Link copied",
-          message: "Module link copied to clipboard",
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Some error occurred",
-        });
-      });
-  };
-
   const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
     submitChanges({
       start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
@@ -204,30 +147,6 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
       title: "Success!",
       message: "Module updated successfully.",
     });
-  };
-
-  const handleRestoreModule = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!workspaceSlug || !projectId || !moduleId) return;
-
-    await restoreModule(workspaceSlug.toString(), projectId.toString(), moduleId)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Restore success",
-          message: "Your module can be found in project modules.",
-        });
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/modules`);
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: "Module could not be restored. Please try again.",
-        })
-      );
   };
 
   useEffect(() => {
@@ -309,56 +228,6 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
             >
               <ChevronRight className="h-3 w-3 stroke-2 text-white" />
             </button>
-          </div>
-          <div className="flex items-center gap-3.5">
-            {!isArchived && (
-              <button onClick={handleCopyText}>
-                <LinkIcon className="h-3 w-3 text-custom-text-300" />
-              </button>
-            )}
-            {isEditingAllowed && (
-              <CustomMenu placement="bottom-end" ellipsis>
-                {!isArchived && (
-                  <CustomMenu.MenuItem onClick={() => setArchiveModuleModal(true)} disabled={!isInArchivableGroup}>
-                    {isInArchivableGroup ? (
-                      <div className="flex items-center gap-2">
-                        <ArchiveIcon className="h-3 w-3" />
-                        {t("project_module.archive_module")}
-                      </div>
-                    ) : (
-                      <div className="flex items-start gap-2">
-                        <ArchiveIcon className="h-3 w-3" />
-                        <div className="-mt-1">
-                          <p>Archive module</p>
-                          <p className="text-xs text-custom-text-400">
-                            {t("project_module.quick_actions.archive_module_description")}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </CustomMenu.MenuItem>
-                )}
-                {isArchived && (
-                  <CustomMenu.MenuItem onClick={handleRestoreModule}>
-                    <span className="flex items-center justify-start gap-2">
-                      <ArchiveRestoreIcon className="h-3 w-3" />
-                      <span>{t("project_module.restore_module")}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                )}
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    setTrackElement("Module peek-overview");
-                    setModuleDeleteModal(true);
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-3 w-3" />
-                    <span>{t("project_module.delete_module")}</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            )}
           </div>
         </div>
 

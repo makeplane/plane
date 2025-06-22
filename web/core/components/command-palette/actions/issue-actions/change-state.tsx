@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { EIssueServiceType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // store hooks
 import { useIssueDetail } from "@/hooks/store";
@@ -16,7 +17,7 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { updateIssue } = useIssueDetail();
+  const { updateIssue } = useIssueDetail(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   // derived values
   const projectId = issue?.project_id;
   const currentStateId = issue?.state_id;

@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 //components
 import { DiceIcon } from "@plane/ui";
 //store
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import { useModule } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 //hooks

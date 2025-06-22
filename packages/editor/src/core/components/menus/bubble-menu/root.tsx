@@ -18,6 +18,7 @@ import {
 } from "@/components/menus";
 // constants
 import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
 // local components
@@ -90,7 +91,8 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       if (
         empty ||
         !editor.isEditable ||
-        editor.isActive("image") ||
+        editor.isActive(CORE_EXTENSIONS.IMAGE) ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
         isNodeSelection(selection) ||
         isCellSelection(selection) ||
         isSelecting
@@ -102,7 +104,12 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     tippyOptions: {
       moveTransition: "transform 0.15s ease-out",
       duration: [300, 0],
+      zIndex: 9,
+      onShow: () => {
+        props.editor.storage.link.isBubbleMenuOpen = true;
+      },
       onHidden: () => {
+        props.editor.storage.link.isBubbleMenuOpen = false;
         setIsNodeSelectorOpen(false);
         setIsLinkSelectorOpen(false);
         setIsColorSelectorOpen(false);

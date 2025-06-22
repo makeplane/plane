@@ -21,6 +21,7 @@ from plane.app.serializers import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.db.models.intake import SourceType
 
 
 class IntakeIssuePublicViewSet(BaseViewSet):
@@ -156,7 +157,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             intake_id=intake_id,
             project_id=project_deploy_board.project_id,
             issue=issue,
-            source=request.data.get("source", "IN-APP"),
+            source=SourceType.IN_APP,
         )
 
         serializer = IssueStateIntakeSerializer(issue)

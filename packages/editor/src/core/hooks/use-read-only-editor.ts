@@ -1,8 +1,8 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect } from "react";
+import { useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
@@ -11,31 +11,19 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
+import type { TReadOnlyEditorHookProps } from "@/types";
 
-interface CustomReadOnlyEditorProps {
-  disabledExtensions: TExtensions[];
-  editorClassName: string;
-  editorProps?: EditorProps;
-  extensions?: Extensions;
-  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  initialValue?: string;
-  fileHandler: TReadOnlyFileHandler;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: TReadOnlyMentionHandler;
-  provider?: HocuspocusProvider;
-}
-
-export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = (props: TReadOnlyEditorHookProps) => {
   const {
     disabledExtensions,
-    initialValue,
-    editorClassName,
-    forwardedRef,
-    extensions = [],
+    editorClassName = "",
     editorProps = {},
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
+    forwardedRef,
     handleEditorReady,
+    initialValue,
     mentionHandler,
     provider,
   } = props;
@@ -45,6 +33,7 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     immediatelyRender: true,
     shouldRerenderOnTransaction: false,
     content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+    parseOptions: { preserveWhitespace: true },
     editorProps: {
       ...CoreReadOnlyEditorProps({
         editorClassName,
@@ -57,8 +46,9 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     extensions: [
       ...CoreReadOnlyEditorExtensions({
         disabledExtensions,
-        mentionHandler,
         fileHandler,
+        flaggedExtensions,
+        mentionHandler,
       }),
       ...extensions,
     ],
@@ -70,15 +60,15 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
   // for syncing swr data on tab refocus etc
   useEffect(() => {
     if (initialValue === null || initialValue === undefined) return;
-    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: "full" });
+    if (editor && !editor.isDestroyed) editor?.commands.setContent(initialValue, false, { preserveWhitespace: true });
   }, [editor, initialValue]);
 
   useImperativeHandle(forwardedRef, () => ({
     clearEditor: (emitUpdate = false) => {
-      editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
+      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
     },
-    setEditorValue: (content: string) => {
-      editor?.commands.setContent(content, false, { preserveWhitespace: "full" });
+    setEditorValue: (content: string, emitUpdate = false) => {
+      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
     getMarkDown: (): string => {
       const markdownOutput = editor?.storage.markdown.getMarkdown();

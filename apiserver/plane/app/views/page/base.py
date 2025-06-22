@@ -42,6 +42,7 @@ from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects
 
+
 def unarchive_archive_page_and_descendants(page_id, archived_at):
     # Your SQL query
     sql = """
@@ -198,7 +199,7 @@ class PageViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not 
+        if the role is guest and guest_view_all_features is false and owned by is not
         the requesting user then dont show the page
         """
 
@@ -571,6 +572,12 @@ class PageDuplicateEndpoint(BaseAPIView):
         page = Page.objects.filter(
             pk=page_id, workspace__slug=slug, projects__id=project_id
         ).first()
+
+        # check for permission
+        if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         # get all the project ids where page is present
         project_ids = ProjectPage.objects.filter(page_id=page_id).values_list(

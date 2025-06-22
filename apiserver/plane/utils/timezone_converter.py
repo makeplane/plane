@@ -35,9 +35,7 @@ def user_timezone_converter(queryset, datetime_fields, user_timezone):
         return queryset_values
 
 
-def convert_to_utc(
-    date, project_id, is_start_date=False, is_start_date_end_date_equal=False
-):
+def convert_to_utc(date, project_id, is_start_date=False):
     """
     Converts a start date string to the project's local timezone at 12:00 AM
     and then converts it to UTC for storage.
@@ -82,10 +80,8 @@ def convert_to_utc(
 
         return utc_datetime
     else:
-        # If it's start an end date are equal, add 23 hours, 59 minutes, and 59 seconds
-        # to make it the end of the day
-        if is_start_date_end_date_equal:
-            localized_datetime += timedelta(hours=23, minutes=59, seconds=59)
+        # the cycle end date is the last minute of the day
+        localized_datetime += timedelta(hours=23, minutes=59, seconds=0)
 
         # Convert the localized datetime to UTC
         utc_datetime = localized_datetime.astimezone(pytz.utc)

@@ -29,20 +29,21 @@ export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }
 
     if (!sourceData.id) return;
     if (droppedId) {
-      try {
-        reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction); /** sequence */
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("toast.success"),
-          message: t("home.widget.reordered_successfully"),
+      reorderWidget(workspaceSlug, sourceData.id, droppedId, instruction)
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("toast.success"),
+            message: t("home.widget.reordered_successfully"),
+          });
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("home.widget.reordering_failed"),
+          });
         });
-      } catch {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: t("home.widget.reordering_failed"),
-        });
-      }
     }
   };
 

@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
-// types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import type { IProject } from "@plane/types";
-// ui
 import {
   Avatar,
   AvatarGroup,
@@ -21,19 +21,14 @@ import {
   TContextMenuItem,
   FavoriteStar,
 } from "@plane/ui";
+import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useMember, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web constants
 
 type Props = {
   project: IProject;
@@ -68,6 +63,11 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
   // archive
   const isArchived = !!project.archived_at;
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -78,6 +78,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       success: {
         title: "Success!",
         message: () => "Project added to favorites.",
+        actionItems: () => {
+          if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+          return <></>;
+        },
       },
       error: {
         title: "Error!",
@@ -117,7 +121,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`, {}, { showProgressBar: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, {}, { showProgressBar: false }),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
@@ -334,7 +338,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
-                      href={`/${workspaceSlug}/projects/${project.id}/settings`}
+                      href={`/${workspaceSlug}/settings/projects/${project.id}`}
                     >
                       <Settings className="h-3.5 w-3.5" />
                     </Link>

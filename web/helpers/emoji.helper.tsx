@@ -1,27 +1,8 @@
-// ui
-import { LUCIDE_ICONS_LIST } from "@plane/ui";
-
-export const getRandomEmoji = () => {
-  const emojis = [
-    "8986",
-    "9200",
-    "128204",
-    "127773",
-    "127891",
-    "128076",
-    "128077",
-    "128187",
-    "128188",
-    "128512",
-    "128522",
-    "128578",
-  ];
-
-  return emojis[Math.floor(Math.random() * emojis.length)];
-};
-
-export const getRandomIconName = () => LUCIDE_ICONS_LIST[Math.floor(Math.random() * LUCIDE_ICONS_LIST.length)].name;
-
+/**
+ * Renders an emoji or icon
+ * @param {string | { name: string; color: string }} emoji - The emoji or icon to render
+ * @returns {React.ReactNode} The rendered emoji or icon
+ */
 export const renderEmoji = (
   emoji:
     | string
@@ -29,7 +10,7 @@ export const renderEmoji = (
         name: string;
         color: string;
       }
-) => {
+): React.ReactNode => {
   if (!emoji) return;
 
   if (typeof emoji === "object")
@@ -39,45 +20,4 @@ export const renderEmoji = (
       </span>
     );
   else return isNaN(parseInt(emoji)) ? emoji : String.fromCodePoint(parseInt(emoji));
-};
-
-export const groupReactions: (reactions: any[], key: string) => { [key: string]: any[] } = (
-  reactions: any,
-  key: string
-) => {
-  const groupedReactions = reactions.reduce(
-    (acc: any, reaction: any) => {
-      if (!acc[reaction[key]]) {
-        acc[reaction[key]] = [];
-      }
-      acc[reaction[key]].push(reaction);
-      return acc;
-    },
-    {} as { [key: string]: any[] }
-  );
-
-  return groupedReactions;
-};
-
-export const convertHexEmojiToDecimal = (emojiUnified: string): string => {
-  if (!emojiUnified) return "";
-
-  return emojiUnified
-    .toString()
-    .split("-")
-    .map((e) => parseInt(e, 16))
-    .join("-");
-};
-
-export const emojiCodeToUnicode = (emoji: string) => {
-  if (!emoji) return "";
-
-  // convert emoji code to unicode
-  const uniCodeEmoji = emoji
-    .toString()
-    .split("-")
-    .map((emoji) => parseInt(emoji, 10).toString(16))
-    .join("-");
-
-  return uniCodeEmoji;
 };

@@ -12,7 +12,11 @@ export type TMentionExtensionOptions = MentionOptions & {
   getMentionedEntityDetails: TMentionHandler["getMentionedEntityDetails"];
 };
 
-export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions>({
+export type MentionExtensionStorage = {
+  mentionsOpen: boolean;
+};
+
+export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOptions, MentionExtensionStorage>({
   addAttributes() {
     return {
       [EMentionComponentAttributeNames.ID]: {

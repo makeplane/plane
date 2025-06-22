@@ -7,55 +7,61 @@ import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 // Plane
 import { TDraggableData } from "@plane/constants";
-import { IState, TStateGroups } from "@plane/types";
+import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
+import { cn, getCurrentStateSequence } from "@plane/utils";
 // components
 import { StateItemTitle, StateUpdate } from "@/components/project-states";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getCurrentStateSequence } from "@/helpers/state.helper";
-// hooks
-import { useProjectState } from "@/hooks/store";
-
 type TStateItem = {
-  workspaceSlug: string;
-  projectId: string;
   groupKey: TStateGroups;
   groupedStates: Record<string, IState[]>;
   totalStates: number;
   state: IState;
+  stateOperationsCallbacks: TStateOperationsCallbacks;
+  shouldTrackEvents: boolean;
   disabled?: boolean;
+  stateItemClassName?: string;
 };
 
 export const StateItem: FC<TStateItem> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, groupedStates, totalStates, state, disabled = false } = props;
-  // hooks
-  const { moveStatePosition } = useProjectState();
+  const {
+    groupKey,
+    groupedStates,
+    totalStates,
+    state,
+    stateOperationsCallbacks,
+    shouldTrackEvents,
+    disabled = false,
+    stateItemClassName,
+  } = props;
+  // ref
+  const draggableElementRef = useRef<HTMLDivElement | null>(null);
   // states
   const [updateStateModal, setUpdateStateModal] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggedOver, setIsDraggedOver] = useState(false);
+  const [closestEdge, setClosestEdge] = useState<string | null>(null);
+  // derived values
+  const isDraggable = totalStates === 1 ? false : true;
+  const commonStateItemListProps = {
+    stateCount: totalStates,
+    state: state,
+    setUpdateStateModal: setUpdateStateModal,
+  };
 
   const handleStateSequence = useCallback(
     async (payload: Partial<IState>) => {
       try {
-        if (!workspaceSlug || !projectId || !payload.id) return;
-        await moveStatePosition(workspaceSlug, projectId, payload.id, payload);
+        if (!payload.id) return;
+        await stateOperationsCallbacks.moveStatePosition(payload.id, payload);
       } catch (error) {
         console.error("error", error);
       }
     },
-    [workspaceSlug, projectId, moveStatePosition]
+    [stateOperationsCallbacks]
   );
 
-  // derived values
-  const isDraggable = totalStates === 1 ? false : true;
-
-  // DND starts
-  // ref
-  const draggableElementRef = useRef<HTMLDivElement | null>(null);
-  // states
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDraggedOver, setIsDraggedOver] = useState(false);
-  const [closestEdge, setClosestEdge] = useState<string | null>(null);
   useEffect(() => {
     const elementRef = draggableElementRef.current;
     const initialData: TDraggableData = { groupKey: groupKey, id: state.id };
@@ -111,9 +117,9 @@ export const StateItem: FC<TStateItem> = observer((props) => {
   if (updateStateModal)
     return (
       <StateUpdate
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
         state={state}
+        updateStateCallback={stateOperationsCallbacks.updateState}
+        shouldTrackEvents={shouldTrackEvents}
         handleClose={() => setUpdateStateModal(false)}
       />
     );
@@ -122,25 +128,29 @@ export const StateItem: FC<TStateItem> = observer((props) => {
     <Fragment>
       {/* draggable drop top indicator */}
       <DropIndicator isVisible={isDraggedOver && closestEdge === "top"} />
-
       <div
         ref={draggableElementRef}
         className={cn(
           "relative border border-custom-border-100 bg-custom-background-100 py-3 px-3.5 rounded group",
           isDragging ? `opacity-50` : `opacity-100`,
-          totalStates === 1 ? `cursor-auto` : `cursor-grab`
+          totalStates === 1 ? `cursor-auto` : `cursor-grab`,
+          stateItemClassName
         )}
       >
-        <StateItemTitle
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          setUpdateStateModal={setUpdateStateModal}
-          stateCount={totalStates}
-          disabled={disabled}
-          state={state}
-        />
+        {disabled ? (
+          <StateItemTitle {...commonStateItemListProps} disabled />
+        ) : (
+          <StateItemTitle
+            {...commonStateItemListProps}
+            disabled={false}
+            stateOperationsCallbacks={{
+              markStateAsDefault: stateOperationsCallbacks.markStateAsDefault,
+              deleteState: stateOperationsCallbacks.deleteState,
+            }}
+            shouldTrackEvents={shouldTrackEvents}
+          />
+        )}
       </div>
-
       {/* draggable drop bottom indicator */}
       <DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />
     </Fragment>

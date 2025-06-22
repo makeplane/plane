@@ -33,6 +33,7 @@ from plane.db.models import (
 
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.host import base_host
 
 
 class ModuleAPIEndpoint(BaseAPIView):
@@ -174,7 +175,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                 current_instance=None,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             module = Module.objects.get(pk=serializer.data["id"])
             serializer = ModuleSerializer(module)
@@ -226,7 +227,7 @@ class ModuleAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -280,6 +281,7 @@ class ModuleAPIEndpoint(BaseAPIView):
             project_id=str(project_id),
             current_instance=json.dumps({"module_name": str(module.name)}),
             epoch=int(timezone.now().timestamp()),
+            origin=base_host(request=request, is_app=True),
         )
         module.delete()
         # Delete the module issues
@@ -449,6 +451,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
                 }
             ),
             epoch=int(timezone.now().timestamp()),
+            origin=base_host(request=request, is_app=True),
         )
 
         return Response(

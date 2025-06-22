@@ -11,12 +11,11 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Row, Tooltip } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectEntityAction } from "@/components/core";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helper
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -261,19 +260,21 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         <ControlLink
           href={workItemLink}
           onClick={() => handleIssuePeekOverview(issueDetail)}
-          className={cn(
-            "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
-            {
-              "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
-              "border border-custom-primary-70 hover:border-custom-primary-70":
-                getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
-              "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
-            }
-          )}
+          className="outline-none"
           disabled={!!issueDetail?.tempId}
         >
-          <Row className="flex item-center flex-row w-full">
-            <div className="flex items-center gap-0.5 min-w-min py-2.5">
+          <Row
+            className={cn(
+              "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              {
+                "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
+                "border border-custom-primary-70 hover:border-custom-primary-70":
+                  getIsIssuePeeked(issueDetail.id) && nestingLevel === peekIssue?.nestingLevel,
+                "shadow-[8px_22px_22px_10px_rgba(0,0,0,0.05)]": isScrolled.current,
+              }
+            )}
+          >
+            <div className="flex items-center gap-0.5 min-w-min py-2">
               {/* select checkbox */}
               {projectId && canSelectIssues && (
                 <Tooltip

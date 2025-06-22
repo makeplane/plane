@@ -1,8 +1,10 @@
 import { Editor } from "@tiptap/core";
 import { Check, Link, Trash2 } from "lucide-react";
 import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { setLinkEditor, unsetLinkEditor } from "@/helpers/editor-commands";
@@ -23,11 +25,11 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
   const handleLinkSubmit = useCallback(() => {
     const input = inputRef.current;
     if (!input) return;
-    let url = input.value;
+    const url = input.value;
     if (!url) return;
-    if (!url.startsWith("http")) url = `http://${url}`;
-    if (isValidHttpUrl(url)) {
-      setLinkEditor(editor, url);
+    const { isValid, url: validatedUrl } = isValidHttpUrl(url);
+    if (isValid) {
+      setLinkEditor(editor, validatedUrl);
       setIsOpen(false);
       setError(false);
     } else {
@@ -43,7 +45,7 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
           "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
           {
             "bg-custom-background-80": isOpen,
-            "text-custom-text-100": editor.isActive("link"),
+            "text-custom-text-100": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
         )}
         onClick={(e) => {

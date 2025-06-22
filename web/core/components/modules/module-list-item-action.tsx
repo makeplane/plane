@@ -12,18 +12,20 @@ import {
   MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
 } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 // hooks
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
@@ -45,6 +47,8 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
   const { t } = useTranslation();
 
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
@@ -63,6 +67,8 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
+        // open favorites menu if closed
+        if (!storedValue) toggleFavoriteMenu(true);
         captureEvent(MODULE_FAVORITED, {
           module_id: moduleId,
           element: "Grid layout",
@@ -152,6 +158,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
             target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
           });
         }}
+        mergeDates
         placeholder={{
           from: t("start_date"),
           to: t("end_date"),

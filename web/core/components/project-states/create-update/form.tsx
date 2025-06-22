@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, FC, useEffect, useState, useMemo } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
 import { IState } from "@plane/types";
 import { Button, Popover, Input, TextArea } from "@plane/ui";
@@ -28,7 +28,7 @@ export const StateForm: FC<TStateForm> = (props) => {
     setErrors((prev) => ({ ...prev, [key]: "" }));
   };
 
-  const formSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const formSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     const name = formData?.name || undefined;
@@ -59,7 +59,7 @@ export const StateForm: FC<TStateForm> = (props) => {
   );
 
   return (
-    <form onSubmit={formSubmit} className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
+    <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
       {/* color */}
       <div className="flex-shrink-0 h-full mt-2">
         <Popover button={PopoverButton} panelClassName="mt-4 -ml-3">
@@ -94,7 +94,7 @@ export const StateForm: FC<TStateForm> = (props) => {
         />
 
         <div className="flex space-x-2 items-center">
-          <Button type="submit" variant="primary" size="sm" disabled={buttonDisabled}>
+          <Button onClick={formSubmit} variant="primary" size="sm" disabled={buttonDisabled}>
             {buttonTitle}
           </Button>
           <Button type="button" variant="neutral-primary" size="sm" disabled={buttonDisabled} onClick={onCancel}>
@@ -102,6 +102,6 @@ export const StateForm: FC<TStateForm> = (props) => {
           </Button>
         </div>
       </div>
-    </form>
+    </div>
   );
 };

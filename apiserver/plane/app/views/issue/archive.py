@@ -37,6 +37,7 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.error_codes import ERROR_CODES
+from plane.utils.host import base_host
 
 # Module imports
 from .. import BaseViewSet, BaseAPIView
@@ -259,7 +260,7 @@ class IssueArchiveViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         issue.archived_at = timezone.now().date()
         issue.save()
@@ -287,7 +288,7 @@ class IssueArchiveViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         issue.archived_at = None
         issue.save()
@@ -333,7 +334,7 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
                 ),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             issue.archived_at = timezone.now().date()
             bulk_archive_issues.append(issue)

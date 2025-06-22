@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "0.25.2",
+  "version": "0.26.1",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
+    "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:errors": "eslint . --ext .ts,.tsx --quiet"
   },
@@ -17,11 +18,11 @@
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "*",
     "@plane/hooks": "*",
+    "@plane/propel": "*",
+    "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
-    "@plane/services": "*",
-    "@sentry/nextjs": "^8.54.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.17.0",
     "autoprefixer": "10.4.14",
@@ -30,7 +31,7 @@
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "next": "^14.2.20",
+    "next": "14.2.30",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
@@ -49,6 +50,6 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.4",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

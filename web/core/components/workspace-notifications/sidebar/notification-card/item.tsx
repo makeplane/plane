@@ -4,16 +4,13 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Avatar, Row } from "@plane/ui";
+import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
 // components
 import { NotificationOption } from "@/components/workspace-notifications";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { calculateTimeAgo, renderFormattedDate, renderFormattedTime } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { sanitizeCommentForNotification } from "@/helpers/notification.helper";
-import { replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@/helpers/string.helper";
 // hooks
-import { useIssueDetail, useNotification, useWorkspaceNotifications } from "@/hooks/store";
+import { useIssueDetail, useNotification, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { NotificationContent } from "./content";
 
 type TNotificationItem = {
   workspaceSlug: string;
@@ -26,6 +23,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
   const { asJson: notification, markNotificationAsRead } = useNotification(notificationId);
   const { getIsIssuePeeked, setPeekIssue } = useIssueDetail();
+  const { getWorkspaceBySlug } = useWorkspace();
   // states
   const [isSnoozeStateModalOpen, setIsSnoozeStateModalOpen] = useState(false);
   const [customSnoozeModal, setCustomSnoozeModal] = useState(false);
@@ -33,6 +31,7 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
   // derived values
   const projectId = notification?.project || undefined;
   const issueId = notification?.data?.issue?.id || undefined;
+  const workspace = getWorkspaceBySlug(workspaceSlug);
 
   const notificationField = notification?.data?.issue_activity.field || undefined;
   const notificationTriggeredBy = notification.triggered_by_details || undefined;
@@ -57,7 +56,8 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
     }
   };
 
-  if (!workspaceSlug || !notificationId || !notification?.id || !notificationField) return <></>;
+  if (!workspaceSlug || !notificationId || !notification?.id || !notificationField || !workspace?.id || !projectId)
+    return <></>;
 
   return (
     <Row
@@ -88,56 +88,12 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
             <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-custom-text-100">
-              {!notification.message ? (
-                <>
-                  <span className="font-semibold">
-                    {notificationTriggeredBy?.is_bot
-                      ? notificationTriggeredBy?.first_name
-                      : notificationTriggeredBy?.display_name}{" "}
-                  </span>
-                  {!["comment", "archived_at"].includes(notificationField) && notification?.data?.issue_activity.verb}{" "}
-                  {notificationField === "comment"
-                    ? "commented"
-                    : notificationField === "archived_at"
-                      ? notification?.data?.issue_activity.new_value === "restore"
-                        ? "restored the work item"
-                        : "archived the work item"
-                      : notificationField === "None"
-                        ? null
-                        : replaceUnderscoreIfSnakeCase(notificationField)}{" "}
-                  {notification?.data?.issue_activity.verb !== "deleted" && (
-                    <>
-                      {!["comment", "archived_at", "None"].includes(notificationField) ? "to" : ""}
-                      <span className="font-semibold">
-                        {" "}
-                        {notificationField !== "None" ? (
-                          notificationField !== "comment" ? (
-                            notificationField === "target_date" ? (
-                              renderFormattedDate(notification?.data?.issue_activity.new_value)
-                            ) : notificationField === "attachment" ? (
-                              "the work item"
-                            ) : notificationField === "description" ? (
-                              stripAndTruncateHTML(notification?.data?.issue_activity.new_value || "", 55)
-                            ) : notificationField === "archived_at" ? null : (
-                              notification?.data?.issue_activity.new_value
-                            )
-                          ) : (
-                            <span>
-                              {sanitizeCommentForNotification(
-                                notification?.data?.issue_activity.new_value ?? undefined
-                              )}
-                            </span>
-                          )
-                        ) : (
-                          "the work item and assigned it to you."
-                        )}
-                      </span>
-                    </>
-                  )}
-                </>
-              ) : (
-                <span className="semi-bold">{notification.message}</span>
-              )}
+              <NotificationContent
+                notification={notification}
+                workspaceId={workspace.id}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+              />
             </div>
             <NotificationOption
               workspaceSlug={workspaceSlug}

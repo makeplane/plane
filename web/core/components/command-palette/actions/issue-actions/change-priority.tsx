@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane constants
-import { ISSUE_PRIORITIES } from "@plane/constants";
+import { EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
 // plane types
 import { TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
@@ -22,7 +22,7 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   // router params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { updateIssue } = useIssueDetail();
+  const { updateIssue } = useIssueDetail(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   // derived values
   const projectId = issue?.project_id;
 

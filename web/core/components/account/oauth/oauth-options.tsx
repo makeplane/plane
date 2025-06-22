@@ -29,7 +29,7 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
             <GoogleOAuthButton text="Continue with Google" />
           </div>
         )}
-        {config?.is_github_enabled && <GithubOAuthButton text="Continue with Github" />}
+        {config?.is_github_enabled && <GithubOAuthButton text="Continue with GitHub" />}
         {config?.is_gitlab_enabled && <GitlabOAuthButton text="Continue with GitLab" />}
       </div>
     </>

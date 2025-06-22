@@ -4,17 +4,16 @@ import omit from "lodash/omit";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { TInboxIssue, TInboxIssueCurrentTab, EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters } from "@plane/constants";
 // types
-import { TInboxIssue, TInboxIssueCurrentTab } from "@plane/constants";
 import {
   TInboxIssueFilter,
   TInboxIssueSorting,
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
-  TInboxForm,
 } from "@plane/types";
+import { getCustomDates} from "@plane/utils";
 // helpers
-import { EInboxIssueCurrentTab, EInboxIssueStatus, EPastDurationFilters, getCustomDates } from "@/helpers/inbox.helper";
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
@@ -39,7 +38,6 @@ export interface IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
-  intakeForms: Record<string, TInboxForm>;
   // computed
   inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
   inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
@@ -69,9 +67,6 @@ export interface IProjectInboxStore {
   ) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;
-  fetchIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
-  toggleIntakeForms: (workspaceSlug: string, projectId: string, data: Partial<TInboxForm>) => Promise<void>;
-  regenerateIntakeForms: (workspaceSlug: string, projectId: string) => Promise<void>;
   createInboxIssue: (
     workspaceSlug: string,
     projectId: string,
@@ -93,7 +88,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxIssueIds: string[] = [];
-  intakeForms: Record<string, TInboxForm> = {};
   // services
   inboxIssueService;
 
@@ -108,7 +102,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
       inboxIssuePaginationInfo: observable,
       inboxIssues: observable,
       inboxIssueIds: observable,
-      intakeForms: observable,
       // computed
       inboxFilters: computed,
       inboxSorting: computed,
@@ -313,51 +306,6 @@ export class ProjectInboxStore implements IProjectInboxStore {
     }
     if (isEmpty(this.inboxSorting)) {
       set(this.sortingMap, [projectId], { order_by: "issue__created_at", sort_by: "desc" });
-    }
-  };
-
-  fetchIntakeForms = async (workspaceSlug: string, projectId: string) => {
-    try {
-      const intakeForms = await this.inboxIssueService.retrievePublishForm(workspaceSlug, projectId);
-      if (intakeForms)
-        runInAction(() => {
-          set(this.intakeForms, projectId, intakeForms);
-        });
-    } catch {
-      console.error("Error fetching the publish forms");
-    }
-  };
-
-  toggleIntakeForms = async (workspaceSlug: string, projectId: string, data: Partial<TInboxForm>) => {
-    const initialData = this.intakeForms[projectId];
-    try {
-      runInAction(() => {
-        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], ...data });
-      });
-      const result = await this.inboxIssueService.updatePublishForm(workspaceSlug, projectId, data);
-      runInAction(() => {
-        set(this.intakeForms, projectId, { ...this.intakeForms[projectId], anchor: result?.anchor });
-      });
-    } catch {
-      console.error("Error fetching the publish forms");
-      runInAction(() => {
-        set(this.intakeForms, projectId, initialData);
-      });
-    }
-  };
-  regenerateIntakeForms = async (workspaceSlug: string, projectId: string) => {
-    try {
-      const form = await this.inboxIssueService.regeneratePublishForm(workspaceSlug, projectId);
-      if (form) {
-        runInAction(() => {
-          set(this.intakeForms, projectId, {
-            ...this.intakeForms[projectId],
-            anchor: form?.anchor,
-          });
-        });
-      }
-    } catch {
-      console.error("Error fetching the publish forms");
     }
   };
 

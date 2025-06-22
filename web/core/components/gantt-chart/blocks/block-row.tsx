@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowRight } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -10,7 +11,6 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { BLOCK_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 import { ChartAddBlock } from "../helpers";
-import { IBlockUpdateData, IGanttBlock } from "../types";
 
 type Props = {
   blockId: string;

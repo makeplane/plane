@@ -149,10 +149,10 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                               }}
                             >
                               <ContrastIcon className="h-5 w-5" />
-                              <div className="flex w-full justify-between">
-                                <span>{cycleDetails?.name}</span>
+                              <div className="flex w-full justify-between truncate">
+                                <span className="truncate">{cycleDetails?.name}</span>
                                 {cycleDetails.status && (
-                                  <span className=" flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
+                                  <span className="flex-shrink-0 flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
                                     {cycleDetails.status.toLocaleLowerCase()}
                                   </span>
                                 )}

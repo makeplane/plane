@@ -1,63 +1,36 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
 import { DOMSerializer } from "@tiptap/pm/model";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect, useState } from "react";
+import { useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect, useState } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 import { migrateDocJSON } from "@/extensions/flat-list/core";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
 import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import type {
-  TDocumentEventsServer,
-  EditorRefApi,
-  TEditorCommands,
-  TFileHandler,
-  TExtensions,
-  TMentionHandler,
-} from "@/types";
+import type { TDocumentEventsServer, TEditorCommands, TEditorHookProps } from "@/types";
 
-export interface CustomEditorProps {
-  editable: boolean;
-  editorClassName: string;
-  editorProps?: EditorProps;
-  enableHistory: boolean;
-  disabledExtensions: TExtensions[];
-  extensions?: Extensions;
-  fileHandler: TFileHandler;
-  forwardedRef?: MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id?: string;
-  initialValue?: string;
-  mentionHandler: TMentionHandler;
-  onChange?: (json: object, html: string) => void;
-  onTransaction?: () => void;
-  autofocus?: boolean;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: HocuspocusProvider;
-  tabIndex?: number;
-  // undefined when prop is not passed, null if intentionally passed to stop
-  // swr syncing
-  value?: string | null | undefined;
-}
-
-export const useEditor = (props: CustomEditorProps) => {
+export const useEditor = (props: TEditorHookProps) => {
   const {
+    autofocus = false,
     disabledExtensions,
     editable = true,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
     enableHistory,
     extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id = "",
@@ -66,10 +39,9 @@ export const useEditor = (props: CustomEditorProps) => {
     onChange,
     onTransaction,
     placeholder,
+    provider,
     tabIndex,
     value,
-    provider,
-    autofocus = false,
   } = props;
 
   const editor = useTiptapEditor(
@@ -78,6 +50,7 @@ export const useEditor = (props: CustomEditorProps) => {
       immediatelyRender: false,
       shouldRerenderOnTransaction: false,
       autofocus,
+      parseOptions: { preserveWhitespace: true },
       editorProps: {
         ...CoreEditorProps({
           editorClassName,
@@ -90,6 +63,7 @@ export const useEditor = (props: CustomEditorProps) => {
           disabledExtensions,
           enableHistory,
           fileHandler,
+          flaggedExtensions,
           mentionHandler,
           placeholder,
           tabIndex,
@@ -110,7 +84,10 @@ export const useEditor = (props: CustomEditorProps) => {
   const [hasMigrated, setHasMigrated] = useState(false);
 
   useEffect(() => {
-    if (editor && (!hasMigrated || editor.isActive("listItem") || editor.isActive("taskItem"))) {
+    if (
+      editor &&
+      (!hasMigrated || editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || editor.isActive(CORE_EXTENSIONS.TASK_ITEM))
+    ) {
       const newJSON = migrateDocJSON(editor.getJSON() as any);
 
       if (newJSON) {
@@ -136,23 +113,32 @@ export const useEditor = (props: CustomEditorProps) => {
         }
       }
     }
-  }, [editor?.getJSON(), editor?.isActive("listItem"), editor?.isActive("taskItem"), hasMigrated]);
+  }, [
+    editor?.getJSON(),
+    editor?.isActive(CORE_EXTENSIONS.LIST_ITEM),
+    editor?.isActive(CORE_EXTENSIONS.TASK_ITEM),
+    hasMigrated,
+    editor,
+  ]);
 
   // Effect for syncing SWR data
   useEffect(() => {
     // value is null when intentionally passed where syncing is not yet
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
-    if (editor && !editor.isDestroyed && !editor.storage.imageComponent?.uploadInProgress) {
-      try {
-        editor.commands.setContent(value, false, { preserveWhitespace: "full" });
-        if (editor.state.selection) {
-          const docLength = editor.state.doc.content.size;
-          const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
-          editor.commands.setTextSelection(relativePosition);
+    if (editor) {
+      const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+      if (!editor.isDestroyed && !isUploadInProgress) {
+        try {
+          editor.commands.setContent(value, false, { preserveWhitespace: true });
+          if (editor.state.selection) {
+            const docLength = editor.state.doc.content.size;
+            const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
+            editor.commands.setTextSelection(relativePosition);
+          }
+        } catch (error) {
+          console.error("Error syncing editor content with external value:", error);
         }
-      } catch (error) {
-        console.error("Error syncing editor content with external value:", error);
       }
     }
   }, [editor, value, id]);
@@ -175,10 +161,10 @@ export const useEditor = (props: CustomEditorProps) => {
       },
       getCurrentCursorPosition: () => editor?.state.selection.from,
       clearEditor: (emitUpdate = false) => {
-        editor?.chain().setMeta("skipImageDeletion", true).clearContent(emitUpdate).run();
+        editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
       },
-      setEditorValue: (content: string) => {
-        editor?.commands.setContent(content, false, { preserveWhitespace: "full" });
+      setEditorValue: (content: string, emitUpdate = false) => {
+        editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
       },
       setEditorValueAtCursorPosition: (content: string) => {
         if (editor?.state.selection) {
@@ -211,7 +197,10 @@ export const useEditor = (props: CustomEditorProps) => {
       onHeadingChange: (callback: (headings: IMarking[]) => void) => {
         // Subscribe to update event emitted from headers extension
         editor?.on("update", () => {
-          callback(editor?.storage.headingList.headings);
+          const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
+          if (headings) {
+            callback(headings);
+          }
         });
         // Return a function to unsubscribe to the continuous transactions of
         // the editor on unmounting the component that has subscribed to this
@@ -220,7 +209,7 @@ export const useEditor = (props: CustomEditorProps) => {
           editor?.off("update");
         };
       },
-      getHeadings: () => editor?.storage.headingList.headings,
+      getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
       onStateChange: (callback: () => void) => {
         // Subscribe to editor state changes
         editor?.on("transaction", () => {
@@ -253,7 +242,8 @@ export const useEditor = (props: CustomEditorProps) => {
         if (!editor) return;
         scrollSummary(editor, marking);
       },
-      isEditorReadyToDiscard: () => editor?.storage.imageComponent?.uploadInProgress === false,
+      isEditorReadyToDiscard: () =>
+        !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
       setFocusAtPosition: (position: number) => {
         if (!editor || editor.isDestroyed) {
           console.error("Editor reference is not available or has been destroyed.");
@@ -264,7 +254,7 @@ export const useEditor = (props: CustomEditorProps) => {
           const safePosition = Math.max(0, Math.min(position, docSize));
           editor
             .chain()
-            .insertContentAt(safePosition, [{ type: "paragraph" }])
+            .insertContentAt(safePosition, [{ type: CORE_EXTENSIONS.PARAGRAPH }])
             .focus()
             .run();
         } catch (error) {

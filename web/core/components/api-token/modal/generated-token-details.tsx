@@ -5,9 +5,8 @@ import { useTranslation } from "@plane/i18n";
 import { IApiToken } from "@plane/types";
 // ui
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { copyTextToClipboard } from "@/helpers/string.helper";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // hooks
@@ -26,7 +25,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: `${t("success")}!`,
-        message: t("workspace_setting.token_copied"),
+        message: t("workspace_settings.token_copied"),
       })
     );
   };
@@ -49,7 +48,9 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       </button>
       <div className="mt-6 flex items-center justify-between">
         <p className="text-xs text-custom-text-400">
-          {tokenDetails.expired_at ? `Expires ${renderFormattedDate(tokenDetails.expired_at)}` : "Never expires"}
+          {tokenDetails.expired_at
+            ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
+            : "Never expires"}
         </p>
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {t("close")}

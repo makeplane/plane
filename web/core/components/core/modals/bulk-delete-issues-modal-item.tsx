@@ -34,7 +34,13 @@ export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props
             backgroundColor: color,
           }}
         />
-        <IssueIdentifier issueId={issue.id} projectId={issue.project_id} textContainerClassName="text-xs" />
+        <IssueIdentifier
+          projectId={issue.project_id}
+          issueTypeId={issue.type_id}
+          projectIdentifier={issue.project__identifier}
+          issueSequenceId={issue.sequence_id}
+          textContainerClassName="text-xs"
+        />
         <span>{issue.name}</span>
       </div>
     </Combobox.Option>

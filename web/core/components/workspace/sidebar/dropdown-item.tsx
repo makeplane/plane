@@ -8,9 +8,8 @@ import { Menu } from "@headlessui/react";
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, getUserRole } from "@plane/utils";
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription";
 
@@ -86,8 +85,8 @@ const SidebarDropdownItem = observer((props: TProps) => {
         </div>
         {workspace.id === activeWorkspace?.id && (
           <>
-            {workspace?.role === EUserPermissions.ADMIN && (
-              <div className="mt-2 mb-1 flex gap-2">
+            <div className="mt-2 mb-1 flex gap-2">
+              {[EUserPermissions.ADMIN, EUserPermissions.MEMBER].includes(workspace?.role) && (
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
@@ -96,6 +95,8 @@ const SidebarDropdownItem = observer((props: TProps) => {
                   <Settings className="h-4 w-4 my-auto" />
                   <span className="text-sm font-medium my-auto">{t("settings")}</span>
                 </Link>
+              )}
+              {[EUserPermissions.ADMIN].includes(workspace?.role) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}
@@ -106,8 +107,8 @@ const SidebarDropdownItem = observer((props: TProps) => {
                     {t("project_settings.members.invite_members.title")}
                   </span>
                 </Link>
-              </div>
-            )}
+              )}
+            </div>
           </>
         )}
       </Menu.Item>

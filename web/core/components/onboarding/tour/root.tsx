@@ -26,7 +26,7 @@ type Props = {
   onComplete: () => void;
 };
 
-export type TTourSteps = "welcome" | "issues" | "cycles" | "modules" | "views" | "pages";
+export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
 
 const TOUR_STEPS: {
   key: TTourSteps;
@@ -37,10 +37,10 @@ const TOUR_STEPS: {
   nextStep?: TTourSteps;
 }[] = [
   {
-    key: "issues",
+    key: "work-items",
     title: "Plan with work items",
     description:
-      "The work item is the building block of the Plane. Most concepts in Plane are either associated with issues and their properties.",
+      "The work item is the building block of the Plane. Most concepts in Plane are either associated with work items and their properties.",
     image: IssuesTour,
     nextStep: "cycles",
   },
@@ -50,7 +50,7 @@ const TOUR_STEPS: {
     description:
       "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
     image: CyclesTour,
-    prevStep: "issues",
+    prevStep: "work-items",
     nextStep: "modules",
   },
   {
@@ -113,7 +113,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     variant="primary"
                     onClick={() => {
                       captureEvent(PRODUCT_TOUR_STARTED);
-                      setStep("issues");
+                      setStep("work-items");
                     }}
                   >
                     Take a Product Tour
@@ -162,7 +162,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     </Button>
                   )}
                   {currentStep?.nextStep && (
-                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "issues")}>
+                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "work-items")}>
                       Next
                     </Button>
                   )}

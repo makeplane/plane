@@ -2,7 +2,7 @@ import * as Comlink from "comlink";
 import set from "lodash/set";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { TIssue, TIssueParams } from "@plane/types";
 // lib
 import { rootStore } from "@/lib/store-context";
 // services
@@ -15,10 +15,11 @@ import { addIssuesBulk, syncDeletesToLocal } from "./utils/load-issues";
 import { loadWorkSpaceData } from "./utils/load-workspace";
 import { issueFilterCountQueryConstructor, issueFilterQueryConstructor } from "./utils/query-constructor";
 import { runQuery } from "./utils/query-executor";
+import { sanitizeWorkItemQueries } from "./utils/query-sanitizer.ts";
 import { createTables } from "./utils/tables";
 import { clearOPFS, getGroupedIssueResults, getSubGroupedIssueResults, log, logError } from "./utils/utils";
 
-const DB_VERSION = 1;
+const DB_VERSION = 1.3;
 const PAGE_SIZE = 500;
 const BATCH_SIZE = 50;
 
@@ -68,6 +69,25 @@ export class Storage {
     }
   };
 
+  private initializeWorker = async (workspaceSlug: string) => {
+    const { DBClass } = await import("./worker/db");
+    const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
+    const MyWorker = Comlink.wrap<typeof DBClass>(worker);
+
+    // Add cleanup on window unload
+    window.addEventListener("unload", () => worker.terminate());
+
+    this.workspaceSlug = workspaceSlug;
+    this.dbName = workspaceSlug;
+    const instance = await new MyWorker();
+    await instance.init(workspaceSlug);
+
+    this.db = {
+      exec: instance.exec,
+      close: instance.close,
+    };
+  };
+
   initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (!rootStore.user.localDBEnabled) return false; // return if the window gets hidden
 
@@ -100,22 +120,27 @@ export class Storage {
     }
 
     try {
-      const { DBClass } = await import("./worker/db");
-      const worker = new Worker(new URL("./worker/db.ts", import.meta.url));
-      const MyWorker = Comlink.wrap<typeof DBClass>(worker);
-
-      // Add cleanup on window unload
-      window.addEventListener("unload", () => worker.terminate());
-
       this.workspaceSlug = workspaceSlug;
       this.dbName = workspaceSlug;
-      const instance = await new MyWorker();
-      await instance.init(workspaceSlug);
+      await this.initializeWorker(workspaceSlug);
 
-      this.db = {
-        exec: instance.exec,
-        close: instance.close,
-      };
+      const dbVersion = await this.getOption("DB_VERSION");
+      log("Stored db version", dbVersion);
+      log("Current db version", DB_VERSION);
+      // Check if the database version matches the current version
+      // If there's a mismatch, clear storage to avoid compatibility issues
+      if (
+        dbVersion !== undefined &&
+        dbVersion !== "" &&
+        !isNaN(Number(dbVersion)) &&
+        Number(dbVersion) !== DB_VERSION
+      ) {
+        log("Database version mismatch detected - clearing storage to ensure compatibility");
+        await this.clearStorage();
+        await this.initializeWorker(workspaceSlug);
+      } else {
+        log("Database version matches current version - proceeding with data load");
+      }
 
       this.status = "ready";
       // Your SQLite code here.
@@ -269,7 +294,12 @@ export class Storage {
     return issue.updated_at;
   };
 
-  getIssues = async (workspaceSlug: string, projectId: string, queries: any, config: any) => {
+  getIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    queries: Partial<Record<TIssueParams, string | boolean>> | undefined,
+    config: any
+  ) => {
     log("#### Queries", queries);
 
     const currentProjectStatus = this.getStatus(projectId);
@@ -294,17 +324,19 @@ export class Storage {
       }
     }
 
-    const { cursor, group_by, sub_group_by } = queries;
+    const sanitizedQueries = sanitizeWorkItemQueries(workspaceSlug, projectId, queries);
+    const { cursor, group_by, sub_group_by } = sanitizedQueries || {};
 
-    const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, queries);
+    const query = issueFilterQueryConstructor(this.workspaceSlug, projectId, sanitizedQueries);
     log("#### Query", query);
-    const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, queries);
+    const countQuery = issueFilterCountQueryConstructor(this.workspaceSlug, projectId, sanitizedQueries);
     const start = performance.now();
     let issuesRaw: any[] = [];
     let count: any[];
     try {
       [issuesRaw, count] = await Promise.all([runQuery(query), runQuery(countQuery)]);
     } catch (e) {
+      log("Unable to get work items from local db, falling back to server");
       logError(e);
       const issueService = new IssueService();
       return await issueService.getIssuesFromServer(workspaceSlug, projectId, queries, config);
@@ -313,7 +345,7 @@ export class Storage {
 
     const { total_count } = count[0];
 
-    const [pageSize, page, offset] = cursor.split(":");
+    const [pageSize, page, offset] = cursor && typeof cursor === "string" ? cursor.split(":") : [];
 
     const groupByProperty: string =
       EIssueGroupBYServerToProperty[group_by as keyof typeof EIssueGroupBYServerToProperty];

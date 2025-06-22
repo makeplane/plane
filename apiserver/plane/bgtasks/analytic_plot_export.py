@@ -459,8 +459,37 @@ def analytic_export_task(email, data, slug):
 
         csv_buffer = generate_csv_from_rows(rows)
         send_export_email(email, slug, csv_buffer, rows)
-        logging.getLogger("plane").info("Email sent succesfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
+    except Exception as e:
+        log_exception(e)
+        return
+
+
+@shared_task
+def export_analytics_to_csv_email(data, headers, keys, email, slug):
+    try:
+        """
+        Prepares a CSV from data and sends it as an email attachment.
+
+        Parameters:
+        - data: List of dictionaries (e.g. from .values())
+        - headers: List of CSV column headers
+        - keys: Keys to extract from each data item (dict)
+        - email: Email address to send to
+        - slug: Used for the filename
+        """
+        # Prepare rows: header + data rows
+        rows = [headers]
+        for item in data:
+            row = [item.get(key, "") for key in keys]
+            rows.append(row)
+
+        # Generate CSV buffer
+        csv_buffer = generate_csv_from_rows(rows)
+
+        # Send email with CSV attachment
+        send_export_email(email=email, slug=slug, csv_buffer=csv_buffer, rows=rows)
     except Exception as e:
         log_exception(e)
         return

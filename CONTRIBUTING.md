@@ -15,14 +15,33 @@ Without said minimal reproduction, we won't be able to investigate all [issues](
 
 You can open a new issue with this [issue form](https://github.com/makeplane/plane/issues/new).
 
+### Naming conventions for issues
+
+When opening a new issue, please use a clear and concise title that follows this format:
+
+- For bugs: `🐛 Bug: [short description]`
+- For features: `🚀 Feature: [short description]`
+- For improvements: `🛠️ Improvement: [short description]`
+- For documentation: `📘 Docs: [short description]`
+
+**Examples:**
+- `🐛 Bug: API token expiry time not saving correctly`
+- `📘 Docs: Clarify RAM requirement for local setup`
+- `🚀 Feature: Allow custom time selection for token expiration`
+
+This helps us triage and manage issues more efficiently.
+
 ## Projects setup and Architecture
 
 ### Requirements
 
-- Node.js version v16.18.0
+- Docker Engine installed and running
+- Node.js version 20+ [LTS version](https://nodejs.org/en/about/previous-releases)
 - Python version 3.8+
 - Postgres version v14
 - Redis version v6.2.7
+- **Memory**: Minimum **12 GB RAM** recommended
+  > ⚠️ Running the project on a system with only 8 GB RAM may lead to setup failures or memory crashes (especially during Docker container build/start or dependency install). Use cloud environments like GitHub Codespaces or upgrade local RAM if possible.
 
 ### Setup the project
 
@@ -50,6 +69,17 @@ chmod +x setup.sh
 docker compose -f docker-compose-local.yml up
 ```
 
+4. Start web apps:
+
+```bash
+yarn dev
+```
+
+5. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
+6. Open up your browser to http://localhost:3000 then log in using the same credentials from the previous step
+
+That’s it! You’re all set to begin coding. Remember to refresh your browser if changes don’t auto-reload. Happy contributing! 🎉
+
 ## Missing a Feature?
 
 If a feature is missing, you can directly _request_ a new one [here](https://github.com/makeplane/plane/issues/new?assignees=&labels=feature&template=feature_request.yml&title=%F0%9F%9A%80+Feature%3A+). You also can do the same by choosing "🚀 Feature" when raising a [New Issue](https://github.com/makeplane/plane/issues/new/choose) on our GitHub Repository.
@@ -75,7 +105,7 @@ To ensure consistency throughout the source code, please keep these rules in min
 - **Improve documentation** - fix incomplete or missing [docs](https://docs.plane.so/), bad wording, examples or explanations.
 
 ## Contributing to language support
-This guide is designed to help contributors understand how to add or update translations in the application. 
+This guide is designed to help contributors understand how to add or update translations in the application.
 
 ### Understanding translation structure
 
@@ -90,7 +120,7 @@ packages/i18n/src/locales/
     ├── fr/
     │   └── translations.json
     └── [language]/
-        └── translations.json   
+        └── translations.json
 ```
 #### Nested structure
 To keep translations organized, we use a nested structure for keys. This makes it easier to manage and locate specific translations. For example:
@@ -110,14 +140,14 @@ To keep translations organized, we use a nested structure for keys. This makes i
 We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) to handle dynamic content, such as variables and pluralization. Here's how to format your translations:
 
 #### Examples
-- **Simple variables** 
+- **Simple variables**
     ```json
     {
     "greeting": "Hello, {name}!"
     }
     ```
 
-- **Pluralization** 
+- **Pluralization**
     ```json
     {
     "items": "{count, plural, one {Work item} other {Work items}}"
@@ -142,15 +172,15 @@ We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) 
 ### Adding new languages
 Adding a new language involves several steps to ensure it integrates seamlessly with the project. Follow these instructions carefully:
 
-1. **Update type definitions**  
+1. **Update type definitions**
 Add the new language to the TLanguage type in the language definitions file:
 
     ```typescript
     // types/language.ts
     export type TLanguage = "en" | "fr" | "your-lang";
-    ``` 
+    ```
 
-2. **Add language configuration**  
+2. **Add language configuration**
 Include the new language in the list of supported languages:
 
     ```typescript
@@ -161,14 +191,14 @@ Include the new language in the list of supported languages:
     ];
     ```
 
-3. **Create translation files**  
+3. **Create translation files**
     1.  Create a new folder for your language under locales (e.g., `locales/your-lang/`).
 
     2. Add a `translations.json` file inside the folder.
 
     3. Copy the structure from an existing translation file and translate all keys.
 
-4. **Update import logic**  
+4. **Update import logic**
 Modify the language import logic to include your new language:
 
     ```typescript

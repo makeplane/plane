@@ -10,11 +10,7 @@ from plane.app.serializers import (
     ProjectMemberRoleSerializer,
 )
 
-from plane.app.permissions import (
-    ProjectMemberPermission,
-    ProjectLitePermission,
-    WorkspaceUserPermission,
-)
+from plane.app.permissions import WorkspaceUserPermission
 
 from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
@@ -25,14 +21,6 @@ from plane.app.permissions.base import allow_permission, ROLE
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
-
-    def get_permissions(self):
-        if self.action == "leave":
-            self.permission_classes = [ProjectLitePermission]
-        else:
-            self.permission_classes = [ProjectMemberPermission]
-
-        return super(ProjectMemberViewSet, self).get_permissions()
 
     search_fields = ["member__display_name", "member__first_name"]
 
@@ -180,6 +168,8 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             member__is_bot=False,
             is_active=True,
+            member__member_workspace__workspace__slug=slug,
+            member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
         serializer = ProjectMemberRoleSerializer(
@@ -187,12 +177,20 @@ class ProjectMemberViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN])
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id, is_active=True
         )
-        if request.user.id == project_member.member_id:
+
+        # Fetch the workspace role of the project member
+        workspace_role = WorkspaceMember.objects.get(
+            workspace__slug=slug, member=project_member.member, is_active=True
+        ).role
+        is_workspace_admin = workspace_role == ROLE.ADMIN.value
+
+        # Check if the user is not editing their own role if they are not an admin
+        if request.user.id == project_member.member_id and not is_workspace_admin:
             return Response(
                 {"error": "You cannot update your own role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -205,9 +203,6 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         )
 
-        workspace_role = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=project_member.member, is_active=True
-        ).role
         if workspace_role in [5] and int(
             request.data.get("role", project_member.role)
         ) in [15, 20]:
@@ -222,6 +217,7 @@ class ProjectMemberViewSet(BaseViewSet):
             "role" in request.data
             and int(request.data.get("role", project_member.role))
             > requested_project_member.role
+            and not is_workspace_admin
         ):
             return Response(
                 {"error": "You cannot update a role that is higher than your own role"},
@@ -319,7 +315,11 @@ class UserProjectRolesEndpoint(BaseAPIView):
 
     def get(self, request, slug):
         project_members = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=request.user.id, is_active=True
+            workspace__slug=slug,
+            member_id=request.user.id,
+            is_active=True,
+            member__member_workspace__workspace__slug=slug,
+            member__member_workspace__is_active=True,
         ).values("project_id", "role")
 
         project_members = {

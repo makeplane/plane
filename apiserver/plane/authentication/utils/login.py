@@ -3,7 +3,8 @@ from django.contrib.auth import login
 from django.conf import settings
 
 # Module imports
-from plane.authentication.utils.host import base_host
+from plane.utils.host import base_host
+from plane.utils.ip_address import get_client_ip
 
 
 def user_login(request, user, is_app=False, is_admin=False, is_space=False):
@@ -15,7 +16,7 @@ def user_login(request, user, is_app=False, is_admin=False, is_space=False):
 
     device_info = {
         "user_agent": request.META.get("HTTP_USER_AGENT", ""),
-        "ip_address": request.META.get("REMOTE_ADDR", ""),
+        "ip_address": get_client_ip(request=request),
         "domain": base_host(
             request=request, is_app=is_app, is_admin=is_admin, is_space=is_space
         ),

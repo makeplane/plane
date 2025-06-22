@@ -3,18 +3,18 @@
 # Python imports
 import os
 from urllib.parse import urlparse
-
+from urllib.parse import urljoin
 
 # Third party imports
 import dj_database_url
-import sentry_sdk
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
 from corsheaders.defaults import default_headers
+
+
+# Module imports
+from plane.utils.url import is_valid_url
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Allowed Hosts
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -62,7 +62,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
+    "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
 # Rest Framework settings
@@ -267,25 +268,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_description_version_sync",
 )
 
-# Sentry Settings
-# Enable Sentry Settings
-if bool(os.environ.get("SENTRY_DSN", False)) and os.environ.get(
-    "SENTRY_DSN"
-).startswith("https://"):
-    sentry_sdk.init(
-        dsn=os.environ.get("SENTRY_DSN", ""),
-        integrations=[
-            DjangoIntegration(),
-            RedisIntegration(),
-            CeleryIntegration(monitor_beat_tasks=True),
-        ],
-        traces_sample_rate=1,
-        send_default_pii=True,
-        environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
-        profiles_sample_rate=float(os.environ.get("SENTRY_PROFILE_SAMPLE_RATE", 0)),
-    )
-
-
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Unsplash Access key
@@ -332,12 +314,36 @@ CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
-# Base URLs
-ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
-SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL")
-LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+######  Base URLs ######
 
+# Admin Base URL
+ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+if ADMIN_BASE_URL and not is_valid_url(ADMIN_BASE_URL):
+    ADMIN_BASE_URL = None
+ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", "/god-mode/")
+
+# Space Base URL
+SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
+if SPACE_BASE_URL and not is_valid_url(SPACE_BASE_URL):
+    SPACE_BASE_URL = None
+SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", "/spaces/")
+
+# App Base URL
+APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
+if APP_BASE_URL and not is_valid_url(APP_BASE_URL):
+    APP_BASE_URL = None
+APP_BASE_PATH = os.environ.get("APP_BASE_PATH", "/")
+
+# Live Base URL
+LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
+if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
+    LIVE_BASE_URL = None
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
+
+LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
+
+# WEB URL
+WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
@@ -394,9 +400,21 @@ ATTACHMENT_MIME_TYPES = [
     "video/x-ms-wmv",
     # Archives
     "application/zip",
+    "application/x-rar",
     "application/x-rar-compressed",
     "application/x-tar",
     "application/gzip",
+    "application/x-zip",
+    "application/x-zip-compressed",
+    "application/x-7z-compressed",
+    "application/x-compressed",
+    "application/x-compressed-tar",
+    "application/x-compressed-tar-gz",
+    "application/x-compressed-tar-bz2",
+    "application/x-compressed-tar-zip",
+    "application/x-compressed-tar-7z",
+    "application/x-compressed-tar-rar",
+    "application/x-compressed-tar-zip",
     # 3D Models
     "model/gltf-binary",
     "model/gltf+json",
@@ -413,4 +431,11 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    # SQL
+    "application/x-sql",
+    # Gzip
+    "application/x-gzip",
 ]
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")

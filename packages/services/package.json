@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "0.25.2",
+  "version": "0.26.1",
   "license": "AGPL-3.0",
   "private": true,
   "main": "./src/index.ts",

@@ -1,7 +1,7 @@
 "use client";
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
@@ -14,11 +14,12 @@ type Props = {
   isOpen: boolean;
   issueId: string;
   disabled: boolean;
-  issueServiceType?: TIssueServiceType;
+  issueServiceType: TIssueServiceType;
 };
 
 export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { isOpen, issueId, disabled, issueServiceType } = props;
+  // translation
   const { t } = useTranslation();
   // store hooks
   const {

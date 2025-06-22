@@ -83,14 +83,14 @@ export const WORKSPACE_SETTINGS = {
     key: "general",
     i18n_label: "workspace_settings.settings.general.title",
     href: `/settings`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/`,
   },
   members: {
     key: "members",
     i18n_label: "workspace_settings.settings.members.title",
     href: `/settings/members`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/members/`,
   },
   "billing-and-plans": {
@@ -114,14 +114,11 @@ export const WORKSPACE_SETTINGS = {
     access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/webhooks/`,
   },
-  "api-tokens": {
-    key: "api-tokens",
-    i18n_label: "workspace_settings.settings.api_tokens.title",
-    href: `/settings/api-tokens`,
-    access: [EUserWorkspaceRoles.ADMIN],
-    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/api-tokens/`,
-  },
 };
+
+export const WORKSPACE_SETTINGS_ACCESS = Object.fromEntries(
+  Object.entries(WORKSPACE_SETTINGS).map(([_, { href, access }]) => [href, access])
+);
 
 export const WORKSPACE_SETTINGS_LINKS: {
   key: string;
@@ -135,7 +132,6 @@ export const WORKSPACE_SETTINGS_LINKS: {
   WORKSPACE_SETTINGS["billing-and-plans"],
   WORKSPACE_SETTINGS["export"],
   WORKSPACE_SETTINGS["webhooks"],
-  WORKSPACE_SETTINGS["api-tokens"],
 ];
 
 export const ROLE = {
@@ -325,6 +321,7 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarN
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
+export const IS_FAVORITE_MENU_OPEN = "is_favorite_menu_open";
 export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
   results: {
     workspace: [],

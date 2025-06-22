@@ -8,6 +8,7 @@ export type TWorkItemTemplateSelect = {
   placeholder?: string;
   renderChevron?: boolean;
   dropDownContainerClassName?: string;
+  handleModalClose: () => void;
   handleFormChange?: () => void;
 };
 

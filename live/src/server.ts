@@ -1,11 +1,8 @@
-import * as Sentry from "@sentry/node";
 import compression from "compression";
 import cors from "cors";
 import expressWs from "express-ws";
 import express from "express";
 import helmet from "helmet";
-// config
-import "@/core/config/sentry-config.js";
 // hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
@@ -15,7 +12,7 @@ import { errorHandler } from "@/core/helpers/error-handler.js";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common.js";
 
-const app = express();
+const app: any = express();
 expressWs(app);
 
 app.set("port", process.env.PORT || 3000);
@@ -91,8 +88,6 @@ app.use(process.env.LIVE_BASE_PATH || "/live", router);
 app.use((_req, res) => {
   res.status(404).send("Not Found");
 });
-
-Sentry.setupExpressErrorHandler(app);
 
 app.use(errorHandler);
 

@@ -121,17 +121,28 @@ export class IssueLinkStore implements IIssueLinkStore {
     linkId: string,
     data: Partial<TIssueLink>
   ) => {
-    runInAction(() => {
-      Object.keys(data).forEach((key) => {
-        set(this.linkMap, [linkId, key], data[key as keyof TIssueLink]);
+    const initialData = { ...this.linkMap[linkId] };
+    try {
+      runInAction(() => {
+        Object.keys(data).forEach((key) => {
+          set(this.linkMap, [linkId, key], data[key as keyof TIssueLink]);
+        });
       });
-    });
 
-    const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
+      const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
 
-    // fetching activity
-    this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-    return response;
+      // fetching activity
+      this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
+      return response;
+    } catch (error) {
+      console.error("error", error);
+      runInAction(() => {
+        Object.keys(initialData).forEach((key) => {
+          set(this.linkMap, [linkId, key], initialData[key as keyof TIssueLink]);
+        });
+      });
+      throw error;
+    }
   };
 
   removeLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => {

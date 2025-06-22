@@ -16,13 +16,7 @@ export const InvitationForm = observer((props: TInvitationFormProps) => {
   const { title, description, children, actions, onSubmit, className } = props;
 
   return (
-    <form
-      onSubmit={onSubmit}
-      onKeyDown={(e) => {
-        if (e.code === "Enter") e.preventDefault();
-      }}
-      className={className}
-    >
+    <form onSubmit={onSubmit} className={className}>
       <div className="space-y-4">
         <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
           {title}

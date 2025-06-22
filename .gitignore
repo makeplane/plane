@@ -1,5 +1,6 @@
 node_modules
 .next
+.yarn
 
 ### NextJS ###
 # Dependencies
@@ -52,6 +53,8 @@ mediafiles
 .env
 .DS_Store
 logs/
+htmlcov/
+.coverage
 
 node_modules/
 assets/dist/
@@ -78,13 +81,17 @@ pnpm-workspace.yaml
 .npmrc
 .secrets
 tmp/
+
 ## packages
 dist
 .temp/
 deploy/selfhost/plane-app/
+
 ## Storybook
 *storybook.log
 output.css
 
-dev-server
 dev-editor
+# Redis
+*.rdb
+*.rdb.gz

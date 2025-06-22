@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 // plane editor
 import { EditorRefApi, IMarking } from "@plane/editor";
 // components
@@ -7,10 +7,11 @@ import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-com
 type Props = {
   editorRef: EditorRefApi | null;
   setSidePeekVisible?: (sidePeekState: boolean) => void;
+  showOutline?: boolean;
 };
 
 export const PageContentBrowser: React.FC<Props> = (props) => {
-  const { editorRef, setSidePeekVisible } = props;
+  const { editorRef, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
 
@@ -23,10 +24,13 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     };
   }, [editorRef]);
 
-  const handleOnClick = (marking: IMarking) => {
-    editorRef?.scrollSummary(marking);
-    if (setSidePeekVisible) setSidePeekVisible(false);
-  };
+  const handleOnClick = useCallback(
+    (marking: IMarking) => {
+      editorRef?.scrollSummary(marking);
+      setSidePeekVisible?.(false);
+    },
+    [editorRef, setSidePeekVisible]
+  );
 
   const HeadingComponent: {
     [key: number]: React.FC<{ marking: IMarking; onClick: () => void }>;
@@ -37,24 +41,28 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      <div className="h-full flex flex-col items-start gap-y-2 overflow-y-auto mt-2">
-        {headings && headings.length !== 0 ? (
-          headings.map((marking) => {
-            const Component = HeadingComponent[marking.level];
-            if (!Component) return null;
-            return (
-              <Component
-                key={`${marking.level}-${marking.sequence}`}
-                marking={marking}
-                onClick={() => handleOnClick(marking)}
-              />
-            );
-          })
-        ) : (
-          <p className="mt-3 text-xs text-custom-text-400">Headings will be displayed here for navigation</p>
-        )}
-      </div>
+    <div className="h-full flex flex-col items-start gap-y-2 overflow-y-auto mt-2">
+      {headings.map((marking) => {
+        const Component = HeadingComponent[marking.level];
+        if (!Component) return null;
+        if (showOutline === true)
+          return (
+            <div
+              key={`${marking.level}-${marking.sequence}`}
+              className="h-0.5 bg-custom-border-400 self-end rounded-sm"
+              style={{
+                width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
+              }}
+            />
+          );
+        return (
+          <Component
+            key={`${marking.level}-${marking.sequence}`}
+            marking={marking}
+            onClick={() => handleOnClick(marking)}
+          />
+        );
+      })}
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import { Editor, Range } from "@tiptap/core";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import { InsertImageComponentProps } from "@/extensions";
 // extensions
@@ -7,44 +9,14 @@ import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-
 import { findTableAncestor } from "@/helpers/common";
 
 export const setText = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("paragraph").run();
-  else editor.chain().focus().setNode("paragraph").run();
+  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.PARAGRAPH).run();
+  else editor.chain().focus().setNode(CORE_EXTENSIONS.PARAGRAPH).run();
 };
 
-export const toggleHeadingOne = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
+export const toggleHeading = (editor: Editor, level: 1 | 2 | 3 | 4 | 5 | 6, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level }).run();
   // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 1 }).run();
-};
-
-export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 2 }).run();
-};
-
-export const toggleHeadingThree = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 3 }).run();
-};
-
-export const toggleHeadingFour = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 4 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 4 }).run();
-};
-
-export const toggleHeadingFive = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 5 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 5 }).run();
-};
-
-export const toggleHeadingSix = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 6 }).run();
-  // @ts-expect-error tiptap types are incorrect
-  else editor.chain().focus().toggleHeading({ level: 6 }).run();
+  else editor.chain().focus().toggleHeading({ level }).run();
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
@@ -105,7 +77,7 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
 export const toggleCodeBlock = (editor: Editor, range?: Range) => {
   try {
     // if it's a code block, replace it with the code with paragraphs
-    if (editor.isActive("codeBlock")) {
+    if (editor.isActive(CORE_EXTENSIONS.CODE_BLOCK)) {
       replaceCodeWithText(editor);
       return;
     }
@@ -114,12 +86,12 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
     const text = editor.state.doc.textBetween(from, to, "\n");
     const isMultiline = text.includes("\n");
 
-    // if the selection is not a range i.e. empty, then simply convert it into a code block
+    // if the selection is not a range i.e. empty, then simply convert it into a codeBlock
     if (editor.state.selection.empty) {
       editor.chain().focus().toggleCodeBlock().run();
     } else if (isMultiline) {
       // if the selection is multiline, then also replace the text content with
-      // a code block
+      // a codeBlock
       editor.chain().focus().deleteRange({ from, to }).insertContentAt(from, `\`\`\`\n${text}\n\`\`\``).run();
     } else {
       // if the selection is single line, then simply convert it into inline
@@ -132,18 +104,18 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-  else editor.chain().focus().toggleOrderedList().run();
+  // if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+  // else editor.chain().focus().toggleOrderedList().run();
 };
 
 export const toggleBulletList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
-  else editor.chain().focus().toggleBulletList().run();
+  // if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
+  // else editor.chain().focus().toggleBulletList().run();
 };
 
 export const toggleTaskList = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
-  else editor.chain().focus().toggleTaskList().run();
+  // if (range) editor.chain().focus().deleteRange(range).toggleTaskList().run();
+  // else editor.chain().focus().toggleTaskList().run();
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
@@ -237,6 +209,7 @@ export const insertHorizontalRule = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setHorizontalRule().run();
   else editor.chain().focus().setHorizontalRule().run();
 };
+
 export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();

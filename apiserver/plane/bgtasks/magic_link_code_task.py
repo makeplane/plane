@@ -16,7 +16,7 @@ from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def magic_link(email, key, token, current_site):
+def magic_link(email, key, token):
     try:
         (
             EMAIL_HOST,
@@ -53,7 +53,7 @@ def magic_link(email, key, token, current_site):
         )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
-        logging.getLogger("plane").info("Email sent successfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
     except Exception as e:
         log_exception(e)

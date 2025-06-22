@@ -4,7 +4,7 @@ export interface IDropdown {
   // root props
   onOpen?: () => void;
   onClose?: () => void;
-  containerClassName?: (isOpen: boolean) => string;
+  containerClassName?: string | ((isOpen: boolean) => string);
   tabIndex?: number;
   placement?: Placement;
   disabled?: boolean;
@@ -27,7 +27,15 @@ export interface IDropdown {
   queryArray?: string[];
   sortByKey?: string;
   firstItem?: (optionValue: string) => boolean;
-  renderItem?: ({ value, selected }: { value: string; selected: boolean }) => React.ReactNode;
+  renderItem?: ({
+    value,
+    selected,
+    disabled,
+  }: {
+    value: string;
+    selected: boolean;
+    disabled?: boolean;
+  }) => React.ReactNode;
   loader?: React.ReactNode;
   disableSorting?: boolean;
 }
@@ -35,7 +43,8 @@ export interface IDropdown {
 export interface TDropdownOption {
   data: any;
   value: string;
-  className?: ({ active, selected }: { active: boolean; selected: boolean }) => string;
+  className?: ({ active, selected }: { active: boolean; selected?: boolean }) => string;
+  disabled?: boolean;
 }
 
 export interface IMultiSelectDropdown extends IDropdown {
@@ -82,7 +91,9 @@ export interface IDropdownOptions {
   handleClose?: () => void;
 
   keyExtractor: (option: TDropdownOption) => string;
-  renderItem: (({ value, selected }: { value: string; selected: boolean }) => React.ReactNode) | undefined;
+  renderItem:
+    | (({ value, selected, disabled }: { value: string; selected: boolean; disabled?: boolean }) => React.ReactNode)
+    | undefined;
   options: TDropdownOption[] | undefined;
   loader?: React.ReactNode;
   isMobile?: boolean;

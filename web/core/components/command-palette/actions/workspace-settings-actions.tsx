@@ -40,7 +40,7 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
       {WORKSPACE_SETTINGS_LINKS.map(
         (setting) =>
           allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) &&
-          shouldRenderSettingLink(setting.key) && (
+          shouldRenderSettingLink(workspaceSlug.toString(), setting.key) && (
             <Command.Item
               key={setting.key}
               onSelect={() => redirect(`/${workspaceSlug}${setting.href}`)}

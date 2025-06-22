@@ -43,7 +43,8 @@
   "your_account": "Your account",
   "security": "Security",
   "activity": "Activity",
-  "appearance": "Appearance",
+  "preferences": "Preferences",
+  "language_and_time": "Language & Time",
   "notifications": "Notifications",
   "workspaces": "Workspaces",
   "create_workspace": "Create workspace",
@@ -56,6 +57,10 @@
   "something_went_wrong_please_try_again": "Something went wrong. Please try again.",
   "load_more": "Load more",
   "select_or_customize_your_interface_color_scheme": "Select or customize your interface color scheme.",
+  "timezone_setting": "Current timezone setting.",
+  "language_setting": "Choose the language used in the user interface.",
+  "settings_moved_to_preferences": "Timezone & Language settings have been moved to preferences.",
+  "go_to_preferences": "Go to preferences",
   "theme": "Theme",
   "system_preference": "System preference",
   "light": "Light",
@@ -148,6 +153,8 @@
   "failed_to_remove_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "project_created_successfully": "Project created successfully",
   "project_created_successfully_description": "Project created successfully. You can now start adding work items to it.",
+  "project_name_already_taken": "The project name is already taken.",
+  "project_identifier_already_taken": "The project identifier is already taken.",
   "project_cover_image_alt": "Project cover image",
   "name_is_required": "Name is required",
   "title_should_be_less_than_255_characters": "Title should be less than 255 characters",
@@ -180,7 +187,7 @@
   "couldnt_remove_the_project_from_favorites": "Couldn't remove the project from favorites. Please try again.",
   "add_to_favorites": "Add to favorites",
   "remove_from_favorites": "Remove from favorites",
-  "publish_settings": "Publish settings",
+  "publish_project": "Publish project",
   "publish": "Publish",
   "copy_link": "Copy link",
   "leave_project": "Leave project",
@@ -197,12 +204,12 @@
   "work_management": "Work management",
   "projects_and_issues": "Projects and work items",
   "projects_and_issues_description": "Toggle these on or off this project.",
-  "cycles_description": "Timebox work as you see fit per project and change frequency from one period to the next.",
-  "modules_description": "Group work into sub-project-like set-ups with their own leads and assignees.",
-  "views_description": "Save sorts, filters, and display options for later or share them.",
-  "pages_description": "Write anything like you write anything.",
-  "intake_description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
-  "time_tracking_description": "Track time spent on work items and projects.",
+  "cycles_description": "Timebox work per project and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
+  "modules_description": "Organize work into sub-projects with dedicated leads and assignees.",
+  "views_description": "Save custom sorts, filters, and display options or share them with your team.",
+  "pages_description": "Create and edit free-form content; notes, docs, anything.",
+  "intake_description": "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
+  "time_tracking_description": "Log time spent on work items and projects.",
   "work_management_description": "Manage your work and projects with ease.",
   "documentation": "Documentation",
   "message_support": "Message support",
@@ -331,7 +338,11 @@
   "re_generate_key": "Re-generate key",
   "export": "Export",
   "member": "{count, plural, one{# member} other{# members}}",
-
+  "new_password_must_be_different_from_old_password": "New password must be different from old password",
+  "edited": "edited",
+  "bot": "Bot",
+  "settings_description": "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+  "back_to_workspace": "Back to workspace",
   "project_view": {
     "sort_by": {
       "created_at": "Created at",
@@ -339,12 +350,10 @@
       "name": "Name"
     }
   },
-
   "toast": {
     "success": "Success!",
     "error": "Error!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -373,7 +382,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Your quickstart guide",
@@ -421,7 +429,7 @@
         "default": "You don't have any recents yet."
       },
       "filters": {
-        "all": "All items",
+        "all": "All",
         "projects": "Projects",
         "pages": "Pages",
         "issues": "Work items"
@@ -441,7 +449,6 @@
     "title": "Home",
     "star_us_on_github": "Star us on GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -455,7 +462,6 @@
       }
     }
   },
-
   "common": {
     "all": "All",
     "states": "States",
@@ -472,6 +478,9 @@
     "modules": "Modules",
     "labels": "Labels",
     "label": "Label",
+    "admins": "Admins",
+    "users": "Users",
+    "guests": "Guests",
     "assignees": "Assignees",
     "assignee": "Assignee",
     "created_by": "Created by",
@@ -583,7 +592,8 @@
         "message": "Something went wrong. Please try again."
       },
       "required": "This field is required",
-      "entity_required": "{entity} is required"
+      "entity_required": "{entity} is required",
+      "restricted_entity": "{entity} is restricted"
     },
     "update_link": "Update link",
     "attach": "Attach",
@@ -607,6 +617,16 @@
     "quarter": "Quarter",
     "press_for_commands": "Press '/' for commands",
     "click_to_add_description": "Click to add description",
+    "on_track": "On-Track",
+    "off_track": "Off-Track",
+    "at_risk": "At risk",
+    "timeline": "Timeline",
+    "completion": "Completion",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "in_progress": "In progress",
+    "planned": "Planned",
+    "paused": "Paused",
     "search": {
       "label": "Search",
       "placeholder": "Type to search",
@@ -627,7 +647,8 @@
       "clear_sorting": "Clear sorting",
       "show_weekends": "Show weekends",
       "enable": "Enable",
-      "disable": "Disable"
+      "disable": "Disable",
+      "copy_markdown": "Copy markdown"
     },
     "name": "Name",
     "discard": "Discard",
@@ -684,6 +705,7 @@
     "live": "Live",
     "change_history": "Change History",
     "coming_soon": "Coming soon",
+    "member": "Member",
     "members": "Members",
     "you": "You",
     "upgrade_cta": {
@@ -698,22 +720,24 @@
     "deleting": "Deleting",
     "pending": "Pending",
     "invite": "Invite",
-    "view": "View"
+    "view": "View",
+    "deactivated_user": "Deactivated user",
+    "apply": "Apply",
+    "applying": "Applying",
+    "overview": "Overview",
+    "no_of": "No. of {entity}"
   },
-
   "chart": {
     "x_axis": "X-axis",
     "y_axis": "Y-axis",
     "metric": "Metric"
   },
-
   "form": {
     "title": {
       "required": "Title is required",
       "max_length": "Title should be less than {length} characters"
     }
   },
-
   "entity": {
     "grouping_title": "{entity} Grouping",
     "priority": "{entity} Priority",
@@ -737,7 +761,6 @@
       "failed": "Error adding {entity}"
     }
   },
-
   "epic": {
     "all": "All Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
@@ -755,7 +778,6 @@
       "required": "Epic title is required."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Work item} other {Work items}}",
     "all": "All Work items",
@@ -918,11 +940,12 @@
     "select": {
       "error": "Please select at least one work item",
       "empty": "No work items selected",
-      "add_selected": "Add selected work items"
+      "add_selected": "Add selected work items",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
     },
     "open_in_full_screen": "Open work item in full screen"
   },
-
   "attachment": {
     "error": "File could not be attached. Try uploading again.",
     "only_one_file_allowed": "Only one file can be uploaded at a time.",
@@ -930,7 +953,6 @@
     "drag_and_drop": "Drag and drop anywhere to upload",
     "delete": "Delete attachment"
   },
-
   "label": {
     "select": "Select label",
     "create": {
@@ -940,7 +962,6 @@
       "type": "Type to add a new label"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sub-work item updated successfully",
@@ -949,9 +970,20 @@
     "remove": {
       "success": "Sub-work item removed successfully",
       "error": "Error removing sub-work item"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "You don't have sub-work items that match the filters you've applied.",
+        "description": "To see all sub-work items, clear all applied filters.",
+        "action": "Clear filters"
+      },
+      "list_filters": {
+        "title": "You don't have work items that match the filters you've applied.",
+        "description": "To see all work items, clear all applied filters.",
+        "action": "Clear filters"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {View} other {Views}}",
     "create": {
@@ -961,7 +993,6 @@
       "label": "Update View"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1047,7 +1078,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Create your workspace",
     "subheading": "To start using Plane, you need to create or join a workspace.",
@@ -1099,7 +1129,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1115,7 +1144,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analytics",
     "page_label": "{workspace} - Analytics",
@@ -1146,21 +1174,33 @@
       "scope_and_demand": "Scope and Demand",
       "custom": "Custom Analytics"
     },
+    "total": "Total {entity}",
+    "started_work_items": "Started {entity}",
+    "backlog_work_items": "Backlog {entity}",
+    "un_started_work_items": "Unstarted {entity}",
+    "completed_work_items": "Completed {entity}",
+    "project_insights": "Project Insights",
+    "summary_of_projects": "Summary of Projects",
+    "all_projects": "All Projects",
+    "trend_on_charts": "Trend on charts",
+    "active_projects": "Active Projects",
+    "customized_insights": "Customized Insights",
+    "created_vs_resolved": "Created vs Resolved",
     "empty_state": {
-      "general": {
-        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
-        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
-        "primary_button": {
-          "text": "Start your first project",
-          "comic": {
-            "title": "Analytics works best with Cycles + Modules",
-            "description": "First, timebox your work items into Cycles and, if you can, group work items that span more than a cycle into Modules. Check out both on the left nav."
-          }
-        }
+      "project_insights": {
+        "title": "No data yet",
+        "description": "Work items assigned to you, broken down by state, will show up here."
+      },
+      "created_vs_resolved": {
+        "title": "No data yet",
+        "description": "Work items created and resolved over time will show up here."
+      },
+      "customized_insights": {
+        "title": "No data yet",
+        "description": "Work items assigned to you, broken down by state, will show up here."
       }
     }
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Project} other {Projects}}",
     "create": {
@@ -1235,7 +1275,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Add view",
     "empty_state": {
@@ -1270,7 +1309,28 @@
       }
     }
   },
-
+  "account_settings": {
+    "profile": {},
+    "preferences": {
+      "heading": "Preferences",
+      "description": "Customize your app experience the way you work"
+    },
+    "notifications": {
+      "heading": "Email notifications",
+      "description": "Stay in the loop on Work items you are subscribed to. Enable this to get notified."
+    },
+    "security": {
+      "heading": "Security"
+    },
+    "api_tokens": {
+      "heading": "Personal Access Tokens",
+      "description": "Generate secure API tokens to integrate your data with external systems and applications."
+    },
+    "activity": {
+      "heading": "Activity",
+      "description": "Track your recent actions and changes across all projects and work items."
+    }
+  },
   "workspace_settings": {
     "label": "Workspace settings",
     "page_label": "{workspace} - General settings",
@@ -1337,16 +1397,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Billing & Plans",
+        "description": "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
         "title": "Billing & Plans",
         "current_plan": "Current plan",
         "free_plan": "You are currently using the free plan",
         "view_plans": "View plans"
       },
       "exports": {
+        "heading": "Exports",
+        "description": "Export your project data in various formats and access your export history with download links.",
         "title": "Exports",
         "exporting": "Exporting",
         "previous_exports": "Previous exports",
         "export_separate_files": "Export the data into separate files",
+        "exporting_projects": "Exporting project",
+        "format": "Format",
         "modal": {
           "title": "Export to",
           "toasts": {
@@ -1362,6 +1428,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automate notifications to external services when project events occur.",
         "title": "Webhooks",
         "add_webhook": "Add webhook",
         "modal": {
@@ -1413,29 +1481,29 @@
         }
       },
       "api_tokens": {
-        "title": "API Tokens",
-        "add_token": "Add API token",
+        "title": "Personal Access Tokens",
+        "add_token": "Add personal access token",
         "create_token": "Create token",
         "never_expires": "Never expires",
         "generate_token": "Generate token",
         "generating": "Generating",
         "delete": {
-          "title": "Delete API token",
+          "title": "Delete personal access token",
           "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
           "success": {
             "title": "Success!",
-            "message": "The API token has been successfully deleted"
+            "message": "The token has been successfully deleted"
           },
           "error": {
             "title": "Error!",
-            "message": "The API token could not be deleted"
+            "message": "The token could not be deleted"
           }
         }
       }
     },
     "empty_state": {
       "api_tokens": {
-        "title": "No API tokens created",
+        "title": "No personal access tokens created",
         "description": "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started."
       },
       "webhooks": {
@@ -1452,7 +1520,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profile",
     "page_label": "Your work",
@@ -1486,8 +1553,9 @@
       "profile": "Profile",
       "security": "Security",
       "activity": "Activity",
-      "appearance": "Appearance",
-      "notifications": "Notifications"
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "api-tokens": "Personal Access Tokens"
     },
     "tabs": {
       "summary": "Summary",
@@ -1515,7 +1583,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Enter project ID",
@@ -1550,6 +1617,8 @@
       }
     },
     "states": {
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
       "describe_this_state_for_your_members": "Describe this state for your members.",
       "empty_state": {
         "title": "No states available for the {groupKey} group",
@@ -1557,6 +1626,8 @@
       }
     },
     "labels": {
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
       "label_title": "Label title",
       "label_title_is_required": "Label title is required",
       "label_max_char": "Label name should not exceed 255 characters",
@@ -1565,11 +1636,94 @@
       }
     },
     "estimates": {
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
+      "label": "Estimates",
       "title": "Enable estimates for my project",
-      "description": "They help you in communicating complexity and workload of the team."
+      "enable_description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "new": "New estimate system",
+      "create": {
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate",
+        "step": "Step {step} of {total}",
+        "label": "Create estimate"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimate created",
+            "message": "The estimate has been created successfully"
+          },
+          "error": {
+            "title": "Estimate creation failed",
+            "message": "We were unable to create the new estimate, please try again."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimate modified",
+            "message": "The estimate has been updated in your project."
+          },
+          "error": {
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been enabled."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been disabled."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimate needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate needs to be a numeric value.",
+        "character": "Estimate needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
+        "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for."
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Squares",
+          "custom": "Custom"
+        },
+        "categories": {
+          "label": "Categories",
+          "t_shirt_sizes": "T-Shirt Sizes",
+          "easy_to_hard": "Easy to hard",
+          "custom": "Custom"
+        },
+        "time": {
+          "label": "Time",
+          "hours": "Hours"
+        }
+      }
     },
     "automations": {
       "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       "auto-archive": {
         "title": "Auto-archive closed work items",
         "description": "Plane will auto archive work items that have been completed or canceled.",
@@ -1582,7 +1736,6 @@
         "auto_close_status": "Auto-close status"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "No labels yet",
@@ -1595,7 +1748,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Add cycle",
     "more_details": "More details",
@@ -1606,6 +1758,12 @@
     "remove_filters_to_see_all_cycles": "Remove the filters to see all cycles",
     "remove_search_criteria_to_see_all_cycles": "Remove the search criteria to see all cycles",
     "only_completed_cycles_can_be_archived": "Only completed cycles can be archived",
+    "start_date": "Start date",
+    "end_date": "End date",
+    "in_your_timezone": "In your timezone",
+    "transfer_work_items": "Transfer {count} work items",
+    "date_range": "Date range",
+    "add_date": "Add date",
     "active_cycle": {
       "label": "Active cycle",
       "progress": "Progress",
@@ -1715,7 +1873,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1744,7 +1901,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Add Module",
     "update_module": "Update Module",
@@ -1798,7 +1954,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1818,7 +1973,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -1848,7 +2002,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -1856,7 +2009,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -1867,7 +2019,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -1876,7 +2027,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Inbox",
     "page_label": "{workspace} - Inbox",
@@ -1933,7 +2083,6 @@
       "custom": "Custom"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -1953,7 +2102,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2016,7 +2164,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Your stickies",
     "placeholder": "click to type here",
@@ -2074,7 +2221,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Guest",
@@ -2089,7 +2235,6 @@
       "description": "All permissions set to true within the workspace."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Product / Project Manager",
     "development_or_engineering": "Development / Engineering",
@@ -2102,7 +2247,6 @@
     "human_resources": "Human / Resources",
     "other": "Other"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2113,7 +2257,6 @@
       "description": "Import work items and epics from Jira projects and epics."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2142,7 +2285,6 @@
     "created": "Created",
     "subscribed": "Subscribed"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2188,14 +2330,21 @@
       "manual": "Manual"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cycle} other {Cycles}}",
     "no_cycle": "No cycle"
   },
-
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "No module"
+  },
+  "description_versions": {
+    "last_edited_by": "Last edited by",
+    "previously_edited_by": "Previously edited by",
+    "edited_by": "Edited by"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choose View Logs from setup.sh and Docker logs to be sure."
   }
 }

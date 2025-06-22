@@ -7,6 +7,7 @@ import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, U
 import { useTranslation } from "@plane/i18n";
 // ui
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
+import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import {
   DateDropdown,
@@ -18,9 +19,6 @@ import {
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 // hooks
 import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
 // plane web components
@@ -299,7 +297,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               projectId={projectId}
               workspaceSlug={workspaceSlug}
               isEditable={isEditable}
-              isPeekView
             />
           </div>
         </div>

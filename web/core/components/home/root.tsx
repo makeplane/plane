@@ -4,15 +4,15 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
+import { cn } from "@plane/utils";
 import { TourRoot } from "@/components/onboarding";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useUserProfile, useEventTracker, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 import useSize from "@/hooks/use-window-size";
-import { IssuePeekOverview } from "../issues";
+import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
 
@@ -57,7 +57,7 @@ export const WorkspaceHomeView = observer(() => {
         </div>
       )}
       <>
-        <IssuePeekOverview />
+        <HomePeekOverviewsRoot />
         <ContentWrapper
           className={cn("gap-6 bg-custom-background-90/20", {
             "vertical-scrollbar scrollbar-lg": windowWidth >= 768,

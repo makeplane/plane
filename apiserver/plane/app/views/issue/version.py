@@ -3,7 +3,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import IssueVersion, IssueDescriptionVersion
+from plane.db.models import (
+    IssueVersion,
+    IssueDescriptionVersion,
+    Project,
+    ProjectMember,
+    Issue,
+)
 from ..base import BaseAPIView
 from plane.app.serializers import (
     IssueVersionDetailSerializer,
@@ -66,7 +72,7 @@ class IssueVersionEndpoint(BaseAPIView):
         return Response(paginated_data, status=status.HTTP_200_OK)
 
 
-class IssueDescriptionVersionEndpoint(BaseAPIView):
+class WorkItemDescriptionVersionEndpoint(BaseAPIView):
     def process_paginated_result(self, fields, results, timezone):
         paginated_data = results.values(*fields)
 
@@ -78,10 +84,34 @@ class IssueDescriptionVersionEndpoint(BaseAPIView):
         return paginated_data
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
-    def get(self, request, slug, project_id, issue_id, pk=None):
+    def get(self, request, slug, project_id, work_item_id, pk=None):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=work_item_id
+        )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
-                workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=work_item_id,
+                pk=pk,
             )
 
             serializer = IssueDescriptionVersionDetailSerializer(
@@ -105,8 +135,8 @@ class IssueDescriptionVersionEndpoint(BaseAPIView):
         ]
 
         issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id
-        )
+            workspace__slug=slug, project_id=project_id, issue_id=work_item_id
+        ).order_by("-created_at")
         paginated_data = paginate(
             base_queryset=issue_description_versions_queryset,
             queryset=issue_description_versions_queryset,

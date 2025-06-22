@@ -4,11 +4,12 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
+import { EIssueServiceType } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // hooks
 import { DoubleCircleIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette, useIssueDetail, useUser } from "@/hooks/store";
 
@@ -26,7 +27,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // hooks
-  const { updateIssue } = useIssueDetail();
+  const { updateIssue } = useIssueDetail(issueDetails?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
   // derived values
@@ -72,8 +73,11 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
       });
   };
 
+  const actionHeading = issueDetails?.is_epic ? "Epic actions" : "Work item actions";
+  const entityType = issueDetails?.is_epic ? "epic" : "work item";
+
   return (
-    <Command.Group heading="Work item actions">
+    <Command.Group heading={actionHeading}>
       <Command.Item
         onSelect={() => {
           setPlaceholder("Change state...");
@@ -137,7 +141,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
       <Command.Item onSelect={deleteIssue} className="focus:outline-none">
         <div className="flex items-center gap-2 text-custom-text-200">
           <Trash2 className="h-3.5 w-3.5" />
-          Delete work item
+          {`Delete ${entityType}`}
         </div>
       </Command.Item>
       <Command.Item
@@ -149,7 +153,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
       >
         <div className="flex items-center gap-2 text-custom-text-200">
           <LinkIcon className="h-3.5 w-3.5" />
-          Copy work item URL
+          {`Copy ${entityType} URL`}
         </div>
       </Command.Item>
     </Command.Group>

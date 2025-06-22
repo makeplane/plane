@@ -7,11 +7,10 @@ import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
 // Plane
 import { ISearchIssueResponse } from "@plane/types";
 import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

@@ -1,6 +1,8 @@
+// plane constants
+import { TInboxIssue, TInboxIssueStatus } from "@plane/constants";
+// plane types
 import { TPaginationInfo } from "./common";
 import { TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/base";
 
 // filters
 export type TInboxIssueFilterMemberKeys = "assignees" | "created_by";
@@ -66,8 +68,10 @@ export type TInboxIssueWithPagination = TInboxIssuePaginationInfo & {
   results: TInboxIssue[];
 };
 
+export type TAnchors = { [key: string]: string };
+
 export type TInboxForm = {
-  anchor: string;
+  anchors: TAnchors;
   id: string;
   is_in_app_enabled: boolean;
   is_form_enabled: boolean;

@@ -27,6 +27,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.host import base_host
 
 
 class IssueRelationViewSet(BaseViewSet):
@@ -253,7 +254,7 @@ class IssueRelationViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
 
         if relation_type in ["blocking", "start_after", "finish_after"]:
@@ -290,6 +291,6 @@ class IssueRelationViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

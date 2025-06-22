@@ -1,16 +1,19 @@
 import React from "react";
 // plane imports
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
+import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 
 interface LiteTextEditorWrapperProps
-  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions"
+  > {
   anchor: string;
   workspaceId: string;
   isSubmitting?: boolean;
@@ -27,6 +30,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     showSubmitButton = true,
     uploadFile,
     disabledExtensions,
+    flaggedExtensions,
     ...rest
   } = props;
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -41,6 +45,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={disabledExtensions ?? []}
+        flaggedExtensions={flaggedExtensions ?? []}
         fileHandler={getEditorFileHandlers({
           anchor,
           uploadFile,

@@ -5,8 +5,8 @@ import { XCircle } from "lucide-react";
 import { IApiToken } from "@plane/types";
 // components
 import { Tooltip } from "@plane/ui";
+import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
 import { DeleteApiTokenModal } from "@/components/api-token";
-import { renderFormattedDate, calculateTimeAgo } from "@/helpers/date-time.helper";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui
 // helpers
@@ -52,7 +52,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <p className="mb-1 text-xs leading-6 text-custom-text-400">
             {token.is_active
               ? token.expired_at
-                ? `Expires ${renderFormattedDate(token.expired_at!)}`
+                ? `Expires ${renderFormattedDate(token.expired_at!)} at ${renderFormattedTime(token.expired_at!)}`
                 : "Never expires"
               : `Expired ${calculateTimeAgo(token.expired_at)}`}
           </p>

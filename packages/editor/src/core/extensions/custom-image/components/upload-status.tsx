@@ -1,6 +1,10 @@
 import { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type Props = {
   editor: Editor;
@@ -16,7 +20,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
   // subscribe to image upload status
   const uploadStatus: number | undefined = useEditorState({
     editor,
-    selector: ({ editor }) => editor.storage.imageComponent?.assetsUploadStatus[nodeId],
+    selector: ({ editor }) => getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsUploadStatus?.[nodeId],
   });
 
   useEffect(() => {

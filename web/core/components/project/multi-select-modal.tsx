@@ -7,10 +7,10 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -166,7 +166,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button
           ref={moveButtonRef}
@@ -176,7 +176,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}
         >
-          {isSubmitting ? "Confirming" : "Confirm"}
+          {isSubmitting ? t("confirming") : t("confirm")}
         </Button>
       </div>
     </ModalCore>

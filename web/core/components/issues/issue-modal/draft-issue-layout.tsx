@@ -10,9 +10,9 @@ import type { TIssue } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
+import { isEmptyHtmlString } from "@plane/utils";
 import { ConfirmIssueDiscard } from "@/components/issues";
 // helpers
-import { isEmptyHtmlString } from "@/helpers/string.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";
@@ -38,27 +38,34 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const { createIssue } = useWorkspaceDraftIssues();
   const { t } = useTranslation();
 
+  const sanitizeChanges = (): Partial<TIssue> => {
+    const sanitizedChanges = { ...changesMade };
+    Object.entries(sanitizedChanges).forEach(([key, value]) => {
+      const issueKey = key as keyof TIssue;
+      if (value === null || value === undefined || value === "") delete sanitizedChanges[issueKey];
+      if (typeof value === "object" && isEmpty(value)) delete sanitizedChanges[issueKey];
+      if (Array.isArray(value) && value.length === 0) delete sanitizedChanges[issueKey];
+      if (issueKey === "project_id") delete sanitizedChanges.project_id;
+      if (issueKey === "priority" && value && value === "none") delete sanitizedChanges.priority;
+      if (
+        issueKey === "description_html" &&
+        changesMade?.description_html &&
+        isEmptyHtmlString(changesMade.description_html, ["img"])
+      )
+        delete sanitizedChanges.description_html;
+    });
+    return sanitizedChanges;
+  };
+
   const handleClose = () => {
+    // If the user is updating an existing work item, we don't need to show the discard modal
     if (data?.id) {
       onClose();
       setIssueDiscardModal(false);
     } else {
       if (changesMade) {
-        Object.entries(changesMade).forEach(([key, value]) => {
-          const issueKey = key as keyof TIssue;
-          if (value === null || value === undefined || value === "") delete changesMade[issueKey];
-          if (typeof value === "object" && isEmpty(value)) delete changesMade[issueKey];
-          if (Array.isArray(value) && value.length === 0) delete changesMade[issueKey];
-          if (issueKey === "project_id") delete changesMade.project_id;
-          if (issueKey === "priority" && value && value === "none") delete changesMade.priority;
-          if (
-            issueKey === "description_html" &&
-            changesMade.description_html &&
-            isEmptyHtmlString(changesMade.description_html, ["img"])
-          )
-            delete changesMade.description_html;
-        });
-        if (isEmpty(changesMade)) {
+        const sanitizedChanges = sanitizeChanges();
+        if (isEmpty(sanitizedChanges)) {
           onClose();
           setIssueDiscardModal(false);
         } else setIssueDiscardModal(true);
@@ -119,6 +126,14 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
     }
   };
 
+  const handleDraftAndClose = () => {
+    const sanitizedChanges = sanitizeChanges();
+    if (!data?.id && !isEmpty(sanitizedChanges)) {
+      handleCreateDraftIssue();
+    }
+    onClose();
+  };
+
   return (
     <>
       <ConfirmIssueDiscard
@@ -131,7 +146,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           onClose();
         }}
       />
-      <IssueFormRoot {...props} onClose={handleClose} />
+      <IssueFormRoot {...props} onClose={handleClose} handleDraftAndClose={handleDraftAndClose} />
     </>
   );
 });

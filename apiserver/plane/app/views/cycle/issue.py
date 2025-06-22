@@ -27,6 +27,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
+from plane.utils.host import base_host
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -291,7 +292,7 @@ class CycleIssueViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         return Response({"message": "success"}, status=status.HTTP_201_CREATED)
 
@@ -317,7 +318,7 @@ class CycleIssueViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         cycle_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

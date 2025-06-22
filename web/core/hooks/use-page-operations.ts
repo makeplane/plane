@@ -1,16 +1,16 @@
 import { useMemo } from "react";
-// plane editor
+// plane imports
+import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
-// plane types
 import { EPageAccess } from "@plane/types/src/enums";
-// plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
 import { TPageInstance } from "@/store/pages/base-page";
+// local storage
+import useLocalStorage from "./use-local-storage";
 
 export type TPageOperations = {
   toggleLock: () => void;
@@ -46,6 +46,11 @@ export const usePageOperations = (
   } = page;
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(props);
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
   // page operations
   const pageOperations: TPageOperations = useMemo(() => {
     const pageLink = getRedirectionLink();
@@ -141,13 +146,14 @@ export const usePageOperations = (
             })
           );
         } else {
-          addToFavorites().then(() =>
+          addToFavorites().then(() => {
+            if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
               message: "Page added to favorites.",
-            })
-          );
+            });
+          });
         }
       },
       toggleLock: async () => {
@@ -193,7 +199,9 @@ export const usePageOperations = (
     getRedirectionLink,
     is_favorite,
     is_locked,
+    isFavoriteMenuOpen,
     removePageFromFavorites,
+    toggleFavoriteMenu,
   ]);
   return {
     pageOperations,

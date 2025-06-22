@@ -13,10 +13,8 @@ import {
   TCycleDistribution,
   TCycleEstimateType,
 } from "@plane/types";
+import { orderCycles, shouldFilterCycle, getDate, DistributionUpdates, updateDistribution } from "@plane/utils";
 // helpers
-import { orderCycles, shouldFilterCycle } from "@/helpers/cycle.helper";
-import { getDate } from "@/helpers/date-time.helper";
-import { DistributionUpdates, updateDistribution } from "@/helpers/distribution-update.helper";
 // services
 import { syncIssuesWithDeletedCycles } from "@/local-db/utils/load-workspace";
 import { CycleService } from "@/services/cycle.service";
@@ -241,10 +239,10 @@ export class CycleStore implements ICycleStore {
   }
 
   getIsPointsDataAvailable = computedFn((cycleId: string) => {
-    const cycle = this.cycleMap[cycleId];
+    const cycle = this.getCycleById(cycleId);
     if (!cycle) return false;
-    if (this.cycleMap[cycleId].version === 2) return cycle.progress.some((p) => p.total_estimate_points > 0);
-    else if (this.cycleMap[cycleId].version === 1) {
+    if (cycle.version === 2) return cycle.progress?.some((p) => p.total_estimate_points > 0);
+    else if (cycle.version === 1) {
       const completionChart = cycle.estimate_distribution?.completion_chart || {};
       return !isEmpty(completionChart) && Object.keys(completionChart).some((p) => completionChart[p]! > 0);
     } else return false;
@@ -560,8 +558,7 @@ export class CycleStore implements ICycleStore {
    * @returns
    */
   updateCycleDistribution = (distributionUpdates: DistributionUpdates, cycleId: string) => {
-    const cycle = this.cycleMap[cycleId];
-
+    const cycle = this.getCycleById(cycleId);
     if (!cycle) return;
 
     runInAction(() => {
@@ -644,7 +641,7 @@ export class CycleStore implements ICycleStore {
         entity_type: "cycle",
         entity_identifier: cycleId,
         project_id: projectId,
-        entity_data: { name: this.cycleMap[cycleId].name || "" },
+        entity_data: { name: currentCycle?.name || "" },
       });
       return response;
     } catch (error) {

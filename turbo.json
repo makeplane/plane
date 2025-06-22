@@ -1,6 +1,5 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
   "globalEnv": [
     "NODE_ENV",
     "NEXT_PUBLIC_API_BASE_URL",
@@ -18,13 +17,7 @@
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
-    "NEXT_PUBLIC_SUPPORT_EMAIL",
-    "SENTRY_AUTH_TOKEN",
-    "SENTRY_ORG_ID",
-    "SENTRY_PROJECT_ID",
-    "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
-    "NEXT_PUBLIC_SENTRY_DSN",
-    "SENTRY_MONITORING_ENABLED"
+    "NEXT_PUBLIC_SUPPORT_EMAIL"
   ],
   "tasks": {
     "build": {

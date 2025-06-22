@@ -3,16 +3,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // types
-import { EViewAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EViewAccess, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { useLocalStorage } from "@plane/hooks";
 import { IProjectView } from "@plane/types";
 // ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
+import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
 // components
 import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
-// constants
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
-import { getPublishViewLink } from "@/helpers/project-views.helpers";
 // hooks
 import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal } from "@/plane-web/components/views/publish";
@@ -37,6 +36,12 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   const { addViewToFavorites, removeViewFromFavorites } = useProjectView();
   const { getUserDetails } = useMember();
 
+  // local storage
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteOpen } = useLocalStorage<boolean>(
+    IS_FAVORITE_MENU_OPEN,
+    false
+  );
+
   // derived values
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -50,10 +55,11 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
   const publishLink = getPublishViewLink(view?.anchor);
 
   // handlers
-  const handleAddToFavorites = () => {
+  const handleAddToFavorites = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    await addViewToFavorites(workspaceSlug.toString(), projectId.toString(), view.id);
+    if (!isFavoriteOpen) toggleFavoriteMenu(true);
   };
 
   const handleRemoveFromFavorites = () => {

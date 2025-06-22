@@ -8,11 +8,10 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
@@ -22,10 +21,11 @@ type Props = {
   projectId: string;
   view: IProjectView;
   workspaceSlug: string;
+  customClassName?: string;
 };
 
 export const ViewQuickActions: React.FC<Props> = observer((props) => {
-  const { parentRef, projectId, view, workspaceSlug } = props;
+  const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -95,7 +95,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
       <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
-      <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+      <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
           return (

@@ -42,8 +42,6 @@ x-live-env: &live-env
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
   DEBUG: ${DEBUG:-0}
-  SENTRY_DSN: ${SENTRY_DSN}
-  SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
   GUNICORN_WORKERS: 1
   USE_MINIO: ${USE_MINIO:-1}
@@ -55,7 +53,7 @@ x-app-env: &app-env
 
 services:
   web:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-frontend:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-frontend:${APP_RELEASE:-stable}
     command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
@@ -66,7 +64,7 @@ services:
       - worker
 
   space:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-space:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-space:${APP_RELEASE:-stable}
     command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
@@ -78,7 +76,7 @@ services:
       - web
 
   admin:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-admin:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-admin:${APP_RELEASE:-stable}
     command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
@@ -89,7 +87,7 @@ services:
       - web
 
   live:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-live:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-live:${APP_RELEASE:-stable}
     command: node live/dist/server.js live
     environment:
       <<: [*live-env]
@@ -102,7 +100,7 @@ services:
       - web
 
   api:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -118,7 +116,7 @@ services:
       - plane-mq
 
   worker:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -135,7 +133,7 @@ services:
       - plane-mq
 
   beat-worker:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -152,7 +150,7 @@ services:
       - plane-mq
 
   migrator:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-backend:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-backend:${APP_RELEASE:-stable}
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
@@ -214,7 +212,7 @@ services:
 
   # Comment this if you already have a reverse proxy running
   proxy:
-    image: ${DOCKERHUB_USER:-makeplane}/plane-proxy:${APP_RELEASE:-stable}
+    image: artifacts.plane.so/makeplane/plane-proxy:${APP_RELEASE:-stable}
     ports:
       - target: 80
         published: ${NGINX_PORT:-80}

@@ -21,7 +21,6 @@ export type TLinkCreateEditModal = {
   handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
   preloadedData?: TLinkCreateFormFieldOptions;
-  setLinkData: (link: TLink | undefined) => void;
 };
 
 const defaultValues: TLinkCreateFormFieldOptions = {
@@ -31,7 +30,7 @@ const defaultValues: TLinkCreateFormFieldOptions = {
 
 export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) => {
   // props
-  const { setLinkData, isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
+  const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form
   const {
     formState: { errors, isSubmitting },
@@ -45,7 +44,6 @@ export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) 
 
   const onClose = () => {
     if (handleOnClose) handleOnClose();
-    setLinkData(undefined);
   };
 
   const handleFormSubmit = async (formData: TLinkCreateFormFieldOptions) => {

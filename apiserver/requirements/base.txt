@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.20
+Django==4.2.22
 # rest framework
 djangorestframework==3.15.2
 # postgres
@@ -26,8 +26,6 @@ faker==25.0.0
 django-filter==24.2
 # json model
 jsonmodels==2.7.0
-# sentry
-sentry-sdk==2.8.0
 # storage
 django-storages==1.14.2
 # user management
@@ -45,7 +43,7 @@ scout-apm==3.1.0
 # xlsx generation
 openpyxl==3.1.2
 # logging
-python-json-logger==2.0.7
+python-json-logger==3.3.0
 # html parser
 beautifulsoup4==4.12.3
 # analytics

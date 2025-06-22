@@ -22,6 +22,8 @@ from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
+from plane.utils.host import base_host
+from plane.utils.order_queryset import order_issue_queryset
 
 
 class SubIssuesEndpoint(BaseAPIView):
@@ -102,6 +104,15 @@ class SubIssuesEndpoint(BaseAPIView):
             .order_by("-created_at")
         )
 
+        # Ordering
+        order_by_param = request.GET.get("order_by", "-created_at")
+        group_by = request.GET.get("group_by", False)
+
+        if order_by_param:
+            sub_issues, order_by_param = order_issue_queryset(
+                sub_issues, order_by_param
+            )
+
         # create's a dict with state group name with their respective issue id's
         result = defaultdict(list)
         for sub_issue in sub_issues:
@@ -138,6 +149,26 @@ class SubIssuesEndpoint(BaseAPIView):
         sub_issues = user_timezone_converter(
             sub_issues, datetime_fields, request.user.user_timezone
         )
+        # Grouping
+        if group_by:
+            result_dict = defaultdict(list)
+
+            for issue in sub_issues:
+                if group_by == "assignees__ids":
+                    if issue["assignee_ids"]:
+                        assignee_ids = issue["assignee_ids"]
+                        for assignee_id in assignee_ids:
+                            result_dict[str(assignee_id)].append(issue)
+                    elif issue["assignee_ids"] == []:
+                        result_dict["None"].append(issue)
+
+                elif group_by:
+                    result_dict[str(issue[group_by])].append(issue)
+
+            return Response(
+                {"sub_issues": result_dict, "state_distribution": result},
+                status=status.HTTP_200_OK,
+            )
         return Response(
             {"sub_issues": sub_issues, "state_distribution": result},
             status=status.HTTP_200_OK,
@@ -176,7 +207,7 @@ class SubIssuesEndpoint(BaseAPIView):
                 current_instance=json.dumps({"parent": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             for sub_issue_id in sub_issue_ids
         ]

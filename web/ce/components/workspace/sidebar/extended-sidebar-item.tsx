@@ -5,7 +5,7 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { Eye, EyeClosed } from "lucide-react";
+import { Pin, PinOff } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -55,7 +55,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const sidebarPreference = getNavigationPreferences(workspaceSlug.toString());
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
-  const handleLinkClick = () => toggleExtendedSidebar();
+  const handleLinkClick = () => toggleExtendedSidebar(true);
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
@@ -197,16 +197,16 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
               </div>
             )}
             {isPinned ? (
-              <Tooltip tooltipContent="Hide tab">
-                <Eye
-                  className="size-4 flex-shrink-0 hover:text-custom-text-200 text-custom-text-300 outline-none"
+              <Tooltip tooltipContent="Unpin">
+                <PinOff
+                  className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
                   onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
             ) : (
-              <Tooltip tooltipContent="Show tab">
-                <EyeClosed
-                  className="size-4 flex-shrink-0 hover:text-custom-text-200 text-custom-text-400 outline-none"
+              <Tooltip tooltipContent="Pin">
+                <Pin
+                  className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
                   onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>

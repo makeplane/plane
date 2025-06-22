@@ -1,19 +1,19 @@
 "use client";
 import { useMemo } from "react";
-import { EIssueServiceType } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssueLink, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// types
+// local imports
 import { TLinkOperations } from "../../issue-detail/links";
 
 export const useLinkOperations = (
   workspaceSlug: string,
   projectId: string,
   issueId: string,
-  issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
+  issueServiceType: TIssueServiceType
 ): TLinkOperations => {
   const { createLink, updateLink, removeLink } = useIssueDetail(issueServiceType);
   // i18n
@@ -32,7 +32,7 @@ export const useLinkOperations = (
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.url?.error ?? t("links.toasts.not_created.message"),
+            message: error?.data?.error ?? t("links.toasts.not_created.message"),
             type: TOAST_TYPE.ERROR,
             title: t("links.toasts.not_created.title"),
           });
@@ -50,7 +50,7 @@ export const useLinkOperations = (
           });
         } catch (error: any) {
           setToast({
-            message: error?.data?.url?.error ?? t("links.toasts.not_updated.message"),
+            message: error?.data?.error ?? t("links.toasts.not_updated.message"),
             type: TOAST_TYPE.ERROR,
             title: t("links.toasts.not_updated.title"),
           });
@@ -66,7 +66,7 @@ export const useLinkOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: t("links.toasts.removed.title"),
           });
-        } catch (error) {
+        } catch {
           setToast({
             message: t("links.toasts.not_removed.message"),
             type: TOAST_TYPE.ERROR,
@@ -75,7 +75,7 @@ export const useLinkOperations = (
         }
       },
     }),
-    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink]
+    [workspaceSlug, projectId, issueId, createLink, updateLink, removeLink, t]
   );
 
   return handleLinkOperations;

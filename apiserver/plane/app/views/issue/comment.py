@@ -17,6 +17,7 @@ from plane.app.serializers import IssueCommentSerializer, CommentReactionSeriali
 from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueComment, ProjectMember, CommentReaction, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.utils.host import base_host
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -87,7 +88,7 @@ class IssueCommentViewSet(BaseViewSet):
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -105,7 +106,13 @@ class IssueCommentViewSet(BaseViewSet):
             issue_comment, data=request.data, partial=True
         )
         if serializer.is_valid():
-            serializer.save()
+            if (
+                "comment_html" in request.data
+                and request.data["comment_html"] != issue_comment.comment_html
+            ):
+                serializer.save(edited_at=timezone.now())
+            else:
+                serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",
                 requested_data=requested_data,
@@ -115,7 +122,7 @@ class IssueCommentViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
-                origin=request.META.get("HTTP_ORIGIN"),
+                origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -138,7 +145,7 @@ class IssueCommentViewSet(BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -182,7 +189,7 @@ class CommentReactionViewSet(BaseViewSet):
                     current_instance=None,
                     epoch=int(timezone.now().timestamp()),
                     notification=True,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -216,7 +223,7 @@ class CommentReactionViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
             notification=True,
-            origin=request.META.get("HTTP_ORIGIN"),
+            origin=base_host(request=request, is_app=True),
         )
         comment_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

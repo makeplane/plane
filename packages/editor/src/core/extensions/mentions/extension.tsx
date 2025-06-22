@@ -1,6 +1,6 @@
-import { ReactNodeViewRenderer } from "@tiptap/react";
-import { Node as NodeType } from "@tiptap/pm/model";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Node as NodeType } from "@tiptap/pm/model";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 // types
 import { TMentionHandler } from "@/types";
 // extension config
@@ -8,8 +8,8 @@ import { CustomMentionExtensionConfig } from "./extension-config";
 // node view
 import { MentionNodeView } from "./mention-node-view";
 // utils
-import { renderMentionsDropdown } from "./utils";
 import { EMentionComponentAttributeNames } from "./types";
+import { renderMentionsDropdown } from "./utils";
 
 export const CustomMentionExtension = (props: TMentionHandler) => {
   const { searchCallback, renderComponent, getMentionedEntityDetails } = props;
@@ -26,6 +26,7 @@ export const CustomMentionExtension = (props: TMentionHandler) => {
       return ReactNodeViewRenderer(MentionNodeView);
     },
 
+    // @ts-expect-error - TODO: fix this
     addStorage() {
       return {
         markdown: {

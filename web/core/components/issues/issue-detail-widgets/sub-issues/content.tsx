@@ -1,16 +1,16 @@
 "use client";
 import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
-import { IssueList } from "@/components/issues/sub-issues/issues-list";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
-// helper
+// local imports
 import { useSubIssueOperations } from "./helper";
+import { SubIssuesListRoot } from "./issues-list/root";
 
 type Props = {
   workspaceSlug: string;
@@ -53,8 +53,9 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
     },
   });
   // store hooks
-  const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail();
   const {
+    toggleCreateIssueModal,
+    toggleDeleteIssueModal,
     subIssues: { subIssueHelpersByIssueId, setSubIssueHelpers },
   } = useIssueDetail(issueServiceType);
 
@@ -63,20 +64,19 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
   const subIssueHelpers = subIssueHelpersByIssueId(`${parentIssueId}_root`);
 
   // handler
-  const handleIssueCrudState = (
-    key: "create" | "existing" | "update" | "delete",
-    _parentIssueId: string | null,
-    issue: TIssue | null = null
-  ) => {
-    setIssueCrudState({
-      ...issueCrudState,
-      [key]: {
-        toggle: !issueCrudState[key].toggle,
-        parentIssueId: _parentIssueId,
-        issue: issue,
-      },
-    });
-  };
+  const handleIssueCrudState = useCallback(
+    (key: "create" | "existing" | "update" | "delete", _parentIssueId: string | null, issue: TIssue | null = null) => {
+      setIssueCrudState({
+        ...issueCrudState,
+        [key]: {
+          toggle: !issueCrudState[key].toggle,
+          parentIssueId: _parentIssueId,
+          issue,
+        },
+      });
+    },
+    [issueCrudState]
+  );
 
   const handleFetchSubIssues = useCallback(async () => {
     if (!subIssueHelpers.issue_visibility.includes(parentIssueId)) {
@@ -116,7 +116,8 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
   return (
     <>
       {subIssueHelpers.issue_visibility.includes(parentIssueId) && (
-        <IssueList
+        <SubIssuesListRoot
+          storeType={EIssuesStoreType.PROJECT}
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           parentIssueId={parentIssueId}

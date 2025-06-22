@@ -5,9 +5,11 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
+import { useTranslation } from "@plane/i18n";
+import { EEstimateSystem } from "@plane/types/src/enums";
 import { ComboDropDown } from "@plane/ui";
+import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import {
   useEstimate,
@@ -61,6 +63,8 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     value,
     renderByDefault = true,
   } = props;
+  // i18n
+  const { t } = useTranslation();
   // states
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -85,12 +89,14 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { currentActiveEstimateIdByProjectId, getProjectEstimates } = useProjectEstimates();
+  const { currentActiveEstimateIdByProjectId, getProjectEstimates, getEstimateById } = useProjectEstimates();
   const { estimatePointIds, estimatePointById } = useEstimate(
     projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined
   );
 
   const currentActiveEstimateId = projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined;
+
+  const currentActiveEstimate = currentActiveEstimateId ? getEstimateById(currentActiveEstimateId) : undefined;
 
   const options: DropdownOptions = (estimatePointIds ?? [])
     ?.map((estimatePoint) => {
@@ -102,7 +108,11 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
           content: (
             <div className="flex items-center gap-2">
               <Triangle className="h-3 w-3 flex-shrink-0" />
-              <span className="flex-grow truncate">{currentEstimatePoint.value}</span>
+              <span className="flex-grow truncate">
+                {currentActiveEstimate?.type === EEstimateSystem.TIME
+                  ? convertMinutesToHoursMinutesString(Number(currentEstimatePoint.value))
+                  : currentEstimatePoint.value}
+              </span>
             </div>
           ),
         };
@@ -111,11 +121,11 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
     .filter((estimatePointDropdownOption) => estimatePointDropdownOption != undefined) as DropdownOptions;
   options?.unshift({
     value: null,
-    query: "No estimate",
+    query: t("project_settings.estimates.no_estimate"),
     content: (
       <div className="flex items-center gap-2">
         <Triangle className="h-3 w-3 flex-shrink-0" />
-        <span className="flex-grow truncate">No estimate</span>
+        <span className="flex-grow truncate">{t("project_settings.estimates.no_estimate")}</span>
       </div>
     ),
   });
@@ -176,7 +186,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Estimate"
+            tooltipHeading={t("project_settings.estimates.label")}
             tooltipContent={selectedEstimate ? selectedEstimate?.value : placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
@@ -184,7 +194,13 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
           >
             {!hideIcon && <Triangle className="h-3 w-3 flex-shrink-0" />}
             {(selectedEstimate || placeholder) && BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-              <span className="flex-grow truncate">{selectedEstimate ? selectedEstimate?.value : placeholder}</span>
+              <span className="flex-grow truncate">
+                {selectedEstimate
+                  ? currentActiveEstimate?.type === EEstimateSystem.TIME
+                    ? convertMinutesToHoursMinutesString(Number(selectedEstimate.value))
+                    : selectedEstimate.value
+                  : placeholder}
+              </span>
             )}
             {dropdownArrow && (
               <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
@@ -224,7 +240,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                 className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder={t("common.search.placeholder")}
                 displayValue={(assigned: any) => assigned?.name}
                 onKeyDown={searchInputKeyDown}
               />
@@ -237,7 +253,7 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                   {/* NOTE: This condition renders when estimates are not enabled for the project */}
                   <div className="flex-grow flex items-center gap-2">
                     <Triangle className="h-3 w-3 flex-shrink-0" />
-                    <span className="flex-grow truncate">No estimate</span>
+                    <span className="flex-grow truncate">{t("project_settings.estimates.no_estimate")}</span>
                   </div>
                 </div>
               ) : (
@@ -264,10 +280,12 @@ export const EstimateDropdown: React.FC<Props> = observer((props) => {
                         </Combobox.Option>
                       ))
                     ) : (
-                      <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+                      <p className="px-1.5 py-1 italic text-custom-text-400">
+                        {t("common.search.no_matching_results")}
+                      </p>
                     )
                   ) : (
-                    <p className="px-1.5 py-1 italic text-custom-text-400">Loading...</p>
+                    <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
                   )}
                 </>
               )}

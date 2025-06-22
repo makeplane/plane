@@ -39,6 +39,7 @@ from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
+from plane.utils.host import base_host
 
 
 class ProjectViewSet(BaseViewSet):
@@ -177,7 +178,9 @@ class ProjectViewSet(BaseViewSet):
             "module_view",
             "page_view",
             "inbox_view",
+            "guest_view_all_features",
             "project_lead",
+            "network",
             "created_at",
             "updated_at",
             "created_by",
@@ -272,14 +275,14 @@ class ProjectViewSet(BaseViewSet):
                 states = [
                     {
                         "name": "Backlog",
-                        "color": "#A3A3A3",
+                        "color": "#60646C",
                         "sequence": 15000,
                         "group": "backlog",
                         "default": True,
                     },
                     {
                         "name": "Todo",
-                        "color": "#3A3A3A",
+                        "color": "#60646C",
                         "sequence": 25000,
                         "group": "unstarted",
                     },
@@ -291,13 +294,13 @@ class ProjectViewSet(BaseViewSet):
                     },
                     {
                         "name": "Done",
-                        "color": "#16A34A",
+                        "color": "#46A758",
                         "sequence": 45000,
                         "group": "completed",
                     },
                     {
                         "name": "Cancelled",
-                        "color": "#EF4444",
+                        "color": "#9AA4BC",
                         "sequence": 55000,
                         "group": "cancelled",
                     },
@@ -329,7 +332,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
 
                 serializer = ProjectListSerializer(project)
@@ -338,8 +341,11 @@ class ProjectViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    {
+                        "name": "The project name is already taken",
+                        "code": "PROJECT_NAME_ALREADY_EXIST",
+                    },
+                    status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
             return Response(
@@ -347,8 +353,11 @@ class ProjectViewSet(BaseViewSet):
             )
         except serializers.ValidationError:
             return Response(
-                {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                {
+                    "identifier": "The project identifier is already taken",
+                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                },
+                status=status.HTTP_409_CONFLICT,
             )
 
     def partial_update(self, request, slug, pk=None):
@@ -407,7 +416,7 @@ class ProjectViewSet(BaseViewSet):
                     current_instance=current_instance,
                     actor_id=request.user.id,
                     slug=slug,
-                    origin=request.META.get("HTTP_ORIGIN"),
+                    origin=base_host(request=request, is_app=True),
                 )
                 serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -417,7 +426,7 @@ class ProjectViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"name": "The project name is already taken"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
         except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
@@ -426,7 +435,7 @@ class ProjectViewSet(BaseViewSet):
         except serializers.ValidationError:
             return Response(
                 {"identifier": "The project identifier is already taken"},
-                status=status.HTTP_410_GONE,
+                status=status.HTTP_409_CONFLICT,
             )
 
     def destroy(self, request, slug, pk):
@@ -442,7 +451,7 @@ class ProjectViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
         ):
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=pk, workspace__slug=slug)
             project.delete()
             webhook_activity.delay(
                 event="project",
@@ -452,7 +461,7 @@ class ProjectViewSet(BaseViewSet):
                 new_value=None,
                 actor_id=request.user.id,
                 slug=slug,
-                current_site=request.META.get("HTTP_ORIGIN"),
+                current_site=base_host(request=request, is_app=True),
                 event_id=project.id,
                 old_identifier=None,
                 new_identifier=None,

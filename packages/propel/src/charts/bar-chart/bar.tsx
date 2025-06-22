@@ -15,10 +15,25 @@ const calculatePercentage = <K extends string, T extends string>(
 };
 
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height needed to show text inside
-const BAR_BORDER_RADIUS = 2; // Border radius for each bar
+const BAR_TOP_BORDER_RADIUS = 4; // Border radius for each bar
+const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for each bar
 
 export const CustomBar = React.memo((props: any) => {
-  const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage } = props;
+  const {
+    opacity,
+    fill,
+    x,
+    y,
+    width,
+    height,
+    dataKey,
+    stackKeys,
+    payload,
+    textClassName,
+    showPercentage,
+    showTopBorderRadius,
+    showBottomBorderRadius,
+  } = props;
   // Calculate text position
   const TEXT_PADDING_Y = Math.min(6, Math.abs(MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT - height / 2));
   const textY = y + height - TEXT_PADDING_Y; // Position inside bar if tall enough
@@ -34,24 +49,28 @@ export const CustomBar = React.memo((props: any) => {
     // bar percentage is a number
     !Number.isNaN(currentBarPercentage);
 
+  const topBorderRadius = showTopBorderRadius ? BAR_TOP_BORDER_RADIUS : 0;
+  const bottomBorderRadius = showBottomBorderRadius ? BAR_BOTTOM_BORDER_RADIUS : 0;
+
   if (!height) return null;
+
   return (
     <g>
       <path
         d={`
-          M${x + BAR_BORDER_RADIUS},${y + height}
-          L${x + BAR_BORDER_RADIUS},${y}
-          Q${x},${y} ${x},${y + BAR_BORDER_RADIUS}
-          L${x},${y + height - BAR_BORDER_RADIUS}
-          Q${x},${y + height} ${x + BAR_BORDER_RADIUS},${y + height}
-          L${x + width - BAR_BORDER_RADIUS},${y + height}
-          Q${x + width},${y + height} ${x + width},${y + height - BAR_BORDER_RADIUS}
-          L${x + width},${y + BAR_BORDER_RADIUS}
-          Q${x + width},${y} ${x + width - BAR_BORDER_RADIUS},${y}
-          L${x + BAR_BORDER_RADIUS},${y}
-        `}
-        className={cn("transition-colors duration-200", fill)}
-        fill="currentColor"
+        M${x},${y + topBorderRadius}
+        Q${x},${y} ${x + topBorderRadius},${y}
+        L${x + width - topBorderRadius},${y}
+        Q${x + width},${y} ${x + width},${y + topBorderRadius}
+        L${x + width},${y + height - bottomBorderRadius}
+        Q${x + width},${y + height} ${x + width - bottomBorderRadius},${y + height}
+        L${x + bottomBorderRadius},${y + height}
+        Q${x},${y + height} ${x},${y + height - bottomBorderRadius}
+        Z
+      `}
+        className="transition-opacity duration-200"
+        fill={fill}
+        opacity={opacity}
       />
       {showText && (
         <text

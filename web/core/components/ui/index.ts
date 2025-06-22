@@ -1,4 +1,3 @@
-export * from "./graphs";
 export * from "./empty-space";
 export * from "./labels-list";
 export * from "./markdown-to-component";

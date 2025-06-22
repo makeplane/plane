@@ -1,6 +1,7 @@
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
+import { EStartOfTheWeek } from "@plane/constants";
 import { UserService } from "@plane/services";
 import { TUserProfile } from "@plane/types";
 // store
@@ -54,6 +55,7 @@ export class ProfileStore implements IProfileStore {
     created_at: "",
     updated_at: "",
     language: "",
+    start_of_the_week: EStartOfTheWeek.SUNDAY,
   };
 
   // services

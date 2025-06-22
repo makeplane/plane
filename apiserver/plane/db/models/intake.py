@@ -31,6 +31,10 @@ class Intake(ProjectBaseModel):
         ordering = ("name",)
 
 
+class SourceType(models.TextChoices):
+    IN_APP = "IN_APP"
+
+
 class IntakeIssue(ProjectBaseModel):
     intake = models.ForeignKey(
         "db.Intake", related_name="issue_intake", on_delete=models.CASCADE

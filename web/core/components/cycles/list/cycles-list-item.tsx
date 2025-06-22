@@ -10,11 +10,11 @@ import type { TCycleGroups } from "@plane/types";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
+import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 import { CycleQuickActions } from "@/components/cycles/";
 import { CycleListItemAction } from "@/components/cycles/list";
 // helpers
-import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -53,15 +53,10 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
   const isCompleted = cycleStatus === "completed";
+  const isActive = cycleStatus === "current";
 
-  const cycleTotalIssues =
-    cycleDetails.backlog_issues +
-    cycleDetails.unstarted_issues +
-    cycleDetails.started_issues +
-    cycleDetails.completed_issues +
-    cycleDetails.cancelled_issues;
-
-  const completionPercentage = (cycleDetails.completed_issues / cycleTotalIssues) * 100;
+  const completionPercentage =
+    ((cycleDetails.completed_issues + cycleDetails.cancelled_issues) / cycleDetails.total_issues) * 100;
 
   const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 
@@ -113,6 +108,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
           cycleId={cycleId}
           cycleDetails={cycleDetails}
           parentRef={parentRef}
+          isActive={isActive}
         />
       }
       quickActionElement={

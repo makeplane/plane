@@ -43,6 +43,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
     defaultValues: {
       GITHUB_CLIENT_ID: config["GITHUB_CLIENT_ID"],
       GITHUB_CLIENT_SECRET: config["GITHUB_CLIENT_SECRET"],
+      GITHUB_ORGANIZATION_ID: config["GITHUB_ORGANIZATION_ID"],
     },
   });
 
@@ -92,6 +93,15 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
       placeholder: "9b0050f94ec1b744e32ce79ea4ffacd40d4119cb",
       error: Boolean(errors.GITHUB_CLIENT_SECRET),
       required: true,
+    },
+    {
+      key: "GITHUB_ORGANIZATION_ID",
+      type: "text",
+      label: "Organization ID",
+      description: <>The organization github ID.</>,
+      placeholder: "123456789",
+      error: Boolean(errors.GITHUB_ORGANIZATION_ID),
+      required: false,
     },
   ];
 
@@ -150,6 +160,7 @@ export const InstanceGithubConfigForm: FC<Props> = (props) => {
         reset({
           GITHUB_CLIENT_ID: response.find((item) => item.key === "GITHUB_CLIENT_ID")?.value,
           GITHUB_CLIENT_SECRET: response.find((item) => item.key === "GITHUB_CLIENT_SECRET")?.value,
+          GITHUB_ORGANIZATION_ID: response.find((item) => item.key === "GITHUB_ORGANIZATION_ID")?.value,
         });
       })
       .catch((err) => console.error(err));

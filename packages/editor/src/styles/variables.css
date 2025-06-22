@@ -1,3 +1,47 @@
+:root {
+  /* text colors */
+  --editor-colors-gray-text: #5c5e63;
+  --editor-colors-peach-text: #ff5b59;
+  --editor-colors-pink-text: #f65385;
+  --editor-colors-orange-text: #fd9038;
+  --editor-colors-green-text: #0fc27b;
+  --editor-colors-light-blue-text: #17bee9;
+  --editor-colors-dark-blue-text: #266df0;
+  --editor-colors-purple-text: #9162f9;
+  /* end text colors */
+
+  /* layout */
+  --normal-content-width: 720px;
+  --wide-content-width: 1152px;
+  --normal-content-margin: 20px;
+  --wide-content-margin: 96px;
+  /* end layout */
+}
+
+/* text background colors */
+[data-theme*="light"] {
+  --editor-colors-gray-background: #d6d6d8;
+  --editor-colors-peach-background: #ffd5d7;
+  --editor-colors-pink-background: #fdd4e3;
+  --editor-colors-orange-background: #ffe3cd;
+  --editor-colors-green-background: #c3f0de;
+  --editor-colors-light-blue-background: #c5eff9;
+  --editor-colors-dark-blue-background: #c9dafb;
+  --editor-colors-purple-background: #e3d8fd;
+}
+[data-theme*="dark"] {
+  --editor-colors-gray-background: #404144;
+  --editor-colors-peach-background: #593032;
+  --editor-colors-pink-background: #562e3d;
+  --editor-colors-orange-background: #583e2a;
+  --editor-colors-green-background: #1d4a3b;
+  --editor-colors-light-blue-background: #1f495c;
+  --editor-colors-dark-blue-background: #223558;
+  --editor-colors-purple-background: #3d325a;
+}
+/* end text background colors */
+
+/* font size and style */
 .editor-container {
   --color-placeholder: rgba(var(--color-text-100), 0.5);
 
@@ -47,6 +91,8 @@
   /* end font sizes and line heights */
 
   /* font styles */
+  --font-style: "Inter", sans-serif;
+
   &.sans-serif {
     --font-style: "Inter", sans-serif;
   }
@@ -102,3 +148,96 @@
   }
   /* end spacing */
 }
+/* end font size and style */
+
+/* layout config */
+#page-toolbar-container {
+  container-name: page-toolbar-container;
+  container-type: inline-size;
+
+  .page-toolbar-content {
+    --header-width: var(--normal-content-width);
+
+    &.wide-layout {
+      --header-width: var(--wide-content-width);
+    }
+
+    padding-left: calc(((100% - var(--header-width)) / 2) - 10px);
+  }
+}
+
+#page-content-container {
+  container-name: page-content-container;
+  container-type: inline-size;
+}
+
+.editor-container.document-editor {
+  --editor-content-width: var(--normal-content-width);
+
+  &.wide-layout {
+    --editor-content-width: var(--wide-content-width);
+  }
+
+  .ProseMirror {
+    max-width: var(--editor-content-width);
+    margin: 0 auto;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
+@container page-toolbar-container (min-width: 912px) and (max-width: 1344px) {
+  .page-toolbar-content.wide-layout {
+    padding-left: var(--wide-content-margin) !important;
+  }
+}
+
+/* keep a static padding of 96px for wide layouts for container width <912px */
+@container page-toolbar-container (max-width: 912) {
+  .page-toolbar-content.wide-layout {
+    padding-left: var(--wide-content-margin) !important;
+  }
+}
+/* end layout config */
+
+/* keep a static padding of 20px for wide layouts for container width <760px */
+@container page-toolbar-container (max-width: 760px) {
+  .page-toolbar-content {
+    padding-left: var(--normal-content-margin) !important;
+  }
+}
+/* end layout config */
+
+/* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
+@container page-content-container (min-width: 912px) and (max-width: 1344px) {
+  .editor-container.wide-layout,
+  .page-header-container {
+    padding-left: var(--wide-content-margin);
+    padding-right: var(--wide-content-margin);
+  }
+}
+
+/* keep a static padding of 20px for wide layouts for container width <912px */
+@container page-content-container (max-width: 912px) {
+  .editor-container.wide-layout,
+  .page-header-container {
+    padding-left: var(--normal-content-margin);
+    padding-right: var(--normal-content-margin);
+  }
+}
+
+/* keep a static padding of 20px for normal layouts for container width <760px */
+@container page-content-container (max-width: 760px) {
+  .editor-container:not(.wide-layout),
+  .page-header-container {
+    padding-left: var(--normal-content-margin);
+    padding-right: var(--normal-content-margin);
+  }
+}
+
+@container page-content-container (max-width: 930px) {
+  .page-summary-container {
+    display: none;
+  }
+}
+/* end layout config */
