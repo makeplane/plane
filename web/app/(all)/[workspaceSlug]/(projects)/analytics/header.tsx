@@ -14,9 +14,8 @@ export const WorkspaceAnalyticsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={t("workspace_analytics.label")}
                 icon={<BarChart2 className="h-4 w-4 text-custom-text-300" />}

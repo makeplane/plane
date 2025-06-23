@@ -2,20 +2,21 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
+import { EProjectFeatureKey } from "@plane/constants";
 // types
 import { ICustomSearchSelectOption } from "@plane/types";
 // ui
-import { Breadcrumbs, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPageName } from "@plane/utils";
-import { BreadcrumbLink, PageAccessIcon, SwitcherLabel } from "@/components/common";
+import { PageAccessIcon, SwitcherIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
 // helpers
 // hooks
 import { useProject } from "@/hooks/store";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -31,7 +32,7 @@ export const PageDetailsHeader = observer(() => {
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks
-  const { currentProjectDetails, loader } = useProject();
+  const { loader } = useProject();
   const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
   const page = usePage({
     pageId: pageId?.toString() ?? "",
@@ -64,45 +65,27 @@ export const PageDetailsHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <span>
-                  <span className="hidden md:block">
-                    <ProjectBreadcrumb />
-                  </span>
-                  <span className="md:hidden">
-                    <BreadcrumbLink
-                      href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
-                      label={"..."}
-                    />
-                  </span>
-                </span>
-              }
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              featureKey={EProjectFeatureKey.PAGES}
             />
 
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages`}
-                  label="Pages"
-                  icon={<FileText className="h-4 w-4 text-custom-text-300" />}
-                />
-              }
-            />
-            <Breadcrumbs.BreadcrumbItem
-              type="component"
+            <Breadcrumbs.Item
               component={
-                <CustomSearchSelect
-                  value={pageId}
-                  options={switcherOptions}
-                  label={
-                    <SwitcherLabel logo_props={page.logo_props} name={getPageName(page.name)} LabelIcon={FileText} />
-                  }
+                <BreadcrumbNavigationSearchDropdown
+                  selectedItem={pageId?.toString() ?? ""}
+                  navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);
                   }}
+                  title={page?.name}
+                  icon={
+                    <Breadcrumbs.Icon>
+                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={FileText} size={16} />
+                    </Breadcrumbs.Icon>
+                  }
+                  isLast
                 />
               }
             />

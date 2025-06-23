@@ -37,13 +37,7 @@ const ViewTab = observer((props: { viewId: string }) => {
 
   return (
     <div ref={parentRef} className="relative">
-      <WorkspaceViewQuickActions
-        parentRef={parentRef}
-        view={view}
-        viewId={viewId}
-        globalViewId={globalViewId?.toString()}
-        workspaceSlug={workspaceSlug?.toString()}
-      />
+      <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={view} />
     </div>
   );
 });
@@ -63,12 +57,7 @@ const DefaultViewTab = (props: {
   if (!workspaceSlug || !globalViewId) return null;
   return (
     <div key={tab.key} ref={parentRef} className="relative">
-      <DefaultWorkspaceViewQuickActions
-        parentRef={parentRef}
-        globalViewId={globalViewId?.toString()}
-        workspaceSlug={workspaceSlug?.toString()}
-        view={tab}
-      />
+      <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={tab} />
     </div>
   );
 };
