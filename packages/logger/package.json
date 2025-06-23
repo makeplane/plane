@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
-    "@types/node": "^22.5.4",
-    "tsup": "8.3.0",
-    "typescript": "^5.3.3"
+    "@types/node": "22.5.4",
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   },
   "tsup": {
     "entry": [
