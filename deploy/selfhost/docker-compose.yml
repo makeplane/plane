@@ -28,7 +28,7 @@ x-proxy-env: &proxy-env
   APP_DOMAIN: ${APP_DOMAIN:-localhost}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
   CERT_EMAIL: ${CERT_EMAIL:-admin@example.com}
-  CERT_ACME_CA: ${CERT_ACME_CA:-}
+  CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
   LISTEN_HTTP_PORT: ${LISTEN_PORT:-80}
   LISTEN_HTTPS_PORT: ${LISTEN_SSL_PORT:-443}
   BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
@@ -252,3 +252,5 @@ volumes:
   logs_beat-worker:
   logs_migrator:
   rabbitmq_data:
+  proxy_config:
+  proxy_data:
