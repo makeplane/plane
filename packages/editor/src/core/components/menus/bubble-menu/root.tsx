@@ -31,7 +31,7 @@ export interface EditorStateType {
   bold: boolean;
   italic: boolean;
   underline: boolean;
-  strike: boolean;
+  strikethrough: boolean;
   left: boolean;
   right: boolean;
   center: boolean;
@@ -58,7 +58,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     bold: BoldItem(props.editor),
     italic: ItalicItem(props.editor),
     underline: UnderLineItem(props.editor),
-    strike: StrikeThroughItem(props.editor),
+    strikethrough: StrikeThroughItem(props.editor),
     textAlign: TextAlignItem(props.editor),
   };
 
@@ -69,7 +69,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       bold: formattingItems.bold.isActive(),
       italic: formattingItems.italic.isActive(),
       underline: formattingItems.underline.isActive(),
-      strike: formattingItems.strike.isActive(),
+      strikethrough: formattingItems.strikethrough.isActive(),
       left: formattingItems.textAlign.isActive({ alignment: "left" }),
       right: formattingItems.textAlign.isActive({ alignment: "right" }),
       center: formattingItems.textAlign.isActive({ alignment: "center" }),
@@ -80,7 +80,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
 
   const basicFormattingOptions = editorState.code
     ? [formattingItems.code]
-    : [formattingItems.bold, formattingItems.italic, formattingItems.underline, formattingItems.strike];
+    : [formattingItems.bold, formattingItems.italic, formattingItems.underline, formattingItems.strikethrough];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,
