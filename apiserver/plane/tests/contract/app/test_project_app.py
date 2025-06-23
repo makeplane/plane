@@ -51,7 +51,6 @@ class TestProjectAPIPost(TestProjectBase):
         """Test creating a project with empty data"""
 
         url = self.get_project_url(workspace.slug)
-        print(url)
 
         # Test with empty data
         response = session_client.post(url, {}, format="json")
