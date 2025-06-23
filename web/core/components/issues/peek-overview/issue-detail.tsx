@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/editor";
 import { TNameDescriptionLoader } from "@plane/types";
 // components
+import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { IssueParentDetail, TIssueOperations } from "@/components/issues";
 // helpers
-import { getTextContent } from "@/helpers/editor.helper";
 // hooks
 import { useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";

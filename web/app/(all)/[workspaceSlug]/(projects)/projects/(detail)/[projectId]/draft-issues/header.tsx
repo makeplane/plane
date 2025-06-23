@@ -12,10 +12,10 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
+import { isIssueFilterActive } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // helpers
-import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -93,11 +93,10 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
+            <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
 
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   label="Draft work items"
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}

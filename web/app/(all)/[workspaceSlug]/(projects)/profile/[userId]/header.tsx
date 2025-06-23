@@ -10,10 +10,11 @@ import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissi
 import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
-import { BreadcrumbLink } from "@/components/common";
+import { cn } from "@plane/utils";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile";
-import { cn } from "@/helpers/common.helper";
+// hooks
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
 
 type TUserProfileHeader = {
@@ -51,9 +52,8 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "@plane/constants";
 import type {
   GithubRepositoriesResponse,
   ISearchIssueResponse,
@@ -6,7 +7,6 @@ import type {
   TProjectIssuesSearchParams,
 } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web types
 import { TProject, TPartialProject } from "@/plane-web/types";
 // services

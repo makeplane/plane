@@ -9,18 +9,15 @@ import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } 
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
-// services
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
+// services
 import { CycleService } from "@/services/cycle.service";
-// local components
+// local imports
 import { ArchiveCycleModal } from "../archived-cycles";
 import { CycleDeleteModal } from "../delete-modal";
 
@@ -41,15 +38,13 @@ const cycleService = new CycleService();
 
 export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
-  // router
-  const router = useAppRouter();
   // states
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // hooks
   const { allowPermissions } = useUserPermissions();
-  const { updateCycleDetails, restoreCycle } = useCycle();
-  const { setTrackElement, captureCycleEvent } = useEventTracker();
+  const { updateCycleDetails } = useCycle();
+  const { captureCycleEvent } = useEventTracker();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
 

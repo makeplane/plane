@@ -3,7 +3,7 @@
 import { FC, useMemo } from "react";
 // import { CircleCheck } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 import {
   E_PASSWORD_STRENGTH,
   // PASSWORD_CRITERIA,

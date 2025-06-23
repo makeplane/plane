@@ -3,7 +3,7 @@
 import { FC } from "react";
 // hooks
 import { Tooltip } from "@plane/ui";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // ui

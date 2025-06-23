@@ -6,10 +6,12 @@ import { useTranslation } from "@plane/i18n";
 import { LogoSpinner } from "@/components/common";
 import { PageHead } from "@/components/core";
 import { PreferencesList } from "@/components/preferences/list";
-import { LanguageTimezone, ProfileSettingContentHeader } from "@/components/profile";
+import { ProfileSettingContentHeader } from "@/components/profile";
 // hooks
+import { LanguageTimezone } from "@/components/profile/preferences/language-timezone";
 import { SettingsHeading } from "@/components/settings";
 import { useUserProfile } from "@/hooks/store";
+
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();
   // hooks
