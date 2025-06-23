@@ -61,10 +61,22 @@ const htmlToMarkdown = (html: string): string => {
             const checkbox = li.querySelector('input[type="checkbox"]');
             const isTaskItem = checkbox !== null;
 
-            if (isTaskItem) {
-              const isChecked = (checkbox as HTMLInputElement).checked;
+            // Check for flat-list attributes
+            const listKind = li.getAttribute("data-list-kind");
+            const isChecked = li.hasAttribute("data-list-checked");
+            const isCollapsed = li.hasAttribute("data-list-collapsed");
+            const listOrder = li.getAttribute("data-list-order");
+
+            if (isTaskItem || listKind === "task") {
+              // Task list item - use checkbox state or data attribute
+              const checked = checkbox ? (checkbox as HTMLInputElement).checked : isChecked;
               const textContent = li.textContent?.replace(/^\s*/, "").trim() || "";
-              result += `${indent}- [${isChecked ? "x" : " "}] ${textContent}\n`;
+              result += `${indent}- [${checked ? "x" : " "}] ${textContent}\n`;
+            } else if (listKind === "toggle") {
+              // Toggle list item - handle collapsed state
+              const textContent = li.textContent?.replace(/^\s*/, "").trim() || "";
+              const togglePrefix = isCollapsed ? "- " : "- ";
+              result += `${indent}${togglePrefix}${textContent}\n`;
             } else {
               // Regular list item - process children to handle nested content
               const childContent = Array.from(li.childNodes)
@@ -72,7 +84,14 @@ const htmlToMarkdown = (html: string): string => {
                 .join("")
                 .trim();
 
-              const prefix = isOrdered ? `${itemIndex}. ` : "- ";
+              let prefix: string;
+              if (isOrdered || listKind === "ordered") {
+                const orderNum = listOrder ? parseInt(listOrder, 10) : itemIndex;
+                prefix = `${orderNum}. `;
+              } else {
+                prefix = "- ";
+              }
+
               result += `${indent}${prefix}${childContent}\n`;
               itemIndex++;
             }
