@@ -1,10 +1,8 @@
 import pytest
 from django.conf import settings
 from rest_framework.test import APIClient
-from rest_framework import status
 from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
-from django.urls import reverse
 
 from plane.db.models import User, Workspace, WorkspaceMember
 from plane.db.models.api import APIToken
