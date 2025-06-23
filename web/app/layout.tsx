@@ -80,6 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div id="context-menu-portal" />
+        <div id="editor-portal" />
         <AppProvider>
           <div
             className={cn(

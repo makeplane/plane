@@ -201,7 +201,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // show the image upload status only when the resolvedImageSrc is not ready
   const showUploadStatus = !resolvedImageSrc;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageUtils = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete;
+  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
   const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
@@ -210,8 +210,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   return (
     <div
       className={cn("w-fit max-w-full transition-all", {
-        "mx-auto": nodeAlignment === "center",
-        "ml-auto": nodeAlignment === "right",
+        "ml-[50%] -translate-x-1/2": nodeAlignment === "center",
+        "ml-[100%] -translate-x-full": nodeAlignment === "right",
       })}
     >
       <div
@@ -276,7 +276,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
           }}
         />
         {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
-        {showImageUtils && (
+        {showImageToolbar && (
           <ImageToolbarRoot
             alignment={nodeAlignment ?? "left"}
             width={size.width}
