@@ -41,7 +41,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorReadOnlyRefApi => {
     }),
     getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
     getMarkDown: () => {
-      const markdownOutput = editor?.storage.markdown.getMarkdown();
+      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.();
       return markdownOutput;
     },
     scrollSummary: (marking) => {

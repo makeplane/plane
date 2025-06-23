@@ -25,7 +25,8 @@ export const useQueryParams = () => {
       });
 
       // construct the new route with the updated query parameters
-      const newRoute = `${pathname}?${currentParams.toString()}`;
+      const query = currentParams.toString();
+      const newRoute = query ? `${pathname}?${query}` : pathname;
       return newRoute;
     },
     [pathname, searchParams]
