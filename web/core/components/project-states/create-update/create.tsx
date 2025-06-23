@@ -2,28 +2,33 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { STATE_CREATED, STATE_GROUPS } from "@plane/constants";
-import { IState, TStateGroups } from "@plane/types";
+import { EventProps, STATE_CREATED, STATE_GROUPS } from "@plane/constants";
+import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
 // hooks
-import { useEventTracker, useProjectState } from "@/hooks/store";
+import { useEventTracker } from "@/hooks/store";
 
 type TStateCreate = {
-  workspaceSlug: string;
-  projectId: string;
   groupKey: TStateGroups;
+  shouldTrackEvents: boolean;
+  createStateCallback: TStateOperationsCallbacks["createState"];
   handleClose: () => void;
 };
 
 export const StateCreate: FC<TStateCreate> = observer((props) => {
-  const { workspaceSlug, projectId, groupKey, handleClose } = props;
+  const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
   // hooks
   const { captureProjectStateEvent, setTrackElement } = useEventTracker();
-  const { createState } = useProjectState();
   // states
   const [loader, setLoader] = useState(false);
+
+  const captureEventIfEnabled = (props: EventProps) => {
+    if (shouldTrackEvents) {
+      captureProjectStateEvent(props);
+    }
+  };
 
   const onCancel = () => {
     setLoader(false);
@@ -31,12 +36,14 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
   };
 
   const onSubmit = async (formData: Partial<IState>) => {
-    if (!workspaceSlug || !projectId || !groupKey) return { status: "error" };
+    if (!groupKey) return { status: "error" };
 
-    setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+    if (shouldTrackEvents) {
+      setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+    }
     try {
-      const stateResponse = await createState(workspaceSlug, projectId, { ...formData, group: groupKey });
-      captureProjectStateEvent({
+      const stateResponse = await createStateCallback({ ...formData, group: groupKey });
+      captureEventIfEnabled({
         eventName: STATE_CREATED,
         payload: {
           ...stateResponse,
@@ -53,7 +60,7 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
       return { status: "success" };
     } catch (error) {
       const errorStatus = error as unknown as { status: number; data: { error: string } };
-      captureProjectStateEvent({
+      captureEventIfEnabled({
         eventName: STATE_CREATED,
         payload: {
           ...formData,

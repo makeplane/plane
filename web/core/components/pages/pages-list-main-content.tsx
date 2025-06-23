@@ -26,13 +26,13 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIds, getCurrentProjectPageIds, filters } =
+  const { loader, isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters } =
     usePageStore(storeType);
   const { toggleCreatePageModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const pageIds = getCurrentProjectPageIds(pageType);
-  const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
+  const pageIds = getCurrentProjectPageIdsByTab(pageType);
+  const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT

@@ -2,7 +2,6 @@
 
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
@@ -11,13 +10,17 @@ import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useLabel } from "@/hooks/store";
 
-type Props = {
+export type TLabelOperationsCallbacks = {
+  createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
+  updateLabel: (labelId: string, data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
+};
+
+type TCreateUpdateLabelInlineProps = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
+  labelOperationsCallbacks: TLabelOperationsCallbacks;
   labelToUpdate?: IIssueLabel;
   onClose?: () => void;
 };
@@ -28,12 +31,8 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const CreateUpdateLabelInline = observer(
-  forwardRef<HTMLFormElement, Props>(function CreateUpdateLabelInline(props, ref) {
-    const { labelForm, setLabelForm, isUpdating, labelToUpdate, onClose } = props;
-    // router
-    const { workspaceSlug, projectId } = useParams();
-    // store hooks
-    const { createLabel, updateLabel } = useLabel();
+  forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
+    const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {
       handleSubmit,
@@ -56,9 +55,10 @@ export const CreateUpdateLabelInline = observer(
     };
 
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (isSubmitting) return;
 
-      await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+      await labelOperationsCallbacks
+        .createLabel(formData)
         .then(() => {
           handleClose();
           reset(defaultValues);
@@ -74,10 +74,10 @@ export const CreateUpdateLabelInline = observer(
     };
 
     const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
-      if (!workspaceSlug || !projectId || isSubmitting) return;
+      if (!labelToUpdate?.id || isSubmitting) return;
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      await updateLabel(workspaceSlug.toString(), projectId.toString(), labelToUpdate?.id!, formData)
+      await labelOperationsCallbacks
+        .updateLabel(labelToUpdate.id, formData)
         .then(() => {
           reset(defaultValues);
           handleClose();
@@ -90,6 +90,14 @@ export const CreateUpdateLabelInline = observer(
           });
           reset(formData);
         });
+    };
+
+    const handleFormSubmit = (formData: IIssueLabel) => {
+      if (isUpdating) {
+        handleLabelUpdate(formData);
+      } else {
+        handleLabelCreate(formData);
+      }
     };
 
     /**
@@ -117,12 +125,8 @@ export const CreateUpdateLabelInline = observer(
 
     return (
       <>
-        <form
+        <div
           ref={ref}
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
-          }}
           className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
         >
           <div className="flex-shrink-0">
@@ -199,10 +203,18 @@ export const CreateUpdateLabelInline = observer(
           <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
             {t("cancel")}
           </Button>
-          <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
+          <Button
+            variant="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              handleSubmit(handleFormSubmit)();
+            }}
+            size="sm"
+            loading={isSubmitting}
+          >
             {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           </Button>
-        </form>
+        </div>
         {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
       </>
     );

@@ -18,7 +18,6 @@
     "pro": "프로",
     "upgrade": "업그레이드"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "제출",
   "cancel": "취소",
   "loading": "로딩 중",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   "project_created_successfully": "프로젝트가 성공적으로 생성되었습니다",
   "project_created_successfully_description": "프로젝트가 성공적으로 생성되었습니다. 이제 작업 항목을 추가할 수 있습니다.",
+  "project_name_already_taken": "프로젝트 이름이 이미 사용 중입니다.",
+  "project_identifier_already_taken": "프로젝트 식별자가 이미 사용 중입니다.",
   "project_cover_image_alt": "프로젝트 커버 이미지",
   "name_is_required": "이름이 필요합니다",
   "title_should_be_less_than_255_characters": "제목은 255자 미만이어야 합니다",
@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "프로젝트를 즐겨찾기에서 제거하지 못했습니다. 다시 시도해주세요.",
   "add_to_favorites": "즐겨찾기에 추가",
   "remove_from_favorites": "즐겨찾기에서 제거",
-  "publish_settings": "설정 게시",
+  "publish_project": "프로젝트 게시",
   "publish": "게시",
   "copy_link": "링크 복사",
   "leave_project": "프로젝트 떠나기",
@@ -367,12 +367,12 @@
   "work_management": "작업 관리",
   "projects_and_issues": "프로젝트 및 작업 항목",
   "projects_and_issues_description": "이 프로젝트에서 이들을 켜거나 끕니다.",
-  "cycles_description": "프로젝트별로 작업을 시간 상자로 나누고, 한 기간에서 다음 기간으로 빈도를 변경합니다.",
-  "modules_description": "작업을 하위 프로젝트와 같은 설정으로 그룹화하고, 각 설정에 리드와 담당자를 지정합니다.",
-  "views_description": "정렬, 필터 및 표시 옵션을 나중에 저장하거나 공유합니다.",
-  "pages_description": "무엇이든 작성하세요.",
-  "intake_description": "구독한 작업 항목에 대한 최신 정보를 유지하세요. 알림을 받으려면 이 기능을 활성화하세요.",
-  "time_tracking_description": "작업 항목 및 프로젝트에 소요된 시간을 추적합니다.",
+  "cycles_description": "프로젝트별로 작업 시간을 설정하고 필요에 따라 기간을 조정하세요. 한 주기는 2주일일 수 있고, 다음은 1주일일 수 있습니다.",
+  "modules_description": "작업을 전담 리더와 담당자가 있는 하위 프로젝트로 구성하세요.",
+  "views_description": "사용자 정의 정렬, 필터 및 표시 옵션을 저장하거나 팀과 공유하세요.",
+  "pages_description": "자유 형식의 콘텐츠를 작성하고 편집하세요. 메모, 문서, 무엇이든 가능합니다.",
+  "intake_description": "비회원이 버그, 피드백, 제안을 공유할 수 있도록 하되, 워크플로우를 방해하지 않도록 합니다.",
+  "time_tracking_description": "작업 항목 및 프로젝트에 소요된 시간을 기록하세요.",
   "work_management_description": "작업 및 프로젝트를 쉽게 관리합니다.",
   "documentation": "문서",
   "message_support": "지원 메시지",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "새 비밀번호는 이전 비밀번호와 다르게 설정해야 합니다",
   "edited": "수정됨",
   "bot": "봇",
-
   "project_view": {
     "sort_by": {
       "created_at": "생성일",
@@ -512,12 +511,10 @@
       "name": "이름"
     }
   },
-
   "toast": {
     "success": "성공!",
     "error": "오류!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "빠른 시작 가이드",
@@ -594,7 +590,7 @@
         "default": "아직 최근 항목이 없습니다."
       },
       "filters": {
-        "all": "모든 항목",
+        "all": "모든",
         "projects": "프로젝트",
         "pages": "페이지",
         "issues": "작업 항목"
@@ -614,7 +610,6 @@
     "title": "홈",
     "star_us_on_github": "GitHub에서 별표"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "모두",
     "states": "상태",
@@ -756,7 +750,8 @@
         "message": "문제가 발생했습니다. 다시 시도해주세요."
       },
       "required": "이 필드는 필수입니다",
-      "entity_required": "{entity}가 필요합니다"
+      "entity_required": "{entity}가 필요합니다",
+      "restricted_entity": "{entity}은(는) 제한되어 있습니다"
     },
     "update_link": "링크 업데이트",
     "attach": "첨부",
@@ -857,6 +852,7 @@
     "live": "라이브",
     "change_history": "변경 기록",
     "coming_soon": "곧 출시",
+    "member": "멤버",
     "members": "멤버",
     "you": "나",
     "upgrade_cta": {
@@ -871,22 +867,36 @@
     "deleting": "삭제 중",
     "pending": "보류 중",
     "invite": "초대",
-    "view": "보기"
+    "view": "보기",
+    "deactivated_user": "비활성화된 사용자",
+    "apply": "적용",
+    "applying": "적용 중",
+    "users": "사용자",
+    "admins": "관리자",
+    "guests": "게스트",
+    "on_track": "계획대로 진행 중",
+    "off_track": "계획 이탈",
+    "at_risk": "위험",
+    "timeline": "타임라인",
+    "completion": "완료",
+    "upcoming": "예정된",
+    "completed": "완료됨",
+    "in_progress": "진행 중",
+    "planned": "계획된",
+    "paused": "일시 중지됨",
+    "no_of": "{entity} 수"
   },
-
   "chart": {
     "x_axis": "X축",
     "y_axis": "Y축",
     "metric": "메트릭"
   },
-
   "form": {
     "title": {
       "required": "제목이 필요합니다",
       "max_length": "제목은 {length}자 미만이어야 합니다"
     }
   },
-
   "entity": {
     "grouping_title": "{entity} 그룹화",
     "priority": "{entity} 우선순위",
@@ -910,7 +920,6 @@
       "failed": "{entity} 추가 중 오류 발생"
     }
   },
-
   "epic": {
     "all": "모든 에픽",
     "label": "{count, plural, one {에픽} other {에픽}}",
@@ -928,7 +937,6 @@
       "required": "에픽 제목이 필요합니다."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {작업 항목} other {작업 항목}}",
     "all": "모든 작업 항목",
@@ -1091,11 +1099,12 @@
     "select": {
       "error": "최소 하나의 작업 항목을 선택하세요",
       "empty": "선택된 작업 항목 없음",
-      "add_selected": "선택된 작업 항목 추가"
+      "add_selected": "선택된 작업 항목 추가",
+      "select_all": "모두 선택",
+      "deselect_all": "모두 선택 해제"
     },
     "open_in_full_screen": "작업 항목을 전체 화면으로 열기"
   },
-
   "attachment": {
     "error": "파일을 첨부할 수 없습니다. 다시 업로드하세요.",
     "only_one_file_allowed": "한 번에 하나의 파일만 업로드할 수 있습니다.",
@@ -1103,7 +1112,6 @@
     "drag_and_drop": "업로드하려면 아무 곳에나 드래그 앤 드롭하세요",
     "delete": "첨부 파일 삭제"
   },
-
   "label": {
     "select": "레이블 선택",
     "create": {
@@ -1113,7 +1121,6 @@
       "type": "새 레이블을 추가하려면 입력하세요"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "하위 작업 항목이 성공적으로 업데이트되었습니다",
@@ -1122,9 +1129,20 @@
     "remove": {
       "success": "하위 작업 항목이 성공적으로 제거되었습니다",
       "error": "하위 작업 항목 제거 중 오류 발생"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "적용된 필터에 일치하는 하위 작업 항목이 없습니다.",
+        "description": "모든 하위 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      },
+      "list_filters": {
+        "title": "적용된 필터에 일치하는 작업 항목이 없습니다.",
+        "description": "모든 작업 항목을 보려면 모든 적용된 필터를 지우세요.",
+        "action": "필터 지우기"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {뷰} other {뷰}}",
     "create": {
@@ -1134,7 +1152,6 @@
       "label": "뷰 업데이트"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1220,7 +1237,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "작업 공간 생성",
     "subheading": "Plane을 사용하려면 작업 공간을 생성하거나 참여해야 합니다.",
@@ -1272,7 +1288,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1288,7 +1303,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "분석",
     "page_label": "{workspace} - 분석",
@@ -1320,20 +1334,38 @@
       "custom": "맞춤형 분석"
     },
     "empty_state": {
-      "general": {
-        "title": "진행 상황, 작업량 및 할당을 추적하세요. 트렌드를 파악하고, 차단 요소를 제거하며, 작업을 더 빠르게 진행하세요",
-        "description": "범위 대 수요, 추정치 및 범위 크리프를 확인하세요. 팀원과 팀의 성과를 확인하고 프로젝트가 제시간에 진행되도록 하세요.",
-        "primary_button": {
-          "text": "첫 번째 프로젝트 시작",
-          "comic": {
-            "title": "분석은 주기 + 모듈과 함께 작동합니다",
-            "description": "먼저 작업 항목을 주기로 시간 상자화하고, 주기를 초과하는 작업 항목을 모듈로 그룹화하세요. 왼쪽 탐색에서 둘 다 확인하세요."
-          }
-        }
+      "customized_insights": {
+        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다.",
+        "title": "아직 데이터가 없습니다"
+      },
+      "created_vs_resolved": {
+        "description": "시간이 지나면서 생성되고 해결된 작업 항목이 여기에 표시됩니다.",
+        "title": "아직 데이터가 없습니다"
+      },
+      "project_insights": {
+        "title": "아직 데이터가 없습니다",
+        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다."
       }
-    }
+    },
+    "created_vs_resolved": "생성됨 vs 해결됨",
+    "customized_insights": "맞춤형 인사이트",
+    "backlog_work_items": "백로그 {entity}",
+    "active_projects": "활성 프로젝트",
+    "trend_on_charts": "차트의 추세",
+    "all_projects": "모든 프로젝트",
+    "summary_of_projects": "프로젝트 요약",
+    "project_insights": "프로젝트 인사이트",
+    "started_work_items": "시작된 {entity}",
+    "total_work_items": "총 {entity}",
+    "total_projects": "총 프로젝트 수",
+    "total_admins": "총 관리자 수",
+    "total_users": "총 사용자 수",
+    "total_intake": "총 수입",
+    "un_started_work_items": "시작되지 않은 {entity}",
+    "total_guests": "총 게스트 수",
+    "completed_work_items": "완료된 {entity}",
+    "total": "총 {entity}"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",
     "create": {
@@ -1408,7 +1440,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "뷰 추가",
     "empty_state": {
@@ -1443,7 +1474,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "작업 공간 설정",
     "page_label": "{workspace} - 일반 설정",
@@ -1625,7 +1655,6 @@
       }
     }
   },
-
   "profile": {
     "label": "프로필",
     "page_label": "나의 작업",
@@ -1688,7 +1717,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "프로젝트 ID 입력",
@@ -1738,24 +1766,102 @@
       }
     },
     "estimates": {
-      "title": "프로젝트에 대한 추정 활성화",
-      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다."
+      "label": "추정",
+      "title": "프로젝트 추정 활성화",
+      "description": "팀의 복잡성과 작업량을 전달하는 데 도움이 됩니다.",
+      "no_estimate": "추정 없음",
+      "new": "새 추정 시스템",
+      "create": {
+        "custom": "사용자 지정",
+        "start_from_scratch": "처음부터 시작",
+        "choose_template": "템플릿 선택",
+        "choose_estimate_system": "추정 시스템 선택",
+        "enter_estimate_point": "추정 입력",
+        "step": "단계 {step}/{total}",
+        "label": "추정 생성"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "추정 생성됨",
+            "message": "추정이 성공적으로 생성되었습니다"
+          },
+          "error": {
+            "title": "추정 생성 실패",
+            "message": "새 추정을 생성할 수 없습니다. 다시 시도해 주세요."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "추정 수정됨",
+            "message": "프로젝트의 추정이 업데이트되었습니다."
+          },
+          "error": {
+            "title": "추정 수정 실패",
+            "message": "추정을 수정할 수 없습니다. 다시 시도해 주세요"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 활성화되었습니다."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "성공!",
+            "message": "추정이 비활성화되었습니다."
+          },
+          "error": {
+            "title": "오류!",
+            "message": "추정을 비활성화할 수 없습니다. 다시 시도해 주세요"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "추정은 0보다 커야 합니다.",
+        "unable_to_process": "요청을 처리할 수 없습니다. 다시 시도해 주세요.",
+        "numeric": "추정은 숫자 값이어야 합니다.",
+        "character": "추정은 문자 값이어야 합니다.",
+        "empty": "추정 값은 비어있을 수 없습니다.",
+        "already_exists": "추정 값이 이미 존재합니다.",
+        "unsaved_changes": "저장되지 않은 변경 사항이 있습니다. 완료를 클릭하기 전에 저장하세요",
+        "remove_empty": "추정은 비어있을 수 없습니다. 각 필드에 값을 입력하거나 값이 없는 필드를 제거하세요."
+      },
+      "systems": {
+        "points": {
+          "label": "포인트",
+          "fibonacci": "피보나치",
+          "linear": "선형",
+          "squares": "제곱",
+          "custom": "사용자 정의"
+        },
+        "categories": {
+          "label": "카테고리",
+          "t_shirt_sizes": "티셔츠 사이즈",
+          "easy_to_hard": "쉬움에서 어려움",
+          "custom": "사용자 정의"
+        },
+        "time": {
+          "label": "시간",
+          "hours": "시간"
+        }
+      }
     },
     "automations": {
       "label": "자동화",
       "auto-archive": {
-        "title": "닫힌 작업 항목 자동 아카이브",
-        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 아카이브합니다.",
-        "duration": "닫힌 작업 항목을 자동 아카이브"
+        "title": "완료된 작업 항목 자동 보관",
+        "description": "Plane은 완료되거나 취소된 작업 항목을 자동으로 보관합니다.",
+        "duration": "다음 기간 동안 닫힌 작업 항목 자동 보관"
       },
       "auto-close": {
         "title": "작업 항목 자동 닫기",
         "description": "Plane은 완료되거나 취소되지 않은 작업 항목을 자동으로 닫습니다.",
-        "duration": "비활성 상태인 작업 항목 자동 닫기",
+        "duration": "다음 기간 동안 비활성 작업 항목 자동 닫기",
         "auto_close_status": "자동 닫기 상태"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "레이블 없음",
@@ -1768,7 +1874,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "주기 추가",
     "more_details": "자세히 보기",
@@ -1894,7 +1999,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1923,7 +2027,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "모듈 추가",
     "update_module": "모듈 업데이트",
@@ -1977,7 +2080,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1997,7 +2099,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2027,7 +2128,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2035,7 +2135,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2046,7 +2145,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2055,7 +2153,6 @@
       }
     }
   },
-
   "notification": {
     "label": "받은 편지함",
     "page_label": "{workspace} - 받은 편지함",
@@ -2112,7 +2209,6 @@
       "custom": "사용자 정의"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2132,7 +2228,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2195,7 +2290,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "나의 스티키",
     "placeholder": "여기에 입력하려면 클릭하세요",
@@ -2253,7 +2347,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "게스트",
@@ -2268,7 +2361,6 @@
       "description": "작업 공간 내에서 모든 권한이 true로 설정됨."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "제품 / 프로젝트 관리자",
     "development_or_engineering": "개발 / 엔지니어링",
@@ -2281,7 +2373,6 @@
     "human_resources": "인사 / 자원",
     "other": "기타"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2292,7 +2383,6 @@
       "description": "Jira 프로젝트 및 에픽에서 작업 항목과 에픽을 가져옵니다."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2321,7 +2411,6 @@
     "created": "생성됨",
     "subscribed": "구독됨"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2367,14 +2456,21 @@
       "manual": "수동"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {주기} other {주기}}",
     "no_cycle": "주기 없음"
   },
-
   "module": {
     "label": "{count, plural, one {모듈} other {모듈}}",
     "no_module": "모듈 없음"
+  },
+  "description_versions": {
+    "last_edited_by": "마지막 편집자",
+    "previously_edited_by": "이전 편집자",
+    "edited_by": "편집자"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane이 시작되지 않았습니다. 이는 하나 이상의 Plane 서비스가 시작에 실패했기 때문일 수 있습니다.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "확실히 하려면 setup.sh와 Docker 로그에서 View Logs를 선택하세요."
   }
 }

@@ -1,14 +1,10 @@
 import { useMemo } from "react";
-// plane constants
+// plane imports
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
-// plane editor
 import { EditorRefApi } from "@plane/editor";
-// plane types
 import { EPageAccess } from "@plane/types/src/enums";
-// plane ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
@@ -51,7 +47,7 @@ export const usePageOperations = (
   // collaborative actions
   const { executeCollaborativeAction } = useCollaborativePageActions(props);
   // local storage
-  const { setValue: toggleFavoriteMenu, storedValue: isfavoriteMenuOpen } = useLocalStorage<boolean>(
+  const { setValue: toggleFavoriteMenu, storedValue: isFavoriteMenuOpen } = useLocalStorage<boolean>(
     IS_FAVORITE_MENU_OPEN,
     false
   );
@@ -151,7 +147,7 @@ export const usePageOperations = (
           );
         } else {
           addToFavorites().then(() => {
-            if (!isfavoriteMenuOpen) toggleFavoriteMenu(true);
+            if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
@@ -203,7 +199,9 @@ export const usePageOperations = (
     getRedirectionLink,
     is_favorite,
     is_locked,
+    isFavoriteMenuOpen,
     removePageFromFavorites,
+    toggleFavoriteMenu,
   ]);
   return {
     pageOperations,

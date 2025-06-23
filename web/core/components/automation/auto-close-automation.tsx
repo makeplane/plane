@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // ui
@@ -42,7 +42,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
       query: state.name,
       content: (
         <div className="flex items-center gap-2">
-          <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
+          <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.LG} />
           {state.name}
         </div>
       ),
@@ -139,7 +139,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                   </div>
                 </div>
 
-                <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
+                <div className="ppy sm:py-10 flex w-full items-center justify-between gap-2 px-5 py-4">
                   <div className="w-1/2 text-sm font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
@@ -152,15 +152,13 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                             <StateGroupIcon
                               stateGroup={selectedOption.group}
                               color={selectedOption.color}
-                              height="16px"
-                              width="16px"
+                              size={EIconSize.LG}
                             />
                           ) : currentDefaultState ? (
                             <StateGroupIcon
                               stateGroup={currentDefaultState.group}
                               color={currentDefaultState.color}
-                              height="16px"
-                              width="16px"
+                              size={EIconSize.LG}
                             />
                           ) : (
                             <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />

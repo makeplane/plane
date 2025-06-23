@@ -17,9 +17,9 @@ type TPagesListRoot = {
 export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
   const { pageType, storeType } = props;
   // store hooks
-  const { getCurrentProjectFilteredPageIds } = usePageStore(storeType);
+  const { getCurrentProjectFilteredPageIdsByTab } = usePageStore(storeType);
   // derived values
-  const filteredPageIds = getCurrentProjectFilteredPageIds(pageType);
+  const filteredPageIds = getCurrentProjectFilteredPageIdsByTab(pageType);
 
   if (!filteredPageIds) return <></>;
   return (

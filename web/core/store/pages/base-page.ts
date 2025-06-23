@@ -1,15 +1,19 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
-// constants
+// plane imports
 import { EPageAccess } from "@plane/constants";
-// types
+import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
+import { TChangeHandlerProps } from "@plane/ui";
+import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
+import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import { RootStore } from "@/plane-web/store/root.store";
 
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
+  editorRef: EditorRefApi | null;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
@@ -27,10 +31,12 @@ export type TBasePage = TPage & {
   unlock: (shouldSync?: boolean) => Promise<void>;
   archive: (shouldSync?: boolean) => Promise<void>;
   restore: (shouldSync?: boolean) => Promise<void>;
-  updatePageLogo: (logo_props: TLogoProps) => Promise<void>;
+  updatePageLogo: (value: TChangeHandlerProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
+  mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
+  setEditorRef: (editorRef: EditorRefApi | null) => void;
 };
 
 export type TBasePagePermissions = {
@@ -64,9 +70,10 @@ export type TPageInstance = TBasePage &
     getRedirectionLink: () => string;
   };
 
-export class BasePage implements TBasePage {
+export class BasePage extends ExtendedBasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
+  editorRef: EditorRefApi | null = null;
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -76,13 +83,11 @@ export class BasePage implements TBasePage {
   label_ids: string[] | undefined;
   owned_by: string | undefined;
   access: EPageAccess | undefined;
-  anchor?: string | null | undefined;
   is_favorite: boolean;
   is_locked: boolean;
   archived_at: string | null | undefined;
   workspace: string | undefined;
   project_ids?: string[] | undefined;
-  team: string | null | undefined;
   created_by: string | undefined;
   updated_by: string | undefined;
   created_at: Date | undefined;
@@ -100,6 +105,8 @@ export class BasePage implements TBasePage {
     page: TPage,
     services: TBasePageServices
   ) {
+    super(store, page, services);
+
     this.id = page?.id || undefined;
     this.name = page?.name;
     this.logo_props = page?.logo_props || undefined;
@@ -108,13 +115,11 @@ export class BasePage implements TBasePage {
     this.label_ids = page?.label_ids || undefined;
     this.owned_by = page?.owned_by || undefined;
     this.access = page?.access || EPageAccess.PUBLIC;
-    this.anchor = page?.anchor || undefined;
     this.is_favorite = page?.is_favorite || false;
     this.is_locked = page?.is_locked || false;
     this.archived_at = page?.archived_at || undefined;
     this.workspace = page?.workspace || undefined;
     this.project_ids = page?.project_ids || undefined;
-    this.team = page?.team || undefined;
     this.created_by = page?.created_by || undefined;
     this.updated_by = page?.updated_by || undefined;
     this.created_at = page?.created_at || undefined;
@@ -124,6 +129,7 @@ export class BasePage implements TBasePage {
     makeObservable(this, {
       // loaders
       isSubmitting: observable.ref,
+      editorRef: observable.ref,
       // page properties
       id: observable.ref,
       name: observable.ref,
@@ -133,7 +139,6 @@ export class BasePage implements TBasePage {
       label_ids: observable,
       owned_by: observable.ref,
       access: observable.ref,
-      anchor: observable.ref,
       is_favorite: observable.ref,
       is_locked: observable.ref,
       archived_at: observable.ref,
@@ -164,6 +169,8 @@ export class BasePage implements TBasePage {
       addToFavorites: action,
       removePageFromFavorites: action,
       duplicate: action,
+      mutateProperties: action,
+      setEditorRef: action,
     });
 
     this.rootStore = store;
@@ -203,18 +210,17 @@ export class BasePage implements TBasePage {
       label_ids: this.label_ids,
       owned_by: this.owned_by,
       access: this.access,
-      anchor: this.anchor,
       logo_props: this.logo_props,
       is_favorite: this.is_favorite,
       is_locked: this.is_locked,
       archived_at: this.archived_at,
       workspace: this.workspace,
       project_ids: this.project_ids,
-      team: this.team,
       created_by: this.created_by,
       updated_by: this.updated_by,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      ...this.asJSONExtended,
     };
   }
 
@@ -424,13 +430,35 @@ export class BasePage implements TBasePage {
     }
   };
 
-  updatePageLogo = async (logo_props: TLogoProps) => {
-    await this.services.update({
-      logo_props,
-    });
-    runInAction(() => {
-      this.logo_props = logo_props;
-    });
+  updatePageLogo = async (value: TChangeHandlerProps) => {
+    const originalLogoProps = { ...this.logo_props };
+    try {
+      let logoValue = {};
+      if (value?.type === "emoji")
+        logoValue = {
+          value: convertHexEmojiToDecimal(value.value.unified),
+          url: value.value.imageUrl,
+        };
+      else if (value?.type === "icon") logoValue = value.value;
+
+      const logoProps: TLogoProps = {
+        in_use: value?.type,
+        [value?.type]: logoValue,
+      };
+
+      runInAction(() => {
+        this.logo_props = logoProps;
+      });
+      await this.services.update({
+        logo_props: logoProps,
+      });
+    } catch (error) {
+      console.error("Error in updating page logo", error);
+      runInAction(() => {
+        this.logo_props = originalLogoProps as TLogoProps;
+      });
+      throw error;
+    }
   };
 
   /**
@@ -484,4 +512,22 @@ export class BasePage implements TBasePage {
    * @description duplicate the page
    */
   duplicate = async () => await this.services.duplicate();
+
+  /**
+   * @description mutate multiple properties at once
+   * @param data Partial<TPage>
+   */
+  mutateProperties = (data: Partial<TPage>, shouldUpdateName: boolean = true) => {
+    Object.keys(data).forEach((key) => {
+      const value = data[key as keyof TPage];
+      if (key === "name" && !shouldUpdateName) return;
+      set(this, key, value);
+    });
+  };
+
+  setEditorRef = (editorRef: EditorRefApi | null) => {
+    runInAction(() => {
+      this.editorRef = editorRef;
+    });
+  };
 }

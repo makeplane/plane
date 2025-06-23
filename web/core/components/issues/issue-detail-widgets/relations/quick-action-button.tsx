@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -16,11 +16,11 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
-  issueServiceType?: TIssueServiceType;
+  issueServiceType: TIssueServiceType;
 };
 
 export const RelationActionButton: FC<Props> = observer((props) => {
-  const { customButton, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { customButton, issueId, disabled = false, issueServiceType } = props;
   const { t } = useTranslation();
   // store hooks
   const { toggleRelationModal, setRelationKey } = useIssueDetail(issueServiceType);

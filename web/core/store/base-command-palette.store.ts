@@ -1,4 +1,5 @@
 import { observable, action, makeObservable } from "mobx";
+import { computedFn } from "mobx-utils";
 import {
   EIssuesStoreType,
   TCreateModalStoreTypes,
@@ -25,7 +26,10 @@ export interface IBaseCommandPaletteStore {
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
   createIssueStoreType: TCreateModalStoreTypes;
+  createWorkItemAllowedProjectIds: string[] | undefined;
   allStickiesModal: boolean;
+  projectListOpenMap: Record<string, boolean>;
+  getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -33,11 +37,12 @@ export interface IBaseCommandPaletteStore {
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: TCreatePageModal) => void;
-  toggleCreateIssueModal: (value?: boolean, storeType?: TCreateModalStoreTypes) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: TCreateModalStoreTypes, allowedProjectIds?: string[]) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
   toggleAllStickiesModal: (value?: boolean) => void;
+  toggleProjectListOpen: (projectId: string, value?: boolean) => void;
 }
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
@@ -53,7 +58,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   isBulkDeleteIssueModalOpen: boolean = false;
   createPageModal: TCreatePageModal = DEFAULT_CREATE_PAGE_MODAL_DATA;
   createIssueStoreType: TCreateModalStoreTypes = EIssuesStoreType.PROJECT;
+  createWorkItemAllowedProjectIds: IBaseCommandPaletteStore["createWorkItemAllowedProjectIds"] = undefined;
   allStickiesModal: boolean = false;
+  projectListOpenMap: Record<string, boolean> = {};
 
   constructor() {
     makeObservable(this, {
@@ -69,7 +76,9 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       isBulkDeleteIssueModalOpen: observable.ref,
       createPageModal: observable,
       createIssueStoreType: observable,
+      createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
+      projectListOpenMap: observable,
       // projectPages: computed,
       // toggle actions
       toggleCommandPaletteModal: action,
@@ -83,6 +92,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
       toggleAllStickiesModal: action,
+      toggleProjectListOpen: action,
     });
   }
 
@@ -104,6 +114,18 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
         this.allStickiesModal
     );
   }
+  // computedFn
+  getIsProjectListOpen = computedFn((projectId: string) => this.projectListOpenMap[projectId]);
+
+  /**
+   * Toggles the project list open state
+   * @param projectId
+   * @param value
+   */
+  toggleProjectListOpen = (projectId: string, value?: boolean) => {
+    if (value !== undefined) this.projectListOpenMap[projectId] = value;
+    else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
+  };
 
   /**
    * Toggles the command palette modal
@@ -195,13 +217,15 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
    * @param storeType
    * @returns
    */
-  toggleCreateIssueModal = (value?: boolean, storeType?: TCreateModalStoreTypes) => {
+  toggleCreateIssueModal = (value?: boolean, storeType?: TCreateModalStoreTypes, allowedProjectIds?: string[]) => {
     if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
       this.createIssueStoreType = storeType || EIssuesStoreType.PROJECT;
+      this.createWorkItemAllowedProjectIds = allowedProjectIds ?? undefined;
     } else {
       this.isCreateIssueModalOpen = !this.isCreateIssueModalOpen;
       this.createIssueStoreType = EIssuesStoreType.PROJECT;
+      this.createWorkItemAllowedProjectIds = undefined;
     }
   };
 

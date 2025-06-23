@@ -63,6 +63,7 @@ from .. import BaseAPIView, BaseViewSet
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 
+
 class ModuleViewSet(BaseViewSet):
     model = Module
     webhook_event = "module"
@@ -710,23 +711,31 @@ class ModuleViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def partial_update(self, request, slug, project_id, pk):
-        module = self.get_queryset().filter(pk=pk)
+        module_queryset = self.get_queryset().filter(pk=pk)
 
-        if module.first().archived_at:
+        current_module = module_queryset.first()
+
+        if not current_module:
+            return Response(
+                {"error": "Module not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if current_module.archived_at:
             return Response(
                 {"error": "Archived module cannot be updated"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         current_instance = json.dumps(
-            ModuleSerializer(module.first()).data, cls=DjangoJSONEncoder
+            ModuleSerializer(current_module).data, cls=DjangoJSONEncoder
         )
         serializer = ModuleWriteSerializer(
-            module.first(), data=request.data, partial=True
+            current_module, data=request.data, partial=True
         )
 
         if serializer.is_valid():
             serializer.save()
-            module = module.values(
+            module = module_queryset.values(
                 # Required fields
                 "id",
                 "workspace_id",

@@ -15,10 +15,11 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, EInboxIssueStatus } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
+import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import {
   DeclineIssueModal,
@@ -30,10 +31,7 @@ import {
 } from "@/components/inbox";
 import { CreateUpdateIssueModal, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { findHowManyDaysLeft } from "@/helpers/date-time.helper";
-import { EInboxIssueStatus } from "@/helpers/inbox.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
+//
 // hooks
 import { useUser, useProjectInbox, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -105,7 +103,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
 
   const currentInboxIssueId = inboxIssue?.issue?.id;
 
-  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/inbox/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
+  const intakeIssueLink = `${workspaceSlug}/projects/${issue?.project_id}/intake/?currentTab=${currentTab}&inboxIssueId=${currentInboxIssueId}`;
 
   const redirectIssue = (): string | undefined => {
     let nextOrPreviousIssueId: string | undefined = undefined;
@@ -122,9 +120,9 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
     if (!isNotificationEmbed) {
       if (nextOrPreviousIssueId)
         router.push(
-          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
+          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${nextOrPreviousIssueId}`
         );
-      else router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}`);
+      else router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}`);
     }
   };
 
@@ -156,7 +154,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
     await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
-      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/inbox`);
+      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
     });
   };
 
@@ -192,7 +190,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
           : (currentIssueIndex - 1 + filteredInboxIssueIds.length) % filteredInboxIssueIds.length;
       const nextIssueId = filteredInboxIssueIds[nextIssueIndex];
       if (!nextIssueId) return;
-      router.push(`/${workspaceSlug}/projects/${projectId}/inbox?inboxIssueId=${nextIssueId}`);
+      router.push(`/${workspaceSlug}/projects/${projectId}/intake?inboxIssueId=${nextIssueId}`);
     },
     [currentInboxIssueId, currentIssueIndex, filteredInboxIssueIds, projectId, router, workspaceSlug]
   );

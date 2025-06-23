@@ -2,11 +2,9 @@ import { observable, action, makeObservable, runInAction, computed } from "mobx"
 
 // helpers
 import { computedFn } from "mobx-utils";
-import { ICalendarPayload, ICalendarWeek } from "@/components/issues";
-import { generateCalendarData } from "@/helpers/calendar.helper";
+import { ICalendarPayload, ICalendarWeek } from "@plane/types";
+import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
 // types
-import { getWeekNumberOfDate } from "@/helpers/date-time.helper";
-
 export interface ICalendarStore {
   calendarFilters: {
     activeMonthDate: Date;
@@ -68,7 +66,29 @@ export class CalendarStore implements ICalendarStore {
 
     const { activeMonthDate } = this.calendarFilters;
 
-    return this.calendarPayload[`y-${activeMonthDate.getFullYear()}`][`m-${activeMonthDate.getMonth()}`];
+    const year = activeMonthDate.getFullYear();
+    const month = activeMonthDate.getMonth();
+
+    // Get the weeks for the current month
+    const weeks = this.calendarPayload[`y-${year}`][`m-${month}`];
+
+    // If no weeks exist, return undefined
+    if (!weeks) return undefined;
+
+    // Create a new object to store the reordered weeks
+    const reorderedWeeks: { [weekNumber: string]: ICalendarWeek } = {};
+
+    // Get all week numbers and sort them
+    const weekNumbers = Object.keys(weeks).map((key) => parseInt(key.replace("w-", "")));
+    weekNumbers.sort((a, b) => a - b);
+
+    // Reorder weeks based on start_of_week
+    weekNumbers.forEach((weekNumber) => {
+      const weekKey = `w-${weekNumber}`;
+      reorderedWeeks[weekKey] = weeks[weekKey];
+    });
+
+    return reorderedWeeks;
   }
 
   get activeWeekNumber() {

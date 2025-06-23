@@ -1,11 +1,12 @@
 {
   "name": "@plane/tailwind-config",
-  "version": "0.25.3",
+  "version": "0.26.1",
   "license": "AGPL-3.0",
   "description": "common tailwind configuration across monorepo",
   "main": "tailwind.config.js",
   "private": true,
   "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/typography": "^0.5.9",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.38",

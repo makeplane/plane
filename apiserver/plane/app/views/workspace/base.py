@@ -3,6 +3,7 @@ import csv
 import io
 import os
 from datetime import date
+import uuid
 
 from dateutil.relativedelta import relativedelta
 from django.db import IntegrityError
@@ -35,6 +36,7 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
     WorkspaceTheme,
+    Profile,
 )
 from plane.app.permissions import ROLE, allow_permission
 from django.utils.decorators import method_decorator
@@ -42,6 +44,8 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
+from plane.bgtasks.workspace_seed_task import workspace_seed
+from plane.utils.url import contains_url
 
 
 class WorkSpaceViewSet(BaseViewSet):
@@ -108,6 +112,12 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            if contains_url(name):
+                return Response(
+                    {"error": "Name cannot contain a URL"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)
                 # Create Workspace member
@@ -119,10 +129,14 @@ class WorkSpaceViewSet(BaseViewSet):
                 )
 
                 # Get total members and role
-                total_members=WorkspaceMember.objects.filter(workspace_id=serializer.data["id"]).count()
+                total_members = WorkspaceMember.objects.filter(
+                    workspace_id=serializer.data["id"]
+                ).count()
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
+
+                workspace_seed.delay(serializer.data["id"])
 
                 return Response(data, status=status.HTTP_201_CREATED)
             return Response(
@@ -134,7 +148,7 @@ class WorkSpaceViewSet(BaseViewSet):
             if "already exists" in str(e):
                 return Response(
                     {"slug": "The workspace with the slug already exists"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
@@ -145,8 +159,18 @@ class WorkSpaceViewSet(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
+    def remove_last_workspace_ids_from_user_settings(self, id: uuid.UUID) -> None:
+        """
+        Remove the last workspace id from the user settings
+        """
+        Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
+        return
+
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     def destroy(self, request, *args, **kwargs):
+        # Get the workspace
+        workspace = self.get_object()
+        self.remove_last_workspace_ids_from_user_settings(workspace.id)
         return super().destroy(request, *args, **kwargs)
 
 
@@ -154,8 +178,6 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = ["name"]
     filterset_fields = ["owner"]
 
-    @method_decorator(cache_control(private=True, max_age=12))
-    @method_decorator(vary_on_cookie)
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
@@ -167,10 +189,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             .values("count")
         )
 
-        role = (
-            WorkspaceMember.objects.filter(workspace=OuterRef("id"), member=request.user, is_active=True)
-            .values("role")
-        )
+        role = WorkspaceMember.objects.filter(
+            workspace=OuterRef("id"), member=request.user, is_active=True
+        ).values("role")
 
         workspace = (
             Workspace.objects.prefetch_related(

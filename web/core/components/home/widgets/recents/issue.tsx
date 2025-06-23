@@ -1,13 +1,15 @@
+import { observer } from "mobx-react";
+// plane constants
+import { EIssueServiceType } from "@plane/constants";
 // plane types
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
 import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 // plane web components
@@ -18,11 +20,12 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
-export const RecentIssue = (props: BlockProps) => {
+export const RecentIssue = observer((props: BlockProps) => {
   const { activity, ref, workspaceSlug } = props;
   // hooks
   const { getStateById } = useProjectState();
   const { setPeekIssue } = useIssueDetail();
+  const { setPeekIssue: setPeekEpic } = useIssueDetail(EIssueServiceType.EPICS);
   const { getProjectIdentifierById } = useProject();
   // derived values
   const issueDetails: TIssueEntityData = activity.entity_data as TIssueEntityData;
@@ -38,7 +41,20 @@ export const RecentIssue = (props: BlockProps) => {
     issueId: issueDetails?.id,
     projectIdentifier,
     sequenceId: issueDetails?.sequence_id,
+    isEpic: issueDetails?.is_epic,
   });
+
+  const handlePeekOverview = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const peekDetails = {
+      workspaceSlug,
+      projectId: issueDetails?.project_id,
+      issueId: activity.entity_data.id,
+    };
+    if (issueDetails?.is_epic) setPeekEpic(peekDetails);
+    else setPeekIssue(peekDetails);
+  };
 
   return (
     <ListItem
@@ -78,7 +94,12 @@ export const RecentIssue = (props: BlockProps) => {
         <div className="flex gap-4">
           <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
             <div>
-              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-4 w-4 my-auto" />
+              <StateGroupIcon
+                stateGroup={state?.group ?? "backlog"}
+                color={state?.color}
+                className="h-4 w-4 my-auto"
+                percentage={state?.order}
+              />
             </div>
           </Tooltip>
           <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>
@@ -109,12 +130,8 @@ export const RecentIssue = (props: BlockProps) => {
       disableLink={false}
       className="bg-transparent my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
-      onItemClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setPeekIssue({ workspaceSlug, projectId: issueDetails?.project_id, issueId: activity.entity_data.id });
-      }}
+      onItemClick={handlePeekOverview}
       preventDefaultNProgress
     />
   );
-};
+});

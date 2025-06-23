@@ -1,14 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, Trash2, ExternalLink, EllipsisVertical, Link2, Link } from "lucide-react";
+import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast, CustomMenu, TContextMenuItem } from "@plane/ui";
+import { TOAST_TYPE, setToast, TContextMenuItem, LinkItemBlock } from "@plane/ui";
 // plane utils
-import { cn, copyTextToClipboard } from "@plane/utils";
-// helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 // types
@@ -27,98 +25,76 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
     quickLinks: { getLinkById, toggleLinkModal, setLinkData },
   } = useHome();
   const { t } = useTranslation();
-
+  // derived values
   const linkDetail = getLinkById(linkId);
-  if (!linkDetail) return <></>;
 
-  const viewLink = linkDetail.url;
+  if (!linkDetail) return null;
 
-  const handleEdit = (modalToggle: boolean) => {
-    toggleLinkModal(modalToggle);
-    setLinkData(linkDetail);
-  };
+  // handlers
+  const handleEdit = useCallback(
+    (modalToggle: boolean) => {
+      toggleLinkModal(modalToggle);
+      setLinkData(linkDetail);
+    },
+    [linkDetail, setLinkData, toggleLinkModal]
+  );
 
-  const handleCopyText = () =>
-    copyTextToClipboard(viewLink).then(() => {
+  const handleCopyText = useCallback(() => {
+    copyTextToClipboard(linkDetail.url).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),
         message: t("view_link_copied_to_clipboard"),
       });
     });
-  const handleOpenInNewTab = () => window.open(`${viewLink}`, "_blank");
+  }, [linkDetail.url, t]);
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      action: () => handleEdit(true),
-      title: t("edit"),
-      icon: Pencil,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: ExternalLink,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: Link,
-    },
-    {
-      key: "delete",
-      action: () => linkOperations.remove(linkId),
-      title: t("delete"),
-      icon: Trash2,
-    },
-  ];
+  const handleOpenInNewTab = useCallback(() => {
+    window.open(linkDetail.url, "_blank", "noopener,noreferrer");
+  }, [linkDetail.url]);
+
+  const handleDelete = useCallback(() => {
+    linkOperations.remove(linkId);
+  }, [linkId, linkOperations]);
+
+  // derived values
+  const menuItems = useMemo<TContextMenuItem[]>(
+    () => [
+      {
+        key: "edit",
+        action: () => handleEdit(true),
+        title: t("edit"),
+        icon: Pencil,
+      },
+      {
+        key: "open-new-tab",
+        action: handleOpenInNewTab,
+        title: t("open_in_new_tab"),
+        icon: ExternalLink,
+      },
+      {
+        key: "copy-link",
+        action: handleCopyText,
+        title: t("copy_link"),
+        icon: Link,
+      },
+      {
+        key: "delete",
+        action: handleDelete,
+        title: t("delete"),
+        icon: Trash2,
+      },
+    ],
+    [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]
+  );
 
   return (
-    <div
+    <LinkItemBlock
+      title={linkDetail.title || linkDetail.url}
+      url={linkDetail.url}
+      createdAt={linkDetail.created_at}
+      menuItems={menuItems}
       onClick={handleOpenInNewTab}
-      className="cursor-pointer group flex items-center bg-custom-background-100 px-4 w-[230px] h-[56px] border-[0.5px] border-custom-border-200 rounded-md gap-4 hover:shadow-md transition-shadow"
-    >
-      <div className="flex-shrink-0 size-8 rounded p-2 bg-custom-background-80 grid place-items-center">
-        <Link2 className="size-4 stroke-2 text-custom-text-350 -rotate-45" />
-      </div>
-      <div className="flex-1 truncate">
-        <div className="text-sm font-medium truncate">{linkDetail.title || linkDetail.url}</div>
-        <div className="text-xs font-medium text-custom-text-400">{calculateTimeAgo(linkDetail.created_at)}</div>
-      </div>
-      <div className="hidden group-hover:block">
-        <CustomMenu placement="bottom-end" menuItemsClassName="z-20" closeOnSelect verticalEllipsis>
-          {MENU_ITEMS.map((item) => (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                item.action();
-              }}
-              className={cn("flex items-center gap-2 w-full ", {
-                "text-custom-text-400": item.disabled,
-              })}
-              disabled={item.disabled}
-            >
-              {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-              <div>
-                <h5>{item.title}</h5>
-                {item.description && (
-                  <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
-                    })}
-                  >
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            </CustomMenu.MenuItem>
-          ))}
-        </CustomMenu>
-      </div>
-    </div>
+    />
   );
 });

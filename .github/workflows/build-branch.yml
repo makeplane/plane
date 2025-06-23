@@ -273,7 +273,7 @@ jobs:
         run: |
           cp ./deploy/selfhost/install.sh deploy/selfhost/setup.sh
           sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deploy/selfhost/docker-compose.yml
-          sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
+          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
 
       - name: Create Release
         id: create_release
@@ -290,5 +290,6 @@ jobs:
             ${{ github.workspace }}/deploy/selfhost/setup.sh
             ${{ github.workspace }}/deploy/selfhost/swarm.sh
             ${{ github.workspace }}/deploy/selfhost/restore.sh
+            ${{ github.workspace }}/deploy/selfhost/restore-airgapped.sh
             ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
             ${{ github.workspace }}/deploy/selfhost/variables.env

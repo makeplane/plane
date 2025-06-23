@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane imports
+import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -10,15 +10,14 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
+// plane imports
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
 import { useUser, useWorkspace, useMember } from "@/hooks/store";
@@ -30,6 +29,8 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageEditorHeaderRoot } from "./header";
 
 export type TEditorBodyConfig = {
   fileHandler: TFileHandler;
@@ -41,10 +42,10 @@ export type TEditorBodyHandlers = {
 
 type Props = {
   config: TEditorBodyConfig;
-  editorRef: React.RefObject<EditorRefApi>;
   editorReady: boolean;
+  editorForwardRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
-  handleEditorReady: Dispatch<SetStateAction<boolean>>;
+  handleEditorReady: (status: boolean) => void;
   handlers: TEditorBodyHandlers;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
@@ -54,7 +55,7 @@ type Props = {
 export const PageEditorBody: React.FC<Props> = observer((props) => {
   const {
     config,
-    editorRef,
+    editorForwardRef,
     handleConnectionStatus,
     handleEditorReady,
     handlers,
@@ -68,7 +69,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // derived values
-  const { id: pageId, name: pageTitle, isContentEditable, updateTitle } = page;
+  const { id: pageId, name: pageTitle, isContentEditable, updateTitle, editorRef } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
@@ -80,7 +81,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -145,7 +146,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: generateRandomColor(currentUser?.id ?? ""),
+      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
     }),
     [currentUser?.display_name, currentUser?.id]
   );
@@ -161,36 +162,40 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
 
   return (
     <Row
-      className="relative size-full flex flex-col pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
-      <div id="page-content-container" className="relative w-full flex-shrink-0 space-y-4">
+      <div id="page-content-container" className="relative w-full flex-shrink-0">
         {/* table of content */}
         <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
           <div className="sticky top-[72px]">
             <div className="group/page-toc relative px-page-x">
               <div className="cursor-pointer max-h-[50vh] overflow-hidden">
-                <PageContentBrowser editorRef={editorRef?.current} showOutline />
+                <PageContentBrowser editorRef={editorRef} showOutline />
               </div>
               <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                <PageContentBrowser editorRef={editorRef?.current} />
+                <PageContentBrowser editorRef={editorRef} />
               </div>
             </div>
           </div>
         </div>
-        <PageEditorTitle
-          editorRef={editorRef}
-          readOnly={!isContentEditable}
-          title={pageTitle}
-          updateTitle={updateTitle}
-          widthClassName={blockWidthClassName}
-        />
+        <div className="page-header-container group/page-header">
+          <div className={blockWidthClassName}>
+            <PageEditorHeaderRoot page={page} />
+            <PageEditorTitle
+              editorRef={editorRef}
+              readOnly={!isContentEditable}
+              title={pageTitle}
+              updateTitle={updateTitle}
+            />
+          </div>
+        </div>
         <CollaborativeDocumentEditorWithRef
           editable={isContentEditable}
           id={pageId}
           fileHandler={config.fileHandler}
           handleEditorReady={handleEditorReady}
-          ref={editorRef}
+          ref={editorForwardRef}
           containerClassName="h-full p-0 pb-64"
           displayConfig={displayConfig}
           mentionHandler={{
@@ -208,7 +213,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}
           user={userConfig}
-          disabledExtensions={disabledExtensions}
+          disabledExtensions={documentEditorExtensions.disabled}
+          flaggedExtensions={documentEditorExtensions.flagged}
           aiHandler={{
             menu: getAIMenu,
           }}

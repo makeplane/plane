@@ -1,5 +1,6 @@
 // FIXME: fix this!!!
 import { Placement } from "@blueprintjs/popover2";
+import { ICustomSearchSelectOption } from "@plane/types";
 
 export interface IDropdownProps {
   customButtonClassName?: string;
@@ -20,6 +21,12 @@ export interface IDropdownProps {
   useCaptureForOutsideClick?: boolean;
 }
 
+export interface IPortalProps {
+  children: React.ReactNode;
+  container?: Element | null;
+  asChild?: boolean;
+}
+
 export interface ICustomMenuDropdownProps extends IDropdownProps {
   children: React.ReactNode;
   ellipsis?: boolean;
@@ -31,6 +38,7 @@ export interface ICustomMenuDropdownProps extends IDropdownProps {
   closeOnSelect?: boolean;
   portalElement?: Element | null;
   openOnHover?: boolean;
+  ariaLabel?: string;
 }
 
 export interface ICustomSelectProps extends IDropdownProps {
@@ -44,15 +52,7 @@ interface CustomSearchSelectProps {
   onChange: any;
   onClose?: () => void;
   noResultsMessage?: string;
-  options:
-  | {
-    value: any;
-    query: string;
-    content: React.ReactNode;
-    disabled?: boolean;
-    tooltip?: string | React.ReactNode;
-  }[]
-  | undefined;
+  options?: ICustomSearchSelectOption[];
 }
 
 interface SingleValueProps {
@@ -80,4 +80,28 @@ export interface ICustomSelectItemProps {
   children: React.ReactNode;
   value: any;
   className?: string;
+}
+
+// Submenu interfaces
+export interface ICustomSubMenuProps {
+  children: React.ReactNode;
+  trigger: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
+  contentClassName?: string;
+  placement?: Placement;
+}
+
+export interface ICustomSubMenuTriggerProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  className?: string;
+}
+
+export interface ICustomSubMenuContentProps {
+  children: React.ReactNode;
+  className?: string;
+  placement?: Placement;
+  sideOffset?: number;
+  alignOffset?: number;
 }

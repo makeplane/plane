@@ -2,17 +2,26 @@
 
 // ui
 import { useTranslation } from "@plane/i18n";
+import { BarChart } from "@plane/propel/charts/bar-chart";
 import { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
-import { BarGraph, ProfileEmptyState } from "@/components/ui";
+import { capitalizeFirstLetter } from "@plane/utils";
+import { ProfileEmptyState } from "@/components/ui";
 // image
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 // helpers
 // types
 
 type Props = {
   userProfile: IUserProfileData | undefined;
+};
+
+const priorityColors = {
+  urgent: "#991b1b",
+  high: "#ef4444",
+  medium: "#f59e0b",
+  low: "#16a34a",
+  none: "#e5e5e5",
 };
 
 export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) => {
@@ -23,50 +32,35 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
       {userProfile ? (
         <Card>
           {userProfile.priority_distribution.length > 0 ? (
-            <BarGraph
+            <BarChart
+              className="w-full h-[300px]"
+              margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
               data={userProfile.priority_distribution.map((priority) => ({
-                priority: capitalizeFirstLetter(priority.priority ?? "None"),
-                value: priority.priority_count,
+                key: priority.priority ?? "None",
+                name: capitalizeFirstLetter(priority.priority ?? "None"),
+                count: priority.priority_count,
               }))}
-              height="300px"
-              indexBy="priority"
-              keys={["value"]}
-              borderRadius={4}
-              padding={0.7}
-              customYAxisTickValues={userProfile.priority_distribution.map((p) => p.priority_count)}
-              tooltip={(datum) => (
-                <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-80 p-2 text-xs">
-                  <span
-                    className="h-3 w-3 rounded"
-                    style={{
-                      backgroundColor: datum?.color ?? "rgb(var(--color-primary-100))",
-                    }}
-                  />
-                  <span className="font-medium text-custom-text-200">{datum.data.priority}:</span>
-                  <span>{datum.value}</span>
-                </div>
-              )}
-              colors={(datum) => {
-                if (datum.data.priority === "Urgent") return "#991b1b";
-                else if (datum.data.priority === "High") return "#ef4444";
-                else if (datum.data.priority === "Medium") return "#f59e0b";
-                else if (datum.data.priority === "Low") return "#16a34a";
-                else return "#e5e5e5";
-              }}
-              theme={{
-                axis: {
-                  domain: {
-                    line: {
-                      stroke: "transparent",
-                    },
-                  },
+              bars={[
+                {
+                  key: "count",
+                  label: "Count",
+                  stackId: "bar-one",
+                  fill: (payload) => priorityColors[payload.key as keyof typeof priorityColors],
+                  textClassName: "",
+                  showPercentage: false,
+                  showTopBorderRadius: () => true,
+                  showBottomBorderRadius: () => true,
                 },
-                grid: {
-                  line: {
-                    stroke: "transparent",
-                  },
-                },
+              ]}
+              xAxis={{
+                key: "name",
+                label: t("profile.stats.priority_distribution.priority"),
               }}
+              yAxis={{
+                key: "count",
+                label: "",
+              }}
+              barSize={20}
             />
           ) : (
             <div className="flex-grow p-7">

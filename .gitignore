@@ -1,5 +1,6 @@
 node_modules
 .next
+.yarn
 
 ### NextJS ###
 # Dependencies
@@ -52,6 +53,8 @@ mediafiles
 .env
 .DS_Store
 logs/
+htmlcov/
+.coverage
 
 node_modules/
 assets/dist/

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Projekt konnte nicht aus den Favoriten entfernt werden. Bitte versuchen Sie es erneut.",
   "project_created_successfully": "Projekt erfolgreich erstellt",
   "project_created_successfully_description": "Das Projekt wurde erfolgreich erstellt. Sie können nun Arbeitselemente hinzufügen.",
+  "project_name_already_taken": "Der Projektname ist bereits vergeben.",
+  "project_identifier_already_taken": "Der Projekt-Identifier ist bereits vergeben.",
   "project_cover_image_alt": "Titelbild des Projekts",
   "name_is_required": "Name ist erforderlich",
   "title_should_be_less_than_255_characters": "Der Titel sollte weniger als 255 Zeichen enthalten",
@@ -348,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Projekt konnte nicht aus den Favoriten entfernt werden. Bitte versuchen Sie es erneut.",
   "add_to_favorites": "Zu Favoriten hinzufügen",
   "remove_from_favorites": "Aus Favoriten entfernen",
-  "publish_settings": "Veröffentlichungseinstellungen",
+  "publish_project": "Projekt veröffentlichen",
   "publish": "Veröffentlichen",
   "copy_link": "Link kopieren",
   "leave_project": "Projekt verlassen",
@@ -365,11 +367,11 @@
   "work_management": "Arbeitsverwaltung",
   "projects_and_issues": "Projekte und Arbeitselemente",
   "projects_and_issues_description": "Aktivieren oder deaktivieren Sie diese Funktionen im Projekt.",
-  "cycles_description": "Begrenzen Sie die Arbeit zeitlich bei Bedarf und ändern Sie die Häufigkeit zwischen Zeiträumen.",
-  "modules_description": "Gruppieren Sie die Arbeit in ähnliche Unterprojekte mit eigenen Leitern und zugewiesenen Personen.",
-  "views_description": "Speichern Sie Sortierungen, Filter und Anzeigeoptionen für die spätere Verwendung oder zum Teilen.",
-  "pages_description": "Schreiben Sie alles Mögliche, wie gewohnt.",
-  "intake_description": "Bleiben Sie über abonnierte Arbeitselemente informiert. Aktivieren Sie diese Option, um Benachrichtigungen zu erhalten.",
+  "cycles_description": "Zeitlich begrenzen Sie die Arbeit pro Projekt und passen Sie den Zeitraum bei Bedarf an. Ein Zyklus kann 2 Wochen dauern, der nächste nur 1 Woche.",
+  "modules_description": "Organisieren Sie die Arbeit in Unterprojekte mit eigenen Leitern und Zuständigen.",
+  "views_description": "Speichern Sie benutzerdefinierte Sortierungen, Filter und Anzeigeoptionen oder teilen Sie sie mit Ihrem Team.",
+  "pages_description": "Erstellen und bearbeiten Sie frei formulierte Inhalte – Notizen, Dokumente, alles Mögliche.",
+  "intake_description": "Erlauben Sie Nicht-Mitgliedern, Bugs, Feedback und Vorschläge zu teilen – ohne Ihren Arbeitsablauf zu stören.",
   "time_tracking_description": "Erfassen Sie die auf Arbeitselemente und Projekte verwendete Zeit.",
   "work_management_description": "Verwalten Sie Ihre Arbeit und Projekte mühelos.",
   "documentation": "Dokumentation",
@@ -500,7 +502,6 @@
   "export": "Exportieren",
   "member": "{count, plural, one{# Mitglied} few{# Mitglieder} other{# Mitglieder}}",
   "new_password_must_be_different_from_old_password": "Das neue Passwort muss von dem alten Passwort abweichen",
-  
   "project_view": {
     "sort_by": {
       "created_at": "Erstellt am",
@@ -587,7 +588,7 @@
         "default": "Sie haben noch keine kürzlichen Elemente."
       },
       "filters": {
-        "all": "Alle Elemente",
+        "all": "Alle",
         "projects": "Projekte",
         "pages": "Seiten",
         "issues": "Arbeitselemente"
@@ -747,7 +748,8 @@
         "message": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
       },
       "required": "Dieses Feld ist erforderlich",
-      "entity_required": "{entity} ist erforderlich"
+      "entity_required": "{entity} ist erforderlich",
+      "restricted_entity": "{entity} ist eingeschränkt"
     },
     "update_link": "Link aktualisieren",
     "attach": "Anhängen",
@@ -848,6 +850,7 @@
     "live": "Live",
     "change_history": "Änderungsverlauf",
     "coming_soon": "Demnächst verfügbar",
+    "member": "Mitglied",
     "members": "Mitglieder",
     "you": "Sie",
     "upgrade_cta": {
@@ -862,7 +865,24 @@
     "deleting": "Wird gelöscht",
     "pending": "Ausstehend",
     "invite": "Einladen",
-    "view": "Ansicht"
+    "view": "Ansicht",
+    "deactivated_user": "Deaktivierter Benutzer",
+    "apply": "Anwenden",
+    "applying": "Wird angewendet",
+    "users": "Benutzer",
+    "admins": "Administratoren",
+    "guests": "Gäste",
+    "on_track": "Im Plan",
+    "off_track": "Außer Plan",
+    "at_risk": "Gefährdet",
+    "timeline": "Zeitleiste",
+    "completion": "Fertigstellung",
+    "upcoming": "Bevorstehend",
+    "completed": "Abgeschlossen",
+    "in_progress": "In Bearbeitung",
+    "planned": "Geplant",
+    "paused": "Pausiert",
+    "no_of": "Anzahl {entity}"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -1077,7 +1097,9 @@
     "select": {
       "error": "Wählen Sie mindestens ein Arbeitselement aus",
       "empty": "Keine Arbeitselemente ausgewählt",
-      "add_selected": "Ausgewählte Arbeitselemente hinzufügen"
+      "add_selected": "Ausgewählte Arbeitselemente hinzufügen",
+      "select_all": "Alle auswählen",
+      "deselect_all": "Alle abwählen"
     },
     "open_in_full_screen": "Arbeitselement im Vollbild öffnen"
   },
@@ -1105,6 +1127,18 @@
     "remove": {
       "success": "Untergeordnetes Arbeitselement erfolgreich entfernt",
       "error": "Fehler beim Entfernen des untergeordneten Elements"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Sie haben keine untergeordneten Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle untergeordneten Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      },
+      "list_filters": {
+        "title": "Sie haben keine Arbeitselemente, die den von Ihnen angewendeten Filtern entsprechen.",
+        "description": "Um alle Arbeitselemente anzuzeigen, entfernen Sie alle angewendeten Filter.",
+        "action": "Filter entfernen"
+      }
     }
   },
   "view": {
@@ -1298,18 +1332,37 @@
       "custom": "Benutzerdefinierte Analysen"
     },
     "empty_state": {
-      "general": {
-        "title": "Verfolgen Sie Fortschritt, Auslastung und Zuordnungen. Erkennen Sie Trends, entfernen Sie Blocker und beschleunigen Sie die Arbeit",
-        "description": "Behalten Sie Umfang vs. Nachfrage, Schätzungen und Umfang im Blick. Verfolgen Sie die Leistung von Mitgliedern und Teams, um sicherzustellen, dass Projekte pünktlich abgeschlossen werden.",
-        "primary_button": {
-          "text": "Erstes Projekt starten",
-          "comic": {
-            "title": "Analysen funktionieren am besten mit Zyklen + Modulen",
-            "description": "Begrenzen Sie zuerst Arbeit zeitlich in Zyklen und gruppieren Sie die übergreifenden Elemente in Module. Sie finden sie im linken Menü."
-          }
-        }
+      "customized_insights": {
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "created_vs_resolved": {
+        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt.",
+        "title": "Noch keine Daten"
+      },
+      "project_insights": {
+        "title": "Noch keine Daten",
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
       }
-    }
+    },
+    "created_vs_resolved": "Erstellt vs Gelöst",
+    "customized_insights": "Individuelle Einblicke",
+    "backlog_work_items": "Backlog-{entity}",
+    "active_projects": "Aktive Projekte",
+    "trend_on_charts": "Trend in Diagrammen",
+    "all_projects": "Alle Projekte",
+    "summary_of_projects": "Projektübersicht",
+    "project_insights": "Projekteinblicke",
+    "started_work_items": "Begonnene {entity}",
+    "total_work_items": "Gesamte {entity}",
+    "total_projects": "Gesamtprojekte",
+    "total_admins": "Gesamtanzahl der Admins",
+    "total_users": "Gesamtanzahl der Benutzer",
+    "total_intake": "Gesamteinnahmen",
+    "un_started_work_items": "Nicht begonnene {entity}",
+    "total_guests": "Gesamtanzahl der Gäste",
+    "completed_work_items": "Abgeschlossene {entity}",
+    "total": "Gesamte {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",
@@ -1710,21 +1763,100 @@
       }
     },
     "estimates": {
-      "title": "Schätzungen im Projekt aktivieren",
-      "description": "Hilft, die Komplexität und Auslastung für das Team zu kommunizieren."
+      "label": "Schätzungen",
+      "title": "Schätzungen für mein Projekt aktivieren",
+      "description": "Sie helfen dir, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      "no_estimate": "Keine Schätzung",
+      "new": "Neues Schätzungssystem",
+      "create": {
+        "custom": "Benutzerdefiniert",
+        "start_from_scratch": "Von Grund auf neu",
+        "choose_template": "Vorlage wählen",
+        "choose_estimate_system": "Schätzungssystem wählen",
+        "enter_estimate_point": "Schätzung eingeben",
+        "step": "Schritt {step} von {total}",
+        "label": "Schätzung erstellen"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Schätzung erstellt",
+            "message": "Die Schätzung wurde erfolgreich erstellt"
+          },
+          "error": {
+            "title": "Schätzungserstellung fehlgeschlagen",
+            "message": "Wir konnten die neue Schätzung nicht erstellen, bitte versuche es erneut."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Schätzung geändert",
+            "message": "Die Schätzung wurde in deinem Projekt aktualisiert."
+          },
+          "error": {
+            "title": "Schätzungsänderung fehlgeschlagen",
+            "message": "Wir konnten die Schätzung nicht ändern, bitte versuche es erneut"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden aktiviert."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Schätzungen wurden deaktiviert."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Schätzung konnte nicht deaktiviert werden. Bitte versuche es erneut"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Die Schätzung muss größer als 0 sein.",
+        "unable_to_process": "Wir können deine Anfrage nicht verarbeiten, bitte versuche es erneut.",
+        "numeric": "Die Schätzung muss ein numerischer Wert sein.",
+        "character": "Die Schätzung muss ein Zeichenwert sein.",
+        "empty": "Der Schätzungswert darf nicht leer sein.",
+        "already_exists": "Der Schätzungswert existiert bereits.",
+        "unsaved_changes": "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor du auf Fertig klickst",
+        "remove_empty": "Die Schätzung darf nicht leer sein. Gib einen Wert in jedes Feld ein oder entferne die Felder, für die du keine Werte hast."
+      },
+      "systems": {
+        "points": {
+          "label": "Punkte",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Quadrate",
+          "custom": "Benutzerdefiniert"
+        },
+        "categories": {
+          "label": "Kategorien",
+          "t_shirt_sizes": "T-Shirt-Größen",
+          "easy_to_hard": "Einfach bis schwer",
+          "custom": "Benutzerdefiniert"
+        },
+        "time": {
+          "label": "Zeit",
+          "hours": "Stunden"
+        }
+      }
     },
     "automations": {
-      "label": "Automatisierung",
+      "label": "Automatisierungen",
       "auto-archive": {
-        "title": "Abgeschlossene Elemente automatisch archivieren",
-        "description": "Plane archiviert abgeschlossene oder abgebrochene Elemente.",
-        "duration": "Archivieren von Elementen, die seit mehr als folgendem Zeitraum abgeschlossen sind"
+        "title": "Geschlossene Arbeitselemente automatisch archivieren",
+        "description": "Plane wird Arbeitselemente automatisch archivieren, die abgeschlossen oder abgebrochen wurden.",
+        "duration": "Arbeitselemente automatisch archivieren, die seit"
       },
       "auto-close": {
-        "title": "Elemente automatisch schließen",
-        "description": "Plane schließt inaktive Elemente.",
-        "duration": "Schließen von Elementen, die seit mehr als folgendem Zeitraum inaktiv sind",
-        "auto_close_status": "Status für automatisches Schließen"
+        "title": "Arbeitselemente automatisch schließen",
+        "description": "Plane wird Arbeitselemente automatisch schließen, die nicht abgeschlossen oder abgebrochen wurden.",
+        "duration": "Inaktive Arbeitselemente automatisch schließen seit",
+        "auto_close_status": "Status der automatischen Schließung"
       }
     },
     "empty_state": {
@@ -2328,5 +2460,14 @@
   "module": {
     "label": "{count, plural, one {Modul} few {Module} other {Module}}",
     "no_module": "Kein Modul"
+  },
+  "description_versions": {
+    "last_edited_by": "Zuletzt bearbeitet von",
+    "previously_edited_by": "Zuvor bearbeitet von",
+    "edited_by": "Bearbeitet von"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane ist nicht gestartet. Dies könnte daran liegen, dass einer oder mehrere Plane-Services nicht starten konnten.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wählen Sie View Logs aus setup.sh und Docker-Logs, um sicherzugehen."
   }
 }

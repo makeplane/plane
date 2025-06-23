@@ -109,5 +109,5 @@ class InstanceWorkSpaceEndpoint(BaseAPIView):
             if "already exists" in str(e):
                 return Response(
                     {"slug": "The workspace with the slug already exists"},
-                    status=status.HTTP_410_GONE,
+                    status=status.HTTP_409_CONFLICT,
                 )

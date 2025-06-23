@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 

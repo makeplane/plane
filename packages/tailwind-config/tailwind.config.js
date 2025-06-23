@@ -27,6 +27,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
+        "custom-shadow": "var(--color-shadow-custom)",
         "custom-shadow-2xs": "var(--color-shadow-2xs)",
         "custom-shadow-xs": "var(--color-shadow-xs)",
         "custom-shadow-sm": "var(--color-shadow-sm)",
@@ -207,6 +208,28 @@ module.exports = {
             neutral: "rgba(96, 100, 108, 0.1)",
             hover: "rgba(96, 100, 108, 0.25)",
             active: "rgba(96, 100, 108, 0.7)",
+          },
+          subscription: {
+            free: {
+              200: convertToRGB("--color-subscription-free-200"),
+              400: convertToRGB("--color-subscription-free-400"),
+            },
+            one: {
+              200: convertToRGB("--color-subscription-one-200"),
+              400: convertToRGB("--color-subscription-one-400"),
+            },
+            pro: {
+              200: convertToRGB("--color-subscription-pro-200"),
+              400: convertToRGB("--color-subscription-pro-400"),
+            },
+            business: {
+              200: convertToRGB("--color-subscription-business-200"),
+              400: convertToRGB("--color-subscription-business-400"),
+            },
+            enterprise: {
+              200: convertToRGB("--color-subscription-enterprise-200"),
+              400: convertToRGB("--color-subscription-enterprise-400"),
+            },
           },
         },
         onboarding: {
@@ -438,14 +461,15 @@ module.exports = {
         "onboarding-gradient-200": "var( --gradient-onboarding-200)",
         "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
-    },
-    fontFamily: {
-      custom: ["Inter", "sans-serif"],
+      fontFamily: {
+        custom: ["Inter", "sans-serif"],
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
+    require("@tailwindcss/container-queries"),
     function ({ addUtilities }) {
       const newUtilities = {
         // Mobile screens

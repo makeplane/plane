@@ -1,12 +1,12 @@
 // plane imports
 import { IFavorite } from "@plane/types";
 // components
+import { getPageName } from "@plane/utils";
 import {
   generateFavoriteItemLink,
   getFavoriteItemIcon,
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useProject, useProjectView, useCycle, useModule } from "@/hooks/store";
 // plane web hooks
@@ -43,23 +43,23 @@ export const useFavoriteItemDetails = (workspaceSlug: string, favorite: IFavorit
 
   switch (favoriteItemEntityType) {
     case "project":
-      itemTitle = currentProjectDetails?.name || favoriteItemName;
+      itemTitle = currentProjectDetails?.name ?? favoriteItemName;
       itemIcon = getFavoriteItemIcon("project", currentProjectDetails?.logo_props || favoriteItemLogoProps);
       break;
     case "page":
-      itemTitle = getPageName(pageDetail?.name || favoriteItemName);
-      itemIcon = getFavoriteItemIcon("page", pageDetail?.logo_props || favoriteItemLogoProps);
+      itemTitle = getPageName(pageDetail?.name ?? favoriteItemName);
+      itemIcon = getFavoriteItemIcon("page", pageDetail?.logo_props ?? favoriteItemLogoProps);
       break;
     case "view":
-      itemTitle = viewDetails?.name || favoriteItemName;
+      itemTitle = viewDetails?.name ?? favoriteItemName;
       itemIcon = getFavoriteItemIcon("view", viewDetails?.logo_props || favoriteItemLogoProps);
       break;
     case "cycle":
-      itemTitle = cycleDetail?.name || favoriteItemName;
+      itemTitle = cycleDetail?.name ?? favoriteItemName;
       itemIcon = getFavoriteItemIcon("cycle");
       break;
     case "module":
-      itemTitle = moduleDetail?.name || favoriteItemName;
+      itemTitle = moduleDetail?.name ?? favoriteItemName;
       itemIcon = getFavoriteItemIcon("module");
       break;
     default: {

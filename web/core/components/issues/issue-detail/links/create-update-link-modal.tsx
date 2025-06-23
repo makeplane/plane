@@ -3,7 +3,6 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import type { TIssueLinkEditableFields, TIssueServiceType } from "@plane/types";
@@ -24,7 +23,7 @@ export type TIssueLinkCreateEditModal = {
   isModalOpen: boolean;
   handleOnClose?: () => void;
   linkOperations: TLinkOperationsModal;
-  issueServiceType?: TIssueServiceType;
+  issueServiceType: TIssueServiceType;
 };
 
 const defaultValues: TIssueLinkCreateFormFieldOptions = {
@@ -33,10 +32,9 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
 };
 
 export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
+  const { isModalOpen, handleOnClose, linkOperations, issueServiceType } = props;
   // i18n
   const { t } = useTranslation();
-  // props
-  const { isModalOpen, handleOnClose, linkOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // react hook form
   const {
     formState: { errors, isSubmitting },

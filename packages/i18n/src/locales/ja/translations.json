@@ -18,7 +18,6 @@
     "pro": "プロ",
     "upgrade": "アップグレード"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "送信",
   "cancel": "キャンセル",
   "loading": "読み込み中",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "project_created_successfully": "プロジェクトが正常に作成されました",
   "project_created_successfully_description": "プロジェクトが正常に作成されました。作業項目を追加できるようになりました。",
+  "project_name_already_taken": "プロジェクト名は既に使用されています。",
+  "project_identifier_already_taken": "プロジェクト識別子は既に使用されています。",
   "project_cover_image_alt": "プロジェクトのカバー画像",
   "name_is_required": "名前は必須です",
   "title_should_be_less_than_255_characters": "タイトルは255文字未満である必要があります",
@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "プロジェクトをお気に入りから削除できませんでした。もう一度お試しください。",
   "add_to_favorites": "お気に入りに追加",
   "remove_from_favorites": "お気に入りから削除",
-  "publish_settings": "公開設定",
+  "publish_project": "プロジェクトを公開",
   "publish": "公開",
   "copy_link": "リンクをコピー",
   "leave_project": "プロジェクトを退出",
@@ -367,12 +367,12 @@
   "work_management": "作業管理",
   "projects_and_issues": "プロジェクトと作業項目",
   "projects_and_issues_description": "このプロジェクトでオン/オフを切り替えます。",
-  "cycles_description": "プロジェクトごとに作業を時間枠で区切り、期間を次の期間に変更します。",
-  "modules_description": "サブプロジェクトのような設定で、独自のリーダーと担当者を持つグループ作業を行います。",
-  "views_description": "並び替え、フィルター、表示オプションを後で使用するために保存するか、共有します。",
-  "pages_description": "何でも書けるように何でも書きます。",
-  "intake_description": "購読している作業項目の最新情報を受け取ります。通知を受け取るには有効にしてください。",
-  "time_tracking_description": "作業項目とプロジェクトの作業時間を追跡します。",
+  "cycles_description": "プロジェクトごとに作業の時間枠を設定し、必要に応じて期間を調整します。1サイクルは2週間、次は1週間でもかまいません。",
+  "modules_description": "専任のリーダーと担当者を持つサブプロジェクトに作業を整理します。",
+  "views_description": "カスタムの並び替え、フィルター、表示オプションを保存するか、チームと共有します。",
+  "pages_description": "自由形式のコンテンツを作成・編集できます。メモ、ドキュメント、何でもOKです。",
+  "intake_description": "非メンバーがバグ、フィードバック、提案を共有できるようにし、ワークフローを妨げないようにします。",
+  "time_tracking_description": "作業項目やプロジェクトに費やした時間を記録します。",
   "work_management_description": "作業とプロジェクトを簡単に管理します。",
   "documentation": "ドキュメント",
   "message_support": "サポートにメッセージ",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "新しいパスワードは古いパスワードと異なる必要があります",
   "edited": "編集済み",
   "bot": "ボット",
-
   "project_view": {
     "sort_by": {
       "created_at": "作成日時",
@@ -512,12 +511,10 @@
       "name": "名前"
     }
   },
-
   "toast": {
     "success": "成功！",
     "error": "エラー！"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "クイックスタートガイド",
@@ -594,7 +590,7 @@
         "default": "まだ最近の項目がありません。"
       },
       "filters": {
-        "all": "すべての項目",
+        "all": "すべて",
         "projects": "プロジェクト",
         "pages": "ページ",
         "issues": "作業項目"
@@ -614,7 +610,6 @@
     "title": "ホーム",
     "star_us_on_github": "GitHubでスターをつける"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "すべて",
     "states": "ステータス",
@@ -756,7 +750,8 @@
         "message": "問題が発生しました。もう一度お試しください。"
       },
       "required": "この項目は必須です",
-      "entity_required": "{entity}は必須です"
+      "entity_required": "{entity}は必須です",
+      "restricted_entity": "{entity} は制限されています"
     },
     "update_link": "リンクを更新",
     "attach": "添付",
@@ -856,6 +851,7 @@
     "live": "ライブ",
     "change_history": "変更履歴",
     "coming_soon": "近日公開",
+    "member": "メンバー",
     "members": "メンバー",
     "you": "あなた",
     "upgrade_cta": {
@@ -870,22 +866,36 @@
     "deleting": "デリーティング",
     "pending": "保留中",
     "invite": "招待",
-    "view": "ビュー"
+    "view": "ビュー",
+    "deactivated_user": "無効化されたユーザー",
+    "apply": "適用",
+    "applying": "適用中",
+    "users": "ユーザー",
+    "admins": "管理者",
+    "guests": "ゲスト",
+    "on_track": "順調",
+    "off_track": "遅れ",
+    "at_risk": "リスクあり",
+    "timeline": "タイムライン",
+    "completion": "完了",
+    "upcoming": "今後の予定",
+    "completed": "完了",
+    "in_progress": "進行中",
+    "planned": "計画済み",
+    "paused": "一時停止",
+    "no_of": "{entity} の数"
   },
-
   "chart": {
     "x_axis": "エックス アクシス",
     "y_axis": "ワイ アクシス",
     "metric": "メトリック"
   },
-
   "form": {
     "title": {
       "required": "タイトルは必須です",
       "max_length": "タイトルは{length}文字未満である必要があります"
     }
   },
-
   "entity": {
     "grouping_title": "{entity}のグループ化",
     "priority": "{entity}の優先度",
@@ -909,7 +919,6 @@
       "failed": "{entity}の追加中にエラーが発生しました"
     }
   },
-
   "epic": {
     "all": "すべてのエピック",
     "label": "{count, plural, one {エピック} other {エピック}}",
@@ -927,7 +936,6 @@
       "required": "エピックのタイトルは必須です。"
     }
   },
-
   "issue": {
     "label": "{count, plural, one {作業項目} other {作業項目}}",
     "all": "すべての作業項目",
@@ -1090,11 +1098,12 @@
     "select": {
       "error": "少なくとも1つの作業項目を選択してください",
       "empty": "作業項目が選択されていません",
-      "add_selected": "選択した作業項目を追加"
+      "add_selected": "選択した作業項目を追加",
+      "select_all": "すべて選択",
+      "deselect_all": "すべての選択を解除"
     },
     "open_in_full_screen": "作業項目をフルスクリーンで開く"
   },
-
   "attachment": {
     "error": "ファイルを添付できませんでした。もう一度アップロードしてください。",
     "only_one_file_allowed": "一度にアップロードできるファイルは1つだけです。",
@@ -1102,7 +1111,6 @@
     "drag_and_drop": "どこにでもドラッグ＆ドロップでアップロード",
     "delete": "添付ファイルを削除"
   },
-
   "label": {
     "select": "ラベルを選択",
     "create": {
@@ -1112,7 +1120,6 @@
       "type": "新しいラベルを追加するには入力してください"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "サブ作業項目を更新しました",
@@ -1121,9 +1128,20 @@
     "remove": {
       "success": "サブ作業項目を削除しました",
       "error": "サブ作業項目の削除中にエラーが発生しました"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "適用されたフィルターに一致するサブ作業項目がありません。",
+        "description": "すべてのサブ作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      },
+      "list_filters": {
+        "title": "適用されたフィルターに一致する作業項目がありません。",
+        "description": "すべての作業項目を表示するには、すべての適用されたフィルターをクリアしてください。",
+        "action": "フィルターをクリア"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {ビュー} other {ビュー}}",
     "create": {
@@ -1133,7 +1151,6 @@
       "label": "ビューを更新"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1219,7 +1236,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "ワークスペースを作成",
     "subheading": "Planeを使用するには、ワークスペースを作成するか参加する必要があります。",
@@ -1271,7 +1287,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1287,7 +1302,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "アナリティクス",
     "page_label": "{workspace} - アナリティクス",
@@ -1319,20 +1333,38 @@
       "custom": "カスタムアナリティクス"
     },
     "empty_state": {
-      "general": {
-        "title": "進捗、ワークロード、割り当てを追跡。傾向を把握し、ブロッカーを解消して、作業をより速く進めましょう",
-        "description": "スコープと需要、見積もり、スコープクリープを確認できます。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが予定通りに進むようにします。",
-        "primary_button": {
-          "text": "最初のプロジェクトを開始",
-          "comic": {
-            "title": "アナリティクスはサイクル + モジュールで最も効果を発揮",
-            "description": "まず、作業項目をサイクルでタイムボックス化し、可能であれば、複数のサイクルにまたがる作業項目をモジュールにグループ化します。左のナビゲーションで両方を確認してください。"
-          }
-        }
+      "customized_insights": {
+        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。",
+        "title": "まだデータがありません"
+      },
+      "created_vs_resolved": {
+        "description": "時間の経過とともに作成および解決された作業項目がここに表示されます。",
+        "title": "まだデータがありません"
+      },
+      "project_insights": {
+        "title": "まだデータがありません",
+        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。"
       }
-    }
+    },
+    "created_vs_resolved": "作成 vs 解決",
+    "customized_insights": "カスタマイズされたインサイト",
+    "backlog_work_items": "バックログの{entity}",
+    "active_projects": "アクティブなプロジェクト",
+    "trend_on_charts": "グラフの傾向",
+    "all_projects": "すべてのプロジェクト",
+    "summary_of_projects": "プロジェクトの概要",
+    "project_insights": "プロジェクトのインサイト",
+    "started_work_items": "開始された{entity}",
+    "total_work_items": "{entity}の合計",
+    "total_projects": "プロジェクト合計",
+    "total_admins": "管理者の合計",
+    "total_users": "ユーザー総数",
+    "total_intake": "総収入",
+    "un_started_work_items": "未開始の{entity}",
+    "total_guests": "ゲストの合計",
+    "completed_work_items": "完了した{entity}",
+    "total": "{entity}の合計"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
     "create": {
@@ -1406,7 +1438,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "ビューを追加",
     "empty_state": {
@@ -1441,7 +1472,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "ワークスペース設定",
     "page_label": "{workspace} - 一般設定",
@@ -1623,7 +1653,6 @@
       }
     }
   },
-
   "profile": {
     "label": "プロフィール",
     "page_label": "あなたの作業",
@@ -1686,7 +1715,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "プロジェクトIDを入力",
@@ -1736,24 +1764,102 @@
       }
     },
     "estimates": {
+      "label": "見積もり",
       "title": "プロジェクトの見積もりを有効にする",
-      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。"
+      "description": "チームの複雑さと作業負荷を伝えるのに役立ちます。",
+      "no_estimate": "見積もりなし",
+      "new": "新しい見積もりシステム",
+      "create": {
+        "custom": "カスタム",
+        "start_from_scratch": "最初から開始",
+        "choose_template": "テンプレートを選択",
+        "choose_estimate_system": "見積もりシステムを選択",
+        "enter_estimate_point": "見積もりを入力",
+        "step": "ステップ {step} の {total}",
+        "label": "見積もりを作成"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "見積もりを作成",
+            "message": "見積もりが正常に作成されました"
+          },
+          "error": {
+            "title": "見積もり作成に失敗",
+            "message": "新しい見積もりを作成できませんでした。もう一度お試しください。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "見積もりを更新",
+            "message": "プロジェクトの見積もりが更新されました。"
+          },
+          "error": {
+            "title": "見積もり更新に失敗",
+            "message": "見積もりを更新できませんでした。もう一度お試しください"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが有効になりました。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "見積もりが無効になりました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "見積もりを無効にできませんでした。もう一度お試しください"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "見積もりは0より大きい必要があります。",
+        "unable_to_process": "リクエストを処理できません。もう一度お試しください。",
+        "numeric": "見積もりは数値である必要があります。",
+        "character": "見積もりは文字値である必要があります。",
+        "empty": "見積もり値は空にできません。",
+        "already_exists": "見積もり値は既に存在します。",
+        "unsaved_changes": "未保存の変更があります。完了をクリックする前に保存してください",
+        "remove_empty": "見積もりは空にできません。各フィールドに値を入力するか、値がないフィールドを削除してください。"
+      },
+      "systems": {
+        "points": {
+          "label": "ポイント",
+          "fibonacci": "フィボナッチ",
+          "linear": "リニア",
+          "squares": "二乗",
+          "custom": "カスタム"
+        },
+        "categories": {
+          "label": "カテゴリー",
+          "t_shirt_sizes": "Tシャツサイズ",
+          "easy_to_hard": "簡単から難しい",
+          "custom": "カスタム"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "時間"
+        }
+      }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "完了した作業項目を自動アーカイブ",
+        "title": "完了した作業項目を自動的にアーカイブ",
         "description": "Planeは完了またはキャンセルされた作業項目を自動的にアーカイブします。",
-        "duration": "次の期間完了している作業項目を自動アーカイブ"
+        "duration": "閉じられた作業項目を自動的にアーカイブ"
       },
       "auto-close": {
-        "title": "作業項目を自動クローズ",
-        "description": "Planeは完了またはキャンセルされていない作業項目を自動的にクローズします。",
-        "duration": "次の期間非アクティブな作業項目を自動クローズ",
+        "title": "作業項目を自動的に閉じる",
+        "description": "Planeは完了またはキャンセルされていない作業項目を自動的に閉じます。",
+        "duration": "非アクティブな作業項目を自動的に閉じる",
         "auto_close_status": "自動クローズステータス"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "ラベルがまだありません",
@@ -1766,7 +1872,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "サイクルを追加",
     "more_details": "詳細情報",
@@ -1892,7 +1997,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1921,7 +2025,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "モジュールを追加",
     "update_module": "モジュールを更新",
@@ -1975,7 +2078,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1995,7 +2097,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2025,7 +2126,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2033,7 +2133,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2044,7 +2143,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2053,7 +2151,6 @@
       }
     }
   },
-
   "notification": {
     "label": "受信トレイ",
     "page_label": "{workspace} - 受信トレイ",
@@ -2110,7 +2207,6 @@
       "custom": "カスタム"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2130,7 +2226,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2193,7 +2288,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "あなたの付箋",
     "placeholder": "ここをクリックして入力",
@@ -2251,7 +2345,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "ゲスト",
@@ -2266,7 +2359,6 @@
       "description": "ワークスペース内のすべての権限が有効。"
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "プロダクト/プロジェクトマネージャー",
     "development_or_engineering": "開発/エンジニアリング",
@@ -2279,7 +2371,6 @@
     "human_resources": "人事",
     "other": "その他"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2290,7 +2381,6 @@
       "description": "Jiraプロジェクトとエピックから作業項目とエピックをインポートします。"
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2319,7 +2409,6 @@
     "created": "作成済み",
     "subscribed": "購読中"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2365,14 +2454,21 @@
       "manual": "手動"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {サイクル} other {サイクル}}",
     "no_cycle": "サイクルなし"
   },
-
   "module": {
     "label": "{count, plural, one {モジュール} other {モジュール}}",
     "no_module": "モジュールなし"
+  },
+  "description_versions": {
+    "last_edited_by": "最終編集者",
+    "previously_edited_by": "以前の編集者",
+    "edited_by": "編集者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
   }
 }

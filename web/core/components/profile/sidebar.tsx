@@ -15,12 +15,10 @@ import { useTranslation } from "@plane/i18n";
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader, Tooltip } from "@plane/ui";
+import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useAppTheme, useProject, useUser } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -37,7 +35,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
   // refs
   const ref = useRef<HTMLDivElement>(null);
   // router
-  const { userId } = useParams();
+  const { userId, workspaceSlug } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
   const { profileSidebarCollapsed, toggleProfileSidebar } = useAppTheme();
@@ -94,7 +92,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
               <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
-                <Link href="/profile">
+                <Link href={`/${workspaceSlug}/settings/account`}>
                   <span className="grid place-items-center text-black">
                     <Pencil className="h-3 w-3" />
                   </span>

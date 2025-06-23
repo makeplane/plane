@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Mettre à niveau"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Soumettre",
   "cancel": "Annuler",
   "loading": "Chargement",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "project_created_successfully": "Projet créé avec succès",
   "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à ajouter des éléments de travail.",
+  "project_name_already_taken": "Le nom du projet est déjà pris.",
+  "project_identifier_already_taken": "L’identifiant du projet est déjà pris.",
   "project_cover_image_alt": "Image de couverture du projet",
   "name_is_required": "Le nom est requis",
   "title_should_be_less_than_255_characters": "Le titre doit faire moins de 255 caractères",
@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "add_to_favorites": "Ajouter aux favoris",
   "remove_from_favorites": "Supprimer des favoris",
-  "publish_settings": "Paramètres de publication",
+  "publish_project": "Publier le projet",
   "publish": "Publier",
   "copy_link": "Copier le lien",
   "leave_project": "Quitter le projet",
@@ -367,12 +367,12 @@
   "work_management": "Gestion du travail",
   "projects_and_issues": "Projets et éléments de travail",
   "projects_and_issues_description": "Activez ou désactivez ces éléments pour ce projet.",
-  "cycles_description": "Planifiez le travail comme vous le souhaitez par projet et changez la fréquence d'une période à l'autre.",
-  "modules_description": "Regroupez le travail en configurations de type sous-projet avec leurs propres responsables et assignés.",
-  "views_description": "Enregistrez les tris, filtres et options d'affichage pour plus tard ou partagez-les.",
-  "pages_description": "Écrivez n'importe quoi comme vous écrivez n'importe quoi.",
-  "intake_description": "Restez informé des éléments de travail auxquels vous êtes abonné. Activez ceci pour être notifié.",
-  "time_tracking_description": "Suivez le temps passé sur les éléments de travail et les projets.",
+  "cycles_description": "Planifiez le travail par projet dans un cadre temporel et ajustez la période au besoin. Un cycle peut durer 2 semaines, le suivant 1 semaine.",
+  "modules_description": "Organisez le travail en sous-projets avec des responsables et des personnes assignées dédiés.",
+  "views_description": "Enregistrez des tris, filtres et options d'affichage personnalisés ou partagez-les avec votre équipe.",
+  "pages_description": "Créez et modifiez du contenu libre : notes, documents, tout ce que vous voulez.",
+  "intake_description": "Permettez aux non-membres de partager des bugs, des retours et des suggestions, sans perturber votre flux de travail.",
+  "time_tracking_description": "Enregistrez le temps passé sur les éléments de travail et les projets.",
   "work_management_description": "Gérez votre travail et vos projets facilement.",
   "documentation": "Documentation",
   "message_support": "Contacter le support",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "Le nouveau mot de passe doit être différent du mot de passe précédent",
   "edited": "Modifié",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Créé le",
@@ -512,12 +511,10 @@
       "name": "Nom"
     }
   },
-
   "toast": {
     "success": "Succès !",
     "error": "Erreur !"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Guide de démarrage rapide",
@@ -594,7 +590,7 @@
         "default": "Vous n'avez pas encore d'éléments récents."
       },
       "filters": {
-        "all": "Tous les éléments",
+        "all": "Tous",
         "projects": "Projets",
         "pages": "Pages",
         "issues": "Éléments de travail"
@@ -614,7 +610,6 @@
     "title": "Accueil",
     "star_us_on_github": "Donnez-nous une étoile sur GitHub"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "Tout",
     "states": "États",
@@ -756,7 +750,8 @@
         "message": "Quelque chose s'est mal passé. Veuillez réessayer."
       },
       "required": "Ce champ est obligatoire",
-      "entity_required": "{entity} est requis"
+      "entity_required": "{entity} est requis",
+      "restricted_entity": "{entity} est restreint"
     },
     "update_link": "Mettre à jour le lien",
     "attach": "Joindre",
@@ -856,6 +851,7 @@
     "live": "En direct",
     "change_history": "Historique des modifications",
     "coming_soon": "À venir",
+    "member": "Membre",
     "members": "Membres",
     "you": "Vous",
     "upgrade_cta": {
@@ -870,22 +866,36 @@
     "deleting": "Suppression",
     "pending": "En attente",
     "invite": "Inviter",
-    "view": "Afficher"
+    "view": "Afficher",
+    "deactivated_user": "Utilisateur désactivé",
+    "apply": "Appliquer",
+    "applying": "Application",
+    "users": "Utilisateurs",
+    "admins": "Administrateurs",
+    "guests": "Invités",
+    "on_track": "Sur la bonne voie",
+    "off_track": "Hors de la bonne voie",
+    "at_risk": "À risque",
+    "timeline": "Chronologie",
+    "completion": "Achèvement",
+    "upcoming": "À venir",
+    "completed": "Terminé",
+    "in_progress": "En cours",
+    "planned": "Planifié",
+    "paused": "En pause",
+    "no_of": "Nº de {entity}"
   },
-
   "chart": {
     "x_axis": "Axe X",
     "y_axis": "Axe Y",
     "metric": "Métrique"
   },
-
   "form": {
     "title": {
       "required": "Le titre est requis",
       "max_length": "Le titre doit contenir moins de {length} caractères"
     }
   },
-
   "entity": {
     "grouping_title": "Regroupement {entity}",
     "priority": "Priorité {entity}",
@@ -909,7 +919,6 @@
       "failed": "Erreur lors de l'ajout de {entity}"
     }
   },
-
   "epic": {
     "all": "Tous les Epics",
     "label": "{count, plural, one {Epic} other {Epics}}",
@@ -927,7 +936,6 @@
       "required": "Le titre de l'Epic est requis."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Élément de travail} other {Éléments de travail}}",
     "all": "Tous les éléments de travail",
@@ -1090,11 +1098,12 @@
     "select": {
       "error": "Veuillez sélectionner au moins un élément de travail",
       "empty": "Aucun élément de travail sélectionné",
-      "add_selected": "Ajouter les éléments de travail sélectionnés"
+      "add_selected": "Ajouter les éléments de travail sélectionnés",
+      "select_all": "Sélectionner tout",
+      "deselect_all": "Tout désélectionner"
     },
     "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
   },
-
   "attachment": {
     "error": "Le fichier n'a pas pu être joint. Essayez de le télécharger à nouveau.",
     "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
@@ -1102,7 +1111,6 @@
     "drag_and_drop": "Glissez-déposez n'importe où pour télécharger",
     "delete": "Supprimer la pièce jointe"
   },
-
   "label": {
     "select": "Sélectionner une étiquette",
     "create": {
@@ -1112,7 +1120,6 @@
       "type": "Tapez pour ajouter une nouvelle étiquette"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Sous-élément de travail mis à jour avec succès",
@@ -1121,9 +1128,20 @@
     "remove": {
       "success": "Sous-élément de travail supprimé avec succès",
       "error": "Erreur lors de la suppression du sous-élément de travail"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Vous n'avez pas de sous-éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les sous-éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      },
+      "list_filters": {
+        "title": "Vous n'avez pas d'éléments de travail qui correspondent aux filtres que vous avez appliqués.",
+        "description": "Pour voir tous les éléments de travail, effacer tous les filtres appliqués.",
+        "action": "Effacer les filtres"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {Vue} other {Vues}}",
     "create": {
@@ -1133,7 +1151,6 @@
       "label": "Mettre à jour la vue"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1219,7 +1236,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Créez votre espace de travail",
     "subheading": "Pour commencer à utiliser Plane, vous devez créer ou rejoindre un espace de travail.",
@@ -1271,7 +1287,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1287,7 +1302,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analytique",
     "page_label": "{workspace} - Analytique",
@@ -1319,20 +1333,38 @@
       "custom": "Analytique Personnalisée"
     },
     "empty_state": {
-      "general": {
-        "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, supprimez les blocages et accélérez le travail",
-        "description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres de l'équipe et équipes, et assurez-vous que votre projet se déroule dans les délais.",
-        "primary_button": {
-          "text": "Commencez votre premier projet",
-          "comic": {
-            "title": "L'analytique fonctionne mieux avec les Cycles + Modules",
-            "description": "D'abord, planifiez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments de travail qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
-          }
-        }
+      "customized_insights": {
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "created_vs_resolved": {
+        "description": "Les éléments de travail créés et résolus au fil du temps s'afficheront ici.",
+        "title": "Pas encore de données"
+      },
+      "project_insights": {
+        "title": "Pas encore de données",
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici."
       }
-    }
+    },
+    "created_vs_resolved": "Créé vs Résolu",
+    "customized_insights": "Informations personnalisées",
+    "backlog_work_items": "{entity} en backlog",
+    "active_projects": "Projets actifs",
+    "trend_on_charts": "Tendance sur les graphiques",
+    "all_projects": "Tous les projets",
+    "summary_of_projects": "Résumé des projets",
+    "project_insights": "Aperçus du projet",
+    "started_work_items": "{entity} commencés",
+    "total_work_items": "Total des {entity}",
+    "total_projects": "Total des projets",
+    "total_admins": "Total des administrateurs",
+    "total_users": "Nombre total d'utilisateurs",
+    "total_intake": "Revenu total",
+    "un_started_work_items": "{entity} non commencés",
+    "total_guests": "Nombre total d'invités",
+    "completed_work_items": "{entity} terminés",
+    "total": "Total des {entity}"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",
     "create": {
@@ -1406,7 +1438,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Ajouter une vue",
     "empty_state": {
@@ -1441,7 +1472,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Paramètres de l'espace de travail",
     "page_label": "{workspace} - Paramètres généraux",
@@ -1623,7 +1653,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Votre travail",
@@ -1686,7 +1715,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Saisissez l'ID du projet",
@@ -1736,37 +1764,114 @@
       }
     },
     "estimates": {
+      "label": "Estimations",
       "title": "Activer les estimations pour mon projet",
-      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe."
+      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe.",
+      "no_estimate": "Sans estimation",
+      "new": "Nouveau système d'estimation",
+      "create": {
+        "custom": "Personnalisé",
+        "start_from_scratch": "Commencer depuis zéro",
+        "choose_template": "Choisir un modèle",
+        "choose_estimate_system": "Choisir un système d'estimation",
+        "enter_estimate_point": "Saisir une estimation",
+        "step": "Étape {step} de {total}",
+        "label": "Créer une estimation"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimation créée",
+            "message": "L'estimation a été créée avec succès"
+          },
+          "error": {
+            "title": "Échec de la création de l'estimation",
+            "message": "Nous n'avons pas pu créer la nouvelle estimation, veuillez réessayer."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimation modifiée",
+            "message": "L'estimation a été mise à jour dans votre projet."
+          },
+          "error": {
+            "title": "Échec de la modification de l'estimation",
+            "message": "Nous n'avons pas pu modifier l'estimation, veuillez réessayer"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été activées."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été désactivées."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "L'estimation n'a pas pu être désactivée. Veuillez réessayer"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "L'estimation doit être supérieure à 0.",
+        "unable_to_process": "Nous ne pouvons pas traiter votre demande, veuillez réessayer.",
+        "numeric": "L'estimation doit être une valeur numérique.",
+        "character": "L'estimation doit être une valeur de caractère.",
+        "empty": "La valeur de l'estimation ne peut pas être vide.",
+        "already_exists": "La valeur de l'estimation existe déjà.",
+        "unsaved_changes": "Vous avez des modifications non enregistrées. Veuillez les enregistrer avant de cliquer sur Terminé",
+        "remove_empty": "L'estimation ne peut pas être vide. Saisissez une valeur dans chaque champ ou supprimez ceux pour lesquels vous n'avez pas de valeurs."
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linéaire",
+          "squares": "Carrés",
+          "custom": "Personnalisé"
+        },
+        "categories": {
+          "label": "Catégories",
+          "t_shirt_sizes": "Tailles de T-Shirt",
+          "easy_to_hard": "Facile à difficile",
+          "custom": "Personnalisé"
+        },
+        "time": {
+          "label": "Temps",
+          "hours": "Heures"
+        }
+      }
     },
     "automations": {
       "label": "Automatisations",
       "auto-archive": {
         "title": "Archiver automatiquement les éléments de travail fermés",
-        "description": "Plane archivera automatiquement les éléments de travail qui ont été terminés ou annulés.",
-        "duration": "Archiver automatiquement les éléments de travail qui sont fermés depuis"
+        "description": "Plane archivera automatiquement les éléments de travail qui ont été complétés ou annulés.",
+        "duration": "Archiver automatiquement les éléments de travail fermés depuis"
       },
       "auto-close": {
         "title": "Fermer automatiquement les éléments de travail",
-        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été terminés ou annulés.",
+        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été complétés ou annulés.",
         "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
         "auto_close_status": "Statut de fermeture automatique"
       }
     },
-
     "empty_state": {
       "labels": {
-        "title": "Aucune étiquette pour le moment",
-        "description": "Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
+        "title": "Pas encore d'étiquettes",
+        "description": "Créez des étiquettes pour organiser et filtrer les éléments de travail dans votre projet."
       },
       "estimates": {
-        "title": "Aucun système d'estimation pour le moment",
-        "description": "Créez un ensemble d'estimations pour communiquer la quantité de travail par élément de travail.",
+        "title": "Pas encore de systèmes d'estimation",
+        "description": "Créez un ensemble d'estimations pour communiquer le volume de travail par élément de travail.",
         "primary_button": "Ajouter un système d'estimation"
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Ajouter un cycle",
     "more_details": "Plus de détails",
@@ -1892,7 +1997,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1921,7 +2025,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Ajouter un module",
     "update_module": "Mettre à jour le module",
@@ -1975,7 +2078,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1995,7 +2097,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2025,7 +2126,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2033,7 +2133,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2044,7 +2143,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2053,7 +2151,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Boîte de réception",
     "page_label": "{workspace} - Boîte de réception",
@@ -2110,7 +2207,6 @@
       "custom": "Personnalisé"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2130,7 +2226,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2193,7 +2288,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Vos notes adhésives",
     "placeholder": "cliquez pour écrire ici",
@@ -2251,7 +2345,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Invité",
@@ -2266,7 +2359,6 @@
       "description": "Toutes les permissions sont activées dans l'espace de travail."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Chef de produit / Chef de projet",
     "development_or_engineering": "Développement / Ingénierie",
@@ -2279,7 +2371,6 @@
     "human_resources": "Ressources Humaines",
     "other": "Autre"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2290,7 +2381,6 @@
       "description": "Importez des éléments de travail et des epics depuis les projets et epics Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2319,7 +2409,6 @@
     "created": "Créés",
     "subscribed": "Suivis"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2365,14 +2454,21 @@
       "manual": "Manuel"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cycle} other {Cycles}}",
     "no_cycle": "Pas de cycle"
   },
-
   "module": {
     "label": "{count, plural, one {Module} other {Modules}}",
     "no_module": "Pas de module"
+  },
+  "description_versions": {
+    "last_edited_by": "Dernière modification par",
+    "previously_edited_by": "Précédemment modifié par",
+    "edited_by": "Modifié par"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
   }
 }

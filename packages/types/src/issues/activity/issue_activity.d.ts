@@ -1,3 +1,6 @@
+// plane imports
+import { EInboxIssueSource } from "@plane/constants";
+// local imports
 import {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
@@ -31,7 +34,7 @@ export type TIssueActivity = {
   epoch: number;
   issue_comment: string | null;
   source_data: {
-    source: "IN_APP" | "FORM" | "EMAIL";
+    source: EInboxIssueSource;
     source_email?: string;
     extra: {
       username?: string;

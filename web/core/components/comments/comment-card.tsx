@@ -11,9 +11,9 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // components
+import { isCommentEmpty } from "@plane/utils";
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 //
@@ -161,6 +161,10 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 return asset_id;
               }}
               projectId={projectId?.toString() ?? ""}
+              parentClassName="p-2"
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
           </div>
           <div className="flex gap-1 self-end">
@@ -181,7 +185,10 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             <button
               type="button"
               className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
-              onClick={() => setIsEditing(false)}
+              onClick={() => {
+                setIsEditing(false);
+                editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
+              }}
             >
               <X className="size-3 text-red-500 duration-300 group-hover:text-white" />
             </button>
@@ -203,9 +210,11 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
             containerClassName="!py-1"
             projectId={(projectId as string) ?? ""}
+            displayConfig={{
+              fontSize: "small-font",
+            }}
           />
           <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
         </div>

@@ -6,7 +6,8 @@ import { computedFn } from "mobx-utils";
 // types
 import { TIssue } from "@plane/types";
 // helpers
-import { getCurrentDateTimeInISO } from "@/helpers/date-time.helper";
+import { getCurrentDateTimeInISO } from "@plane/utils";
+import { rootStore } from "@/lib/store-context";
 // services
 import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 import { updatePersistentLayer } from "@/local-db/utils/utils";
@@ -59,6 +60,12 @@ export class IssueStore implements IIssueStore {
     if (issues && issues.length <= 0) return;
     runInAction(() => {
       issues.forEach((issue) => {
+        // add issue identifier to the issuesIdentifierMap
+        const projectIdentifier = rootStore.projectRoot.project.getProjectIdentifierById(issue?.project_id);
+        const workItemSequenceId = issue?.sequence_id;
+        const issueIdentifier = `${projectIdentifier}-${workItemSequenceId}`;
+        set(this.issuesIdentifierMap, issueIdentifier, issue.id);
+
         if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
         else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
       });

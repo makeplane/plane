@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
   "project_created_successfully": "Dự án đã được tạo thành công",
   "project_created_successfully_description": "Dự án đã được tạo thành công. Bây giờ bạn có thể bắt đầu thêm mục công việc.",
+  "project_name_already_taken": "Tên dự án đã được sử dụng.",
+  "project_identifier_already_taken": "ID dự án đã được sử dụng.",
   "project_cover_image_alt": "Ảnh bìa dự án",
   "name_is_required": "Tên là bắt buộc",
   "title_should_be_less_than_255_characters": "Tiêu đề phải ít hơn 255 ký tự",
@@ -348,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Không thể xóa dự án khỏi mục yêu thích. Vui lòng thử lại.",
   "add_to_favorites": "Thêm vào mục yêu thích",
   "remove_from_favorites": "Xóa khỏi mục yêu thích",
-  "publish_settings": "Cài đặt xuất bản",
+  "publish_project": "Xuất bản dự án",
   "publish": "Xuất bản",
   "copy_link": "Sao chép liên kết",
   "leave_project": "Rời dự án",
@@ -365,12 +367,12 @@
   "work_management": "Quản lý công việc",
   "projects_and_issues": "Dự án và mục công việc",
   "projects_and_issues_description": "Bật hoặc tắt các tính năng này trong dự án này. Có thể thay đổi theo thời gian phù hợp với nhu cầu.",
-  "cycles_description": "Thiết lập khung thời gian cho dự án theo nhu cầu, có thể thay đổi tần suất theo các khoảng thời gian khác nhau.",
-  "modules_description": "Nhóm công việc thành cấu trúc giống như các dự án con, với người phụ trách và người được phân công riêng.",
-  "views_description": "Lưu các tùy chọn sắp xếp, lọc và hiển thị để sử dụng hoặc chia sẻ sau này.",
-  "pages_description": "Viết bất cứ thứ gì giống như viết bất cứ thứ gì.",
-  "intake_description": "Cập nhật những mục công việc bạn đã đăng ký. Bật tính năng này để nhận thông báo.",
-  "time_tracking_description": "Theo dõi thời gian dành cho mục công việc và dự án.",
+  "cycles_description": "Thiết lập thời gian làm việc theo dự án và điều chỉnh thời gian nếu cần. Một chu kỳ có thể là 2 tuần, chu kỳ tiếp theo là 1 tuần.",
+  "modules_description": "Tổ chức công việc thành các dự án con với người lãnh đạo và người được phân công riêng.",
+  "views_description": "Lưu các tùy chọn sắp xếp, lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
+  "pages_description": "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
+  "intake_description": "Cho phép người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất mà không làm gián đoạn quy trình làm việc của bạn.",
+  "time_tracking_description": "Ghi lại thời gian dành cho các mục công việc và dự án.",
   "work_management_description": "Quản lý công việc và dự án của bạn một cách dễ dàng.",
   "documentation": "Tài liệu",
   "message_support": "Liên hệ hỗ trợ",
@@ -502,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "Mật khẩu mới phải khác mật khẩu cũ",
   "edited": "đã chỉnh sửa",
   "bot": "bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Thời gian tạo",
@@ -589,7 +590,7 @@
         "default": "Bạn chưa có dự án gần đây nào."
       },
       "filters": {
-        "all": "Tất cả dự án",
+        "all": "Tất cả",
         "projects": "Dự án",
         "pages": "Trang",
         "issues": "Mục công việc"
@@ -749,7 +750,8 @@
         "message": "Đã xảy ra lỗi. Vui lòng thử lại."
       },
       "required": "Trường này là bắt buộc",
-      "entity_required": "{entity} là bắt buộc"
+      "entity_required": "{entity} là bắt buộc",
+      "restricted_entity": "{entity} bị hạn chế"
     },
     "update_link": "Cập nhật liên kết",
     "attach": "Đính kèm",
@@ -849,6 +851,7 @@
     "live": "Trực tiếp",
     "change_history": "Lịch sử thay đổi",
     "coming_soon": "Sắp ra mắt",
+    "member": "Thành viên",
     "members": "Thành viên",
     "you": "Bạn",
     "upgrade_cta": {
@@ -863,7 +866,24 @@
     "deleting": "Đang xóa",
     "pending": "Đang chờ xử lý",
     "invite": "Mời",
-    "view": "Xem"
+    "view": "Xem",
+    "deactivated_user": "Người dùng bị vô hiệu hóa",
+    "apply": "Áp dụng",
+    "applying": "Đang áp dụng",
+    "users": "Người dùng",
+    "admins": "Quản trị viên",
+    "guests": "Khách",
+    "on_track": "Đúng tiến độ",
+    "off_track": "Chệch hướng",
+    "at_risk": "Có nguy cơ",
+    "timeline": "Dòng thời gian",
+    "completion": "Hoàn thành",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "in_progress": "Đang tiến hành",
+    "planned": "Đã lên kế hoạch",
+    "paused": "Tạm dừng",
+    "no_of": "Số lượng {entity}"
   },
   "chart": {
     "x_axis": "Trục X",
@@ -1078,7 +1098,9 @@
     "select": {
       "error": "Vui lòng chọn ít nhất một mục công việc",
       "empty": "Chưa chọn mục công việc",
-      "add_selected": "Thêm mục công việc đã chọn"
+      "add_selected": "Thêm mục công việc đã chọn",
+      "select_all": "Chọn tất cả",
+      "deselect_all": "Bỏ chọn tất cả"
     },
     "open_in_full_screen": "Mở mục công việc trong chế độ toàn màn hình"
   },
@@ -1106,6 +1128,18 @@
     "remove": {
       "success": "Đã xóa mục công việc con thành công",
       "error": "Đã xảy ra lỗi khi xóa mục công việc con"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Bạn không có mục công việc con nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc con, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      },
+      "list_filters": {
+        "title": "Bạn không có mục công việc nào phù hợp với các bộ lọc mà bạn đã áp dụng.",
+        "description": "Để xem tất cả các mục công việc, hãy xóa tất cả các bộ lọc đã áp dụng.",
+        "action": "Xóa bộ lọc"
+      }
     }
   },
   "view": {
@@ -1299,18 +1333,37 @@
       "custom": "Phân tích tùy chỉnh"
     },
     "empty_state": {
-      "general": {
-        "title": "Theo dõi tiến độ, khối lượng công việc và phân công. Khám phá xu hướng, loại bỏ rào cản và đẩy nhanh công việc",
-        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Nhận hiệu suất của thành viên nhóm và nhóm, đảm bảo dự án của bạn đúng tiến độ.",
-        "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
-          "comic": {
-            "title": "Phân tích hoạt động tốt nhất trong chu kỳ + mô-đun",
-            "description": "Đầu tiên, giới hạn mục công việc của bạn trong chu kỳ và nếu có thể, nhóm mục công việc kéo dài nhiều chu kỳ thành mô-đun. Xem cả hai trong thanh điều hướng bên trái."
-          }
-        }
+      "customized_insights": {
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "created_vs_resolved": {
+        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây.",
+        "title": "Chưa có dữ liệu"
+      },
+      "project_insights": {
+        "title": "Chưa có dữ liệu",
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
       }
-    }
+    },
+    "created_vs_resolved": "Đã tạo vs Đã giải quyết",
+    "customized_insights": "Thông tin chi tiết tùy chỉnh",
+    "backlog_work_items": "{entity} tồn đọng",
+    "active_projects": "Dự án đang hoạt động",
+    "trend_on_charts": "Xu hướng trên biểu đồ",
+    "all_projects": "Tất cả dự án",
+    "summary_of_projects": "Tóm tắt dự án",
+    "project_insights": "Thông tin chi tiết dự án",
+    "started_work_items": "{entity} đã bắt đầu",
+    "total_work_items": "Tổng số {entity}",
+    "total_projects": "Tổng số dự án",
+    "total_admins": "Tổng số quản trị viên",
+    "total_users": "Tổng số người dùng",
+    "total_intake": "Tổng thu",
+    "un_started_work_items": "{entity} chưa bắt đầu",
+    "total_guests": "Tổng số khách",
+    "completed_work_items": "{entity} đã hoàn thành",
+    "total": "Tổng số {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -1711,8 +1764,86 @@
       }
     },
     "estimates": {
+      "label": "Ước tính",
       "title": "Bật ước tính cho dự án của tôi",
-      "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm."
+      "description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
+      "no_estimate": "Không có ước tính",
+      "new": "Hệ thống ước tính mới",
+      "create": {
+        "custom": "Tùy chỉnh",
+        "start_from_scratch": "Bắt đầu từ đầu",
+        "choose_template": "Chọn mẫu",
+        "choose_estimate_system": "Chọn hệ thống ước tính",
+        "enter_estimate_point": "Nhập điểm ước tính",
+        "step": "Bước {step} của {total}",
+        "label": "Tạo ước tính"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Đã tạo điểm ước tính",
+            "message": "Điểm ước tính đã được tạo thành công"
+          },
+          "error": {
+            "title": "Không thể tạo điểm ước tính",
+            "message": "Không thể tạo điểm ước tính mới, vui lòng thử lại"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Đã cập nhật ước tính",
+            "message": "Điểm ước tính đã được cập nhật trong dự án của bạn"
+          },
+          "error": {
+            "title": "Không thể cập nhật ước tính",
+            "message": "Không thể cập nhật ước tính, vui lòng thử lại"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã bật ước tính"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã tắt ước tính"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tắt ước tính. Vui lòng thử lại"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Điểm ước tính phải lớn hơn 0",
+        "unable_to_process": "Không thể xử lý yêu cầu của bạn, vui lòng thử lại",
+        "numeric": "Điểm ước tính phải là số",
+        "character": "Điểm ước tính phải là ký tự",
+        "empty": "Giá trị ước tính không được để trống",
+        "already_exists": "Giá trị ước tính này đã tồn tại",
+        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'"
+      },
+      "systems": {
+        "points": {
+          "label": "Điểm",
+          "fibonacci": "Fibonacci",
+          "linear": "Tuyến tính",
+          "squares": "Bình phương",
+          "custom": "Tùy chỉnh"
+        },
+        "categories": {
+          "label": "Danh mục",
+          "t_shirt_sizes": "Kích cỡ áo",
+          "easy_to_hard": "Dễ đến khó",
+          "custom": "Tùy chỉnh"
+        },
+        "time": {
+          "label": "Thời gian",
+          "hours": "Giờ"
+        }
+      }
     },
     "automations": {
       "label": "Tự động hóa",
@@ -2329,5 +2460,14 @@
   "module": {
     "label": "{count, plural, one {mô-đun} other {mô-đun}}",
     "no_module": "Không có mô-đun"
+  },
+  "description_versions": {
+    "last_edited_by": "Chỉnh sửa lần cuối bởi",
+    "previously_edited_by": "Trước đây được chỉnh sửa bởi",
+    "edited_by": "Được chỉnh sửa bởi"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Chọn View Logs từ setup.sh và log Docker để chắc chắn."
   }
 }

@@ -8,12 +8,12 @@ import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 // plane ui
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
+import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
 // components
 import { ImagePickerPopover } from "@/components/core";
 // helpers
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
+// plane web imports
+import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
 type Props = {
   handleClose: () => void;
@@ -38,7 +38,9 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           alt={t("project_cover_image_alt")}
         />
       )}
-
+      <div className="absolute left-2.5 top-2.5">
+        <ProjectTemplateSelect handleModalClose={handleClose} />
+      </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
           <X className="h-5 w-5 text-white" />

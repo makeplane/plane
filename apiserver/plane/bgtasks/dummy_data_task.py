@@ -33,6 +33,7 @@ from plane.db.models import (
     Intake,
     IntakeIssue,
 )
+from plane.db.models.intake import SourceType
 
 
 def create_project(workspace, user_id):
@@ -388,7 +389,7 @@ def create_intake_issues(workspace, project, user_id, intake_issue_count):
                     if status == 0
                     else None
                 ),
-                source="in-app",
+                source=SourceType.IN_APP,
                 workspace=workspace,
                 project=project,
             )

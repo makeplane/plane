@@ -6,22 +6,20 @@ import { observer } from "mobx-react";
 import { EditorRefApi } from "@plane/editor";
 // ui
 import { TextArea } from "@plane/ui";
+import { cn, getPageName } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { usePageFilters } from "@/hooks/use-page-filters";
 
 type Props = {
-  editorRef: React.RefObject<EditorRefApi>;
+  editorRef: EditorRefApi | null;
   readOnly: boolean;
   title: string | undefined;
   updateTitle: (title: string) => void;
-  widthClassName: string;
 };
 
 export const PageEditorTitle: React.FC<Props> = observer((props) => {
-  const { editorRef, readOnly, title, updateTitle, widthClassName } = props;
+  const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);
   // page filters
@@ -33,12 +31,11 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
   });
 
   return (
-    <div className="relative w-full flex-shrink-0 py-3 page-title-container">
+    <div className="relative w-full flex-shrink-0 py-3">
       {readOnly ? (
         <h6
           className={cn(
             titleFontClassName,
-            widthClassName,
             {
               "text-custom-text-400": !title,
             },
@@ -48,14 +45,14 @@ export const PageEditorTitle: React.FC<Props> = observer((props) => {
           {getPageName(title)}
         </h6>
       ) : (
-        <div className={cn("relative", widthClassName)}>
+        <div className="relative">
           <TextArea
             className={cn(titleFontClassName, "block w-full border-none outline-none p-0 resize-none rounded-none")}
             placeholder="Untitled"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                editorRef.current?.setFocusAtPosition(0);
+                editorRef?.setFocusAtPosition(0);
               }
             }}
             value={title}

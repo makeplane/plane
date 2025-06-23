@@ -3,15 +3,16 @@
 import { FC, useEffect, useState, FormEvent } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
+import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
+import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { isEstimatePointValuesRepeated } from "@/helpers/estimates";
 // hooks
 import { useEstimatePoint } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@/plane-web/constants/estimates";
 
 type TEstimatePointUpdate = {
   workspaceSlug: string;
@@ -43,6 +44,8 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
   } = props;
   // hooks
   const { updateEstimatePoint } = useEstimatePoint(estimateId, estimatePointId);
+  // i18n
+  const { t } = useTranslation();
   // states
   const [loader, setLoader] = useState(false);
   const [estimateInputValue, setEstimateInputValue] = useState<string | undefined>(undefined);
@@ -88,11 +91,11 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
         false;
 
       if (!isRepeated) {
-        if (currentEstimateType && [(EEstimateSystem.TIME, EEstimateSystem.POINTS)].includes(currentEstimateType)) {
+        if (currentEstimateType && [EEstimateSystem.TIME, EEstimateSystem.POINTS].includes(currentEstimateType)) {
           if (estimateInputValue && !isNaN(Number(estimateInputValue))) {
             if (Number(estimateInputValue) <= 0) {
-              handleEstimatePointError &&
-                handleEstimatePointError(estimateInputValue, "Estimate point should be greater than 0.");
+              if (handleEstimatePointError)
+                handleEstimatePointError(estimateInputValue, t("project_settings.estimates.validation.min_length"));
               return;
             } else {
               isEstimateValid = true;
@@ -108,7 +111,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           if (estimateId != undefined) {
             if (estimateInputValue === estimatePoint.value) {
               setLoader(false);
-              handleEstimatePointError && handleEstimatePointError(estimateInputValue, undefined);
+              if (handleEstimatePointError) handleEstimatePointError(estimateInputValue, undefined);
 
               handleClose();
             } else
@@ -121,24 +124,24 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
                 await updateEstimatePoint(workspaceSlug, projectId, payload);
 
                 setLoader(false);
-                handleEstimatePointError && handleEstimatePointError(estimateInputValue, undefined, "delete");
+                if (handleEstimatePointError) handleEstimatePointError(estimateInputValue, undefined, "delete");
                 handleClose();
                 setToast({
                   type: TOAST_TYPE.SUCCESS,
-                  title: "Estimate modified",
-                  message: "The estimate point has been updated in your project.",
+                  title: t("project_settings.estimates.toasts.updated.success.title"),
+                  message: t("project_settings.estimates.toasts.updated.success.message"),
                 });
               } catch {
                 setLoader(false);
-                handleEstimatePointError &&
+                if (handleEstimatePointError)
                   handleEstimatePointError(
                     estimateInputValue,
-                    "We are unable to process your request, please try again."
+                    t("project_settings.estimates.validation.unable_to_process")
                   );
                 setToast({
                   type: TOAST_TYPE.ERROR,
-                  title: "Estimate modification failed",
-                  message: "We were unable to modify the estimate, please try again",
+                  title: t("project_settings.estimates.toasts.updated.error.title"),
+                  message: t("project_settings.estimates.toasts.updated.error.message"),
                 });
               }
           } else {
@@ -146,23 +149,18 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           }
         } else {
           setLoader(false);
-          handleEstimatePointError &&
+          if (handleEstimatePointError)
             handleEstimatePointError(
               estimateInputValue,
               [EEstimateSystem.POINTS, EEstimateSystem.TIME].includes(estimateType)
-                ? "Estimate point needs to be a numeric value."
-                : "Estimate point needs to be a character value."
+                ? t("project_settings.estimates.validation.numeric")
+                : t("project_settings.estimates.validation.character")
             );
         }
-      } else handleEstimatePointError && handleEstimatePointError(estimateInputValue, "Estimate value already exists.");
-    } else
-      handleEstimatePointError && handleEstimatePointError(estimateInputValue || "", "Estimate value cannot be empty.");
-  };
-
-  // derived values
-  const inputProps = {
-    type: "text",
-    maxlength: MAX_ESTIMATE_POINT_INPUT_LENGTH,
+      } else if (handleEstimatePointError)
+        handleEstimatePointError(estimateInputValue, t("project_settings.estimates.validation.already_exists"));
+    } else if (handleEstimatePointError)
+      handleEstimatePointError(estimateInputValue || "", t("project_settings.estimates.validation.empty"));
   };
 
   return (
@@ -173,20 +171,17 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
           estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
         )}
       >
-        <input
+        <EstimateInputRoot
+          estimateType={estimateType}
+          handleEstimateInputValue={handleEstimateInputValue}
           value={estimateInputValue}
-          onChange={(e) => handleEstimateInputValue(e.target.value)}
-          className="border-none focus:ring-0 focus:border-0 focus:outline-none p-2.5 w-full bg-transparent"
-          placeholder="Enter estimate point"
-          autoFocus
-          {...inputProps}
         />
         {estimatePointError?.message && (
           <>
             <Tooltip
               tooltipContent={
                 (estimateInputValue || "")?.length >= 1
-                  ? `You have some unsaved changes, Please save them before clicking on done`
+                  ? t("project_settings.estimates.validation.unsaved_changes")
                   : estimatePointError?.message
               }
               position="bottom"

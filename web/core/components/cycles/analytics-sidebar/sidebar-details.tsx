@@ -4,16 +4,16 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { LayersIcon, SquareUser, Users } from "lucide-react";
 // plane types
+import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useProjectEstimates } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
 
 type Props = {
   projectId: string;
@@ -125,7 +125,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         {/**
          * NOTE: Render this section when estimate points of he projects is enabled and the estimate system is points
          */}
-        {isEstimatePointValid && (
+        {isEstimatePointValid && !isCompleted && (
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
               <LayersIcon className="h-4 w-4" />

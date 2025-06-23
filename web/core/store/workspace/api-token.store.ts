@@ -1,9 +1,9 @@
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // services
-import { APITokenService } from "@/services/api_token.service";
 // store
 import { CoreRootStore } from "../root.store";
 
@@ -13,11 +13,11 @@ export interface IApiTokenStore {
   // computed actions
   getApiTokenById: (apiTokenId: string) => IApiToken | null;
   // fetch actions
-  fetchApiTokens: (workspaceSlug: string) => Promise<IApiToken[]>;
-  fetchApiTokenDetails: (workspaceSlug: string, tokenId: string) => Promise<IApiToken>;
+  fetchApiTokens: () => Promise<IApiToken[]>;
+  fetchApiTokenDetails: (tokenId: string) => Promise<IApiToken>;
   // crud actions
-  createApiToken: (workspaceSlug: string, data: Partial<IApiToken>) => Promise<IApiToken>;
-  deleteApiToken: (workspaceSlug: string, tokenId: string) => Promise<void>;
+  createApiToken: (data: Partial<IApiToken>) => Promise<IApiToken>;
+  deleteApiToken: (tokenId: string) => Promise<void>;
 }
 
 export class ApiTokenStore implements IApiTokenStore {
@@ -55,11 +55,10 @@ export class ApiTokenStore implements IApiTokenStore {
   });
 
   /**
-   * fetch all the API tokens for a workspace
-   * @param workspaceSlug
+   * fetch all the API tokens
    */
-  fetchApiTokens = async (workspaceSlug: string) =>
-    await this.apiTokenService.getApiTokens(workspaceSlug).then((response) => {
+  fetchApiTokens = async () =>
+    await this.apiTokenService.list().then((response) => {
       const apiTokensObject: { [apiTokenId: string]: IApiToken } = response.reduce((accumulator, currentWebhook) => {
         if (currentWebhook && currentWebhook.id) {
           return { ...accumulator, [currentWebhook.id]: currentWebhook };
@@ -74,11 +73,10 @@ export class ApiTokenStore implements IApiTokenStore {
 
   /**
    * fetch API token details using token id
-   * @param workspaceSlug
    * @param tokenId
    */
-  fetchApiTokenDetails = async (workspaceSlug: string, tokenId: string) =>
-    await this.apiTokenService.retrieveApiToken(workspaceSlug, tokenId).then((response) => {
+  fetchApiTokenDetails = async (tokenId: string) =>
+    await this.apiTokenService.retrieve(tokenId).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
@@ -87,11 +85,10 @@ export class ApiTokenStore implements IApiTokenStore {
 
   /**
    * create API token using data
-   * @param workspaceSlug
    * @param data
    */
-  createApiToken = async (workspaceSlug: string, data: Partial<IApiToken>) =>
-    await this.apiTokenService.createApiToken(workspaceSlug, data).then((response) => {
+  createApiToken = async (data: Partial<IApiToken>) =>
+    await this.apiTokenService.create(data).then((response) => {
       runInAction(() => {
         this.apiTokens = { ...this.apiTokens, [response.id]: response };
       });
@@ -100,11 +97,10 @@ export class ApiTokenStore implements IApiTokenStore {
 
   /**
    * delete API token using token id
-   * @param workspaceSlug
    * @param tokenId
    */
-  deleteApiToken = async (workspaceSlug: string, tokenId: string) =>
-    await this.apiTokenService.deleteApiToken(workspaceSlug, tokenId).then(() => {
+  deleteApiToken = async (tokenId: string) =>
+    await this.apiTokenService.destroy(tokenId).then(() => {
       const updatedApiTokens = { ...this.apiTokens };
       delete updatedApiTokens[tokenId];
       runInAction(() => {

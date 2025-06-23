@@ -6,7 +6,7 @@ import { computedFn } from "mobx-utils";
 import { STATE_GROUPS } from "@plane/constants";
 import { IState } from "@plane/types";
 // helpers
-import { sortStates } from "@/helpers/state.helper";
+import { sortStates } from "@plane/utils";
 // plane web
 import { syncIssuesWithDeletedStates } from "@/local-db/utils/load-workspace";
 import { ProjectStateService } from "@/plane-web/services/project/project-state.service";
@@ -45,6 +45,8 @@ export interface IStateStore {
     stateId: string,
     payload: Partial<IState>
   ) => Promise<void>;
+
+  getStatePercentageInGroup: (stateId: string | null | undefined) => number | undefined;
 }
 
 export class StateStore implements IStateStore {
@@ -303,4 +305,27 @@ export class StateStore implements IStateStore {
       });
     }
   };
+
+  /**
+   * Returns the percentage position of a state within its group based on sequence
+   * @param stateId The ID of the state to find the percentage for
+   * @returns The percentage position of the state in its group (0-100), or -1 if not found
+   */
+  getStatePercentageInGroup = computedFn((stateId: string | null | undefined) => {
+    if (!stateId || !this.stateMap[stateId]) return -1;
+
+    const state = this.stateMap[stateId];
+    const group = state.group;
+
+    if (!group || !this.groupedProjectStates || !this.groupedProjectStates[group]) return -1;
+
+    // Get all states in the same group
+    const statesInGroup = this.groupedProjectStates[group];
+    const stateIndex = statesInGroup.findIndex((s) => s.id === stateId);
+
+    if (stateIndex === -1) return undefined;
+
+    // Calculate percentage: ((index + 1) / totalLength) * 100
+    return ((stateIndex + 1) / statesInGroup.length) * 100;
+  });
 }

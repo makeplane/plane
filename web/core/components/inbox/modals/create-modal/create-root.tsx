@@ -10,12 +10,11 @@ import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEventTracker, useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -162,7 +161,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();

@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
 import { useLabel } from "@/hooks/store";
@@ -14,7 +15,7 @@ type TLabelListItem = {
   disabled: boolean;
 };
 
-export const LabelListItem: FC<TLabelListItem> = (props) => {
+export const LabelListItem: FC<TLabelListItem> = observer((props) => {
   const { workspaceSlug, projectId, issueId, labelId, values, labelOperations, disabled } = props;
   // hooks
   const { getLabelById } = useLabel();
@@ -51,4 +52,4 @@ export const LabelListItem: FC<TLabelListItem> = (props) => {
       )}
     </div>
   );
-};
+});

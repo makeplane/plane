@@ -15,7 +15,7 @@ import {
   TUnreadNotificationsCount,
 } from "@plane/types";
 // helpers
-import { convertToEpoch } from "@/helpers/date-time.helper";
+import { convertToEpoch } from "@plane/utils";
 // services
 import workspaceNotificationService from "@/services/workspace-notification.service";
 // store

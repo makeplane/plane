@@ -3,7 +3,7 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { PROJECT_UNSPLASH_COVERS, PROJECT_CREATED } from "@plane/constants";
+import { PROJECT_CREATED, DEFAULT_PROJECT_FORM_VALUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -11,8 +11,6 @@ import { setToast, TOAST_TYPE } from "@plane/ui";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
-// helpers
-import { getRandomEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -26,26 +24,12 @@ export type TCreateProjectFormProps = {
   onClose: () => void;
   handleNextStep: (projectId: string) => void;
   data?: Partial<TProject>;
+  templateId?: string;
   updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
 };
 
-const defaultValues: Partial<TProject> = {
-  cover_image_url: PROJECT_UNSPLASH_COVERS[Math.floor(Math.random() * PROJECT_UNSPLASH_COVERS.length)],
-  description: "",
-  logo_props: {
-    in_use: "emoji",
-    emoji: {
-      value: getRandomEmoji(),
-    },
-  },
-  identifier: "",
-  name: "",
-  network: 2,
-  project_lead: null,
-};
-
 export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
-  const { setToFavorite, workspaceSlug, onClose, handleNextStep, updateCoverImageStatus } = props;
+  const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();
   const { captureProjectEvent } = useEventTracker();
@@ -54,7 +38,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
   const methods = useForm<TProject>({
-    defaultValues,
+    defaultValues: { ...DEFAULT_PROJECT_FORM_VALUES, ...data },
     reValidateMode: "onChange",
   });
   const { handleSubmit, reset, setValue } = methods;
@@ -65,7 +49,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("error"),
+        title: t("toast.error"),
         message: t("failed_to_remove_project_from_favorites"),
       });
     });
@@ -105,20 +89,27 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         handleNextStep(res.id);
       })
       .catch((err) => {
-        Object.keys(err.data).map((key) => {
+        if (err?.data.code === "PROJECT_NAME_ALREADY_EXIST") {
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: t("error"),
-            message: err.data[key],
+            title: t("toast.error"),
+            message: t("project_name_already_taken"),
           });
-          captureProjectEvent({
-            eventName: PROJECT_CREATED,
-            payload: {
-              ...formData,
-              state: "FAILED",
-            },
+        } else if (err?.data.code === "PROJECT_IDENTIFIER_ALREADY_EXIST") {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("project_identifier_already_taken"),
           });
-        });
+        } else {
+          Object.keys(err?.data ?? {}).map((key) => {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("error"),
+              message: err.data[key],
+            });
+          });
+        }
       });
   };
 

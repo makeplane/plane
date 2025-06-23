@@ -80,7 +80,7 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
         # Send the email
         msg.send()
         # Log the success
-        logging.getLogger("plane").info("Email sent successfully.")
+        logging.getLogger("plane.worker").info("Email sent successfully.")
         return
     except Exception as e:
         log_exception(e)

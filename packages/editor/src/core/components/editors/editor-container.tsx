@@ -4,6 +4,7 @@ import { FC, ReactNode, useRef } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import { TDisplayConfig } from "@/types";
 // components
@@ -36,26 +37,31 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       if (
         currentNode.content.size === 0 && // Check if the current node is empty
         !(
-          editor.isActive("orderedList") ||
-          editor.isActive("bulletList") ||
-          editor.isActive("taskItem") ||
-          editor.isActive("table") ||
-          editor.isActive("blockquote") ||
-          editor.isActive("codeBlock")
+          editor.isActive(CORE_EXTENSIONS.ORDERED_LIST) ||
+          editor.isActive(CORE_EXTENSIONS.BULLET_LIST) ||
+          editor.isActive(CORE_EXTENSIONS.TASK_ITEM) ||
+          editor.isActive(CORE_EXTENSIONS.TABLE) ||
+          editor.isActive(CORE_EXTENSIONS.BLOCKQUOTE) ||
+          editor.isActive(CORE_EXTENSIONS.CODE_BLOCK)
         ) // Check if it's an empty node within an orderedList, bulletList, taskItem, table, quote or code block
       ) {
         return;
       }
 
-      // Insert a new paragraph at the end of the document
-      const endPosition = editor?.state.doc.content.size;
-      editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).run();
+      // Get the last node in the document
+      const docSize = editor.state.doc.content.size;
+      const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
+      const lastNode = lastNodePos.node();
 
-      // Focus the newly added paragraph for immediate editing
-      editor
-        .chain()
-        .setTextSelection(endPosition + 1)
-        .run();
+      // Check if its last node and add new node
+      if (lastNode) {
+        const isLastNodeEmptyParagraph = lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
+        // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
+        if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
+          const endPosition = editor?.state.doc.content.size;
+          editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).focus("end").run();
+        }
+      }
     } catch (error) {
       console.error("An error occurred while handling container click to insert new empty node at bottom:", error);
     }

@@ -4,15 +4,14 @@ import React, { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+// plane imports
 import { TIssueServiceType } from "@plane/types";
-// plane ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
-
+// local imports
 import { useAttachmentOperations } from "./helper";
 
 type Props = {
@@ -21,18 +20,11 @@ type Props = {
   issueId: string;
   customButton?: React.ReactNode;
   disabled?: boolean;
-  issueServiceType?: TIssueServiceType;
+  issueServiceType: TIssueServiceType;
 };
 
 export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    issueId,
-    customButton,
-    disabled = false,
-    issueServiceType = EIssueServiceType.ISSUES,
-  } = props;
+  const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks

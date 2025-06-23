@@ -3,34 +3,21 @@
 import React, { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
-  ArrowRight,
-  ChevronRight,
-  EllipsisIcon,
-  LinkIcon,
-  Trash2,
-} from "lucide-react";
-// types
+import { ArrowRight, ChevronRight } from "lucide-react";
+// Plane Imports
 import { CYCLE_STATUS, CYCLE_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
-// ui
-import { CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
-// helpers
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
-// plane web constants
-// services
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
+// services
 import { CycleService } from "@/services/cycle.service";
-// local components
+// local imports
 import { ArchiveCycleModal } from "../archived-cycles";
 import { CycleDeleteModal } from "../delete-modal";
 
@@ -51,15 +38,13 @@ const cycleService = new CycleService();
 
 export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
-  // router
-  const router = useAppRouter();
   // states
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // hooks
   const { allowPermissions } = useUserPermissions();
-  const { updateCycleDetails, restoreCycle } = useCycle();
-  const { setTrackElement, captureCycleEvent } = useEventTracker();
+  const { updateCycleDetails } = useCycle();
+  const { captureCycleEvent } = useEventTracker();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
 
@@ -75,44 +60,6 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const isCompleted = cycleStatus === "completed";
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
-
-  const handleRestoreCycle = async () => {
-    if (!workspaceSlug || !projectId) return;
-
-    await restoreCycle(workspaceSlug.toString(), projectId.toString(), cycleDetails.id)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("project_cycles.action.restore.success.title"),
-          message: t("project_cycles.action.restore.success.description"),
-        });
-        router.push(`/${workspaceSlug.toString()}/projects/${projectId.toString()}/archives/cycles`);
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("project_cycles.action.restore.failed.title"),
-          message: t("project_cycles.action.restore.failed.description"),
-        })
-      );
-  };
-
-  const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/cycles/${cycleDetails.id}`)
-      .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: t("common.link_copied"),
-          message: t("common.link_copied_to_clipboard"),
-        });
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("common.errors.default.message"),
-        });
-      });
-  };
 
   const submitChanges = async (data: Partial<ICycle>, changedProperty: string) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
@@ -225,62 +172,6 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
             <ChevronRight className="h-3 w-3 stroke-2 text-white" />
           </button>
         </div>
-        <div className="flex items-center gap-3">
-          {!isArchived && (
-            <button onClick={handleCopyText} className="size-4">
-              <LinkIcon className="size-3.5 text-custom-text-300" />
-            </button>
-          )}
-          {isEditingAllowed && (
-            <CustomMenu
-              placement="bottom-end"
-              customButtonClassName="size-4"
-              customButton={<EllipsisIcon className="size-3.5 text-custom-text-300" />}
-            >
-              {!isArchived && (
-                <CustomMenu.MenuItem onClick={() => setArchiveCycleModal(true)} disabled={!isCompleted}>
-                  {isCompleted ? (
-                    <div className="flex items-center gap-2">
-                      <ArchiveIcon className="h-3 w-3" />
-                      {t("common.archive")}
-                    </div>
-                  ) : (
-                    <div className="flex items-start gap-2">
-                      <ArchiveIcon className="h-3 w-3" />
-                      <div className="-mt-1">
-                        <p>{t("common.archive")}</p>
-                        <p className="text-xs text-custom-text-400">
-                          {t("project_cycles.only_completed_cycles_can_be_archived")}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </CustomMenu.MenuItem>
-              )}
-              {isArchived && (
-                <CustomMenu.MenuItem onClick={handleRestoreCycle}>
-                  <span className="flex items-center justify-start gap-2">
-                    <ArchiveRestoreIcon className="h-3 w-3" />
-                    <span>{t("project_cycles.action.restore.title")}</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              )}
-              {!isCompleted && (
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    setTrackElement("CYCLE_PAGE_SIDEBAR");
-                    setCycleDeleteModal(true);
-                  }}
-                >
-                  <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-3 w-3" />
-                    <span>{t("delete")}</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              )}
-            </CustomMenu>
-          )}
-        </div>
       </div>
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-start justify-between gap-3 pt-2">
@@ -334,6 +225,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
                         {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
                       </span>
                     }
+                    mergeDates
                     showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
                     required={cycleDetails.status !== "draft"}
                     disabled={!isEditingAllowed || isArchived || isCompleted}

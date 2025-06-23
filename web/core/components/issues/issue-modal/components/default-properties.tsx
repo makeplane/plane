@@ -11,6 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import {
   CycleDropdown,
@@ -24,8 +25,6 @@ import {
 import { ParentIssuesListModal } from "@/components/issues";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useProjectEstimates, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -334,7 +333,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             }}
             projectId={projectId ?? undefined}
             issueId={isDraft ? undefined : id}
-            searchEpic
           />
         )}
       />

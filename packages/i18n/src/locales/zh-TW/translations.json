@@ -18,7 +18,6 @@
     "pro": "專業版",
     "upgrade": "升級"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "送出",
   "cancel": "取消",
   "loading": "載入中",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "無法從我的最愛移除專案。請再試一次。",
   "project_created_successfully": "專案建立成功",
   "project_created_successfully_description": "專案建立成功。您現在可以開始新增工作事項。",
+  "project_name_already_taken": "專案名稱已被使用。",
+  "project_identifier_already_taken": "專案識別碼已被使用。",
   "project_cover_image_alt": "專案封面圖片",
   "name_is_required": "名稱為必填",
   "title_should_be_less_than_255_characters": "標題不應超過 255 個字元",
@@ -350,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "無法從我的最愛移除專案。請再試一次。",
   "add_to_favorites": "加入我的最愛",
   "remove_from_favorites": "從我的最愛移除",
-  "publish_settings": "發布設定",
+  "publish_project": "發佈專案",
   "publish": "發布",
   "copy_link": "複製連結",
   "leave_project": "離開專案",
@@ -367,12 +367,12 @@
   "work_management": "工作管理",
   "projects_and_issues": "專案與工作事項",
   "projects_and_issues_description": "為此專案開啟或關閉這些功能。",
-  "cycles_description": "依需要為每個專案設定時間區段，依週期變更頻率。",
-  "modules_description": "將工作分組成類似子專案的設置，並擁有自己的負責人和指派對象。",
-  "views_description": "儲存排序、篩選和顯示選項以供稍後使用或分享。",
-  "pages_description": "撰寫任何內容，就像寫任何東西一樣。",
-  "intake_description": "持續追蹤您訂閱的工作事項。啟用此功能以接收通知。",
-  "time_tracking_description": "追蹤工作事項和專案的花費時間。",
+  "cycles_description": "為每個專案設定工作時間區段，並依需求調整週期。一個週期可以是兩週，下一個是一週。",
+  "modules_description": "將工作組織成子專案，並指派專屬的負責人與任務對象。",
+  "views_description": "儲存自訂排序、篩選和顯示選項，或與團隊分享。",
+  "pages_description": "建立與編輯自由格式內容：筆記、文件，任何內容皆可。",
+  "intake_description": "允許非成員分享錯誤、回饋和建議，而不會中斷您的工作流程。",
+  "time_tracking_description": "記錄在工作事項和專案上花費的時間。",
   "work_management_description": "輕鬆管理您的工作和專案。",
   "documentation": "文件",
   "message_support": "聯絡支援",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "新密碼必須與舊密碼不同",
   "edited": "已編輯",
   "bot": "機器人",
-
   "project_view": {
     "sort_by": {
       "created_at": "建立時間",
@@ -512,12 +511,10 @@
       "name": "名稱"
     }
   },
-
   "toast": {
     "success": "成功！",
     "error": "錯誤！"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "您的快速入門指南",
@@ -594,7 +590,7 @@
         "default": "您還沒有任何最近項目。"
       },
       "filters": {
-        "all": "所有項目",
+        "all": "所有",
         "projects": "專案",
         "pages": "頁面",
         "issues": "工作事項"
@@ -614,7 +610,6 @@
     "title": "首頁",
     "star_us_on_github": "在 GitHub 上給我們星星"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "全部",
     "states": "狀態",
@@ -756,7 +750,8 @@
         "message": "發生錯誤。請再試一次。"
       },
       "required": "此欄位為必填",
-      "entity_required": "{entity} 為必填"
+      "entity_required": "{entity} 為必填",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新連結",
     "attach": "附加",
@@ -857,6 +852,7 @@
     "live": "即時",
     "change_history": "變更歷史記錄",
     "coming_soon": "即將推出",
+    "member": "成員",
     "members": "成員",
     "you": "您",
     "upgrade_cta": {
@@ -871,22 +867,36 @@
     "deleting": "刪除中",
     "pending": "待處理",
     "invite": "邀請",
-    "view": "檢視"
+    "view": "檢視",
+    "deactivated_user": "已停用用戶",
+    "apply": "應用",
+    "applying": "應用中",
+    "users": "使用者",
+    "admins": "管理員",
+    "guests": "訪客",
+    "on_track": "進展順利",
+    "off_track": "偏離軌道",
+    "timeline": "時間軸",
+    "completion": "完成",
+    "upcoming": "即將發生",
+    "completed": "已完成",
+    "in_progress": "進行中",
+    "planned": "已計劃",
+    "paused": "暫停",
+    "at_risk": "有風險",
+    "no_of": "{entity} 的數量"
   },
-
   "chart": {
     "x_axis": "X 軸",
     "y_axis": "Y 軸",
     "metric": "指標"
   },
-
   "form": {
     "title": {
       "required": "標題為必填",
       "max_length": "標題不應超過 {length} 個字元"
     }
   },
-
   "entity": {
     "grouping_title": "{entity} 分組",
     "priority": "{entity} 優先順序",
@@ -910,7 +920,6 @@
       "failed": "新增 {entity} 時發生錯誤"
     }
   },
-
   "epic": {
     "all": "所有 Epic",
     "label": "{count, plural, one {Epic} other {Epic}}",
@@ -928,7 +937,6 @@
       "required": "Epic 標題為必填。"
     }
   },
-
   "issue": {
     "label": "{count, plural, one {工作事項} other {工作事項}}",
     "all": "所有工作事項",
@@ -1091,11 +1099,12 @@
     "select": {
       "error": "請至少選擇一個工作事項",
       "empty": "未選擇工作事項",
-      "add_selected": "新增已選取的工作事項"
+      "add_selected": "新增已選取的工作事項",
+      "select_all": "全選",
+      "deselect_all": "取消全選"
     },
     "open_in_full_screen": "以全螢幕開啟工作事項"
   },
-
   "attachment": {
     "error": "無法附加檔案。請重新上傳。",
     "only_one_file_allowed": "一次只能上傳一個檔案。",
@@ -1103,7 +1112,6 @@
     "drag_and_drop": "拖曳到任何位置以上傳",
     "delete": "刪除附件"
   },
-
   "label": {
     "select": "選擇標籤",
     "create": {
@@ -1113,7 +1121,6 @@
       "type": "輸入以新增標籤"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "子工作事項更新成功",
@@ -1122,9 +1129,20 @@
     "remove": {
       "success": "子工作事項移除成功",
       "error": "移除子工作事項時發生錯誤"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您沒有符合您應用過的過濾器的子工作事項。",
+        "description": "要查看所有子工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      },
+      "list_filters": {
+        "title": "您沒有符合您應用過的過濾器的工作事項。",
+        "description": "要查看所有工作事項，請清除所有應用過的過濾器。",
+        "action": "清除過濾器"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {檢視} other {檢視}}",
     "create": {
@@ -1134,7 +1152,6 @@
       "label": "更新檢視"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1220,7 +1237,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "建立您的工作區",
     "subheading": "若要開始使用 Plane，您需要建立或加入工作區。",
@@ -1272,7 +1288,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1288,7 +1303,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "分析",
     "page_label": "{workspace} - 分析",
@@ -1320,20 +1334,38 @@
       "custom": "自訂分析"
     },
     "empty_state": {
-      "general": {
-        "title": "追蹤進度、工作量和分配。發現趨勢、移除阻礙，加快工作進展",
-        "description": "檢視範圍與需求、評估和範圍擴展。取得團隊成員和團隊的績效，確保您的專案按時進行。",
-        "primary_button": {
-          "text": "開始您的第一個專案",
-          "comic": {
-            "title": "分析最適合搭配週期 + 模組使用",
-            "description": "首先，將您的工作事項時間區段到週期中，如果可以的話，將跨週期的工作事項分組到模組中。請檢視左側導覽列中的兩個功能。"
-          }
-        }
+      "customized_insights": {
+        "description": "指派給您的工作項目將依狀態分類顯示在此處。",
+        "title": "尚無資料"
+      },
+      "created_vs_resolved": {
+        "description": "隨著時間推移所建立與解決的工作項目將顯示在此處。",
+        "title": "尚無資料"
+      },
+      "project_insights": {
+        "title": "尚無資料",
+        "description": "指派給您的工作項目將依狀態分類顯示在此處。"
       }
-    }
+    },
+    "created_vs_resolved": "已建立 vs 已解決",
+    "customized_insights": "自訂化洞察",
+    "backlog_work_items": "待辦的{entity}",
+    "active_projects": "啟用中的專案",
+    "trend_on_charts": "圖表趨勢",
+    "all_projects": "所有專案",
+    "summary_of_projects": "專案摘要",
+    "project_insights": "專案洞察",
+    "started_work_items": "已開始的{entity}",
+    "total_work_items": "{entity}總數",
+    "total_projects": "專案總數",
+    "total_admins": "管理員總數",
+    "total_users": "使用者總數",
+    "total_intake": "總收入",
+    "un_started_work_items": "未開始的{entity}",
+    "total_guests": "訪客總數",
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}總數"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
     "create": {
@@ -1408,7 +1440,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "新增檢視",
     "empty_state": {
@@ -1443,7 +1474,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "工作區設定",
     "page_label": "{workspace} - 一般設定",
@@ -1625,7 +1655,6 @@
       }
     }
   },
-
   "profile": {
     "label": "個人資料",
     "page_label": "您的工作",
@@ -1688,7 +1717,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "輸入專案 ID",
@@ -1738,24 +1766,102 @@
       }
     },
     "estimates": {
-      "title": "為我的專案啟用評估",
-      "description": "它們可以協助您傳達團隊的複雜度和工作量。"
+      "label": "預估",
+      "title": "為我的專案啟用預估",
+      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "no_estimate": "無預估",
+      "new": "新估算系統",
+      "create": {
+        "custom": "自訂",
+        "start_from_scratch": "從頭開始",
+        "choose_template": "選擇範本",
+        "choose_estimate_system": "選擇預估系統",
+        "enter_estimate_point": "輸入預估",
+        "step": "步驟 {step} 共 {total}",
+        "label": "建立預估"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "預估已建立",
+            "message": "預估已成功建立"
+          },
+          "error": {
+            "title": "預估建立失敗",
+            "message": "我們無法建立新的預估，請重試。"
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "預估已修改",
+            "message": "專案中的預估已更新。"
+          },
+          "error": {
+            "title": "預估修改失敗",
+            "message": "我們無法修改預估，請重試"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已啟用。"
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "成功！",
+            "message": "預估已停用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "無法停用預估。請重試"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "預估必須大於0。",
+        "unable_to_process": "我們無法處理你的請求，請重試。",
+        "numeric": "預估必須是數值。",
+        "character": "預估必須是字元值。",
+        "empty": "預估值不能為空。",
+        "already_exists": "預估值已存在。",
+        "unsaved_changes": "你有未儲存的變更。請在點擊完成前儲存",
+        "remove_empty": "預估不能為空。在每個欄位中輸入值或移除沒有值的欄位。"
+      },
+      "systems": {
+        "points": {
+          "label": "點數",
+          "fibonacci": "費波那契數列",
+          "linear": "線性",
+          "squares": "平方數",
+          "custom": "自訂"
+        },
+        "categories": {
+          "label": "類別",
+          "t_shirt_sizes": "T恤尺寸",
+          "easy_to_hard": "簡單到困難",
+          "custom": "自訂"
+        },
+        "time": {
+          "label": "時間",
+          "hours": "小時"
+        }
+      }
     },
     "automations": {
       "label": "自動化",
       "auto-archive": {
-        "title": "自動封存已關閉的工作事項",
-        "description": "Plane 將自動封存已完成或取消的工作事項。",
-        "duration": "自動封存已關閉"
+        "title": "自動封存已關閉的工作項目",
+        "description": "Plane將自動封存已完成或已取消的工作項目。",
+        "duration": "自動封存已關閉的工作項目"
       },
       "auto-close": {
-        "title": "自動關閉工作事項",
-        "description": "Plane 將自動關閉尚未完成或取消的工作事項。",
-        "duration": "自動關閉閒置",
+        "title": "自動關閉工作項目",
+        "description": "Plane將自動關閉未完成或未取消的工作項目。",
+        "duration": "自動關閉非活動工作項目",
         "auto_close_status": "自動關閉狀態"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "尚無標籤",
@@ -1768,7 +1874,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "新增週期",
     "more_details": "更多詳細資訊",
@@ -1894,7 +1999,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1923,7 +2027,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "新增模組",
     "update_module": "更新模組",
@@ -1977,7 +2080,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1997,7 +2099,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2027,7 +2128,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2035,7 +2135,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2046,7 +2145,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2055,7 +2153,6 @@
       }
     }
   },
-
   "notification": {
     "label": "收件匣",
     "page_label": "{workspace} - 收件匣",
@@ -2112,7 +2209,6 @@
       "custom": "自訂"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2132,7 +2228,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2195,7 +2290,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "您的便利貼",
     "placeholder": "點選此處輸入",
@@ -2253,7 +2347,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "訪客",
@@ -2268,7 +2361,6 @@
       "description": "工作區內的所有權限都設為允許。"
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "產品/專案經理",
     "development_or_engineering": "開發/工程",
@@ -2281,7 +2373,6 @@
     "human_resources": "人力資源",
     "other": "其他"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2292,7 +2383,6 @@
       "description": "從 Jira 專案和 Epic 匯入工作事項和 Epic。"
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2321,7 +2411,6 @@
     "created": "已建立",
     "subscribed": "已訂閱"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2367,14 +2456,21 @@
       "manual": "手動"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {週期} other {週期}}",
     "no_cycle": "無週期"
   },
-
   "module": {
     "label": "{count, plural, one {模組} other {模組}}",
     "no_module": "無模組"
+  },
+  "description_versions": {
+    "last_edited_by": "最後編輯者",
+    "previously_edited_by": "先前編輯者",
+    "edited_by": "編輯者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
   }
 }

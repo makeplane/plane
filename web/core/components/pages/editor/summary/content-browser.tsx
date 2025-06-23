@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 // plane editor
 import { EditorRefApi, IMarking } from "@plane/editor";
 // components
@@ -24,10 +24,13 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     };
   }, [editorRef]);
 
-  const handleOnClick = (marking: IMarking) => {
-    editorRef?.scrollSummary(marking);
-    if (setSidePeekVisible) setSidePeekVisible(false);
-  };
+  const handleOnClick = useCallback(
+    (marking: IMarking) => {
+      editorRef?.scrollSummary(marking);
+      setSidePeekVisible?.(false);
+    },
+    [editorRef, setSidePeekVisible]
+  );
 
   const HeadingComponent: {
     [key: number]: React.FC<{ marking: IMarking; onClick: () => void }>;

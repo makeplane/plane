@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nepodařilo se odstranit projekt z oblíbených. Zkuste to prosím znovu.",
   "project_created_successfully": "Projekt úspěšně vytvořen",
   "project_created_successfully_description": "Projekt byl úspěšně vytvořen. Nyní můžete začít přidávat pracovní položky.",
+  "project_name_already_taken": "Název projektu už je zabraný.",
+  "project_identifier_already_taken": "Identifikátor projektu už je zabraný.",
   "project_cover_image_alt": "Úvodní obrázek projektu",
   "name_is_required": "Název je povinný",
   "title_should_be_less_than_255_characters": "Název by měl být kratší než 255 znaků",
@@ -348,7 +350,7 @@
   "couldnt_remove_the_project_from_favorites": "Nepodařilo se odstranit projekt z oblíbených. Zkuste to prosím znovu.",
   "add_to_favorites": "Přidat do oblíbených",
   "remove_from_favorites": "Odebrat z oblíbených",
-  "publish_settings": "Nastavení publikování",
+  "publish_project": "Publikovat projekt",
   "publish": "Publikovat",
   "copy_link": "Kopírovat odkaz",
   "leave_project": "Opustit projekt",
@@ -365,12 +367,12 @@
   "work_management": "Správa práce",
   "projects_and_issues": "Projekty a pracovní položky",
   "projects_and_issues_description": "Aktivujte nebo deaktivujte tyto funkce v projektu.",
-  "cycles_description": "Časově ohraničte práci podle potřeby a měňte frekvenci mezi obdobími.",
-  "modules_description": "Seskupujte práci do podobných podprojektů s vlastními vedoucími a přiřazenými osobami.",
-  "views_description": "Uložte řazení, filtry a zobrazovací možnosti pro pozdější použití nebo sdílení.",
-  "pages_description": "Pište cokoli, jako obvykle.",
-  "intake_description": "Zůstaňte v obraze u pracovních položek, které odebíráte. Aktivujte toto pro zasílání oznámení.",
-  "time_tracking_description": "Sledujte čas strávený na pracovních položkách a projektech.",
+  "cycles_description": "Časově vymezte práci podle projektu a podle potřeby upravte období. Jeden cyklus může trvat 2 týdny, další jen 1 týden.",
+  "modules_description": "Organizujte práci do podprojektů s vyhrazenými vedoucími a přiřazenými osobami.",
+  "views_description": "Uložte vlastní řazení, filtry a možnosti zobrazení nebo je sdílejte se svým týmem.",
+  "pages_description": "Vytvářejte a upravujte volně strukturovaný obsah – poznámky, dokumenty, cokoli.",
+  "intake_description": "Umožněte nečlenům sdílet chyby, zpětnou vazbu a návrhy, aniž by narušili váš pracovní postup.",
+  "time_tracking_description": "Zaznamenávejte čas strávený na pracovních položkách a projektech.",
   "work_management_description": "Spravujte svou práci a projekty snadno.",
   "documentation": "Dokumentace",
   "message_support": "Kontaktovat podporu",
@@ -500,7 +502,6 @@
   "export": "Exportovat",
   "member": "{count, plural, one{# člen} few{# členové} other{# členů}}",
   "new_password_must_be_different_from_old_password": "Nové heslo musí být odlišné od starého hesla",
-
   "project_view": {
     "sort_by": {
       "created_at": "Vytvořeno dne",
@@ -508,12 +509,10 @@
       "name": "Název"
     }
   },
-
   "toast": {
     "success": "Úspěch!",
     "error": "Chyba!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -542,7 +541,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Váš průvodce rychlým startem",
@@ -590,10 +588,10 @@
         "default": "Zatím nemáte žádné nedávné položky."
       },
       "filters": {
-        "all": "Všechny položky",
+        "all": "Vše",
         "projects": "Projekty",
         "pages": "Stránky",
-        "issues": "Pracovní položky"
+        "issues": "Úkoly"
       }
     },
     "new_at_plane": {
@@ -610,7 +608,6 @@
     "title": "Domů",
     "star_us_on_github": "Ohodnoťte nás na GitHubu"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -624,7 +621,6 @@
       }
     }
   },
-
   "common": {
     "all": "Vše",
     "states": "Stavy",
@@ -752,7 +748,8 @@
         "message": "Něco se pokazilo. Zkuste to prosím znovu."
       },
       "required": "Toto pole je povinné",
-      "entity_required": "{entity} je povinná"
+      "entity_required": "{entity} je povinná",
+      "restricted_entity": "{entity} je omezen"
     },
     "update_link": "Aktualizovat odkaz",
     "attach": "Připojit",
@@ -853,6 +850,7 @@
     "live": "Živě",
     "change_history": "Historie změn",
     "coming_soon": "Již brzy",
+    "member": "Člen",
     "members": "Členové",
     "you": "Vy",
     "upgrade_cta": {
@@ -867,22 +865,36 @@
     "deleting": "Mazání",
     "pending": "Čekající",
     "invite": "Pozvat",
-    "view": "Pohled"
+    "view": "Pohled",
+    "deactivated_user": "Deaktivovaný uživatel",
+    "apply": "Použít",
+    "applying": "Používání",
+    "users": "Uživatelé",
+    "admins": "Administrátoři",
+    "guests": "Hosté",
+    "on_track": "Na správné cestě",
+    "off_track": "Mimo plán",
+    "at_risk": "V ohrožení",
+    "timeline": "Časová osa",
+    "completion": "Dokončení",
+    "upcoming": "Nadcházející",
+    "completed": "Dokončeno",
+    "in_progress": "Probíhá",
+    "planned": "Plánováno",
+    "paused": "Pozastaveno",
+    "no_of": "Počet {entity}"
   },
-
   "chart": {
     "x_axis": "Osa X",
     "y_axis": "Osa Y",
     "metric": "Metrika"
   },
-
   "form": {
     "title": {
       "required": "Název je povinný",
       "max_length": "Název by měl být kratší než {length} znaků"
     }
   },
-
   "entity": {
     "grouping_title": "Seskupení {entity}",
     "priority": "Priorita {entity}",
@@ -906,7 +918,6 @@
       "failed": "Chyba při přidávání {entity}"
     }
   },
-
   "epic": {
     "all": "Všechny epiky",
     "label": "{count, plural, one {Epik} other {Epiky}}",
@@ -924,7 +935,6 @@
       "required": "Název epiku je povinný."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {Pracovní položka} few {Pracovní položky} other {Pracovních položek}}",
     "all": "Všechny pracovní položky",
@@ -1087,11 +1097,12 @@
     "select": {
       "error": "Vyberte alespoň jednu pracovní položku",
       "empty": "Nevybrány žádné pracovní položky",
-      "add_selected": "Přidat vybrané pracovní položky"
+      "add_selected": "Přidat vybrané pracovní položky",
+      "select_all": "Vybrat vše",
+      "deselect_all": "Zrušit výběr všeho"
     },
     "open_in_full_screen": "Otevřít pracovní položku na celou obrazovku"
   },
-
   "attachment": {
     "error": "Soubor nelze připojit. Zkuste to prosím znovu.",
     "only_one_file_allowed": "Je možné nahrát pouze jeden soubor najednou.",
@@ -1099,7 +1110,6 @@
     "drag_and_drop": "Přetáhněte soubor kamkoli pro nahrání",
     "delete": "Smazat přílohu"
   },
-
   "label": {
     "select": "Vybrat štítek",
     "create": {
@@ -1109,7 +1119,6 @@
       "type": "Zadejte pro vytvoření nového štítku"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Podřízená pracovní položka úspěšně aktualizována",
@@ -1118,9 +1127,20 @@
     "remove": {
       "success": "Podřízená pracovní položka úspěšně odebrána",
       "error": "Chyba při odebírání podřízené položky"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nemáte podřízené pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny podřízené pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      },
+      "list_filters": {
+        "title": "Nemáte pracovní položky, které odpovídají použitým filtrům.",
+        "description": "Chcete-li zobrazit všechny pracovní položky, odstraňte všechny použité filtry.",
+        "action": "Odstranit filtry"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {Pohled} few {Pohledy} other {Pohledů}}",
     "create": {
@@ -1130,7 +1150,6 @@
       "label": "Aktualizovat pohled"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1216,7 +1235,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Vytvořte si pracovní prostor",
     "subheading": "Pro používání Plane musíte vytvořit nebo se připojit k pracovnímu prostoru.",
@@ -1268,7 +1286,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1284,7 +1301,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analytika",
     "page_label": "{workspace} - Analytika",
@@ -1316,20 +1332,38 @@
       "custom": "Vlastní analytika"
     },
     "empty_state": {
-      "general": {
-        "title": "Sledujte pokrok, vytížení a alokace. Identifikujte trendy, odstraňte překážky a zrychlete práci",
-        "description": "Sledujte rozsah vs. poptávku, odhady a rozsah. Zjistěte výkonnost členů a týmů, zajistěte včasné dokončení projektů.",
-        "primary_button": {
-          "text": "Začněte první projekt",
-          "comic": {
-            "title": "Analytika funguje nejlépe s Cykly + Moduly",
-            "description": "Nejprve časově ohraničte práci do Cyklů a seskupte položky přesahující cyklus do Modulů. Najdete je v levém menu."
-          }
-        }
+      "customized_insights": {
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "created_vs_resolved": {
+        "description": "Pracovní položky vytvořené a vyřešené v průběhu času se zde zobrazí.",
+        "title": "Zatím žádná data"
+      },
+      "project_insights": {
+        "title": "Zatím žádná data",
+        "description": "Pracovní položky přiřazené vám, rozdělené podle stavu, se zde zobrazí."
       }
-    }
+    },
+    "created_vs_resolved": "Vytvořeno vs Vyřešeno",
+    "customized_insights": "Přizpůsobené přehledy",
+    "backlog_work_items": "Backlog {entity}",
+    "active_projects": "Aktivní projekty",
+    "trend_on_charts": "Trend na grafech",
+    "all_projects": "Všechny projekty",
+    "summary_of_projects": "Souhrn projektů",
+    "project_insights": "Přehled projektu",
+    "started_work_items": "Zahájené {entity}",
+    "total_work_items": "Celkový počet {entity}",
+    "total_projects": "Celkový počet projektů",
+    "total_admins": "Celkový počet administrátorů",
+    "total_users": "Celkový počet uživatelů",
+    "total_intake": "Celkový příjem",
+    "un_started_work_items": "Nezahájené {entity}",
+    "total_guests": "Celkový počet hostů",
+    "completed_work_items": "Dokončené {entity}",
+    "total": "Celkový počet {entity}"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
     "create": {
@@ -1404,7 +1438,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Přidat pohled",
     "empty_state": {
@@ -1439,7 +1472,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Nastavení pracovního prostoru",
     "page_label": "{workspace} - Obecná nastavení",
@@ -1621,7 +1653,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Vaše práce",
@@ -1684,7 +1715,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Zadejte ID projektu",
@@ -1734,37 +1764,114 @@
       }
     },
     "estimates": {
-      "title": "Povolit odhady v projektu",
-      "description": "Pomáhají komunikovat složitost a vytížení týmu."
+      "label": "Odhady",
+      "title": "Povolit odhady pro můj projekt",
+      "description": "Pomáhají vám komunikovat složitost a pracovní zátěž týmu.",
+      "no_estimate": "Bez odhadu",
+      "new": "Nový systém odhadů",
+      "create": {
+        "custom": "Vlastní",
+        "start_from_scratch": "Začít od nuly",
+        "choose_template": "Vybrat šablonu",
+        "choose_estimate_system": "Vybrat systém odhadů",
+        "enter_estimate_point": "Zadat odhad",
+        "step": "Krok {step} z {total}",
+        "label": "Vytvořit odhad"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Odhad vytvořen",
+            "message": "Odhad byl úspěšně vytvořen"
+          },
+          "error": {
+            "title": "Vytvoření odhadu selhalo",
+            "message": "Nepodařilo se vytvořit nový odhad, zkuste to prosím znovu."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Odhad upraven",
+            "message": "Odhad byl aktualizován ve vašem projektu."
+          },
+          "error": {
+            "title": "Úprava odhadu selhala",
+            "message": "Nepodařilo se upravit odhad, zkuste to prosím znovu"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Odhady byly povoleny."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Odhady byly zakázány."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Odhad nemohl být zakázán. Zkuste to prosím znovu"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Odhad musí být větší než 0.",
+        "unable_to_process": "Nemůžeme zpracovat váš požadavek, zkuste to prosím znovu.",
+        "numeric": "Odhad musí být číselná hodnota.",
+        "character": "Odhad musí být znakový.",
+        "empty": "Hodnota odhadu nemůže být prázdná.",
+        "already_exists": "Hodnota odhadu již existuje.",
+        "unsaved_changes": "Máte neuložené změny. Před kliknutím na hotovo je prosím uložte",
+        "remove_empty": "Odhad nemůže být prázdný. Zadejte hodnotu do každého pole nebo odstraňte ta, pro která nemáte hodnoty."
+      },
+      "systems": {
+        "points": {
+          "label": "Body",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineární",
+          "squares": "Čtverce",
+          "custom": "Vlastní"
+        },
+        "categories": {
+          "label": "Kategorie",
+          "t_shirt_sizes": "Velikosti triček",
+          "easy_to_hard": "Od snadného po těžké",
+          "custom": "Vlastní"
+        },
+        "time": {
+          "label": "Čas",
+          "hours": "Hodiny"
+        }
+      }
     },
     "automations": {
       "label": "Automatizace",
       "auto-archive": {
-        "title": "Automaticky archivovat uzavřené položky",
-        "description": "Plane bude archivovat dokončené nebo zrušené položky.",
-        "duration": "Archivovat položky uzavřené déle než"
+        "title": "Automaticky archivovat uzavřené pracovní položky",
+        "description": "Plane bude automaticky archivovat pracovní položky, které byly dokončeny nebo zrušeny.",
+        "duration": "Automaticky archivovat pracovní položky, které jsou uzavřené po dobu"
       },
       "auto-close": {
-        "title": "Automaticky uzavírat položky",
-        "description": "Plane uzavře neaktivní položky.",
-        "duration": "Uzavřít položky neaktivní déle než",
-        "auto_close_status": "Stav pro automatické uzavření"
+        "title": "Automaticky uzavírat pracovní položky",
+        "description": "Plane automaticky uzavře pracovní položky, které nebyly dokončeny nebo zrušeny.",
+        "duration": "Automaticky uzavřít pracovní položky, které jsou neaktivní po dobu",
+        "auto_close_status": "Stav automatického uzavření"
       }
     },
-
     "empty_state": {
       "labels": {
-        "title": "Žádné štítky",
-        "description": "Vytvářejte štítky pro organizaci položek."
+        "title": "Zatím žádné štítky",
+        "description": "Vytvořte štítky pro organizaci a filtrování pracovních položek ve vašem projektu."
       },
       "estimates": {
-        "title": "Žádné systémy odhadů",
-        "description": "Vytvořte systém odhadů pro komunikaci vytížení.",
+        "title": "Zatím žádné systémy odhadů",
+        "description": "Vytvořte sadu odhadů pro komunikaci množství práce na pracovní položku.",
         "primary_button": "Přidat systém odhadů"
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Přidat cyklus",
     "more_details": "Více detailů",
@@ -1890,7 +1997,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1919,7 +2025,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Přidat modul",
     "update_module": "Aktualizovat modul",
@@ -1973,7 +2078,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -1993,7 +2097,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2023,7 +2126,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2031,7 +2133,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2042,7 +2143,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2051,7 +2151,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Schránka",
     "page_label": "{workspace} - Schránka",
@@ -2108,7 +2207,6 @@
       "custom": "Vlastní"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2128,7 +2226,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2191,7 +2288,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Vaše poznámky",
     "placeholder": "kliknutím začněte psát",
@@ -2249,7 +2345,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Host",
@@ -2264,7 +2359,6 @@
       "description": "Má všechna oprávnění v prostoru."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Produktový/Projektový manažer",
     "development_or_engineering": "Vývoj/Inženýrství",
@@ -2277,7 +2371,6 @@
     "human_resources": "Lidské zdroje",
     "other": "Jiné"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2288,7 +2381,6 @@
       "description": "Importujte položky a epiky z Jira."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2317,7 +2409,6 @@
     "created": "Vytvořeno",
     "subscribed": "Odebíráno"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2363,14 +2454,21 @@
       "manual": "Ručně"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cyklus} few {Cykly} other {Cyklů}}",
     "no_cycle": "Žádný cyklus"
   },
-
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulů}}",
     "no_module": "Žádný modul"
+  },
+  "description_versions": {
+    "last_edited_by": "Naposledy upraveno uživatelem",
+    "previously_edited_by": "Dříve upraveno uživatelem",
+    "edited_by": "Upraveno uživatelem"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane se nespustil. To může být způsobeno tím, že se jeden nebo více služeb Plane nepodařilo spustit.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logů, abyste si byli jisti."
   }
 }

@@ -9,9 +9,9 @@ import { IJiraImporterForm } from "@plane/types";
 // plane ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // constants
+import { getFileURL } from "@plane/utils";
 import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 

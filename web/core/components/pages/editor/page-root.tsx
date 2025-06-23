@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // editor
@@ -7,7 +7,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // components
 import {
-  PageEditorHeaderRoot,
+  PageEditorToolbarRoot,
   PageEditorBody,
   PageVersionsOverlay,
   PagesVersionEditor,
@@ -18,8 +18,6 @@ import {
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 import { useQueryParams } from "@/hooks/use-query-params";
-// plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -38,13 +36,12 @@ type TPageRootProps = {
   config: TPageRootConfig;
   handlers: TPageRootHandlers;
   page: TPageInstance;
-  storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   workspaceSlug: string;
 };
 
 export const PageRoot = observer((props: TPageRootProps) => {
-  const { config, handlers, page, storeType, webhookConnectionParams, workspaceSlug } = props;
+  const { config, handlers, page, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
@@ -56,7 +53,7 @@ export const PageRoot = observer((props: TPageRootProps) => {
   // search params
   const searchParams = useSearchParams();
   // derived values
-  const { isContentEditable } = page;
+  const { isContentEditable, setEditorRef } = page;
   // page fallback
   usePageFallback({
     editorRef,
@@ -66,6 +63,22 @@ export const PageRoot = observer((props: TPageRootProps) => {
   });
   // update query params
   const { updateQueryParams } = useQueryParams();
+
+  const handleEditorReady = useCallback(
+    (status: boolean) => {
+      setEditorReady(status);
+      if (editorRef.current && !page.editorRef) {
+        setEditorRef(editorRef.current);
+      }
+    },
+    [page.editorRef, setEditorRef]
+  );
+
+  useEffect(() => {
+    setTimeout(() => {
+      setEditorRef(editorRef.current);
+    }, 0);
+  }, [isContentEditable, setEditorRef]);
 
   const version = searchParams.get("version");
   useEffect(() => {
@@ -89,6 +102,14 @@ export const PageRoot = observer((props: TPageRootProps) => {
   };
   const currentVersionDescription = editorRef.current?.getDocument().html;
 
+  // reset editor ref on unmount
+  useEffect(
+    () => () => {
+      setEditorRef(null);
+    },
+    [setEditorRef]
+  );
+
   return (
     <>
       <PageVersionsOverlay
@@ -103,13 +124,13 @@ export const PageRoot = observer((props: TPageRootProps) => {
         pageId={page.id ?? ""}
         restoreEnabled={isContentEditable}
       />
-      <PageEditorHeaderRoot editorReady={editorReady} editorRef={editorRef} page={page} storeType={storeType} />
+      <PageEditorToolbarRoot page={page} />
       <PageEditorBody
         config={config}
         editorReady={editorReady}
-        editorRef={editorRef}
+        editorForwardRef={editorRef}
         handleConnectionStatus={setHasConnectionFailed}
-        handleEditorReady={setEditorReady}
+        handleEditorReady={handleEditorReady}
         handlers={handlers}
         page={page}
         webhookConnectionParams={webhookConnectionParams}

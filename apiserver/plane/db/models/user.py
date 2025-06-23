@@ -106,6 +106,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
     )
 
+    # email validation
+    is_email_valid = models.BooleanField(default=False)
+
+    # masking
+    masked_at = models.DateTimeField(null=True)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
@@ -164,6 +170,24 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(TimeAuditModel):
+    SUNDAY = 0
+    MONDAY = 1
+    TUESDAY = 2
+    WEDNESDAY = 3
+    THURSDAY = 4
+    FRIDAY = 5
+    SATURDAY = 6
+
+    START_OF_THE_WEEK_CHOICES = (
+        (SUNDAY, "Sunday"),
+        (MONDAY, "Monday"),
+        (TUESDAY, "Tuesday"),
+        (WEDNESDAY, "Wednesday"),
+        (THURSDAY, "Thursday"),
+        (FRIDAY, "Friday"),
+        (SATURDAY, "Saturday"),
+    )
+
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True
     )
@@ -194,6 +218,9 @@ class Profile(TimeAuditModel):
     mobile_timezone_auto_set = models.BooleanField(default=False)
     # language
     language = models.CharField(max_length=255, default="en")
+    start_of_the_week = models.PositiveSmallIntegerField(
+        choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY
+    )
 
     class Meta:
         verbose_name = "Profile"

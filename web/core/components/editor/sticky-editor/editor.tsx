@@ -2,11 +2,11 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 // plane web hooks
@@ -14,7 +14,7 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
-  extends Omit<ILiteTextEditor, "disabledExtensions" | "fileHandler" | "mentionHandler"> {
+  extends Omit<ILiteTextEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler"> {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -48,7 +48,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -65,7 +65,8 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={[...disabledExtensions, "enter-key"]}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

@@ -21,6 +21,7 @@ export interface IWorkspaceRootStore {
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation>;
+  getWorkspaceRedirectionUrl: () => string;
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
@@ -93,6 +94,25 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   }
 
   /**
+   * get the workspace redirection url based on the last and fallback workspace_slug
+   */
+  getWorkspaceRedirectionUrl = () => {
+    let redirectionRoute = "/create-workspace";
+    // validate the last and fallback workspace_slug
+    const currentWorkspaceSlug =
+      this.user.userSettings?.data?.workspace?.last_workspace_slug ||
+      this.user.userSettings?.data?.workspace?.fallback_workspace_slug;
+
+    // validate the current workspace_slug is available in the user's workspace list
+    const isCurrentWorkspaceValid = Object.values(this.workspaces || {}).findIndex(
+      (workspace) => workspace.slug === currentWorkspaceSlug
+    );
+
+    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
+    return redirectionRoute;
+  };
+
+  /**
    * computed value of current workspace based on workspace slug saved in the query store
    */
   get currentWorkspace() {
@@ -162,11 +182,15 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param data
    */
   updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) =>
-    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((response) => {
-      runInAction(() => {
-        set(this.workspaces, response.id, response);
-      });
-      return response;
+    await this.workspaceService.updateWorkspace(workspaceSlug, data).then((res) => {
+      if (res && res.id) {
+        runInAction(() => {
+          Object.keys(data).forEach((key) => {
+            set(this.workspaces, [res.id, key], data[key as keyof IWorkspace]);
+          });
+        });
+      }
+      return res;
     });
 
   /**
@@ -217,6 +241,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   ) => {
     // Store the data before update to use for reverting if needed
     const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]?.[key]);
+
     try {
       runInAction(() => {
         this.navigationPreferencesMap[workspaceSlug] = {

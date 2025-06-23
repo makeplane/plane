@@ -151,11 +151,11 @@
 /* end font size and style */
 
 /* layout config */
-#page-header-container {
-  container-name: page-header-container;
+#page-toolbar-container {
+  container-name: page-toolbar-container;
   container-type: inline-size;
 
-  .page-header-content {
+  .page-toolbar-content {
     --header-width: var(--normal-content-width);
 
     &.wide-layout {
@@ -186,23 +186,23 @@
 }
 
 /* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
-@container page-header-container (min-width: 912px) and (max-width: 1344px) {
-  .page-header-content.wide-layout {
+@container page-toolbar-container (min-width: 912px) and (max-width: 1344px) {
+  .page-toolbar-content.wide-layout {
     padding-left: var(--wide-content-margin) !important;
   }
 }
 
 /* keep a static padding of 96px for wide layouts for container width <912px */
-@container page-header-container (max-width: 912) {
-  .page-header-content.wide-layout {
+@container page-toolbar-container (max-width: 912) {
+  .page-toolbar-content.wide-layout {
     padding-left: var(--wide-content-margin) !important;
   }
 }
 /* end layout config */
 
 /* keep a static padding of 20px for wide layouts for container width <760px */
-@container page-header-container (max-width: 760px) {
-  .page-header-content {
+@container page-toolbar-container (max-width: 760px) {
+  .page-toolbar-content {
     padding-left: var(--normal-content-margin) !important;
   }
 }
@@ -211,7 +211,7 @@
 /* keep a static padding of 96px for wide layouts for container width >912px and <1344px */
 @container page-content-container (min-width: 912px) and (max-width: 1344px) {
   .editor-container.wide-layout,
-  .page-title-container {
+  .page-header-container {
     padding-left: var(--wide-content-margin);
     padding-right: var(--wide-content-margin);
   }
@@ -220,7 +220,7 @@
 /* keep a static padding of 20px for wide layouts for container width <912px */
 @container page-content-container (max-width: 912px) {
   .editor-container.wide-layout,
-  .page-title-container {
+  .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
   }
@@ -229,11 +229,13 @@
 /* keep a static padding of 20px for normal layouts for container width <760px */
 @container page-content-container (max-width: 760px) {
   .editor-container:not(.wide-layout),
-  .page-title-container {
+  .page-header-container {
     padding-left: var(--normal-content-margin);
     padding-right: var(--normal-content-margin);
   }
+}
 
+@container page-content-container (max-width: 930px) {
   .page-summary-container {
     display: none;
   }

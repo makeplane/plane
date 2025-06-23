@@ -1,56 +1,70 @@
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { EditorRefApi } from "@plane/editor";
-// components
-import { PageEditorMobileHeaderRoot, PageExtraOptions, PageToolbar } from "@/components/pages";
-// helpers
-import { cn } from "@/helpers/common.helper";
-// hooks
-import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import { SmilePlus } from "lucide-react";
+// plane imports
+import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { cn } from "@plane/utils";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
+// local imports
+import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
-  editorReady: boolean;
-  editorRef: React.RefObject<EditorRefApi>;
   page: TPageInstance;
-  storeType: EPageStoreType;
 };
 
 export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
-  const { editorReady, editorRef, page, storeType } = props;
+  const { page } = props;
+  // states
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
   // derived values
-  const { isContentEditable } = page;
-  // page filters
-  const { isFullWidth, isStickyToolbarEnabled } = usePageFilters();
-  // derived values
-  const resolvedEditorRef = editorRef.current;
-
-  if (!resolvedEditorRef) return null;
+  const { isContentEditable, logo_props, name, updatePageLogo } = page;
+  const isLogoSelected = !!logo_props?.in_use;
+  const isTitleEmpty = !name || name.trim() === "";
 
   return (
-    <div id="page-header-container">
-      <div
-        className={cn(
-          "hidden md:flex items-center relative min-h-[52px] page-header-content border-b border-custom-border-200 px-page-x transition-all duration-200 ease-in-out",
-          {
-            "wide-layout": isFullWidth,
-          }
-        )}
-      >
-        <div className="max-w-full w-full flex items-center justify-between">
-          <div>
-            {isStickyToolbarEnabled && editorReady && isContentEditable && editorRef.current && (
-              <PageToolbar editorRef={editorRef?.current} />
-            )}
+    <>
+      <div className="h-[48px] flex items-end text-left">
+        {!isLogoSelected && (
+          <div
+            className={cn("opacity-0 group-hover/page-header:opacity-100 transition-all duration-200", {
+              "opacity-100": isTitleEmpty,
+            })}
+          >
+            <EmojiIconPicker
+              isOpen={isLogoPickerOpen}
+              handleToggle={(val) => setIsLogoPickerOpen(val)}
+              className="flex items-center justify-center"
+              buttonClassName="flex items-center justify-center"
+              label={
+                <button
+                  type="button"
+                  className={cn(
+                    "flex items-center gap-1 p-1 rounded font-medium text-sm hover:bg-custom-background-80 text-custom-text-300 outline-none transition-colors",
+                    {
+                      "bg-custom-background-80": isLogoPickerOpen,
+                    }
+                  )}
+                >
+                  <SmilePlus className="flex-shrink-0 size-4" />
+                  Icon
+                </button>
+              }
+              onChange={updatePageLogo}
+              defaultIconColor={
+                logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
+              }
+              defaultOpen={
+                logo_props?.in_use && logo_props?.in_use === "emoji"
+                  ? EmojiIconPickerTypes.EMOJI
+                  : EmojiIconPickerTypes.ICON
+              }
+              disabled={!isContentEditable}
+            />
           </div>
-          <PageExtraOptions editorRef={resolvedEditorRef} page={page} storeType={storeType} />
-        </div>
+        )}
       </div>
-      <div className="md:hidden">
-        <PageEditorMobileHeaderRoot editorRef={resolvedEditorRef} page={page} storeType={storeType} />
-      </div>
-    </div>
+      <PageEditorHeaderLogoPicker className="flex-shrink-0 w-full mt-2 flex" page={page} />
+    </>
   );
 });

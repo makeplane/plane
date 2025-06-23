@@ -1,7 +1,8 @@
 import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-// @ts-expect-error __serializeForClipboard's is not exported
-import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import { EditorView } from "@tiptap/pm/view";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 
@@ -10,10 +11,10 @@ const verticalEllipsisIcon =
 
 const generalSelectors = [
   "li",
-  "p:not(:first-child)",
+  "p.editor-paragraph-block:not(:first-child)",
   ".code-block",
   "blockquote",
-  "h1, h2, h3, h4, h5, h6",
+  "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
   ".table-wrapper",
   ".issue-embed",
@@ -132,7 +133,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let listType = "";
   let isDragging = false;
   let lastClientY = 0;
-  let scrollAnimationFrame = null;
+  let scrollAnimationFrame: number | null = null;
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
@@ -142,8 +143,10 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   };
 
   const handleDragStart = (event: DragEvent, view: EditorView) => {
-    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options);
-    listType = listTypeFromDragStart;
+    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
+    if (listTypeFromDragStart) {
+      listType = listTypeFromDragStart;
+    }
     isDragging = true;
     lastClientY = event.clientY;
     scroll();
@@ -297,7 +300,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
       // Traverse up the document tree to find if we're inside a list item
       for (let i = resolvedPos.depth; i > 0; i--) {
-        if (resolvedPos.node(i).type.name === "listItem") {
+        if (resolvedPos.node(i).type.name === CORE_EXTENSIONS.LIST_ITEM) {
           isDroppedInsideList = true;
           dropDepth = i;
           break;
@@ -305,7 +308,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       }
 
       // Handle nested list items and task items
-      if (droppedNode.type.name === "listItem") {
+      if (droppedNode.type.name === CORE_EXTENSIONS.LIST_ITEM) {
         let slice = view.state.selection.content();
         let newFragment = slice.content;
 
@@ -348,8 +351,8 @@ function flattenListStructure(fragment: Fragment, schema: Schema): Fragment {
         (node.content.firstChild.type === schema.nodes.bulletList ||
           node.content.firstChild.type === schema.nodes.orderedList)
       ) {
-        const sublist = node.content.firstChild;
-        const flattened = flattenListStructure(sublist.content, schema);
+        const subList = node.content.firstChild;
+        const flattened = flattenListStructure(subList.content, schema);
         flattened.forEach((subNode) => result.push(subNode));
       }
     }
@@ -376,7 +379,7 @@ const handleNodeSelection = (
   let draggedNodePos = nodePosAtDOM(node, view, options);
   if (draggedNodePos == null || draggedNodePos < 0) return;
 
-  // Handle blockquotes separately
+  // Handle blockquote separately
   if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
@@ -385,7 +388,10 @@ const handleNodeSelection = (
     const $pos = view.state.doc.resolve(draggedNodePos);
 
     // If it's a nested list item or task item, move up to the item level
-    if (($pos.parent.type.name === "listItem" || $pos.parent.type.name === "taskItem") && $pos.depth > 1) {
+    if (
+      [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes($pos.parent.type.name as CORE_EXTENSIONS) &&
+      $pos.depth > 1
+    ) {
       draggedNodePos = $pos.before($pos.depth);
     }
   }
@@ -403,14 +409,16 @@ const handleNodeSelection = (
     // Additional logic for drag start
     if (event instanceof DragEvent && !event.dataTransfer) return;
 
-    if (nodeSelection.node.type.name === "listItem" || nodeSelection.node.type.name === "taskItem") {
+    if (
+      [CORE_EXTENSIONS.LIST_ITEM, CORE_EXTENSIONS.TASK_ITEM].includes(nodeSelection.node.type.name as CORE_EXTENSIONS)
+    ) {
       listType = node.closest("ol, ul")?.tagName || "";
     }
 
     const slice = view.state.selection.content();
-    const { dom, text } = __serializeForClipboard(view, slice);
+    const { dom, text } = view.serializeForClipboard(slice);
 
-    if (event instanceof DragEvent) {
+    if (event instanceof DragEvent && event.dataTransfer) {
       event.dataTransfer.clearData();
       event.dataTransfer.setData("text/html", dom.innerHTML);
       event.dataTransfer.setData("text/plain", text);

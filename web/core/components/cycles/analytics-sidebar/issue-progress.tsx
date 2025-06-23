@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, Fragment, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
@@ -11,10 +11,10 @@ import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 // components
+import { getDate } from "@plane/utils";
 import { CycleProgressStats } from "@/components/cycles";
 // constants
 // helpers
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useCycle } from "@/hooks/store";
 // plane web components
@@ -32,7 +32,7 @@ type Options = {
 
 export const cycleEstimateOptions: Options[] = [
   { value: "issues", label: "Work items" },
-  { value: "points", label: "Points" },
+  { value: "points", label: "Estimates" },
 ];
 export const cycleChartOptions: Options[] = [
   { value: "burndown", label: "Burn-down" },
@@ -133,7 +133,7 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   if (!cycleDetails) return <></>;
   return (
     <div className="border-t border-custom-border-200 space-y-4 py-5">
-      <Disclosure defaultOpen={isCycleDateValid ? true : false}>
+      <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">
             {/* progress bar header */}
@@ -161,24 +161,34 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
             )}
 
             <Transition show={open}>
-              <Disclosure.Panel className="flex flex-col">
-                <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
-                {/* progress detailed view */}
-                {chartDistributionData && (
-                  <div className="w-full border-t border-custom-border-200 py-4">
-                    <CycleProgressStats
-                      cycleId={cycleId}
-                      plotType={plotType}
-                      distribution={chartDistributionData}
-                      groupedIssues={groupedIssues}
-                      totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                      isEditable={Boolean(!peekCycle)}
-                      size="xs"
-                      roundedTab={false}
-                      noBackground={false}
-                      filters={issueFilters}
-                      handleFiltersUpdate={handleFiltersUpdate}
-                    />
+              <Disclosure.Panel className="flex flex-col divide-y divide-custom-border-200">
+                {cycleStartDate && cycleEndDate ? (
+                  <>
+                    {isCycleDateValid && (
+                      <SidebarChartRoot workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+                    )}
+                    {/* progress detailed view */}
+                    {chartDistributionData && (
+                      <div className="w-full py-4">
+                        <CycleProgressStats
+                          cycleId={cycleId}
+                          plotType={plotType}
+                          distribution={chartDistributionData}
+                          groupedIssues={groupedIssues}
+                          totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
+                          isEditable={Boolean(!peekCycle)}
+                          size="xs"
+                          roundedTab={false}
+                          noBackground={false}
+                          filters={issueFilters}
+                          handleFiltersUpdate={handleFiltersUpdate}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="my-2 py-2 text-sm text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
+                    {t("no_data_yet")}
                   </div>
                 )}
               </Disclosure.Panel>

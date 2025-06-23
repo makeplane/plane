@@ -1,9 +1,9 @@
 "use client";
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
+// plane imports
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 
@@ -41,7 +41,7 @@ export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = obs
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
-      await copyUrlToClipboard(workItemLink, false);
+      await copyUrlToClipboard(workItemLink);
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
     } catch (error) {

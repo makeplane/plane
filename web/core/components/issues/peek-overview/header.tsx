@@ -6,11 +6,8 @@ import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
 import { TNameDescriptionLoader } from "@plane/types";
-// ui
 import {
   ArchiveIcon,
   CenterPanelIcon,
@@ -21,12 +18,10 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
+import { copyUrlToClipboard, cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { copyUrlToClipboard } from "@/helpers/string.helper";
 // store hooks
 import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
 // hooks
@@ -110,11 +105,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(workItemLink, false).then(() => {
+    copyUrlToClipboard(workItemLink).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.link_copied"),
-        message: t("common.copied_to_clipboard"),
+        message: t("common.link_copied_to_clipboard"),
       });
     });
   };

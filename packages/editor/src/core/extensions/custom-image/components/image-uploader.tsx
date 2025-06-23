@@ -3,13 +3,17 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { ACCEPTED_FILE_EXTENSIONS } from "@/constants/config";
+import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { CustoBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+import { CustomBaseImageNodeViewProps, getImageComponentImageFileMap } from "@/extensions/custom-image";
+// helpers
+import { EFileError } from "@/helpers/file";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
-import { useUploader, useDropZone, uploadFirstImageAndInsertRemaining } from "@/hooks/use-file-upload";
+import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 
-type CustomImageUploaderProps = CustoBaseImageNodeViewProps & {
+type CustomImageUploaderProps = CustomBaseImageNodeViewProps & {
   maxFileSize: number;
   loadImageFromFileSystem: (file: string) => void;
   failedToLoadImage: boolean;
@@ -41,7 +45,9 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         if (!imageEntityId) return;
         setIsUploaded(true);
         // Update the node view's src attribute post upload
-        updateAttributes({ src: url });
+        updateAttributes({
+          src: url,
+        });
         imageComponentImageFileMap?.delete(imageEntityId);
 
         const pos = getPos();
@@ -51,11 +57,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
         // only if the cursor is at the current image component, manipulate
         // the cursor position
-        if (currentNode && currentNode.type.name === "imageComponent" && currentNode.attrs.src === url) {
+        if (currentNode && currentNode.type.name === node.type.name && currentNode.attrs.src === url) {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
-          if (nextNode && nextNode.type.name === "paragraph") {
+          if (nextNode && nextNode.type.name === CORE_EXTENSIONS.PARAGRAPH) {
             // If there is a paragraph node after the image component, move the focus to the next node
             editor.commands.setTextSelection(pos + 1);
           } else {
@@ -67,18 +73,39 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     },
     [imageComponentImageFileMap, imageEntityId, updateAttributes, getPos]
   );
+
+  const uploadImageEditorCommand = useCallback(
+    async (file: File) => await editor?.commands.uploadImage(imageEntityId ?? "", file),
+    [editor, imageEntityId]
+  );
+
+  const handleProgressStatus = useCallback(
+    (isUploading: boolean) => {
+      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+    },
+    [editor]
+  );
+
+  const handleInvalidFile = useCallback((_error: EFileError, _file: File, message: string) => {
+    alert(message);
+  }, []);
+
   // hooks
-  const { uploading: isImageBeingUploaded, uploadFile } = useUploader({
-    blockId: imageEntityId ?? "",
-    editor,
-    loadImageFromFileSystem,
+  const { isUploading: isImageBeingUploaded, uploadFile } = useUploader({
+    acceptedMimeTypes: ACCEPTED_IMAGE_MIME_TYPES,
+    // @ts-expect-error - TODO: fix typings, and don't remove await from here for now
+    editorCommand: uploadImageEditorCommand,
+    handleProgressStatus,
+    loadFileFromFileSystem: loadImageFromFileSystem,
     maxFileSize,
+    onInvalidFile: handleInvalidFile,
     onUpload,
   });
+
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
-    maxFileSize,
     pos: getPos(),
+    type: "image",
     uploader: uploadFile,
   });
 
@@ -110,11 +137,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       if (!filesList) {
         return;
       }
-      await uploadFirstImageAndInsertRemaining({
+      await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
-        maxFileSize,
         pos: getPos(),
+        type: "image",
         uploader: uploadFile,
       });
     },
@@ -170,7 +197,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         ref={fileInputRef}
         hidden
         type="file"
-        accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
+        accept={ACCEPTED_IMAGE_MIME_TYPES.join(",")}
         onChange={onFileChange}
         multiple
       />

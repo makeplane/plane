@@ -141,8 +141,10 @@ class CycleAPIEndpoint(BaseAPIView):
         if pk:
             queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
             data = CycleSerializer(
-                queryset, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                queryset,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
@@ -154,8 +156,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 start_date__lte=timezone.now(), end_date__gte=timezone.now()
             )
             data = CycleSerializer(
-                queryset, many=True, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                queryset,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data
             return Response(data, status=status.HTTP_200_OK)
 
@@ -166,8 +171,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -178,8 +186,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -190,8 +201,11 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
 
@@ -204,16 +218,22 @@ class CycleAPIEndpoint(BaseAPIView):
                 request=request,
                 queryset=(queryset),
                 on_results=lambda cycles: CycleSerializer(
-                    cycles, many=True, fields=self.fields,
-                    expand=self.expand, context={"project": project}
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                    context={"project": project},
                 ).data,
             )
         return self.paginate(
             request=request,
             queryset=(queryset),
             on_results=lambda cycles: CycleSerializer(
-                cycles, many=True, fields=self.fields,
-                expand=self.expand, context={"project": project}
+                cycles,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+                context={"project": project},
             ).data,
         )
 
@@ -768,6 +788,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -779,6 +800,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__archived_at__isnull=True,
                         issue_cycle__issue__is_draft=False,
                         issue_cycle__deleted_at__isnull=True,
+                        issue_cycle__issue__deleted_at__isnull=True,
                     ),
                 )
             )
@@ -827,6 +849,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 )
             )
         )
+        old_cycle = old_cycle.first()
 
         estimate_type = Project.objects.filter(
             workspace__slug=slug,
@@ -946,7 +969,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             )
 
             estimate_completion_chart = burndown_plot(
-                queryset=old_cycle.first(),
+                queryset=old_cycle,
                 slug=slug,
                 project_id=project_id,
                 plot_type="points",
@@ -1094,7 +1117,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # Pass the new_cycle queryset to burndown_plot
         completion_chart = burndown_plot(
-            queryset=old_cycle.first(),
+            queryset=old_cycle,
             slug=slug,
             project_id=project_id,
             plot_type="issues",
@@ -1106,12 +1129,12 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         ).first()
 
         current_cycle.progress_snapshot = {
-            "total_issues": old_cycle.first().total_issues,
-            "completed_issues": old_cycle.first().completed_issues,
-            "cancelled_issues": old_cycle.first().cancelled_issues,
-            "started_issues": old_cycle.first().started_issues,
-            "unstarted_issues": old_cycle.first().unstarted_issues,
-            "backlog_issues": old_cycle.first().backlog_issues,
+            "total_issues": old_cycle.total_issues,
+            "completed_issues": old_cycle.completed_issues,
+            "cancelled_issues": old_cycle.cancelled_issues,
+            "started_issues": old_cycle.started_issues,
+            "unstarted_issues": old_cycle.unstarted_issues,
+            "backlog_issues": old_cycle.backlog_issues,
             "distribution": {
                 "labels": label_distribution_data,
                 "assignees": assignee_distribution_data,

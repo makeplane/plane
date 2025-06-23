@@ -1,4 +1,4 @@
 from django.urls import path
-from django.views.generic import TemplateView
+from plane.web.views import robots_txt, health_check
 
-urlpatterns = [path("about/", TemplateView.as_view(template_name="about.html"))]
+urlpatterns = [path("robots.txt", robots_txt), path("", health_check)]

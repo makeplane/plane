@@ -27,17 +27,24 @@ from plane.db.models import (
     Project,
     ProjectMember,
     CycleIssue,
+    IssueDescriptionVersion,
 )
 from plane.app.serializers import (
     IssueCreateSerializer,
-    IssueSerializer,
+    IssueDetailSerializer,
     IntakeSerializer,
     IntakeIssueSerializer,
     IntakeIssueDetailSerializer,
+    IssueDescriptionVersionDetailSerializer,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.app.views.base import BaseAPIView
+from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
+from plane.db.models.intake import SourceType
 
 
 class IntakeViewSet(BaseViewSet):
@@ -88,7 +95,7 @@ class IntakeIssueViewSet(BaseViewSet):
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
 
-    filterset_fields = ["statulls"]
+    filterset_fields = ["status"]
 
     def get_queryset(self):
         return (
@@ -219,7 +226,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
                 member=request.user,
-                role=5,
+                role=ROLE.GUEST.value,
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
@@ -272,7 +279,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 intake_id=intake_id.id,
                 project_id=project_id,
                 issue_id=serializer.data["id"],
-                source=request.data.get("source", "IN-APP"),
+                source=SourceType.IN_APP,
             )
             # Create an Issue Activity
             issue_activity.delay(
@@ -286,6 +293,13 @@ class IntakeIssueViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
                 intake=str(intake_issue.id),
+            )
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                issue_id=str(serializer.data["id"]),
+                user_id=request.user.id,
+                is_creating=True,
             )
             intake_issue = (
                 IntakeIssue.objects.select_related("issue")
@@ -386,13 +400,15 @@ class IntakeIssueViewSet(BaseViewSet):
                     ),
                     "description": issue_data.get("description", issue.description),
                 }
+            current_instance = json.dumps(
+                IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder
+            )
 
             issue_serializer = IssueCreateSerializer(
                 issue, data=issue_data, partial=True, context={"project_id": project_id}
             )
 
             if issue_serializer.is_valid():
-                current_instance = issue
                 # Log all the updates
                 requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
                 if issue is not None:
@@ -402,14 +418,17 @@ class IntakeIssueViewSet(BaseViewSet):
                         actor_id=str(request.user.id),
                         issue_id=str(issue.id),
                         project_id=str(project_id),
-                        current_instance=json.dumps(
-                            IssueSerializer(current_instance).data,
-                            cls=DjangoJSONEncoder,
-                        ),
+                        current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                         notification=True,
                         origin=base_host(request=request, is_app=True),
                         intake=str(intake_issue.id),
+                    )
+                    # updated issue description version
+                    issue_description_version_task.delay(
+                        updated_issue=current_instance,
+                        issue_id=str(pk),
+                        user_id=request.user.id,
                     )
                 issue_serializer.save()
             else:
@@ -550,7 +569,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
                 member=request.user,
-                role=5,
+                role=ROLE.GUEST.value,
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
@@ -558,7 +577,7 @@ class IntakeIssueViewSet(BaseViewSet):
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
         issue = IntakeIssueDetailSerializer(intake_issue).data
         return Response(issue, status=status.HTTP_200_OK)
@@ -585,3 +604,80 @@ class IntakeIssueViewSet(BaseViewSet):
 
         intake_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IntakeWorkItemDescriptionVersionEndpoint(BaseAPIView):
+    def process_paginated_result(self, fields, results, timezone):
+        paginated_data = results.values(*fields)
+
+        datetime_fields = ["created_at", "updated_at"]
+        paginated_data = user_timezone_converter(
+            paginated_data, datetime_fields, timezone
+        )
+
+        return paginated_data
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, work_item_id, pk=None):
+        project = Project.objects.get(pk=project_id)
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=work_item_id
+        )
+
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=ROLE.GUEST.value,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+            and not issue.created_by == request.user
+        ):
+            return Response(
+                {"error": "You are not allowed to view this issue"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if pk:
+            issue_description_version = IssueDescriptionVersion.objects.get(
+                workspace__slug=slug,
+                project_id=project_id,
+                issue_id=work_item_id,
+                pk=pk,
+            )
+
+            serializer = IssueDescriptionVersionDetailSerializer(
+                issue_description_version
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        cursor = request.GET.get("cursor", None)
+
+        required_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
+            "last_saved_at",
+            "owned_by",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+
+        issue_description_versions_queryset = IssueDescriptionVersion.objects.filter(
+            workspace__slug=slug, project_id=project_id, issue_id=work_item_id
+        )
+
+        paginated_data = paginate(
+            base_queryset=issue_description_versions_queryset,
+            queryset=issue_description_versions_queryset,
+            cursor=cursor,
+            on_result=lambda results: self.process_paginated_result(
+                required_fields, results, request.user.user_timezone
+            ),
+        )
+        return Response(paginated_data, status=status.HTTP_200_OK)

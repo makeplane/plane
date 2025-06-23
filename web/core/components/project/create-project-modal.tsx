@@ -1,9 +1,10 @@
 import { useEffect, FC, useState } from "react";
-// plane ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
+// plane ui
 // helpers
-import { getAssetIdFromUrl } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 // plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 // plane web types
@@ -19,6 +20,7 @@ type Props = {
   setToFavorite?: boolean;
   workspaceSlug: string;
   data?: Partial<TProject>;
+  templateId?: string;
 };
 
 enum EProjectCreationSteps {
@@ -27,7 +29,7 @@ enum EProjectCreationSteps {
 }
 
 export const CreateProjectModal: FC<Props> = (props) => {
-  const { isOpen, onClose, setToFavorite = false, workspaceSlug, data } = props;
+  const { isOpen, onClose, setToFavorite = false, workspaceSlug, data, templateId } = props;
   // states
   const [currentStep, setCurrentStep] = useState<EProjectCreationSteps>(EProjectCreationSteps.CREATE_PROJECT);
   const [createdProjectId, setCreatedProjectId] = useState<string | null>(null);
@@ -53,8 +55,12 @@ export const CreateProjectModal: FC<Props> = (props) => {
     }
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen) onClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
         <CreateProjectForm
           setToFavorite={setToFavorite}
@@ -63,6 +69,7 @@ export const CreateProjectModal: FC<Props> = (props) => {
           updateCoverImageStatus={handleCoverImageStatusUpdate}
           handleNextStep={handleNextStep}
           data={data}
+          templateId={templateId}
         />
       )}
       {currentStep === EProjectCreationSteps.FEATURE_SELECTION && (

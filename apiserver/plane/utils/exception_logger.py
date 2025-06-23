@@ -8,8 +8,8 @@ from django.conf import settings
 
 def log_exception(e):
     # Log the error
-    logger = logging.getLogger("plane")
-    logger.error(e)
+    logger = logging.getLogger("plane.exception")
+    logger.exception(e)
 
     if settings.DEBUG:
         # Print the traceback if in debug mode

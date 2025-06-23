@@ -3,7 +3,7 @@
 # Python imports
 import os
 from urllib.parse import urlparse
-
+from urllib.parse import urljoin
 
 # Third party imports
 import dj_database_url
@@ -11,6 +11,10 @@ import dj_database_url
 # Django imports
 from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
+
+
+# Module imports
+from plane.utils.url import is_valid_url
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -58,7 +62,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+    "plane.middleware.logger.APITokenLogMiddleware",
+    "plane.middleware.logger.RequestLoggerMiddleware",
 ]
 
 # Rest Framework settings
@@ -309,11 +314,35 @@ CSRF_TRUSTED_ORIGINS = cors_allowed_origins
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 
-# Base URLs
+######  Base URLs ######
+
+# Admin Base URL
 ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", None)
+if ADMIN_BASE_URL and not is_valid_url(ADMIN_BASE_URL):
+    ADMIN_BASE_URL = None
+ADMIN_BASE_PATH = os.environ.get("ADMIN_BASE_PATH", "/god-mode/")
+
+# Space Base URL
 SPACE_BASE_URL = os.environ.get("SPACE_BASE_URL", None)
-APP_BASE_URL = os.environ.get("APP_BASE_URL")
-LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL")
+if SPACE_BASE_URL and not is_valid_url(SPACE_BASE_URL):
+    SPACE_BASE_URL = None
+SPACE_BASE_PATH = os.environ.get("SPACE_BASE_PATH", "/spaces/")
+
+# App Base URL
+APP_BASE_URL = os.environ.get("APP_BASE_URL", None)
+if APP_BASE_URL and not is_valid_url(APP_BASE_URL):
+    APP_BASE_URL = None
+APP_BASE_PATH = os.environ.get("APP_BASE_PATH", "/")
+
+# Live Base URL
+LIVE_BASE_URL = os.environ.get("LIVE_BASE_URL", None)
+if LIVE_BASE_URL and not is_valid_url(LIVE_BASE_URL):
+    LIVE_BASE_URL = None
+LIVE_BASE_PATH = os.environ.get("LIVE_BASE_PATH", "/live/")
+
+LIVE_URL = urljoin(LIVE_BASE_URL, LIVE_BASE_PATH) if LIVE_BASE_URL else None
+
+# WEB URL
 WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
@@ -371,9 +400,21 @@ ATTACHMENT_MIME_TYPES = [
     "video/x-ms-wmv",
     # Archives
     "application/zip",
+    "application/x-rar",
     "application/x-rar-compressed",
     "application/x-tar",
     "application/gzip",
+    "application/x-zip",
+    "application/x-zip-compressed",
+    "application/x-7z-compressed",
+    "application/x-compressed",
+    "application/x-compressed-tar",
+    "application/x-compressed-tar-gz",
+    "application/x-compressed-tar-bz2",
+    "application/x-compressed-tar-zip",
+    "application/x-compressed-tar-7z",
+    "application/x-compressed-tar-rar",
+    "application/x-compressed-tar-zip",
     # 3D Models
     "model/gltf-binary",
     "model/gltf+json",
@@ -390,4 +431,11 @@ ATTACHMENT_MIME_TYPES = [
     "text/xml",
     "text/csv",
     "application/xml",
+    # SQL
+    "application/x-sql",
+    # Gzip
+    "application/x-gzip",
 ]
+
+# Seed directory path
+SEED_DIR = os.path.join(BASE_DIR, "seeds")

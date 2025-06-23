@@ -1,9 +1,9 @@
-// types
-import { TInboxIssue } from "@plane/constants";
+// plane imports
+import { EInboxIssueSource, TInboxIssue, API_BASE_URL } from "@plane/constants";
 import type { TIssue, TInboxIssueWithPagination } from "@plane/types";
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { APIService } from "@/services/api.service";
 // helpers
+// services
+import { APIService } from "@/services/api.service";
 
 export class InboxIssueService extends APIService {
   constructor() {
@@ -32,7 +32,7 @@ export class InboxIssueService extends APIService {
 
   async create(workspaceSlug: string, projectId: string, data: Partial<TIssue>): Promise<TInboxIssue> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/`, {
-      source: "IN_APP",
+      source: EInboxIssueSource.IN_APP,
       issue: data,
     })
       .then((response) => response?.data)

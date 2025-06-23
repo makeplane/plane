@@ -5,15 +5,16 @@ import { useForm, Controller } from "react-hook-form";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
-// components
+// plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
+import { cn, isCommentEmpty } from "@plane/utils";
+// components
 import { LiteTextEditor } from "@/components/editor";
 // constants
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+// services
 import { FileService } from "@/services/file.service";
 
 type TCommentCreate = {
@@ -22,12 +23,21 @@ type TCommentCreate = {
   activityOperations: TCommentsOperations;
   showToolbarInitially?: boolean;
   projectId?: string;
+  onSubmitCallback?: (elementId: string) => void;
 };
 
 // services
 const fileService = new FileService();
+
 export const CommentCreate: FC<TCommentCreate> = observer((props) => {
-  const { workspaceSlug, entityId, activityOperations, showToolbarInitially = false, projectId } = props;
+  const {
+    workspaceSlug,
+    entityId,
+    activityOperations,
+    showToolbarInitially = false,
+    projectId,
+    onSubmitCallback,
+  } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // refs
@@ -50,28 +60,29 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
   });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
-    activityOperations
-      .createComment(formData)
-      .then(async () => {
-        if (uploadedAssetIds.length > 0) {
-          if (projectId) {
-            await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {
-              asset_ids: uploadedAssetIds,
-            });
-          } else {
-            await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, entityId, {
-              asset_ids: uploadedAssetIds,
-            });
-          }
-          setUploadedAssetIds([]);
+    try {
+      const comment = await activityOperations.createComment(formData);
+      if (comment?.id) onSubmitCallback?.(comment.id);
+      if (uploadedAssetIds.length > 0) {
+        if (projectId) {
+          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {
+            asset_ids: uploadedAssetIds,
+          });
+        } else {
+          await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, entityId, {
+            asset_ids: uploadedAssetIds,
+          });
         }
-      })
-      .finally(() => {
-        reset({
-          comment_html: "<p></p>",
-        });
-        editorRef.current?.clearEditor();
+        setUploadedAssetIds([]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      reset({
+        comment_html: "<p></p>",
       });
+      editorRef.current?.clearEditor();
+    }
   };
 
   const commentHTML = watch("comment_html");
@@ -81,7 +92,15 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
     <div
       className={cn("sticky bottom-0 z-[4] bg-custom-background-100 sm:static")}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty && !isSubmitting)
+        if (
+          e.key === "Enter" &&
+          !e.shiftKey &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !isEmpty &&
+          !isSubmitting &&
+          editorRef.current?.isEditorReadyToDiscard()
+        )
           handleSubmit(onSubmit)(e);
       }}
     >
@@ -105,7 +124,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                containerClassName="min-h-min [&_p]:!p-0 [&_p]:!text-base"
+                containerClassName="min-h-min"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
@@ -117,6 +136,9 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 showToolbarInitially={showToolbarInitially}
                 parentClassName="p-2"
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
               />
             )}
           />

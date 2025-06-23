@@ -29,8 +29,9 @@ export interface IIssueRelationStoreActions {
     projectId: string,
     issueId: string,
     relationType: TIssueRelationTypes,
-    related_issue: string
-  ) => Promise<any>;
+    related_issue: string,
+    updateLocally?: boolean
+  ) => Promise<void>;
 }
 
 export interface IIssueRelationStore extends IIssueRelationStoreActions {
@@ -181,7 +182,7 @@ export class IssueRelationStore implements IIssueRelationStore {
    */
   createCurrentRelation = async (issueId: string, relationType: TIssueRelationTypes, relatedIssueId: string) => {
     const workspaceSlug = this.rootIssueDetailStore.rootIssueStore.workspaceSlug;
-    const projectId = this.rootIssueDetailStore.rootIssueStore.projectId;
+    const projectId = this.rootIssueDetailStore.issue.getIssueById(issueId)?.project_id;
 
     if (!workspaceSlug || !projectId) return;
 
@@ -232,7 +233,8 @@ export class IssueRelationStore implements IIssueRelationStore {
     projectId: string,
     issueId: string,
     relationType: TIssueRelationTypes,
-    related_issue: string
+    related_issue: string,
+    updateLocally = false
   ) => {
     try {
       const relationIndex = this.relationMap[issueId]?.[relationType]?.findIndex(
@@ -243,10 +245,12 @@ export class IssueRelationStore implements IIssueRelationStore {
           this.relationMap[issueId]?.[relationType]?.splice(relationIndex, 1);
         });
 
-      const response = await this.issueRelationService.deleteIssueRelation(workspaceSlug, projectId, issueId, {
-        relation_type: relationType,
-        related_issue,
-      });
+      if (!updateLocally) {
+        await this.issueRelationService.deleteIssueRelation(workspaceSlug, projectId, issueId, {
+          relation_type: relationType,
+          related_issue,
+        });
+      }
 
       // While removing one relation, reverse of the relation should also be removed
       const reverseRelatedType = REVERSE_RELATIONS[relationType];
@@ -260,7 +264,6 @@ export class IssueRelationStore implements IIssueRelationStore {
 
       // fetching activity
       this.rootIssueDetailStore.activity.fetchActivities(workspaceSlug, projectId, issueId);
-      return response;
     } catch (error) {
       this.fetchRelations(workspaceSlug, projectId, issueId);
       throw error;

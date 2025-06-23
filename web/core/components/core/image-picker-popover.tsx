@@ -9,14 +9,14 @@ import { Control, Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
 // plane imports
-import { MAX_FILE_SIZE } from "@plane/constants";
+import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane types
 import { EFileAssetType } from "@plane/types/src/enums";
 // ui
-import { Button, Input, Loader } from "@plane/ui";
+import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getFileURL } from "@/helpers/file.helper";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
@@ -88,9 +88,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
-    accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".webp"],
-    },
+    accept: ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE,
     maxSize: MAX_FILE_SIZE,
   });
 
@@ -114,7 +112,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading user cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     } else {
       if (!workspaceSlug) return;
       await fileService
@@ -126,7 +133,16 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
           },
           image
         )
-        .then((res) => uploadCallback(res.asset_url));
+        .then((res) => uploadCallback(res.asset_url))
+        .catch((error) => {
+          console.error("Error uploading project cover image:", error);
+          setIsImageUploading(false);
+          setToast({
+            message: error?.error ?? "The image could not be uploaded",
+            type: TOAST_TYPE.ERROR,
+            title: "Image not uploaded",
+          });
+        });
     }
   };
 

@@ -352,8 +352,19 @@ class IssueRelationSerializer(BaseSerializer):
             "state_id",
             "priority",
             "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "updated_by",
         ]
-        read_only_fields = ["workspace", "project"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
 
 
 class RelatedIssueSerializer(BaseSerializer):
@@ -383,8 +394,19 @@ class RelatedIssueSerializer(BaseSerializer):
             "state_id",
             "priority",
             "assignee_ids",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
         ]
-        read_only_fields = ["workspace", "project"]
+        read_only_fields = [
+            "workspace",
+            "project",
+            "created_by",
+            "created_at",
+            "updated_by",
+            "updated_at",
+        ]
 
 
 class IssueAssigneeSerializer(BaseSerializer):
