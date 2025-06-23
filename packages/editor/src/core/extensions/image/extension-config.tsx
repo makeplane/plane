@@ -19,6 +19,9 @@ export const ImageExtensionConfig = BaseImageExtension.extend<
       aspectRatio: {
         default: null,
       },
+      alignment: {
+        default: "left",
+      },
     };
   },
 });
