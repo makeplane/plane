@@ -1,6 +1,7 @@
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 // plane imports
+import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -10,8 +11,7 @@ type Props = {
     aspectRatio: number;
     src: string;
   };
-  isOpen: boolean;
-  toggleFullScreenMode: (val: boolean) => void;
+  toggleToolbarViewStatus: (val: boolean) => void;
 };
 
 const MIN_ZOOM = 0.5;
@@ -20,16 +20,19 @@ const ZOOM_SPEED = 0.05;
 const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 export const ImageFullScreenAction: React.FC<Props> = (props) => {
-  const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
-  const { src, width, aspectRatio } = image;
-
+  const { image, toggleToolbarViewStatus } = props;
+  // state
+  const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
   const [magnification, setMagnification] = useState<number>(1);
   const [initialMagnification, setInitialMagnification] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
+  // refs
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
+  // derived values
+  const { src, width, aspectRatio } = image;
 
   const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
 
@@ -59,10 +62,10 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
 
   const handleClose = useCallback(() => {
     if (isDragging) return;
-    toggleFullScreenMode(false);
+    setIsFullScreenEnabled(false);
     setMagnification(1);
     setInitialMagnification(1);
-  }, [isDragging, toggleFullScreenMode]);
+  }, [isDragging]);
 
   const handleMagnification = useCallback((direction: "increase" | "decrease") => {
     setMagnification((prev) => {
@@ -165,7 +168,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
         return;
       }
     },
-    [isFullScreenEnabled, magnification]
+    [isFullScreenEnabled]
   );
 
   // Event listeners
@@ -184,6 +187,10 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
       window.removeEventListener("wheel", handleWheel);
     };
   }, [isFullScreenEnabled, handleKeyDown, handleMouseMove, handleMouseUp, handleWheel]);
+
+  useEffect(() => {
+    toggleToolbarViewStatus(isFullScreenEnabled);
+  }, [isFullScreenEnabled, toggleToolbarViewStatus]);
 
   return (
     <>
@@ -252,17 +259,19 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleFullScreenMode(true);
-        }}
-        className="size-5 grid place-items-center hover:bg-black/40 text-white rounded transition-colors"
-      >
-        <Maximize className="size-3" />
-      </button>
+      <Tooltip tooltipContent="View in full screen">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsFullScreenEnabled(true);
+          }}
+          className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+        >
+          <Maximize className="size-3" />
+        </button>
+      </Tooltip>
     </>
   );
 };
