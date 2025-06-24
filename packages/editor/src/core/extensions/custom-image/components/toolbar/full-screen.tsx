@@ -1,14 +1,14 @@
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
 
 type Props = {
   image: {
-    src: string;
-    height: string;
     width: string;
+    height: string;
     aspectRatio: number;
+    src: string;
   };
   isOpen: boolean;
   toggleFullScreenMode: (val: boolean) => void;
