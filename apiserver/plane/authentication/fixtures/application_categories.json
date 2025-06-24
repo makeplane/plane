@@ -1,0 +1,18 @@
+[
+  {
+    "model": "authentication.applicationcategory",
+    "pk": "8f778616-3839-4910-8626-aa694855679e",
+    "fields": {
+      "created_at": "2025-05-15T10:22:30.575Z",
+      "updated_at": "2025-05-15T10:22:30.575Z",
+      "name": "Engineering",
+      "description": "Engineering Productivity",
+      "logo_props": {
+        "logo": {
+          "url": "https://plane.so/_next/static/media/plane-pure-white-full-logo.5dc58187.svg"
+        },
+        "in_use": "logo"
+      }
+    }
+  }
+]

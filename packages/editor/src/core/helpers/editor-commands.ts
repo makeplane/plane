@@ -14,7 +14,6 @@ export const setText = (editor: Editor, range?: Range) => {
 
 export const toggleHeading = (editor: Editor, level: 1 | 2 | 3 | 4 | 5 | 6, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).setNode(CORE_EXTENSIONS.HEADING, { level }).run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleHeading({ level }).run();
 };
 
@@ -181,4 +180,17 @@ export const insertHorizontalRule = (editor: Editor, range?: Range) => {
 export const insertCallout = (editor: Editor, range?: Range) => {
   if (range) editor.chain().focus().deleteRange(range).insertCallout().run();
   else editor.chain().focus().insertCallout().run();
+};
+
+export const insertPageEmbed = (
+  data: {
+    pageId: string;
+    position?: number;
+    workspaceSlug: string;
+  },
+  editor: Editor,
+  range?: Range
+) => {
+  if (range) editor.chain().focus().deleteRange(range).insertPageEmbed(data).run();
+  else editor.chain().focus().insertPageEmbed(data).run();
 };
