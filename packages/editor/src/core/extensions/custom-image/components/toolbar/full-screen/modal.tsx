@@ -29,7 +29,10 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
+  const widthInNumber = useMemo(() => {
+    if (!width) return 0;
+    return Number(width.replace("px", ""));
+  }, [width]);
 
   const setImageRef = useCallback(
     (node: HTMLImageElement | null) => {
@@ -146,7 +149,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       e.preventDefault();
 
       // Handle pinch-to-zoom
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         const delta = e.deltaY;
         setMagnification((prev) => {
           const newZoom = prev * (1 - delta * ZOOM_SPEED);
@@ -190,6 +193,9 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       className={cn("fixed inset-0 size-full z-30 bg-black/90 cursor-default", {
         "cursor-grabbing": isDragging,
       })}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Fullscreen image viewer"
     >
       <div
         ref={modalRef}
@@ -251,6 +257,10 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
 export const ImageFullScreenModal: React.FC<Props> = (props) => {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
-  if (portal) modal = ReactDOM.createPortal(modal, portal);
+  if (portal) {
+    modal = ReactDOM.createPortal(modal, portal);
+  } else {
+    console.warn("Portal element #editor-portal not found. Rendering inline.");
+  }
   return modal;
 };

@@ -44,6 +44,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
             setIsFullScreenEnabled(true);
           }}
           className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+          aria-label="View image in full screen"
         >
           <Maximize className="size-3" />
         </button>
