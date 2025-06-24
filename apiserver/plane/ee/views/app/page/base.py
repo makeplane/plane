@@ -14,7 +14,7 @@ from plane.db.models import (
     DeployBoard,
     UserFavorite,
 )
-from plane.ee.models import PageUser
+from plane.ee.models import PageUser, WorkItemPage
 from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -144,8 +144,11 @@ class MovePageEndpoint(BaseAPIView):
         )
 
         # change the uploaded files in the page
-        FileAsset.objects.filter(page_id=pk, project_id=project_id, workspace__slug=slug).update(
+        FileAsset.objects.filter(
+            page_id=pk, project_id=project_id, workspace__slug=slug
+        ).update(
             page_id=new_page_id,
+            project_id=new_project_id,
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
         )
@@ -170,6 +173,11 @@ class MovePageEndpoint(BaseAPIView):
             updated_by_id=request.user.id,
             updated_at=timezone.now(),
         )
+
+        # update the work item pages
+        WorkItemPage.objects.filter(
+            page_id=pk, project_id=project_id, workspace__slug=slug
+        ).delete()
 
         # fetch the old page
         old_page.moved_to_page = new_page_id

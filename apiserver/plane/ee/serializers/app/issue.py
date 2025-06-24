@@ -1,6 +1,6 @@
 from plane.db.models import Issue, Page
 from plane.ee.serializers import BaseSerializer
-from plane.ee.models.issue import WorkItemPage
+from plane.ee.models import WorkItemPage
 
 
 class IssueLiteSerializer(BaseSerializer):

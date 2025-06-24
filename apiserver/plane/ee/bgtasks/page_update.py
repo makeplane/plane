@@ -29,7 +29,7 @@ from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.utils.page_descendants import get_descendant_page_ids
 from plane.ee.utils.page_events import PageAction
 from plane.utils.url import normalize_url_path
-from plane.ee.models import PageUser
+from plane.ee.models import PageUser, WorkItemPage
 
 
 @shared_task
@@ -306,6 +306,13 @@ def nested_page_update(
                     updated_by=user_id,
                 )
 
+                # Update the project id for the work item pages
+                WorkItemPage.objects.filter(
+                    page_id__in=descendants_ids,
+                    project_id=project_id,
+                    workspace__slug=slug,
+                ).delete()
+
                 # Update the project id for the file assets
                 FileAsset.objects.filter(
                     page_id__in=descendants_ids, project_id=project_id
@@ -329,15 +336,15 @@ def nested_page_update(
                 # Step 1: Get users the page is currently shared with in the old project
                 shared_users = PageUser.objects.filter(
                     page_id__in=descendants_ids, project_id=project_id
-                ).values_list("user_id", "access")
+                ).values_list("user_id", flat=True)
 
                 # Step 2: Get users who are NOT in the new project (i.e., remove them)
                 removed_user_ids = (
                     ProjectMember.objects.filter(
                         project_id=new_project_id, is_active=True
                     )
-                    .exclude(user_id__in=shared_users)
-                    .values_list("user_id", flat=True)
+                    .exclude(member_id__in=shared_users)
+                    .values_list("member_id", flat=True)
                 )
 
                 # Step 3: Delete PageUser records for removed users in the new project

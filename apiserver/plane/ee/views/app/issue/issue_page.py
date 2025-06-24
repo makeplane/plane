@@ -7,7 +7,7 @@ from rest_framework import status
 from django.db.models import Q
 
 # Module imports
-from plane.ee.models.issue import WorkItemPage
+from plane.ee.models import WorkItemPage
 from plane.db.models import Page, Workspace
 from plane.ee.serializers import WorkItemPageSerializer
 from plane.app.permissions import ProjectLitePermission
@@ -18,9 +18,9 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 class IssuePageViewSet(BaseAPIView):
     permission_classes = [ProjectLitePermission]
 
-    def filter_work_item_pages(self, workspace, project_id, issue_id):
+    def filter_work_item_pages(self, slug, project_id, issue_id):
         return WorkItemPage.objects.filter(
-            workspace=workspace, project_id=project_id, issue_id=issue_id
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id
         )
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
@@ -39,7 +39,7 @@ class IssuePageViewSet(BaseAPIView):
         ).values_list("id", flat=True)
 
         # Bulk create only the given pages
-        self.filter_work_item_pages(workspace, project_id, issue_id).delete()
+        self.filter_work_item_pages(slug, project_id, issue_id).delete()
         work_item_pages = WorkItemPage.objects.bulk_create(
             [
                 WorkItemPage(
@@ -66,17 +66,15 @@ class IssuePageViewSet(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
     def get(self, request, slug, project_id, issue_id, page_id=None):
-        workspace = Workspace.objects.get(slug=slug)
-        work_item_pages = self.filter_work_item_pages(workspace, project_id, issue_id)
+        work_item_pages = self.filter_work_item_pages(slug, project_id, issue_id)
         serializer = WorkItemPageSerializer(work_item_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
     def delete(self, request, slug, project_id, issue_id, page_id):
-        workspace = Workspace.objects.get(slug=slug)
-        work_item_page = self.filter_work_item_pages(
-            workspace, project_id, issue_id
-        ).get(page_id=page_id)
+        work_item_page = self.filter_work_item_pages(slug, project_id, issue_id).get(
+            page_id=page_id
+        )
         work_item_page.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -89,17 +87,17 @@ class PageSearchViewSet(BaseAPIView):
         is_global = request.query_params.get("is_global", False)
         search = request.query_params.get("search", "")
 
-        workspace = Workspace.objects.get(slug=slug)
+        pages = (
+            Page.objects.filter(workspace__slug=slug)
+            .filter(moved_to_page__isnull=True)
+            .filter(archived_at__isnull=True)
+            .filter(Q(owned_by=self.request.user) | Q(access=0))
+        )
 
         if is_global == "true":
-            pages = Page.objects.filter(
-                Q(workspace_id=workspace.id),
-                Q(is_global=True) | Q(projects__id=project_id),
-            )
+            pages = pages.filter(Q(is_global=True) | Q(projects__id=project_id))
         else:
-            pages = Page.objects.filter(
-                Q(workspace_id=workspace.id), Q(projects__id=project_id)
-            )
+            pages = pages.filter(projects__id=project_id)
         # Add search functionality
         if search:
             pages = pages.filter(name__icontains=search)
