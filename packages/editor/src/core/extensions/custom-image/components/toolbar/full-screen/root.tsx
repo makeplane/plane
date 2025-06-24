@@ -1,22 +1,31 @@
 import { Maximize } from "lucide-react";
+import { useEffect, useState } from "react";
+// plane imports
+import { Tooltip } from "@plane/ui";
 // local imports
 import { ImageFullScreenModal } from "./modal";
 
 type Props = {
   image: {
+    downloadSrc: string;
     src: string;
     height: string;
     width: string;
     aspectRatio: number;
   };
-  isOpen: boolean;
-  toggleFullScreenMode: (val: boolean) => void;
+  toggleToolbarViewStatus: (val: boolean) => void;
 };
 
 export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
-  const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
+  const { image, toggleToolbarViewStatus } = props;
+  // states
+  const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
   // derived values
-  const { src, width, aspectRatio } = image;
+  const { downloadSrc, src, width, aspectRatio } = image;
+
+  useEffect(() => {
+    toggleToolbarViewStatus(isFullScreenEnabled);
+  }, [isFullScreenEnabled, toggleToolbarViewStatus]);
 
   return (
     <>
@@ -24,20 +33,24 @@ export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
         aspectRatio={aspectRatio}
         isFullScreenEnabled={isFullScreenEnabled}
         src={src}
+        downloadSrc={downloadSrc}
         width={width}
-        toggleFullScreenMode={toggleFullScreenMode}
+        toggleFullScreenMode={setIsFullScreenEnabled}
       />
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleFullScreenMode(true);
-        }}
-        className="size-5 grid place-items-center hover:bg-black/40 text-white rounded transition-colors"
-      >
-        <Maximize className="size-3" />
-      </button>
+      <Tooltip tooltipContent="View in full screen">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsFullScreenEnabled(true);
+          }}
+          className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+          aria-label="View image in full screen"
+        >
+          <Maximize className="size-3" />
+        </button>
+      </Tooltip>
     </>
   );
 };

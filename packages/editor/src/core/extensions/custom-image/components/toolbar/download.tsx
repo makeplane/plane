@@ -11,14 +11,14 @@ export const ImageDownloadAction: React.FC<Props> = (props) => {
 
   return (
     <Tooltip tooltipContent="Download">
-      <a
-        href={src}
+      <button
+        type="button"
+        onClick={() => window.open(src, "_blank")}
         className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
-        target="_blank"
-        rel="noreferrer noopener"
+        aria-label="Download image"
       >
         <Download className="size-3" />
-      </a>
+      </button>
     </Tooltip>
   );
 };

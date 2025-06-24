@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import type { TCustomImageAlignment } from "../../types";
 import { ImageAlignmentAction } from "./alignment";
 import { ImageDownloadAction } from "./download";
-import { ImageFullScreenAction } from "./full-screen";
+import { ImageFullScreenActionRoot } from "./full-screen";
 
 type Props = {
   alignment: TCustomImageAlignment;
@@ -38,7 +38,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           handleChange={handleAlignmentChange}
           toggleToolbarViewStatus={setShouldShowToolbar}
         />
-        <ImageFullScreenAction image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
+        <ImageFullScreenActionRoot image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
       </div>
     </>
   );
