@@ -1,15 +1,9 @@
-// TODO: fix all warnings
-
-/* eslint-disable react/display-name */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { useEffect, useState } from "react";
 import { NodeViewWrapper } from "@tiptap/react";
-// plane utils
+import { useEffect, useState } from "react";
+// plane imports
 import { cn } from "@plane/utils";
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export const PiMentionNodeView = (props) => {
+export const PiChatEditorMentionNodeView = (props) => {
   // TODO: move it to web app
   const [highlightsState, setHighlightsState] = useState<string[]>();
 

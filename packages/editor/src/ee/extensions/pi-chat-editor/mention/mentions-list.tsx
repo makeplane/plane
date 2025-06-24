@@ -1,9 +1,11 @@
-import { IMentionSuggestion } from "@/types";
 import { Disclosure, Transition } from "@headlessui/react";
-import { cn } from "@plane/utils";
 import { Editor } from "@tiptap/core";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
+// plane imports
+import { cn } from "@plane/utils";
+// local imports
+import { IMentionSuggestion } from "./extension";
 
 interface IItem {
   id: string;
@@ -84,7 +86,8 @@ const Suggestions = ({ type, data, onClick, key, selectedIndex, isSectionSelecte
     </Disclosure>
   </>
 );
-const MentionList = forwardRef((props: MentionListProps, ref) => {
+
+export const PiChatEditorMentionsList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedSection, setSelectedSection] = useState(0);
   const [isEmpty, setIsEmpty] = useState(true);
@@ -94,9 +97,9 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
       if (selectedItem) {
         props.command({
           id: selectedItem.id,
-          label: type === "issue" ? `${selectedItem.subTitle}` : selectedItem.title,
+          label: type === "issue" ? `${selectedItem.subTitle ?? ""}` : (selectedItem.title ?? ""),
           entity_identifier: selectedItem.id,
-          entity_name: selectedItem.title,
+          entity_name: selectedItem.title ?? "",
           target: `${type}s`,
           redirect_uri: "",
         });
@@ -206,5 +209,3 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     </div>
   );
 });
-
-export default MentionList;
