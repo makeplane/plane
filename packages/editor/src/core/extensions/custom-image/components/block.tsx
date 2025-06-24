@@ -1,70 +1,42 @@
 import { NodeSelection } from "@tiptap/pm/state";
 import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
-// extensions
-import { CustomBaseImageNodeViewProps, ImageToolbarRoot } from "@/extensions/custom-image";
+// local imports
+import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
+import { ensurePixelString, getImageBlockId } from "../utils";
+import type { CustomImageNodeViewProps } from "./node-view";
+import { ImageToolbarRoot } from "./toolbar";
 import { ImageUploadStatus } from "./upload-status";
 
 const MIN_SIZE = 100;
 
-type Pixel = `${number}px`;
-
-type PixelAttribute<TDefault> = Pixel | TDefault;
-
-export type ImageAttributes = {
-  src: string | null;
-  width: PixelAttribute<"35%" | number>;
-  height: PixelAttribute<"auto" | number>;
-  aspectRatio: number | null;
-  id: string | null;
-};
-
-type Size = {
-  width: PixelAttribute<"35%">;
-  height: PixelAttribute<"auto">;
-  aspectRatio: number | null;
-};
-
-const ensurePixelString = <TDefault,>(value: Pixel | TDefault | number | undefined | null, defaultValue?: TDefault) => {
-  if (!value || value === defaultValue) {
-    return defaultValue;
-  }
-
-  if (typeof value === "number") {
-    return `${value}px` satisfies Pixel;
-  }
-
-  return value;
-};
-
-export const getImageBlockId = (id: string) => `editor-image-block-${id}`;
-
-type CustomImageBlockProps = CustomBaseImageNodeViewProps & {
-  imageFromFileSystem: string | undefined;
-  setFailedToLoadImage: (isError: boolean) => void;
+type CustomImageBlockProps = CustomImageNodeViewProps & {
   editorContainer: HTMLDivElement | null;
+  imageFromFileSystem: string | undefined;
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
+  setFailedToLoadImage: (isError: boolean) => void;
   src: string | undefined;
 };
 
 export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // props
   const {
-    node,
-    updateAttributes,
-    setFailedToLoadImage,
-    imageFromFileSystem,
-    selected,
-    getPos,
     editor,
     editorContainer,
-    src: resolvedImageSrc,
+    extension,
+    getPos,
+    imageFromFileSystem,
+    node,
+    selected,
     setEditorContainer,
+    setFailedToLoadImage,
+    src: resolvedImageSrc,
+    updateAttributes,
   } = props;
   const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio, src: imgNodeSrc } = node.attrs;
   // states
-  const [size, setSize] = useState<Size>({
+  const [size, setSize] = useState<TCustomImageSize>({
     width: ensurePixelString(nodeWidth, "35%") ?? "35%",
     height: ensurePixelString(nodeHeight, "auto") ?? "auto",
     aspectRatio: nodeAspectRatio || null,
@@ -79,7 +51,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
 
   const updateAttributesSafely = useCallback(
-    (attributes: Partial<ImageAttributes>, errorMessage: string) => {
+    (attributes: Partial<TCustomImageAttributes>, errorMessage: string) => {
       try {
         updateAttributes(attributes);
       } catch (error) {
@@ -116,7 +88,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       const initialWidth = Math.max(editorWidth * 0.35, MIN_SIZE);
       const initialHeight = initialWidth / aspectRatioCalculated;
 
-      const initialComputedSize = {
+      const initialComputedSize: TCustomImageSize = {
         width: `${Math.round(initialWidth)}px` satisfies Pixel,
         height: `${Math.round(initialHeight)}px` satisfies Pixel,
         aspectRatio: aspectRatioCalculated,
@@ -141,7 +113,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       }
     }
     setInitialResizeComplete(true);
-  }, [nodeWidth, updateAttributes, editorContainer, nodeAspectRatio]);
+  }, [nodeWidth, updateAttributesSafely, editorContainer, nodeAspectRatio, setEditorContainer]);
 
   // for real time resizing
   useLayoutEffect(() => {
@@ -170,7 +142,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const handleResizeEnd = useCallback(() => {
     setIsResizing(false);
     updateAttributesSafely(size, "Failed to update attributes at the end of resizing:");
-  }, [size, updateAttributes]);
+  }, [size, updateAttributesSafely]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -245,7 +217,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         onLoad={handleImageLoad}
         onError={async (e) => {
           // for old image extension this command doesn't exist or if the image failed to load for the first time
-          if (!editor?.commands.restoreImage || hasTriedRestoringImageOnce) {
+          if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
             setFailedToLoadImage(true);
             return;
           }
@@ -256,7 +228,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             if (!imgNodeSrc) {
               throw new Error("No source image to restore from");
             }
-            await editor?.commands.restoreImage?.(imgNodeSrc);
+            await extension.options.restoreImage?.(imgNodeSrc);
             if (!imageRef.current) {
               throw new Error("Image reference not found");
             }
@@ -292,10 +264,10 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
             "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
           }
           image={{
-            src: resolvedImageSrc,
-            aspectRatio: size.aspectRatio === null ? 1 : size.aspectRatio,
-            height: size.height,
             width: size.width,
+            height: size.height,
+            aspectRatio: size.aspectRatio === null ? 1 : size.aspectRatio,
+            src: resolvedImageSrc,
           }}
         />
       )}

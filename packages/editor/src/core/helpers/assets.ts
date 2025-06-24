@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { getImageBlockId } from "@/extensions/custom-image/components/image-block";
+import { getImageBlockId } from "@/extensions/custom-image/utils";
 // plane editor imports
 import { ADDITIONAL_ASSETS_META_DATA_RECORD } from "@/plane-editor/constants/assets";
 // types
