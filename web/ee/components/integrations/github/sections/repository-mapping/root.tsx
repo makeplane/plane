@@ -3,16 +3,16 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
-import { Logo } from "@/components/common";
 import { EntityConnectionItem, FormCreate } from "@/plane-web/components/integrations/github";
 //  plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import { E_STATE_MAP_KEYS, TGithubEntityConnection, TProjectMap, TStateMap } from "@/plane-web/types/integrations";
+import { MappingLoader } from "../../../ui";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,
@@ -83,40 +83,38 @@ export const RepositoryMappingRoot: FC = observer(() => {
     { errorRetryCount: 0 }
   );
 
+  // Loading state with skeleton loader
+  if (isEntitiesLoading) {
+    return <MappingLoader />;
+  }
   return (
-    <div className="relative border border-custom-border-200 rounded p-4 space-y-4">
-      {/* heading */}
-      <div className="relative flex justify-between items-center gap-4">
+    <div className="relative border border-custom-border-200 rounded space-y-4">
+      {/* Header */}
+      <div className="flex flex-row items-center justify-between py-5 px-5 bg-custom-background-90 border-b border-custom-border-200">
         <div className="space-y-1">
           <div className="text-base font-medium">{t("github_integration.repo_mapping")}</div>
           <div className="text-sm text-custom-text-200">{t("github_integration.repo_mapping_description")}</div>
         </div>
-        <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
-          {t("common.add")}
+        <Button
+          variant="neutral-primary"
+          size="sm"
+          className="h-8 w-8 rounded p-0"
+          onClick={() => setModalCreateOpen(true)}
+        >
+          <Plus className="h-5 w-5" />
         </Button>
       </div>
 
       {/* mapped blocks */}
       {entityIds && entityIds.length > 0 && (
-        <div className="relative space-y-2">
+        <div className="p-4 relative">
           {Object.keys(entityConnection).map((projectId, index) => {
             const project = projectId ? getProjectById(projectId) : undefined;
             if (!project) return null;
 
             return (
-              <div className="space-y-2" key={index}>
-                <div className="relative flex items-center gap-2 rounded bg-custom-background-90/50 text-base p-2">
-                  <div className="flex-shrink-0 relative flex justify-center items-center !w-5 !h-5 rounded-sm bg-custom-background-100">
-                    {project && project?.logo_props ? (
-                      <Logo logo={project?.logo_props} size={14} />
-                    ) : (
-                      <Briefcase className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div className="text-sm">{project?.name || "Project"}</div>
-                </div>
-
-                <div className="space-y-1">
+              <div key={index}>
+                <div className="space-y-4">
                   {(entityConnection[projectId] || []).map((connection, index) => (
                     <EntityConnectionItem key={index} project={project} entityConnection={connection} />
                   ))}

@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Plus, AlertTriangle, RefreshCw } from "lucide-react";
+import { Plus, AlertTriangle, RefreshCw, Hash } from "lucide-react";
 import { E_SLACK_ENTITY_TYPE, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { useTranslation } from "@plane/i18n";
 import { TWorkspaceEntityConnection } from "@plane/types";
@@ -12,7 +12,9 @@ import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 //  plane web hooks
 // plane web types
 import { useSlackIntegration } from "@/plane-web/hooks/store";
-import { ConnectionItem } from "./entity-item";
+import SlackLogo from "@/public/services/slack.png";
+import { MappingLoader } from "../../../ui";
+import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 import ProjectUpdatesForm from "./form/form";
 
 export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ connectionId }) => {
@@ -25,6 +27,7 @@ export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ conn
     createProjectConnection,
     updateProjectConnection,
     deleteProjectConnection,
+    getProjectById,
   } = useSlackIntegration();
 
   const { t } = useTranslation();
@@ -161,44 +164,7 @@ export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ conn
 
   // Loading state with skeleton loader
   if (isLoading) {
-    return (
-      <div className="relative w-full space-y-4">
-        <div className="border border-custom-border-200 rounded-md overflow-hidden">
-          <Loader>
-            {/* Header skeleton */}
-            <div className="flex flex-row items-center justify-between py-3 px-4 bg-custom-background-90 border-b border-custom-border-200">
-              <div className="space-y-1">
-                <Loader.Item height="24px" width="180px" />
-                <Loader.Item height="18px" width="280px" />
-              </div>
-              <Loader.Item height="32px" width="32px" className="rounded" />
-            </div>
-
-            {/* Content skeleton */}
-            <div className="p-4 bg-custom-background-100">
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="border border-custom-border-200 rounded-md p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Loader.Item height="24px" width="24px" className="rounded-md" />
-                        <Loader.Item height="20px" width="140px" />
-                      </div>
-                      <div className="flex gap-2">
-                        <Loader.Item height="24px" width="60px" />
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <Loader.Item height="16px" width="90px" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Loader>
-        </div>
-      </div>
-    );
+    return <MappingLoader />;
   }
 
   // Error state
@@ -249,14 +215,27 @@ export const ProjectUpdatesRoot: FC<{ connectionId: string }> = observer(({ conn
         <div className="p-4 bg-custom-background-100">
           {projectConnections && projectConnections.length > 0 ? (
             <div className="space-y-3">
-              {projectConnections.map((connection) => (
-                <ConnectionItem
-                  key={connection.id}
-                  connection={connection}
-                  onEdit={() => handleEdit(connection)}
-                  onDelete={() => handleDelete(connection)}
-                />
-              ))}
+              {projectConnections.map((connection) => {
+                const project = connection.project_id ? getProjectById(connection.project_id) : undefined;
+                if (!project) return null;
+                return (
+                  <IntegrationsMapping
+                    key={connection.id}
+                    entityName={
+                      <div className="flex items-center gap-1 ">
+                        <Hash className="h-3.5 w-3.5 text-[#E01E5A] flex-shrink-0" />
+                        <div className="text-sm text-custom-text-100 font-medium truncate">
+                          {connection.entity_slug}
+                        </div>
+                      </div>
+                    }
+                    project={project}
+                    connectorLogo={SlackLogo}
+                    handleEditOpen={() => handleEdit(connection)}
+                    handleDeleteOpen={() => handleDelete(connection)}
+                  />
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-10 text-custom-text-200">

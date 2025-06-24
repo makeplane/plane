@@ -2,7 +2,6 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
@@ -16,6 +15,7 @@ import { TGithubEntityConnection } from "@/plane-web/types/integrations";
 // public images
 import GithubDarkLogo from "@/public/services/github-dark.svg";
 import GithubLightLogo from "@/public/services/github-light.svg";
+import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 
 type TEntityConnectionItem = {
   project: IProject;
@@ -90,27 +90,13 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
 
       <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} />
 
-      <div className="relative flex items-center gap-2 p-2 bg-custom-background-90/20">
-        <div className="flex-shrink-0 relative flex justify-center items-center w-8 h-8 rounded">
-          <Image src={githubLogo} layout="fill" objectFit="contain" alt="GitHub Logo" />
-        </div>
-        <div className="w-full">
-          <div className="text-sm font-medium">
-            {entityConnection?.entity_data?.name} ({entityConnection?.entity_data?.full_name})
-          </div>
-          <div className="text-xs text-custom-text-200">
-            {t("github_integration.issue_sync_message", { project: project?.name || "Project" })}
-          </div>
-        </div>
-        <div className="relative flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleEditOpen}>
-            {t("common.edit")}
-          </Button>
-          <Button variant="link-danger" size="sm" onClick={handleDeleteOpen}>
-            {t("common.remove")}
-          </Button>
-        </div>
-      </div>
+      <IntegrationsMapping
+        entityName={`${entityConnection?.entity_data?.name} (${entityConnection?.entity_data?.full_name})`}
+        project={project}
+        connectorLogo={githubLogo}
+        handleEditOpen={handleEditOpen}
+        handleDeleteOpen={handleDeleteOpen}
+      />
     </>
   );
 });
