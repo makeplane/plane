@@ -65,7 +65,9 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement) => {
+const getScrollParent = (node: HTMLElement | SVGElement | null): Element | null => {
+  if (!node) return null;
+
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }
@@ -137,32 +139,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
-
-  const handleClick = (event: MouseEvent, view: EditorView) => {
-    handleNodeSelection(event, view, false, options);
-  };
-
-  const handleDragStart = (event: DragEvent, view: EditorView) => {
-    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
-    if (listTypeFromDragStart) {
-      listType = listTypeFromDragStart;
-    }
-    isDragging = true;
-    lastClientY = event.clientY;
-    scroll();
-  };
-
-  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
-    event.preventDefault();
-    isDragging = false;
-    isMouseInsideWhileDragging = false;
-    if (scrollAnimationFrame) {
-      cancelAnimationFrame(scrollAnimationFrame);
-      scrollAnimationFrame = null;
-    }
-
-    view?.dom.classList.remove("dragging");
-  };
+  let dragHandleElement: HTMLElement | null = null;
 
   function scroll() {
     if (!isDragging) {
@@ -199,7 +176,32 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     scrollAnimationFrame = requestAnimationFrame(scroll);
   }
 
-  let dragHandleElement: HTMLElement | null = null;
+  const handleClick = (event: MouseEvent, view: EditorView) => {
+    handleNodeSelection(event, view, false, options);
+  };
+
+  const handleDragStart = (event: DragEvent, view: EditorView) => {
+    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
+    if (listTypeFromDragStart) {
+      listType = listTypeFromDragStart;
+    }
+    isDragging = true;
+    lastClientY = event.clientY;
+    scroll();
+  };
+
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
+    event.preventDefault();
+    isDragging = false;
+    isMouseInsideWhileDragging = false;
+    if (scrollAnimationFrame) {
+      cancelAnimationFrame(scrollAnimationFrame);
+      scrollAnimationFrame = null;
+    }
+
+    view?.dom.classList.remove("dragging");
+  };
+
   // drag handle view actions
   const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
   const hideDragHandle = () => {
