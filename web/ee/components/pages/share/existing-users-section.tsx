@@ -16,6 +16,7 @@ type TExistingUsersSectionProps = {
   isUserModified: (userId: string) => boolean;
   isAccordionOpen: boolean;
   onToggleAccordion: () => void;
+  canCurrentUserChangeAccess?: boolean;
 };
 
 export const ExistingUsersSection = ({
@@ -26,6 +27,7 @@ export const ExistingUsersSection = ({
   isUserModified,
   isAccordionOpen,
   onToggleAccordion,
+  canCurrentUserChangeAccess = true,
 }: TExistingUsersSectionProps) => {
   if (existingUsers.length === 0) return null;
 
@@ -96,8 +98,9 @@ export const ExistingUsersSection = ({
                 access={user.access}
                 isModified={isUserModified(user.user_id)}
                 isOwner={isOwner}
-                onUpdateAccess={onUpdateAccess}
-                onRemove={onRemove}
+                onUpdateAccess={canCurrentUserChangeAccess ? onUpdateAccess : () => {}}
+                onRemove={canCurrentUserChangeAccess ? onRemove : () => {}}
+                canCurrentUserChangeAccess={canCurrentUserChangeAccess}
                 className="hover:bg-custom-background-80 rounded transition-colors p-1"
               />
             );

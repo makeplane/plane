@@ -32,7 +32,9 @@ export type CollaboratorsUpdatedPayload = CreatePayload<{ users: TCollaborator[]
 export type SharedPayload = CreatePayload<{
   users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
 }>;
-export type UnsharedPayload = CreatePayload<{ users_and_access: { user_id: string; access: EPageAccess }[] }>;
+export type UnsharedPayload = CreatePayload<{
+  users_and_access: { user_id: string; access: EPageSharedUserAccess; page_id: string[] }[];
+}>;
 export type RestoredPayload = CreatePayload<{ deleted_page_ids?: string[] }>;
 export type SubPagePayload = BaseActionPayload;
 

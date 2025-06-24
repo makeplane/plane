@@ -605,6 +605,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return page;
     } catch (error) {
       runInAction(() => {
+        // Remove the page from store if fetch fails (page might not exist or be inaccessible)
+        if (pageId && this.data[pageId]) {
+          delete this.data[pageId];
+        }
+
+        // Clear any cached root parent references for this page
+        this._rootParentMap.delete(pageId);
+
         this.loader = undefined;
         this.error = {
           title: "Failed",
@@ -734,7 +742,6 @@ export class WorkspacePageStore implements IWorkspacePageStore {
               pageInstance.mutateProperties(page);
             } else {
               set(this.data, [page.id], new WorkspacePage(this.store, page));
-              console.log("page after setting", this.data[page.id]);
             }
           }
         }

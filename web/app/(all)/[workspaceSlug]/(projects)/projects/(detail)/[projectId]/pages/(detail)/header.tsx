@@ -59,7 +59,7 @@ export const PageDetailsHeader = observer(() => {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!page) return null;
+  if (!page || !page.canCurrentUserAccessPage) return null;
 
   return (
     <Header>

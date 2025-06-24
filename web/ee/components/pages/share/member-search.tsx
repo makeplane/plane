@@ -14,6 +14,7 @@ type TMemberOption = {
 type TMemberSearchProps = {
   memberOptions: TMemberOption[];
   onSelectMember: (memberId: string) => void;
+  canCurrentUserChangeAccess?: boolean;
 };
 
 export const MemberOption = memo<{ member: { display_name: string; avatar_url: string } }>(({ member }) => (
@@ -27,21 +28,31 @@ export const MemberOption = memo<{ member: { display_name: string; avatar_url: s
 
 MemberOption.displayName = "MemberOption";
 
-export const MemberSearch = ({ memberOptions, onSelectMember }: TMemberSearchProps) => (
-  <CustomSearchSelect
-    value=""
-    customButton={
-      <span className="w-full flex items-center gap-1 text-custom-text-400 p-2 rounded border-[0.5px] border-custom-border-300">
-        <span className="shrink-0 size-4 grid place-items-center">
-          <Search className="size-3.5" />
+export const MemberSearch = ({
+  memberOptions,
+  onSelectMember,
+  canCurrentUserChangeAccess = true,
+}: TMemberSearchProps) => {
+  if (!canCurrentUserChangeAccess) {
+    return null;
+  }
+
+  return (
+    <CustomSearchSelect
+      value=""
+      customButton={
+        <span className="w-full flex items-center gap-1 text-custom-text-400 p-2 rounded border-[0.5px] border-custom-border-300">
+          <span className="shrink-0 size-4 grid place-items-center">
+            <Search className="size-3.5" />
+          </span>
+          <span className="truncate">Find members to share this page with.</span>
         </span>
-        <span className="truncate">Find members to share this page with.</span>
-      </span>
-    }
-    customButtonClassName="rounded"
-    onChange={onSelectMember}
-    options={memberOptions}
-  />
-);
+      }
+      customButtonClassName="rounded"
+      onChange={onSelectMember}
+      options={memberOptions}
+    />
+  );
+};
 
 MemberSearch.displayName = "MemberSearch";

@@ -105,7 +105,7 @@ class ProjectPageUserViewSet(BaseViewSet):
                 action=PageAction.SHARED,
                 slug=slug,
                 user_id=request.user.id,
-                extra=json.dumps({"users_and_access": request.data}),
+                extra=json.dumps({"create_user_access": request.data}),
             )
 
         if deleted_user_ids:

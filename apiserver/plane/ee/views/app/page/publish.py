@@ -142,9 +142,9 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    def post(self, request, slug, pk):
+    def post(self, request, slug, page_id):
         # Fetch the page
-        page = Page.objects.get(pk=pk, workspace__slug=slug)
+        page = Page.objects.get(pk=page_id, workspace__slug=slug)
 
         if not page:
             return Response(
@@ -166,20 +166,25 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
 
         # Create a deploy board for the page
         deploy_board, _ = DeployBoard.objects.get_or_create(
-            entity_identifier=pk, entity_name="page", workspace_id=page.workspace_id
+            entity_identifier=page_id,
+            entity_name="page",
+            workspace_id=page.workspace_id,
         )
 
         nested_page_update.delay(
-            page_id=pk, action=PageAction.PUBLISHED, slug=slug, user_id=request.user.id
+            page_id=page_id,
+            action=PageAction.PUBLISHED,
+            slug=slug,
+            user_id=request.user.id,
         )
         # Return the deploy board
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    def patch(self, request, slug, pk):
+    def patch(self, request, slug, page_id):
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk, entity_name="page", workspace__slug=slug
+            entity_identifier=page_id, entity_name="page", workspace__slug=slug
         )
         data = {
             "is_comments_enabled": request.data.get(
@@ -203,24 +208,24 @@ class WorkspacePagePublishEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    def get(self, request, slug, pk):
+    def get(self, request, slug, page_id):
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk, entity_name="page", workspace__slug=slug
+            entity_identifier=page_id, entity_name="page", workspace__slug=slug
         )
         serializer = DeployBoardSerializer(deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
-    def delete(self, request, slug, pk):
+    def delete(self, request, slug, page_id):
         # Get the deploy board and un publish all the sub page as well.
         deploy_board = DeployBoard.objects.get(
-            entity_identifier=pk, entity_name="page", workspace__slug=slug
+            entity_identifier=page_id, entity_name="page", workspace__slug=slug
         )
         # Delete the deploy board
         deploy_board.delete()
 
         nested_page_update.delay(
-            page_id=pk,
+            page_id=page_id,
             action=PageAction.UNPUBLISHED,
             slug=slug,
             user_id=request.user.id,

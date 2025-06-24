@@ -56,6 +56,9 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
   const { workspaceSlug } = useParams();
 
   const { isNestedPagesEnabled } = usePageStore(storeType);
+  const hasSubpages = page.sub_pages_count !== undefined && page.sub_pages_count > 0;
+
+  const canShowRecursiveOptions = isNestedPagesEnabled(workspaceSlug.toString()) && hasSubpages;
 
   useEffect(
     () => () => {
@@ -130,13 +133,13 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
   }, [is_locked]);
 
   const handleButtonClick = useCallback(() => {
-    if (isNestedPagesEnabled(workspaceSlug.toString())) {
+    if (canShowRecursiveOptions) {
       setShowLockOptions((prev) => !prev);
     } else {
       toggleLock({ recursive: false });
       setShowLockOptions(false);
     }
-  }, [isNestedPagesEnabled, toggleLock, workspaceSlug]);
+  }, [canShowRecursiveOptions, toggleLock]);
 
   const handleLockOption = useCallback(
     (recursive: boolean) => {
@@ -186,15 +189,14 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
     <div className="relative">
       {/* Render the correct button based on display state, inlined */}
       {displayState === "neutral" && (
-        <Tooltip tooltipContent="Lock page" position="bottom" disabled={showLockOptions}>
+        <Tooltip tooltipContent="Lock page" position="bottom" disabled={canShowRecursiveOptions && showLockOptions}>
           <button
             type="button"
             onClick={handleButtonClick}
             className={cn(
               "flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors",
               {
-                "bg-custom-background-80 text-custom-text-100":
-                  isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions,
+                "bg-custom-background-80 text-custom-text-100": canShowRecursiveOptions && showLockOptions,
               }
             )}
             aria-label="Lock"
@@ -212,19 +214,21 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
           className={cn(
             buttonBaseClass,
             "text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30",
-            { "bg-custom-primary-100/30": isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions }
+            {
+              "bg-custom-primary-100/30": canShowRecursiveOptions && showLockOptions,
+            }
           )}
           aria-label={shouldShowHoverEffect ? "Unlock" : "Locked"}
         >
           {/* Simple icon display - show one or the other */}
-          {shouldShowHoverEffect || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions) ? (
+          {shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? (
             <LockKeyholeOpen className="size-3.5 flex-shrink-0" />
           ) : (
             <LockKeyhole className={cn("size-3.5 flex-shrink-0", justLocked && "animate-lock-icon")} />
           )}
 
           {/* Text element with animation only when just locked */}
-          {shouldShowHoverEffect || (isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions) ? (
+          {shouldShowHoverEffect || (canShowRecursiveOptions && showLockOptions) ? (
             <span className={textBaseClass}>Unlock</span>
           ) : (
             <span className={cn(textBaseClass, justLocked && "animate-text-slide-in")}>Locked</span>
@@ -238,7 +242,7 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
         </div>
       )}
 
-      {isNestedPagesEnabled(workspaceSlug.toString()) && showLockOptions && (
+      {canShowRecursiveOptions && showLockOptions && (
         <div ref={lockOptionsRef} className="absolute top-full right-0 mt-1 z-10 animate-slide-up">
           <div className="my-1 overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[180px]">
             {(() => {
@@ -252,14 +256,16 @@ export const PageLockControl = observer(({ page, storeType }: Props) => {
                     <LockIcon className="size-3.5 flex-shrink-0" />
                     <span className="text-xs leading-none flex items-center">{`Just ${actionText.toLowerCase()} this page`}</span>
                   </button>
-                  <button type="button" onClick={() => handleLockOption(true)} className={menuItemClasses}>
-                    {is_locked ? (
-                      <FolderOpen className="size-3.5 flex-shrink-0" />
-                    ) : (
-                      <FolderLock className="size-3.5 flex-shrink-0" />
-                    )}
-                    <span className="text-xs leading-none flex items-center">{`${actionText} page and all subpages`}</span>
-                  </button>
+                  {hasSubpages && (
+                    <button type="button" onClick={() => handleLockOption(true)} className={menuItemClasses}>
+                      {is_locked ? (
+                        <FolderOpen className="size-3.5 flex-shrink-0" />
+                      ) : (
+                        <FolderLock className="size-3.5 flex-shrink-0" />
+                      )}
+                      <span className="text-xs leading-none flex items-center">{`${actionText} page and all subpages`}</span>
+                    </button>
+                  )}
                 </>
               );
             })()}

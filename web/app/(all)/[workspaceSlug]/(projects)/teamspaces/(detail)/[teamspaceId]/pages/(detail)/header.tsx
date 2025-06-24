@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader, TeamsIcon } from "@plane/ui";
-import { getPageName  } from "@plane/utils";
+import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo, PageAccessIcon, SwitcherLabel } from "@/components/common";
 import { PageHeaderActions } from "@/components/pages/header/actions";
@@ -53,7 +53,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
 
-  if (!workspaceSlug || !page) return;
+  if (!workspaceSlug || !page || !page.canCurrentUserAccessPage) return;
 
   return (
     <Header>

@@ -186,6 +186,7 @@ export const SharePageRoolModal: React.FC<TSharePageModalProps> = observer(
         isSubmitting: shareForm?.formState?.isSubmitting || false,
         isLoadingSharedUsers,
         isSharedUsersAccordionOpen,
+        canCurrentUserChangeAccess: page?.canCurrentUserChangeAccess || false,
       };
     }, [
       pageTitle,
@@ -194,6 +195,7 @@ export const SharePageRoolModal: React.FC<TSharePageModalProps> = observer(
       memberOptions,
       isLoadingSharedUsers,
       page?.owned_by,
+      page?.canCurrentUserChangeAccess,
       getWorkspaceMemberDetails,
       isSharedUsersAccordionOpen,
     ]);

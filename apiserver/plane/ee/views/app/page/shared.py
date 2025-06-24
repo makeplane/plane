@@ -21,8 +21,8 @@ class WorkspacePageUserViewSet(BaseViewSet):
     permission_classes = [WorkspacePagePermission]
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
-    def create(self, request, slug, pk):
-        page = Page.objects.get(id=pk, workspace__slug=slug)
+    def create(self, request, slug, page_id):
+        page = Page.objects.get(id=page_id, workspace__slug=slug)
         if page.parent_id is not None:
             return Response(
                 {"detail": "You can only share the root page"},
@@ -45,7 +45,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
         }
         requested_user_ids = set(requested_user_map.keys())
 
-        existing_users = PageUser.objects.filter(page_id=pk, workspace__slug=slug)
+        existing_users = PageUser.objects.filter(page_id=page_id, workspace__slug=slug)
         existing_user_map = {str(pu.user_id): pu for pu in existing_users}
         existing_user_ids = set(existing_user_map.keys())
 
@@ -54,7 +54,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
         users_to_create = [
             PageUser(
                 user_id=user_id,
-                page_id=pk,
+                page_id=page_id,
                 access=requested_user_map[user_id],
                 workspace_id=page.workspace_id,
                 created_by_id=request.user.id,
@@ -68,9 +68,10 @@ class WorkspacePageUserViewSet(BaseViewSet):
 
         # 2. Users to delete (in existing but not in request)
         deleted_user_ids = existing_user_ids - requested_user_ids
-        PageUser.objects.filter(
-            page_id=pk, user_id__in=deleted_user_ids, workspace__slug=slug
-        ).delete()
+        if deleted_user_ids:
+            PageUser.objects.filter(
+                page_id=page_id, user_id__in=deleted_user_ids, workspace__slug=slug
+            ).delete()
 
         # 3. Users to update access
         common_user_ids = requested_user_ids & existing_user_ids
@@ -91,17 +92,30 @@ class WorkspacePageUserViewSet(BaseViewSet):
 
         # Fire shared and unshared events if needed
         if users_to_create or users_to_update:
+            create_user_access = [
+                {"user_id": str(user.user_id), "access": user.access}
+                for user in users_to_create
+            ]
+            update_user_access = [
+                {"user_id": str(user.user_id), "access": user.access}
+                for user in users_to_update
+            ]
             nested_page_update.delay(
                 page_id=page.id,
                 action=PageAction.SHARED,
                 slug=slug,
                 user_id=request.user.id,
-                extra=json.dumps({"users_and_access": request.data}),
+                extra=json.dumps(
+                    {
+                        "create_user_access": create_user_access,
+                        "update_user_access": update_user_access,
+                    }
+                ),
             )
 
         if deleted_user_ids:
             nested_page_update.delay(
-                page_id=pk,
+                page_id=page_id,
                 action=PageAction.UNSHARED,
                 slug=slug,
                 user_id=request.user.id,
@@ -111,15 +125,15 @@ class WorkspacePageUserViewSet(BaseViewSet):
         return Response(status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
-    def list(self, request, slug, pk):
-        shared_pages = PageUser.objects.filter(page_id=pk, workspace__slug=slug)
+    def list(self, request, slug, page_id):
+        shared_pages = PageUser.objects.filter(page_id=page_id, workspace__slug=slug)
         serializer = PageUserSerializer(shared_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
-    def destroy(self, request, slug, pk, user_id):
+    def destroy(self, request, slug, page_id, user_id):
         page_user = PageUser.objects.filter(
-            page_id=pk, user_id=user_id, workspace__slug=slug
+            page_id=page_id, user_id=user_id, workspace__slug=slug
         ).first()
 
         if not page_user:
@@ -131,7 +145,7 @@ class WorkspacePageUserViewSet(BaseViewSet):
         if request.user.id == user_id:
             page_user.delete()
             nested_page_update.delay(
-                page_id=pk,
+                page_id=page_id,
                 action=PageAction.UNSHARED,
                 slug=slug,
                 user_id=request.user.id,

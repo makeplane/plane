@@ -39,7 +39,7 @@ export class ExtendedBasePage implements TExtendedPageInstance {
 
   constructor(store: RootStore, page: TPage, services: TBasePageServices) {
     // Initialize shared page properties
-    this.shared_access = page?.shared_access || null;
+    this.shared_access = page?.shared_access ?? null;
     this.is_shared = page?.is_shared || false;
     this.collaborators = [];
     this.sub_pages_count = !page?.sub_pages_count ? 0 : page.sub_pages_count;

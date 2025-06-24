@@ -10,6 +10,7 @@ type TPendingUsersSectionProps = {
   onUpdateAccess: (userId: string, access: EPageSharedUserAccess) => void;
   onRemove: (userId: string) => void;
   getMemberDetails: (userId: string) => { member: { display_name: string; avatar_url: string } };
+  canCurrentUserChangeAccess?: boolean;
 };
 
 export const PendingUsersSection = ({
@@ -17,6 +18,7 @@ export const PendingUsersSection = ({
   onUpdateAccess,
   onRemove,
   getMemberDetails,
+  canCurrentUserChangeAccess = true,
 }: TPendingUsersSectionProps) => {
   if (pendingUsers.length === 0) return null;
 
@@ -31,8 +33,9 @@ export const PendingUsersSection = ({
             displayName={memberDetails?.member?.display_name}
             avatarUrl={memberDetails?.member?.avatar_url}
             access={user.access}
-            onUpdateAccess={onUpdateAccess}
-            onRemove={onRemove}
+            onUpdateAccess={canCurrentUserChangeAccess ? onUpdateAccess : () => {}}
+            onRemove={canCurrentUserChangeAccess ? onRemove : () => {}}
+            canCurrentUserChangeAccess={canCurrentUserChangeAccess}
             className="p-1 transition-all duration-200 ease-in-out"
           />
         );

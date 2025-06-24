@@ -15,6 +15,7 @@ type TUserListItemProps = {
   onUpdateAccess: (userId: string, access: number) => void;
   onRemove: (userId: string) => void;
   className?: string;
+  canCurrentUserChangeAccess?: boolean;
 };
 
 export const UserListItem = ({
@@ -27,6 +28,7 @@ export const UserListItem = ({
   onUpdateAccess,
   onRemove,
   className = "",
+  canCurrentUserChangeAccess = true,
 }: TUserListItemProps) => {
   const { resolvedTheme } = useTheme();
 
@@ -56,6 +58,7 @@ export const UserListItem = ({
           onUpdateAccess={(accessValue) => onUpdateAccess(userId, parseInt(accessValue) as number)}
           onRemove={() => onRemove(userId)}
           isOwner={isOwner}
+          canCurrentUserChangeAccess={canCurrentUserChangeAccess}
         />
       </div>
     </div>

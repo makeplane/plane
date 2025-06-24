@@ -241,7 +241,21 @@ export const useRealtimePageEvents = ({
           }
         }
       },
-      unshared: async ({ pageIds, data }) => {},
+      unshared: async ({ data }) => {
+        const { users_and_access } = data;
+        for (const user of users_and_access) {
+          const { user_id, page_id: pageIds } = user;
+          for (const pageId of pageIds) {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              pageItem.removeSharedUser(user_id);
+              if (currentUser?.id === user_id) {
+                pageItem.setSharedAccess(null);
+              }
+            }
+          }
+        }
+      },
       duplicated: async ({ pageIds, data }) => {
         const duplicatedPage = data.new_page_id;
         dismissToast("duplicating-page");

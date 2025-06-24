@@ -30,6 +30,7 @@ type TSharePageModalData = {
   isSubmitting: boolean;
   isLoadingSharedUsers: boolean;
   isSharedUsersAccordionOpen: boolean;
+  canCurrentUserChangeAccess: boolean;
 };
 
 type TSharePageModalActions = {
@@ -68,7 +69,11 @@ export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose
       <ModalHeader pageTitle={data.pageTitle} copied={data.copied} onCopyLink={onAction.copyLink} />
 
       <div className="mt-2 px-4 min-h-[240px] transition-all duration-300 ease-in-out">
-        <MemberSearch memberOptions={data.memberOptions} onSelectMember={onAction.selectMember} />
+        <MemberSearch
+          memberOptions={data.memberOptions}
+          onSelectMember={onAction.selectMember}
+          canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
+        />
 
         <div className="transition-all duration-300 ease-in-out">
           <PendingUsersSection
@@ -76,6 +81,7 @@ export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose
             onUpdateAccess={onAction.updatePendingAccess}
             onRemove={onAction.removePending}
             getMemberDetails={onAction.getMemberDetails}
+            canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
           />
 
           {data.pendingSharedUsers.length > 0 && data.existingUsers.length > 0 && (
@@ -90,6 +96,7 @@ export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose
             isUserModified={onAction.isUserModified}
             isAccordionOpen={data.isSharedUsersAccordionOpen}
             onToggleAccordion={onAction.toggleSharedUsersAccordion}
+            canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
           />
 
           <EmptyState
@@ -104,8 +111,9 @@ export const SharePageModal: React.FC<TSharePageModalProps> = ({ isOpen, onClose
       <ModalFooter
         hasUnsavedChanges={data.hasUnsavedChanges}
         isSubmitting={data.isSubmitting}
-        onCancel={onAction.cancel}
         onSave={onAction.save}
+        onCancel={onAction.cancel}
+        canCurrentUserChangeAccess={data.canCurrentUserChangeAccess}
       />
     </ModalCore>
   );

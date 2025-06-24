@@ -18,11 +18,9 @@ export const EmptyState = memo<TEmptyStateProps>(
       return (
         <div className="mt-2 space-y-2 transition-all duration-300 ease-in-out">
           <Loader className="space-y-2">
-            {/* Shimmer for user rows - matches UserListItem structure */}
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="hover:bg-custom-background-80 rounded transition-colors p-1">
+              <div key={index} className="rounded transition-colors p-1">
                 <div className="flex items-center justify-between gap-3">
-                  {/* Left side - Avatar + Name (matches UserListItem left side) */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <Loader.Item height="24px" width="24px" className="rounded-full" />
                     <div className="min-w-0 flex-1">
@@ -30,7 +28,6 @@ export const EmptyState = memo<TEmptyStateProps>(
                     </div>
                   </div>
 
-                  {/* Right side - Access menu (matches UserListItem right side) */}
                   <div className="flex items-center gap-2">
                     <Loader.Item height="24px" width="70px" className="rounded-md" />
                   </div>
@@ -42,12 +39,10 @@ export const EmptyState = memo<TEmptyStateProps>(
       );
     }
 
-    // Don't show empty state if there are existing users (including owner) or pending users
     if (existingUsersCount > 0 || pendingUsersCount > 0) {
       return null;
     }
 
-    // Only show empty state if there are truly no users at all
     if (totalUsers === 0 && pendingUsersCount === 0) {
       return (
         <div className="text-center py-8 animate-in fade-in duration-500 transition-all ease-in-out">

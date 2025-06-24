@@ -164,7 +164,7 @@ def nested_page_update(
                     project_id=project_id,
                     user_id=user_id,
                     extra=json.dumps(
-                        {"users_and_access": shared_users},
+                        {"create_user_access": shared_users},
                         cls=DjangoJSONEncoder,
                     ),
                 )
@@ -403,7 +403,7 @@ def nested_page_update(
                 project_id=project_id,
                 user_id=user_id,
                 extra=json.dumps(
-                    {"users_and_access": shared_users}, cls=DjangoJSONEncoder
+                    {"create_user_access": shared_users}, cls=DjangoJSONEncoder
                 ),
             )
             if access == 0:
@@ -469,10 +469,62 @@ def nested_page_update(
             descendants_ids += [str(page_id)]
             # get the data payload of user with each page
             extra_data = json.loads(extra)
-            users_and_access = extra_data.get("users_and_access", [])
+            create_user_access = extra_data.get("create_user_access", [])
+            update_user_access = extra_data.get("update_user_access", [])
+
+            if create_user_access:
+                # create shared pages for all the nested child pages
+                PageUser.objects.bulk_create(
+                    [
+                        PageUser(
+                            page_id=page_id,
+                            project_id=project_id,
+                            user_id=user_data.get("user_id"),
+                            access=user_data.get("access"),
+                            created_by_id=user_id,
+                            updated_by_id=user_id,
+                            workspace_id=workspace_id,
+                        )
+                        for page_id in descendants_ids
+                        for user_data in create_user_access
+                    ],
+                    batch_size=50,
+                    ignore_conflicts=True,
+                )
+
+            if update_user_access:
+                # create a list of all the user ids whose access needs to be updated in the nested pages
+                user_ids = [user.get("user_id") for user in update_user_access]
+                page_users = PageUser.objects.filter(
+                    page_id__in=descendants_ids,
+                    user_id__in=user_ids,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                )
+
+                # Create a mapping of user_id to access for quick lookup
+                # Convert user_id to string to ensure consistent comparison
+                user_access_mapping = {
+                    str(user.get("user_id")): user.get("access")
+                    for user in update_user_access
+                }
+
+                # Update the access for each page user
+                updated_page_access = []
+                for page_user in page_users:
+                    # Convert page_user.user_id to string for comparison
+                    if str(page_user.user_id) in user_access_mapping:
+                        page_user.access = user_access_mapping[str(page_user.user_id)]
+                        updated_page_access.append(page_user)
+
+                if updated_page_access:
+                    PageUser.objects.bulk_update(
+                        updated_page_access, ["access"], batch_size=100
+                    )
 
             values = []
-            for user in users_and_access:
+            user_access_mapper = create_user_access + update_user_access
+            for user in user_access_mapper:
                 values.append(
                     {
                         "user_id": str(user.get("user_id")),
@@ -481,32 +533,10 @@ def nested_page_update(
                     }
                 )
 
-            # also remove the shared access for the page
-            PageUser.objects.filter(
-                page_id__in=descendants_ids, project_id=project_id, workspace__slug=slug
-            ).delete()
-
-            # create shared pages for all the nested child pages
-            PageUser.objects.bulk_create(
-                [
-                    PageUser(
-                        page_id=page_id,
-                        project_id=project_id,
-                        user_id=user_data.get("user_id"),
-                        access=user_data.get("access"),
-                        created_by_id=user_id,
-                        updated_by_id=user_id,
-                        workspace_id=workspace_id,
-                    )
-                    for page_id in descendants_ids
-                    for user_data in users_and_access
-                ],
-                batch_size=50,
-                ignore_conflicts=True,
-            )
             data = {"users_and_access": values}
 
         elif action == PageAction.UNSHARED:
+
             values = []
             user_ids = None
 
@@ -521,11 +551,18 @@ def nested_page_update(
                     workspace__slug=slug,
                 )
                 user_ids.delete()
+            else:
+                PageUser.objects.filter(
+                    page_id__in=descendants_ids + [str(page_id)],
+                    user_id__in=user_ids,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                ).delete()
 
             for user in user_ids:
                 values.append(
                     {
-                        "user": user,
+                        "user_id": user,
                         "page_id": descendants_ids + [str(page_id)],
                         "access": None,
                     }

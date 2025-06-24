@@ -18,49 +18,45 @@ from plane.ee.views import (
 
 urlpatterns = [
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/publish/",
-        ProjectPagePublishEndpoint.as_view(),
-    ),
-    path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/publish/",
-        WorkspacePagePublishEndpoint.as_view(),
-    ),
-    path(
         "workspaces/<str:slug>/pages/",
         WorkspacePageViewSet.as_view({"get": "list", "post": "create"}),
         name="workspace-pages",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/",
         WorkspacePageViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-pages",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/duplicate/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/duplicate/",
         WorkspacePageDuplicateEndpoint.as_view(),
         name="workspace-page-duplicate",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/archive/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/publish/",
+        WorkspacePagePublishEndpoint.as_view(),
+    ),
+    path(
+        "workspaces/<str:slug>/pages/<uuid:page_id>/archive/",
         WorkspacePageViewSet.as_view({"post": "archive", "delete": "unarchive"}),
         name="workspace-page-archive-unarchive",
     ),
     # private and public page
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/access/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/access/",
         WorkspacePageViewSet.as_view({"post": "access"}),
         name="project-pages-access",
     ),
     # lock and unlock
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/lock/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/lock/",
         WorkspacePageViewSet.as_view({"post": "lock", "delete": "unlock"}),
         name="workspace-pages-lock-unlock",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/description/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/description/",
         WorkspacePagesDescriptionViewSet.as_view(
             {"get": "retrieve", "patch": "partial_update"}
         ),
@@ -82,14 +78,9 @@ urlpatterns = [
         name="workspace-pages-restore",
     ),
     path(
-        "workspaces/<str:slug>/favorite-pages/<uuid:pk>/",
+        "workspaces/<str:slug>/favorite-pages/<uuid:page_id>/",
         WorkspacePageFavoriteEndpoint.as_view(),
         name="page-favorites",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/move/",
-        MovePageEndpoint.as_view(),
-        name="move-page",
     ),
     path(
         "pages/<uuid:page_id>/sub-pages/",
@@ -114,15 +105,25 @@ urlpatterns = [
         name="workspace-parent-pages",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/share/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/share/",
         WorkspacePageUserViewSet.as_view({"post": "create", "get": "list"}),
         name="workspace-shared-page",
     ),
     path(
-        "workspaces/<str:slug>/pages/<uuid:pk>/share/<uuid:user_id>/",
+        "workspaces/<str:slug>/pages/<uuid:page_id>/share/<uuid:user_id>/",
         WorkspacePageUserViewSet.as_view(
             {"patch": "partial_update", "delete": "destroy"}
         ),
         name="workspace-shared-page",
+    ),
+    ## EE project level
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/publish/",
+        ProjectPagePublishEndpoint.as_view(),
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:pk>/move/",
+        MovePageEndpoint.as_view(),
+        name="move-page",
     ),
 ]
