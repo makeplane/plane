@@ -6,7 +6,6 @@ import { cn } from "@plane/utils";
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { CORE_ASSETS_META_DATA_RECORD } from "@/helpers/assets";
 import { EFileError } from "@/helpers/file";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
@@ -52,16 +51,6 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           src: url,
         });
         imageComponentImageFileMap?.delete(imageEntityId);
-        const updatedAttrs: CustomImageUploaderProps["node"]["attrs"] = {
-          ...node.attrs,
-          src: url,
-        };
-        const assetMetaData = CORE_ASSETS_META_DATA_RECORD[CORE_EXTENSIONS.CUSTOM_IMAGE]?.(updatedAttrs);
-        if (assetMetaData) {
-          editor.commands.updateAssetsList?.({
-            asset: assetMetaData,
-          });
-        }
 
         const pos = getPos();
         // get current node
