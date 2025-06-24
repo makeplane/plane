@@ -3,14 +3,15 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers import BaseSerializer
+from plane.db.models import FileAsset
 from plane.ee.models import (
-    Template,
-    WorkitemTemplate,
     PageTemplate,
     ProjectTemplate,
+    Template,
     TemplateCategory,
+    WorkitemTemplate,
 )
-from plane.db.models import FileAsset
+from plane.utils.url import contains_url
 
 
 class TemplateSerializer(BaseSerializer):
@@ -25,10 +26,21 @@ class TemplateSerializer(BaseSerializer):
     class Meta:
         model = Template
         fields = "__all__"
-        read_only_fields = ["workspace", "template_type"]
+        read_only_fields = [
+            "workspace",
+            "template_type",
+            "slug",
+            "short_id",
+        ]
 
     def get_attachments_urls(self, obj):
         return [attachment.asset_url for attachment in obj.attachments.all()]
+
+    def validate_name(self, value):
+        # Check if the name contains a URL
+        if contains_url(value):
+            raise serializers.ValidationError("Name must not contain URLs")
+        return value
 
 
 class WorkitemTemplateSerializer(BaseSerializer):

@@ -31,6 +31,8 @@ class PublishedTemplateSerializer(DynamicBaseSerializer):
             "website",
             "company_name",
             "cover_image_url",
+            "short_id",
+            "slug",
         ]
 
     def get_attachments(self, obj):
@@ -75,6 +77,8 @@ class PublishedTemplateMetaSerializer(serializers.ModelSerializer):
             "short_description",
             "keywords",
             "cover_image_url",
+            "short_id",
+            "slug",
         ]
 
     def get_cover_image_url(self, obj):

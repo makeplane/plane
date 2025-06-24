@@ -1,17 +1,25 @@
 # Python imports
 from datetime import datetime
+from typing import Dict, List, Optional, Union
+
 import pytz
 
 # Django imports
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.utils.text import slugify
 
 # Third party imports
-from pydantic import BaseModel as PydanticBaseModel, Field, UUID4, field_validator
-from typing import Optional, Dict, List, Union
+from pydantic import (
+    UUID4,
+    BaseModel as PydanticBaseModel,
+    Field,
+    field_validator,
+)
 
 # Module imports
-from plane.db.models import WorkspaceBaseModel, BaseModel
+from plane.db.models import BaseModel, WorkspaceBaseModel
+from plane.ee.utils import generate_short_id
 from plane.utils.html_processor import strip_tags
 
 
@@ -63,19 +71,52 @@ class Template(WorkspaceBaseModel):
     keywords = models.JSONField(default=list)
     website = models.URLField(max_length=800, null=True, blank=True)
 
+    short_id = models.CharField(
+        max_length=255, null=True, blank=True, db_index=True, unique=True
+    )
+    slug = models.SlugField(max_length=255, null=True, blank=True)
+
     class Meta:
         db_table = "templates"
         verbose_name = "Template"
         verbose_name_plural = "Templates"
         ordering = ("-created_at",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # track if name is changed
+        self._original_name = self.name
+        self.name_changed = False
+
     def save(self, *args, **kwargs):
+        # Check if name is changed
+        if self.name != self._original_name:
+            self.name_changed = True
+
         # Strip the html tags using html parser
         self.description_stripped = (
             None
             if (self.description_html == "" or self.description_html is None)
             else strip_tags(self.description_html)
         )
+
+        # Generate short_id if not set
+        if not self.short_id:
+            # Generate unique short_id with collision detection
+            max_attempts = 3
+            for attempt in range(max_attempts):
+                candidate_id = generate_short_id()
+                if not Template.objects.filter(short_id=candidate_id).exists():
+                    self.short_id = candidate_id
+                    break
+            else:
+                # If all attempts failed, fall back to longer random ID
+                self.short_id = generate_short_id(length=8)
+
+        # Set slug if name is changed or slug is not set
+        if not self.slug or self.name_changed:
+            self.slug = slugify(self.name)
+
         super(Template, self).save(*args, **kwargs)
 
     @property

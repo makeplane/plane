@@ -65,7 +65,7 @@ class PublishedTemplateEndpoint(BaseAPIView):
             queryset = queryset.filter(categories__name=category)
         return queryset
 
-    def get(self, request: Request, pk: uuid.UUID | None = None) -> Response:
+    def get(self, request: Request, short_id: str | None = None) -> Response:
         order_by = request.query_params.get("order_by", "-created_at")
         queryset = self.get_queryset()
         if order_by.lstrip("-") in self.ordering_fields:
@@ -73,8 +73,8 @@ class PublishedTemplateEndpoint(BaseAPIView):
 
         filtered_queryset = self.filter_queryset(queryset)
 
-        if pk:
-            template = filtered_queryset.get(id=pk)
+        if short_id:
+            template = filtered_queryset.get(short_id=short_id)
             serialised_template = self.detail_serializer_class(template)
             return Response(serialised_template.data, status=status.HTTP_200_OK)
 
@@ -99,7 +99,7 @@ class PublishedTemplateMetaEndpoint(BaseAPIView):
         )
         return queryset
 
-    def get(self, request: Request, pk: uuid.UUID) -> Response:
-        template = self.get_queryset().get(id=pk)
+    def get(self, request: Request, short_id: str) -> Response:
+        template = self.get_queryset().get(short_id=short_id)
         serialised_template = self.serializer_class(template)
         return Response(serialised_template.data, status=status.HTTP_200_OK)
