@@ -74,6 +74,7 @@ from .issue import (
     IssueLinkLiteSerializer,
     IssueVersionDetailSerializer,
     IssueDescriptionVersionDetailSerializer,
+    IssueListDetailSerializer,
 )
 
 from .module import (

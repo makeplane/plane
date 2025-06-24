@@ -725,6 +725,102 @@ class IssueSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
+class IssueListDetailSerializer(serializers.Serializer):
+
+    def __init__(self, *args, **kwargs):
+        # Extract expand parameter and store it as instance variable
+        self.expand = kwargs.pop("expand", []) or []
+        # Extract fields parameter and store it as instance variable
+        self.fields = kwargs.pop("fields", []) or []
+        super().__init__(*args, **kwargs)
+
+    def get_module_ids(self, obj):
+        return [module.module_id for module in obj.issue_module.all()]
+
+    def get_label_ids(self, obj):
+        return [label.label_id for label in obj.label_issue.all()]
+
+    def get_assignee_ids(self, obj):
+        return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
+
+    def to_representation(self, instance):
+        data = {
+            # Basic fields
+            "id": instance.id,
+            "name": instance.name,
+            "state_id": instance.state_id,
+            "sort_order": instance.sort_order,
+            "completed_at": instance.completed_at,
+            "estimate_point": instance.estimate_point_id,
+            "priority": instance.priority,
+            "start_date": instance.start_date,
+            "target_date": instance.target_date,
+            "sequence_id": instance.sequence_id,
+            "project_id": instance.project_id,
+            "parent_id": instance.parent_id,
+            "created_at": instance.created_at,
+            "updated_at": instance.updated_at,
+            "created_by": instance.created_by_id,
+            "updated_by": instance.updated_by_id,
+            "is_draft": instance.is_draft,
+            "archived_at": instance.archived_at,
+            # Computed fields
+            "cycle_id": instance.cycle_id,
+            "module_ids": self.get_module_ids(instance),
+            "label_ids": self.get_label_ids(instance),
+            "assignee_ids": self.get_assignee_ids(instance),
+            "sub_issues_count": instance.sub_issues_count,
+            "attachment_count": instance.attachment_count,
+            "link_count": instance.link_count,
+        }
+
+        # Handle expanded fields only when requested - using direct field access
+        if self.expand:
+            if "issue_relation" in self.expand:
+                relations = []
+                for relation in instance.issue_relation.all():
+                    related_issue = relation.related_issue
+                    relations.append(
+                        {
+                            "id": related_issue.id,
+                            "project_id": related_issue.project_id,
+                            "sequence_id": related_issue.sequence_id,
+                            "name": related_issue.name,
+                            "relation_type": relation.relation_type,
+                            "state_id": related_issue.state_id,
+                            "priority": related_issue.priority,
+                            "created_by": related_issue.created_by_id,
+                            "created_at": related_issue.created_at,
+                            "updated_at": related_issue.updated_at,
+                            "updated_by": related_issue.updated_by_id,
+                        }
+                    )
+                data["issue_relation"] = relations
+
+            if "issue_related" in self.expand:
+                related = []
+                for relation in instance.issue_related.all():
+                    issue = relation.issue
+                    related.append(
+                        {
+                            "id": issue.id,
+                            "project_id": issue.project_id,
+                            "sequence_id": issue.sequence_id,
+                            "name": issue.name,
+                            "relation_type": relation.relation_type,
+                            "state_id": issue.state_id,
+                            "priority": issue.priority,
+                            "created_by": issue.created_by_id,
+                            "created_at": issue.created_at,
+                            "updated_at": issue.updated_at,
+                            "updated_by": issue.updated_by_id,
+                        }
+                    )
+                data["issue_related"] = related
+
+        return data
+
+
 class IssueLiteSerializer(DynamicBaseSerializer):
     class Meta:
         model = Issue
