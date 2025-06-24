@@ -9,6 +9,7 @@ import { cn } from "@plane/utils";
 import { SidebarDropdown, SidebarHelpSection } from "@/components/workspace";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import useSize from "@/hooks/use-window-size";
 // plane web components
 import { PagesAppSidebarList, PagesAppSidebarMenu, PagesAppSidebarQuickActions } from "@/plane-web/components/pages";
 import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
@@ -24,6 +25,7 @@ export const PagesAppSidebar = observer(() => {
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
+  const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
 
@@ -74,6 +76,10 @@ export const PagesAppSidebar = observer(() => {
     }
   });
 
+  useEffect(() => {
+    if (windowSize[0] < 768 && !sidebarCollapsed) toggleSidebar();
+  }, [windowSize]);
+
   return (
     <div
       className={cn(
@@ -85,26 +91,38 @@ export const PagesAppSidebar = observer(() => {
     >
       <div
         ref={ref}
-        className={cn("size-full flex flex-1 flex-col p-4 pb-0", {
-          "p-2 pb-0": sidebarCollapsed,
+        className={cn("size-full flex flex-col flex-1 pt-4 pb-0", {
+          "p-2 pt-4": sidebarCollapsed,
         })}
       >
-        <SidebarDropdown />
-        <div className="flex-shrink-0 h-4" />
-        <SidebarAppSwitcher />
-        <PagesAppSidebarQuickActions />
+        <div
+          className={cn("px-2", {
+            "px-4": !sidebarCollapsed,
+          })}
+        >
+          <SidebarDropdown />
+          <div className="flex-shrink-0 h-4" />
+          <SidebarAppSwitcher />
+          <PagesAppSidebarQuickActions />
+        </div>
         <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
+          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-1", {
             "opacity-0": !sidebarCollapsed,
           })}
         />
-        <PagesAppSidebarMenu />
-        <hr
-          className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
-            "opacity-0": !sidebarCollapsed,
+        <div
+          className={cn("overflow-x-hidden scrollbar-sm flex-1 w-full overflow-y-auto px-2 py-0.5", {
+            "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
-        />
-        <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
+        >
+          <PagesAppSidebarMenu />
+          <hr
+            className={cn("flex-shrink-0 border-custom-sidebar-border-300 h-[0.5px] w-3/5 mx-auto my-2", {
+              "opacity-0": !sidebarCollapsed,
+            })}
+          />
+          <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
+        </div>
         <SidebarHelpSection />
       </div>
     </div>

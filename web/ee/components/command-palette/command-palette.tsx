@@ -10,6 +10,7 @@ import { useUser, useAppTheme, useCommandPalette, useUserPermissions } from "@/h
 // plane web components
 import { PagesAppCommandModal, PagesAppShortcutsModal } from "@/plane-web/components/command-palette";
 import { WikiCreatePageModal } from "@/plane-web/components/pages";
+import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals";
 
 export const PagesAppCommandPalette: React.FC = observer(() => {
   // params
@@ -120,6 +121,7 @@ export const PagesAppCommandPalette: React.FC = observer(() => {
   return (
     <>
       <PagesAppShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
+      {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
       {workspaceSlug && (
         <WikiCreatePageModal
           workspaceSlug={workspaceSlug.toString()}
