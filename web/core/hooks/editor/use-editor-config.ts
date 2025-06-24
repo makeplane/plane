@@ -2,7 +2,7 @@ import { useCallback } from "react";
 // plane editor
 import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
 // helpers
-import { getEditorAssetSrc } from "@plane/utils";
+import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store";
 // plane web hooks
@@ -32,6 +32,20 @@ export const useEditorConfig = () => {
         checkIfAssetExists: async (assetId: string) => {
           const res = await fileService.checkIfAssetExists(workspaceSlug, assetId);
           return res?.exists ?? false;
+        },
+        getAssetDownloadSrc: async (path) => {
+          if (!path) return "";
+          if (path?.startsWith("http")) {
+            return path;
+          } else {
+            return (
+              getEditorAssetDownloadSrc({
+                assetId: path,
+                projectId,
+                workspaceSlug,
+              }) ?? ""
+            );
+          }
         },
         getAssetSrc: async (path) => {
           if (!path) return "";

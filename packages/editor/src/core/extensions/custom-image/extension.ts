@@ -20,7 +20,7 @@ type Props = {
 export const CustomImageExtension = (props: Props) => {
   const { fileHandler, isEditable } = props;
   // derived values
-  const { getAssetSrc, restore: restoreImageFn } = fileHandler;
+  const { getAssetSrc, getAssetDownloadSrc, restore: restoreImageFn } = fileHandler;
 
   return CustomImageExtensionConfig.extend({
     selectable: isEditable,
@@ -31,6 +31,7 @@ export const CustomImageExtension = (props: Props) => {
 
       return {
         ...this.parent?.(),
+        getImageDownloadSource: getAssetDownloadSrc,
         getImageSource: getAssetSrc,
         restoreImage: restoreImageFn,
         uploadImage: upload,
