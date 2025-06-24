@@ -5,11 +5,14 @@ import uuid
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Module imports
 from plane.app.serializers import (
@@ -31,14 +34,14 @@ from plane.db.models import (
     WorkspaceMemberInvite,
     Session,
 )
+from plane.ee.models import TeamspaceMember, PageUser
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
+from plane.authentication.session import BaseSessionAuthentication
+from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class UserEndpoint(BaseViewSet):
@@ -144,6 +147,18 @@ class UserEndpoint(BaseViewSet):
             workspaces_to_deactivate, ["is_active"], batch_size=100
         )
 
+        # Remove the user from the teamspaces where the user is part of
+        TeamspaceMember.objects.filter(member_id=request.user.id).delete()
+
+        # Remove the user from the pages where the user is part of
+        PageUser.objects.filter(user_id=request.user.id).delete()
+
+        # Sync workspace members
+        [
+            member_sync_task.delay(workspace.workspace.slug)
+            for workspace in workspaces_to_deactivate
+        ]
+
         # Delete all workspace invites
         WorkspaceMemberInvite.objects.filter(email=user.email).delete()
 
@@ -184,15 +199,19 @@ class UserEndpoint(BaseViewSet):
 
 
 class UserSessionEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
+
+    # Authentication classes
+    authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get(self, request):
+        # If the user is authenticated, return the user data
         if request.user.is_authenticated:
             user = User.objects.get(pk=request.user.id)
             serializer = UserMeSerializer(user)
             data = {"is_authenticated": True}
             data["user"] = serializer.data
             return Response(data, status=status.HTTP_200_OK)
+        # If the user is not authenticated, return False
         else:
             return Response({"is_authenticated": False}, status=status.HTTP_200_OK)
 
@@ -261,3 +280,14 @@ class ProfileEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserTokenVerificationEndpoint(BaseAPIView):
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request):
+        if request.user:
+            return Response({"user_id": request.user.id}, status=status.HTTP_200_OK)
+        return Response(
+            {"error": "Invalid verification token"}, status=status.HTTP_401_UNAUTHORIZED
+        )

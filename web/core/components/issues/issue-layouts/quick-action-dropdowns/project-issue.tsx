@@ -15,6 +15,7 @@ import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/c
 import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
+import { useIssueType } from "@/plane-web/hooks/store";
 import { IQuickActionProps } from "../list/list-view-types";
 // helper
 import { useProjectIssueMenuItems, MenuItemFactoryProps } from "./helper";
@@ -46,6 +47,8 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
+  // plane web hooks
+  const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
@@ -84,6 +87,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
+    issueTypeDetail,
     isDraftIssue,
     setTrackElement,
     setIssueToEdit,
