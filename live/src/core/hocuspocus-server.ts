@@ -7,48 +7,44 @@ import { handleAuthentication } from "@/core/lib/authentication";
 import { getExtensions } from "@/core/extensions/index";
 import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 // editor types
-import { TUserDetails } from "@plane/editor";
+import { EventToPayloadMap, TUserDetails, createRealtimeEvent } from "@plane/editor";
 // types
 import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/common";
 // error handling
 import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
+// server agent
+import { serverAgentManager } from "./agents/server-agent";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
   const serverName = process.env.HOSTNAME || uuidv4();
-  return Server.configure({
+  const server = Server.configure({
     name: serverName,
     onAuthenticate: async ({
       requestHeaders,
-      context,
       requestParameters,
-      // user id used as token for authentication
+      context,
       token,
     }: {
       requestHeaders: IncomingHttpHeaders;
-      context: HocusPocusServerContext; // Better than 'any', still allows property assignment
+      context: HocusPocusServerContext;
       requestParameters: URLSearchParams;
       token: string;
     }) => {
-      // need to rethrow all errors since hocuspocus needs to know to stop
-      // further propagation of events to other document lifecycle
       return catchAsync(
         async () => {
           let cookie: string | undefined = undefined;
           let userId: string | undefined = undefined;
 
-          // Extract cookie (fallback to request headers) and userId from token (for scenarios where
-          // the cookies are not passed in the request headers)
+          // Extract cookie (fallback to request headers) and userId from token
           try {
             const parsedToken = JSON.parse(token) as TUserDetails;
             userId = parsedToken.id;
             cookie = parsedToken.cookie;
           } catch (error) {
-            // If token parsing fails, fallback to request headers
             console.error("Token parsing failed, using request headers:", error);
           } finally {
-            // If cookie is still not found, fallback to request headers
             if (!cookie) {
               cookie = requestHeaders.cookie?.toString();
             }
@@ -66,9 +62,12 @@ export const getHocusPocusServer = async () => {
           }
 
           context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
-          context.cookie = cookie ?? requestParameters.get("cookie");
+          context.cookie = cookie ?? requestParameters.get("cookie") ?? "";
           context.userId = userId;
-          context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() as string;
+          context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() ?? "";
+          context.parentId = requestParameters.get("parentPageId")?.toString() ?? undefined;
+          context.projectId = requestParameters.get("projectId")?.toString() ?? "";
+          context.teamspaceId = requestParameters.get("teamspaceId")?.toString() ?? "";
 
           return await handleAuthentication({
             cookie: context.cookie,
@@ -77,24 +76,76 @@ export const getHocusPocusServer = async () => {
           });
         },
         { extra: { operation: "authenticate" } },
-        {
-          rethrow: true,
-        }
+        { rethrow: true }
       )();
     },
-    onStateless: async ({ payload, document }) => {
+    onStateless: async ({ payload, document, connection }) => {
       return catchAsync(
         async () => {
-          // broadcast the client event (derived from the server event) to all the clients so that they can update their state
-          const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
-          if (response) {
-            document.broadcastStateless(response);
+          const payloadStr = payload as string;
+
+          // Function to safely parse JSON without throwing exceptions
+          const safeJsonParse = (str: string) => {
+            try {
+              return { success: true, data: JSON.parse(str) };
+            } catch (e) {
+              return { success: false, error: e };
+            }
+          };
+
+          // First check if this is a known document event
+          const documentEvent = DocumentCollaborativeEvents[payload as TDocumentEventsServer]?.client;
+
+          if (documentEvent) {
+            const eventType = documentEvent as keyof EventToPayloadMap;
+
+            let eventData: Partial<EventToPayloadMap[typeof eventType]> = {
+              user_id: connection.context.userId,
+            };
+
+            if (eventType === "archived") {
+              eventData = {
+                ...eventData,
+                archived_at: new Date().toISOString(),
+              };
+            }
+
+            const realtimeEvent = createRealtimeEvent({
+              action: eventType,
+              page_id: document.name,
+              descendants_ids: [],
+              data: eventData as EventToPayloadMap[typeof eventType],
+              workspace_slug: connection.context.workspaceSlug || "",
+              user_id: connection.context.userId || "",
+            });
+
+            // Broadcast the event
+            document.broadcastStateless(JSON.stringify(realtimeEvent));
+            return;
+          }
+
+          // If not a document event, try to parse as JSON
+          const parseResult = safeJsonParse(payloadStr);
+
+          if (parseResult.success && parseResult.data && typeof parseResult.data === "object") {
+            const parsedPayload = parseResult.data as {
+              workspaceSlug?: string;
+              projectId?: string;
+              action?: string;
+            };
+
+            // Handle synced action
+            if (parsedPayload.action === "synced" && parsedPayload.workspaceSlug) {
+              serverAgentManager.notifySyncTrigger(document.name, connection.context);
+              return;
+            }
           }
         },
         { extra: { operation: "stateless", payload } }
-      );
+      )();
     },
-    extensions,
-    debounce: 1000,
+    extensions: [...extensions],
+    debounce: 10000,
   });
+  return server;
 };

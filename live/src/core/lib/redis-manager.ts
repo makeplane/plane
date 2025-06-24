@@ -1,9 +1,8 @@
 import { Redis } from "ioredis";
 import { logger } from "@plane/logger";
 import { getRedisUrl } from "@/core/lib/utils/redis-url";
-import { ShutdownManager } from "@/core/shutdown-manager";
+import { shutdownManager } from "@/core/shutdown-manager";
 
-// Define Redis error interface to handle specific error properties
 interface RedisError extends Error {
   code?: string;
 }
@@ -32,9 +31,7 @@ export class RedisManager {
     const redisUrl = getRedisUrl();
 
     if (!redisUrl) {
-      logger.warn(
-        "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
-      );
+      shutdownManager.shutdown("Redis URL is not set, shutting down", 1);
       return null;
     }
 
@@ -45,13 +42,12 @@ export class RedisManager {
           logger.warn(
             "Initial Redis connection attempt failed. Continuing without Redis (you won't be able to sync data between multiple plane live servers)"
           );
+          shutdownManager.shutdown("Redis connection failed and could not be recovered", 1);
           return null;
         } else {
           // Once connected at least once, try a few times before giving up
           if (times > this.maxReconnectAttempts) {
             logger.error(`Exceeded ${this.maxReconnectAttempts} Redis reconnect attempts. Shutting down the server.`);
-            // Use ShutdownManager to gracefully terminate the server
-            const shutdownManager = ShutdownManager.getInstance();
             shutdownManager.shutdown("Redis connection lost and could not be recovered", 1);
             return null; // This will never be reached due to shutdown, but needed for type safety
           }
@@ -76,15 +72,27 @@ export class RedisManager {
     });
 
     this.client.on("error", (error: RedisError) => {
+      const fatalErrorCodes = [
+        "ENOTFOUND",
+        "ECONNREFUSED",
+        "ECONNRESET",
+        "ETIMEDOUT",
+        "EHOSTUNREACH",
+        "EPIPE",
+        "WRONGPASS",
+        "NOAUTH",
+      ];
+      const fatalMessages = ["WRONGPASS", "NOAUTH", "READONLY", "LOADING", "CLUSTERDOWN", "CONNECTION_BROKEN"];
+
       if (
-        error?.code === "ENOTFOUND" ||
-        error.message.includes("WRONGPASS") ||
-        error.message.includes("NOAUTH") ||
-        error.message.includes("ECONNREFUSED")
+        (error?.code && fatalErrorCodes.includes(error.code)) ||
+        fatalMessages.some((msg) => error.message.includes(msg))
       ) {
         if (this.client) this.client.disconnect();
+        shutdownManager.shutdown("Redis connection failed and could not be recovered", 1);
+      } else {
+        logger.warn("Non-fatal Redis error:", error);
       }
-      logger.warn("Redis error:", error);
     });
 
     this.client.on("close", () => {

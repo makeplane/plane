@@ -24,6 +24,8 @@ const envSchema = z.object({
 
   // Graceful termination timeout
   SHUTDOWN_TIMEOUT: z.string().default("10000").transform(Number),
+  // Live server secret key
+  LIVE_SERVER_SECRET_KEY: z.string(),
 });
 
 // Validate the environment variables

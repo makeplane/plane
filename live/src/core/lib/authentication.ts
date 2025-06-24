@@ -17,7 +17,6 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    console.log("caught?");
     handleError(error, {
       errorType: "unauthorized",
       message: "Failed to authenticate user",

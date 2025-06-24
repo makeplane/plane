@@ -123,11 +123,16 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
+  titleHTML: string;
 } => {
   // encode binary description data
   const base64Data = convertBinaryDataToBase64String(description);
   const yDoc = new Y.Doc();
   Y.applyUpdate(yDoc, description);
+  const title = yDoc.getXmlFragment("title");
+  const titleJSON = yXmlFragmentToProseMirrorRootNode(title, documentEditorSchema).toJSON();
+  // @ts-expect-error tiptap types are incorrect
+  const titleHTML = extractTextFromHTML(generateHTML(titleJSON, DOCUMENT_EDITOR_EXTENSIONS));
   // convert to JSON
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, documentEditorSchema).toJSON();
@@ -139,6 +144,7 @@ export const getAllDocumentFormatsFromDocumentEditorBinaryData = (
     contentBinaryEncoded: base64Data,
     contentJSON,
     contentHTML,
+    titleHTML,
   };
 };
 
@@ -187,4 +193,10 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
   }
 
   return allFormats;
+};
+
+export const extractTextFromHTML = (html: string): string => {
+  // Use a regex to extract text between tags
+  const textMatch = html.replace(/<[^>]*>/g, "");
+  return textMatch || "";
 };

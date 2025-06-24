@@ -1,27 +1,28 @@
 import { Database } from "@hocuspocus/extension-database";
 import { catchAsync } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
-import { getDocumentHandler } from "../handlers/document-handlers";
 import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common";
+import { storePayload } from "@hocuspocus/server";
+import { extractTextFromHTML } from "./title-update/title-utils";
+import { getDocumentHandler } from "../handlers/page-handlers";
 
 export const createDatabaseExtension = () => {
   return new Database({
     fetch: handleFetch,
-    store: handleStore,
+    store: handleStore as (data: storePayload) => Promise<void>,
   });
 };
 
 const handleFetch = async ({
   context,
-  documentName: pageId,
-  requestParameters,
+  documentName,
 }: {
   context: HocusPocusServerContext;
-  documentName: TDocumentTypes;
+  documentName: string;
   requestParameters: URLSearchParams;
 }) => {
   const { documentType } = context;
-  const params = requestParameters;
+  const pageId = documentName as TDocumentTypes;
 
   let fetchedData = null;
   fetchedData = await catchAsync(
@@ -41,7 +42,6 @@ const handleFetch = async ({
       fetchedData = await documentHandler.fetch({
         context: context as HocusPocusServerContext,
         pageId,
-        params,
       });
 
       if (!fetchedData) {
@@ -67,15 +67,20 @@ const handleFetch = async ({
 const handleStore = async ({
   context,
   state,
-  documentName: pageId,
-  requestParameters,
-}: {
+  documentName,
+  document,
+}: Partial<storePayload> & {
   context: HocusPocusServerContext;
-  state: Buffer;
-  documentName: TDocumentTypes;
-  requestParameters: URLSearchParams;
+  documentName: string;
 }) => {
-  catchAsync(
+  const pageId = documentName;
+
+  if (!context) {
+    console.error("Context is undefined in handleStore for document:", pageId);
+    return;
+  }
+
+  await catchAsync(
     async () => {
       if (!state) {
         handleError(null, {
@@ -87,8 +92,12 @@ const handleStore = async ({
           throw: true,
         });
       }
+      let title = "";
+      if (document) {
+        title = extractTextFromHTML(document?.getXmlFragment("title")?.toJSON());
+      }
       const { documentType } = context as HocusPocusServerContext;
-      const params = requestParameters;
+
       if (!documentType) {
         handleError(null, {
           errorType: "bad-request",
@@ -105,11 +114,14 @@ const handleStore = async ({
         context: context as HocusPocusServerContext,
         pageId,
         state,
-        params,
+        title,
       });
     },
     {
-      params: { pageId, documentType: context.documentType },
+      params: {
+        pageId,
+        documentType: context?.documentType || "unknown",
+      },
       extra: { operation: "store" },
     }
   )();
