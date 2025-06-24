@@ -27,7 +27,7 @@ def add_app_bots_to_project(project_id: str, user_id: Optional[str] = None) -> N
             workspace=project.workspace,
             status=WorkspaceAppInstallation.Status.INSTALLED,
             deleted_at__isnull=True,
-        )
+        ).exclude(app_bot__id=user_id)
 
         # Create ProjectMember records for each app bot
         project_members: List[ProjectMember] = []

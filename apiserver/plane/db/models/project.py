@@ -1,7 +1,9 @@
 # Python imports
-import pytz
-from uuid import uuid4, UUID
 from enum import Enum
+from uuid import UUID, uuid4
+
+import pytz
+from crum import get_current_user
 
 # Django imports
 from django.conf import settings
@@ -9,12 +11,14 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 
+from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
+
 # Module imports
 from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet
 
 # Module imports
 from .base import BaseModel
-from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
+
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -61,9 +65,9 @@ class ProjectBaseQuerySet(SoftDeletionQuerySet):
     """QuerySet for project related models that handles accessibility"""
 
     def accessible_to(self, user_id: UUID, slug: str):
-        from plane.ee.models import TeamspaceProject, TeamspaceMember
-        from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+        from plane.ee.models import TeamspaceMember, TeamspaceProject
         from plane.payment.flags.flag import FeatureFlag
+        from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
         base_query = Q(
             project_projectmember__member_id=user_id,
@@ -221,7 +225,11 @@ class Project(BaseModel):
 
     def save(self, *args, **kwargs):
         self.identifier = self.identifier.strip().upper()
-        return super().save(*args, **kwargs)
+        project = super().save(*args, **kwargs)
+        # Add app bots to the newly created project
+        if self._state.adding:
+            self.add_app_bots_to_project()
+        return project
 
     def delete(self, using=None, *args, **kwargs):
         delete_queryset = super().delete(using=using, *args, **kwargs)
@@ -229,14 +237,27 @@ class Project(BaseModel):
 
         return delete_queryset
 
+    def add_app_bots_to_project(self):
+        from plane.ee.bgtasks.app_bot_task import add_app_bots_to_project
+
+        # Trigger the background task with the project id
+        user_id = None
+        if self.created_by_id:
+            user_id = self.created_by_id
+        else:
+            user = get_current_user()
+            user_id = user.id if user and user.is_authenticated else None
+
+        add_app_bots_to_project.delay(str(self.id), user_id)
+
 
 class ProjectQuerySet(SoftDeletionQuerySet):
     """QuerySet for project related models that handles accessibility"""
 
     def accessible_to(self, user_id: UUID, slug: str):
-        from plane.ee.models import TeamspaceProject, TeamspaceMember
-        from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+        from plane.ee.models import TeamspaceMember, TeamspaceProject
         from plane.payment.flags.flag import FeatureFlag
+        from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
         base_query = Q(
             project__project_projectmember__member_id=user_id,
