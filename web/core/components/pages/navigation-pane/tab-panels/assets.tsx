@@ -1,15 +1,13 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
 // plane imports
 import { CORE_EXTENSIONS, type TEditorAsset } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { AdditionalPageNavigationPaneAssetItem } from "@/plane-web/components/pages/navigation-pane/tab-panels/assets";
+import { PageNavigationPaneAssetsTabEmptyState } from "@/plane-web/components/pages/navigation-pane/tab-panels/empty-states/assets";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -100,26 +98,8 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props
   const {
     editor: { assetsList },
   } = page;
-  // translation
-  const { t } = useTranslation();
 
-  // asset resolved path
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/pages/navigation-pane/assets" });
-
-  if (assetsList.length === 0)
-    return (
-      <div className="size-full grid place-items-center">
-        <div className="flex flex-col items-center gap-y-6 text-center">
-          <Image src={resolvedPath} width={160} height={160} alt="An image depicting the assets of a page" />
-          <div className="space-y-2.5">
-            <h4 className="text-base font-medium">{t("page_navigation_pane.tabs.assets.empty_state.title")}</h4>
-            <p className="text-sm text-custom-text-200 font-medium">
-              {t("page_navigation_pane.tabs.assets.empty_state.description")}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+  if (assetsList.length === 0) return <PageNavigationPaneAssetsTabEmptyState />;
 
   return (
     <div className="mt-5 space-y-4">
