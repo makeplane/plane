@@ -16,7 +16,6 @@ import {
   CustomCodeInlineExtension,
   CustomColorExtension,
   CustomHorizontalRule,
-  CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
   CustomMentionExtension,
@@ -39,6 +38,8 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
 import type { IEditorProps } from "@/types";
+// local imports
+import { CustomImageExtension } from "./custom-image/extension";
 
 type TArguments = Pick<
   IEditorProps,
@@ -198,12 +199,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(
-      ImageExtension(fileHandler).configure({
-        HTMLAttributes: {
-          class: "rounded-md",
-        },
+      ImageExtension({
+        fileHandler,
       }),
-      CustomImageExtension(fileHandler)
+      CustomImageExtension({
+        fileHandler,
+        isEditable: editable,
+      })
     );
   }
 

@@ -163,7 +163,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
         return;
       }
     },
-    [isFullScreenEnabled, magnification]
+    [isFullScreenEnabled]
   );
 
   // Event listeners
