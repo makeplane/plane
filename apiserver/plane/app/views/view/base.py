@@ -38,7 +38,10 @@ from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPagina
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
-from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+
 
 class WorkspaceViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
@@ -55,6 +58,7 @@ class WorkspaceViewViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project__isnull=True)
             .filter(Q(owned_by=self.request.user) | Q(access=1))
+            .exclude(team_spaces__isnull=False)
             .select_related("workspace")
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
@@ -222,7 +226,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             )
             .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
-
 
     @method_decorator(gzip_page)
     @allow_permission(
@@ -408,7 +411,9 @@ class IssueViewViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
@@ -436,7 +441,9 @@ class IssueViewViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not issue_view.owned_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
