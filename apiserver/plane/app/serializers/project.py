@@ -35,7 +35,7 @@ class ProjectSerializer(BaseSerializer):
 
         if project.exists():
             raise serializers.ValidationError(
-                detail="The project name is already taken",
+                detail="PROJECT_NAME_ALREADY_EXIST",
             )
 
         return name
@@ -53,7 +53,7 @@ class ProjectSerializer(BaseSerializer):
 
         if project.exists():
             raise serializers.ValidationError(
-                detail="The project identifier is already taken",
+                detail="PROJECT_IDENTIFIER_ALREADY_EXIST",
             )
 
         return identifier
