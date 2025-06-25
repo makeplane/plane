@@ -75,7 +75,13 @@ const ProjectsInsightTable = observer(() => {
                 {row.original.name}
               </div>
               <TrendPiece
-                percentage={(row.original.completed_work_items / row.original.total_work_items) * 100}
+                percentage={
+                  row.original.total_work_items > 0
+                    ? isNaN((row.original.completed_work_items / row.original.total_work_items) * 100)
+                      ? 0
+                      : (row.original.completed_work_items / row.original.total_work_items) * 100
+                    : 0
+                }
                 variant="tinted"
                 trendIconVisible={false}
               />
