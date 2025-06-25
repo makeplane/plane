@@ -1,9 +1,14 @@
-FROM makeplane/caddy:latest
+FROM caddy:builder AS caddy-builder
 
-COPY ./Caddyfile.ce /etc/caddy/Caddyfile
+RUN xcaddy build \
+        --with github.com/caddy-dns/cloudflare@8cbec3f04d5b4a768c52941a5468c4b71436509e \
+        # --with github.com/caddy-dns/digitalocean@master \
+        --with github.com/mholt/caddy-l4
 
-COPY ./caddy.sh /docker-entrypoint.sh
+FROM caddy:alpine
 
-RUN chmod +x /docker-entrypoint.sh
+RUN apk add nss-tools bash curl 
 
-CMD ["/docker-entrypoint.sh"]
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
+
+COPY Caddyfile.ce /etc/caddy/Caddyfile
