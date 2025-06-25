@@ -161,8 +161,10 @@ class OffsetPaginator:
             else results.count()
         )
 
+        # Check if there are more results available after the current page
+
         # Adjust cursors based on the results for pagination
-        next_cursor = Cursor(limit, page + 1, False, total_count > limit)
+        next_cursor = Cursor(limit, page + 1, False, len(results) > limit)
         # If the page is greater than 0, then set the previous cursor
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
