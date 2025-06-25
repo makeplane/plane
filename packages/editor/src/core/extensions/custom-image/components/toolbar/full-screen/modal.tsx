@@ -192,9 +192,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       })}
     >
       <div
+        className={cn("fixed inset-0 size-full z-20 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
+          "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
+          "cursor-default": !isDragging,
+          "cursor-grabbing": isDragging,
+        })}
         ref={modalRef}
         onMouseDown={(e) => e.target === modalRef.current && handleClose()}
-        className="relative size-full grid place-items-center overflow-hidden"
       >
         <button type="button" onClick={handleClose} className="absolute top-10 right-10 size-8 grid place-items-center">
           <X className="size-8 text-white/60 hover:text-white transition-colors" />

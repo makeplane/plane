@@ -15,7 +15,6 @@ from django.db.models import (
     UUIDField,
     Value,
     Subquery,
-    Count,
 )
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -33,6 +32,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueUserPropertySerializer,
     IssueSerializer,
+    IssueListDetailSerializer,
 )
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -49,9 +49,11 @@ from plane.db.models import (
     CycleIssue,
     UserRecentVisit,
     ModuleIssue,
-    Cycle,
+    IssueRelation,
+    IssueAssignee,
+    IssueLabel,
 )
-from plane.ee.models import EntityIssueStateActivity, TeamspaceProject, TeamspaceMember
+from plane.ee.models import TeamspaceProject, TeamspaceMember
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -1174,22 +1176,22 @@ class IssueDetailEndpoint(BaseAPIView):
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features
         #  if it is true then show all the issues else show only the issues created by the user
-        project_member_subquery = ProjectMember.objects.filter(
-            project_id=OuterRef("project_id"),
-            member=self.request.user,
-            is_active=True,
-        ).filter(
-            Q(role__gt=ROLE.GUEST.value) 
-            | Q(
-                role=ROLE.GUEST.value, project__guest_view_all_features=True
+        permission_subquery = (
+            Issue.issue_objects.filter(
+                workspace__slug=slug, project_id=project_id, id=OuterRef("id")
             )
-        )
-
-        # Main issue query
-        issue = (
-            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
             .filter(
-                Q(Exists(project_member_subquery))
+                Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role__gt=ROLE.GUEST.value,
+                )
+                | Q(
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                    project__project_projectmember__role=ROLE.GUEST.value,
+                    project__guest_view_all_features=True,
+                )
                 | Q(
                     project__project_projectmember__member=self.request.user,
                     project__project_projectmember__is_active=True,
@@ -1198,50 +1200,36 @@ class IssueDetailEndpoint(BaseAPIView):
                     created_by=self.request.user,
                 )
             )
-            .prefetch_related("assignees", "labels", "issue_module__module")
+            .values("id")
+        )
+        # Main issue query
+        issue = (
+            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
+            .filter(Exists(permission_subquery))
+            .prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "label_issue",
+                    queryset=IssueLabel.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_module",
+                    queryset=ModuleIssue.objects.all(),
+                )
+            )
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
                         issue=OuterRef("id"), deleted_at__isnull=True
                     ).values("cycle_id")[:1]
                 )
-            )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(issue_module__module_id__isnull=True)
-                            & Q(issue_module__module__archived_at__isnull=True)
-                            & Q(issue_module__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
             )
             .annotate(
                 link_count=IssueLink.objects.filter(issue=OuterRef("id"))
@@ -1266,6 +1254,23 @@ class IssueDetailEndpoint(BaseAPIView):
             )
         )
 
+        # Add additional prefetch based on expand parameter
+        if self.expand:
+            if "issue_relation" in self.expand:
+                issue = issue.prefetch_related(
+                    Prefetch(
+                        "issue_relation",
+                        queryset=IssueRelation.objects.select_related("related_issue"),
+                    )
+                )
+            if "issue_related" in self.expand:
+                issue = issue.prefetch_related(
+                    Prefetch(
+                        "issue_related",
+                        queryset=IssueRelation.objects.select_related("issue"),
+                    )
+                )
+
         issue = issue.filter(**filters)
         order_by_param = request.GET.get("order_by", "-created_at")
         # Issue queryset
@@ -1276,7 +1281,7 @@ class IssueDetailEndpoint(BaseAPIView):
             request=request,
             order_by=order_by_param,
             queryset=(issue),
-            on_results=lambda issue: IssueSerializer(
+            on_results=lambda issue: IssueListDetailSerializer(
                 issue, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
