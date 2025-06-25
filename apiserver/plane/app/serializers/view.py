@@ -42,7 +42,7 @@ class ViewIssueListSerializer(serializers.Serializer):
             "link_count": instance.link_count,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
-            "state__group": instance.state.group,
+            "state__group": instance.state.group if instance.state else None,
             "assignee_ids": self.get_assignee_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "module_ids": self.get_module_ids(instance),

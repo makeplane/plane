@@ -780,6 +780,10 @@ class IssueListDetailSerializer(serializers.Serializer):
                 relations = []
                 for relation in instance.issue_relation.all():
                     related_issue = relation.related_issue
+                    # If the related issue is deleted, skip it
+                    if not related_issue:
+                        continue
+                    # Add the related issue to the relations list
                     relations.append(
                         {
                             "id": related_issue.id,
@@ -801,6 +805,10 @@ class IssueListDetailSerializer(serializers.Serializer):
                 related = []
                 for relation in instance.issue_related.all():
                     issue = relation.issue
+                    # If the related issue is deleted, skip it
+                    if not issue:
+                        continue
+                    # Add the related issue to the related list
                     related.append(
                         {
                             "id": issue.id,

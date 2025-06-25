@@ -48,7 +48,6 @@ from plane.db.models import (
     UserRecentVisit,
     ModuleIssue,
     IssueRelation,
-    User,
     IssueAssignee,
     IssueLabel,
 )
