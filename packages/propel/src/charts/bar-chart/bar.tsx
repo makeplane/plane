@@ -140,7 +140,6 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
         fill={typeof fill === "function" ? fill(payload) : fill}
         stroke="none"
-        alignmentBaseline="middle"
       />
       {showPercentage && (
         <text
