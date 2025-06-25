@@ -12,8 +12,10 @@ import { EditorMentionsRoot } from "@/components/editor";
 import { useEditorConfig } from "@/hooks/editor";
 // store hooks
 import { useMember } from "@/hooks/store";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { NodeViewProps } from "@tiptap/react";
 
 type RichTextReadOnlyEditorWrapperProps = MakeOptional<
   Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
@@ -49,6 +51,7 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
           getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         {...props}
+        embedHandler={{ externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> } }}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(props.containerClassName, "relative pl-3")}
       />

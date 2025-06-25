@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
+import { NodeViewProps } from "@tiptap/react";
 import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
@@ -12,11 +13,12 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 interface RichTextEditorWrapperProps
   extends MakeOptional<
-    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
-    "disabledExtensions" | "flaggedExtensions"
+    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "flaggedExtensions">,
+    "disabledExtensions" 
   > {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
@@ -67,6 +69,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         renderComponent: (props) => <EditorMentionsRoot {...props} />,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
+      embedHandler={{ externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> } }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

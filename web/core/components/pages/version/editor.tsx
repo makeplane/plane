@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { NodeViewProps } from "@tiptap/react";
 // plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
 import { TPageVersion } from "@plane/types";
@@ -13,6 +14,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
@@ -116,6 +118,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
         issue: {
           widgetCallback: issueEmbedProps.widgetCallback,
         },
+        externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
       }}
     />
   );

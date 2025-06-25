@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // plane constants
+import { NodeViewProps } from "@tiptap/react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
@@ -18,11 +19,12 @@ import { useMember } from "@/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps
   extends MakeOptional<
-    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
     "disabledExtensions" | "flaggedExtensions"
   > {
   workspaceSlug: string;
@@ -84,7 +86,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
+  const embedHandlerConfig = {
+    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
+  };
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
@@ -113,6 +117,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         placeholder={placeholder}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
+        embedHandler={embedHandlerConfig}
       />
       {showToolbar && (
         <div

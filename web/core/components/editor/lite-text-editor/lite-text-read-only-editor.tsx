@@ -1,5 +1,6 @@
 import React from "react";
 // plane imports
+import { NodeViewProps } from "@tiptap/react";
 import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditorProps, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 // components
@@ -12,9 +13,10 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type LiteTextReadOnlyEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<ILiteTextReadOnlyEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceId: string;
@@ -31,7 +33,9 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
     // editor config
     const { getReadOnlyEditorFileHandlers } = useEditorConfig();
-
+    const embedHandlerConfig = {
+      externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
+    };
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
@@ -47,6 +51,7 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
           getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
         }}
         {...props}
+        embedHandler={embedHandlerConfig}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(props.containerClassName, "relative p-2")}
       />
