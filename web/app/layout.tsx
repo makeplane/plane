@@ -1,13 +1,13 @@
 import { Metadata, Viewport } from "next";
 import Script from "next/script";
-
 // styles
 import "@/styles/globals.css";
-
+// plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
-
-// helpers
 import { cn } from "@plane/utils";
+// plane web imports
+import { DesktopAppProviderRoot } from "@/plane-web/components/desktop";
+import { TrialBanner } from "@/plane-web/components/license";
 
 // local
 import { AppProvider } from "./provider";
@@ -80,13 +80,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div id="context-menu-portal" />
+        <div id="editor-portal" />
         <AppProvider>
+          <DesktopAppProviderRoot />
           <div
             className={cn(
               "h-screen w-full overflow-hidden bg-custom-background-100 relative flex flex-col",
               "app-container"
             )}
           >
+            {/* free trial banner */}
+            <TrialBanner />
             <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>

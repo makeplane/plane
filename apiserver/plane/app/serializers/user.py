@@ -110,7 +110,11 @@ class UserMeSettingsSerializer(BaseSerializer):
                 workspace_member__member=obj.id,
                 workspace_member__is_active=True,
             ).first()
-            logo_asset_url = workspace.logo_asset.asset_url if workspace.logo_asset is not None else ""
+            logo_asset_url = (
+                workspace.logo_asset.asset_url
+                if workspace.logo_asset is not None
+                else ""
+            )
             return {
                 "last_workspace_id": profile.last_workspace_id,
                 "last_workspace_slug": (

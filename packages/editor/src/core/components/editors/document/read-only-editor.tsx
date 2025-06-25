@@ -1,7 +1,5 @@
 import { Extensions } from "@tiptap/core";
 import React, { forwardRef, MutableRefObject } from "react";
-// plane imports
-import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -12,6 +10,9 @@ import { WorkItemEmbedExtension } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
+import { CustomAttachmentExtension } from "@/plane-editor/extensions/attachments/extension";
 // types
 import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
@@ -30,11 +31,25 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     initialValue,
     mentionHandler,
   } = props;
-  const extensions: Extensions = [];
+  const extensions: Extensions = [
+    CustomAttachmentExtension({
+      fileHandler,
+      isFlagged: flaggedExtensions.includes("attachments"),
+      isEditable: false,
+    }),
+  ];
   if (embedHandler?.issue) {
     extensions.push(
       WorkItemEmbedExtension({
         widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
+  if (embedHandler?.page) {
+    extensions.push(
+      PageEmbedReadOnlyExtension({
+        widgetCallback: embedHandler.page.widgetCallback,
       })
     );
   }
@@ -62,7 +77,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
       bubbleMenuEnabled={false}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={cn(editorContainerClassName, "document-editor")}
+      editorContainerClassName={editorContainerClassName}
       id={id}
     />
   );

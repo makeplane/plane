@@ -15,6 +15,7 @@ import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import { useFlag } from "@/plane-web/hooks/store";
 
 type Props = {
   params: {
@@ -50,11 +51,14 @@ const AnalyticsPage = observer((props: Props) => {
     EUserPermissionsLevel.WORKSPACE
   );
 
+  const workspaceSlug = params.workspaceSlug;
+  const isAnalyticsTabsEnabled = useFlag(workspaceSlug.toString(), "ANALYTICS_ADVANCED");
+
   // derived values
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
+  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t, isAnalyticsTabsEnabled), [isAnalyticsTabsEnabled, t]);
   const tabs: TabItem[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
