@@ -5,11 +5,11 @@ import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // Constants
-const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14;
-const BAR_TOP_BORDER_RADIUS = 4;
-const BAR_BOTTOM_BORDER_RADIUS = 4;
-const DEFAULT_LOLLIPOP_LINE_WIDTH = 2;
-const DEFAULT_LOLLIPOP_CIRCLE_RADIUS = 8;
+const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height required to show text inside bar
+const BAR_TOP_BORDER_RADIUS = 4; // Border radius for the top of bars
+const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for the bottom of bars
+const DEFAULT_LOLLIPOP_LINE_WIDTH = 2; // Width of lollipop stick
+const DEFAULT_LOLLIPOP_CIRCLE_RADIUS = 8; // Radius of lollipop circle
 
 // Types
 interface TShapeProps {
@@ -32,7 +32,7 @@ interface TBarProps extends TShapeProps {
   dotted?: boolean;
 }
 
-// Utilities
+// Helper Functions
 const calculatePercentage = <K extends string, T extends string>(
   data: TChartData<K, T>,
   stackKeys: T[],
@@ -149,7 +149,13 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
   );
 });
 
-// Shape Variants Factory
+// Shape Variants
+/**
+ * Factory function to create shape variants with consistent props
+ * @param Component - The base component to render
+ * @param factoryProps - Additional props to pass to the component
+ * @returns A function that creates the shape with proper props
+ */
 const createShapeVariant =
   (Component: React.ComponentType<TBarProps>, factoryProps?: Partial<TBarProps>) =>
   (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): JSX.Element => {
@@ -170,14 +176,13 @@ const createShapeVariant =
     );
   };
 
-// Shape Variants
 export const barShapeVariants: Record<
   TBarChartShapeVariant,
   (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => JSX.Element
 > = {
-  bar: createShapeVariant(CustomBar),
-  lollipop: createShapeVariant(CustomBarLollipop),
-  "lollipop-dotted": createShapeVariant(CustomBarLollipop, { dotted: true }),
+  bar: createShapeVariant(CustomBar), // Standard bar with rounded corners
+  lollipop: createShapeVariant(CustomBarLollipop), // Line with circle at top
+  "lollipop-dotted": createShapeVariant(CustomBarLollipop, { dotted: true }), // Dotted line lollipop variant
 };
 
 // Display names
