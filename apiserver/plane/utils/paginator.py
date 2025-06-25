@@ -140,9 +140,9 @@ class OffsetPaginator:
             )
         # The current page
         page = cursor.offset
-        # The offset
-        offset = cursor.offset * cursor.value
-        stop = offset + (cursor.value or limit) + 1
+        # The offset - use limit instead of cursor.value for consistent pagination
+        offset = cursor.offset * limit
+        stop = offset + limit + 1
 
         if self.max_offset is not None and offset >= self.max_offset:
             raise BadPaginationError("Pagination offset too large")
@@ -150,7 +150,9 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
-        if cursor.value != limit:
+
+        # Only slice from the end if we're going backwards (previous page)
+        if cursor.value != limit and cursor.is_prev:
             results = results[-(limit + 1) :]
 
         total_count = (

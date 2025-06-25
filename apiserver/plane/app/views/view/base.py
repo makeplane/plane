@@ -216,7 +216,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         # Base query for the counts
         total_issue_count = (
-            Issue.issue_objects.filter(workspace__slug=slug)
+            Issue.issue_objects.filter(**filters)
+            .filter(workspace__slug=slug)
             .filter(
                 Q(
                     project__project_projectmember__role=5,
