@@ -33,6 +33,7 @@ x-proxy-env: &proxy-env
   LISTEN_HTTP_PORT: ${LISTEN_PORT:-80}
   LISTEN_HTTPS_PORT: ${LISTEN_SSL_PORT:-443}
   BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+  SITE_ADDRESS: ${SITE_ADDRESS:-:80}
 
 x-mq-env: &mq-env # RabbitMQ Settings
   RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}

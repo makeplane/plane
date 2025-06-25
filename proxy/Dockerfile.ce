@@ -1,6 +1,6 @@
 FROM makeplane/caddy:latest
 
-COPY ./Caddyfile.template /etc/caddy/Caddyfile
+COPY ./Caddyfile.ce /etc/caddy/Caddyfile
 
 COPY ./caddy.sh /docker-entrypoint.sh
 
