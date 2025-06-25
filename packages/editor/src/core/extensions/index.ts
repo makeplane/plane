@@ -1,7 +1,6 @@
 export * from "./callout";
 export * from "./code";
 export * from "./code-inline";
-export * from "./custom-image";
 export * from "./custom-link";
 export * from "./image";
 export * from "./mentions";
@@ -22,3 +21,4 @@ export * from "./side-menu";
 export * from "./text-align";
 export * from "./flat-list";
 export * from "./utility";
+export * from "./drop-cursor";

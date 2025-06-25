@@ -19,7 +19,6 @@ import {
   CustomCodeInlineExtension,
   CustomColorExtension,
   CustomHorizontalRule,
-  CustomImageExtension,
   CustomKeymap,
   CustomLinkExtension,
   CustomMentionExtension,
@@ -33,15 +32,17 @@ import {
   TableRow,
   FlatListExtension,
   UtilityExtension,
+  DropCursorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
-import { IEditorProps } from "@/types";
 // types
-import { DropCursorExtension } from "./drop-cursor";
+import type { IEditorProps } from "@/types";
+// local imports
+import { CustomImageExtension } from "./custom-image/extension";
 
 type TArguments = Pick<
   IEditorProps,
@@ -177,7 +178,14 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     Markdown.extend({
       addMarkdownSerializerRules() {
         return {
-          list: (state: { write: (text: string) => void; ensureNewLine: () => void; serializeFragment: (fragment: any) => string }, node: { attrs: Record<string, any>; content: any }) => {
+          list: (
+            state: {
+              write: (text: string) => void;
+              ensureNewLine: () => void;
+              serializeFragment: (fragment: any) => string;
+            },
+            node: { attrs: Record<string, any>; content: any }
+          ) => {
             // Custom serializer for flat-list nodes
             const attrs = node.attrs as { kind?: string; order?: number; checked?: boolean; collapsed?: boolean };
             const listKind = attrs.kind || "bullet";
@@ -268,15 +276,15 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(
-      ImageExtension(fileHandler).configure({
-        HTMLAttributes: {
-          class: "rounded-md",
-        },
+      ImageExtension({
+        fileHandler,
       }),
-      CustomImageExtension(fileHandler)
+      CustomImageExtension({
+        fileHandler,
+        isEditable: editable,
+      })
     );
   }
 
-  // @ts-expect-error - TODO: fix this
   return extensions;
 };

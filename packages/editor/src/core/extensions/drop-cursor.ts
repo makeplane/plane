@@ -155,7 +155,7 @@ class DropCursorView {
     const isBetweenFlatList = isBetweenFlatLists ?? false;
     const $pos = this.editorView.state.doc.resolve(this.cursorPos!);
     const isBlock = !$pos.parent.inlineContent;
-    let rect: Partial<DOMRect>;
+    let rect: Partial<DOMRect> | undefined;
     const editorDOM = this.editorView.dom;
     const editorRect = editorDOM.getBoundingClientRect();
     const scaleX = editorRect.width / editorDOM.offsetWidth;
@@ -419,7 +419,7 @@ function rawIsBetweenFlatListsFn(event: DragEvent, editor: Editor) {
       state.pos = getPositionFromElement(firstNestedList);
       state.hasNestedLists = true;
     } else if (level >= 1 && !sibling) {
-      const parent = currentFlatList.parentElement.parentElement;
+      const parent = currentFlatList.parentElement?.parentElement;
       const poss = getPositionFromElement(currentFlatList as Element, true);
       if (parent) {
         state.pos = poss;
