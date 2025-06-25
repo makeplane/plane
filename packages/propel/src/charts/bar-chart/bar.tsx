@@ -1,10 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 // plane imports
-import { TChartData } from "@plane/types";
+import { TBarItem, TChartData } from "@plane/types";
 import { cn } from "@plane/utils";
 
-// Helper to calculate percentage
+// Constants
+const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14;
+const BAR_TOP_BORDER_RADIUS = 4;
+const BAR_BOTTOM_BORDER_RADIUS = 4;
+const DEFAULT_LOLLIPOP_LINE_WIDTH = 2;
+const DEFAULT_LOLLIPOP_CIRCLE_RADIUS = 8;
+
+// Types
+interface TShapeProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  dataKey: string;
+  payload: any;
+  opacity?: number;
+}
+
+interface TBarProps extends TShapeProps {
+  fill: string | ((payload: any) => string);
+  stackKeys: string[];
+  textClassName?: string;
+  showPercentage?: boolean;
+  showTopBorderRadius?: boolean;
+  showBottomBorderRadius?: boolean;
+}
+
+// Utilities
 const calculatePercentage = <K extends string, T extends string>(
   data: TChartData<K, T>,
   stackKeys: T[],
@@ -14,11 +41,36 @@ const calculatePercentage = <K extends string, T extends string>(
   return total === 0 ? 0 : Math.round((data[currentKey] / total) * 100);
 };
 
-const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height needed to show text inside
-const BAR_TOP_BORDER_RADIUS = 4; // Border radius for each bar
-const BAR_BOTTOM_BORDER_RADIUS = 4; // Border radius for each bar
+const getBarPath = (x: number, y: number, width: number, height: number, topRadius: number, bottomRadius: number) => `
+  M${x},${y + topRadius}
+  Q${x},${y} ${x + topRadius},${y}
+  L${x + width - topRadius},${y}
+  Q${x + width},${y} ${x + width},${y + topRadius}
+  L${x + width},${y + height - bottomRadius}
+  Q${x + width},${y + height} ${x + width - bottomRadius},${y + height}
+  L${x + bottomRadius},${y + height}
+  Q${x},${y + height} ${x},${y + height - bottomRadius}
+  Z
+`;
 
-export const CustomBar = React.memo((props: any) => {
+const PercentageText = ({
+  x,
+  y,
+  percentage,
+  className,
+}: {
+  x: number;
+  y: number;
+  percentage: number;
+  className?: string;
+}) => (
+  <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
+    {percentage}%
+  </text>
+);
+
+// Base Components
+const CustomBar = React.memo((props: TBarProps) => {
   const {
     opacity,
     fill,
@@ -34,51 +86,69 @@ export const CustomBar = React.memo((props: any) => {
     showTopBorderRadius,
     showBottomBorderRadius,
   } = props;
-  // Calculate text position
-  const TEXT_PADDING_Y = Math.min(6, Math.abs(MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT - height / 2));
-  const textY = y + height - TEXT_PADDING_Y; // Position inside bar if tall enough
-  // derived values
+
+  if (!height) return null;
+
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
+  const TEXT_PADDING_Y = Math.min(6, Math.abs(MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT - height / 2));
+  const textY = y + height - TEXT_PADDING_Y;
+
   const showText =
-    // from props
     showPercentage &&
-    // height of the bar is greater than or equal to the minimum height required to show the text
     height >= MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT &&
-    // bar percentage text has some value
     currentBarPercentage !== undefined &&
-    // bar percentage is a number
     !Number.isNaN(currentBarPercentage);
 
   const topBorderRadius = showTopBorderRadius ? BAR_TOP_BORDER_RADIUS : 0;
   const bottomBorderRadius = showBottomBorderRadius ? BAR_BOTTOM_BORDER_RADIUS : 0;
 
-  if (!height) return null;
-
   return (
     <g>
       <path
-        d={`
-        M${x},${y + topBorderRadius}
-        Q${x},${y} ${x + topBorderRadius},${y}
-        L${x + width - topBorderRadius},${y}
-        Q${x + width},${y} ${x + width},${y + topBorderRadius}
-        L${x + width},${y + height - bottomBorderRadius}
-        Q${x + width},${y + height} ${x + width - bottomBorderRadius},${y + height}
-        L${x + bottomBorderRadius},${y + height}
-        Q${x},${y + height} ${x},${y + height - bottomBorderRadius}
-        Z
-      `}
+        d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
         className="transition-opacity duration-200"
-        fill={fill}
+        fill={typeof fill === "function" ? fill(payload) : fill}
         opacity={opacity}
       />
       {showText && (
+        <PercentageText x={x + width / 2} y={textY} percentage={currentBarPercentage} className={textClassName} />
+      )}
+    </g>
+  );
+});
+
+const CustomBarLollipop = React.memo((props: TBarProps) => {
+  const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage } = props;
+
+  const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
+
+  console.log(y, "y", x, "x", width, "width", height, "height");
+  return (
+    <g>
+      <line
+        x1={x + width / 2}
+        y1={y + height}
+        x2={x + width / 2}
+        y2={y}
+        stroke={typeof fill === "function" ? fill(payload) : fill}
+        strokeWidth={DEFAULT_LOLLIPOP_LINE_WIDTH}
+        strokeLinecap="round"
+      />
+      <circle
+        cx={x + width / 2}
+        cy={y}
+        r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
+        fill={typeof fill === "function" ? fill(payload) : fill}
+        stroke="none"
+        alignmentBaseline="middle"
+      />
+      {showPercentage && (
         <text
           x={x + width / 2}
-          y={textY}
+          y={y + DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
           textAnchor="middle"
-          className={cn("text-xs font-medium", textClassName)}
-          fill="currentColor"
+          dominantBaseline="middle"
+          className={cn("text-xs font-medium fill-white", textClassName)}
         >
           {currentBarPercentage}%
         </text>
@@ -86,4 +156,33 @@ export const CustomBar = React.memo((props: any) => {
     </g>
   );
 });
+
+// Shape Variants Factory
+const createShapeVariant =
+  (Component: React.ComponentType<TBarProps>) =>
+  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => {
+    const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
+    const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
+
+    return (
+      <Component
+        {...shapeProps}
+        fill={typeof bar.fill === "function" ? bar.fill(shapeProps.payload) : bar.fill}
+        stackKeys={stackKeys}
+        textClassName={bar.textClassName}
+        showPercentage={bar.showPercentage}
+        showTopBorderRadius={!!showTopBorderRadius}
+        showBottomBorderRadius={!!showBottomBorderRadius}
+      />
+    );
+  };
+
+// Shape Variants
+export const barShapeVariants = {
+  bar: createShapeVariant(CustomBar),
+  lollipop: createShapeVariant(CustomBarLollipop),
+};
+
+// Display names
 CustomBar.displayName = "CustomBar";
+CustomBarLollipop.displayName = "CustomBarLollipop";
