@@ -368,7 +368,7 @@ class ProjectViewSet(BaseViewSet):
         serializer = ProjectSerializer(
             project,
             data={**request.data, "intake_view": intake_view},
-            context={"workspace_id": workspace.id, "project_id": pk},
+            context={"workspace_id": workspace.id},
             partial=True,
         )
 

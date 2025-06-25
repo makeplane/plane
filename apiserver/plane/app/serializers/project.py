@@ -25,7 +25,7 @@ class ProjectSerializer(BaseSerializer):
         read_only_fields = ["workspace", "deleted_at"]
 
     def validate_name(self, name):
-        project_id = self.context.get("project_id")
+        project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
         project = Project.objects.filter(name=name, workspace_id=workspace_id)
@@ -41,7 +41,7 @@ class ProjectSerializer(BaseSerializer):
         return name
 
     def validate_identifier(self, identifier):
-        project_id = self.context.get("project_id")
+        project_id = self.instance.id if self.instance else None
         workspace_id = self.context["workspace_id"]
 
         project = Project.objects.filter(
