@@ -141,15 +141,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         stroke="none"
       />
       {showPercentage && (
-        <text
-          x={x + width / 2}
-          y={y + DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          className={cn("text-xs font-medium fill-white", textClassName)}
-        >
-          {currentBarPercentage}%
-        </text>
+        <PercentageText x={x + width / 2} y={y} percentage={currentBarPercentage} className={textClassName} />
       )}
     </g>
   );
