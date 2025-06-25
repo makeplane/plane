@@ -174,8 +174,8 @@ class IssueCommentDocument(BaseDocument):
 
     class Index(BaseDocument.Index):
         name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_issue_comments"
-            if settings.OPENSEARCH_INDEX_PREFIX
+            f"{django_settings.OPENSEARCH_INDEX_PREFIX}_issue_comments"
+            if django_settings.OPENSEARCH_INDEX_PREFIX
             else "issue_comments"
         )
 
