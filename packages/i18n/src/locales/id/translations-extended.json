@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Impor data Confluence Anda ke wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Unggah ZIP yang Diekspor dari Confluence",
+      "description_upload_zip": "Silakan unggah file ZIP yang berisi data Confluence Anda."
+    },
+    "upload": {
+      "drop_file_here": "Jatuhkan file zip Confluence Anda di sini",
+      "upload_title": "Unggah Ekspor Confluence",
+      "drag_drop_description": "Seret dan jatuhkan file zip ekspor Confluence Anda, atau klik untuk menelusuri",
+      "file_type_restriction": "Hanya file .zip yang diekspor dari Confluence yang didukung",
+      "select_file": "Pilih File",
+      "uploading": "Mengunggah...",
+      "preparing_upload": "Mempersiapkan unggah...",
+      "confirming_upload": "Mengonfirmasi unggah...",
+      "confirming": "Mengonfirmasi...",
+      "upload_complete": "Unggah selesai",
+      "upload_failed": "Unggah gagal",
+      "start_import": "Mulai Impor",
+      "retry_upload": "Coba Unggah Lagi",
+      "upload": "Unggah",
+      "ready": "Siap",
+      "error": "Error",
+      "upload_complete_message": "Unggah selesai!",
+      "upload_complete_description": "Klik \"Mulai Impor\" untuk memulai memproses data Confluence Anda.",
+      "upload_progress_message": "Harap jangan tutup jendela ini."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Impor data CSV Anda ke dalam projek Plane.",
     "steps": {

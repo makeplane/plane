@@ -1,7 +1,7 @@
 import { Store } from '@/worker/base';
 import { StorageProvider, S3StorageProvider } from './storage-provider';
 import { TZipManagerOptions } from './types';
-import { ZipManager, ZipManagerImpl } from './zip-manager';
+import { ZipManager } from './zip-manager';
 
 export function createZipManager(options: TZipManagerOptions): ZipManager {
   let storageProvider: StorageProvider;
@@ -16,5 +16,5 @@ export function createZipManager(options: TZipManagerOptions): ZipManager {
 
   const store = Store.getInstance();
 
-  return new ZipManagerImpl(storageProvider, store);
+  return new ZipManager(storageProvider, store);
 }

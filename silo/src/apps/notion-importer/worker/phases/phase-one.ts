@@ -1,6 +1,6 @@
 import * as bluebird from "bluebird";
 import mimetics from "mimetics";
-import { Client } from "@plane/sdk";
+import { Client, ExPage } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
 import { ENotionImporterKeyType, ENotionMigrationType, TNotionMigratorData } from "@/apps/notion-importer/types";
 import { TZipFileNode } from "@/lib/zip-manager";
@@ -8,6 +8,7 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
+import { EZipDriverType } from "../../drivers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
 const apiClient = getAPIClient();
@@ -48,7 +49,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    * @param data - The data of the migration
    */
   async processNodes(context: PhaseProcessingContext, data: TNotionMigratorData): Promise<void> {
-    const { parentPageId } = data;
+    const { parentPageId, type } = data;
     const { currentNode, fileId, job, client, headers, zipManager } = context;
 
     // Segregate the children nodes into attachment nodes, page nodes and directory nodes
@@ -66,7 +67,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     // Process all children nodes and perform desired actions
     const pageCreationResults = await this.processPageNodes(fileId, job as TImportJob, client, parentPageId, pageNodes);
     await this.processAttachmentNodes(fileId, currentNode, job as TImportJob, client, attachmentNodes, contentMap);
-    await this.processDirectoryNodes(job as TImportJob, fileId, headers, pageCreationResults, directoryNodes);
+    await this.processDirectoryNodes(job as TImportJob, fileId, headers, pageCreationResults, directoryNodes, type);
   }
 
   /*=================== Node Processors ===================*/
@@ -94,14 +95,28 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     try {
       // Transform all pages to ExPage format
       const pages = pageNodes
-        .map((pageNode) => this.createPageFromNode(pageNode, parentPageId, job.initiator_id))
+        .map((pageNode) => this.createPageFromNode(job, pageNode, parentPageId, job.initiator_id))
         .filter(Boolean) as Partial<TPage>[];
 
       // Use bulk create API if we have valid pages
       if (pages.length > 0) {
-        const createdPages = (await apiClient.page.bulkCreatePages(job.workspace_slug, pages)) as TPage[];
-        // Cache the page ids with original names
-        const pageMap = new Map(createdPages.map((page) => [page.name!, page.id!]));
+        const createdPages = (await apiClient.page.bulkCreatePages(job.workspace_slug, pages)) as ExPage[];
+        /*
+         * Path represents maximum information that we have about a page,
+         * from that we can get the page, name and all the information necessary
+         * hence, we are setting page map with the path rather than the name, which
+         * used to be there, and have not changed the name of the page, which is the
+         * name of the page in the html file
+        */
+        const pageMap = new Map(createdPages.map((page) => {
+          let identifier = page.name;
+          if (page.external_id) {
+            const path = page.external_id.split("/").pop()!;
+            const pathWithoutExtension = path.replace(/\.html$/, "");
+            identifier = pathWithoutExtension;
+          }
+          return [identifier, page.id];
+        }));
 
         if (pageMap.size > 0) await this.setCacheObjects(fileId, ENotionImporterKeyType.PAGE, pageMap);
         return pageMap;
@@ -172,6 +187,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
           );
 
           result.set(`${parentPath}/${node.name}`, assetId);
+
         } catch (error) {
           logger.error(`Error uploading asset for job ${job.id} and node ${node.name}`, {
             jobId: job.id,
@@ -197,7 +213,8 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
     fileId: string,
     headers: TaskHeaders,
     pageCreationResults: Map<string, string>,
-    directoryNodes: TZipFileNode[]
+    directoryNodes: TZipFileNode[],
+    type: EZipDriverType
   ): Promise<void> {
     if (!directoryNodes.length) {
       await this.decrementLeafNodeCounter(fileId);
@@ -208,7 +225,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
         await this.deleteLeafNodeCounter(fileId);
 
         // Schedule a job for phase 2 import
-        const data: TNotionMigratorData = { fileId }; // For type assertion
+        const data: TNotionMigratorData = { fileId, type }; // For type assertion
 
         // Mark the job as progressing
         await apiClient.importReport.updateImportReport(job.report_id, {
@@ -235,7 +252,8 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
        * which we can use to pass to the page ids of the children nodes such that
        * they are created in the correct hierarchy
        */
-      const parentPageId = pageCreationResults.get(directoryNode.name);
+      const directoryPath = directoryNode.path.split("/").pop();
+      const parentPageId = pageCreationResults.get(directoryPath!);
       if (!parentPageId) {
         logger.error(`Parent page id not found for directory node ${directoryNode.name}`, {
           jobId: headers.jobId,
@@ -249,6 +267,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
           fileId,
           node: directoryNode,
           parentPageId,
+          type,
         });
       } catch (error) {
         logger.error(`Error registering task for directory node ${directoryNode.name}`, {
@@ -269,15 +288,18 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    * @param contentMap - Map of file paths to content buffers
    * @returns Plane page object or undefined if content not found
    */
-  createPageFromNode(node: TZipFileNode, parentPageId: string | undefined, userId: string): Partial<TPage> | undefined {
+  createPageFromNode(job: TImportJob, node: TZipFileNode, parentPageId: string | undefined, userId: string): Partial<ExPage> | undefined {
     // Basic transformation logic - extract name from filename and convert content
     const pageName = node.name.replace(/\.html$/, "");
+    const strippedPath = node.path.split("/").pop();
+    // const pageName = node.path;
 
     // Create page in ExPage format
     return {
       name: pageName,
       access: 0,
       parent_id: parentPageId,
+      external_id: `${job.id}/${strippedPath}`,
       owned_by: userId,
       description_html: "<p></p>",
     };

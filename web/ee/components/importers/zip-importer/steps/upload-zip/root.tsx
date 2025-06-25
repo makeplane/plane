@@ -4,20 +4,19 @@ import { useDropzone } from "react-dropzone";
 import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button, CircularProgressIndicator, setToast, TOAST_TYPE } from "@plane/ui";
-import { useNotionImporter } from "@/plane-web/hooks/store";
-import { UploadState } from "@/plane-web/store/importers/notion/root.store";
-import { E_IMPORTER_STEPS } from "@/plane-web/types/importers/notion";
+import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
+import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
+import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { StepperNavigation } from "../../../ui";
 
 interface UploadedFile {
   file: File;
 }
 
-export const UploadZip: FC = observer(() => {
+export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceName }) => {
   // hooks
   const { t } = useTranslation();
 
-  // Notion importer hook
   const {
     currentStep,
     handleDashboardView,
@@ -29,7 +28,7 @@ export const UploadZip: FC = observer(() => {
     uploadError,
     confirmAndStartImport,
     workspace,
-  } = useNotionImporter();
+  } = useZipImporter(driverType);
 
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -58,7 +57,7 @@ export const UploadZip: FC = observer(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Invalid file format",
-          message: "Only .zip files exported from Notion are supported.",
+          message: `Only .zip files exported from ${serviceName} are supported.`,
         });
       }
     },
@@ -105,12 +104,12 @@ export const UploadZip: FC = observer(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Import started",
-          message: "Your Notion import has been started successfully.",
+          message: `Your ${serviceName} import has been started successfully.`,
         });
         // Now proceed to next step
         handleDashboardView();
       } catch (error) {
-        console.error("Failed to confirm upload:", error);
+        console.error(`Failed to confirm upload: ${error}`);
         // Show error toast
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -133,20 +132,20 @@ export const UploadZip: FC = observer(() => {
 
   // Update button text based on upload state
   const getButtonText = () => {
-    if (isConfirming) return t("notion_importer.upload.confirming");
+    if (isConfirming) return t(`${driverType}_importer.upload.confirming`);
 
     switch (uploadState) {
       case UploadState.GETTING_UPLOAD_URL:
       case UploadState.UPLOADING:
-        return t("notion_importer.upload.uploading");
+        return t(`${driverType}_importer.upload.uploading`);
       case UploadState.CONFIRMING:
-        return t("notion_importer.upload.confirming");
+        return t(`${driverType}_importer.upload.confirming`);
       case UploadState.COMPLETE:
-        return t("notion_importer.upload.start_import");
+        return t(`${driverType}_importer.upload.start_import`);
       case UploadState.ERROR:
-        return t("notion_importer.upload.retry_upload");
+        return t(`${driverType}_importer.upload.retry_upload`);
       default:
-        return t("notion_importer.upload.upload");
+        return t(`${driverType}_importer.upload.upload`);
     }
   };
 
@@ -157,19 +156,19 @@ export const UploadZip: FC = observer(() => {
 
   // Get status text based on upload state
   const getStatusText = () => {
-    if (isConfirming) return t("notion_importer.upload.confirming_upload");
+    if (isConfirming) return t(`${driverType}_importer.upload.confirming_upload`);
 
     switch (uploadState) {
       case UploadState.GETTING_UPLOAD_URL:
-        return t("notion_importer.upload.preparing_upload");
+        return t(`${driverType}_importer.upload.preparing_upload`);
       case UploadState.UPLOADING:
-        return `${t("notion_importer.upload.uploading")} ${uploadProgress}%`;
+        return `${t(`${driverType}_importer.upload.uploading`)} ${uploadProgress}%`;
       case UploadState.CONFIRMING:
-        return t("notion_importer.upload.confirming_upload");
+        return t(`${driverType}_importer.upload.confirming_upload`);
       case UploadState.COMPLETE:
-        return t("notion_importer.upload.upload_complete");
+        return t(`${driverType}_importer.upload.upload_complete`);
       case UploadState.ERROR:
-        return t("notion_importer.upload.upload_failed");
+        return t(`${driverType}_importer.upload.upload_failed`);
       default:
         return "";
     }
@@ -196,16 +195,22 @@ export const UploadZip: FC = observer(() => {
             </div>
             <div>
               <h3 className="text-lg font-medium text-custom-text-100">
-                {isDragActive ? t("notion_importer.upload.drop_file_here") : t("notion_importer.upload.upload_title")}
+                {isDragActive
+                  ? t(`${driverType}_importer.upload.drop_file_here`)
+                  : t(`${driverType}_importer.upload.upload_title`)}
               </h3>
-              <p className="mt-1 text-sm text-custom-text-300">{t("notion_importer.upload.drag_drop_description")}</p>
-              <p className="mt-2 text-xs text-custom-text-400">{t("notion_importer.upload.file_type_restriction")}</p>
+              <p className="mt-1 text-sm text-custom-text-300">
+                {t(`${driverType}_importer.upload.drag_drop_description`)}
+              </p>
+              <p className="mt-2 text-xs text-custom-text-400">
+                {t(`${driverType}_importer.upload.file_type_restriction`)}
+              </p>
             </div>
             <button
               type="button"
               className="mt-2 px-4 py-2 bg-custom-primary-100 text-white rounded-md text-sm font-medium hover:bg-custom-primary-200 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
             >
-              {t("notion_importer.upload.select_file")}
+              {t(`${driverType}_importer.upload.select_file`)}
             </button>
           </div>
         </div>
@@ -246,12 +251,12 @@ export const UploadZip: FC = observer(() => {
                 </div>
               ) : uploadState === UploadState.COMPLETE ? (
                 <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-custom-primary-100/10 text-custom-primary-100">
-                  {t("notion_importer.upload.ready")}
+                  {t(`${driverType}_importer.upload.ready`)}
                 </span>
               ) : uploadState === UploadState.ERROR ? (
                 <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-red-100 text-red-600 flex items-center gap-1">
                   <AlertTriangle size={12} />
-                  {t("notion_importer.upload.error")}
+                  {t(`${driverType}_importer.upload.error`)}
                 </span>
               ) : null}
 
@@ -277,7 +282,7 @@ export const UploadZip: FC = observer(() => {
                 />
               </div>
               <p className="mt-2 text-xs text-custom-text-300">
-                {getStatusText()} • {t("notion_importer.upload.upload_progress_message")}
+                {getStatusText()} • {t(`${driverType}_importer.upload.upload_progress_message`)}
               </p>
             </div>
           )}
@@ -301,9 +306,11 @@ export const UploadZip: FC = observer(() => {
               </div>
               <div className="flex-1">
                 <div className="font-medium text-custom-primary-100 mb-1">
-                  {t("notion_importer.upload.upload_complete_message")}
+                  {t(`${driverType}_importer.upload.upload_complete_message`)}
                 </div>
-                <div className="text-custom-text-300">{t("notion_importer.upload.upload_complete_description")}</div>
+                <div className="text-custom-text-300">
+                  {t(`${driverType}_importer.upload.upload_complete_description`)}
+                </div>
               </div>
             </div>
           )}

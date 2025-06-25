@@ -1264,6 +1264,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Importa i tuoi dati Confluence nel wiki di Plane.",
+    "steps": {
+      "title_upload_zip": "Carica ZIP esportato da Confluence",
+      "description_upload_zip": "Carica il file ZIP contenente i tuoi dati Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Trascina qui il tuo file zip di Confluence",
+      "upload_title": "Carica esportazione Confluence",
+      "drag_drop_description": "Trascina e rilascia il tuo file zip di esportazione Confluence, o clicca per sfogliare",
+      "file_type_restriction": "Sono supportati solo file .zip esportati da Confluence",
+      "select_file": "Seleziona file",
+      "uploading": "Caricamento...",
+      "preparing_upload": "Preparazione caricamento...",
+      "confirming_upload": "Conferma caricamento...",
+      "confirming": "Conferma...",
+      "upload_complete": "Caricamento completato",
+      "upload_failed": "Caricamento fallito",
+      "start_import": "Inizia importazione",
+      "retry_upload": "Riprova caricamento",
+      "upload": "Carica",
+      "ready": "Pronto",
+      "error": "Errore",
+      "upload_complete_message": "Caricamento completato!",
+      "upload_complete_description": "Clicca su \"Inizia importazione\" per iniziare l'elaborazione dei tuoi dati Confluence.",
+      "upload_progress_message": "Non chiudere questa finestra."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importa i tuoi dati CSV nel progetto Plane.",
     "steps": {

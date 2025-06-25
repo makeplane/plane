@@ -1,4 +1,5 @@
 import { TZipFileNode } from "@/lib/zip-manager";
+import { EZipDriverType } from "../drivers";
 
 export enum ENotionImporterKeyType {
   PAGE = 'PAGE',
@@ -13,6 +14,9 @@ export type TNotionImportConfig = {
 }
 
 export type TNotionMigratorData = {
+  // Type of the driver that we are going to use
+  type: EZipDriverType;
+
   // Name of the zip file that we are going to process
   fileId: string;
 
@@ -31,10 +35,12 @@ export enum ENotionMigrationType {
 }
 
 
-export type TNotionContentParserConfig = {
+export type TDocContentParserConfig = {
   fileId: string;
   assetMap: Map<string, string>;
   pageMap: Map<string, string>;
   workspaceSlug: string;
   apiBaseUrl: string;
+  context?: Map<string, string>;
 };
+

@@ -1281,6 +1281,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Confluence verilerinizi Plane wiki'sine aktarın.",
+    "steps": {
+      "title_upload_zip": "Confluence'dan Dışa Aktarılan ZIP'i Yükle",
+      "description_upload_zip": "Lütfen Confluence verilerinizi içeren ZIP dosyasını yükleyin."
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip dosyanızı buraya bırakın",
+      "upload_title": "Confluence Dışa Aktarımını Yükle",
+      "drag_drop_description": "Confluence dışa aktarım zip dosyanızı sürükleyip bırakın veya göz atmak için tıklayın",
+      "file_type_restriction": "Yalnızca Confluence'dan dışa aktarılan .zip dosyaları desteklenir",
+      "select_file": "Dosya Seç",
+      "uploading": "Yükleniyor...",
+      "preparing_upload": "Yükleme hazırlanıyor...",
+      "confirming_upload": "Yükleme onaylanıyor...",
+      "confirming": "Onaylanıyor...",
+      "upload_complete": "Yükleme tamamlandı",
+      "upload_failed": "Yükleme başarısız",
+      "start_import": "İçe Aktarmayı Başlat",
+      "retry_upload": "Yüklemeyi Yeniden Dene",
+      "upload": "Yükle",
+      "ready": "Hazır",
+      "error": "Hata",
+      "upload_complete_message": "Yükleme tamamlandı!",
+      "upload_complete_description": "Confluence verilerinizin işlenmesini başlatmak için \"İçe Aktarmayı Başlat\"a tıklayın.",
+      "upload_progress_message": "Lütfen bu pencereyi kapatmayın."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSV verilerinizi Plane projelerine import edin.",
     "steps": {

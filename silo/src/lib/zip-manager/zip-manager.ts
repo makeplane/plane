@@ -1,26 +1,17 @@
 import { Store } from "@/worker/base";
-import { extractZipTableOfContents, extractDirectoryFromZip } from "./extractor";
-import { buildFileTree } from "./file-tree";
+import { extractZipTableOfContents, extractDirectoryFromZip, extractFileFromZip } from "./extractor";
 import { StorageProvider } from "./storage-provider";
 import { TZipFileNode } from "./types";
 import { ZipStream } from "./zip-stream";
-
-export interface ZipManager {
-  initialize(fileId: string): Promise<void>;
-  getFileTree(): Promise<TZipFileNode>;
-  getDirectoryContent(directoryNode: TZipFileNode, ignoredFileTypes?: string[], acceptedFileTypes?: string[]): Promise<Map<string, Buffer>>;
-  cleanup(fileId: string): Promise<void>;
-}
 
 const TOC_KEY = 'toc';
 
 export const getKey = (fileId: string, key: string) => `SILO_ZIP_MANAGER_${fileId}_${key}`;
 
-export class ZipManagerImpl implements ZipManager {
+export class ZipManager {
+  protected zipStream?: ZipStream;
+  protected toc: string[] = [];
   private storageProvider: StorageProvider;
-  private zipStream?: ZipStream;
-  private fileTree?: TZipFileNode;
-  private toc: string[] = [];
   private store: Store;
 
   private fileId?: string;
@@ -29,7 +20,6 @@ export class ZipManagerImpl implements ZipManager {
     this.storageProvider = storageProvider;
     this.store = store;
   }
-
 
   /**
    * Initializes the zip manager, fetches the tables of contents and builds the file tree
@@ -46,20 +36,6 @@ export class ZipManagerImpl implements ZipManager {
 
     // Table of contents is a list of the file paths which are present in the zip file
     this.toc = await this.getTableOfContents();
-
-    // We parse the table of contents in order to build a file tree with the file paths and give it a parent child relationship
-    this.fileTree = buildFileTree(this.toc);
-  }
-
-  /**
-   * Gets the file tree for the zip file
-   * @returns The file tree
-   */
-  async getFileTree(): Promise<TZipFileNode> {
-    if (!this.fileTree) {
-      throw new Error("Manager not initialized");
-    }
-    return this.fileTree;
   }
 
   /**
@@ -118,7 +94,7 @@ export class ZipManagerImpl implements ZipManager {
     const isRootDir = directoryNode.path === "/" || directoryNode.path === "";
 
     // Extract files from the directory
-    const allFiles = await extractDirectoryFromZip(this.toc, this.zipStream, directoryNode.path, ignoredFileTypes, acceptedFileTypes);
+    const allFiles = await extractDirectoryFromZip(this.zipStream, directoryNode, ignoredFileTypes, acceptedFileTypes);
     // Filter out files from subdirectories
     const directFiles = new Map<string, Buffer>();
 
@@ -131,17 +107,30 @@ export class ZipManagerImpl implements ZipManager {
           directFiles.set(filePath, content);
         }
       } else {
-        // Regular case - get the relative path from the directory
-        const relativePath = filePath.substring(directoryNode.path.length);
-        const pathWithoutLeadingSlash = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
+        directFiles.set(filePath, content);
+        // // Regular case - get the relative path from the directory
+        // const relativePath = filePath.substring(directoryNode.path.length);
+        // const pathWithoutLeadingSlash = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
 
-        // Include only direct children (no additional slashes in relative path)
-        if (!pathWithoutLeadingSlash.includes("/")) {
-          directFiles.set(filePath, content);
-        }
+        // // Include only direct children (no additional slashes in relative path)
+        // if (!pathWithoutLeadingSlash.includes("/")) {
+        // }
       }
     }
 
     return directFiles;
+  }
+
+  /**
+   * Gets the content of a file from the zip file
+   * @param filePath - The path of the file to get the content of
+   * @returns The content of the file
+   */
+  async getFileContent(filePath: string): Promise<Buffer> {
+    if (!this.zipStream) {
+      throw new Error("Manager not initialized");
+    }
+
+    return extractFileFromZip(this.zipStream, filePath);
   }
 }

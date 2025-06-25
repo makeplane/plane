@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Importuj swoje dane Confluence do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Prześlij wyeksportowany ZIP z Confluence",
+      "description_upload_zip": "Proszę przesłać plik ZIP zawierający dane z Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Upuść tutaj swój plik zip z Confluence",
+      "upload_title": "Prześlij eksport Confluence",
+      "drag_drop_description": "Przeciągnij i upuść swój plik zip eksportu Confluence lub kliknij, aby przeglądać",
+      "file_type_restriction": "Obsługiwane są tylko pliki .zip wyeksportowane z Confluence",
+      "select_file": "Wybierz plik",
+      "uploading": "Przesyłanie...",
+      "preparing_upload": "Przygotowywanie przesyłania...",
+      "confirming_upload": "Potwierdzanie przesyłania...",
+      "confirming": "Potwierdzanie...",
+      "upload_complete": "Przesyłanie zakończone",
+      "upload_failed": "Przesyłanie nie powiodło się",
+      "start_import": "Rozpocznij import",
+      "retry_upload": "Ponów przesyłanie",
+      "upload": "Prześlij",
+      "ready": "Gotowy",
+      "error": "Błąd",
+      "upload_complete_message": "Przesyłanie zakończone!",
+      "upload_complete_description": "Kliknij \"Rozpocznij import\", aby rozpocząć przetwarzanie danych Confluence.",
+      "upload_progress_message": "Proszę nie zamykać tego okna."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importuj swoje dane CSV do projektów Plane.",
     "steps": {

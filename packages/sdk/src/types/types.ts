@@ -266,7 +266,10 @@ export type ExCycle = ICycle &
   };
 
 export type ExPage = ExBase & {
+  id: string;
   name: string;
+  access: number;
+  owned_by: string;
   parent_id: string | null;
   description_html: string;
   external_id: string;

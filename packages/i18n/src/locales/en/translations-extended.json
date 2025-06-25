@@ -1318,7 +1318,7 @@
   },
 
   "notion_importer": {
-    "notion_importer_description": "Import your Notion data into Plane projects.",
+    "notion_importer_description": "Import your Notion data into Plane wiki.",
     "steps": {
       "title_upload_zip": "Upload Notion Exported ZIP",
       "description_upload_zip": "Please upload the ZIP file containing your Notion data."
@@ -1328,6 +1328,35 @@
       "upload_title": "Upload Notion Export",
       "drag_drop_description": "Drag and drop your Notion export zip file, or click to browse",
       "file_type_restriction": "Only .zip files exported from Notion are supported",
+      "select_file": "Select File",
+      "uploading": "Uploading...",
+      "preparing_upload": "Preparing upload...",
+      "confirming_upload": "Confirming upload...",
+      "confirming": "Confirming...",
+      "upload_complete": "Upload complete",
+      "upload_failed": "Upload failed",
+      "start_import": "Start Import",
+      "retry_upload": "Retry Upload",
+      "upload": "Upload",
+      "ready": "Ready",
+      "error": "Error",
+      "upload_complete_message": "Upload complete!",
+      "upload_complete_description": "Click \"Start Import\" to begin processing your Notion data.",
+      "upload_progress_message": "Please don't close this window."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Import your Confluence data into Plane wiki.",
+    "steps": {
+      "title_upload_zip": "Upload Confluence Exported ZIP",
+      "description_upload_zip": "Please upload the ZIP file containing your Confluence data."
+    },
+    "upload": {
+      "drop_file_here": "Drop your Confluence zip file here",
+      "upload_title": "Upload Confluence Export",
+      "drag_drop_description": "Drag and drop your Confluence export zip file, or click to browse",
+      "file_type_restriction": "Only .zip files exported from Confluence are supported",
       "select_file": "Select File",
       "uploading": "Uploading...",
       "preparing_upload": "Preparing upload...",

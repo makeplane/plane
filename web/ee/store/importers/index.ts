@@ -6,4 +6,4 @@ export * from "./flatfile";
 export * from "./asana";
 export * from "./jira-server";
 export * from "./clickup";
-export * from "./notion";
+export * from "./zip-importer";

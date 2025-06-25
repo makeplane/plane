@@ -1256,6 +1256,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Импортируйте ваши данные Confluence в вики Plane.",
+    "steps": {
+      "title_upload_zip": "Загрузить ZIP-экспорт из Confluence",
+      "description_upload_zip": "Пожалуйста, загрузите ZIP-файл, содержащий ваши данные Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Перетащите ваш zip-файл Confluence сюда",
+      "upload_title": "Загрузить экспорт Confluence",
+      "drag_drop_description": "Перетащите ваш zip-файл экспорта Confluence или нажмите для просмотра",
+      "file_type_restriction": "Поддерживаются только .zip файлы, экспортированные из Confluence",
+      "select_file": "Выбрать файл",
+      "uploading": "Загрузка...",
+      "preparing_upload": "Подготовка загрузки...",
+      "confirming_upload": "Подтверждение загрузки...",
+      "confirming": "Подтверждение...",
+      "upload_complete": "Загрузка завершена",
+      "upload_failed": "Загрузка не удалась",
+      "start_import": "Начать импорт",
+      "retry_upload": "Повторить загрузку",
+      "upload": "Загрузить",
+      "ready": "Готово",
+      "error": "Ошибка",
+      "upload_complete_message": "Загрузка завершена!",
+      "upload_complete_description": "Нажмите \"Начать импорт\", чтобы начать обработку ваших данных Confluence.",
+      "upload_progress_message": "Пожалуйста, не закрывайте это окно."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Импортируйте ваши данные CSV в проекты Plane.",
     "steps": {

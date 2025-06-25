@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "將您的 Confluence 資料匯入到 Plane 維基中。",
+    "steps": {
+      "title_upload_zip": "上傳 Confluence 匯出的 ZIP 檔案",
+      "description_upload_zip": "請上傳包含您的 Confluence 資料的 ZIP 檔案。"
+    },
+    "upload": {
+      "drop_file_here": "將您的 Confluence zip 檔案拖放到這裡",
+      "upload_title": "上傳 Confluence 匯出檔案",
+      "drag_drop_description": "拖放您的 Confluence 匯出 zip 檔案，或點擊瀏覽",
+      "file_type_restriction": "僅支援從 Confluence 匯出的 .zip 檔案",
+      "select_file": "選擇檔案",
+      "uploading": "正在上傳...",
+      "preparing_upload": "正在準備上傳...",
+      "confirming_upload": "正在確認上傳...",
+      "confirming": "正在確認...",
+      "upload_complete": "上傳完成",
+      "upload_failed": "上傳失敗",
+      "start_import": "開始匯入",
+      "retry_upload": "重試上傳",
+      "upload": "上傳",
+      "ready": "就緒",
+      "error": "錯誤",
+      "upload_complete_message": "上傳完成！",
+      "upload_complete_description": "點擊「開始匯入」開始處理您的 Confluence 資料。",
+      "upload_progress_message": "請不要關閉此視窗。"
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "將您的 CSV 數據導入到 Plane 專案中。",
     "steps": {

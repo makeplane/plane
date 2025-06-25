@@ -12,6 +12,7 @@ export const importTaskManger = new TaskManager({
     clickup: "clickup",
     clickup_additional_data: "clickup_additional_data",
     notion: "notion",
+    confluence: "confluence",
   },
   retryAttempts: 3,
   retryDelay: 1000,

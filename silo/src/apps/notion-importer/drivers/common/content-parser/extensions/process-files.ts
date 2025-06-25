@@ -10,10 +10,11 @@ export interface NotionFileParserConfig {
   // Required for creating a link from an asset ID
   workspaceSlug: string;
   apiBaseUrl: string;
+  context?: Map<string, string>;
 }
 
 export class NotionFileParserExtension implements IParserExtension {
-  constructor(private readonly config: NotionFileParserConfig) { }
+  constructor(readonly config: NotionFileParserConfig) { }
 
   shouldParse(node: HTMLElement): boolean {
     // Only process anchor tags that are likely local file links
@@ -48,7 +49,7 @@ export class NotionFileParserExtension implements IParserExtension {
     return node;
   }
 
-  private normalizeFilePath(src: string): string {
+  protected normalizeFilePath(src: string): string {
     // Remove URL encoding and construct the full path
     // This should match how paths were stored in phase one
     const decodedSrc = decodeURIComponent(src);

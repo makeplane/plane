@@ -5,16 +5,18 @@ import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Post } from "@/lib";
 import { getAPIClient } from "@/services/client";
 import { importTaskManger } from "@/worker";
+import { EZipDriverType } from "../drivers";
 
 const apiClient = getAPIClient();
 
-@Controller("/api/notion")
+@Controller("/api/zip-importer")
 export class NotionController {
 
-  @Post("/credentials/save")
+  @Post("/:provider/credentials/save")
   async saveCredentials(req: Request, res: Response) {
     try {
       const { workspaceId, userId, externalApiToken } = req.body;
+      const { provider } = req.params;
 
       if (!workspaceId || !userId || !externalApiToken) {
         return res.status(400).json({
@@ -22,8 +24,8 @@ export class NotionController {
         });
       }
 
-      await createOrUpdateCredentials(workspaceId, userId, E_IMPORTER_KEYS.NOTION, {
-        source: "NOTION",
+      await createOrUpdateCredentials(workspaceId, userId, provider.toUpperCase() as E_IMPORTER_KEYS, {
+        source: provider.toUpperCase(),
         target_access_token: externalApiToken,
         workspace_id: workspaceId,
         user_id: userId,
@@ -35,10 +37,11 @@ export class NotionController {
     }
   }
 
-  @Post("/start-import")
+  @Post("/:provider/start-import")
   async startImport(req: Request, res: Response) {
     try {
       const { workspaceId, userId, fileKey, fileName } = req.body;
+      const { provider } = req.params;
 
       if (!workspaceId || !userId || !fileKey) {
         return res.status(400).json({ error: "Missing required parameters: workspaceId, userId or fileKey" });
@@ -47,7 +50,7 @@ export class NotionController {
       const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
         workspace_id: workspaceId,
         user_id: userId,
-        source: E_IMPORTER_KEYS.NOTION,
+        source: provider.toUpperCase() as EZipDriverType,
       });
 
       if (!credentials.length) {
@@ -62,7 +65,7 @@ export class NotionController {
         credential_id: credential.id,
         initiator_id: userId,
         workspace_id: workspaceId,
-        source: E_IMPORTER_KEYS.NOTION,
+        source: provider.toUpperCase() as EZipDriverType,
         config: {
           fileId: fileKey,
           fileName: fileName,
@@ -79,7 +82,9 @@ export class NotionController {
           jobId: job.id,
           type: "initiate",
         },
-        {}
+        {
+          type: provider.toUpperCase() as EZipDriverType
+        }
       );
 
       return res.status(200).json({

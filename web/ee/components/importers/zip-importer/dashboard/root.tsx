@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import Image from "next/image";
 import useSWR from "swr";
 import { Briefcase, Loader, RefreshCcw } from "lucide-react";
 import { TJobStatus } from "@plane/etl/core";
@@ -9,46 +10,51 @@ import { TJobStatus } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
-import { useNotionImporter } from "@/plane-web/hooks/store";
-import NotionLogo from "@/public/services/notion.svg";
+import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
+import { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
-import ImporterHeader from "../../header";
 
-export const NotionJobDashboard: FC = observer(() => {
+export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverType, logo, serviceName }) => {
   const { t } = useTranslation();
 
   // hooks
   const {
     handleDashboardView,
     job: { loader, jobIds, jobById, fetchJobs },
-  } = useNotionImporter();
+  } = useZipImporter(driverType);
 
   // fetching jobs
-  useSWR("NOTION_IMPORTER_DASHBOARD", async () => await fetchJobs(), { errorRetryCount: 3, refreshInterval: 10000 });
+  useSWR(`${driverType}_IMPORTER_DASHBOARD`, async () => await fetchJobs(), {
+    errorRetryCount: 3,
+    refreshInterval: 10000,
+  });
 
   // handlers
   const handleJobsRefresh = async () => {
     try {
       await fetchJobs();
     } catch (error) {
-      console.error("Error while refreshing Notion jobs", error);
+      console.error(`Error while refreshing ${serviceName} jobs`, error);
     }
   };
 
   return (
     <div className="space-y-6 relative w-full h-full overflow-auto flex flex-col">
       {/* header */}
-      <ImporterHeader
-        config={{
-          serviceName: "Notion",
-          logo: NotionLogo,
-        }}
-        actions={
-          <Button size="sm" onClick={handleDashboardView} className="my-auto">
+      <div className="flex-shrink-0 relative flex items-center gap-4 rounded bg-custom-background-90 p-4">
+        <div className="flex-shrink-0 w-10 h-10 relative flex justify-center items-center overflow-hidden">
+          <Image src={logo} layout="fill" objectFit="contain" alt={`${serviceName} Logo`} />
+        </div>
+        <div className="w-full h-full overflow-hidden">
+          <div className="text-lg font-medium">{serviceName}</div>
+          <div className="text-sm text-custom-text-200">{t("importers.import_message", { serviceName })}</div>
+        </div>
+        <div className="flex-shrink-0 relative flex items-center gap-4">
+          <Button size="sm" onClick={handleDashboardView}>
             {t("importers.import")}
           </Button>
-        }
-      />
+        </div>
+      </div>
       {/* migrations */}
       <div className="w-full h-full space-y-3 relative flex flex-col">
         {loader ? (
@@ -125,9 +131,7 @@ export const NotionJobDashboard: FC = observer(() => {
               </div>
               <div className="flex flex-col items-center gap-1.5 text-center">
                 <h4 className="text-xl font-medium">{t("importers.no_jobs_found")}</h4>
-                <p className="text-sm text-custom-text-200">
-                  {t("importers.no_project_imports", { serviceName: "Notion" })}
-                </p>
+                <p className="text-sm text-custom-text-200">{t("importers.no_project_imports", { serviceName })}</p>
               </div>
             </div>
           </div>

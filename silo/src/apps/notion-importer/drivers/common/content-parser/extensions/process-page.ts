@@ -41,12 +41,14 @@ export class NotionPageParserExtension implements IParserExtension {
     return node;
   }
 
-  private normalizeFilePath(src: string): string | undefined {
+  protected normalizeFilePath(src: string): string | undefined {
     // Remove URL encoding and construct the full path
     // This should match how paths were stored in phase one
-    const decodedSrc = decodeURIComponent(src);
+    const decodedSrc = decodeURIComponent(src)
+    // Remove the trailing slash
+    const withoutTrailingSlash = decodedSrc.replace(/\/$/, "");
     // Strip the page and get the last part of the path
-    const lastPart = decodedSrc.split("/").pop();
+    const lastPart = withoutTrailingSlash.split("/").pop();
     // Remove the extension from the path
     return lastPart?.replace(/\.[^.]+$/, "");
   }

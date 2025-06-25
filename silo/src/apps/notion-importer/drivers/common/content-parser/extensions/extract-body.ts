@@ -2,7 +2,14 @@ import { HTMLElement } from "node-html-parser";
 import { IParserExtension } from "@plane/etl/parser";
 import { logger } from "@/logger";
 
+export type ExtractBodyExtensionConfig = {
+  selector: string;
+  context: Map<string, any>;
+}
+
 export class ExtractBodyExtension implements IParserExtension {
+  constructor(protected readonly config: ExtractBodyExtensionConfig) { }
+
   shouldParse(node: HTMLElement): boolean {
     // This extension should only run on the root html element
     if (node.tagName !== "HTML") {
@@ -10,21 +17,20 @@ export class ExtractBodyExtension implements IParserExtension {
     }
 
     // Check if the expected structure exists
-    const pageBodyElement = node.querySelector("div.page-body");
+    const pageBodyElement = node.querySelector(this.config.selector);
     return pageBodyElement !== null;
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
     try {
       // Find the div with class "page-body"
-      const pageBodyElement = node.querySelector("div.page-body");
+      const pageBodyElement = node.querySelector(this.config.selector);
 
       if (!pageBodyElement) {
         // If we can't find the target element, return the original node
-        logger.warn("ExtractBodyExtension: Could not find div.page-body element");
+        logger.warn(`ExtractBodyExtension: Could not find ${this.config.selector} element`);
         return node;
       }
-      // Return the extracted content for further processing
 
       return pageBodyElement;
     } catch (error) {

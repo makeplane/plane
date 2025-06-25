@@ -4,9 +4,9 @@ import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { E_IMPORTER_KEYS, TServiceAuthConfiguration } from "@plane/etl/core";
 import { FlatfileConfig } from "@plane/etl/flatfile";
 // plane web store types
-import { IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
-import { NotionService } from "@/plane-web/services/importers/notion/data.service";
-import { SiloAssetsService } from "@/plane-web/services/importers/notion/silo-assets.service";
+import { NOTION_IMPORTER_STEPS, CONFLUENCE_IMPORTER_STEPS } from "@/plane-web/constants/importers/notion";
+import { ZipImporterService } from "@/plane-web/services/importers/zip-importer/data.service";
+import { SiloAssetsService } from "@/plane-web/services/importers/zip-importer/silo-assets.service";
 import {
   IImporterBaseStore,
   IImporterJobStore,
@@ -20,7 +20,8 @@ import {
   E_IMPORTER_STEPS,
   TImporterStep,
   TImporterDataPayload,
-} from "@/plane-web/types/importers/notion";
+  EZipDriverType,
+} from "@/plane-web/types/importers/zip-importer";
 
 // constants
 const defaultImporterData: TImporterDataPayload = {
@@ -39,7 +40,7 @@ export enum UploadState {
   ERROR = "error",
 }
 
-export interface INotionStore extends IImporterBaseStore {
+export interface IZipImporterStore extends IImporterBaseStore {
   // auth state
   currentAuth: TServiceAuthConfiguration | undefined;
   // observables
@@ -87,12 +88,13 @@ export interface INotionStore extends IImporterBaseStore {
   handleSyncJobConfig: <T extends keyof FlatfileConfig>(key: T, config: FlatfileConfig[T]) => void;
 }
 
-export class NotionStore extends ImporterBaseStore implements INotionStore {
+export class ZipImporterStore extends ImporterBaseStore implements IZipImporterStore {
   dashboardView: boolean = true;
   stepper: TImporterStepKeys = E_IMPORTER_STEPS.UPLOAD_ZIP;
   importerData: TImporterDataPayload = defaultImporterData;
   job: IImporterJobStore<any>;
   configData: Partial<FlatfileConfig> = {};
+  steps: TImporterStep[] = [];
 
   // upload state
   uploadState: UploadState = UploadState.IDLE;
@@ -118,10 +120,10 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
   };
 
   // services
-  private notionService: NotionService;
+  private zipImporterService: ZipImporterService;
   private siloAssetsService: SiloAssetsService;
 
-  constructor(public store: RootStore) {
+  constructor(public store: RootStore, provider: EZipDriverType) {
     super(store);
     makeObservable(this, {
       // observables
@@ -147,9 +149,11 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
       handleSyncJobConfig: action,
     });
 
+    this.steps = provider === EZipDriverType.NOTION ? NOTION_IMPORTER_STEPS : CONFLUENCE_IMPORTER_STEPS;
+
     // store instances
-    this.notionService = new NotionService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
-    this.job = new ImporterJobStore(E_IMPORTER_KEYS.NOTION);
+    this.zipImporterService = new ZipImporterService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), provider);
+    this.job = new ImporterJobStore(provider === EZipDriverType.NOTION ? E_IMPORTER_KEYS.NOTION : E_IMPORTER_KEYS.CONFLUENCE);
     this.siloAssetsService = new SiloAssetsService(API_BASE_URL);
   }
 
@@ -174,7 +178,7 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
    * @returns {number} The current step index
    */
   get currentStepIndex(): number {
-    return IMPORTER_STEPS.findIndex((step) => step.key === this.stepper);
+    return this.steps.findIndex((step) => step.key === this.stepper);
   }
 
   /**
@@ -182,7 +186,7 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
    * @returns {TImporterStep} The current step
    */
   get currentStep(): TImporterStep {
-    return IMPORTER_STEPS[this.currentStepIndex];
+    return this.steps[this.currentStepIndex];
   }
 
   /**
@@ -341,7 +345,7 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
         uploadId // This is the asset_id from upload response
       );
 
-      await this.notionService.startImport(workspace.id, user.id, fileKey, options?.fileName);
+      await this.zipImporterService.startImport(workspace.id, user.id, fileKey, options?.fileName);
 
       // Set state to complete
       runInAction(() => {
@@ -374,7 +378,7 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
    */
   fetchAuthStatus = async (workspaceId: string, userId: string): Promise<void> => {
     try {
-      const response = await this.notionService.verifyCredentials(workspaceId, userId);
+      const response = await this.zipImporterService.verifyCredentials(workspaceId, userId);
       runInAction(() => {
         if (response) {
           set(this.authentication, [userId], response);
@@ -398,7 +402,7 @@ export class NotionStore extends ImporterBaseStore implements INotionStore {
   saveCredentials = async (workspaceId: string, userId: string, externalApiToken: string): Promise<void> => {
     // eslint-disable-next-line no-useless-catch
     try {
-      await this.notionService.saveCredentials(workspaceId, userId, externalApiToken);
+      await this.zipImporterService.saveCredentials(workspaceId, userId, externalApiToken);
       // After saving credentials, refresh auth status
       await this.fetchAuthStatus(workspaceId, userId);
     } catch (error) {

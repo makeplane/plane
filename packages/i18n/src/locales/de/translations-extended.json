@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Importieren Sie Ihre Confluence-Daten in das Plane-Wiki.",
+    "steps": {
+      "title_upload_zip": "Confluence-Export ZIP hochladen",
+      "description_upload_zip": "Bitte laden Sie die ZIP-Datei mit Ihren Confluence-Daten hoch."
+    },
+    "upload": {
+      "drop_file_here": "Lassen Sie Ihre Confluence zip-Datei hier fallen",
+      "upload_title": "Confluence-Export hochladen",
+      "drag_drop_description": "Ziehen Sie Ihre Confluence-Export zip-Datei hierher oder klicken Sie zum Durchsuchen",
+      "file_type_restriction": "Nur von Confluence exportierte .zip-Dateien werden unterstützt",
+      "select_file": "Datei auswählen",
+      "uploading": "Hochladen...",
+      "preparing_upload": "Upload vorbereiten...",
+      "confirming_upload": "Upload bestätigen...",
+      "confirming": "Bestätigen...",
+      "upload_complete": "Upload abgeschlossen",
+      "upload_failed": "Upload fehlgeschlagen",
+      "start_import": "Import starten",
+      "retry_upload": "Upload wiederholen",
+      "upload": "Hochladen",
+      "ready": "Bereit",
+      "error": "Fehler",
+      "upload_complete_message": "Upload abgeschlossen!",
+      "upload_complete_description": "Klicken Sie auf \"Import starten\", um mit der Verarbeitung Ihrer Confluence-Daten zu beginnen.",
+      "upload_progress_message": "Bitte schließen Sie dieses Fenster nicht."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importieren Sie Ihre CSV-Daten in Plane-Projekte.",
     "steps": {

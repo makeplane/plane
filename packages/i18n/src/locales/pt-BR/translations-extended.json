@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Importe seus dados do Confluence para o wiki do Plane.",
+    "steps": {
+      "title_upload_zip": "Enviar ZIP exportado do Confluence",
+      "description_upload_zip": "Por favor, envie o arquivo ZIP contendo seus dados do Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Solte seu arquivo zip do Confluence aqui",
+      "upload_title": "Enviar exportação do Confluence",
+      "drag_drop_description": "Arraste e solte seu arquivo zip de exportação do Confluence, ou clique para navegar",
+      "file_type_restriction": "Apenas arquivos .zip exportados do Confluence são suportados",
+      "select_file": "Selecionar arquivo",
+      "uploading": "Enviando...",
+      "preparing_upload": "Preparando envio...",
+      "confirming_upload": "Confirmando envio...",
+      "confirming": "Confirmando...",
+      "upload_complete": "Envio concluído",
+      "upload_failed": "Falha no envio",
+      "start_import": "Iniciar importação",
+      "retry_upload": "Tentar envio novamente",
+      "upload": "Enviar",
+      "ready": "Pronto",
+      "error": "Erro",
+      "upload_complete_message": "Envio concluído!",
+      "upload_complete_description": "Clique em \"Iniciar importação\" para começar o processamento dos seus dados do Confluence.",
+      "upload_progress_message": "Por favor, não feche esta janela."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importe seus dados CSV para projetos do Plane.",
     "steps": {

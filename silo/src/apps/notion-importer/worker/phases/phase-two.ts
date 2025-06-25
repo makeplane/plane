@@ -1,6 +1,5 @@
 import { E_JOB_STATUS } from "@plane/etl/core";
 import { ContentParser } from "@plane/etl/parser";
-import { Client } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
 import { env } from "@/env";
 import { TZipFileNode, ZipManager } from "@/lib/zip-manager";
@@ -8,8 +7,9 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
+import { EZipDriverType } from "../../drivers";
+import { IZipImportDriver } from "../../drivers/types";
 import { ENotionImporterKeyType, TNotionMigratorData } from "../../types";
-import { getContentParser } from "../../utils/content-parser/content-parser";
 import { getEmojiPayload } from "../../utils/html-helpers";
 import { NotionMigratorBase, PhaseProcessingContext } from "./base";
 
@@ -42,8 +42,9 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
    * @param context - The context of the migration
    * @param data - The data of the migration
    */
-  protected async processNodes(context: PhaseProcessingContext, _data: TNotionMigratorData): Promise<void> {
-    const { currentNode, fileId, job, client, headers, zipManager } = context;
+  protected async processNodes(context: PhaseProcessingContext, data: TNotionMigratorData): Promise<void> {
+    const { currentNode, fileId, job, headers, zipManager, zipDriver } = context;
+    const { type } = data;
 
     // Segregate the children nodes into attachment nodes, page nodes and directory nodes
     const { pageNodes, directoryNodes } = await this.segregateChildrenNodes(currentNode);
@@ -51,8 +52,8 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     const contentMap = await zipManager.getDirectoryContent(currentNode, [], ["html"]);
 
     // Process all children nodes and perform desired actions
-    await this.processPageNodes(fileId, job as TImportJob, client, contentMap, pageNodes);
-    await this.processDirectoryNodes(job as TImportJob, fileId, headers, directoryNodes, zipManager);
+    await this.processPageNodes(fileId, job as TImportJob, zipDriver, contentMap, pageNodes);
+    await this.processDirectoryNodes(job as TImportJob, fileId, headers, zipManager, directoryNodes, type);
   }
 
   /*=================== Node Processors ===================*/
@@ -68,7 +69,7 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
   async processPageNodes(
     fileId: string,
     job: TImportJob,
-    client: Client,
+    zipDriver: IZipImportDriver,
     contentMap: Map<string, Buffer>,
     pageNodes: TZipFileNode[]
   ): Promise<void> {
@@ -79,7 +80,7 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       this.retrieveMap(this.store, fileId, ENotionImporterKeyType.ASSET),
     ]);
 
-    const parser = getContentParser({
+    const parser = zipDriver.getContentParser({
       fileId,
       assetMap,
       pageMap,
@@ -91,7 +92,10 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       // Transform all pages to ExPage format
       const pages = (await Promise.all(
         pageNodes.map(async (pageNode) => {
-          const pageId = pageMap.get(pageNode.name.replace(/\.html$/, ""));
+          const pagePath = pageNode.path.split("/").pop()
+          const pagePathWithoutExt = pagePath?.replace(/\.html$/, "");
+
+          const pageId = pageMap.get(pagePathWithoutExt!);
           if (!pageId) {
             logger.error(`Page id not found for page node ${pageNode.name}`, {
               jobId,
@@ -128,8 +132,9 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
     job: TImportJob,
     fileId: string,
     headers: TaskHeaders,
+    zipManager: ZipManager,
     directoryNodes: TZipFileNode[],
-    zipManager: ZipManager
+    type: EZipDriverType
   ): Promise<void> {
     if (directoryNodes.length === 0) {
       await this.decrementLeafNodeCounter(fileId);
@@ -160,6 +165,7 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
         await importTaskManger.registerTask(headers, {
           fileId,
           node: directoryNode,
+          type,
         });
       } catch (error) {
         logger.error(`Error registering task for directory node ${directoryNode.name}`, {

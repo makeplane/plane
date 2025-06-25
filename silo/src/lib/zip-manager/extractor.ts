@@ -1,5 +1,6 @@
 import zlib from 'zlib';
 import { logger } from '@/logger';
+import { TZipFileNode, EZipNodeType } from './types';
 import { ZipStream } from './zip-stream';
 
 // ======================= PUBLIC API FUNCTIONS ======================= //
@@ -90,6 +91,42 @@ export async function extractFileFromZip(
   }
 }
 
+export async function extractDirectoryFromZip(
+  zipStream: ZipStream,
+  directoryNode: TZipFileNode,
+  ignoredFileTypes: string[] = [],
+  acceptedFileTypes?: string[]
+): Promise<Map<string, Buffer>> {
+  // For each child node, we need to extract the content
+  const extractedFiles = new Map<string, Buffer>();
+
+  if (!directoryNode.children) {
+    return extractedFiles;
+  }
+
+  for (const childNode of directoryNode.children) {
+    if (childNode.type === EZipNodeType.FILE) {
+      // We need to check for the ignored file types and accepted file types
+      if (ignoredFileTypes.includes(childNode.path.split(".").pop() || "")) {
+        continue;
+      }
+      if (acceptedFileTypes && !acceptedFileTypes.includes(childNode.path.split(".").pop() || "")) {
+        continue;
+      }
+
+      // If the file is not ignored, we need to extract the content
+      try {
+        const fileContent = await extractFileFromZip(zipStream, childNode.path);
+        extractedFiles.set(childNode.path, fileContent);
+      } catch (error) {
+        logger.error(`Failed to extract file ${childNode.path}:`, error);
+      }
+    }
+  }
+
+  return extractedFiles;
+}
+
 /**
  * Extracts all files from a specified directory within a ZIP archive.
  *
@@ -97,92 +134,92 @@ export async function extractFileFromZip(
  * @param directoryPath - Path of the directory to extract (e.g. "folder/subfolder/")
  * @returns Promise resolving to a Map where keys are file paths and values are file contents
  */
-export async function extractDirectoryFromZip(
-  toc: string[],
-  zipStream: ZipStream,
-  directoryPath: string,
-  ignoredFileTypes: string[] = [],
-  acceptedFileTypes?: string[]
-): Promise<Map<string, Buffer>> {
-  try {
-    // Get all file names from the ZIP
-    const allFiles = toc;
+// export async function extractDirectoryFromZip(
+//   toc: string[],
+//   zipStream: ZipStream,
+//   directoryPath: string,
+//   ignoredFileTypes: string[] = [],
+//   acceptedFileTypes?: string[]
+// ): Promise<Map<string, Buffer>> {
+//   try {
+//     // Get all file names from the ZIP
+//     const allFiles = toc;
 
-    let dirFiles: string[];
+//     let dirFiles: string[];
 
-    // Handle root directory (empty or "/")
-    if (directoryPath === "" || directoryPath === "/") {
-      // Only include files at the root level (no directory separators)
-      dirFiles = allFiles.filter(filePath =>
-        // File is at root if it has no directory separator
-        // or if the only separator is at the end (directory marker)
-        !filePath.includes('/') ||
-        (filePath.indexOf('/') === filePath.length - 1)
-      );
+//     // Handle root directory (empty or "/")
+//     if (directoryPath === "" || directoryPath === "/") {
+//       // Only include files at the root level (no directory separators)
+//       dirFiles = allFiles.filter(filePath =>
+//         // File is at root if it has no directory separator
+//         // or if the only separator is at the end (directory marker)
+//         !filePath.includes('/') ||
+//         (filePath.indexOf('/') === filePath.length - 1)
+//       );
 
-    } else {
-      // For non-root directories, normalize path with trailing slash
-      const normalizedDirPath = directoryPath.endsWith('/')
-        ? directoryPath
-        : `${directoryPath}/`;
+//     } else {
+//       // For non-root directories, normalize path with trailing slash
+//       const normalizedDirPath = directoryPath.endsWith('/')
+//         ? directoryPath.slice(0, -1)
+//         : directoryPath;
 
-      // Get files directly in this directory (one level only)
-      dirFiles = allFiles.filter(filePath => {
-        // Skip the directory itself
-        if (filePath === normalizedDirPath) return false;
+//       // Get files directly in this directory (one level only)
+//       dirFiles = allFiles.filter(filePath => {
+//         // Skip the directory itself
+//         if (filePath === normalizedDirPath) return false;
 
-        // Must start with the directory path
-        if (!filePath.startsWith(normalizedDirPath)) return false;
+//         // Must start with the directory path
+//         if (!filePath.startsWith(normalizedDirPath)) return false;
 
-        // Get the relative path (part after the directory path)
-        const relativePath = filePath.substring(normalizedDirPath.length);
+//         // Get the relative path (part after the directory path)
+//         const relativePath = filePath.substring(normalizedDirPath.length);
 
-        // No subdirectories allowed - should have no slashes in the relative path
-        return !relativePath.includes('/');
-      });
-    }
+//         // No subdirectories allowed - should have no slashes in the relative path
+//         return !relativePath.includes('/');
+//       });
+//     }
 
-    if (dirFiles.length === 0) {
-      throw new Error(`Directory not found or empty: ${directoryPath}`);
-    }
+//     if (dirFiles.length === 0) {
+//       throw new Error(`Directory not found or empty: ${directoryPath}`);
+//     }
 
-    // Extract each file in the directory
-    const extractedFiles = new Map<string, Buffer>();
+//     // Extract each file in the directory
+//     const extractedFiles = new Map<string, Buffer>();
 
-    for (const filePath of dirFiles) {
-      try {
-        // Skip directory entries
-        if (filePath.endsWith('/')) continue;
-        let shouldExtract = true;
+//     for (const filePath of dirFiles) {
+//       try {
+//         // Skip directory entries
+//         if (filePath.endsWith('/')) continue;
+//         let shouldExtract = true;
 
-        // Let's not get content of the ignored file types
-        if (ignoredFileTypes.includes(filePath.split('.').pop() || '')) shouldExtract = false;
-        // If acceptedFileTypes is provided, ONLY extract files with extensions in that list
-        if (acceptedFileTypes) {
-          const fileExt = filePath.split('.').pop() || '';
-          shouldExtract = acceptedFileTypes.includes(fileExt);
-        }
+//         // Let's not get content of the ignored file types
+//         if (ignoredFileTypes.includes(filePath.split('.').pop() || '')) shouldExtract = false;
+//         // If acceptedFileTypes is provided, ONLY extract files with extensions in that list
+//         if (acceptedFileTypes) {
+//           const fileExt = filePath.split('.').pop() || '';
+//           shouldExtract = acceptedFileTypes.includes(fileExt);
+//         }
 
-        if (!shouldExtract) continue;
+//         if (!shouldExtract) continue;
 
-        /*
-         * It's good to think that as we are using the seek approach, we can get the whole directory
-         * at once in the buffer, but zip files doesn't store files consecutively, so we need to extract
-         * each file individually.
-        */
-        const fileContent = await extractFileFromZip(zipStream, filePath);
-        extractedFiles.set(filePath, fileContent);
-      } catch (fileError) {
-        logger.warn(`Failed to extract file ${filePath}:`, fileError);
-      }
-    }
+//         /*
+//          * It's good to think that as we are using the seek approach, we can get the whole directory
+//          * at once in the buffer, but zip files doesn't store files consecutively, so we need to extract
+//          * each file individually.
+//         */
+//         const fileContent = await extractFileFromZip(zipStream, filePath);
+//         extractedFiles.set(filePath, fileContent);
+//       } catch (fileError) {
+//         logger.warn(`Failed to extract file ${filePath}:`, fileError);
+//       }
+//     }
 
-    return extractedFiles;
-  } catch (error) {
-    logger.error('Failed to extract directory from ZIP:', error);
-    throw error;
-  }
-}
+//     return extractedFiles;
+//   } catch (error) {
+//     logger.error('Failed to extract directory from ZIP:', error);
+//     throw error;
+//   }
+// }
 
 // ======================= ZIP FORMAT PARSING HELPERS ======================= //
 

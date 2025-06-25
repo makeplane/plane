@@ -8,6 +8,7 @@ import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import AsanaLogo from "@/public/services/asana.svg";
 import ClickUpLogo from "@/public/services/clickup.svg";
+import ConfluenceLogo from "@/public/services/confluence.svg";
 import JiraLogo from "@/public/services/jira.svg";
 import LinearLogo from "@/public/services/linear.svg";
 import NotionLogo from "@/public/services/notion.svg";
@@ -69,6 +70,14 @@ export const IMPORTERS_LIST: ImporterProps[] = [
     title: "Notion",
     i18n_description: "notion_importer.notion_importer_description",
     logo: NotionLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.CONFLUENCE_IMPORTER,
+    key: "confluence",
+    title: "Confluence",
+    i18n_description: "confluence_importer.confluence_importer_description",
+    logo: ConfluenceLogo,
     beta: true,
   },
 ];

@@ -52,6 +52,8 @@ class WorkerFactory {
         return new AsanaDataMigrator(mq, store);
       case "notion":
         return new NotionDataMigrator(mq, store, s3Client);
+      case "confluence":
+        return new NotionDataMigrator(mq, store, s3Client);
       case "github-webhook":
         return new GithubWebhookWorker(mq, store);
       case "gitlab-webhook":
@@ -93,14 +95,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-      type: "mq";
-      headers: TaskHeaders;
-      data: any;
-    }
+    type: "mq";
+    headers: TaskHeaders;
+    data: any;
+  }
   | {
-      type: "store";
-      event: string;
-    };
+    type: "store";
+    event: string;
+  };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution

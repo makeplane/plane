@@ -17,5 +17,6 @@ export default defineConfig((options: Options) => ({
   format: ["cjs", "esm"],
   dts: true,
   clean: false,
+  sourcemap: true,
   ...options,
 }));

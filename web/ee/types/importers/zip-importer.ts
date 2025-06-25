@@ -17,4 +17,13 @@ export type TImporterDataPayload = {
   };
 };
 
+export enum EZipDriverType {
+  NOTION = "notion",
+  CONFLUENCE = "confluence",
+}
 
+export type TZipImporterProps = {
+  driverType: EZipDriverType;
+  logo: string;
+  serviceName: string;
+};

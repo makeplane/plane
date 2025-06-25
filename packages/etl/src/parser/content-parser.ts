@@ -1,7 +1,6 @@
 import { marked } from "marked";
 import { parse, HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
-import { PTagCustomComponentExtension } from "./extensions";
 import { IParserExtension } from "./types";
 
 export class ContentParser {
@@ -24,10 +23,7 @@ export class ContentParser {
 
   constructor(extensions: IParserExtension[], preprocessExtensions: IParserExtension[] = [], postprocessExtensions: IParserExtension[] = []) {
     this.preprocessExtensions = preprocessExtensions;
-    this.extensions = [
-      ...extensions,
-      new PTagCustomComponentExtension(),
-    ];
+    this.extensions = extensions;
     this.postprocessExtensions = postprocessExtensions;
   }
 

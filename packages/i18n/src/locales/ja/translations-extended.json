@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "ConfluenceデータをPlaneウィキにインポートします。",
+    "steps": {
+      "title_upload_zip": "Confluence エクスポート ZIP をアップロード",
+      "description_upload_zip": "Confluenceデータを含むZIPファイルをアップロードしてください。"
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip ファイルをここにドロップ",
+      "upload_title": "Confluence エクスポートをアップロード",
+      "drag_drop_description": "Confluence エクスポート zip ファイルをドラッグ＆ドロップするか、クリックして参照",
+      "file_type_restriction": "Confluenceからエクスポートされた.zipファイルのみサポートされています",
+      "select_file": "ファイルを選択",
+      "uploading": "アップロード中...",
+      "preparing_upload": "アップロードを準備中...",
+      "confirming_upload": "アップロードを確認中...",
+      "confirming": "確認中...",
+      "upload_complete": "アップロード完了",
+      "upload_failed": "アップロード失敗",
+      "start_import": "インポートを開始",
+      "retry_upload": "アップロードを再試行",
+      "upload": "アップロード",
+      "ready": "準備完了",
+      "error": "エラー",
+      "upload_complete_message": "アップロード完了！",
+      "upload_complete_description": "「インポートを開始」をクリックして、Confluenceデータの処理を開始してください。",
+      "upload_progress_message": "このウィンドウを閉じないでください。"
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSVデータをPlaneプロジェクトにインポートします。",
     "steps": {

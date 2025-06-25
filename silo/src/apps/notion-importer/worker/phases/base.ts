@@ -10,8 +10,11 @@ import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
+import { EZipDriverType, ZipDriverFactory } from "../../drivers";
+import { IZipImportDriver } from "../../drivers/types";
 import { ENotionImporterKeyType, TNotionImportConfig, TNotionMigratorData } from "../../types";
 import { getKey } from "../../utils";
+
 const apiClient = getAPIClient();
 
 // Context for processing nodes (everything a phase implementation needs)
@@ -21,6 +24,7 @@ export interface PhaseProcessingContext {
   job: TImportJob;
   client: Client;
   zipManager: ZipManager;
+  zipDriver: IZipImportDriver;
   currentNode: TZipFileNode;
   headers: TaskHeaders;
 }
@@ -77,6 +81,11 @@ export abstract class NotionMigratorBase extends TaskHandler {
     return jobData;
   }
 
+  /**
+   * Gets the job credentials from the store
+   * @param job - The job to get the credentials for
+   * @returns The job credentials
+   */
   async getCachesJobCredentials(job: TImportJob): Promise<TWorkspaceCredential | undefined> {
     const credentialsKey = getKey(job.id, ENotionImporterKeyType.JOB_CREDENTIALS);
     const credentials = await this.store.get(credentialsKey);
@@ -99,6 +108,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    */
   async handleTask(headers: TaskHeaders, data: TNotionMigratorData): Promise<boolean> {
     const { jobId } = headers;
+    const { type } = data
 
     try {
       // Get job data
@@ -117,12 +127,16 @@ export abstract class NotionMigratorBase extends TaskHandler {
       // Get the services required for the migration
       const zipManager = await this.getZipManager(fileId);
       const client = await this.getPlaneClient(job as TImportJob);
+      const zipDriver = await this.getZipDriver(zipManager, type as EZipDriverType);
 
       // Determine the current node to process
       let currentNode: TZipFileNode | undefined = data.node;
       if (!currentNode) {
         // Get the file tree and initialize counter
-        currentNode = await zipManager.getFileTree();
+        currentNode = await zipDriver.buildFileTree();
+        if (!currentNode) {
+          throw new Error(`Current node not found for job ${jobId}`);
+        }
         const leafNodeCount = await this.countLeafNodesFromRoot(currentNode);
         await this.setLeafNodeCounter(fileId, leafNodeCount);
       }
@@ -138,6 +152,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
         job: job as TImportJob,
         client,
         zipManager,
+        zipDriver,
         currentNode,
         headers,
       };
@@ -195,6 +210,15 @@ export abstract class NotionMigratorBase extends TaskHandler {
 
     await manager.initialize(fileId);
     return manager;
+  }
+
+  /**
+   * Gets the zip driver for the given file id
+   * @param fileId - The id of the file
+   * @returns The zip driver
+   */
+  async getZipDriver(manager: ZipManager, type: EZipDriverType): Promise<IZipImportDriver> {
+    return ZipDriverFactory.getDriver(type, manager);
   }
 
   /**
@@ -259,7 +283,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
           directoryNodes.push(child);
           break;
         case EZipNodeType.FILE:
-          if (child.name.endsWith(".html")) {
+          if (child.name.endsWith(".html") || child.path.endsWith(".html")) {
             pageNodes.push(child);
           } else {
             attachmentNodes.push(child);

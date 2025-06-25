@@ -1265,6 +1265,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Confluence 데이터를 Plane 위키로 가져옵니다.",
+    "steps": {
+      "title_upload_zip": "Confluence 내보낸 ZIP 업로드",
+      "description_upload_zip": "Confluence 데이터가 포함된 ZIP 파일을 업로드해 주세요."
+    },
+    "upload": {
+      "drop_file_here": "Confluence zip 파일을 여기에 드롭하세요",
+      "upload_title": "Confluence 내보내기 업로드",
+      "drag_drop_description": "Confluence 내보내기 zip 파일을 드래그 앤 드롭하거나 클릭해서 찾아보기",
+      "file_type_restriction": "Confluence에서 내보낸 .zip 파일만 지원됩니다",
+      "select_file": "파일 선택",
+      "uploading": "업로드 중...",
+      "preparing_upload": "업로드 준비 중...",
+      "confirming_upload": "업로드 확인 중...",
+      "confirming": "확인 중...",
+      "upload_complete": "업로드 완료",
+      "upload_failed": "업로드 실패",
+      "start_import": "가져오기 시작",
+      "retry_upload": "업로드 재시도",
+      "upload": "업로드",
+      "ready": "준비완료",
+      "error": "오류",
+      "upload_complete_message": "업로드 완료!",
+      "upload_complete_description": "\"가져오기 시작\"을 클릭하여 Confluence 데이터 처리를 시작하세요.",
+      "upload_progress_message": "이 창을 닫지 마세요."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "CSV 데이터를 플레인 프로젝트로 임포트하세요.",
     "steps": {

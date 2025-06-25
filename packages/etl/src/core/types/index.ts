@@ -49,6 +49,7 @@ export enum E_IMPORTER_KEYS {
   CLICKUP = "CLICKUP",
   IMPORTER = "IMPORTER",
   NOTION = "NOTION",
+  CONFLUENCE = "CONFLUENCE",
 }
 export type TImporterKeys = keyof typeof E_IMPORTER_KEYS;
 

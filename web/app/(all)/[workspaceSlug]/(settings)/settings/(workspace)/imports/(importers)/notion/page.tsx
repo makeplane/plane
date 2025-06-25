@@ -5,9 +5,12 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { DashboardLoaderRoot } from "@/plane-web/components/importers/common/dashboard";
-import { NotionJobDashboard } from "@/plane-web/components/importers/notion/dashboard";
-import { StepsRoot } from "@/plane-web/components/importers/notion/steps/root";
-import { useFlag, useNotionImporter } from "@/plane-web/hooks/store";
+import { ZipImporterDashboard } from "@/plane-web/components/importers/zip-importer";
+import { StepsRoot } from "@/plane-web/components/importers/zip-importer/steps/root";
+import { useFlag } from "@/plane-web/hooks/store";
+import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
+import { EZipDriverType, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
+import NotionLogo from "@/public/services/notion.svg";
 
 const NotionImporter: FC = observer(() => {
   const {
@@ -23,7 +26,7 @@ const NotionImporter: FC = observer(() => {
     verifyAndAddCredentials,
     resetImporterData,
     job: { workspaceId: serviceWorkspaceId, setDefaultServiceConfig },
-  } = useNotionImporter();
+  } = useZipImporter(EZipDriverType.NOTION);
 
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
@@ -93,7 +96,13 @@ const NotionImporter: FC = observer(() => {
       </div>
     );
 
-  return <Fragment>{dashboardView ? <NotionJobDashboard /> : <StepsRoot />}</Fragment>;
+  const props: TZipImporterProps = {
+    driverType: EZipDriverType.NOTION,
+    logo: NotionLogo,
+    serviceName: "Notion",
+  };
+
+  return <Fragment>{dashboardView ? <ZipImporterDashboard {...props} /> : <StepsRoot {...props} />}</Fragment>;
 });
 
 export default NotionImporter;

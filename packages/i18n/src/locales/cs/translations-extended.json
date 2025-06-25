@@ -1266,6 +1266,35 @@
     }
   },
 
+  "confluence_importer": {
+    "confluence_importer_description": "Importujte svá data z Confluence do wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Nahrát exportovaný ZIP z Confluence",
+      "description_upload_zip": "Prosím nahrajte ZIP soubor obsahující vaše data z Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Přetáhněte váš Confluence zip soubor sem",
+      "upload_title": "Nahrát export z Confluence",
+      "drag_drop_description": "Přetáhněte váš Confluence export zip soubor nebo klikněte pro procházení",
+      "file_type_restriction": "Podporovány jsou pouze .zip soubory exportované z Confluence",
+      "select_file": "Vybrat soubor",
+      "uploading": "Nahrávání...",
+      "preparing_upload": "Příprava nahrávání...",
+      "confirming_upload": "Potvrzování nahrávání...",
+      "confirming": "Potvrzování...",
+      "upload_complete": "Nahrávání dokončeno",
+      "upload_failed": "Nahrávání selhalo",
+      "start_import": "Spustit import",
+      "retry_upload": "Opakovat nahrávání",
+      "upload": "Nahrát",
+      "ready": "Připraveno",
+      "error": "Chyba",
+      "upload_complete_message": "Nahrávání dokončeno!",
+      "upload_complete_description": "Klikněte na \"Spustit import\" pro zahájení zpracování vašich dat z Confluence.",
+      "upload_progress_message": "Prosím nezavírejte toto okno."
+    }
+  },
+
   "flatfile_importer": {
     "flatfile_importer_description": "Importujte svá CSV data do projektů Plane.",
     "steps": {

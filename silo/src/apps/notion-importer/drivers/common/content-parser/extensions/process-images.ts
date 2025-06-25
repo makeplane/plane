@@ -8,7 +8,7 @@ export interface NotionImageParserConfig {
 }
 
 export class NotionImageParserExtension implements IParserExtension {
-  constructor(private readonly config: NotionImageParserConfig) { }
+  constructor(protected config: NotionImageParserConfig) { }
 
   shouldParse(node: HTMLElement): boolean {
     // Only process img tags
@@ -43,18 +43,21 @@ export class NotionImageParserExtension implements IParserExtension {
     return node;
   }
 
-  private normalizeImagePath(src: string): string {
+
+  protected normalizeImagePath(src: string): string {
     // Remove URL encoding and construct the full path
     // This should match how paths were stored in phase one
     const decodedSrc = decodeURIComponent(src);
+    // Remove all the query params and everything after it
+    const withoutQueryParams = decodedSrc.split("?")[0];
 
-    const components = decodedSrc.split("/");
+    const components = withoutQueryParams.split("/");
     if (components.length > 2) {
       // Split the path by / and take the last two components
-      const lastTwoComponents = decodedSrc.split("/").slice(-2);
+      const lastTwoComponents = withoutQueryParams.split("/").slice(-2);
       return lastTwoComponents.join("/");
     }
 
-    return decodedSrc;
+    return withoutQueryParams;
   }
 }
