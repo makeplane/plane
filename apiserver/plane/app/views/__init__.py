@@ -182,6 +182,10 @@ from .issue.custom_property import (
     IssueCustomPropertyUpdateAPIView,
 )
 
+from .issue_type.issue_type_custom_property import (
+    IssueTypeCustomPropertyAPIEndpoint,
+)
+
 from .module.base import (
     ModuleViewSet,
     ModuleLinkViewSet,

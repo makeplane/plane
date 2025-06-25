@@ -35,18 +35,19 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     const getIssueTypeCustomProperties = async () => {
       try {
         const response = await axios.get(
-          `/api/v1/workspaces/${workspaceSlug}/issue-type/${issue_type_id}/custom-properties/`,
-          {
-            headers: {
-              'x-api-key': 'TEST_API_TOKEN',
-            }
-          }
+          `/api/workspaces/${workspaceSlug}/issue-type/${issue_type_id}/custom-properties/`,
         );
         setissueTypeCustomProperties(response.data);
+        setError(null);
       } catch (error) {
         setError("Failed to load custom properties.");
       }
     };
+
+    if (!issue_type_id) {
+      setError("Invalid Issue Type");
+      return;
+    }
 
     getIssueTypeCustomProperties();
   }, [workspaceSlug, issue_type_id]);

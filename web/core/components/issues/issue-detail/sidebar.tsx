@@ -91,7 +91,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             },
             {
               headers: {
-                'x-api-key': 'TEST_API_TOKEN',
                 'Content-Type': 'application/json'
               }
             }
