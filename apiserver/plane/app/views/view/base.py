@@ -1,8 +1,13 @@
 # Django imports
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import Exists, F, Func, OuterRef, Q, UUIDField, Value, Subquery
-from django.db.models.functions import Coalesce
+from django.db.models import (
+    Exists,
+    F,
+    Func,
+    OuterRef,
+    Q,
+    Subquery,
+    Prefetch,
+)
 from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 from django.db import transaction
@@ -13,7 +18,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import allow_permission, ROLE
-from plane.app.serializers import IssueViewSerializer
+from plane.app.serializers import IssueViewSerializer, ViewIssueListSerializer
 from plane.db.models import (
     Issue,
     FileAsset,
@@ -25,15 +30,12 @@ from plane.db.models import (
     Project,
     CycleIssue,
     UserRecentVisit,
-)
-from plane.utils.grouper import (
-    issue_group_values,
-    issue_on_results,
-    issue_queryset_grouper,
+    IssueAssignee,
+    IssueLabel,
+    ModuleIssue,
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
@@ -143,6 +145,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
@@ -152,12 +155,25 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .values("count")
             )
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
+            .select_related("state")
+            .prefetch_related(
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.all(),
+                )
             )
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels", "issue_module__module")
+            .prefetch_related(
+                Prefetch(
+                    "label_issue",
+                    queryset=IssueLabel.objects.all(),
+                )
+            )
+            .prefetch_related(
+                Prefetch(
+                    "issue_module",
+                    queryset=ModuleIssue.objects.all(),
+                )
+            )
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(
@@ -186,43 +202,6 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(
-                label_ids=Coalesce(
-                    ArrayAgg(
-                        "labels__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                assignee_ids=Coalesce(
-                    ArrayAgg(
-                        "assignees__id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(assignees__id__isnull=True)
-                            & Q(assignees__member_project__is_active=True)
-                            & Q(issue_assignee__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-                module_ids=Coalesce(
-                    ArrayAgg(
-                        "issue_module__module_id",
-                        distinct=True,
-                        filter=Q(
-                            ~Q(issue_module__module_id__isnull=True)
-                            & Q(issue_module__module__archived_at__isnull=True)
-                            & Q(issue_module__deleted_at__isnull=True)
-                        ),
-                    ),
-                    Value([], output_field=ArrayField(UUIDField())),
-                ),
-            )
         )
 
     @method_decorator(gzip_page)
@@ -233,16 +212,28 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        issue_queryset = (
-            self.get_queryset()
-            .filter(**filters)
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+        issue_queryset = self.get_queryset().filter(**filters)
+
+        # Base query for the counts
+        total_issue_count = (
+            Issue.issue_objects.filter(workspace__slug=slug)
+            .filter(
+                Q(
+                    project__project_projectmember__role=5,
+                    project__guest_view_all_features=True,
                 )
+                | Q(
+                    project__project_projectmember__role=5,
+                    project__guest_view_all_features=False,
+                    created_by=self.request.user,
+                )
+                |
+                # For other roles (role < 5), show all issues
+                Q(project__project_projectmember__role__gt=5),
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
             )
+            .only("id")
         )
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
@@ -269,89 +260,14 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             issue_queryset=issue_queryset, order_by_param=order_by_param
         )
 
-        # Group by
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-
-        # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
+        # List Paginate
+        return self.paginate(
+            order_by=order_by_param,
+            request=request,
+            queryset=issue_queryset,
+            on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
+            total_count_queryset=total_issue_count,
         )
-
-        if group_by:
-            # Check group and sub group value paginate
-            if sub_group_by:
-                if group_by == sub_group_by:
-                    return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-                else:
-                    # group and sub group pagination
-                    return self.paginate(
-                        request=request,
-                        order_by=order_by_param,
-                        queryset=issue_queryset,
-                        on_results=lambda issues: issue_on_results(
-                            group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                        ),
-                        paginator_cls=SubGroupedOffsetPaginator,
-                        group_by_fields=issue_group_values(
-                            field=group_by, slug=slug, project_id=None, filters=filters
-                        ),
-                        sub_group_by_fields=issue_group_values(
-                            field=sub_group_by,
-                            slug=slug,
-                            project_id=None,
-                            filters=filters,
-                        ),
-                        group_by_field_name=group_by,
-                        sub_group_by_field_name=sub_group_by,
-                        count_filter=Q(
-                            Q(issue_intake__status=1)
-                            | Q(issue_intake__status=-1)
-                            | Q(issue_intake__status=2)
-                            | Q(issue_intake__isnull=True),
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-            # Group Paginate
-            else:
-                # Group paginate
-                return self.paginate(
-                    request=request,
-                    order_by=order_by_param,
-                    queryset=issue_queryset,
-                    on_results=lambda issues: issue_on_results(
-                        group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                    ),
-                    paginator_cls=GroupedOffsetPaginator,
-                    group_by_fields=issue_group_values(
-                        field=group_by, slug=slug, project_id=None, filters=filters
-                    ),
-                    group_by_field_name=group_by,
-                    count_filter=Q(
-                        Q(issue_intake__status=1)
-                        | Q(issue_intake__status=-1)
-                        | Q(issue_intake__status=2)
-                        | Q(issue_intake__isnull=True),
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-        else:
-            # List Paginate
-            return self.paginate(
-                order_by=order_by_param,
-                request=request,
-                queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
-            )
 
 
 class IssueViewViewSet(BaseViewSet):
