@@ -10,17 +10,22 @@ import {
   GitlabEntityData,
   EConnectionType,
   GitLabAuthorizeState,
+  GitlabPlaneOAuthState,
 } from "@plane/etl/gitlab";
 import { ExIssueLabel } from "@plane/sdk";
 import { TWorkspaceEntityConnection } from "@plane/types";
 import { env } from "@/env";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Post, useValidateUserAuthentication } from "@/lib";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
+import { planeOAuthService } from "@/services/oauth";
+import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { verifyGitlabToken } from "../helpers";
 import { gitlabAuthService, getGitlabClientService } from "../services";
-import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 
@@ -101,8 +106,23 @@ export default class GitlabController {
   @Post("/auth/url")
   async getAuthURL(req: Request, res: Response) {
     try {
-      const { workspace_id, workspace_slug, plane_api_token, target_host, user_id, gitlab_hostname } = req.body;
-      if (!user_id || !workspace_id || !workspace_slug || !plane_api_token || !target_host)
+      const {
+        workspace_id,
+        workspace_slug,
+        plane_api_token,
+        target_host,
+        user_id,
+        gitlab_hostname,
+        plane_app_installation_id,
+      } = req.body;
+      if (
+        !user_id ||
+        !workspace_id ||
+        !workspace_slug ||
+        !plane_api_token ||
+        !target_host ||
+        !plane_app_installation_id
+      )
         return res.status(400).send({ message: "Missing required fields" });
 
       const gitlabService = createGitLabAuth({
@@ -119,6 +139,7 @@ export default class GitlabController {
           workspace_slug: workspace_slug,
           plane_api_token: plane_api_token,
           target_host: target_host,
+          plane_app_installation_id: plane_app_installation_id,
         })
       );
     } catch (error) {
@@ -126,16 +147,24 @@ export default class GitlabController {
     }
   }
 
-  @Get("/auth/callback")
-  async authCallback(req: Request, res: Response) {
-    const { code, state } = req.query;
+  @Get("/plane-oauth/callback")
+  async oauthCallback(req: Request, res: Response) {
+    const { code: oauthCode, state: encodedGitlabState } = req.query;
 
-    if (!code || !state) {
-      return responseHandler(res, 400, "Missing required fields");
+    if (!oauthCode || !encodedGitlabState) {
+      return responseHandler(res, 400, "Invalid request callback");
     }
 
-    const decodedState = JSON.parse(Buffer.from(state as string, "base64").toString()) as GitLabAuthorizeState;
-    const redirectUri = `${env.APP_BASE_URL}/${decodedState.workspace_slug}/settings/integrations/gitlab/`;
+    const gitlabState: GitlabPlaneOAuthState = JSON.parse(
+      Buffer.from(encodedGitlabState as string, "base64").toString()
+    );
+
+    const { gitlab_code, encoded_gitlab_state } = gitlabState;
+
+    const gitlabAuthState: GitLabAuthorizeState = JSON.parse(
+      Buffer.from(encoded_gitlab_state as string, "base64").toString()
+    );
+    const redirectUri = `${env.APP_BASE_URL}/${gitlabAuthState.workspace_slug}/settings/integrations/gitlab/`;
 
     try {
       const gitlabAuthService = createGitLabAuth({
@@ -145,8 +174,8 @@ export default class GitlabController {
       });
 
       const { response: token, state: authState } = await gitlabAuthService.getAccessToken({
-        code: code as string,
-        state: state as string,
+        code: gitlab_code as string,
+        state: encoded_gitlab_state,
       });
 
       if (!token || !token.access_token) {
@@ -154,16 +183,6 @@ export default class GitlabController {
           `${env.APP_BASE_URL}/${authState.workspace_slug}/settings/integrations/gitlab/?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`
         );
       }
-
-      // Create or update credentials
-      const credentials = await apiClient.workspaceCredential.createWorkspaceCredential({
-        workspace_id: authState.workspace_id,
-        user_id: authState.user_id,
-        source_access_token: token.access_token,
-        source_refresh_token: token.refresh_token,
-        target_access_token: authState.plane_api_token,
-        source: E_INTEGRATION_KEYS.GITLAB,
-      });
 
       const gitlabService = createGitLabService(
         token.access_token,
@@ -188,6 +207,37 @@ export default class GitlabController {
         );
       }
 
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITLAB);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.status(400).send("Invalid app credentials");
+      }
+      // generate the token for the user
+      const tokenResponse = await planeOAuthService.generateToken({
+        client_id: planeAppClientId,
+        client_secret: planeAppClientSecret,
+        grant_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        code: oauthCode as string,
+        redirect_uri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/plane-oauth/callback`,
+        app_installation_id: gitlabAuthState.plane_app_installation_id,
+        user_id: gitlabAuthState.user_id,
+      });
+
+      // Create or update credential
+      const credential = await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
+        workspace_id: authState.workspace_id,
+        user_id: authState.user_id,
+        source: E_INTEGRATION_KEYS.GITLAB,
+        source_identifier: user.id.toString(),
+        source_authorization_type: ESourceAuthorizationType.OAUTH,
+        source_access_token: token.access_token,
+        source_refresh_token: token.refresh_token,
+        target_access_token: tokenResponse.access_token,
+        target_refresh_token: tokenResponse.refresh_token,
+        target_authorization_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        target_identifier: gitlabAuthState.plane_app_installation_id,
+        source_hostname: gitlabAuthState.gitlab_hostname || "gitlab.com",
+      });
+
       /*
        In case of Gitlab, we don't have any organization level connection, the access given is at the user level.
        So we need to use the userId as the organizationId.
@@ -211,13 +261,62 @@ export default class GitlabController {
         connection_type: E_INTEGRATION_KEYS.GITLAB,
         connection_id: organizationId,
         connection_data: user,
-        credential_id: credentials.id,
+        credential_id: credential.id,
       });
 
       return res.redirect(redirectUri);
     } catch (error) {
       console.error(error);
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
+    }
+  }
+
+  @Get("/auth/callback")
+  async authCallback(req: Request, res: Response) {
+    const { code, state } = req.query;
+
+    if (!code || !state) {
+      return responseHandler(res, 400, "Missing required fields");
+    }
+
+    const decodedState = JSON.parse(Buffer.from(state as string, "base64").toString()) as GitLabAuthorizeState;
+    const redirectUri = `${env.APP_BASE_URL}/${decodedState.workspace_slug}/settings/integrations/gitlab/`;
+
+    try {
+      const gitlabState: GitlabPlaneOAuthState = {
+        gitlab_code: code as string,
+        encoded_gitlab_state: state as string,
+      };
+
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITLAB);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS}`);
+      }
+
+      const siloAppOAuthCallbackURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/gitlab/plane-oauth/callback`;
+      const authorizationURL = planeOAuthService.getPlaneOAuthRedirectUrl(
+        planeAppClientId,
+        siloAppOAuthCallbackURL,
+        Buffer.from(JSON.stringify(gitlabState)).toString("base64")
+      );
+
+      return res.redirect(authorizationURL);
+    } catch (error) {
+      logger.error("Failed to redirect Gitlab callback to plane oauth", { error });
+      return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
+    }
+  }
+
+  @Get("/plane-app-details")
+  async getPlaneAppDetail(req: Request, res: Response) {
+    try {
+      const { planeAppId, planeAppClientId } = await getPlaneAppDetails(E_INTEGRATION_KEYS.GITLAB);
+      res.status(200).json({
+        appId: planeAppId,
+        clientId: planeAppClientId,
+      });
+    } catch (error) {
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -254,7 +353,6 @@ export default class GitlabController {
       return res.status(202).send({
         message: "Webhook received",
       });
-
     } catch (error) {
       responseHandler(res, 500, error);
     }
@@ -263,7 +361,6 @@ export default class GitlabController {
   @Post("/plane-webhook")
   async planeWebhook(req: Request, res: Response) {
     try {
-
       // Get the event types and delivery id
       const eventType = req.headers["x-plane-event"];
 

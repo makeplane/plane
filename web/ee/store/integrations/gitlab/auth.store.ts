@@ -9,6 +9,7 @@ import { GitLabAuthorizeState } from "@plane/etl/gitlab";
 // plane web services
 import { GitlabAuthService } from "@/plane-web/services/integrations/gitlab";
 // plane web store
+import { ApplicationService } from "@/plane-web/services/marketplace";
 import { IGitlabStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGitlabWorkspaceConnection } from "@/plane-web/types/integrations/gitlab";
@@ -31,6 +32,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
   workspaceConnectionMap: Record<string, Record<string, TGitlabWorkspaceConnection>> = {}; // workspaceId -> organizationId -> TGitlabWorkspaceConnection
   // service
   private service: GitlabAuthService;
+  private applicationService: ApplicationService;
 
   constructor(protected store: IGitlabStore) {
     makeObservable(this, {
@@ -45,6 +47,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
     });
 
     this.service = new GitlabAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.applicationService = new ApplicationService();
   }
 
   // computed
@@ -113,6 +116,10 @@ export class GitlabAuthStore implements IGitlabAuthStore {
 
       if (!userId || !workspaceId || !workspaceSlug || !externalApiToken) return undefined;
 
+      // get the plane app
+      const appDetails = await this.service.getPlaneAppDetails();
+      const appInstallation = await this.applicationService.installApplication(workspaceSlug, appDetails.appId);
+
       const payload: GitLabAuthorizeState = {
         user_id: userId,
         workspace_id: workspaceId,
@@ -121,6 +128,7 @@ export class GitlabAuthStore implements IGitlabAuthStore {
         gitlab_hostname: "gitlab.com",
         source_hostname: "gitlab.com",
         target_host: targetHostname,
+        plane_app_installation_id: appInstallation.id,
       };
       const response = await this.service.connectOrganization(payload);
       await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/gitlab/plane-webhook`);

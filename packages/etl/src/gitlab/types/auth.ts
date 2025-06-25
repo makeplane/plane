@@ -13,11 +13,17 @@ export type GitLabAuthorizeState = {
   gitlab_hostname: string;
   source_hostname?: string; // generic field for oauth controller migration
   target_host: string;
+  plane_app_installation_id?: string;
 };
 
 export type GitLabAuthPayload = {
   code: string;
   state: string;
+};
+
+export type GitlabPlaneOAuthState = {
+  gitlab_code: string;
+  encoded_gitlab_state: string;
 };
 
 export type GitLabTokenResponse = {

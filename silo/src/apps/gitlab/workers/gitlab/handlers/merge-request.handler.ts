@@ -1,11 +1,10 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GitlabMergeRequestEvent } from "@plane/etl/gitlab";
-import { Client } from "@plane/sdk";
 import { TWorkspaceCredential } from "@plane/types";
 import { getGitlabConnectionDetails } from "@/apps/gitlab/helpers/connection-details";
 import { GitlabIntegrationService } from "@/apps/gitlab/services/gitlab.service";
 import { GitlabConnectionDetails } from "@/apps/gitlab/types";
-import { env } from "@/env";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { PullRequestBehaviour } from "@/lib/behaviours";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -40,10 +39,7 @@ export const handleMergeRequest = async (data: GitlabMergeRequestEvent) => {
 
     const [{ workspaceConnection, projectConnections }, credentials] = result;
 
-    const planeClient = new Client({
-      apiToken: credentials.target_access_token!,
-      baseURL: env.API_BASE_URL
-    });
+    const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.GITLAB);
 
     const refreshTokenCallback = async (access_token: string, refresh_token: string) => {
       await apiClient.workspaceCredential.createWorkspaceCredential({
