@@ -73,6 +73,8 @@ export const PagesCollapsibleContentBlock: FC<TProps> = observer((props) => {
     },
   ];
 
+  if (!page) return null;
+
   return (
     <div
       key={page.id}
