@@ -5,14 +5,12 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_MEMBERS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 // components
 import { MemberSelect } from "@/components/project";
-// constants
-import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 

@@ -3,6 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// constants
+import { USER_PROFILE_ACTIVITY } from "@plane/constants";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Loader, Card } from "@plane/ui";
@@ -10,9 +12,6 @@ import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core";
 import { ProfileEmptyState } from "@/components/ui";
-// constants
-import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
-// helpers
 // hooks
 import { useUser } from "@/hooks/store";
 // assets
@@ -63,7 +62,9 @@ export const ProfileActivity = observer(() => {
                   <div className="-mt-1 w-4/5 break-words">
                     <p className="inline text-sm text-custom-text-200">
                       <span className="font-medium text-custom-text-100">
-                        {currentUser?.id === activity.actor_detail?.id ? "You" : activity.actor_detail?.display_name}{" "}
+                        {currentUser?.id === activity.actor_detail?.id
+                          ? "You"
+                          : activity.actor_detail?.display_name}{" "}
                       </span>
                       {activity.field ? (
                         <ActivityMessage activity={activity} showIssue />

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // services
-import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
+import { USER_PROFILE_ACTIVITY } from "@plane/constants";
 import { UserService } from "@/services/user.service";
 // components
 import { ActivityList } from "./activity-list";

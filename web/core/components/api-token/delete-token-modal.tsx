@@ -2,14 +2,13 @@
 
 import { useState, FC } from "react";
 import { mutate } from "swr";
-// types
+// constants
+import { API_TOKENS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// fetch-keys
-import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;

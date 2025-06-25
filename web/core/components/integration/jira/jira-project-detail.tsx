@@ -8,13 +8,13 @@ import { useParams } from "next/navigation";
 // swr
 import { useFormContext, Controller } from "react-hook-form";
 import useSWR from "swr";
+import { JIRA_IMPORTER_DETAIL } from "@plane/constants";
 import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // react hook form
 
 // services
 import { ToggleSwitch, Spinner } from "@plane/ui";
-import { JIRA_IMPORTER_DETAIL } from "@/constants/fetch-keys";
 import { JiraImporterService } from "@/services/integrations";
 
 // fetch keys
