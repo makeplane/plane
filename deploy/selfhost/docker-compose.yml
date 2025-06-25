@@ -27,7 +27,7 @@ x-proxy-env: &proxy-env
   SSL: ${SSL:-false}
   APP_DOMAIN: ${APP_DOMAIN:-localhost}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-  CERT_EMAIL: ${CERT_EMAIL:-admin@example.com}
+  CERT_EMAIL: ${CERT_EMAIL}
   CERT_ACME_CA: ${CERT_ACME_CA}
   CERT_ACME_DNS: ${CERT_ACME_DNS}
   LISTEN_HTTP_PORT: ${LISTEN_PORT:-80}
