@@ -53,7 +53,7 @@ type TChartProps<K extends string, T extends string> = {
 // Bar Chart
 // ============================================================
 
-export type TBarChartShapeVariant = "bar" | "lollipop";
+export type TBarChartShapeVariant = "bar" | "lollipop" | "lollipop-dotted";
 
 export type TBarItem<T extends string> = {
   key: T;

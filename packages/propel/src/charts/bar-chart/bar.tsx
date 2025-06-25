@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 // plane imports
-import { TBarItem, TChartData } from "@plane/types";
+import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // Constants
@@ -29,6 +29,7 @@ interface TBarProps extends TShapeProps {
   showPercentage?: boolean;
   showTopBorderRadius?: boolean;
   showBottomBorderRadius?: boolean;
+  dotted?: boolean;
 }
 
 // Utilities
@@ -118,7 +119,7 @@ const CustomBar = React.memo((props: TBarProps) => {
 });
 
 const CustomBarLollipop = React.memo((props: TBarProps) => {
-  const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage } = props;
+  const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage, dotted } = props;
 
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
 
@@ -132,6 +133,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         stroke={typeof fill === "function" ? fill(payload) : fill}
         strokeWidth={DEFAULT_LOLLIPOP_LINE_WIDTH}
         strokeLinecap="round"
+        strokeDasharray={dotted ? "4 4" : "0"}
       />
       <circle
         cx={x + width / 2}
@@ -149,8 +151,8 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
 
 // Shape Variants Factory
 const createShapeVariant =
-  (Component: React.ComponentType<TBarProps>) =>
-  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => {
+  (Component: React.ComponentType<TBarProps>, factoryProps?: Partial<TBarProps>) =>
+  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): JSX.Element => {
     const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
     const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
 
@@ -163,14 +165,19 @@ const createShapeVariant =
         showPercentage={bar.showPercentage}
         showTopBorderRadius={!!showTopBorderRadius}
         showBottomBorderRadius={!!showBottomBorderRadius}
+        {...factoryProps}
       />
     );
   };
 
 // Shape Variants
-export const barShapeVariants = {
+export const barShapeVariants: Record<
+  TBarChartShapeVariant,
+  (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => JSX.Element
+> = {
   bar: createShapeVariant(CustomBar),
   lollipop: createShapeVariant(CustomBarLollipop),
+  "lollipop-dotted": createShapeVariant(CustomBarLollipop, { dotted: true }),
 };
 
 // Display names
