@@ -7,9 +7,9 @@ from plane.ee.models import PageUser
 from plane.payment.flags.flag import FeatureFlag
 
 # Permission Mappings for workspace members
-ADMIN = ROLE.ADMIN
-MEMBER = ROLE.MEMBER
-GUEST = ROLE.GUEST
+ADMIN = ROLE.ADMIN.value
+MEMBER = ROLE.MEMBER.value
+GUEST = ROLE.GUEST.value
 
 # Permission Mappings for page users
 VIEW = PageUser.AccessLevel.VIEW
