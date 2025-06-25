@@ -40,5 +40,5 @@ export const getRandomColor = () => "#" + Math.floor(Math.random() * 16777215).t
 
 export const removeUndefinedFromObject = (obj: any): any =>
   Object.fromEntries(
-    Object.entries(obj || {}).filter(([_, value]) => value !== undefined && value !== null)
+    Object.entries(obj || {}).filter(([_, value]) => value !== undefined)
   );

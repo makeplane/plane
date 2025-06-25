@@ -208,7 +208,7 @@ export class JobController {
       await client.importJob.updateImportJob(job.id, {
         status: "CREATED",
         cancelled_at: null,
-        error_metadata: undefined,
+        error_metadata: {},
       });
 
       await resetJobIfStarted(job);
