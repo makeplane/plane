@@ -19,7 +19,7 @@
 }
 
 {
-	email {$CERT_EMAIL}
+	{$CERT_EMAIL}
 	acme_ca {$CERT_ACME_CA:https://acme-v02.api.letsencrypt.org/directory} 
 	{$CERT_ACME_DNS}
 	servers {
