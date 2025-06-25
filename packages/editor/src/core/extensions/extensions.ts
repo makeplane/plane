@@ -37,14 +37,21 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // plane editor extensions
 import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import type { IEditorProps } from "@/types";
+import type { IEditorProps, TEmbedConfig } from "@/types";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "embedHandler"
 > & {
   enableHistory: boolean;
   editable: boolean;
+  embedHandler?: TEmbedConfig;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -56,6 +63,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     mentionHandler,
     placeholder,
     tabIndex,
+    embedHandler,
     editable,
   } = args;
 
@@ -184,8 +192,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomColorExtension,
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
-      flaggedExtensions,
       fileHandler,
+      flaggedExtensions,
+      embedHandler,
     }),
   ];
 

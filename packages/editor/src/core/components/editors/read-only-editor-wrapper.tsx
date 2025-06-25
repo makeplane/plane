@@ -22,6 +22,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
     id,
     initialValue,
     mentionHandler,
+    embedHandler,
   } = props;
 
   const editor = useReadOnlyEditor({
@@ -33,6 +34,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
     forwardedRef,
     initialValue,
     mentionHandler,
+    embedHandler,
   });
 
   const editorContainerClassName = getEditorClassNames({

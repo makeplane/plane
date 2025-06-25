@@ -1,6 +1,11 @@
+import { NodeViewProps } from "@tiptap/react";
+
 export type TEmbedConfig = {
   issue?: TIssueEmbedConfig;
+  externalEmbedComponent?: TExternalEmbedConfig;
 };
+
+export type TExternalEmbedConfig = { widgetCallback: (props: NodeViewProps) => React.ReactNode };
 
 export type TReadOnlyEmbedConfig = TEmbedConfig;
 

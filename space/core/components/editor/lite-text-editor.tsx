@@ -1,5 +1,6 @@
 import React from "react";
 // plane imports
+import { NodeViewProps } from "@tiptap/react";
 import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -8,10 +9,11 @@ import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 
 interface LiteTextEditorWrapperProps
   extends MakeOptional<
-    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
     "disabledExtensions" | "flaggedExtensions"
   > {
   anchor: string;
@@ -39,7 +41,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
+  const embedHandlerConfig = {
+    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} anchor={anchor} /> },
+  };
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
@@ -55,6 +59,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         {...rest}
+        embedHandler={embedHandlerConfig}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}
       />

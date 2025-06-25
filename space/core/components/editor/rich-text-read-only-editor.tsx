@@ -1,5 +1,6 @@
 import React from "react";
 // plane imports
+import { NodeViewProps } from "@tiptap/react";
 import { EditorReadOnlyRefApi, IRichTextReadOnlyEditorProps, RichTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -9,9 +10,10 @@ import { EditorMentionsRoot } from "@/components/editor";
 import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 // store hooks
 import { useMember } from "@/hooks/store";
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 
 type RichTextReadOnlyEditorWrapperProps = MakeOptional<
-  Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
   "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
@@ -38,6 +40,11 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
           }),
         }}
         {...props}
+        embedHandler={{
+          externalEmbedComponent: {
+            widgetCallback: (props: NodeViewProps) => <EmbedHandler anchor={anchor} {...props} />,
+          },
+        }}
         // overriding the customClassName to add relative class passed
         containerClassName={cn("relative p-0 border-none", props.containerClassName)}
       />

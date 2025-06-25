@@ -36,6 +36,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    embedHandler,
   } = props;
 
   const editor = useEditor({
@@ -57,6 +58,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    embedHandler,
   });
 
   const editorContainerClassName = getEditorClassNames({

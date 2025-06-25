@@ -137,9 +137,13 @@ export interface IEditorProps {
   value?: string | null;
 }
 
-export type ILiteTextEditorProps = IEditorProps;
+export type ILiteTextEditorProps = IEditorProps & {
+  embedHandler?: TEmbedConfig;
+};
+
 export interface IRichTextEditorProps extends IEditorProps {
   dragDropEnabled?: boolean;
+  embedHandler?: TEmbedConfig;
 }
 
 export interface ICollaborativeDocumentEditorProps
@@ -175,7 +179,9 @@ export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export type IRichTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
-export type IDocumentReadOnlyEditorProps = IReadOnlyEditorProps;
+export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
+  embedHandler: TEmbedConfig;
+}
 
 export interface EditorEvents {
   beforeCreate: never;

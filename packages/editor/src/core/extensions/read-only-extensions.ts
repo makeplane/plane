@@ -33,7 +33,10 @@ import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extension
 // types
 import type { IReadOnlyEditorProps } from "@/types";
 
-type Props = Pick<IReadOnlyEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler">;
+type Props = Pick<
+  IReadOnlyEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "embedHandler"
+>;
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
   const { disabledExtensions, fileHandler, flaggedExtensions, mentionHandler } = props;

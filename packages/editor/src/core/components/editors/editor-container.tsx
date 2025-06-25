@@ -3,7 +3,7 @@ import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { LinkViewContainer } from "@/components/editors/link-view-container";
+import { LinkViewContainer } from "./link-view-container";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
@@ -55,7 +55,8 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
 
       // Check if its last node and add new node
       if (lastNode) {
-        const isLastNodeEmptyParagraph = lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
+        const isLastNodeEmptyParagraph =
+          lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
         // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
         if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
           const endPosition = editor?.state.doc.content.size;

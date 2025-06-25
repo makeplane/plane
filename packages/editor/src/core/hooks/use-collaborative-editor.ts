@@ -75,6 +75,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
   );
 
   const editor = useEditor({
+    embedHandler,
     disabledExtensions,
     id,
     editable,

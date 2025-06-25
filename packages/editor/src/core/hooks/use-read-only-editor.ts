@@ -25,6 +25,7 @@ export const useReadOnlyEditor = (props: TReadOnlyEditorHookProps) => {
     handleEditorReady,
     initialValue,
     mentionHandler,
+    embedHandler,
     provider,
   } = props;
 
@@ -49,6 +50,7 @@ export const useReadOnlyEditor = (props: TReadOnlyEditorHookProps) => {
         fileHandler,
         flaggedExtensions,
         mentionHandler,
+        embedHandler,
       }),
       ...extensions,
     ],
