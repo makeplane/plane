@@ -90,7 +90,7 @@ const ProjectsByStatus = observer(() => {
           }}
           yAxis={{
             key: "count",
-            label: t("no_of", { entity: t("common.projects") }),
+            label: t("common.no_of", { entity: t("common.projects") }),
           }}
           margin={{
             top: 10,
