@@ -1,4 +1,4 @@
-from .issue import IssueDocument
+from .issue import IssueDocument, IssueCommentDocument
 from .workspace import WorkspaceDocument
 from .project import ProjectDocument
 from .cycle import CycleDocument

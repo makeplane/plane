@@ -1,6 +1,7 @@
 # Standard library imports
 
 # Third-party imports
+from django.conf import settings
 from opensearchpy.exceptions import ConnectionError, NotFoundError, RequestError
 from rest_framework import status
 from rest_framework.response import Response
@@ -15,6 +16,7 @@ from plane.ee.documents import (
     ModuleDocument,
     IssueViewDocument,
     PageDocument,
+    IssueCommentDocument,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -26,6 +28,7 @@ from plane.ee.serializers.app.search_serializers import (
     PageSearchSerializer,
     IssueViewSearchSerializer,
     TeamspaceSearchSerializer,
+    IssueCommentSearchSerializer,
 )
 from plane.ee.utils.opensearch_helper import OpenSearchHelper
 from plane.utils.exception_logger import log_exception
@@ -277,6 +280,42 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         return helper
 
+    def filter_work_item_comments(self, query, slug):
+        # permission filters
+        filters = [
+            {"workspace_slug": slug},
+            {"active_project_member_user_ids": self.request.user.id},
+            {"project_is_archived": False},
+        ]
+
+        fields_to_retrieve = [
+            "id",
+            "comment",
+            "project_identifier",
+            "project_id",
+            "workspace_slug",
+            "actor_id",
+            "issue_id",
+        ]
+
+        result_key = "work_item_comment"
+
+        helper = OpenSearchHelper(
+            document_cls=IssueCommentDocument,
+            filters=filters,
+            query=query,
+            search_fields=["comment"],
+            source_fields=fields_to_retrieve,
+            page=1,
+            page_size=100,
+            boosts=None,
+            operator="and",
+            result_key=result_key,
+            serializer_class=IssueCommentSearchSerializer,
+        )
+
+        return helper
+
     @check_feature_flag(FeatureFlag.ADVANCED_SEARCH)
     def get(self, request, slug):
         query = request.query_params.get("search", False)
@@ -291,6 +330,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             "page": [],
             "epic": [],
             "teamspace": [],
+            "work_item_comment": [],
         }
 
         if not query:
@@ -309,6 +349,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             self.filter_pages(query, slug),
             self.filter_views(query, slug),
             self.filter_teamspaces(query, slug),
+            self.filter_work_item_comments(query, slug),
         ]
 
         try:

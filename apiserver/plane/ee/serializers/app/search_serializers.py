@@ -91,3 +91,13 @@ class TeamspaceSearchSerializer(BaseSearchSerializer):
     id = serializers.CharField()
     workspace_slug = serializers.CharField()
     logo_props = AttrDictField()
+
+
+class IssueCommentSearchSerializer(BaseSearchSerializer):
+    comment = serializers.CharField()
+    id = serializers.CharField()
+    project_id = serializers.CharField()
+    project_identifier = serializers.CharField()
+    workspace_slug = serializers.CharField()
+    actor_id = serializers.CharField(required=False)
+    issue_id = serializers.CharField(required=False)
