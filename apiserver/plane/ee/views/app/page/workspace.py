@@ -540,9 +540,16 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, page_id):
+        user_pages = (
+            PageUser.objects.filter(
+                page_id=page_id, user_id=request.user.id, workspace__slug=slug
+            )
+            .values_list("page_id", flat=True)
+            .first()
+        )
         page = (
             Page.objects.filter(pk=page_id, workspace__slug=slug)
-            .filter(Q(owned_by=self.request.user) | Q(access=0))
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id=user_pages))
             .first()
         )
         if page is None:
@@ -565,7 +572,18 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def partial_update(self, request, slug, page_id):
-        page = Page.objects.filter(pk=page_id, workspace__slug=slug).first()
+        user_pages = (
+            PageUser.objects.filter(
+                page_id=page_id, user_id=request.user.id, workspace__slug=slug
+            )
+            .values_list("page_id", flat=True)
+            .first()
+        )
+        page = (
+            Page.objects.filter(pk=page_id, workspace__slug=slug)
+            .filter(Q(owned_by=self.request.user) | Q(access=0) | Q(id=user_pages))
+            .first()
+        )
 
         if page is None:
             return Response(
