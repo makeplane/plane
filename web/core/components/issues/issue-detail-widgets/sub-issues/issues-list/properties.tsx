@@ -1,12 +1,21 @@
 // plane imports
-import { SyntheticEvent } from "react";
+import { SyntheticEvent, useMemo } from "react";
 import { observer } from "mobx-react";
+import { CalendarCheck2, CalendarClock } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import { PriorityDropdown, MemberDropdown, StateDropdown, DateRangeDropdown } from "@/components/dropdowns";
+import {
+  PriorityDropdown,
+  MemberDropdown,
+  StateDropdown,
+  DateRangeDropdown,
+  DateDropdown,
+} from "@/components/dropdowns";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type Props = {
   workspaceSlug: string;
@@ -27,6 +36,8 @@ type Props = {
 
 export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => {
   const { workspaceSlug, parentIssueId, issueId, disabled, updateSubIssue, displayProperties, issue } = props;
+  const { t } = useTranslation();
+  const { getStateById } = useProjectState();
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -49,10 +60,22 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
     }
   };
 
+  //derived values
+  const stateDetails = useMemo(() => getStateById(issue.state_id), [getStateById, issue.state_id]);
+  const shouldHighlight = useMemo(
+    () => shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+    [issue.target_date, stateDetails?.group]
+  );
+  // date range is enabled only when both dates are available and both dates are enabled
+  const isDateRangeEnabled: boolean = Boolean(
+    issue.start_date && issue.target_date && displayProperties?.start_date && displayProperties?.due_date
+  );
+
   if (!displayProperties) return <></>;
 
   const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
+  const minDate = getDate(issue.start_date);
+
   return (
     <div className="relative flex items-center gap-2">
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
@@ -104,7 +127,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey={["start_date", "due_date"]}
-        shouldRenderProperty={(properties) => !!(properties.start_date || properties.due_date)}
+        shouldRenderProperty={() => isDateRangeEnabled}
       >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateRangeDropdown
@@ -122,10 +145,55 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             isClearable
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={shouldHighlight ? "text-red-500" : ""}
             disabled={!disabled}
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* start date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="start_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5">
+          <DateDropdown
+            value={issue.start_date ?? null}
+            onChange={handleStartDate}
+            maxDate={maxDate}
+            placeholder={t("common.order_by.start_date")}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            optionsClassName="z-30"
+            disabled={!disabled}
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* target/due date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="due_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5">
+          <DateDropdown
+            value={issue?.target_date ?? null}
+            onChange={handleTargetDate}
+            minDate={minDate}
+            placeholder={t("common.order_by.due_date")}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={shouldHighlight ? "text-red-500" : ""}
+            clearIconClassName="text-custom-text-100"
+            optionsClassName="z-30"
+            disabled={!disabled}
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
