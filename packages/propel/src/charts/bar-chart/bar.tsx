@@ -122,7 +122,6 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
 
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
 
-  console.log(y, "y", x, "x", width, "width", height, "height");
   return (
     <g>
       <line
