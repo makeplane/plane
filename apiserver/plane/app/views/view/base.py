@@ -145,6 +145,27 @@ class WorkspaceViewViewSet(BaseViewSet):
 
 
 class WorkspaceViewIssuesViewSet(BaseViewSet):
+    def _get_project_permission_filters(self):
+        """
+        Get common project permission filters for guest users and role-based access control.
+        Returns Q object for filtering issues based on user role and project settings.
+        """
+        return Q(
+            Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=True,
+            )
+            | Q(
+                project__project_projectmember__role=5,
+                project__guest_view_all_features=False,
+                created_by=self.request.user,
+            )
+            |
+            # For other roles (role > 5), show all issues
+            Q(project__project_projectmember__role__gt=5),
+            project__project_projectmember__member=self.request.user,
+            project__project_projectmember__is_active=True,
+        )
 
     def get_queryset(self):
         return (
@@ -214,47 +235,19 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         issue_queryset = self.get_queryset().filter(**filters)
 
+        # Get common project permission filters
+        permission_filters = self._get_project_permission_filters()
+
         # Base query for the counts
         total_issue_count = (
             Issue.issue_objects.filter(**filters)
             .filter(workspace__slug=slug)
-            .filter(
-                Q(
-                    project__project_projectmember__role=5,
-                    project__guest_view_all_features=True,
-                )
-                | Q(
-                    project__project_projectmember__role=5,
-                    project__guest_view_all_features=False,
-                    created_by=self.request.user,
-                )
-                |
-                # For other roles (role < 5), show all issues
-                Q(project__project_projectmember__role__gt=5),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-            )
+            .filter(permission_filters)
             .only("id")
         )
 
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features if it is true then show all the issues else show only the issues created by the user
-
-        issue_queryset = issue_queryset.filter(
-            Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=True,
-            )
-            | Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=False,
-                created_by=self.request.user,
-            )
-            |
-            # For other roles (role < 5), show all issues
-            Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
-        )
+        # Apply project permission filters to the issue queryset
+        issue_queryset = issue_queryset.filter(permission_filters)
 
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
