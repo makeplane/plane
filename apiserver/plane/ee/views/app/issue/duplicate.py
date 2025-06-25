@@ -1,5 +1,13 @@
 from plane.app.views.base import BaseAPIView
-from plane.db.models import IssueRelation, Workspace, Issue, IssueType
+from plane.db.models import (
+    IssueRelation,
+    Workspace,
+    Issue,
+    IssueType,
+    State,
+    Project,
+    ProjectMember,
+)
 from rest_framework.response import Response
 from rest_framework import status
 from plane.app.serializers.issue import IssueDuplicateSerializer
@@ -14,6 +22,29 @@ class IssueDuplicateEndpoint(BaseAPIView):
     def post(self, request, slug, issue_id):
         workspace = Workspace.objects.get(slug=slug)
         project_id = request.data.get("project_id")
+
+        project_exists = Project.objects.filter(
+            id=project_id, workspace__slug=slug
+        ).exists()
+
+        if not project_exists:
+            return Response(
+                {"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        project_member_exists = ProjectMember.objects.filter(
+            project_id=project_id,
+            member_id=request.user.id,
+            is_active=True,
+        ).exists()
+
+        if not project_member_exists:
+            return Response(
+                {
+                    "error": "You don't have permission to duplicate issues in this project"
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         original_issue = Issue.objects.get(pk=issue_id)
         duplicated_issue = original_issue
@@ -43,13 +74,17 @@ class IssueDuplicateEndpoint(BaseAPIView):
         duplicated_issue.issue_cycle_ids = None
         duplicated_issue.issue_module_ids = None
 
+        state = State.objects.filter(project_id=project_id, default=True).first()
+
+        if not state:
+            state = State.objects.filter(project_id=project_id, group="backlog").first()
+
         # Fetch all issue types for the destination project once
         destination_issue_types = IssueType.objects.filter(
             project_issue_types__project_id=project_id
         )
 
         duplicated_issue.project_id = project_id
-
 
         # Separate epics and regular issue types
         epic_types = [it for it in destination_issue_types if it.is_epic]
@@ -74,9 +109,9 @@ class IssueDuplicateEndpoint(BaseAPIView):
             else:
                 # Add default type id of issue type of destination project
                 duplicated_issue.type_id = regular_issue_types[0].id
-        
+
         duplicated_issue.save()
-        
+
         # Duplicate description assets
         copy_s3_objects.delay(
             entity_name="ISSUE",
