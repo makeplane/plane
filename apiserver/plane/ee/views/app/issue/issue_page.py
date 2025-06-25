@@ -56,7 +56,7 @@ class IssuePageViewSet(BaseAPIView):
         work_item_pages_ids = [work_item_page.id for work_item_page in work_item_pages]
 
         work_item_pages = (
-            self.filter_work_item_pages(workspace, project_id, issue_id)
+            self.filter_work_item_pages(slug, project_id, issue_id)
             .filter(id__in=work_item_pages_ids)
             .select_related("page")
         )

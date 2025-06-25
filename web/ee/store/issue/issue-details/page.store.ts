@@ -66,10 +66,10 @@ export class WorkItemPagesStore implements IWorkItemPagesInterface {
     try {
       const result = await this.issuePageService.updateWorkItemPage(workspaceSlug, projectId, issueId, pages);
       runInAction(async () => {
-        this.issuePagesMap[issueId] = pages;
         result.forEach((data) => {
           this.pagesMap[data.page.id] = { ...data.page, name: getPageName(data.page.name) };
         });
+        this.issuePagesMap[issueId] = result.map((data) => data.page.id) || [];
       });
     } catch (error) {
       console.error(error);

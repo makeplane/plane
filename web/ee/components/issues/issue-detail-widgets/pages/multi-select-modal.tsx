@@ -58,7 +58,9 @@ const PagesMultiSelectModal = observer(
     const [showWikiPages, setShowWikiPages] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    const issuePages = getPagesByIssueId(workItemId).map((id) => getPageById(id));
+    const issuePages = getPagesByIssueId(workItemId)
+      .map((id) => getPageById(id))
+      .filter((page) => page !== undefined);
 
     const handleClose = () => {
       onClose();
@@ -175,13 +177,13 @@ const PagesMultiSelectModal = observer(
                   className="group flex items-center gap-1.5 bg-custom-background-90 px-2 py-1 rounded cursor-pointer w-fit overflow-hidden"
                   onClick={() => setSelectedPages((prev) => prev.filter((p) => p.id !== page.id))}
                 >
-                  {page.logo_props && page.logo_props?.in_use ? (
+                  {page?.logo_props && page.logo_props?.in_use ? (
                     <Logo logo={page.logo_props} size={16} type="lucide" />
                   ) : (
                     <FileText className="size-4 text-custom-text-300" />
                   )}
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
-                    {getPageName(page.name)}
+                    {getPageName(page?.name ?? "")}
                   </p>
                   <X className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
                 </div>
