@@ -5,7 +5,11 @@ import { getValidKeysFromObject } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
-import { IssueTypeActivity, AdditionalActivityRoot } from "@/plane-web/components/issues/issue-details";
+import {
+  IssueTypeActivity,
+  AdditionalActivityRoot,
+  IssuePageActivity,
+} from "@/plane-web/components/issues/issue-details";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
 // local components
 import {
@@ -89,6 +93,8 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
       return <IssueInboxActivity {...componentDefaultProps} />;
     case "type":
       return <IssueTypeActivity {...componentDefaultProps} />;
+    case "page":
+      return <IssuePageActivity {...componentDefaultProps} />;
     default:
       return <AdditionalActivityRoot {...componentDefaultProps} field={activityField} />;
   }
