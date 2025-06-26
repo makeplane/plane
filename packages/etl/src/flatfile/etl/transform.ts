@@ -144,7 +144,7 @@ export const extractFlatfileEntity = (records: TExtractedRecord[]): TFlatfileEnt
     if (record.labels) {
       record.labels.forEach((label) => {
         label
-          .split(",")
+          .split(";")
           .map((part) => part.trim().toLowerCase())
           .filter((part) => part.length > 0)
           .forEach((part) => labels.add(part));
@@ -172,7 +172,7 @@ export const extractFlatfileEntity = (records: TExtractedRecord[]): TFlatfileEnt
           created_by: record.created_by && record.created_by.trim().split("@")[0],
           issue_type: record.issue_type?.trim(),
           description: record.description?.trim() || "",
-          labels: (record.labels || []).flatMap((label) => label.split(",").map((part) => part.trim())),
+          labels: (record.labels || []).flatMap((label) => label.split(";").map((part) => part.trim())),
           start_date: record.start_date && getFormattedDate(record.start_date.trim()),
           target_date: record.target_date && getFormattedDate(record.target_date.trim()),
         });
