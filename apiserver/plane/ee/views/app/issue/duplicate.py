@@ -79,6 +79,8 @@ class IssueDuplicateEndpoint(BaseAPIView):
         if not state:
             state = State.objects.filter(project_id=project_id, group="backlog").first()
 
+        duplicated_issue.state_id = state.id
+
         # Fetch all issue types for the destination project once
         destination_issue_types = IssueType.objects.filter(
             project_issue_types__project_id=project_id
