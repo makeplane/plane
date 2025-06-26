@@ -46,9 +46,9 @@ export const InstanceSignInForm: FC = (props) => {
   const {} = props;
   // search params
   const searchParams = useSearchParams();
-  const emailParam = searchParams.get("email") || undefined;
-  const errorCode = searchParams.get("error_code") || undefined;
-  const errorMessage = searchParams.get("error_message") || undefined;
+  const emailParam = searchParams?.get("email") || undefined;
+  const errorCode = searchParams?.get("error_code") || undefined;
+  const errorMessage = searchParams?.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);

@@ -8,10 +8,12 @@ import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
 import { SettingsHeading } from "@/components/settings";
 import { useEventTracker, useProject, useUser } from "@/hooks/store";
-// plane web components
+import { ProjectFeatureChildren } from "@/plane-web/components/projects/settings";
+// plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace";
-// plane web constants
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 type Props = {
   workspaceSlug: string;
@@ -26,6 +28,8 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
+  const { toggleProjectFeatures } = useProjectAdvanced();
+  const isWorklogEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
   // derived values
   const currentProjectDetails = getProjectById(projectId);
 
@@ -43,6 +47,9 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
+    if (featureProperty === "is_time_tracking_enabled") {
+      toggleProjectFeatures(workspaceSlug, projectId, settingsPayload, false);
+    }
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {
@@ -78,7 +85,10 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                       <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
                       {featureItem.isPro && (
                         <Tooltip tooltipContent="Pro feature" position="top">
-                          <UpgradeBadge className="rounded" />
+                          <UpgradeBadge
+                            flag={featureItem.property === "is_time_tracking_enabled" ? "ISSUE_WORKLOG" : undefined}
+                            className="rounded"
+                          />
                         </Tooltip>
                       )}
                     </div>
@@ -87,16 +97,29 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     </p>
                   </div>
                 </div>
+
                 <ToggleSwitch
-                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                  value={Boolean(
+                    currentProjectDetails?.[featureItem.property as keyof IProject] &&
+                      (featureItem.property === "is_time_tracking_enabled" ? isWorklogEnabled : true)
+                  )}
                   onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                  disabled={!featureItem.isEnabled || !isAdmin}
+                  disabled={
+                    !featureItem.isEnabled || !isAdmin || featureItem.property === "is_time_tracking_enabled"
+                      ? !isWorklogEnabled
+                      : false
+                  }
                   size="sm"
                 />
               </div>
               <div className="pl-14">
-                {currentProjectDetails?.[featureItem.property as keyof IProject] &&
-                  featureItem.renderChildren?.(currentProjectDetails, workspaceSlug)}
+                {currentProjectDetails && currentProjectDetails?.[featureItem.property as keyof IProject] && (
+                  <ProjectFeatureChildren
+                    feature={featureItemKey}
+                    currentProjectDetails={currentProjectDetails}
+                    workspaceSlug={workspaceSlug}
+                  />
+                )}
               </div>
             </div>
           ))}

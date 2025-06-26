@@ -11,7 +11,7 @@ import { useMember } from "@/hooks/store";
 
 interface RichTextEditorWrapperProps
   extends MakeOptional<
-    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled">,
     "disabledExtensions" | "flaggedExtensions"
   > {
   anchor: string;
@@ -42,6 +42,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
+      isSmoothCursorEnabled={false}
     />
   );
 });

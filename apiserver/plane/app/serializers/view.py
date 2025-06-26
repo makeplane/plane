@@ -52,6 +52,7 @@ class ViewIssueListSerializer(serializers.Serializer):
 
 class IssueViewSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueView

@@ -3,6 +3,12 @@ export enum EPageAccess {
   PRIVATE = 1,
 }
 
+export enum EPageSharedUserAccess {
+  VIEW = 0,
+  COMMENT = 1,
+  EDIT = 2,
+}
+
 export type TCreatePageModal = {
   isOpen: boolean;
   pageAccess?: EPageAccess;
