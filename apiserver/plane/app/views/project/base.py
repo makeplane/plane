@@ -65,6 +65,25 @@ class ProjectViewSet(BaseViewSet):
     model = Project
     webhook_event = "project"
 
+    def get_teamspace_project_ids(self, request, slug):
+        # Check if user is part of any teamspace and that teamspace has projects
+        teamspace_project_ids = set()
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            user_id=request.user.id,
+            slug=slug,
+        ):
+            # Get all teamspace IDs where the user is a member
+            teamspace_ids = TeamspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug
+            ).values_list("team_space_id", flat=True)
+
+            # Get all project IDs that belong to those teamspaces
+            teamspace_project_ids = TeamspaceProject.objects.filter(
+                team_space_id__in=teamspace_ids
+            ).values_list("project_id", flat=True)
+        return teamspace_project_ids
+
     def update_project_role(
         self, project: Dict[str, Any], teamspace_project_ids: List[uuid.UUID]
     ) -> Dict[str, Any]:
@@ -188,7 +207,6 @@ class ProjectViewSet(BaseViewSet):
                     to_attr="members_list",
                 )
             )
-            .distinct()
         )
 
     @allow_permission(
@@ -196,28 +214,48 @@ class ProjectViewSet(BaseViewSet):
     )
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        projects = self.get_queryset().order_by("sort_order", "name")
+        base_queryset = self.get_queryset().order_by("sort_order", "name")
 
         # Get the projects in which the user is part of
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=ROLE.GUEST.value
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
-            projects = projects.filter(
+            # For GUEST role: direct memberships + teamspace memberships
+            direct_projects = base_queryset.filter(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
             )
 
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(teamspace_projects)
+
         # Get the projects in which the user is part of or the public projects
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=ROLE.MEMBER.value
+        elif WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
+            # For MEMBER role: direct memberships + public projects + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
             )
+
+            public_projects = base_queryset.filter(network=2)
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(public_projects, teamspace_projects)
+        else:
+            # For other roles, show all projects
+            projects = base_queryset
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
@@ -250,7 +288,7 @@ class ProjectViewSet(BaseViewSet):
             is_active=True,
         ).values("sort_order")
 
-        projects = (
+        base_queryset = (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .select_related(
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
@@ -264,8 +302,42 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
-            .distinct()
-        ).values(
+        )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=5
+        ).exists():
+            # For role 5 (MEMBER): direct memberships + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(teamspace_projects)
+
+        elif WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=15
+        ).exists():
+            # For role 15 (GUEST): direct memberships + public projects + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+            public_projects = base_queryset.filter(network=2)
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(public_projects, teamspace_projects)
+        else:
+            # For other roles, show all projects
+            projects = base_queryset
+
+        projects = projects.values(
             "id",
             "name",
             "identifier",
@@ -288,25 +360,6 @@ class ProjectViewSet(BaseViewSet):
             "updated_by",
         )
 
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
-        ).exists():
-            projects = projects.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
-        ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
-            )
-
         payload = self.update_project_member_role(list(projects))
         return Response(payload, status=status.HTTP_200_OK)
 
@@ -315,34 +368,15 @@ class ProjectViewSet(BaseViewSet):
     )
     def retrieve(self, request, slug, pk):
         project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES,
-            user_id=self.request.user.id,
-            slug=self.kwargs.get("slug"),
-        ):
-            ## Get all team ids where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(
-                member=self.request.user, workspace__slug=self.kwargs.get("slug")
-            ).values_list("team_space_id", flat=True)
 
-            # Get all the projects in the respective teamspaces
-            teamspace_project_ids = TeamspaceProject.objects.filter(
-                team_space_id__in=teamspace_ids
-            ).values_list("project_id", flat=True)
-
-            # filter projects
-            project = project.filter(
-                Q(pk__in=teamspace_project_ids)
-                | Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-            )
-        else:
-            project = project.filter(
+        # filter projects
+        project = project.filter(
+            Q(pk__in=self.get_teamspace_project_ids(request, slug))
+            | Q(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
             )
+        )
 
         # projects
         project = project.first()
