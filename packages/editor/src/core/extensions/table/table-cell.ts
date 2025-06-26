@@ -1,6 +1,9 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { TableCellSelectionOutlinePlugin } from "./table/plugins/selection-outline.plugin";
+
 export interface TableCellOptions {
   HTMLAttributes: Record<string, any>;
 }
@@ -45,6 +48,10 @@ export const TableCell = Node.create<TableCellOptions>({
   tableRole: "cell",
 
   isolating: true,
+
+  addProseMirrorPlugins() {
+    return [TableCellSelectionOutlinePlugin(this.editor)];
+  },
 
   parseHTML() {
     return [{ tag: "td" }];
