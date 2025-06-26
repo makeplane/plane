@@ -11,13 +11,10 @@ const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 const emojiSuggestion = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
     if (query.trim() === "") {
-      const defaultEmojis = DEFAULT_EMOJIS
-        .map((name) =>
-          editor.storage.emoji.emojis.find((emoji: EmojiItem) =>
-            emoji.shortcodes.includes(name) || emoji.name === name
-          )
-        )
-        .filter(Boolean) 
+      const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
+        editor.storage.emoji.emojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+      )
+        .filter(Boolean)
         .slice(0, 5);
       
       return defaultEmojis;
@@ -25,9 +22,10 @@ const emojiSuggestion = {
     
     return editor.storage.emoji.emojis
       .filter(({ shortcodes, tags }: EmojiItem) => {
+        const lowerQuery = query.toLowerCase();
         return (
-          shortcodes.find((shortcode: string) => shortcode.startsWith(query.toLowerCase())) ||
-          tags.find((tag: string) => tag.startsWith(query.toLowerCase()))
+          shortcodes.find((shortcode: string) => shortcode.startsWith(lowerQuery)) ||
+          tags.find((tag: string) => tag.startsWith(lowerQuery))
         );
       })
       .slice(0, 5);
@@ -106,11 +104,12 @@ const emojiSuggestion = {
       },
 
       onExit: (props: any): void => {
-        const { activeDropbarExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const newactiveDropbarExtensions = activeDropbarExtensions.filter(
-          (extension) => extension !== CORE_EXTENSIONS.EMOJI
-        );
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions = newactiveDropbarExtensions;
+        const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+        if (index > -1) {
+          utilityStorage.activeDropbarExtensions.splice(index, 1);
+        }
+
 
         if (popup) {
           popup[0]?.destroy();

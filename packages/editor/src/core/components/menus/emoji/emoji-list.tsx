@@ -97,6 +97,8 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
   return (
     <div
       ref={emojiListContainer}
+        role="listbox"
+        aria-label="Emoji suggestions"
       className="z-10 max-h-[90vh] w-[16rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-1"
     >
       {items.length ? (
@@ -106,6 +108,9 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
           return (
             <button
               key={index}
+              role="option"
+              aria-selected={isSelected}
+              aria-label={`${item.name} emoji`}
               id={`emoji-item-${index}`}
               type="button"
               className={cn(
