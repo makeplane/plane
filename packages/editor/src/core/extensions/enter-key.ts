@@ -11,10 +11,9 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
     addKeyboardShortcuts(this) {
       return {
         Enter: () => {
-          const { activeModalExtensions } = getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY);
+          const { activeDropbarExtensions } = getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY);
 
-          console.log(activeModalExtensions, "enter-key ");
-          if (activeModalExtensions.length === 0) {
+          if (activeDropbarExtensions.length === 0) {
             onEnterKeyPress?.();
             return true;
           }

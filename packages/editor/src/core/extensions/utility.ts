@@ -9,6 +9,10 @@ import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { TActiveDropbarExtensionsCE } from "@/plane-editor/types/utils";
+
+type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI |TActiveDropbarExtensionsCE;
 
 declare module "@tiptap/core" {
   interface Commands {
@@ -21,7 +25,7 @@ declare module "@tiptap/core" {
 export interface UtilityExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
-  activeModalExtensions: any[];
+  activeDropbarExtensions: TActiveDropbarExtensions[];
 }
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
@@ -61,7 +65,7 @@ export const UtilityExtension = (props: Props) => {
       return {
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
-        activeModalExtensions: [],
+        activeDropbarExtensions: [],
       };
     },
 

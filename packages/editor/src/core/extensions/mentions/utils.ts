@@ -30,7 +30,7 @@ export const renderMentionsDropdown =
           },
           editor: props.editor,
         });
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions.push(CORE_EXTENSIONS.MENTION);
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.MENTION);
         // @ts-expect-error - Tippy types are incorrect
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect,
@@ -66,12 +66,12 @@ export const renderMentionsDropdown =
         return false;
       },
       onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
-        const { activeModalExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const newActiveModalExtensions = activeModalExtensions.filter(
+        const { activeDropbarExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+        const newactiveDropbarExtensions = activeDropbarExtensions.filter(
           (extension) => extension !== CORE_EXTENSIONS.MENTION
         );
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions =
-          newActiveModalExtensions;
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions =
+          newactiveDropbarExtensions;
         popup?.[0]?.destroy();
         component?.destroy();
       },

@@ -2,12 +2,27 @@ import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/react";
 import tippy, { Instance as TippyInstance } from "tippy.js";
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
-import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./EmojiList";
+import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./emoji-list";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
+const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
+
 const emojiSuggestion = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
+    if (query.trim() === "") {
+      const defaultEmojis = DEFAULT_EMOJIS
+        .map((name) =>
+          editor.storage.emoji.emojis.find((emoji: EmojiItem) =>
+            emoji.shortcodes.includes(name) || emoji.name === name
+          )
+        )
+        .filter(Boolean) 
+        .slice(0, 5);
+      
+      return defaultEmojis;
+    }
+    
     return editor.storage.emoji.emojis
       .filter(({ shortcodes, tags }: EmojiItem) => {
         return (
@@ -22,7 +37,7 @@ const emojiSuggestion = {
 
   render: () => {
     let component: ReactRenderer<EmojiListRef, EmojiListProps>;
-    let popup: TippyInstance;
+    let popup: TippyInstance[] | null = null;
 
     return {
       onStart: (props: SuggestionProps): void => {
@@ -32,11 +47,8 @@ const emojiSuggestion = {
           editor: props.editor,
         };
 
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions.push(CORE_EXTENSIONS.EMOJI);
-        console.log(
-          getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions,
-          "suggestion------ start"
-        );
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
+
         component = new ReactRenderer(EmojiList, {
           props: emojiListProps,
           editor: props.editor,
@@ -44,14 +56,22 @@ const emojiSuggestion = {
 
         if (!props.clientRect) return;
 
-        popup = tippy(document.body, {
+        popup = tippy("body", {
           getReferenceClientRect: props.clientRect as () => DOMRect,
-          appendTo: () => document.body,
+          appendTo: () =>
+            document.querySelector(".active-editor") ??
+            document.querySelector('[id^="editor-container"]') ??
+            document.body,
           content: component.element,
           showOnCreate: true,
           interactive: true,
           trigger: "manual",
           placement: "bottom-start",
+          hideOnClick: false,
+          sticky: "reference",
+          animation: false,
+          duration: 0,
+          offset: [0, 8],
         });
       },
 
@@ -65,7 +85,7 @@ const emojiSuggestion = {
         component.updateProps(emojiListProps);
 
         if (popup && props.clientRect) {
-          popup.setProps({
+          popup[0]?.setProps({
             getReferenceClientRect: props.clientRect as () => DOMRect,
           });
         }
@@ -74,7 +94,7 @@ const emojiSuggestion = {
       onKeyDown: (props: SuggestionKeyDownProps): boolean => {
         if (props.event.key === "Escape") {
           if (popup) {
-            popup.hide();
+            popup[0]?.hide();
           }
           if (component) {
             component.destroy();
@@ -86,19 +106,14 @@ const emojiSuggestion = {
       },
 
       onExit: (props: any): void => {
-        console.log("suggestion------ on exit");
-        const { activeModalExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const newActiveModalExtensions = activeModalExtensions.filter(
+        const { activeDropbarExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+        const newactiveDropbarExtensions = activeDropbarExtensions.filter(
           (extension) => extension !== CORE_EXTENSIONS.EMOJI
         );
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions = newActiveModalExtensions;
-        console.log(
-          getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions,
-          "suggestion------ test"
-        );
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions = newactiveDropbarExtensions;
 
         if (popup) {
-          popup.destroy();
+          popup[0]?.destroy();
         }
         if (component) {
           component.destroy();

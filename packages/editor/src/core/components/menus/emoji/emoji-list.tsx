@@ -1,8 +1,6 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
 import { cn } from "@plane/utils";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export interface EmojiItem {
   name: string;
@@ -25,6 +23,8 @@ export interface EmojiListRef {
 export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) => {
   const { items, command } = props;
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  // refs
+  const emojiListContainer = useRef<HTMLDivElement>(null);
 
   const selectItem = (index: number): void => {
     const item = items[index];
@@ -48,6 +48,24 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
   useEffect(() => setSelectedIndex(0), [items]);
 
+  // scroll to the dropdown item when navigating via keyboard
+  useLayoutEffect(() => {
+    const container = emojiListContainer?.current;
+    if (!container) return;
+
+    const item = container.querySelector(`#emoji-item-${selectedIndex}`) as HTMLElement;
+    if (item) {
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = item.getBoundingClientRect();
+
+      const isItemInView = itemRect.top >= containerRect.top && itemRect.bottom <= containerRect.bottom;
+
+      if (!isItemInView) {
+        item.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [selectedIndex]);
+
   useImperativeHandle(
     ref,
     () => ({
@@ -63,7 +81,6 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
         }
 
         if (event.key === "Enter") {
-
           enterHandler();
           event.preventDefault();
           event.stopPropagation();
@@ -78,7 +95,10 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
   );
 
   return (
-    <div className="z-10 max-h-[90vh] w-[16rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-1">
+    <div
+      ref={emojiListContainer}
+      className="z-10 max-h-[90vh] w-[16rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-1"
+    >
       {items.length ? (
         items.map((item, index) => {
           const isSelected = index === selectedIndex;
@@ -86,6 +106,7 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
           return (
             <button
               key={index}
+              id={`emoji-item-${index}`}
               type="button"
               className={cn(
                 "flex items-center gap-2 w-full rounded px-2 py-1.5 text-sm text-left truncate text-custom-text-200 hover:bg-custom-background-80 transition-colors duration-150",
