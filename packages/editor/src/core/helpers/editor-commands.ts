@@ -2,8 +2,8 @@ import { Editor, Range } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { InsertImageComponentProps } from "@/extensions";
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
+import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
 

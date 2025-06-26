@@ -27,7 +27,7 @@ def user_data():
         "email": "test@plane.so",
         "password": "test-password",
         "first_name": "Test",
-        "last_name": "User"
+        "last_name": "User",
     }
 
 
@@ -37,7 +37,7 @@ def create_user(db, user_data):
     user = User.objects.create(
         email=user_data["email"],
         first_name=user_data["first_name"],
-        last_name=user_data["last_name"]
+        last_name=user_data["last_name"],
     )
     user.set_password(user_data["password"])
     user.save()
@@ -67,6 +67,48 @@ def session_client(api_client, create_user):
     """Return a session authenticated API client for app API testing, which is what plane.app uses"""
     api_client.force_authenticate(user=create_user)
     return api_client
+
+
+@pytest.fixture
+def create_bot_user(db):
+    """Create and return a bot user instance"""
+    from uuid import uuid4
+
+    unique_id = uuid4().hex[:8]
+    user = User.objects.create(
+        email=f"bot-{unique_id}@plane.so",
+        username=f"bot_user_{unique_id}",
+        first_name="Bot",
+        last_name="User",
+        is_bot=True,
+    )
+    user.set_password("bot@123")
+    user.save()
+    return user
+
+
+@pytest.fixture
+def api_token_data():
+    """Return sample API token data for testing"""
+    from django.utils import timezone
+    from datetime import timedelta
+
+    return {
+        "label": "Test API Token",
+        "description": "Test description for API token",
+        "expired_at": (timezone.now() + timedelta(days=30)).isoformat(),
+    }
+
+
+@pytest.fixture
+def create_api_token_for_user(db, create_user):
+    """Create and return an API token for a specific user"""
+    return APIToken.objects.create(
+        label="Test Token",
+        description="Test token description",
+        user=create_user,
+        user_type=0,
+    )
 
 
 @pytest.fixture

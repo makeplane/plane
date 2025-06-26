@@ -22,6 +22,7 @@ type BlockData = {
   sort_order: number | null;
   start_date?: string | undefined | null;
   target_date?: string | undefined | null;
+  project_id?: string | undefined | null;
 };
 
 export interface IBaseTimelineStore {
@@ -194,6 +195,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         sort_order: blockData?.sort_order ?? undefined,
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
+        project_id: blockData?.project_id ?? undefined,
       };
       if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);

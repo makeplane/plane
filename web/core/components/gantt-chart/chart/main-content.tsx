@@ -41,6 +41,7 @@ type Props = {
   enableReorder: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
   enableAddBlock: boolean | ((blockId: string) => boolean);
+  enableDependency: boolean | ((blockId: string) => boolean);
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -67,6 +68,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     enableReorder,
     enableAddBlock,
     enableSelection,
+    enableDependency,
     itemsContainerWidth,
     showAllBlocks,
     sidebarToRender,
@@ -215,6 +217,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                       enableBlockRightResize={enableBlockRightResize}
                       enableBlockMove={enableBlockMove}
                       ganttContainerRef={ganttContainerRef}
+                      enableDependency={enableDependency}
                       showAllBlocks={showAllBlocks}
                       updateBlockDates={updateBlockDates}
                     />

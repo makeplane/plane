@@ -1,6 +1,6 @@
 import React from "react";
 // plane imports
-import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
+import { EditorReadOnlyRefApi, IRichTextReadOnlyEditorProps, RichTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -11,21 +11,22 @@ import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
 import { useMember } from "@/hooks/store";
 
 type RichTextReadOnlyEditorWrapperProps = MakeOptional<
-  Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler">,
-  "disabledExtensions"
+  Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   anchor: string;
   workspaceId: string;
 };
 
 export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, RichTextReadOnlyEditorWrapperProps>(
-  ({ anchor, workspaceId, disabledExtensions, ...props }, ref) => {
+  ({ anchor, workspaceId, disabledExtensions, flaggedExtensions, ...props }, ref) => {
     const { getMemberById } = useMember();
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
         disabledExtensions={disabledExtensions ?? []}
+        flaggedExtensions={flaggedExtensions ?? []}
         fileHandler={getReadOnlyEditorFileHandlers({
           anchor,
           workspaceId,

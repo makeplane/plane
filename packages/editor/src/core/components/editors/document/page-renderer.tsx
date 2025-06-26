@@ -5,7 +5,7 @@ import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus"
 // types
 import { TAIHandler, TDisplayConfig } from "@/types";
 
-type IPageRenderer = {
+type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
@@ -15,7 +15,7 @@ type IPageRenderer = {
   tabIndex?: number;
 };
 
-export const PageRenderer = (props: IPageRenderer) => {
+export const PageRenderer = (props: Props) => {
   const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, tabIndex } = props;
 
   return (

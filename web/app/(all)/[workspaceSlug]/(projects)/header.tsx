@@ -28,9 +28,8 @@ export const WorkspaceDashboardHeader = () => {
         <Header.LeftItem>
           <div>
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink label={t("home.title")} icon={<Home className="h-4 w-4 text-custom-text-300" />} />
                 }
               />

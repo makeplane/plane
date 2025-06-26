@@ -3,19 +3,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { FileText } from "lucide-react";
 // constants
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, EProjectFeatureKey } from "@plane/constants";
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
-// helpers
-import { BreadcrumbLink } from "@/components/common";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -58,15 +55,14 @@ export const PagesListHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div>
-          <Breadcrumbs isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Pages" icon={<FileText className="h-4 w-4 text-custom-text-300" />} />}
-            />
-          </Breadcrumbs>
-        </div>
+        <Breadcrumbs isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            projectId={currentProjectDetails?.id?.toString() ?? ""}
+            featureKey={EProjectFeatureKey.PAGES}
+            isLast
+          />
+        </Breadcrumbs>
       </Header.LeftItem>
       {canCurrentUserCreatePage ? (
         <Header.RightItem>

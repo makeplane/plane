@@ -8,7 +8,6 @@ import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
 import { PageHead } from "@/components/core";
 import { AllIssueLayoutRoot, GlobalViewsAppliedFiltersRoot } from "@/components/issues";
-import { GlobalViewsHeader } from "@/components/workspace";
 // constants
 // hooks
 import { useWorkspace } from "@/hooks/store";
@@ -32,7 +31,6 @@ const GlobalViewIssuesPage = observer(() => {
       <PageHead title={pageTitle} />
       <div className="h-full overflow-hidden bg-custom-background-100">
         <div className="flex h-full w-full flex-col border-b border-custom-border-300">
-          <GlobalViewsHeader />
           {globalViewId && (
             <GlobalViewsAppliedFiltersRoot globalViewId={globalViewId.toString()} isLoading={isLoading} />
           )}

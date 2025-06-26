@@ -146,6 +146,11 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
     id: uuidv4(),
     project_id: projectId,
     priority: "none",
+    label_ids: [],
+    assignee_ids: [],
+    sub_issues_count: 0,
+    attachment_count: 0,
+    link_count: 0,
     // tempId is used for optimistic updates. It is not a part of the API response.
     tempId: uuidv4(),
     // to be overridden by the form data
@@ -185,6 +190,7 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   sort_order: block?.sort_order,
   start_date: block?.start_date ?? undefined,
   target_date: block?.target_date ?? undefined,
+  project_id: block?.project_id ?? undefined,
 });
 
 export const formatTextList = (TextArray: string[]): string => {
@@ -260,7 +266,7 @@ export const getComputedDisplayFilters = (
   displayFilters: IIssueDisplayFilterOptions = {},
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
-  const filters = displayFilters || defaultValues;
+  const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
 
   return {
     calendar: {

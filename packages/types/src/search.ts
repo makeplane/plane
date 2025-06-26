@@ -1,7 +1,7 @@
 import { ICycle } from "./cycle";
 import { TIssue } from "./issues/issue";
 import { IModule } from "./module";
-import { TPage } from "./pages";
+import { TPage } from "./page";
 import { IProject } from "./project";
 import { IUser } from "./users";
 import { IWorkspace } from "./workspace";

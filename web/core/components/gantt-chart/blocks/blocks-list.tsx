@@ -12,6 +12,7 @@ export type GanttChartBlocksProps = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  enableDependency: boolean | ((blockId: string) => boolean);
 };
 
 export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
@@ -24,6 +25,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
     ganttContainerRef,
     showAllBlocks,
     updateBlockDates,
+    enableDependency,
   } = props;
 
   return (
@@ -41,6 +43,7 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
             typeof enableBlockRightResize === "function" ? enableBlockRightResize(blockId) : enableBlockRightResize
           }
           enableBlockMove={typeof enableBlockMove === "function" ? enableBlockMove(blockId) : enableBlockMove}
+          enableDependency={typeof enableDependency === "function" ? enableDependency(blockId) : enableDependency}
           ganttContainerRef={ganttContainerRef}
           updateBlockDates={updateBlockDates}
         />

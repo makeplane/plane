@@ -1,6 +1,6 @@
 import React from "react";
 // plane imports
-import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditor, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
+import { EditorReadOnlyRefApi, ILiteTextReadOnlyEditorProps, LiteTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
@@ -14,8 +14,8 @@ import { useMember } from "@/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type LiteTextReadOnlyEditorWrapperProps = MakeOptional<
-  Omit<ILiteTextReadOnlyEditor, "fileHandler" | "mentionHandler">,
-  "disabledExtensions"
+  Omit<ILiteTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceId: string;
   workspaceSlug: string;
@@ -28,14 +28,15 @@ export const LiteTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Lit
     const { getUserDetails } = useMember();
 
     // editor flaggings
-    const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
     // editor config
     const { getReadOnlyEditorFileHandlers } = useEditorConfig();
 
     return (
       <LiteTextReadOnlyEditorWithRef
         ref={ref}
-        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
           workspaceId,

@@ -1,8 +1,8 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect } from "react";
+import { useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
+// constants
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreReadOnlyEditorExtensions } from "@/extensions";
 // helpers
@@ -11,32 +11,19 @@ import { IMarking, scrollSummary } from "@/helpers/scroll-to-node";
 // props
 import { CoreReadOnlyEditorProps } from "@/props";
 // types
-import type { EditorReadOnlyRefApi, TExtensions, TReadOnlyFileHandler, TReadOnlyMentionHandler } from "@/types";
-import { CORE_EDITOR_META } from "@/constants/meta";
+import type { TReadOnlyEditorHookProps } from "@/types";
 
-interface CustomReadOnlyEditorProps {
-  disabledExtensions: TExtensions[];
-  editorClassName: string;
-  editorProps?: EditorProps;
-  extensions?: Extensions;
-  forwardedRef?: MutableRefObject<EditorReadOnlyRefApi | null>;
-  initialValue?: string;
-  fileHandler: TReadOnlyFileHandler;
-  handleEditorReady?: (value: boolean) => void;
-  mentionHandler: TReadOnlyMentionHandler;
-  provider?: HocuspocusProvider;
-}
-
-export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = (props: TReadOnlyEditorHookProps) => {
   const {
     disabledExtensions,
-    initialValue,
-    editorClassName,
-    forwardedRef,
-    extensions = [],
+    editorClassName = "",
     editorProps = {},
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
+    forwardedRef,
     handleEditorReady,
+    initialValue,
     mentionHandler,
     provider,
   } = props;
@@ -59,8 +46,9 @@ export const useReadOnlyEditor = (props: CustomReadOnlyEditorProps) => {
     extensions: [
       ...CoreReadOnlyEditorExtensions({
         disabledExtensions,
-        mentionHandler,
         fileHandler,
+        flaggedExtensions,
+        mentionHandler,
       }),
       ...extensions,
     ],

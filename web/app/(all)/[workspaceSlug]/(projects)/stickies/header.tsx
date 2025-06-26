@@ -25,9 +25,8 @@ export const WorkspaceStickyHeader = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink
                     label={`Stickies`}
                     icon={<RecentStickyIcon className="size-5 rotate-90 text-custom-text-200" />}

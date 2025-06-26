@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // types
+import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -14,7 +14,6 @@ import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-toke
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // helpers
 // services
-import { APITokenService } from "@/services/api_token.service";
 
 type Props = {
   isOpen: boolean;
@@ -29,8 +28,6 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   // states
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null | undefined>(null);
-  // router
-  const { workspaceSlug } = useParams();
 
   const handleClose = () => {
     onClose();
@@ -53,17 +50,15 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
   };
 
   const handleCreateToken = async (data: Partial<IApiToken>) => {
-    if (!workspaceSlug) return;
-
     // make the request to generate the token
     await apiTokenService
-      .createApiToken(workspaceSlug.toString(), data)
+      .create(data)
       .then((res) => {
         setGeneratedToken(res);
         downloadSecretKey(res);
 
         mutate<IApiToken[]>(
-          API_TOKENS_LIST(workspaceSlug.toString()),
+          API_TOKENS_LIST,
           (prevData) => {
             if (!prevData) return;
 
@@ -76,7 +71,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err.message,
+          message: err.message || err.detail,
         });
 
         throw err;

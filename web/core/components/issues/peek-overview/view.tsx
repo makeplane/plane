@@ -89,8 +89,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const handleKeyDown = () => {
     const slashCommandDropdownElement = document.querySelector("#slash-command");
+    const editorImageFullScreenModalElement = document.querySelector(".editor-image-full-screen-modal");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
+    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement && !editorImageFullScreenModalElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();

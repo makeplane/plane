@@ -7,8 +7,7 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -78,6 +77,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
   // router
   const { workspaceSlug, projectId: URLProjectId } = useParams();
+  const router = useRouter();
   // derived values
   const project = getPartialProjectById(projectId);
   // toggle project list open
@@ -353,26 +353,26 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     </span>
                   </CustomMenu.MenuItem>
                   {isAuthorized && (
-                    <CustomMenu.MenuItem>
-                      <Link href={`/${workspaceSlug}/projects/${project?.id}/archives/issues`}>
-                        <div className="flex items-center justify-start gap-2">
-                          <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                          <span>{t("archives")}</span>
-                        </div>
-                      </Link>
+                    <CustomMenu.MenuItem
+                      onClick={() => {
+                        router.push(`/${workspaceSlug}/projects/${project?.id}/archives/issues`);
+                      }}
+                    >
+                      <div className="flex items-center justify-start gap-2 cursor-pointer">
+                        <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>{t("archives")}</span>
+                      </div>
                     </CustomMenu.MenuItem>
                   )}
                   <CustomMenu.MenuItem
                     onClick={() => {
-                      setIsMenuActive(false);
+                      router.push(`/${workspaceSlug}/settings/projects/${project?.id}`);
                     }}
                   >
-                    <Link href={`/${workspaceSlug}/settings/projects/${project?.id}`}>
-                      <div className="flex items-center justify-start gap-2">
-                        <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>{t("settings")}</span>
-                      </div>
-                    </Link>
+                    <div className="flex items-center justify-start gap-2 cursor-pointer">
+                      <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("settings")}</span>
+                    </div>
                   </CustomMenu.MenuItem>
                   {/* leave project */}
                   {!isAuthorized && (

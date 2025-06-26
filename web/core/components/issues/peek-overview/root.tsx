@@ -4,9 +4,16 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane types
-import { ISSUE_UPDATED, ISSUE_DELETED, ISSUE_ARCHIVED, ISSUE_RESTORED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  ISSUE_UPDATED,
+  ISSUE_DELETED,
+  ISSUE_ARCHIVED,
+  ISSUE_RESTORED,
+  EUserPermissions,
+  EUserPermissionsLevel,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
+import { EIssuesStoreType, IWorkItemPeekOverview, TIssue, EIssueServiceType } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
@@ -15,7 +22,7 @@ import { IssueView, TIssueOperations } from "@/components/issues";
 // hooks
 import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-
+import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 
 export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const {
@@ -43,6 +50,13 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
   const storeType = issueStoreFromProps ?? issueStoreType;
   const { issues } = useIssues(storeType);
   const { captureIssueEvent } = useEventTracker();
+
+  useWorkItemProperties(
+    peekIssue?.projectId,
+    peekIssue?.workspaceSlug,
+    peekIssue?.issueId,
+    storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  );
   // state
   const [error, setError] = useState(false);
 

@@ -1,7 +1,6 @@
 export * from "./callout";
 export * from "./code";
 export * from "./code-inline";
-export * from "./custom-image";
 export * from "./custom-link";
 export * from "./custom-list-keymap";
 export * from "./image";

@@ -36,10 +36,9 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumb />
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Archives"
@@ -47,9 +46,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               />
             }
           />
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
@@ -57,9 +55,8 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               />
             }
           />
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
+          <Breadcrumbs.Item
+            component={
               <BreadcrumbLink
                 label={
                   currentProjectDetails && issueDetails
