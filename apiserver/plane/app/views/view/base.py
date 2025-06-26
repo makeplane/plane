@@ -175,6 +175,55 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             project__project_projectmember__is_active=True,
         )
 
+    def _validate_order_by_field(self, order_by_param):
+        """
+        Validate if the order_by parameter is a valid sortable field.
+        Returns a tuple of (is_valid, sanitized_field)
+        """
+        # Remove the minus sign for validation
+        field_name = order_by_param.lstrip("-")
+
+        # Define valid sortable fields
+        valid_fields = {
+            # Direct fields
+            "name",
+            "priority",
+            "sequence_id",
+            "sort_order",
+            "start_date",
+            "target_date",
+            "completed_at",
+            "archived_at",
+            "is_draft",
+            "created_at",
+            "updated_at",
+            "point",
+            # Related fields
+            "state__name",
+            "state__group",
+            "type__name",
+            "parent__name",
+            "created_by__first_name",
+            "updated_by__first_name",
+            "estimate_point__name",
+            # Many-to-many fields (handled specially in order_issue_queryset)
+            "labels__name",
+            "assignees__first_name",
+            "issue_module__module__name",
+            # Computed fields (annotated in get_queryset)
+            "sub_issues_count",
+            "attachment_count",
+            "link_count",
+            # Special fields handled by order_issue_queryset
+            "priority",
+            "state__group",
+        }
+
+        if field_name in valid_fields:
+            return order_by_param
+        else:
+            return "-created_at"
+
     def get_queryset(self):
         return (
             Issue.issue_objects.annotate(
@@ -241,6 +290,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
+
+        # Validate the order_by_param
+        order_by_param = self._validate_order_by_field(order_by_param)
 
         issue_queryset = self.get_queryset().filter(**filters)
 
