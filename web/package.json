@@ -26,6 +26,7 @@
     "@plane/hooks": "*",
     "@plane/i18n": "*",
     "@plane/propel": "*",
+    "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
