@@ -21,6 +21,7 @@ declare module "@tiptap/core" {
 export interface UtilityExtensionStorage {
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
+  activeModalExtensions: any[];
 }
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
@@ -60,6 +61,7 @@ export const UtilityExtension = (props: Props) => {
       return {
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
+        activeModalExtensions: [],
       };
     },
 

@@ -8,6 +8,8 @@ import { CommandListInstance } from "@/helpers/tippy";
 import { TMentionHandler } from "@/types";
 // local components
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const renderMentionsDropdown =
   (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
@@ -28,7 +30,7 @@ export const renderMentionsDropdown =
           },
           editor: props.editor,
         });
-        props.editor.storage.mentionsOpen = true;
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions.push(CORE_EXTENSIONS.MENTION);
         // @ts-expect-error - Tippy types are incorrect
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect,
@@ -64,7 +66,12 @@ export const renderMentionsDropdown =
         return false;
       },
       onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
-        props.editor.storage.mentionsOpen = false;
+        const { activeModalExtensions } = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+        const newActiveModalExtensions = activeModalExtensions.filter(
+          (extension) => extension !== CORE_EXTENSIONS.MENTION
+        );
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeModalExtensions =
+          newActiveModalExtensions;
         popup?.[0]?.destroy();
         component?.destroy();
       },

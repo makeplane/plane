@@ -39,6 +39,8 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
+import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
+import suggestion from "@/components/menus/emoji/suggestion";
 
 type TArguments = Pick<
   IEditorProps,
@@ -96,6 +98,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
       },
       ...(enableHistory ? {} : { history: false }),
+    }),
+    Emoji.configure({
+      emojis: gitHubEmojis,
+      enableEmoticons: true,
+      suggestion: suggestion,
     }),
     CustomQuoteExtension,
     CustomHorizontalRule.configure({

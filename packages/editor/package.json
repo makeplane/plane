@@ -43,6 +43,7 @@
     "@tiptap/extension-blockquote": "2.10.4",
     "@tiptap/extension-character-count": "2.11.0",
     "@tiptap/extension-collaboration": "2.11.0",
+    "@tiptap/extension-emoji": "^2.22.3",
     "@tiptap/extension-image": "2.11.0",
     "@tiptap/extension-list-item": "2.11.0",
     "@tiptap/extension-mention": "2.11.0",
