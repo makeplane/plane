@@ -2,7 +2,6 @@ import { findParentNode, type Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { CellSelection, TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
-import type { CSSProperties } from "react";
 
 const getTableCellBorderSelectionStatus = (
   cell: number,
@@ -32,58 +31,11 @@ const getTableCellBorderSelectionStatus = (
   };
 };
 
-const createBorderDiv = (side: "top" | "bottom" | "left" | "right"): HTMLElement => {
-  const div = document.createElement("div");
-
-  Object.assign(div.style, {
-    position: "absolute",
-    backgroundColor: "rgb(var(--color-primary-100))",
-    pointerEvents: "none",
-  } satisfies CSSProperties);
-
-  switch (side) {
-    case "top":
-      Object.assign(div.style, {
-        top: "-1px",
-        left: "-1px",
-        height: "2px",
-        width: "calc(100% + 2px)",
-      } satisfies CSSProperties);
-      break;
-    case "bottom":
-      Object.assign(div.style, {
-        bottom: "-1px",
-        left: "-1px",
-        height: "2px",
-        width: "calc(100% + 2px)",
-      } satisfies CSSProperties);
-      break;
-    case "left":
-      Object.assign(div.style, {
-        top: "-1px",
-        left: "-1px",
-        width: "2px",
-        height: "calc(100% + 2px)",
-      } satisfies CSSProperties);
-      break;
-    case "right":
-      Object.assign(div.style, {
-        top: "-1px",
-        right: "-1px",
-        width: "2px",
-        height: "calc(100% + 2px)",
-      } satisfies CSSProperties);
-      break;
-  }
-
-  return div;
-};
-
 type TableCellSelectionOutlinePluginState = {
   decorations?: DecorationSet;
 };
 
-const SELECTION_OUTLINE_PLUGIN_KEY = new PluginKey("selection");
+const SELECTION_OUTLINE_PLUGIN_KEY = new PluginKey("table-cell-selection-outline");
 
 export const TableCellSelectionOutlinePlugin = (editor: Editor): Plugin<TableCellSelectionOutlinePluginState> =>
   new Plugin<TableCellSelectionOutlinePluginState>({
@@ -114,27 +66,14 @@ export const TableCellSelectionOutlinePlugin = (editor: Editor): Plugin<TableCel
           const start = pos - table.pos - 1;
           const borders = getTableCellBorderSelectionStatus(start, selected, tableMap);
 
-          // Add container div to make cell position relative
-          const containerDiv = document.createElement("div");
-          containerDiv.style.position = "absolute";
-          containerDiv.style.height = "100%";
-          containerDiv.style.width = "100%";
-          containerDiv.style.top = "0";
-          containerDiv.style.left = "0";
+          const classes: string[] = [];
 
-          // Add border divs for each side that needs a border
-          if (borders.top) containerDiv.appendChild(createBorderDiv("top"));
-          if (borders.bottom) containerDiv.appendChild(createBorderDiv("bottom"));
-          if (borders.left) containerDiv.appendChild(createBorderDiv("left"));
-          if (borders.right) containerDiv.appendChild(createBorderDiv("right"));
+          if (borders.top) classes.push("selectedCell-border-top");
+          if (borders.bottom) classes.push("selectedCell-border-bottom");
+          if (borders.left) classes.push("selectedCell-border-left");
+          if (borders.right) classes.push("selectedCell-border-right");
 
-          // Use widget decoration to insert the container div
-          decorations.push(
-            Decoration.widget(pos + 1, containerDiv, {
-              side: -1,
-              ignoreSelection: true,
-            })
-          );
+          decorations.push(Decoration.node(pos, pos + node.nodeSize, { class: classes.join(" ") }));
         });
 
         return {

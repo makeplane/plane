@@ -22,8 +22,33 @@
         margin-bottom: 0;
       }
 
-      .ProseMirror-widget + * {
-        padding-top: 0 !important;
+      &.selectedCell {
+        user-select: none;
+
+        &::after {
+          position: absolute;
+          content: "";
+          top: -1px;
+          left: -1px;
+          height: calc(100% + 2px);
+          width: calc(100% + 2px);
+        }
+
+        &.selectedCell-border-top::after {
+          border-top: 2px solid rgba(var(--color-primary-100));
+        }
+
+        &.selectedCell-border-left::after {
+          border-left: 2px solid rgba(var(--color-primary-100));
+        }
+
+        &.selectedCell-border-bottom::after {
+          border-bottom: 2px solid rgba(var(--color-primary-100));
+        }
+
+        &.selectedCell-border-right::after {
+          border-right: 2px solid rgba(var(--color-primary-100));
+        }
       }
     }
 
@@ -50,10 +75,10 @@
 /* table dropdown */
 .table-wrapper table .column-resize-handle {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: -1px;
+  top: -1px;
   width: 2px;
-  height: 100%;
+  height: calc(100% + 2px);
   z-index: 5;
   background-color: rgba(var(--color-primary-100));
   pointer-events: none;
