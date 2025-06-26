@@ -50,7 +50,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             message: "Cycle deleted successfully.",
           });
           captureCycleEvent({
-            eventName: CYCLE_EVENT_TRACKER_KEYS.update,
+            eventName: CYCLE_EVENT_TRACKER_KEYS.delete,
             payload: { ...cycle, state: "SUCCESS" },
           });
         })
@@ -65,7 +65,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             message: currentError.i18n_message && t(currentError.i18n_message),
           });
           captureCycleEvent({
-            eventName: CYCLE_EVENT_TRACKER_KEYS.update,
+            eventName: CYCLE_EVENT_TRACKER_KEYS.delete,
             payload: { ...cycle, state: "FAILED" },
           });
         })
