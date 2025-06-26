@@ -42,9 +42,8 @@ export const WorkspaceDraftHeader = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink label={t("drafts")} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />
                 }
               />

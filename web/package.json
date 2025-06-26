@@ -26,6 +26,7 @@
     "@plane/hooks": "workspace:*",
     "@plane/i18n": "workspace:*",
     "@plane/propel": "workspace:*",
+    "@plane/services": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",

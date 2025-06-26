@@ -2,7 +2,7 @@ import React, { useState } from "react";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditor, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
@@ -21,7 +21,10 @@ import { WorkspaceService } from "@/plane-web/services";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps
-  extends MakeOptional<Omit<ILiteTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -55,13 +58,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     parentClassName = "",
     placeholder = t("issue.comments.placeholder"),
     uploadFile,
-    disabledExtensions: additionalDisabledExtensions,
+    disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
-  const { liteTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // store hooks
   const { getUserDetails } = useMember();
   // use editor mention
@@ -90,7 +93,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     >
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

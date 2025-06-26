@@ -2,18 +2,12 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  GROUPED_PROFILE_SETTINGS,
-  PROFILE_SETTINGS_CATEGORIES,
-  PROFILE_SETTINGS_CATEGORY,
-} from "@plane/constants";
+import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { getFileURL } from "@plane/utils";
 // components
 import { SettingsSidebar } from "@/components/settings";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 
 const ICONS = {
   profile: CircleUser,
@@ -44,14 +38,10 @@ export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
   // store hooks
   const { data: currentUser } = useUser();
 
-  const { allowPermissions } = useUserPermissions();
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   return (
     <SettingsSidebar
       isMobile={isMobile}
-      categories={PROFILE_SETTINGS_CATEGORIES.filter(
-        (category) => isAdmin || category !== PROFILE_SETTINGS_CATEGORY.DEVELOPER
-      )}
+      categories={PROFILE_SETTINGS_CATEGORIES}
       groupedSettings={GROUPED_PROFILE_SETTINGS}
       workspaceSlug={workspaceSlug?.toString() ?? ""}
       isActive={(data: { href: string }) => pathname === `/${workspaceSlug}${data.href}/`}

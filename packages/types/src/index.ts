@@ -10,7 +10,7 @@ export * from "./issues";
 export * from "./module";
 export * from "./views";
 export * from "./integration";
-export * from "./pages";
+export * from "./page";
 export * from "./ai";
 export * from "./estimate";
 export * from "./importer";

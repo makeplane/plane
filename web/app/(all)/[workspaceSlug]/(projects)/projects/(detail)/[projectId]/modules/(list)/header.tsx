@@ -1,24 +1,25 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, Button, DiceIcon, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
 import { ModuleViewHeader } from "@/components/modules";
 // hooks
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 // constants
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useAppRouter();
+  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { setTrackElement } = useEventTracker();
@@ -39,12 +40,11 @@ export const ModulesListHeader: React.FC = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink label={t("modules")} icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+              projectId={projectId?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.MODULES}
+              isLast
             />
           </Breadcrumbs>
         </div>

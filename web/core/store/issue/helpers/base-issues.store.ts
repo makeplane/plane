@@ -114,7 +114,7 @@ export interface IBaseIssuesStore {
     addModuleIds: string[],
     removeModuleIds: string[]
   ): Promise<void>;
-  updateIssueDates(workspaceSlug: string, projectId: string, updates: IBlockUpdateDependencyData[]): Promise<void>;
+  updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
@@ -827,9 +827,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   async updateIssueDates(
     workspaceSlug: string,
-    projectId: string,
-    updates: { id: string; start_date?: string; target_date?: string }[]
+    updates: { id: string; start_date?: string; target_date?: string }[],
+    projectId?: string
   ) {
+    if(!projectId) return;
     const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
     try {
       const getIssueById = this.rootIssueStore.issues.getIssueById;
