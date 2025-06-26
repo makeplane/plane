@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 // constants
-import { EPageAccess, PAGE_CREATED } from "@plane/constants";
+import { EPageAccess, PAGE_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { TPage } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -63,7 +63,7 @@ export const CreatePageModal: FC<Props> = (props) => {
       const pageData = await createPage(pageFormData);
       if (pageData) {
         capturePageEvent({
-          eventName: PAGE_CREATED,
+          eventName: PAGE_EVENT_TRACKER_KEYS.create,
           payload: {
             ...pageData,
             state: "SUCCESS",
@@ -74,7 +74,7 @@ export const CreatePageModal: FC<Props> = (props) => {
       }
     } catch {
       capturePageEvent({
-        eventName: PAGE_CREATED,
+        eventName: PAGE_EVENT_TRACKER_KEYS.create,
         payload: {
           state: "FAILED",
         },

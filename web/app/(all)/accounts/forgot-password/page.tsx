@@ -9,7 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
-import { FORGOT_PASS_LINK, NAVIGATE_TO_SIGNUP } from "@plane/constants";
+import { AUTH_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
@@ -71,7 +71,7 @@ const ForgotPasswordPage = observer(() => {
         email: formData.email,
       })
       .then(() => {
-        captureEvent(FORGOT_PASS_LINK, {
+        captureEvent(AUTH_EVENT_TRACKER_KEYS.forgot_password, {
           state: "SUCCESS",
         });
         setToast({
@@ -82,7 +82,7 @@ const ForgotPasswordPage = observer(() => {
         setResendCodeTimer(30);
       })
       .catch((err) => {
-        captureEvent(FORGOT_PASS_LINK, {
+        captureEvent(AUTH_EVENT_TRACKER_KEYS.forgot_password, {
           state: "FAILED",
         });
         setToast({
@@ -120,7 +120,7 @@ const ForgotPasswordPage = observer(() => {
                 {t("auth.common.new_to_plane")}
                 <Link
                   href="/"
-                  onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+                  onClick={() => captureEvent(AUTH_EVENT_TRACKER_KEYS.navigate.sign_up, {})}
                   className="font-semibold text-custom-primary-100 hover:underline"
                 >
                   {t("auth.common.create_account")}

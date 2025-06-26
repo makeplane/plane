@@ -6,7 +6,7 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
-import { NAVIGATE_TO_SIGNIN } from "@plane/constants";
+import { AUTH_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 // constants
@@ -54,7 +54,7 @@ const SignInPage = observer(() => {
               {t("auth.common.already_have_an_account")}
               <Link
                 href="/"
-                onClick={() => captureEvent(NAVIGATE_TO_SIGNIN, {})}
+                onClick={() => captureEvent(AUTH_EVENT_TRACKER_KEYS.navigate.sign_in, {})}
                 className="font-semibold text-custom-primary-100 hover:underline"
               >
                 {t("auth.common.login")}

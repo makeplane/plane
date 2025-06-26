@@ -2,7 +2,7 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { EventProps, STATE_CREATED, STATE_GROUPS } from "@plane/constants";
+import { EventProps, STATE_EVENT_TRACKER_KEYS, STATE_GROUPS } from "@plane/constants";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -44,7 +44,7 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
     try {
       const stateResponse = await createStateCallback({ ...formData, group: groupKey });
       captureEventIfEnabled({
-        eventName: STATE_CREATED,
+        eventName: STATE_EVENT_TRACKER_KEYS.create,
         payload: {
           ...stateResponse,
           state: "SUCCESS",
@@ -61,7 +61,7 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
     } catch (error) {
       const errorStatus = error as unknown as { status: number; data: { error: string } };
       captureEventIfEnabled({
-        eventName: STATE_CREATED,
+        eventName: STATE_EVENT_TRACKER_KEYS.create,
         payload: {
           ...formData,
           state: "FAILED",

@@ -6,7 +6,13 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { MODULE_STATUS, MODULE_LINK_CREATED, MODULE_LINK_DELETED, MODULE_LINK_UPDATED, MODULE_UPDATED, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
+import {
+  MODULE_STATUS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  EEstimateSystem,
+  MODULE_EVENT_TRACKER_KEYS,
+} from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
@@ -74,13 +80,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
       .then((res) => {
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_EVENT_TRACKER_KEYS.update,
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
       .catch(() => {
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_EVENT_TRACKER_KEYS.update,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -92,7 +98,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     const payload = { metadata: {}, ...formData };
 
     await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
-      captureEvent(MODULE_LINK_CREATED, {
+      captureEvent(MODULE_EVENT_TRACKER_KEYS.link.create, {
         module_id: moduleId,
         state: "SUCCESS",
       })
@@ -106,7 +112,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
       () =>
-        captureEvent(MODULE_LINK_UPDATED, {
+        captureEvent(MODULE_EVENT_TRACKER_KEYS.link.update, {
           module_id: moduleId,
           state: "SUCCESS",
         })
@@ -118,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        captureEvent(MODULE_LINK_DELETED, {
+        captureEvent(MODULE_EVENT_TRACKER_KEYS.link.delete, {
           module_id: moduleId,
           state: "SUCCESS",
         });

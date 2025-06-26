@@ -3,7 +3,6 @@ import posthog from "posthog-js";
 // store
 import {
   GROUP_WORKSPACE,
-  WORKSPACE_CREATED,
   EventProps,
   IssueEventProps,
   getCycleEventPayload,
@@ -13,6 +12,7 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
+  WORKSPACE_EVENT_TRACKER_KEYS,
 } from "@plane/constants";
 import { CoreRootStore } from "./root.store";
 
@@ -115,7 +115,7 @@ export class EventTrackerStore implements IEventTrackerStore {
    */
   captureWorkspaceEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    if (eventName === WORKSPACE_CREATED && payload.state == "SUCCESS") {
+    if (eventName === WORKSPACE_EVENT_TRACKER_KEYS.create && payload.state == "SUCCESS") {
       this.joinWorkspaceMetricGroup(payload.id);
     }
     const eventPayload: any = getWorkspaceEventPayload({

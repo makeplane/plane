@@ -3,7 +3,7 @@
 import { useState, FC } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { PROJECT_CREATED, DEFAULT_PROJECT_FORM_VALUES } from "@plane/constants";
+import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -75,7 +75,7 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
           state: "SUCCESS",
         };
         captureProjectEvent({
-          eventName: PROJECT_CREATED,
+          eventName: PROJECT_EVENT_TRACKER_KEYS.create,
           payload: newPayload,
         });
         setToast({

@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
+import { EIssueServiceType, WORK_ITEM_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -41,7 +41,7 @@ export const useRelationOperations = (
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -56,7 +56,7 @@ export const useRelationOperations = (
           });
         } catch {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -75,14 +75,14 @@ export const useRelationOperations = (
         try {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
             captureIssueEvent({
-              eventName: ISSUE_DELETED,
+              eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
               payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
               path: pathname,
             });
           });
         } catch {
           captureIssueEvent({
-            eventName: ISSUE_DELETED,
+            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             path: pathname,
           });

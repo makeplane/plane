@@ -11,8 +11,10 @@ import {
   EIssueFilterType,
   EIssuesStoreType,
   EViewAccess,
-  GLOBAL_VIEW_UPDATED,
- EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+  EUserPermissions,
+  EUserPermissionsLevel,
+  GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS,
+} from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
 // components
@@ -112,7 +114,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
 
     updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters).then((res) => {
       if (res)
-        captureEvent(GLOBAL_VIEW_UPDATED, {
+        captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.update, {
           view_id: res.id,
           applied_filters: res.filters,
           state: "SUCCESS",

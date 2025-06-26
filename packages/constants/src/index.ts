@@ -25,7 +25,7 @@ export * from "./intake";
 export * from "./profile";
 export * from "./workspace-drafts";
 export * from "./label";
-export * from "./event-tracker";
+export * from "./event-tracker/core";
 export * from "./spreadsheet";
 export * from "./dashboard";
 export * from "./page";

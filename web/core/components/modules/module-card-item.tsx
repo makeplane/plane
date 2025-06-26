@@ -9,11 +9,10 @@ import { Info, SquareUser } from "lucide-react";
 import {
   MODULE_STATUS,
   PROGRESS_STATE_GROUPS_DETAILS,
-  MODULE_FAVORITED,
-  MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
+  MODULE_EVENT_TRACKER_KEYS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
@@ -80,7 +79,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_FAVORITED, {
+        captureEvent(MODULE_EVENT_TRACKER_KEYS.favorite, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -111,7 +110,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_UNFAVORITED, {
+      captureEvent(MODULE_EVENT_TRACKER_KEYS.unfavorite, {
         module_id: moduleId,
         element: "Grid layout",
         state: "SUCCESS",

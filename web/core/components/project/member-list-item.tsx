@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_MEMBER_LEAVE } from "@plane/constants";
+import { MEMBER_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
@@ -44,7 +44,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           router.push(`/${workspaceSlug}/projects`);
-          captureEvent(PROJECT_MEMBER_LEAVE, {
+          captureEvent(MEMBER_EVENT_TRACKER_KEYS.project.leave, {
             state: "SUCCESS",
             element: "Project settings members page",
           });

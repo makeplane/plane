@@ -4,7 +4,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { GLOBAL_VIEW_CREATED, GLOBAL_VIEW_UPDATED } from "@plane/constants";
+import { GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -47,7 +47,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     await createGlobalView(workspaceSlug.toString(), payloadData)
       .then((res) => {
-        captureEvent(GLOBAL_VIEW_CREATED, {
+        captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.create, {
           view_id: res.id,
           applied_filters: res.filters,
           state: "SUCCESS",
@@ -62,7 +62,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         handleClose();
       })
       .catch(() => {
-        captureEvent(GLOBAL_VIEW_CREATED, {
+        captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.create, {
           applied_filters: payload?.filters,
           state: "FAILED",
         });
@@ -87,7 +87,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
       .then((res) => {
         if (res) {
-          captureEvent(GLOBAL_VIEW_UPDATED, {
+          captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.update, {
             view_id: res.id,
             applied_filters: res.filters,
             state: "SUCCESS",
@@ -101,7 +101,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         }
       })
       .catch(() => {
-        captureEvent(GLOBAL_VIEW_UPDATED, {
+        captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.update, {
           view_id: data.id,
           applied_filters: data.filters,
           state: "FAILED",

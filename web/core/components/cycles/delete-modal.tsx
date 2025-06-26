@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // types
-import { PROJECT_ERROR_MESSAGES, CYCLE_DELETED } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES, CYCLE_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
@@ -50,7 +50,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             message: "Cycle deleted successfully.",
           });
           captureCycleEvent({
-            eventName: CYCLE_DELETED,
+            eventName: CYCLE_EVENT_TRACKER_KEYS.update,
             payload: { ...cycle, state: "SUCCESS" },
           });
         })
@@ -65,7 +65,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             message: currentError.i18n_message && t(currentError.i18n_message),
           });
           captureCycleEvent({
-            eventName: CYCLE_DELETED,
+            eventName: CYCLE_EVENT_TRACKER_KEYS.update,
             payload: { ...cycle, state: "FAILED" },
           });
         })

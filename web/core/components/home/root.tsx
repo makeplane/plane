@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
 import useSWR from "swr";
-import { PRODUCT_TOUR_COMPLETED } from "@plane/constants";
+import { PRODUCT_TOUR_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { TourRoot } from "@/components/onboarding";
@@ -38,7 +38,7 @@ export const WorkspaceHomeView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        captureEvent(PRODUCT_TOUR_COMPLETED, {
+        captureEvent(PRODUCT_TOUR_EVENT_TRACKER_KEYS.complete, {
           user_id: currentUser?.id,
           state: "SUCCESS",
         });

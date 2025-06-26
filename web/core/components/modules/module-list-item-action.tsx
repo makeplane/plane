@@ -8,11 +8,10 @@ import { SquareUser } from "lucide-react";
 // types
 import {
   MODULE_STATUS,
-  MODULE_FAVORITED,
-  MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
+  MODULE_EVENT_TRACKER_KEYS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -69,7 +68,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       () => {
         // open favorites menu if closed
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_FAVORITED, {
+        captureEvent(MODULE_EVENT_TRACKER_KEYS.favorite, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -100,7 +99,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_UNFAVORITED, {
+      captureEvent(MODULE_EVENT_TRACKER_KEYS.unfavorite, {
         module_id: moduleId,
         element: "Grid layout",
         state: "SUCCESS",

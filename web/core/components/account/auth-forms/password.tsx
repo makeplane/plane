@@ -6,7 +6,7 @@ import Link from "next/link";
 // icons
 import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
 // plane imports
-import { FORGOT_PASSWORD, SIGN_IN_WITH_CODE, SIGN_IN_WITH_PASSWORD, SIGN_UP_WITH_PASSWORD, API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_EVENT_TRACKER_KEYS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
@@ -77,7 +77,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
   const redirectToUniqueCodeSignIn = async () => {
     handleAuthStep(EAuthSteps.UNIQUE_CODE);
-    captureEvent(SIGN_IN_WITH_CODE);
+    captureEvent(AUTH_EVENT_TRACKER_KEYS.sign_in_with_code);
   };
 
   const passwordSupport =
@@ -85,7 +85,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       <div className="w-full">
         {isSMTPConfigured ? (
           <Link
-            onClick={() => captureEvent(FORGOT_PASSWORD)}
+            onClick={() => captureEvent(AUTH_EVENT_TRACKER_KEYS.forgot_password)}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
             className="text-xs font-medium text-custom-primary-100"
           >
@@ -154,7 +154,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               : true;
           if (isPasswordValid) {
             setIsSubmitting(true);
-            captureEvent(mode === EAuthModes.SIGN_IN ? SIGN_IN_WITH_PASSWORD : SIGN_UP_WITH_PASSWORD);
+            captureEvent(
+              mode === EAuthModes.SIGN_IN
+                ? AUTH_EVENT_TRACKER_KEYS.sign_in_with_password
+                : AUTH_EVENT_TRACKER_KEYS.sign_up_with_password
+            );
             if (formRef.current) formRef.current.submit(); // Manually submit the form if the condition is met
           } else {
             setBannerMessage(true);
