@@ -15,6 +15,7 @@ import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import { SectionHeader, SectionContent } from "./components";
 import { SECTION_DETAILS } from "./constants";
@@ -43,6 +44,14 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
   const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
     EPageStoreType.WORKSPACE
   );
+
+  // feature flag check for shared pages
+  const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);
+
+  // Don't render shared section if feature flag is disabled
+  if (sectionType === "shared" && !isSharedPagesEnabled) {
+    return null;
+  }
 
   // Custom hooks
   const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType);
