@@ -35,11 +35,8 @@ from plane.db.models import (
     ModuleIssue,
     DeployBoard,
 )
-from plane.utils.grouper import (
-    issue_group_values,
-    issue_on_results,
-    issue_queryset_grouper,
-)
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -48,6 +45,7 @@ from plane.db.models import UserFavorite
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
+from plane.ee.models import CustomerRequestIssue
 
 
 class WorkspaceViewViewSet(BaseViewSet):
@@ -233,6 +231,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .accessible_to(self.request.user.id, self.kwargs.get("slug"))
         )
 
     @method_decorator(gzip_page)
@@ -248,11 +247,24 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         # Get common project permission filters
         permission_filters = self._get_project_permission_filters()
 
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.CUSTOMERS,
+            slug=self.kwargs.get("slug"),
+            user_id=str(self.request.user.id),
+        ):
+            issue_queryset = issue_queryset.prefetch_related(
+                Prefetch(
+                    "customer_request_issues",
+                    queryset=CustomerRequestIssue.objects.all(),
+                )
+            )
+
         # Base query for the counts
         total_issue_count = (
             Issue.issue_objects.filter(**filters)
             .filter(workspace__slug=slug)
             .filter(permission_filters)
+            .accessible_to(request.user.id, slug)
             .only("id")
         )
 
@@ -269,7 +281,9 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
             order_by=order_by_param,
             request=request,
             queryset=issue_queryset,
-            on_results=lambda issues: ViewIssueListSerializer(issues, many=True).data,
+            on_results=lambda issues: ViewIssueListSerializer(
+                issues, many=True, context={"slug": slug, "user_id": request.user.id}
+            ).data,
             total_count_queryset=total_issue_count,
         )
 
