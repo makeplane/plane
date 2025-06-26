@@ -170,7 +170,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;

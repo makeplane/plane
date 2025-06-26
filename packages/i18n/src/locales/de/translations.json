@@ -2469,5 +2469,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane ist nicht gestartet. Dies könnte daran liegen, dass einer oder mehrere Plane-Services nicht starten konnten.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wählen Sie View Logs aus setup.sh und Docker-Logs, um sicherzugehen."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Gliederung",
+        "empty_state": {
+          "title": "Fehlende Überschriften",
+          "description": "Fügen Sie einige Überschriften zu dieser Seite hinzu, um sie hier zu sehen."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Wörter",
+          "characters": "Zeichen",
+          "paragraphs": "Absätze",
+          "read_time": "Lesezeit"
+        },
+        "actors_info": {
+          "edited_by": "Bearbeitet von",
+          "created_by": "Erstellt von"
+        },
+        "version_history": {
+          "label": "Versionsverlauf",
+          "current_version": "Aktuelle Version"
+        }
+      },
+      "assets": {
+        "label": "Assets",
+        "download_button": "Herunterladen",
+        "empty_state": {
+          "title": "Fehlende Bilder",
+          "description": "Fügen Sie Bilder hinzu, um sie hier zu sehen."
+        }
+      }
+    },
+    "open_button": "Navigationsbereich öffnen",
+    "close_button": "Navigationsbereich schließen",
+    "outline_floating_button": "Gliederung öffnen"
   }
 }

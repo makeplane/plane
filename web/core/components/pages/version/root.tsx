@@ -1,67 +1,62 @@
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-// plane types
+import { useRouter, useSearchParams } from "next/navigation";
+// plane imports
 import { TPageVersion } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
-import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
-// helpers
+// components
+import { PageVersionsMainContent, TVersionEditorProps } from "@/components/pages";
+// hooks
+import { useQueryParams } from "@/hooks/use-query-params";
+// local imports
+import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "../navigation-pane";
 
 type Props = {
-  activeVersion: string | null;
-  currentVersionDescription: string | null;
   editorComponent: React.FC<TVersionEditorProps>;
-  fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   handleRestore: (descriptionHTML: string) => Promise<void>;
-  isOpen: boolean;
-  onClose: () => void;
   pageId: string;
   restoreEnabled: boolean;
 };
 
 export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
-  const {
-    activeVersion,
-    currentVersionDescription,
-    editorComponent,
-    fetchAllVersions,
-    fetchVersionDetails,
-    handleRestore,
-    isOpen,
-    onClose,
-    pageId,
-    restoreEnabled,
-  } = props;
+  const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled } = props;
+  // navigation
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // query params
+  const { updateQueryParams } = useQueryParams();
+  // derived values
+  const activeVersion = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
+  const isOpen = !!activeVersion;
 
-  const handleClose = () => {
-    onClose();
-  };
+  const handleClose = useCallback(() => {
+    const updatedRoute = updateQueryParams({
+      paramsToRemove: [PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM],
+    });
+    router.push(updatedRoute);
+  }, [router, updateQueryParams]);
 
   return (
     <div
       className={cn(
-        "absolute inset-0 z-[16] size-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
+        "absolute inset-0 z-[16] h-full bg-custom-background-100 flex overflow-hidden opacity-0 pointer-events-none transition-opacity",
         {
           "opacity-100 pointer-events-auto": isOpen,
         }
       )}
+      style={{
+        width: `calc(100% - ${PAGE_NAVIGATION_PANE_WIDTH}px)`,
+      }}
     >
       <PageVersionsMainContent
         activeVersion={activeVersion}
-        currentVersionDescription={currentVersionDescription}
         editorComponent={editorComponent}
         fetchVersionDetails={fetchVersionDetails}
         handleClose={handleClose}
         handleRestore={handleRestore}
         pageId={pageId}
         restoreEnabled={restoreEnabled}
-      />
-      <PageVersionsSidebarRoot
-        activeVersion={activeVersion}
-        fetchAllVersions={fetchAllVersions}
-        handleClose={handleClose}
-        isOpen={isOpen}
-        pageId={pageId}
       />
     </div>
   );

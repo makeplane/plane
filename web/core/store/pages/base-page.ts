@@ -2,18 +2,18 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
 import { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
 import { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import { RootStore } from "@/plane-web/store/root.store";
+// local imports
+import { PageEditorInstance } from "./page-editor-info";
 
 export type TBasePage = TPage & {
   // observables
   isSubmitting: TNameDescriptionLoader;
-  editorRef: EditorRefApi | null;
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
@@ -36,7 +36,8 @@ export type TBasePage = TPage & {
   removePageFromFavorites: () => Promise<void>;
   duplicate: () => Promise<TPage | undefined>;
   mutateProperties: (data: Partial<TPage>, shouldUpdateName?: boolean) => void;
-  setEditorRef: (editorRef: EditorRefApi | null) => void;
+  // sub-store
+  editor: PageEditorInstance;
 };
 
 export type TBasePagePermissions = {
@@ -73,7 +74,6 @@ export type TPageInstance = TBasePage &
 export class BasePage extends ExtendedBasePage implements TBasePage {
   // loaders
   isSubmitting: TNameDescriptionLoader = "saved";
-  editorRef: EditorRefApi | null = null;
   // page properties
   id: string | undefined;
   name: string | undefined;
@@ -100,6 +100,9 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   disposers: Array<() => void> = [];
   // root store
   rootStore: RootStore;
+  // sub-store
+  editor: PageEditorInstance;
+
   constructor(
     private store: RootStore,
     page: TPage,
@@ -129,7 +132,6 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     makeObservable(this, {
       // loaders
       isSubmitting: observable.ref,
-      editorRef: observable.ref,
       // page properties
       id: observable.ref,
       name: observable.ref,
@@ -170,11 +172,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       removePageFromFavorites: action,
       duplicate: action,
       mutateProperties: action,
-      setEditorRef: action,
     });
 
-    this.rootStore = store;
+    // init
     this.services = services;
+    this.rootStore = store;
+    this.editor = new PageEditorInstance();
 
     const titleDisposer = reaction(
       () => this.name,
@@ -522,12 +525,6 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       const value = data[key as keyof TPage];
       if (key === "name" && !shouldUpdateName) return;
       set(this, key, value);
-    });
-  };
-
-  setEditorRef = (editorRef: EditorRefApi | null) => {
-    runInAction(() => {
-      this.editorRef = editorRef;
     });
   };
 }

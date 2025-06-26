@@ -165,7 +165,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     }
 
     return "Add an image";
-  }, [draggedInside, failedToLoadImage, isImageBeingUploaded, editor.isEditable]);
+  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded]);
 
   return (
     <div

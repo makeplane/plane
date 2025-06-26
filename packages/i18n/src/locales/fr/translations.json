@@ -2470,5 +2470,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Plan",
+        "empty_state": {
+          "title": "Titres manquants",
+          "description": "Ajoutons quelques titres à cette page pour les voir ici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Mots",
+          "characters": "Caractères",
+          "paragraphs": "Paragraphes",
+          "read_time": "Temps de lecture"
+        },
+        "actors_info": {
+          "edited_by": "Modifié par",
+          "created_by": "Créé par"
+        },
+        "version_history": {
+          "label": "Historique des versions",
+          "current_version": "Version actuelle"
+        }
+      },
+      "assets": {
+        "label": "Ressources",
+        "download_button": "Télécharger",
+        "empty_state": {
+          "title": "Images manquantes",
+          "description": "Ajoutez des images pour les voir ici."
+        }
+      }
+    },
+    "open_button": "Ouvrir le panneau de navigation",
+    "close_button": "Fermer le panneau de navigation",
+    "outline_floating_button": "Ouvrir le plan"
   }
 }
