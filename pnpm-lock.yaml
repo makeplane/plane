@@ -27,32 +27,32 @@ importers:
         specifier: ^2.5.4
         version: 2.5.4
 
-  admin:
+  apps/admin:
     dependencies:
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
-        version: link:../packages/constants
+        version: link:../../packages/constants
       '@plane/hooks':
         specifier: workspace:*
-        version: link:../packages/hooks
+        version: link:../../packages/hooks
       '@plane/propel':
         specifier: workspace:*
-        version: link:../packages/propel
+        version: link:../../packages/propel
       '@plane/services':
         specifier: workspace:*
-        version: link:../packages/services
+        version: link:../../packages/services
       '@plane/types':
         specifier: workspace:*
-        version: link:../packages/types
+        version: link:../../packages/types
       '@plane/ui':
         specifier: workspace:*
-        version: link:../packages/ui
+        version: link:../../packages/ui
       '@plane/utils':
         specifier: workspace:*
-        version: link:../packages/utils
+        version: link:../../packages/utils
       '@tailwindcss/typography':
         specifier: ^0.5.9
         version: 0.5.16(tailwindcss@3.4.17(ts-node@10.9.2(@swc/core@1.12.1(@swc/helpers@0.5.17))(@types/node@22.15.32)(typescript@5.8.3)))
@@ -113,13 +113,13 @@ importers:
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
-        version: link:../packages/eslint-config
+        version: link:../../packages/eslint-config
       '@plane/tailwind-config':
         specifier: workspace:*
-        version: link:../packages/tailwind-config
+        version: link:../../packages/tailwind-config
       '@plane/typescript-config':
         specifier: workspace:*
-        version: link:../packages/typescript-config
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: 18.16.1
         version: 18.16.1
@@ -139,7 +139,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  live:
+  apps/live:
     dependencies:
       '@hocuspocus/extension-database':
         specifier: ^2.15.0
@@ -155,19 +155,19 @@ importers:
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@plane/constants':
         specifier: workspace:*
-        version: link:../packages/constants
+        version: link:../../packages/constants
       '@plane/decorators':
         specifier: workspace:*
-        version: link:../packages/decorators
+        version: link:../../packages/decorators
       '@plane/editor':
         specifier: workspace:*
-        version: link:../packages/editor
+        version: link:../../packages/editor
       '@plane/logger':
         specifier: workspace:*
-        version: link:../packages/logger
+        version: link:../../packages/logger
       '@plane/types':
         specifier: workspace:*
-        version: link:../packages/types
+        version: link:../../packages/types
       '@tiptap/core':
         specifier: 2.10.4
         version: 2.10.4(@tiptap/pm@2.11.0)
@@ -225,7 +225,7 @@ importers:
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
-        version: link:../packages/typescript-config
+        version: link:../../packages/typescript-config
       '@types/compression':
         specifier: ^1.7.5
         version: 1.8.1
@@ -259,6 +259,370 @@ importers:
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.12.1(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.0)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  apps/server: {}
+
+  apps/space:
+    dependencies:
+      '@blueprintjs/core':
+        specifier: ^4.16.3
+        version: 4.20.2(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@blueprintjs/popover2':
+        specifier: ^1.13.3
+        version: 1.14.11(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@emotion/react':
+        specifier: ^11.11.1
+        version: 11.14.0(@types/react@18.3.23)(react@18.3.1)
+      '@emotion/styled':
+        specifier: ^11.11.0
+        version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react@18.3.1)
+      '@headlessui/react':
+        specifier: ^1.7.13
+        version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mui/material':
+        specifier: ^5.14.1
+        version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@plane/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
+      '@plane/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
+      '@plane/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@plane/propel':
+        specifier: workspace:*
+        version: link:../../packages/propel
+      '@plane/services':
+        specifier: workspace:*
+        version: link:../../packages/services
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@plane/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@plane/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@popperjs/core':
+        specifier: ^2.11.8
+        version: 2.11.8
+      axios:
+        specifier: ^1.8.3
+        version: 1.10.0
+      clsx:
+        specifier: ^2.0.0
+        version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dompurify:
+        specifier: ^3.0.11
+        version: 3.2.6
+      dotenv:
+        specifier: ^16.3.1
+        version: 16.5.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      lowlight:
+        specifier: ^2.9.0
+        version: 2.9.0
+      lucide-react:
+        specifier: ^0.469.0
+        version: 0.469.0(react@18.3.1)
+      mobx:
+        specifier: ^6.10.0
+        version: 6.13.7
+      mobx-react:
+        specifier: ^9.1.1
+        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mobx-react-lite:
+        specifier: ^4.1.0
+        version: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mobx-utils:
+        specifier: ^6.0.8
+        version: 6.1.1(mobx@6.13.7)
+      next:
+        specifier: 14.2.30
+        version: 14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next-themes:
+        specifier: ^0.2.1
+        version: 0.2.1(next@14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      nprogress:
+        specifier: ^0.2.0
+        version: 0.2.0
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-dropzone:
+        specifier: ^14.2.3
+        version: 14.3.8(react@18.3.1)
+      react-hook-form:
+        specifier: 7.51.5
+        version: 7.51.5(react@18.3.1)
+      react-popper:
+        specifier: ^2.3.0
+        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      swr:
+        specifier: ^2.2.2
+        version: 2.3.3(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.0.0
+        version: 2.6.0
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
+      zxcvbn:
+        specifier: ^4.4.2
+        version: 4.4.2
+    devDependencies:
+      '@plane/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@plane/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/dompurify':
+        specifier: ^3.0.5
+        version: 3.2.0
+      '@types/lodash':
+        specifier: ^4.17.1
+        version: 4.17.17
+      '@types/node':
+        specifier: 18.14.1
+        version: 18.14.1
+      '@types/nprogress':
+        specifier: ^0.2.0
+        version: 0.2.3
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.23
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.3.0
+      '@types/uuid':
+        specifier: ^9.0.1
+        version: 9.0.8
+      '@types/zxcvbn':
+        specifier: ^4.4.4
+        version: 4.4.5
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.48.2
+        version: 5.62.0(@typescript-eslint/parser@8.34.1(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  apps/web:
+    dependencies:
+      '@atlaskit/pragmatic-drag-and-drop':
+        specifier: ^1.1.3
+        version: 1.7.2
+      '@atlaskit/pragmatic-drag-and-drop-auto-scroll':
+        specifier: ^1.3.0
+        version: 1.4.0
+      '@atlaskit/pragmatic-drag-and-drop-hitbox':
+        specifier: ^1.0.3
+        version: 1.1.0
+      '@headlessui/react':
+        specifier: ^1.7.3
+        version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@intercom/messenger-js-sdk':
+        specifier: ^0.0.12
+        version: 0.0.12
+      '@plane/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
+      '@plane/editor':
+        specifier: workspace:*
+        version: link:../../packages/editor
+      '@plane/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@plane/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@plane/propel':
+        specifier: workspace:*
+        version: link:../../packages/propel
+      '@plane/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@plane/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@plane/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      '@popperjs/core':
+        specifier: ^2.11.8
+        version: 2.11.8
+      '@react-pdf/renderer':
+        specifier: ^3.4.5
+        version: 3.4.5(react@18.3.1)
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios:
+        specifier: ^1.8.3
+        version: 1.10.0
+      clsx:
+        specifier: ^2.0.0
+        version: 2.1.1
+      cmdk:
+        specifier: ^1.0.0
+        version: 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      comlink:
+        specifier: ^4.4.1
+        version: 4.4.2
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.5.0
+      emoji-picker-react:
+        specifier: ^4.5.16
+        version: 4.12.2(react@18.3.1)
+      export-to-csv:
+        specifier: ^1.4.0
+        version: 1.4.0
+      isomorphic-dompurify:
+        specifier: ^2.12.0
+        version: 2.25.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      lucide-react:
+        specifier: ^0.469.0
+        version: 0.469.0(react@18.3.1)
+      mobx:
+        specifier: ^6.10.0
+        version: 6.13.7
+      mobx-react:
+        specifier: ^9.1.1
+        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mobx-react-lite:
+        specifier: ^4.1.0
+        version: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mobx-utils:
+        specifier: ^6.0.8
+        version: 6.1.1(mobx@6.13.7)
+      next:
+        specifier: 14.2.30
+        version: 14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next-themes:
+        specifier: ^0.2.1
+        version: 0.2.1(next@14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      nprogress:
+        specifier: ^0.2.0
+        version: 0.2.0
+      posthog-js:
+        specifier: ^1.131.3
+        version: 1.254.0
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-color:
+        specifier: ^2.19.3
+        version: 2.19.3(react@18.3.1)
+      react-day-picker:
+        specifier: 9.5.0
+        version: 9.5.0(react@18.3.1)
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-dropzone:
+        specifier: ^14.2.3
+        version: 14.3.8(react@18.3.1)
+      react-hook-form:
+        specifier: 7.51.5
+        version: 7.51.5(react@18.3.1)
+      react-markdown:
+        specifier: ^8.0.7
+        version: 8.0.7(@types/react@18.3.23)(react@18.3.1)
+      react-masonry-component:
+        specifier: ^6.3.0
+        version: 6.3.0(react@18.3.1)
+      react-pdf-html:
+        specifier: ^2.1.2
+        version: 2.1.3(@react-pdf/renderer@3.4.5(react@18.3.1))(react@18.3.1)
+      react-popper:
+        specifier: ^2.3.0
+        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      recharts:
+        specifier: ^2.12.7
+        version: 2.15.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      sharp:
+        specifier: ^0.32.1
+        version: 0.32.6
+      smooth-scroll-into-view-if-needed:
+        specifier: ^2.0.2
+        version: 2.0.2
+      swr:
+        specifier: ^2.1.3
+        version: 2.3.3(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.0.0
+        version: 2.6.0
+      use-font-face-observer:
+        specifier: ^1.2.2
+        version: 1.3.0(react@18.3.1)
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.1
+      zxcvbn:
+        specifier: ^4.4.2
+        version: 4.4.2
+    devDependencies:
+      '@plane/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
+      '@plane/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.17.17
+      '@types/node':
+        specifier: 18.16.1
+        version: 18.16.1
+      '@types/nprogress':
+        specifier: ^0.2.0
+        version: 0.2.3
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.23
+      '@types/react-color':
+        specifier: ^3.0.6
+        version: 3.0.13(@types/react@18.3.23)
+      '@types/react-dom':
+        specifier: ^18.2.18
+        version: 18.3.0
+      '@types/uuid':
+        specifier: ^8.3.4
+        version: 8.3.4
+      '@types/zxcvbn':
+        specifier: ^4.4.4
+        version: 4.4.5
+      prettier:
+        specifier: ^3.2.5
+        version: 3.6.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -795,34 +1159,34 @@ importers:
         version: link:../typescript-config
       '@storybook/addon-essentials':
         specifier: ^8.1.1
-        version: 8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.6.0))
       '@storybook/addon-interactions':
         specifier: ^8.1.1
-        version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@storybook/addon-links':
         specifier: ^8.1.1
-        version: 8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))
       '@storybook/addon-onboarding':
         specifier: ^8.1.1
-        version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@storybook/addon-styling-webpack':
         specifier: ^1.0.0
-        version: 1.0.1(storybook@8.6.14(prettier@3.5.3))(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
+        version: 1.0.1(storybook@8.6.14(prettier@3.6.0))(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
       '@storybook/addon-webpack5-compiler-swc':
         specifier: ^1.0.2
         version: 1.0.6(@swc/helpers@0.5.17)(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
       '@storybook/blocks':
         specifier: ^8.1.1
-        version: 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))
       '@storybook/react':
         specifier: ^8.1.1
-        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
       '@storybook/react-webpack5':
         specifier: ^8.1.1
-        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
       '@storybook/test':
         specifier: ^8.1.1
-        version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@types/lodash':
         specifier: ^4.17.6
         version: 4.17.17
@@ -849,7 +1213,7 @@ importers:
         version: 6.2.0(postcss@8.5.6)
       storybook:
         specifier: ^8.1.1
-        version: 8.6.14(prettier@3.5.3)
+        version: 8.6.14(prettier@3.6.0)
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.12.1(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.0)
@@ -917,368 +1281,6 @@ importers:
       tsup:
         specifier: 8.4.0
         version: 8.4.0(@swc/core@1.12.1(@swc/helpers@0.5.17))(jiti@1.21.7)(postcss@8.5.6)(typescript@5.8.3)(yaml@2.8.0)
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-
-  space:
-    dependencies:
-      '@blueprintjs/core':
-        specifier: ^4.16.3
-        version: 4.20.2(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@blueprintjs/popover2':
-        specifier: ^1.13.3
-        version: 1.14.11(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@emotion/react':
-        specifier: ^11.11.1
-        version: 11.14.0(@types/react@18.3.23)(react@18.3.1)
-      '@emotion/styled':
-        specifier: ^11.11.0
-        version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react@18.3.1)
-      '@headlessui/react':
-        specifier: ^1.7.13
-        version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mui/material':
-        specifier: ^5.14.1
-        version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react@18.3.1))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@plane/constants':
-        specifier: workspace:*
-        version: link:../packages/constants
-      '@plane/editor':
-        specifier: workspace:*
-        version: link:../packages/editor
-      '@plane/i18n':
-        specifier: workspace:*
-        version: link:../packages/i18n
-      '@plane/propel':
-        specifier: workspace:*
-        version: link:../packages/propel
-      '@plane/services':
-        specifier: workspace:*
-        version: link:../packages/services
-      '@plane/types':
-        specifier: workspace:*
-        version: link:../packages/types
-      '@plane/ui':
-        specifier: workspace:*
-        version: link:../packages/ui
-      '@plane/utils':
-        specifier: workspace:*
-        version: link:../packages/utils
-      '@popperjs/core':
-        specifier: ^2.11.8
-        version: 2.11.8
-      axios:
-        specifier: ^1.8.3
-        version: 1.10.0
-      clsx:
-        specifier: ^2.0.0
-        version: 2.1.1
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      dompurify:
-        specifier: ^3.0.11
-        version: 3.2.6
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.5.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      lowlight:
-        specifier: ^2.9.0
-        version: 2.9.0
-      lucide-react:
-        specifier: ^0.469.0
-        version: 0.469.0(react@18.3.1)
-      mobx:
-        specifier: ^6.10.0
-        version: 6.13.7
-      mobx-react:
-        specifier: ^9.1.1
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-react-lite:
-        specifier: ^4.1.0
-        version: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-utils:
-        specifier: ^6.0.8
-        version: 6.1.1(mobx@6.13.7)
-      next:
-        specifier: 14.2.30
-        version: 14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      next-themes:
-        specifier: ^0.2.1
-        version: 0.2.1(next@14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nprogress:
-        specifier: ^0.2.0
-        version: 0.2.0
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-dropzone:
-        specifier: ^14.2.3
-        version: 14.3.8(react@18.3.1)
-      react-hook-form:
-        specifier: 7.51.5
-        version: 7.51.5(react@18.3.1)
-      react-popper:
-        specifier: ^2.3.0
-        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      swr:
-        specifier: ^2.2.2
-        version: 2.3.3(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.0.0
-        version: 2.6.0
-      uuid:
-        specifier: ^9.0.0
-        version: 9.0.1
-      zxcvbn:
-        specifier: ^4.4.2
-        version: 4.4.2
-    devDependencies:
-      '@plane/eslint-config':
-        specifier: workspace:*
-        version: link:../packages/eslint-config
-      '@plane/tailwind-config':
-        specifier: workspace:*
-        version: link:../packages/tailwind-config
-      '@plane/typescript-config':
-        specifier: workspace:*
-        version: link:../packages/typescript-config
-      '@types/dompurify':
-        specifier: ^3.0.5
-        version: 3.2.0
-      '@types/lodash':
-        specifier: ^4.17.1
-        version: 4.17.17
-      '@types/node':
-        specifier: 18.14.1
-        version: 18.14.1
-      '@types/nprogress':
-        specifier: ^0.2.0
-        version: 0.2.3
-      '@types/react':
-        specifier: ^18.3.11
-        version: 18.3.23
-      '@types/react-dom':
-        specifier: ^18.2.18
-        version: 18.3.0
-      '@types/uuid':
-        specifier: ^9.0.1
-        version: 9.0.8
-      '@types/zxcvbn':
-        specifier: ^4.4.4
-        version: 4.4.5
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.48.2
-        version: 5.62.0(@typescript-eslint/parser@8.34.1(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3)
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
-
-  web:
-    dependencies:
-      '@atlaskit/pragmatic-drag-and-drop':
-        specifier: ^1.1.3
-        version: 1.7.2
-      '@atlaskit/pragmatic-drag-and-drop-auto-scroll':
-        specifier: ^1.3.0
-        version: 1.4.0
-      '@atlaskit/pragmatic-drag-and-drop-hitbox':
-        specifier: ^1.0.3
-        version: 1.1.0
-      '@headlessui/react':
-        specifier: ^1.7.3
-        version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@intercom/messenger-js-sdk':
-        specifier: ^0.0.12
-        version: 0.0.12
-      '@plane/constants':
-        specifier: workspace:*
-        version: link:../packages/constants
-      '@plane/editor':
-        specifier: workspace:*
-        version: link:../packages/editor
-      '@plane/hooks':
-        specifier: workspace:*
-        version: link:../packages/hooks
-      '@plane/i18n':
-        specifier: workspace:*
-        version: link:../packages/i18n
-      '@plane/propel':
-        specifier: workspace:*
-        version: link:../packages/propel
-      '@plane/types':
-        specifier: workspace:*
-        version: link:../packages/types
-      '@plane/ui':
-        specifier: workspace:*
-        version: link:../packages/ui
-      '@plane/utils':
-        specifier: workspace:*
-        version: link:../packages/utils
-      '@popperjs/core':
-        specifier: ^2.11.8
-        version: 2.11.8
-      '@react-pdf/renderer':
-        specifier: ^3.4.5
-        version: 3.4.5(react@18.3.1)
-      '@tanstack/react-table':
-        specifier: ^8.21.3
-        version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: ^1.8.3
-        version: 1.10.0
-      clsx:
-        specifier: ^2.0.0
-        version: 2.1.1
-      cmdk:
-        specifier: ^1.0.0
-        version: 1.1.1(@types/react-dom@18.3.0)(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      comlink:
-        specifier: ^4.4.1
-        version: 4.4.2
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      dotenv:
-        specifier: ^16.0.3
-        version: 16.5.0
-      emoji-picker-react:
-        specifier: ^4.5.16
-        version: 4.12.2(react@18.3.1)
-      export-to-csv:
-        specifier: ^1.4.0
-        version: 1.4.0
-      isomorphic-dompurify:
-        specifier: ^2.12.0
-        version: 2.25.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      lucide-react:
-        specifier: ^0.469.0
-        version: 0.469.0(react@18.3.1)
-      mobx:
-        specifier: ^6.10.0
-        version: 6.13.7
-      mobx-react:
-        specifier: ^9.1.1
-        version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-react-lite:
-        specifier: ^4.1.0
-        version: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-utils:
-        specifier: ^6.0.8
-        version: 6.1.1(mobx@6.13.7)
-      next:
-        specifier: 14.2.30
-        version: 14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      next-themes:
-        specifier: ^0.2.1
-        version: 0.2.1(next@14.2.30(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      nprogress:
-        specifier: ^0.2.0
-        version: 0.2.0
-      posthog-js:
-        specifier: ^1.131.3
-        version: 1.254.0
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-color:
-        specifier: ^2.19.3
-        version: 2.19.3(react@18.3.1)
-      react-day-picker:
-        specifier: 9.5.0
-        version: 9.5.0(react@18.3.1)
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-dropzone:
-        specifier: ^14.2.3
-        version: 14.3.8(react@18.3.1)
-      react-hook-form:
-        specifier: 7.51.5
-        version: 7.51.5(react@18.3.1)
-      react-markdown:
-        specifier: ^8.0.7
-        version: 8.0.7(@types/react@18.3.23)(react@18.3.1)
-      react-masonry-component:
-        specifier: ^6.3.0
-        version: 6.3.0(react@18.3.1)
-      react-pdf-html:
-        specifier: ^2.1.2
-        version: 2.1.3(@react-pdf/renderer@3.4.5(react@18.3.1))(react@18.3.1)
-      react-popper:
-        specifier: ^2.3.0
-        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      recharts:
-        specifier: ^2.12.7
-        version: 2.15.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      sharp:
-        specifier: ^0.32.1
-        version: 0.32.6
-      smooth-scroll-into-view-if-needed:
-        specifier: ^2.0.2
-        version: 2.0.2
-      swr:
-        specifier: ^2.1.3
-        version: 2.3.3(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.0.0
-        version: 2.6.0
-      use-font-face-observer:
-        specifier: ^1.2.2
-        version: 1.3.0(react@18.3.1)
-      uuid:
-        specifier: ^9.0.0
-        version: 9.0.1
-      zxcvbn:
-        specifier: ^4.4.2
-        version: 4.4.2
-    devDependencies:
-      '@plane/eslint-config':
-        specifier: workspace:*
-        version: link:../packages/eslint-config
-      '@plane/tailwind-config':
-        specifier: workspace:*
-        version: link:../packages/tailwind-config
-      '@plane/typescript-config':
-        specifier: workspace:*
-        version: link:../packages/typescript-config
-      '@types/lodash':
-        specifier: ^4.14.202
-        version: 4.17.17
-      '@types/node':
-        specifier: 18.16.1
-        version: 18.16.1
-      '@types/nprogress':
-        specifier: ^0.2.0
-        version: 0.2.3
-      '@types/react':
-        specifier: ^18.3.11
-        version: 18.3.23
-      '@types/react-color':
-        specifier: ^3.0.6
-        version: 3.0.13(@types/react@18.3.23)
-      '@types/react-dom':
-        specifier: ^18.2.18
-        version: 18.3.0
-      '@types/uuid':
-        specifier: ^8.3.4
-        version: 8.3.4
-      '@types/zxcvbn':
-        specifier: ^4.4.4
-        version: 4.4.5
-      prettier:
-        specifier: ^3.2.5
-        version: 3.5.3
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -6302,6 +6304,11 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  prettier@3.6.0:
+    resolution: {integrity: sha512-ujSB9uXHJKzM/2GBuE0hBOUgC77CN3Bnpqa+g80bkv3T3A93wL/xlzDATHhnhkzifz/UE2SNOvmbTz5hSkDlHw==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   pretty-error@4.0.0:
     resolution: {integrity: sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw==}
 
@@ -8894,111 +8901,111 @@ snapshots:
 
   '@rushstack/eslint-patch@1.11.0': {}
 
-  '@storybook/addon-actions@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-actions@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
       '@types/uuid': 9.0.8
       dequal: 2.0.3
       polished: 4.3.1
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       uuid: 9.0.1
 
-  '@storybook/addon-backgrounds@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-backgrounds@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
       memoizerific: 1.11.3
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-controls@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-controls@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
       dequal: 2.0.3
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-docs@8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-docs@8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@mdx-js/react': 3.1.0(@types/react@18.3.23)(react@18.3.1)
-      '@storybook/blocks': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/csf-plugin': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/react-dom-shim': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/blocks': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/csf-plugin': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/react-dom-shim': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - '@types/react'
 
-  '@storybook/addon-essentials@8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-essentials@8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      '@storybook/addon-actions': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-backgrounds': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-controls': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-docs': 8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-highlight': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-measure': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-outline': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-toolbars': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/addon-viewport': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      storybook: 8.6.14(prettier@3.5.3)
+      '@storybook/addon-actions': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-backgrounds': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-controls': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-docs': 8.6.14(@types/react@18.3.23)(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-highlight': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-measure': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-outline': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-toolbars': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/addon-viewport': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - '@types/react'
 
-  '@storybook/addon-highlight@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-highlight@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/addon-interactions@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-interactions@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/test': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/instrumenter': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/test': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       polished: 4.3.1
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-links@8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-links@8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
     optionalDependencies:
       react: 18.3.1
 
-  '@storybook/addon-measure@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-measure@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       tiny-invariant: 1.3.3
 
-  '@storybook/addon-onboarding@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-onboarding@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/addon-outline@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-outline@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
 
-  '@storybook/addon-styling-webpack@1.0.1(storybook@8.6.14(prettier@3.5.3))(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))':
+  '@storybook/addon-styling-webpack@1.0.1(storybook@8.6.14(prettier@3.6.0))(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))':
     dependencies:
-      '@storybook/node-logger': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/node-logger': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       webpack: 5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)
     transitivePeerDependencies:
       - storybook
 
-  '@storybook/addon-toolbars@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-toolbars@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/addon-viewport@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/addon-viewport@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       memoizerific: 1.11.3
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
   '@storybook/addon-webpack5-compiler-swc@1.0.6(@swc/helpers@0.5.17)(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))':
     dependencies:
@@ -9008,18 +9015,18 @@ snapshots:
       - '@swc/helpers'
       - webpack
 
-  '@storybook/blocks@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/blocks@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/icons': 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/builder-webpack5@8.6.14(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)':
+  '@storybook/builder-webpack5@8.6.14(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)':
     dependencies:
-      '@storybook/core-webpack': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/core-webpack': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@types/semver': 7.7.0
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
@@ -9033,7 +9040,7 @@ snapshots:
       path-browserify: 1.0.1
       process: 0.11.10
       semver: 7.7.2
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       style-loader: 3.3.4(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
       terser-webpack-plugin: 5.3.14(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
       ts-dedent: 2.2.0
@@ -9053,18 +9060,18 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/components@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/components@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/core-webpack@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/core-webpack@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       ts-dedent: 2.2.0
 
-  '@storybook/core@8.6.14(prettier@3.5.3)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/core@8.6.14(prettier@3.6.0)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      '@storybook/theming': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/theming': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       better-opn: 3.0.2
       browser-assert: 1.2.1
       esbuild: 0.25.0
@@ -9076,16 +9083,16 @@ snapshots:
       util: 0.12.5
       ws: 8.18.2
     optionalDependencies:
-      prettier: 3.5.3
+      prettier: 3.6.0
     transitivePeerDependencies:
       - bufferutil
       - storybook
       - supports-color
       - utf-8-validate
 
-  '@storybook/csf-plugin@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/csf-plugin@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       unplugin: 1.16.1
 
   '@storybook/global@5.0.0': {}
@@ -9095,24 +9102,24 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/instrumenter@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/instrumenter@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
       '@vitest/utils': 2.1.9
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/manager-api@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/manager-api@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/node-logger@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/node-logger@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/preset-react-webpack@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)':
+  '@storybook/preset-react-webpack@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)':
     dependencies:
-      '@storybook/core-webpack': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/react': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+      '@storybook/core-webpack': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/react': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
       '@storybook/react-docgen-typescript-plugin': 1.0.6--canary.9.0c3f3b7.0(typescript@5.8.3)(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))
       '@types/semver': 7.7.0
       find-up: 5.0.0
@@ -9122,7 +9129,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       resolve: 1.22.10
       semver: 7.7.2
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
       tsconfig-paths: 4.2.0
       webpack: 5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)
     optionalDependencies:
@@ -9135,9 +9142,9 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/preview-api@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/preview-api@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.8.3)(webpack@5.99.9(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0))':
     dependencies:
@@ -9153,20 +9160,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@storybook/react-dom-shim@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/react-dom-shim@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/react-webpack5@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)':
+  '@storybook/react-webpack5@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)':
     dependencies:
-      '@storybook/builder-webpack5': 8.6.14(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
-      '@storybook/preset-react-webpack': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
-      '@storybook/react': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+      '@storybook/builder-webpack5': 8.6.14(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
+      '@storybook/preset-react-webpack': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(@swc/core@1.12.1(@swc/helpers@0.5.17))(esbuild@0.25.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
+      '@storybook/react': 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
     optionalDependencies:
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -9178,35 +9185,35 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@storybook/react@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)':
+  '@storybook/react@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))(typescript@5.8.3)':
     dependencies:
-      '@storybook/components': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/components': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@storybook/global': 5.0.0
-      '@storybook/manager-api': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/preview-api': 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/react-dom-shim': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
-      '@storybook/theming': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/manager-api': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/preview-api': 8.6.14(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/react-dom-shim': 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.6.0))
+      '@storybook/theming': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
     optionalDependencies:
-      '@storybook/test': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/test': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       typescript: 5.8.3
 
-  '@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/test@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.6.14(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/instrumenter': 8.6.14(storybook@8.6.14(prettier@3.6.0))
       '@testing-library/dom': 10.4.0
       '@testing-library/jest-dom': 6.5.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
       '@vitest/expect': 2.0.5
       '@vitest/spy': 2.0.5
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
-  '@storybook/theming@8.6.14(storybook@8.6.14(prettier@3.5.3))':
+  '@storybook/theming@8.6.14(storybook@8.6.14(prettier@3.6.0))':
     dependencies:
-      storybook: 8.6.14(prettier@3.5.3)
+      storybook: 8.6.14(prettier@3.6.0)
 
   '@swc/core-darwin-arm64@1.12.1':
     optional: true
@@ -13244,6 +13251,8 @@ snapshots:
 
   prettier@3.5.3: {}
 
+  prettier@3.6.0: {}
+
   pretty-error@4.0.0:
     dependencies:
       lodash: 4.17.21
@@ -14056,11 +14065,11 @@ snapshots:
       es-errors: 1.3.0
       internal-slot: 1.1.0
 
-  storybook@8.6.14(prettier@3.5.3):
+  storybook@8.6.14(prettier@3.6.0):
     dependencies:
-      '@storybook/core': 8.6.14(prettier@3.5.3)(storybook@8.6.14(prettier@3.5.3))
+      '@storybook/core': 8.6.14(prettier@3.6.0)(storybook@8.6.14(prettier@3.6.0))
     optionalDependencies:
-      prettier: 3.5.3
+      prettier: 3.6.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color

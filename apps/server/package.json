@@ -1,7 +1,7 @@
 {
-  "name": "plane-api",
+  "name": "server",
+  "description": "API server powering Plane's backend",
   "version": "0.26.1",
   "license": "AGPL-3.0",
-  "private": true,
-  "description": "API server powering Plane's backend"
+  "private": true
 }

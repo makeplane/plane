@@ -2,7 +2,8 @@
 # STAGE 1: Setup base image
 # *****************************************************************************
 
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
+
 RUN apk add --no-cache libc6-compat
 RUN apk update
 
@@ -30,8 +31,8 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 # *****************************************************************************
 # STAGE 2: Prune the project

@@ -1,13 +1,10 @@
 packages:
-  - web
-  - space
-  - admin
-  - live
-  - packages/*
+- apps/*
+- packages/*
 
 onlyBuiltDependencies:
-  - '@swc/core'
-  - core-js
-  - esbuild
-  - sharp
-  - unrs-resolver
+- '@swc/core'
+- core-js
+- esbuild
+- sharp
+- unrs-resolver

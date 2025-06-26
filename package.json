@@ -28,5 +28,5 @@
     "chokidar": "3.6.0",
     "tar-fs": "3.0.9"
   },
-  "packageManager": "pnpm@10.12.1"
+  "packageManager": "pnpm@10.12.2"
 }
