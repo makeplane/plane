@@ -39,6 +39,12 @@
       }
     }
   }
+
+  &.ProseMirror-selectednode {
+    table {
+      background-color: rgba(var(--color-primary-100), 0.2);
+    }
+  }
 }
 
 /* table dropdown */
