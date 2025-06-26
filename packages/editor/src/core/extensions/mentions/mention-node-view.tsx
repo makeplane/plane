@@ -4,17 +4,18 @@ import { TMentionExtensionOptions } from "./extension-config";
 // extension types
 import { EMentionComponentAttributeNames, TMentionComponentAttributes } from "./types";
 
-type Props = NodeViewProps & {
+export type MentionNodeViewProps = NodeViewProps & {
   node: NodeViewProps["node"] & {
     attrs: TMentionComponentAttributes;
   };
 };
 
-export const MentionNodeView = (props: Props) => {
+export const MentionNodeView: React.FC<MentionNodeViewProps> = (props) => {
   const {
     extension,
     node: { attrs },
   } = props;
+
   return (
     <NodeViewWrapper className="mention-component inline w-fit">
       {(extension.options as TMentionExtensionOptions).renderComponent({

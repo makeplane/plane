@@ -33,7 +33,8 @@
     "@babel/helpers": "7.26.10",
     "@babel/runtime": "7.26.10",
     "chokidar": "3.6.0",
-    "tar-fs": "3.0.9"
+    "tar-fs": "3.0.9",
+    "prosemirror-view": "1.40.0"
   },
   "packageManager": "yarn@1.22.22"
 }
