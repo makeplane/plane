@@ -16,7 +16,7 @@ import {
 } from "@plane/constants";
 import { CoreRootStore } from "./root.store";
 
-export interface IEventTrackerStore {
+export interface ICoreEventTrackerStore {
   // properties
   trackElement: string | undefined;
   // computed
@@ -35,7 +35,7 @@ export interface IEventTrackerStore {
   captureProjectStateEvent: (props: EventProps) => void;
 }
 
-export class EventTrackerStore implements IEventTrackerStore {
+export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
   trackElement: string | undefined = undefined;
   rootStore;
   constructor(_rootStore: CoreRootStore) {
