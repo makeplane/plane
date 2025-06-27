@@ -8,9 +8,9 @@ import { Layers } from "lucide-react";
 import {
   DEFAULT_GLOBAL_VIEWS_LIST,
   EIssueFilterType,
+  EIssueLayoutTypes,
   EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EIssueLayoutTypes
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types

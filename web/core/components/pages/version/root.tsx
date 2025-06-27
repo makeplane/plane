@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 // plane types
 import { TPageVersion } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
+// components
 import { PageVersionsMainContent, PageVersionsSidebarRoot, TVersionEditorProps } from "@/components/pages";
 // helpers
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {
   activeVersion: string | null;
@@ -17,6 +18,7 @@ type Props = {
   onClose: () => void;
   pageId: string;
   restoreEnabled: boolean;
+  storeType: EPageStoreType;
 };
 
 export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
@@ -31,6 +33,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
     onClose,
     pageId,
     restoreEnabled,
+    storeType,
   } = props;
 
   const handleClose = () => {
@@ -55,6 +58,7 @@ export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
         handleRestore={handleRestore}
         pageId={pageId}
         restoreEnabled={restoreEnabled}
+        storeType={storeType}
       />
       <PageVersionsSidebarRoot
         activeVersion={activeVersion}
