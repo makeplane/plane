@@ -11,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // store hooks
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 
 export type SidebarWorkspaceMenuHeaderProps = {
   isWorkspaceMenuOpen: boolean;
@@ -26,7 +26,6 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const { workspaceSlug } = useParams();
-  const { sidebarCollapsed } = useAppTheme();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
 
@@ -36,19 +35,8 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN] as any, EUserPermissionsLevel.WORKSPACE);
 
-  if (sidebarCollapsed) {
-    return <></>;
-  }
-
   return (
-    <div
-      className={cn(
-        "flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded",
-        {
-          "mt-2.5": !sidebarCollapsed,
-        }
-      )}
-    >
+    <div className="flex px-2 bg-custom-sidebar-background-100 group/workspace-button hover:bg-custom-sidebar-background-90 rounded mt-2.5">
       <Disclosure.Button
         as="button"
         className="flex-1 sticky top-0  z-10  w-full  py-1.5 flex items-center justify-between gap-1 text-custom-sidebar-text-400  text-sm font-semibold"

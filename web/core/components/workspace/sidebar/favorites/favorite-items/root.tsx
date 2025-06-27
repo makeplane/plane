@@ -27,7 +27,6 @@ import {
   FavoriteItemTitle,
 } from "@/components/workspace/sidebar/favorites";
 // hooks
-import { useAppTheme } from "@/hooks/store";
 import { useFavoriteItemDetails } from "@/hooks/use-favorite-item-details";
 //helpers
 import { getCanDrop, getInstructionFromPayload } from "../favorites.helpers";
@@ -45,7 +44,6 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   const { itemLink, itemIcon, itemTitle } = useFavoriteItemDetails(workspaceSlug, favorite);
   //state
   const [isDragging, setIsDragging] = useState(false);
@@ -82,12 +80,7 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
               const root = createRoot(container);
               root.render(
                 <div className="rounded bg-custom-background-100 text-sm p-1 pr-2">
-                  <FavoriteItemTitle
-                    href={itemLink}
-                    icon={itemIcon}
-                    title={itemTitle}
-                    isSidebarCollapsed={!!sidebarCollapsed}
-                  />
+                  <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
                 </div>
               );
               return () => root.unmount();
@@ -138,18 +131,16 @@ export const FavoriteRoot: FC<Props> = observer((props) => {
   return (
     <>
       <DropIndicator isVisible={instruction === "reorder-above"} />
-      <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive} sidebarCollapsed={sidebarCollapsed}>
-        {!sidebarCollapsed && <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />}
-        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} isSidebarCollapsed={!!sidebarCollapsed} />
-        {!sidebarCollapsed && (
-          <FavoriteItemQuickAction
-            favorite={favorite}
-            ref={actionSectionRef}
-            isMenuActive={isMenuActive}
-            onChange={handleQuickAction}
-            handleRemoveFromFavorites={handleRemoveFromFavorites}
-          />
-        )}
+      <FavoriteItemWrapper elementRef={elementRef} isMenuActive={isMenuActive}>
+        <FavoriteItemDragHandle isDragging={isDragging} sort_order={favorite.sort_order} />
+        <FavoriteItemTitle href={itemLink} icon={itemIcon} title={itemTitle} />
+        <FavoriteItemQuickAction
+          favorite={favorite}
+          ref={actionSectionRef}
+          isMenuActive={isMenuActive}
+          onChange={handleQuickAction}
+          handleRemoveFromFavorites={handleRemoveFromFavorites}
+        />
       </FavoriteItemWrapper>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </>
