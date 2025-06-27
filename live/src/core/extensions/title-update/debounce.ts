@@ -3,7 +3,7 @@
  */
 export interface DebounceState {
   lastArgs: any[] | null;
-  timerId: NodeJS.Timeout | null;
+  timerId: ReturnType<typeof setTimeout> | null;
   lastCallTime: number | undefined;
   lastExecutionTime: number;
   inProgress: boolean;

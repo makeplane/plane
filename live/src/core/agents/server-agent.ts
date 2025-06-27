@@ -55,7 +55,7 @@ export class ServerAgentManager {
   private static instance: ServerAgentManager;
   private connections: Map<string, ConnectionData>;
   public hocuspocusServer: Hocuspocus | null;
-  private cleanupInterval: NodeJS.Timeout | null;
+  private cleanupInterval: ReturnType<typeof setInterval> | null;
 
   /**
    * Private constructor to enforce singleton pattern

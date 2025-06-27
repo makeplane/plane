@@ -110,8 +110,8 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     if (this.isCurrentUserOwner) return true;
 
     // Shared access takes precedence over role-based access
-    if (this.hasSharedAccess) {
-      return this.canViewWithSharedAccess;
+    if (this.is_shared || this.hasSharedAccess) {
+      return this.is_shared || this.canViewWithSharedAccess;
     }
     // Fallback to regular access control
     const isPagePublic = this.access === EPageAccess.PUBLIC;

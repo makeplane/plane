@@ -148,6 +148,7 @@ class PageDetailSerializer(PageSerializer):
 class PageLiteSerializer(BaseSerializer):
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     sub_pages_count = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Page
@@ -168,6 +169,7 @@ class PageLiteSerializer(BaseSerializer):
             "updated_at",
             "moved_to_page",
             "moved_to_project",
+            "is_shared",
         ]
 
 

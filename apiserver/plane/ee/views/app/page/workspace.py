@@ -485,14 +485,23 @@ class WorkspacePageViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def sub_pages(self, request, slug, page_id):
-        pages = Page.all_objects.filter(
-            workspace__slug=slug, parent_id=page_id
-        ).annotate(
-            sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
-            .filter(archived_at__isnull=True)
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
+        pages = (
+            Page.all_objects.filter(workspace__slug=slug, parent_id=page_id)
+            .annotate(
+                sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .filter(archived_at__isnull=True)
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("id"),
+                        workspace__slug=slug,
+                    )
+                )
+            )
         )
         serializer = WorkspacePageLiteSerializer(pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

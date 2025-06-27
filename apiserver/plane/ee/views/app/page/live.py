@@ -4,7 +4,7 @@ import base64
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import OuterRef, Q, Value, UUIDField, Func, F
+from django.db.models import OuterRef, Q, Value, UUIDField, Func, F, Exists
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -26,6 +26,7 @@ from plane.ee.views.base import BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.authentication.secret import SecretKeyAuthentication
+from plane.ee.models import PageUser
 
 
 class PagesLiveServerSubPagesViewSet(BaseViewSet):
@@ -49,6 +50,13 @@ class PagesLiveServerSubPagesViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                is_shared=Exists(
+                    PageUser.objects.filter(
+                        page_id=OuterRef("id"),
+                    )
+                )
             )
         )
         serializer = PageLiteSerializer(pages, many=True)

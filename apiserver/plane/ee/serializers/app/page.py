@@ -203,6 +203,7 @@ class WorkspacePageVersionDetailSerializer(BaseSerializer):
 
 class WorkspacePageLiteSerializer(BaseSerializer):
     sub_pages_count = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Page
@@ -216,6 +217,7 @@ class WorkspacePageLiteSerializer(BaseSerializer):
             "parent_id",
             "workspace",
             "sub_pages_count",
+            "is_shared",
             "owned_by",
             "deleted_at",
             "is_description_empty",
