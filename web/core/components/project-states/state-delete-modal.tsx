@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { STATE_DELETED } from "@plane/constants";
+import { STATE_TRACKER_EVENTS } from "@plane/constants";
 import type { IState } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -41,7 +41,7 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
         captureProjectStateEvent({
-          eventName: STATE_DELETED,
+          eventName: STATE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "SUCCESS",
@@ -64,7 +64,7 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
             message: "State could not be deleted. Please try again.",
           });
         captureProjectStateEvent({
-          eventName: STATE_DELETED,
+          eventName: STATE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "FAILED",

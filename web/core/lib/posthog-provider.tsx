@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
-import { GROUP_WORKSPACE } from "@plane/constants";
+import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 // helpers
 import { getUserRole } from "@plane/utils";
 // hooks
@@ -46,7 +46,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
       });
       if (currentWorkspace) {
-        posthog?.group(GROUP_WORKSPACE, currentWorkspace?.id);
+        posthog?.group(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id);
       }
     }
   }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, PROJECT_UPDATED } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -56,7 +56,7 @@ export const HeroSection = observer((props: THeroSection) => {
         const changed_properties = Object.keys(dirtyFields);
 
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {
             ...res,
             changed_properties: changed_properties,
@@ -72,7 +72,7 @@ export const HeroSection = observer((props: THeroSection) => {
       })
       .catch((error) => {
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
         setToast({

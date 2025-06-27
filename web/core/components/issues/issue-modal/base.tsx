@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssueServiceType, EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -248,7 +248,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         ),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
@@ -264,7 +264,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -324,7 +324,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         });
       }
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
         path: pathname,
       });
@@ -339,7 +339,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         });
       }
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });

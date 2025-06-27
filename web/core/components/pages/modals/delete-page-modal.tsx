@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // ui
-import { PAGE_DELETED } from "@plane/constants";
+import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { getPageName } from "@plane/utils";
@@ -47,7 +47,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     await removePage({ pageId })
       .then(() => {
         capturePageEvent({
-          eventName: PAGE_DELETED,
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
           payload: {
             ...page,
             state: "SUCCESS",
@@ -71,7 +71,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
       })
       .catch(() => {
         capturePageEvent({
-          eventName: PAGE_DELETED,
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
           payload: {
             ...page,
             state: "FAILED",

@@ -7,7 +7,7 @@ import { Home } from "lucide-react";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // plane imports
-import { GITHUB_REDIRECTED } from "@plane/constants";
+import { GITHUB_REDIRECTED_TRACKER_EVENT } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -33,7 +33,7 @@ export const PagesAppDashboardHeader = () => {
       <Header.RightItem>
         <a
           onClick={() =>
-            captureEvent(GITHUB_REDIRECTED, {
+            captureEvent(GITHUB_REDIRECTED_TRACKER_EVENT, {
               element: "navbar",
             })
           }

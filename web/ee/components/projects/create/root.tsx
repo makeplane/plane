@@ -4,7 +4,7 @@ import { useState, FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { DEFAULT_PROJECT_FORM_VALUES, EUserProjectRoles, PROJECT_CREATED } from "@plane/constants";
+import { DEFAULT_PROJECT_FORM_VALUES, EUserProjectRoles, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
@@ -141,7 +141,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
           });
         }
         captureProjectEvent({
-          eventName: PROJECT_CREATED,
+          eventName: PROJECT_TRACKER_EVENTS.create,
           payload: newPayload,
         });
         setToast({
@@ -164,7 +164,7 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
             message: err.data[key],
           });
           captureProjectEvent({
-            eventName: PROJECT_CREATED,
+            eventName: PROJECT_TRACKER_EVENTS.create,
             payload: {
               ...formData,
               state: "FAILED",

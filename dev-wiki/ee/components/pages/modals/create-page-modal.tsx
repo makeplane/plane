@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
-import { EPageAccess, PAGE_CREATED } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { TPage } from "@plane/types";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
