@@ -11,9 +11,9 @@ import {
   EIssueServiceType,
   EIssueFilterType,
   EIssuesStoreType,
-  ISSUE_DELETED,
   EUserPermissions,
   EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
@@ -152,7 +152,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         element,
       })
     );
-  }, [scrollableContainerRef?.current]);
+  }, []);
 
   // Make the Issue Delete Box a Drop Target
   useEffect(() => {
@@ -181,7 +181,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         },
       })
     );
-  }, [deleteAreaRef?.current, setIsDragOverDelete, setDraggedIssueId, setDeleteIssueModal]);
+  }, [setIsDragOverDelete, setDraggedIssueId, setDeleteIssueModal]);
 
   const renderQuickActions: TRenderQuickActions = useCallback(
     ({ issue, parentRef, customActionButton }) => (
@@ -210,7 +210,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       setDeleteIssueModal(false);
       setDraggedIssueId(undefined);
       captureIssueEvent({
-        eventName: ISSUE_DELETED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
         payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
         path: pathname,
       });

@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
-import { NETWORK_CHOICES, PROJECT_UPDATED } from "@plane/constants";
+import { NETWORK_CHOICES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
@@ -95,7 +95,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         const changed_properties = Object.keys(dirtyFields);
 
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {
             ...res,
             changed_properties: changed_properties,
@@ -111,7 +111,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
         setToast({
