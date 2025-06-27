@@ -3,32 +3,51 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { CellSelection, TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 
-const getTableCellBorderSelectionStatus = (
-  cell: number,
-  selection: number[],
+const getAdjacentCellPositions = (
+  cellStart: number,
   tableMap: TableMap
-): { top: boolean; bottom: boolean; left: boolean; right: boolean } => {
+): { top?: number; bottom?: number; left?: number; right?: number } => {
   const { width, height } = tableMap;
-  const cellIndex = tableMap.map.indexOf(cell);
+  const cellIndex = tableMap.map.indexOf(cellStart);
 
-  const rect = tableMap.findCell(cell);
-  const cellW = rect.right - rect.left;
-  const cellH = rect.bottom - rect.top;
+  if (cellIndex === -1) return {};
 
-  const testRight = cellW;
-  const testBottom = width * cellH;
-
-  const topCell = cellIndex >= width ? tableMap.map[cellIndex - width] : undefined;
-  const bottomCell = cellIndex < width * height - testBottom ? tableMap.map[cellIndex + testBottom] : undefined;
-  const leftCell = cellIndex % width > 0 ? tableMap.map[cellIndex - 1] : undefined;
-  const rightCell = cellIndex % width < width - testRight ? tableMap.map[cellIndex + testRight] : undefined;
+  const row = Math.floor(cellIndex / width);
+  const col = cellIndex % width;
 
   return {
-    top: topCell === undefined || !selection.includes(topCell),
-    bottom: bottomCell === undefined || !selection.includes(bottomCell),
-    left: leftCell === undefined || !selection.includes(leftCell),
-    right: rightCell === undefined || !selection.includes(rightCell),
+    top: row > 0 ? tableMap.map[(row - 1) * width + col] : undefined,
+    bottom: row < height - 1 ? tableMap.map[(row + 1) * width + col] : undefined,
+    left: col > 0 ? tableMap.map[row * width + (col - 1)] : undefined,
+    right: col < width - 1 ? tableMap.map[row * width + (col + 1)] : undefined,
   };
+};
+
+const getCellBorderClasses = (cellStart: number, selectedCells: number[], tableMap: TableMap): string[] => {
+  const adjacent = getAdjacentCellPositions(cellStart, tableMap);
+  const classes: string[] = [];
+
+  // Add border-right if right cell is not selected or doesn't exist
+  if (adjacent.right === undefined || !selectedCells.includes(adjacent.right)) {
+    classes.push("selectedCell-border-right");
+  }
+
+  // Add border-left if left cell is not selected or doesn't exist
+  if (adjacent.left === undefined || !selectedCells.includes(adjacent.left)) {
+    classes.push("selectedCell-border-left");
+  }
+
+  // Add border-top if top cell is not selected or doesn't exist
+  if (adjacent.top === undefined || !selectedCells.includes(adjacent.top)) {
+    classes.push("selectedCell-border-top");
+  }
+
+  // Add border-bottom if bottom cell is not selected or doesn't exist
+  if (adjacent.bottom === undefined || !selectedCells.includes(adjacent.bottom)) {
+    classes.push("selectedCell-border-bottom");
+  }
+
+  return classes;
 };
 
 type TableCellSelectionOutlinePluginState = {
@@ -55,23 +74,18 @@ export const TableCellSelectionOutlinePlugin = (editor: Editor): Plugin<TableCel
 
         const decorations: Decoration[] = [];
         const tableMap = TableMap.get(table.node);
-        const selected: number[] = [];
+        const selectedCells: number[] = [];
 
+        // First, collect all selected cell positions
         selection.forEachCell((_node, pos) => {
           const start = pos - table.pos - 1;
-          selected.push(start);
+          selectedCells.push(start);
         });
 
+        // Then, add decorations with appropriate border classes
         selection.forEachCell((node, pos) => {
           const start = pos - table.pos - 1;
-          const borders = getTableCellBorderSelectionStatus(start, selected, tableMap);
-
-          const classes: string[] = [];
-
-          if (borders.top) classes.push("selectedCell-border-top");
-          if (borders.bottom) classes.push("selectedCell-border-bottom");
-          if (borders.left) classes.push("selectedCell-border-left");
-          if (borders.right) classes.push("selectedCell-border-right");
+          const classes = getCellBorderClasses(start, selectedCells, tableMap);
 
           decorations.push(Decoration.node(pos, pos + node.nodeSize, { class: classes.join(" ") }));
         });
