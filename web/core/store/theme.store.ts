@@ -15,7 +15,7 @@ export interface IThemeStore {
   initiativesSidebarCollapsed: boolean | undefined;
   projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
-  toggleDock: (docked?: boolean) => void;
+  toggleDock: (value?: boolean) => void;
   toggleAnySidebarDropdown: (open?: boolean) => void;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleSidebarPeek: (peek?: boolean) => void;
@@ -75,11 +75,11 @@ export class ThemeStore implements IThemeStore {
     });
   }
 
-  toggleDock = (docked?: boolean) => {
-    if (docked === undefined) {
+  toggleDock = (value?: boolean) => {
+    if (value === undefined) {
       this.isDockVisible = !this.isDockVisible;
     } else {
-      this.isDockVisible = docked;
+      this.isDockVisible = value;
     }
   };
 
