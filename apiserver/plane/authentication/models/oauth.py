@@ -217,13 +217,16 @@ class WorkspaceAppInstallation(BaseModel):
         # create bot user and attach
         if not self.app_bot:
             username = f"{self.workspace.slug}_{self.application.slug}_bot"
+            bot_type = (
+                BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
+            )
             self.app_bot = User.objects.create(
                 username=username,
                 display_name=f"{self.application.name} Bot",
                 first_name=f"{self.application.name}",
                 last_name="Bot",
                 is_bot=True,
-                bot_type=BotTypeEnum.APP_BOT.value,
+                bot_type=bot_type,
                 email=f"{username}@plane.so",
                 password=make_password(uuid.uuid4().hex),
                 is_password_autoset=True,
