@@ -64,6 +64,15 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
             <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
+          {(getFileExtension(attachment.asset) === "wav" || getFileExtension(attachment.asset) == "mp3") && (
+            <>
+            <audio controls style={{height: "20px"}}>
+              <source src={attachment.asset} type="audio/wav"/>
+              Your browser does not support the audio element.
+            </audio>
+            </>
+          )
+          }
           <div className="flex items-center gap-3">
             {attachment?.created_by && (
               <>
