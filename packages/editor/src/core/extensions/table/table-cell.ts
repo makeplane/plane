@@ -2,8 +2,8 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableCellSelectionOutlinePlugin } from "./plugins/table-selection-outline/plugin";
 import { DEFAULT_COLUMN_WIDTH } from "./table";
-import { TableCellSelectionOutlinePlugin } from "./table/plugins/table-selection-outline/plugin";
 
 export interface TableCellOptions {
   HTMLAttributes: Record<string, any>;
