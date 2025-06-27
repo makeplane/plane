@@ -1,5 +1,5 @@
 // plane web components
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAnalytics } from "@/hooks/store/use-analytics";

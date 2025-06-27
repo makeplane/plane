@@ -70,16 +70,10 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "@plane/eslint-config": "*",
     "@plane/tailwind-config": "*",
     "@plane/typescript-config": "*",
     "@types/dompurify": "^3.0.5",
-=======
-    "@plane/eslint-config": "workspace:*",
-    "@plane/tailwind-config": "workspace:*",
-    "@plane/typescript-config": "workspace:*",
->>>>>>> a2ce70d3f (fix: circular dependencies and build issues (#7232))
     "@types/lodash": "^4.14.202",
     "@types/node": "18.16.1",
     "@types/nprogress": "^0.2.0",

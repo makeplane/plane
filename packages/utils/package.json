@@ -16,12 +16,8 @@
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
   },
   "dependencies": {
-<<<<<<< HEAD
-=======
-    "@plane/constants": "workspace:*",
-    "@plane/types": "workspace:*",
-    "@types/uuid": "^9.0.8",
->>>>>>> a2ce70d3f (fix: circular dependencies and build issues (#7232))
+    "@plane/constants": "*",
+    "@plane/types": "*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
@@ -33,8 +29,10 @@
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
+    "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.5",
     "tsup": "8.4.0",
     "typescript": "5.8.3"

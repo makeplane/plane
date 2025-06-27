@@ -31,7 +31,6 @@
     "lucide-react": "^0.469.0",
     "mobx": "^6.12.0",
     "mobx-react": "^9.1.1",
-    "mobx-react-lite": "^4.1.0",
     "next": "14.2.30",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.49",
