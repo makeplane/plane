@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { ETemplateLevel, ETemplateType } from "@plane/constants";
-import { extractImageAssetsFromHTMLContent  } from "@plane/editor";
+import { extractAssetsFromHTMLContent } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { PartialDeep, TPageTemplateForm } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -174,10 +174,10 @@ export const CreateUpdatePageTemplate: React.FC<Props> = observer((props) => {
         .then(async (response) => {
           // Extract image assets from the description and attach them to the page template
           if (response?.id && response?.template_data.description_html) {
-            const uploadedImageAssets = extractImageAssetsFromHTMLContent(response.template_data.description_html);
-            if (uploadedImageAssets.length > 0) {
+            const uploadedAssets = extractAssetsFromHTMLContent(response.template_data.description_html);
+            if (uploadedAssets.length > 0) {
               await fileService.updateBulkWorkspaceAssetsUploadStatus(workspaceSlug, response.id, {
-                asset_ids: uploadedImageAssets,
+                asset_ids: uploadedAssets,
               });
             }
           }
