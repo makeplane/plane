@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { ScatterChart } from "@plane/propel/charts/scatter-chart";
+import { BarChart } from "@plane/propel/charts/bar-chart";
 import { IChartResponse, TChartData, TCycleGroups, TScatterPointItem } from "@plane/types";
 import { ICycleProgressData } from "@plane/types/src/analytics-extended";
 import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/ui";
@@ -50,18 +50,6 @@ const CycleProgress = observer(() => {
     }));
   }, [cycleInsightsData]);
 
-  const scatterPoints: TScatterPointItem<string>[] = useMemo(() => {
-    if (!parsedData) return [];
-    return parsedData.map((datum) => ({
-      key: datum.key,
-      label: datum.name,
-      x: datum.key,
-      y: datum.count,
-      fill: CYCLE_GROUP_COLORS[datum.status.toLowerCase() as TCycleGroups],
-      stroke: CYCLE_GROUP_COLORS[datum.status.toLowerCase() as TCycleGroups],
-    }));
-  }, [parsedData]);
-
   const tooltipRows = useCallback(
     (data: ICycleProgressData) => [
       {
@@ -100,9 +88,18 @@ const CycleProgress = observer(() => {
         <ChartLoader />
       ) : cycleInsightsData && cycleInsightsData?.data?.length > 0 ? (
         <div className="h-[350px] flex flex-col gap-4">
-          <ScatterChart
+          <BarChart
             data={parsedData}
-            scatterPoints={scatterPoints}
+            bars={[
+              {
+                key: "count",
+                label: t("common.completion"),
+                fill: (payload: any) => CYCLE_GROUP_COLORS[payload.status.toLowerCase() as TCycleGroups],
+                textClassName: "text-xs",
+                stackId: "a",
+                shapeVariant: "lollipop",
+              },
+            ]}
             className="h-full"
             xAxis={{
               key: "name",

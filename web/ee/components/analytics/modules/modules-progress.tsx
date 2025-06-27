@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { MODULE_STATUS, MODULE_STATUS_COLORS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ScatterChart } from "@plane/propel/charts/scatter-chart";
-import { IChartResponse, TChartData, TModuleStatus, TScatterPointItem } from "@plane/types";
+import { BarChart } from "@plane/propel/charts/bar-chart";
+import { IChartResponse, TChartData, TModuleStatus } from "@plane/types";
 import { IModuleProgressData } from "@plane/types/src/analytics-extended";
 import { renderFormattedDate } from "@plane/utils";
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
@@ -50,18 +50,6 @@ const ModuleProgress = observer(() => {
     }));
   }, [moduleInsightsData]);
 
-  const scatterPoints: TScatterPointItem<string>[] = useMemo(() => {
-    if (!parsedData) return [];
-    return parsedData.map((datum) => ({
-      key: datum.key,
-      label: datum.name,
-      x: datum.key,
-      y: datum.count,
-      fill: MODULE_STATUS_COLORS[datum.status.toLowerCase() as TModuleStatus],
-      stroke: MODULE_STATUS_COLORS[datum.status.toLowerCase() as TModuleStatus],
-    }));
-  }, [parsedData]);
-
   const tooltipRows = useCallback(
     (data: IModuleProgressData) => [
       {
@@ -96,9 +84,18 @@ const ModuleProgress = observer(() => {
         <ChartLoader />
       ) : moduleInsightsData && moduleInsightsData?.data?.length > 0 ? (
         <div className="h-[350px] flex flex-col gap-4">
-          <ScatterChart
+          <BarChart
             data={parsedData}
-            scatterPoints={scatterPoints}
+            bars={[
+              {
+                key: "count",
+                label: t("common.completion"),
+                fill: (payload: any) => MODULE_STATUS_COLORS[payload.status.toLowerCase() as TModuleStatus],
+                textClassName: "text-xs",
+                stackId: "a",
+                shapeVariant: "lollipop",
+              },
+            ]}
             className="h-full"
             xAxis={{
               key: "name",
@@ -106,13 +103,9 @@ const ModuleProgress = observer(() => {
             }}
             yAxis={{
               key: "count",
-              label: t("common.completion") + " " + "%",
-              offset: -30,
-              dx: -25,
+              label: t("common.completion") + " %",
               domain: [0, 100],
-            }}
-            tickCount={{
-              y: 100,
+              dx: -25,
             }}
             margin={{
               top: 20,
