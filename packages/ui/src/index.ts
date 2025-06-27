@@ -25,7 +25,6 @@ export * from "./modals";
 export * from "./popovers";
 export * from "./progress";
 export * from "./row";
-export * from "./scroll-area";
 export * from "./sortable";
 export * from "./spinners";
 export * from "./tables";

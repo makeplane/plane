@@ -22,6 +22,7 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
+  ListCollapse,
 } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -35,13 +36,14 @@ import {
   toggleBackgroundColor,
   toggleBlockquote,
   toggleBold,
-  toggleBulletList,
   toggleCodeBlock,
+  toggleFlatBulletList,
+  toggleFlatOrderedList,
+  toggleFlatTaskList,
+  toggleFlatToggleList,
   toggleHeading,
   toggleItalic,
-  toggleOrderedList,
   toggleStrike,
-  toggleTaskList,
   toggleTextColor,
   toggleUnderline,
 } from "@/helpers/editor-commands";
@@ -136,25 +138,33 @@ export const StrikeThroughItem = (editor: Editor): EditorMenuItem<"strikethrough
 export const BulletListItem = (editor: Editor): EditorMenuItem<"bulleted-list"> => ({
   key: "bulleted-list",
   name: "Bulleted list",
-  isActive: () => editor?.isActive(CORE_EXTENSIONS.BULLET_LIST),
-  command: () => toggleBulletList(editor),
+  isActive: () => editor?.isActive("list", { kind: "bullet" }),
+  command: () => toggleFlatBulletList(editor),
   icon: ListIcon,
 });
 
 export const NumberedListItem = (editor: Editor): EditorMenuItem<"numbered-list"> => ({
   key: "numbered-list",
   name: "Numbered list",
-  isActive: () => editor?.isActive(CORE_EXTENSIONS.ORDERED_LIST),
-  command: () => toggleOrderedList(editor),
+  isActive: () => editor?.isActive("list", { kind: "ordered" }),
+  command: () => toggleFlatOrderedList(editor),
   icon: ListOrderedIcon,
 });
 
 export const TodoListItem = (editor: Editor): EditorMenuItem<"to-do-list"> => ({
   key: "to-do-list",
   name: "To-do list",
-  isActive: () => editor.isActive(CORE_EXTENSIONS.TASK_ITEM),
-  command: () => toggleTaskList(editor),
+  isActive: () => editor?.isActive("list", { kind: "task" }),
+  command: () => toggleFlatTaskList(editor),
   icon: CheckSquare,
+});
+
+export const ToggleListItem = (editor: Editor): EditorMenuItem<"toggle-list"> => ({
+  key: "toggle-list",
+  name: "Toggle list",
+  isActive: () => editor?.isActive("list", { kind: "toggle" }),
+  command: () => toggleFlatToggleList(editor),
+  icon: ListCollapse,
 });
 
 export const QuoteItem = (editor: Editor): EditorMenuItem<"quote"> => ({
@@ -248,6 +258,7 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     StrikeThroughItem(editor),
     BulletListItem(editor),
     TodoListItem(editor),
+    ToggleListItem(editor),
     CodeItem(editor),
     NumberedListItem(editor),
     QuoteItem(editor),

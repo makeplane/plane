@@ -1,6 +1,6 @@
 import { DOMSerializer } from "@tiptap/pm/model";
 import { useEditor as useTiptapEditor } from "@tiptap/react";
-import { useImperativeHandle, useEffect } from "react";
+import { useImperativeHandle, useEffect, useState } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
@@ -9,6 +9,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
+import { migrateDocJSON } from "@/extensions/flat-list/core";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
@@ -79,6 +80,46 @@ export const useEditor = (props: TEditorHookProps) => {
     },
     [editable]
   );
+
+  const [hasMigrated, setHasMigrated] = useState(false);
+
+  useEffect(() => {
+    if (
+      editor &&
+      (!hasMigrated || editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || editor.isActive(CORE_EXTENSIONS.TASK_ITEM))
+    ) {
+      const newJSON = migrateDocJSON(editor.getJSON() as any);
+
+      if (newJSON) {
+        // Create a new transaction
+        const transaction = editor.state.tr;
+
+        try {
+          const node = editor.state.schema.nodeFromJSON(newJSON);
+
+          transaction.replaceWith(0, editor.state.doc.content.size, node);
+          transaction.setMeta("addToHistory", false);
+          editor.view.dispatch(transaction);
+          setHasMigrated(true);
+
+          // focus user on the current position
+          if (editor.state.selection) {
+            const docLength = editor.state.doc.content.size;
+            const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
+            editor.commands.setTextSelection(relativePosition);
+          }
+        } catch (error) {
+          console.error("Error during migration:", error);
+        }
+      }
+    }
+  }, [
+    editor?.getJSON(),
+    editor?.isActive(CORE_EXTENSIONS.LIST_ITEM),
+    editor?.isActive(CORE_EXTENSIONS.TASK_ITEM),
+    hasMigrated,
+    editor,
+  ]);
 
   // Effect for syncing SWR data
   useEffect(() => {

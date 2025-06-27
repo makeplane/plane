@@ -1,8 +1,11 @@
 import { Extensions } from "@tiptap/core";
+// import BulletList from "@tiptap/extension-bullet-list";
 import CharacterCount from "@tiptap/extension-character-count";
+// import ListItem from "@tiptap/extension-list-item";
+// import OrderedList from "@tiptap/extension-ordered-list";
 import Placeholder from "@tiptap/extension-placeholder";
-import TaskItem from "@tiptap/extension-task-item";
-import TaskList from "@tiptap/extension-task-list";
+// import TaskItem from "@tiptap/extension-task-item";
+// import TaskList from "@tiptap/extension-task-list";
 import TextStyle from "@tiptap/extension-text-style";
 import TiptapUnderline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -23,12 +26,13 @@ import {
   CustomTextAlignExtension,
   CustomTypographyExtension,
   ImageExtension,
-  ListKeymap,
   Table,
   TableCell,
   TableHeader,
   TableRow,
+  FlatListExtension,
   UtilityExtension,
+  DropCursorExtension,
 } from "@/extensions";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
@@ -49,34 +53,14 @@ type TArguments = Pick<
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
-  const {
-    disabledExtensions,
-    enableHistory,
-    fileHandler,
-    flaggedExtensions,
-    mentionHandler,
-    placeholder,
-    tabIndex,
-    editable,
-  } = args;
+  const { disabledExtensions, enableHistory, fileHandler, flaggedExtensions, mentionHandler, placeholder, editable } =
+    args;
 
   const extensions = [
     StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc pl-7 space-y-[--list-spacing-y]",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal pl-7 space-y-[--list-spacing-y]",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "not-prose space-y-2",
-        },
-      },
+      bulletList: false,
+      orderedList: false,
+      listItem: false,
       code: false,
       codeBlock: false,
       horizontalRule: false,
@@ -91,12 +75,78 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
           class: "editor-heading-block",
         },
       },
-      dropcursor: {
-        class:
-          "text-custom-text-300 transition-all motion-reduce:transition-none motion-reduce:hover:transform-none duration-200 ease-[cubic-bezier(0.165, 0.84, 0.44, 1)]",
-      },
+      // dropcursor: {
+      //   class: "text-custom-text-300",
+      // },
+      dropcursor: false,
       ...(enableHistory ? {} : { history: false }),
     }),
+    DropCursorExtension,
+    FlatListExtension,
+    // BulletList.extend({
+    //   parseHTML() {
+    //     return [];
+    //   },
+    //   addInputRules() {
+    //     return [];
+    //   },
+    // }).configure({
+    //   HTMLAttributes: {
+    //     class: "list-disc pl-7 space-y-2",
+    //   },
+    // }),
+    // OrderedList.extend({
+    //   parseHTML() {
+    //     return [];
+    //   },
+    //   addInputRules() {
+    //     return [];
+    //   },
+    // }).configure({
+    //   HTMLAttributes: {
+    //     class: "list-decimal pl-7 space-y-2",
+    //   },
+    // }),
+    // ListItem.extend({
+    //   parseHTML() {
+    //     return [];
+    //   },
+    //   addInputRules() {
+    //     return [];
+    //   },
+    // }).configure({
+    //   HTMLAttributes: {
+    //     class: "not-prose space-y-2",
+    //   },
+    // }),
+    // TaskList.extend({
+    //   parseHTML() {
+    //     return [];
+    //   },
+    //   addInputRules() {
+    //     return [];
+    //   },
+    // }).configure({
+    //   HTMLAttributes: {
+    //     class: "not-prose pl-2 space-y-2",
+    //   },
+    // }),
+    // TaskItem.extend({
+    //   parseHTML() {
+    //     return [];
+    //   },
+    //   addInputRules() {
+    //     return [];
+    //   },
+    //   addKeyboardShortcuts() {
+    //     return {};
+    //   },
+    // }).configure({
+    //   HTMLAttributes: {
+    //     class: "relative",
+    //   },
+    //   nested: true,
+    // }),
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
@@ -104,7 +154,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
     }),
     CustomKeymap,
-    ListKeymap({ tabIndex }),
+    // ListKeymap({ tabIndex }),
     CustomLinkExtension.configure({
       openOnClick: true,
       autolink: true,
@@ -119,24 +169,58 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomTypographyExtension,
     TiptapUnderline,
     TextStyle,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2 space-y-2",
-      },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "relative",
-      },
-      nested: true,
-    }),
     CustomCodeBlockExtension.configure({
       HTMLAttributes: {
         class: "",
       },
     }),
     CustomCodeInlineExtension,
-    Markdown.configure({
+    Markdown.extend({
+      addMarkdownSerializerRules() {
+        return {
+          list: (
+            state: {
+              write: (text: string) => void;
+              ensureNewLine: () => void;
+              serializeFragment: (fragment: any) => string;
+            },
+            node: { attrs: Record<string, any>; content: any }
+          ) => {
+            // Custom serializer for flat-list nodes
+            const attrs = node.attrs as { kind?: string; order?: number; checked?: boolean; collapsed?: boolean };
+            const listKind = attrs.kind || "bullet";
+            const isChecked = attrs.checked;
+            const isCollapsed = attrs.collapsed;
+
+            // Serialize the content of this list item
+            const content = state.serializeFragment(node.content);
+
+            // Create the appropriate markdown based on list type
+            switch (listKind) {
+              case "task":
+                state.write(`- [${isChecked ? "x" : " "}] ${content}`);
+                break;
+              case "toggle": {
+                const togglePrefix = isCollapsed ? "▶" : "▼";
+                state.write(`- ${togglePrefix} ${content}`);
+                break;
+              }
+              case "ordered": {
+                const orderNum = attrs.order || 1;
+                state.write(`${orderNum}. ${content}`);
+                break;
+              }
+              case "bullet":
+              default:
+                state.write(`- ${content}`);
+                break;
+            }
+
+            state.ensureNewLine();
+          },
+        };
+      },
+    }).configure({
       html: true,
       transformCopiedText: false,
       transformPastedText: true,
@@ -202,6 +286,5 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     );
   }
 
-  // @ts-expect-error tiptap types are incorrect
   return extensions;
 };

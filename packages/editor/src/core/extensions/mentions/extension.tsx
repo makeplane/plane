@@ -1,11 +1,14 @@
+import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import { Node as NodeType } from "@tiptap/pm/model";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // types
 import { TMentionHandler } from "@/types";
 // extension config
 import { CustomMentionExtensionConfig } from "./extension-config";
 // node view
-import { MentionNodeView } from "./mention-node-view";
+import { MentionNodeView, MentionNodeViewProps } from "./mention-node-view";
 // utils
+import { EMentionComponentAttributeNames } from "./types";
 import { renderMentionsDropdown } from "./utils";
 
 export const CustomMentionExtension = (props: TMentionHandler) => {
@@ -20,7 +23,21 @@ export const CustomMentionExtension = (props: TMentionHandler) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(MentionNodeView);
+      return ReactNodeViewRenderer((props) => (
+        <MentionNodeView {...props} node={props.node as MentionNodeViewProps["node"]} />
+      ));
+    },
+
+    // @ts-expect-error - TODO: fix this
+    addStorage() {
+      return {
+        markdown: {
+          serialize(state: MarkdownSerializerState, node: NodeType) {
+            const label = node.attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention";
+            state.write(`@${label}`);
+          },
+        },
+      };
     },
   }).configure({
     suggestion: {

@@ -40,10 +40,6 @@ const Command = Extension.create<SlashCommandOptions>({
             return false;
           }
 
-          if (editor.isActive(CORE_EXTENSIONS.TABLE)) {
-            return false;
-          }
-
           return true;
         },
       },

@@ -82,9 +82,9 @@ export const CustomTypographyExtension = Extension.create<TypographyOptions>({
       rules.push(laquo(this.options.laquo));
     }
 
-    if (this.options.raquo !== false) {
-      rules.push(raquo(this.options.raquo));
-    }
+    // if (this.options.raquo !== false) {
+    //   rules.push(raquo(this.options.raquo));
+    // }
 
     if (this.options.multiplication !== false) {
       rules.push(multiplication(this.options.multiplication));

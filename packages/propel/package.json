@@ -14,7 +14,6 @@
     "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.1",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
