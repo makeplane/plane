@@ -1,73 +1,151 @@
 import { Server } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
+import { IncomingHttpHeaders } from "http";
 // lib
-import { handleAuthentication } from "@/core/lib/authentication.js";
+import { handleAuthentication } from "@/core/lib/authentication";
 // extensions
-import { getExtensions } from "@/core/extensions/index.js";
-import {
-  DocumentCollaborativeEvents,
-  TDocumentEventsServer,
-} from "@plane/editor/lib";
+import { getExtensions } from "@/core/extensions/index";
+import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 // editor types
-import { TUserDetails } from "@plane/editor";
+import { EventToPayloadMap, TUserDetails, createRealtimeEvent } from "@plane/editor";
 // types
-import { type HocusPocusServerContext } from "@/core/types/common.js";
+import { TDocumentTypes, type HocusPocusServerContext } from "@/core/types/common";
+// error handling
+import { catchAsync } from "@/core/helpers/error-handling/error-handler";
+import { handleError } from "@/core/helpers/error-handling/error-factory";
+// server agent
+import { serverAgentManager } from "./agents/server-agent";
 
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
   const serverName = process.env.HOSTNAME || uuidv4();
-  return Server.configure({
+  const server = Server.configure({
     name: serverName,
     onAuthenticate: async ({
       requestHeaders,
+      requestParameters,
       context,
-      // user id used as token for authentication
       token,
+    }: {
+      requestHeaders: IncomingHttpHeaders;
+      context: HocusPocusServerContext;
+      requestParameters: URLSearchParams;
+      token: string;
     }) => {
-      let cookie: string | undefined = undefined;
-      let userId: string | undefined = undefined;
+      return catchAsync(
+        async () => {
+          let cookie: string | undefined = undefined;
+          let userId: string | undefined = undefined;
 
-      // Extract cookie (fallback to request headers) and userId from token (for scenarios where
-      // the cookies are not passed in the request headers)
-      try {
-        const parsedToken = JSON.parse(token) as TUserDetails;
-        userId = parsedToken.id;
-        cookie = parsedToken.cookie;
-      } catch (error) {
-        // If token parsing fails, fallback to request headers
-        console.error("Token parsing failed, using request headers:", error);
-      } finally {
-        // If cookie is still not found, fallback to request headers
-        if (!cookie) {
-          cookie = requestHeaders.cookie?.toString();
-        }
-      }
+          // Extract cookie (fallback to request headers) and userId from token
+          try {
+            const parsedToken = JSON.parse(token) as TUserDetails;
+            userId = parsedToken.id;
+            cookie = parsedToken.cookie;
+          } catch (error) {
+            console.error("Token parsing failed, using request headers:", error);
+          } finally {
+            if (!cookie) {
+              cookie = requestHeaders.cookie?.toString();
+            }
+          }
 
-      if (!cookie || !userId) {
-        throw new Error("Credentials not provided");
-      }
+          if (!cookie || !userId) {
+            handleError(null, {
+              errorType: "unauthorized",
+              message: "Credentials not provided",
+              component: "hocuspocus",
+              operation: "authenticate",
+              extraContext: { tokenProvided: !!token },
+              throw: true,
+            });
+          }
 
-      // set cookie in context, so it can be used throughout the ws connection
-      (context as HocusPocusServerContext).cookie = cookie;
+          context.documentType = requestParameters.get("documentType")?.toString() as TDocumentTypes;
+          context.cookie = cookie ?? requestParameters.get("cookie") ?? "";
+          context.userId = userId;
+          context.workspaceSlug = requestParameters.get("workspaceSlug")?.toString() ?? "";
+          context.parentId = requestParameters.get("parentPageId")?.toString() ?? undefined;
+          context.projectId = requestParameters.get("projectId")?.toString() ?? "";
+          context.teamspaceId = requestParameters.get("teamspaceId")?.toString() ?? "";
 
-      try {
-        await handleAuthentication({
-          cookie,
-          userId,
-        });
-      } catch (error) {
-        throw Error("Authentication unsuccessful!");
-      }
+          return await handleAuthentication({
+            cookie: context.cookie,
+            userId: context.userId,
+            workspaceSlug: context.workspaceSlug,
+          });
+        },
+        { extra: { operation: "authenticate" } },
+        { rethrow: true }
+      )();
     },
-    async onStateless({ payload, document }) {
-      // broadcast the client event (derived from the server event) to all the clients so that they can update their state
-      const response =
-        DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
-      if (response) {
-        document.broadcastStateless(response);
-      }
+    onStateless: async ({ payload, document, connection }) => {
+      return catchAsync(
+        async () => {
+          const payloadStr = payload as string;
+
+          // Function to safely parse JSON without throwing exceptions
+          const safeJsonParse = (str: string) => {
+            try {
+              return { success: true, data: JSON.parse(str) };
+            } catch (e) {
+              return { success: false, error: e };
+            }
+          };
+
+          // First check if this is a known document event
+          const documentEvent = DocumentCollaborativeEvents[payload as TDocumentEventsServer]?.client;
+
+          if (documentEvent) {
+            const eventType = documentEvent as keyof EventToPayloadMap;
+
+            let eventData: Partial<EventToPayloadMap[typeof eventType]> = {
+              user_id: connection.context.userId,
+            };
+
+            if (eventType === "archived") {
+              eventData = {
+                ...eventData,
+                archived_at: new Date().toISOString(),
+              };
+            }
+
+            const realtimeEvent = createRealtimeEvent({
+              action: eventType,
+              page_id: document.name,
+              descendants_ids: [],
+              data: eventData as EventToPayloadMap[typeof eventType],
+              workspace_slug: connection.context.workspaceSlug || "",
+              user_id: connection.context.userId || "",
+            });
+
+            // Broadcast the event
+            document.broadcastStateless(JSON.stringify(realtimeEvent));
+            return;
+          }
+
+          // If not a document event, try to parse as JSON
+          const parseResult = safeJsonParse(payloadStr);
+
+          if (parseResult.success && parseResult.data && typeof parseResult.data === "object") {
+            const parsedPayload = parseResult.data as {
+              workspaceSlug?: string;
+              projectId?: string;
+              action?: string;
+            };
+
+            // Handle synced action
+            if (parsedPayload.action === "synced" && parsedPayload.workspaceSlug) {
+              serverAgentManager.notifySyncTrigger(document.name, connection.context);
+              return;
+            }
+          }
+        },
+        { extra: { operation: "stateless", payload } }
+      )();
     },
-    extensions,
+    extensions: [...extensions],
     debounce: 10000,
   });
+  return server;
 };
