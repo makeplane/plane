@@ -39,7 +39,7 @@ from .project import (
     ProjectMemberRoleSerializer,
 )
 from .state import StateSerializer, StateLiteSerializer
-from .view import IssueViewSerializer
+from .view import IssueViewSerializer, ViewIssueListSerializer
 from .cycle import (
     CycleSerializer,
     CycleIssueSerializer,
@@ -74,6 +74,7 @@ from .issue import (
     IssueLinkLiteSerializer,
     IssueVersionDetailSerializer,
     IssueDescriptionVersionDetailSerializer,
+    IssueListDetailSerializer,
 )
 
 from .module import (

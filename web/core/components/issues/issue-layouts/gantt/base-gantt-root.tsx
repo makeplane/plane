@@ -98,14 +98,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         target_date?: string;
       }[]
     ) =>
-      issues.updateIssueDates(workspaceSlug.toString(), projectId.toString(), updates).catch(() => {
+      issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
           message: "Error while updating work item dates, Please try again Later",
         });
       }),
-    [issues]
+    [issues, projectId, workspaceSlug]
   );
 
   const quickAdd =
@@ -146,6 +146,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             canLoadMoreBlocks={nextPageResults}
             updateBlockDates={updateBlockDates}
             showAllBlocks
+            enableDependency
             isEpic={isEpic}
           />
         </div>

@@ -13,6 +13,7 @@ import {
   EViewAccess,
   EUserPermissions,
   EUserPermissionsLevel,
+  EProjectFeatureKey,
 } from "@plane/constants";
 // types
 import {
@@ -22,10 +23,10 @@ import {
   IIssueFilterOptions,
 } from "@plane/types";
 // ui
-import { Breadcrumbs, Button, Tooltip, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
+import { SwitcherIcon, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import { ViewQuickActions } from "@/components/views";
@@ -44,7 +45,7 @@ import {
 } from "@/hooks/store";
 // plane web
 import { useAppRouter } from "@/hooks/use-app-router";
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   // refs
@@ -164,27 +165,27 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumb />
-          <Breadcrumbs.BreadcrumbItem
-            type="text"
-            link={
-              <BreadcrumbLink
-                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/views`}
-                label="Views"
-                icon={<Layers className="h-4 w-4 text-custom-text-300" />}
-              />
-            }
+          <CommonProjectBreadcrumbs
+            workspaceSlug={workspaceSlug?.toString() ?? ""}
+            projectId={projectId?.toString() ?? ""}
+            featureKey={EProjectFeatureKey.VIEWS}
           />
-          <Breadcrumbs.BreadcrumbItem
-            type="component"
+
+          <Breadcrumbs.Item
             component={
-              <CustomSearchSelect
-                options={switcherOptions}
-                value={viewId}
-                label={<SwitcherLabel logo_props={viewDetails.logo_props} name={viewDetails.name} LabelIcon={Layers} />}
+              <BreadcrumbNavigationSearchDropdown
+                selectedItem={viewId?.toString() ?? ""}
+                navigationItems={switcherOptions}
                 onChange={(value: string) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
                 }}
+                title={viewDetails?.name}
+                icon={
+                  <Breadcrumbs.Icon>
+                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={Layers} size={16} />
+                  </Breadcrumbs.Icon>
+                }
+                isLast
               />
             }
           />

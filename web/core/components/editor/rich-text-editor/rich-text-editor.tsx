@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { EditorRefApi, IRichTextEditor, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
@@ -14,7 +14,10 @@ import { useMember } from "@/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 interface RichTextEditorWrapperProps
-  extends MakeOptional<Omit<IRichTextEditor, "fileHandler" | "mentionHandler">, "disabledExtensions"> {
+  extends MakeOptional<
+    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+    "disabledExtensions" | "flaggedExtensions"
+  > {
   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
   workspaceSlug: string;
   workspaceId: string;
@@ -36,7 +39,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) => await searchMentionCallback(payload),
@@ -47,7 +50,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   return (
     <RichTextEditorWithRef
       ref={ref}
-      disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
+      disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+      flaggedExtensions={richTextEditorExtensions.flagged}
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile,

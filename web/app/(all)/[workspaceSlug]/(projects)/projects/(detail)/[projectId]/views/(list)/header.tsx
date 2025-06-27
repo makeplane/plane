@@ -1,18 +1,19 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Layers } from "lucide-react";
+import { useParams } from "next/navigation";
 // ui
+import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
 import { ViewListHeader } from "@/components/views";
 // hooks
 import { useCommandPalette, useProject } from "@/hooks/store";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 
 export const ProjectViewsHeader = observer(() => {
+  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
@@ -22,10 +23,11 @@ export const ProjectViewsHeader = observer(() => {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={<BreadcrumbLink label="Views" icon={<Layers className="h-4 w-4 text-custom-text-300" />} />}
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+              projectId={projectId?.toString() ?? ""}
+              featureKey={EProjectFeatureKey.VIEWS}
+              isLast
             />
           </Breadcrumbs>
         </Header.LeftItem>
