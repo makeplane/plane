@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // types
-import { WORKSPACE_DELETED } from "@plane/constants";
+import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspace } from "@plane/types";
 // ui
@@ -65,7 +65,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
         captureWorkspaceEvent({
-          eventName: WORKSPACE_DELETED,
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "SUCCESS",
@@ -85,7 +85,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
           message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
         captureWorkspaceEvent({
-          eventName: WORKSPACE_DELETED,
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "FAILED",

@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
-import { NOTIFICATION_ARCHIVED } from "@plane/constants";
+import { NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -31,7 +31,7 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
     try {
       const request = data.archived_at ? unArchiveNotification : archiveNotification;
       await request(workspaceSlug);
-      captureEvent(NOTIFICATION_ARCHIVED, {
+      captureEvent(NOTIFICATION_TRACKER_EVENTS.archive, {
         issue_id: data?.data?.issue?.id,
         tab: currentNotificationTab,
         state: "SUCCESS",

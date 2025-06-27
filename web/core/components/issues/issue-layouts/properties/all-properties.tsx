@@ -7,13 +7,19 @@ import { useParams, usePathname } from "next/navigation";
 // icons
 import { Layers, Link, Paperclip } from "lucide-react";
 // types
-import { ISSUE_UPDATED } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
-import { cn, getDate, renderFormattedPayloadDate, generateWorkItemLink, shouldHighlightIssueDueDate } from "@plane/utils";
+import {
+  cn,
+  getDate,
+  renderFormattedPayloadDate,
+  generateWorkItemLink,
+  shouldHighlightIssueDueDate,
+} from "@plane/utils";
 // components
 import {
   EstimateDropdown,
@@ -103,7 +109,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -118,7 +124,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -133,7 +139,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -148,7 +154,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -173,7 +179,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
 
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: pathname,
         updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
@@ -189,7 +195,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       else issueOperations.removeIssueFromCycle?.();
 
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: pathname,
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
@@ -203,7 +209,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
             path: pathname,
             updates: {
@@ -220,7 +226,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
             path: pathname,
             updates: {
@@ -236,7 +242,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {

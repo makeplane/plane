@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { GLOBAL_VIEW_DELETED } from "@plane/constants";
+import { GLOBAL_VIEW_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -37,13 +37,13 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
 
     await deleteGlobalView(workspaceSlug.toString(), data.id)
       .then(() => {
-        captureEvent(GLOBAL_VIEW_DELETED, {
+        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.delete, {
           view_id: data.id,
           state: "SUCCESS",
         });
       })
       .catch((error: any) => {
-        captureEvent(GLOBAL_VIEW_DELETED, {
+        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.delete, {
           view_id: data.id,
           state: "FAILED",
         });

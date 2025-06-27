@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
-import { MEMBER_INVITED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceBulkInviteFormData } from "@plane/types";
 // ui
@@ -52,7 +52,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
       .then(() => {
         setInviteModal(false);
-        captureEvent(MEMBER_INVITED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
@@ -70,7 +70,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         });
       })
       .catch((err) => {
-        captureEvent(MEMBER_INVITED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           emails: [
             ...data.emails.map((email) => ({
               email: email.email,
