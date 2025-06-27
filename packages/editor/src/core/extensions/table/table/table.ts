@@ -77,7 +77,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export const Table = Node.create({
+export const Table = Node.create<TableOptions>({
   name: CORE_EXTENSIONS.TABLE,
 
   addOptions() {
