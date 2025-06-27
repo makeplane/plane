@@ -18,11 +18,12 @@ import { CustomAttachmentExtension } from "../attachments/extension";
  * Each entry defines a single slash command option with its own enabling logic
  */
 const slashCommandRegistry: {
-  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
+  isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
   getOption: (props: TRichTextEditorAdditionalExtensionsProps) => TSlashCommandAdditionalOption | null;
 }[] = [
   {
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("attachments") && !flaggedExtensions.includes("attachments"),
     getOption: () => ({
       commandKey: "attachment",
       key: "attachment",
@@ -44,7 +45,7 @@ const extensionRegistry: TRichTextEditorAdditionalExtensionsRegistry[] = [
       const { disabledExtensions, flaggedExtensions } = props;
       // Get enabled slash command options from the registry
       const slashCommandOptions = slashCommandRegistry
-        .filter((command) => command.isEnabled(disabledExtensions || []))
+        .filter((command) => command.isEnabled(disabledExtensions, flaggedExtensions))
         .map((command) => command.getOption(props))
         .filter((option): option is TSlashCommandAdditionalOption => option !== null);
 

@@ -25,12 +25,13 @@ import { CustomCollaborationCursor } from "./collaboration-cursor";
  * Each entry defines a single slash command option with its own enabling logic
  */
 const slashCommandRegistry: {
-  isEnabled: (disabledExtensions: TExtensions[]) => boolean;
+  isEnabled: (disabledExtensions: TExtensions[], flaggedExtensions: TExtensions[]) => boolean;
   getOption: (props: TDocumentEditorAdditionalExtensionsProps) => TSlashCommandAdditionalOption | null;
 }[] = [
   {
     // Work item embed slash command
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("issue-embed"),
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("issue-embed") && !flaggedExtensions.includes("issue-embed"),
     getOption: () => ({
       commandKey: "issue-embed",
       key: "issue-embed",
@@ -47,7 +48,8 @@ const slashCommandRegistry: {
   },
   {
     // Page embed slash command
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("nested-pages"),
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("nested-pages") && !flaggedExtensions.includes("nested-pages"),
     getOption: ({ embedConfig }) => {
       // Only enable if page config with createCallback exists
       const pageConfig = embedConfig?.page;
@@ -80,7 +82,8 @@ const slashCommandRegistry: {
   },
   {
     // Attachment slash command
-    isEnabled: (disabledExtensions) => !disabledExtensions.includes("attachments"),
+    isEnabled: (disabledExtensions, flaggedExtensions) =>
+      !disabledExtensions.includes("attachments") && !flaggedExtensions.includes("attachments"),
     getOption: () => ({
       commandKey: "attachment",
       key: "attachment",
@@ -106,7 +109,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
     getExtension: (props) => {
       // Get enabled slash command options from the registry
       const slashCommandOptions = slashCommandRegistry
-        .filter((command) => command.isEnabled(props.disabledExtensions || []))
+        .filter((command) => command.isEnabled(props.disabledExtensions, props.flaggedExtensions))
         .map((command) => command.getOption(props))
         .filter((option): option is TSlashCommandAdditionalOption => option !== null);
 
