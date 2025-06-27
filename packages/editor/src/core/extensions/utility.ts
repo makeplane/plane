@@ -2,17 +2,17 @@ import { Extension } from "@tiptap/core";
 // prosemirror plugins
 import codemark from "prosemirror-codemark";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
+import { TActiveDropbarExtensionsCE } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
-import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
-import { CORE_EXTENSIONS } from "@/constants/extension";
-import { TActiveDropbarExtensionsCE } from "@/plane-editor/types/utils";
 
-type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI |TActiveDropbarExtensionsCE;
+import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
+type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TActiveDropbarExtensionsCE;
 
 declare module "@tiptap/core" {
   interface Commands {

@@ -1,5 +1,5 @@
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { Editor } from "@tiptap/react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 
 export interface EmojiItem {
@@ -26,25 +26,27 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
   // refs
   const emojiListContainer = useRef<HTMLDivElement>(null);
 
-  const selectItem = (index: number): void => {
-    const item = items[index];
+  const selectItem = useCallback(
+    (index: number): void => {
+      const item = items[index];
+      if (item) {
+        command({ name: item.name });
+      }
+    },
+    [command, items]
+  );
 
-    if (item) {
-      command({ name: item.name });
-    }
-  };
-
-  const upHandler = (): void => {
+  const upHandler = useCallback(() => {
     setSelectedIndex((selectedIndex + items.length - 1) % items.length);
-  };
+  }, [items.length, selectedIndex]);
 
-  const downHandler = (): void => {
+  const downHandler = useCallback(() => {
     setSelectedIndex((selectedIndex + 1) % items.length);
-  };
+  }, [items.length, selectedIndex]);
 
-  const enterHandler = (): void => {
+  const enterHandler = useCallback(() => {
     selectItem(selectedIndex);
-  };
+  }, [selectItem, selectedIndex]);
 
   useEffect(() => setSelectedIndex(0), [items]);
 
@@ -91,23 +93,23 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
         return false;
       },
     }),
-    [selectedIndex, items]
+    [upHandler, downHandler, enterHandler]
   );
-
   return (
     <div
       ref={emojiListContainer}
-        role="listbox"
-        aria-label="Emoji suggestions"
+      role="listbox"
+      aria-label="Emoji suggestions"
       className="z-10 max-h-[90vh] w-[16rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-1"
     >
       {items.length ? (
         items.map((item, index) => {
           const isSelected = index === selectedIndex;
+          const emojiKey = item.shortcodes.join(" - ");
 
           return (
             <button
-              key={index}
+              key={emojiKey}
               role="option"
               aria-selected={isSelected}
               aria-label={`${item.name} emoji`}

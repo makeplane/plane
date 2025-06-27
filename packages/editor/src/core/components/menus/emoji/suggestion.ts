@@ -1,34 +1,33 @@
-import { ReactRenderer } from "@tiptap/react";
-import { Editor } from "@tiptap/react";
+import { ReactRenderer, Editor } from "@tiptap/react";
+import { SuggestionProps, SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
 import tippy, { Instance as TippyInstance } from "tippy.js";
-import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
-import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./emoji-list";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
+import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./emoji-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
-const emojiSuggestion = {
+const emojiSuggestion: Omit<SuggestionOptions, "editor"> = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
+
     if (query.trim() === "") {
+      const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        editor.storage.emoji.emojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+        emojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);
-      
-      return defaultEmojis;
+      return defaultEmojis as EmojiItem[];
     }
-    
-    return editor.storage.emoji.emojis
-      .filter(({ shortcodes, tags }: EmojiItem) => {
+    return getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI).emojis
+      .filter(({ shortcodes, tags }) => {
         const lowerQuery = query.toLowerCase();
         return (
           shortcodes.find((shortcode: string) => shortcode.startsWith(lowerQuery)) ||
           tags.find((tag: string) => tag.startsWith(lowerQuery))
         );
       })
-      .slice(0, 5);
+      .slice(0, 5) as EmojiItem[];
   },
 
   allowSpaces: false,
@@ -103,7 +102,7 @@ const emojiSuggestion = {
         return component.ref?.onKeyDown(props) || false;
       },
 
-      onExit: (props: any): void => {
+      onExit: (props: SuggestionProps): void => {
         const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
         const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
         if (index > -1) {

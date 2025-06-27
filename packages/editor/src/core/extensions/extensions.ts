@@ -39,8 +39,7 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
-import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
-import suggestion from "@/components/menus/emoji/suggestion";
+import { EmojiExtension } from "./emoji";
 
 type TArguments = Pick<
   IEditorProps,
@@ -99,11 +98,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
       ...(enableHistory ? {} : { history: false }),
     }),
-    Emoji.configure({
-      emojis: gitHubEmojis,
-      enableEmoticons: true,
-      suggestion: suggestion,
-    }),
+    EmojiExtension,
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {

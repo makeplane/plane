@@ -1,4 +1,5 @@
 // constants
+import { EmojiStorage } from "@tiptap/extension-emoji";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { type HeadingExtensionStorage } from "@/extensions";
@@ -13,6 +14,7 @@ export type ExtensionStorageMap = {
   [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
   [CORE_EXTENSIONS.HEADINGS_LIST]: HeadingExtensionStorage;
   [CORE_EXTENSIONS.UTILITY]: UtilityExtensionStorage;
+  [CORE_EXTENSIONS.EMOJI]: EmojiStorage;
 };
 
 export type ExtensionFileSetStorageKey = Extract<keyof ImageExtensionStorage, "deletedImageSet">;
