@@ -1,17 +1,19 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
+import { cn } from "@plane/utils";
+// components
 import { TIssueOperations } from "@/components/issues";
-// helpers
-import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
-// local components
+// plane web imports
 import { useCustomers } from "@/plane-web/hooks/store";
 import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// local imports
 import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
 import { EpicPeekOverviewHeader, TPeekModes } from "./header";
@@ -95,8 +97,9 @@ export const EpicView: FC<IEpicView> = observer((props) => {
 
   const handleKeyDown = () => {
     const slashCommandDropdownElement = document.querySelector("#slash-command");
+    const editorImageFullScreenModalElement = document.querySelector(".editor-image-full-screen-modal");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement) {
+    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement && !editorImageFullScreenModalElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EIssuesStoreType, ETemplateLevel, ETemplateType } from "@plane/constants";
-import { getEditorContentWithReplacedImageAssets } from "@plane/editor";
+import { getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
 import { TPage } from "@plane/types";
@@ -107,7 +107,7 @@ export const TemplateListActionWrapper = observer((props: TTemplateListActionWra
 
       // duplicate the assets
       const duplicateAssetService = fileService.duplicateAssets.bind(fileService, workspaceSlug);
-      const documentPayload = await getEditorContentWithReplacedImageAssets({
+      const documentPayload = await getEditorContentWithReplacedAssets({
         descriptionHTML: pageData.description_html ?? "",
         entityId: page.id,
         entityType: EFileAssetType.PAGE_DESCRIPTION,

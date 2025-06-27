@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { Check, Search, Shapes } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EditorTitleRefApi, getEditorContentWithReplacedImageAssets } from "@plane/editor";
+import { EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
 import { TPageTemplate } from "@plane/types";
@@ -68,7 +68,7 @@ export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer
     setIsApplyingTemplate(true);
     // duplicate template assets and replace the old assets with the new ones
     const duplicateAssetService = fileService.duplicateAssets.bind(fileService, workspaceSlug);
-    const documentPayload = await getEditorContentWithReplacedImageAssets({
+    const documentPayload = await getEditorContentWithReplacedAssets({
       descriptionHTML: selectedTemplate.template_data.description_html ?? "",
       entityId: page.id,
       entityType: EFileAssetType.PAGE_DESCRIPTION,
