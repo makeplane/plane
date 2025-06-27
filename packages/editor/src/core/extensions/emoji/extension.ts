@@ -1,8 +1,9 @@
 import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
-import suggestion from "@/extensions/emoji/suggestion";
+// local imports
+import suggestion from "./suggestion";
 
 export const EmojiExtension = Emoji.configure({
   emojis: gitHubEmojis,
-  enableEmoticons: true,
   suggestion: suggestion,
+  enableEmoticons: true,
 });
