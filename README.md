@@ -66,7 +66,7 @@ Prefer full control over your data and infrastructure? Install and run Plane on 
 Efficiently create and manage tasks with a robust rich text editor that supports file uploads. Enhance organization and tracking by adding sub-properties and referencing related issues.
 
 - **Cycles**
-Maintain your team’s momentum with Cycles. Track progress effortlessly using burn-down charts and other insightful tools.
+In Plane, Cycles are similar to Sprints in Agile. They let your team plan and execute work in short, focused timeframes. Track progress with burn-down charts and gain insights to stay on track and improve delivery.
 
 - **Modules**
 Simplify complex projects by dividing them into smaller, manageable modules.
