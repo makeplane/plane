@@ -3,6 +3,7 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 export interface IThemeStore {
   // observables
   isAnySidebarDropdownOpen: boolean | undefined;
+  isDockVisible: boolean | undefined;
   sidebarCollapsed: boolean | undefined;
   sidebarPeek: boolean | undefined;
   isExtendedSidebarOpened: boolean | undefined;
@@ -14,6 +15,7 @@ export interface IThemeStore {
   initiativesSidebarCollapsed: boolean | undefined;
   projectOverviewSidebarCollapsed: boolean | undefined;
   // actions
+  toggleDock: (docked?: boolean) => void;
   toggleAnySidebarDropdown: (open?: boolean) => void;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleSidebarPeek: (peek?: boolean) => void;
@@ -30,6 +32,7 @@ export interface IThemeStore {
 export class ThemeStore implements IThemeStore {
   // observables
   isAnySidebarDropdownOpen: boolean | undefined = undefined;
+  isDockVisible: boolean | undefined = true;
   sidebarCollapsed: boolean | undefined = undefined;
   sidebarPeek: boolean | undefined = undefined;
   isExtendedSidebarOpened: boolean | undefined = undefined;
@@ -45,6 +48,7 @@ export class ThemeStore implements IThemeStore {
     makeObservable(this, {
       // observable
       isAnySidebarDropdownOpen: observable.ref,
+      isDockVisible: observable.ref,
       sidebarCollapsed: observable.ref,
       sidebarPeek: observable.ref,
       isExtendedSidebarOpened: observable.ref,
@@ -56,6 +60,7 @@ export class ThemeStore implements IThemeStore {
       initiativesSidebarCollapsed: observable.ref,
       projectOverviewSidebarCollapsed: observable.ref,
       // action
+      toggleDock: action,
       toggleAnySidebarDropdown: action,
       toggleSidebar: action,
       toggleSidebarPeek: action,
@@ -69,6 +74,14 @@ export class ThemeStore implements IThemeStore {
       toggleProjectOverviewSidebar: action,
     });
   }
+
+  toggleDock = (docked?: boolean) => {
+    if (docked === undefined) {
+      this.isDockVisible = !this.isDockVisible;
+    } else {
+      this.isDockVisible = docked;
+    }
+  };
 
   toggleAnySidebarDropdown = (open?: boolean) => {
     if (open === undefined) {
