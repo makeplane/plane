@@ -4,7 +4,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
-import { NOTIFICATIONS_READ } from "@plane/constants";
+import { NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
@@ -32,7 +32,7 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
     try {
       const request = unreadCount === 0 ? markBulkNotificationsAsUnread : markBulkNotificationsAsRead;
       await request(notificationList, workspaceSlug);
-      captureEvent(NOTIFICATIONS_READ, {
+      captureEvent(NOTIFICATION_TRACKER_EVENTS.all_marked_read, {
         issue_id: issueId,
         tab: currentNotificationTab,
         state: "SUCCESS",

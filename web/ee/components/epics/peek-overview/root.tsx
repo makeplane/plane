@@ -4,13 +4,7 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import {
-  EIssueServiceType,
-  EUserProjectRoles,
-  EUserPermissionsLevel,
-  ISSUE_UPDATED,
-  ISSUE_DELETED,
-} from "@plane/constants";
+import { EIssueServiceType, EUserProjectRoles, EUserPermissionsLevel, EPIC_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue, IWorkItemPeekOverview } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -60,7 +54,7 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
-                eventName: ISSUE_UPDATED,
+                eventName: EPIC_TRACKER_EVENTS.update,
                 payload: { ...data, issueId, state: "SUCCESS", element: "Work item peek-overview" },
                 updates: {
                   changed_property: Object.keys(data).join(","),
@@ -71,7 +65,7 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
             })
             .catch(() => {
               captureIssueEvent({
-                eventName: ISSUE_UPDATED,
+                eventName: EPIC_TRACKER_EVENTS.update,
                 payload: { state: "FAILED", element: "Work item peek-overview" },
                 path: pathname,
               });
@@ -87,7 +81,7 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
         try {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
             captureIssueEvent({
-              eventName: ISSUE_DELETED,
+              eventName: EPIC_TRACKER_EVENTS.delete,
               payload: { id: issueId, state: "SUCCESS", element: "Work item peek-overview" },
               path: pathname,
             });
@@ -100,7 +94,7 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
             message: "Work item delete failed",
           });
           captureIssueEvent({
-            eventName: ISSUE_DELETED,
+            eventName: EPIC_TRACKER_EVENTS.delete,
             payload: { id: issueId, state: "FAILED", element: "Work item peek-overview" },
             path: pathname,
           });

@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // constants
-import { PAGE_DELETED } from "@plane/constants";
+import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // ui
 import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { getPageName  } from "@plane/utils";
+import { getPageName } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // plane web hooks
@@ -51,7 +51,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
         return removePage({ pageId: page.id })
           .then(() => {
             capturePageEvent({
-              eventName: PAGE_DELETED,
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
               payload: {
                 ...page,
                 state: "SUCCESS",
@@ -63,7 +63,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
           })
           .catch(() => {
             capturePageEvent({
-              eventName: PAGE_DELETED,
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
               payload: {
                 ...page,
                 state: "FAILED",

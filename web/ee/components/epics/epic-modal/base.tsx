@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -144,7 +144,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         ),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
@@ -157,7 +157,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         message: "Epic could not be created. Please try again.",
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -191,7 +191,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
       }
 
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
         path: pathname,
       });
@@ -206,7 +206,7 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         });
       }
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });

@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane imports
-import { EPageAccess, PAGE_CREATED } from "@plane/constants";
+import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage } from "@plane/types";
 // components
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -53,7 +53,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
       const pageData = await createPage(pageFormData);
       if (pageData) {
         capturePageEvent({
-          eventName: PAGE_CREATED,
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
           payload: {
             ...pageData,
             state: "SUCCESS",
@@ -64,7 +64,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
       }
     } catch {
       capturePageEvent({
-        eventName: PAGE_CREATED,
+        eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
         payload: {
           state: "FAILED",
         },
