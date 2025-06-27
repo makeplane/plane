@@ -37,16 +37,19 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
   );
 
   const upHandler = useCallback(() => {
-    setSelectedIndex((selectedIndex + items.length - 1) % items.length);
-  }, [items.length, selectedIndex]);
+    setSelectedIndex((prevIndex) => (prevIndex + items.length - 1) % items.length);
+  }, [items.length]);
 
   const downHandler = useCallback(() => {
-    setSelectedIndex((selectedIndex + 1) % items.length);
-  }, [items.length, selectedIndex]);
+    setSelectedIndex((prevIndex) => (prevIndex + 1) % items.length);
+  }, [items.length]);
 
   const enterHandler = useCallback(() => {
-    selectItem(selectedIndex);
-  }, [selectItem, selectedIndex]);
+    setSelectedIndex((prevIndex) => {
+      selectItem(prevIndex);
+      return prevIndex;
+    });
+  }, [selectItem]);
 
   useEffect(() => setSelectedIndex(0), [items]);
 
