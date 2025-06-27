@@ -5,14 +5,14 @@ import codemark from "prosemirror-codemark";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
-import { TActiveDropbarExtensionsCE } from "@/plane-editor/types/utils";
+import { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 
 import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
-type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TActiveDropbarExtensionsCE;
+type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
   interface Commands {

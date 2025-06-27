@@ -1,1 +1,1 @@
-export type TActiveDropbarExtensionsCE = never;
+export type TAdditionalActiveDropbarExtensions = never;

@@ -1,5 +1,6 @@
+import type { EmojiOptions } from "@tiptap/extension-emoji";
 import { ReactRenderer, Editor } from "@tiptap/react";
-import { SuggestionProps, SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
+import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 import tippy, { Instance as TippyInstance } from "tippy.js";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
@@ -7,9 +8,8 @@ import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./emoji-list
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
-const emojiSuggestion: Omit<SuggestionOptions, "editor"> = {
+const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
-
     if (query.trim() === "") {
       const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
@@ -19,8 +19,8 @@ const emojiSuggestion: Omit<SuggestionOptions, "editor"> = {
         .slice(0, 5);
       return defaultEmojis as EmojiItem[];
     }
-    return getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI).emojis
-      .filter(({ shortcodes, tags }) => {
+    return getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI)
+      .emojis.filter(({ shortcodes, tags }) => {
         const lowerQuery = query.toLowerCase();
         return (
           shortcodes.find((shortcode: string) => shortcode.startsWith(lowerQuery)) ||
@@ -108,7 +108,6 @@ const emojiSuggestion: Omit<SuggestionOptions, "editor"> = {
         if (index > -1) {
           utilityStorage.activeDropbarExtensions.splice(index, 1);
         }
-
 
         if (popup) {
           popup[0]?.destroy();
