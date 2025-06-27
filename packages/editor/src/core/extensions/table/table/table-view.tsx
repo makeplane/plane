@@ -387,7 +387,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "table-wrapper horizontal-scrollbar scrollbar-md controls--disabled",
+        className: "table-wrapper editor-full-width-block horizontal-scrollbar scrollbar-sm controls--disabled",
       },
       this.controls,
       this.table
