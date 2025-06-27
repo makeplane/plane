@@ -1,5 +1,6 @@
 import { Editor } from "@tiptap/react";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+// plane imports
 import { cn } from "@plane/utils";
 
 export interface EmojiItem {

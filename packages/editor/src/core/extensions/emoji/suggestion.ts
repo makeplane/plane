@@ -2,8 +2,11 @@ import type { EmojiOptions } from "@tiptap/extension-emoji";
 import { ReactRenderer, Editor } from "@tiptap/react";
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 import tippy, { Instance as TippyInstance } from "tippy.js";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// local imports
 import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
