@@ -107,7 +107,7 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
     view_id: path?.includes("workspace-views") || path?.includes("views") ? path.split("/").pop() : "",
   };
 
-  if (eventName === WORK_ITEM_EVENT_TRACKER_KEYS.update) {
+  if (eventName === WORK_ITEM_TRACKER_EVENTS.update) {
     eventPayload = {
       ...eventPayload,
       ...updates,
@@ -143,116 +143,116 @@ export const getProjectStateEventPayload = (payload: any) => ({
 });
 
 // Dashboard Events
-export const GITHUB_REDIRECTED = "GitHub redirected";
+export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
 // Groups
-export const GROUP_WORKSPACE = "Workspace_metrics";
+export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 
-export const WORKSPACE_EVENT_TRACKER_KEYS = {
-  create: "Workspace created",
-  update: "Workspace updated",
-  delete: "Workspace deleted",
+export const WORKSPACE_TRACKER_EVENTS = {
+  create: "workspace_created",
+  update: "workspace_updated",
+  delete: "workspace_deleted",
 };
 
-export const PROJECT_EVENT_TRACKER_KEYS = {
-  create: "Project created",
-  update: "Project updated",
-  delete: "Project deleted",
+export const PROJECT_TRACKER_EVENTS = {
+  create: "project_created",
+  update: "project_updated",
+  delete: "project_deleted",
 };
 
-export const CYCLE_EVENT_TRACKER_KEYS = {
-  create: "Cycle created",
-  update: "Cycle updated",
-  delete: "Cycle deleted",
-  favorite: "Cycle favorited",
-  unfavorite: "Cycle unfavorited",
+export const CYCLE_TRACKER_EVENTS = {
+  create: "cycle_created",
+  update: "cycle_updated",
+  delete: "cycle_deleted",
+  favorite: "cycle_favorited",
+  unfavorite: "cycle_unfavorited",
 };
 
-export const MODULE_EVENT_TRACKER_KEYS = {
-  create: "Module created",
-  update: "Module updated",
-  delete: "Module deleted",
-  favorite: "Module favorited",
-  unfavorite: "Module unfavorited",
+export const MODULE_TRACKER_EVENTS = {
+  create: "module_created",
+  update: "module_updated",
+  delete: "module_deleted",
+  favorite: "module_favorited",
+  unfavorite: "module_unfavorited",
   link: {
-    create: "Module link created",
-    update: "Module link updated",
-    delete: "Module link deleted",
+    create: "module_link_created",
+    update: "module_link_updated",
+    delete: "module_link_deleted",
   },
 };
 
-export const WORK_ITEM_EVENT_TRACKER_KEYS = {
-  create: "Work item created",
-  update: "Work item updated",
-  delete: "Work item deleted",
-  archive: "Work item archived",
-  restore: "Work item restored",
+export const WORK_ITEM_TRACKER_EVENTS = {
+  create: "work_item_created",
+  update: "work_item_updated",
+  delete: "work_item_deleted",
+  archive: "work_item_archived",
+  restore: "work_item_restored",
 };
 
-export const STATE_EVENT_TRACKER_KEYS = {
-  create: "State created",
-  update: "State updated",
-  delete: "State deleted",
+export const STATE_TRACKER_EVENTS = {
+  create: "state_created",
+  update: "state_updated",
+  delete: "state_deleted",
 };
 
-export const PAGE_EVENT_TRACKER_KEYS = {
-  create: "Page created",
-  update: "Page updated",
-  delete: "Page deleted",
+export const PROJECT_PAGE_TRACKER_EVENTS = {
+  create: "project_page_created",
+  update: "project_page_updated",
+  delete: "project_page_deleted",
 };
 
-export const MEMBER_EVENT_TRACKER_KEYS = {
-  invite: "Member invited",
-  accept: "Member accepted",
+export const MEMBER_TRACKER_EVENTS = {
+  invite: "member_invited",
+  accept: "member_accepted",
   project: {
-    add: "Project member added",
-    leave: "Project member left",
+    add: "project_member_added",
+    leave: "project_member_left",
   },
   workspace: {
-    leave: "Workspace member left",
+    leave: "workspace_member_left",
   },
 };
 
-export const AUTH_EVENT_TRACKER_KEYS = {
+export const AUTH_TRACKER_EVENTS = {
   navigate: {
-    sign_up: "Navigate to sign-up page",
-    sign_in: "Navigate to sign-in page",
+    sign_up: "navigate_to_sign_up_page",
+    sign_in: "navigate_to_sign_in_page",
   },
-  code_verify: "Code verified",
-  sign_up_with_password: "Sign up with password",
-  sign_in_with_password: "Sign in with password",
-  sign_in_with_code: "Sign in with magic link",
-  forgot_password: "Forgot password clicked",
+  code_verify: "code_verified",
+  sign_up_with_password: "sign_up_with_password",
+  sign_in_with_password: "sign_in_with_password",
+  sign_in_with_code: "sign_in_with_magic_link",
+  forgot_password: "forgot_password_clicked",
 };
 
-export const PRODUCT_TOUR_EVENT_TRACKER_KEYS = {
-  start: "Product tour started",
-  complete: "Product tour completed",
-  skip: "Product tour skipped",
+export const PRODUCT_TOUR_TRACKER_EVENTS = {
+  start: "product_tour_started",
+  complete: "product_tour_completed",
+  skip: "product_tour_skipped",
 };
 
-export const GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS = {
-  create: "Global view created",
-  update: "Global view updated",
-  delete: "Global view deleted",
-  open: "Global view opened",
+export const GLOBAL_VIEW_TOUR_TRACKER_EVENTS = {
+  create: "global_view_created",
+  update: "global_view_updated",
+  delete: "global_view_deleted",
+  open: "global_view_opened",
 };
 
-export const NOTIFICATION_EVENT_TRACKER_KEYS = {
-  archive: "Notification archived",
-  all_marked_read: "All notifications marked read",
+export const NOTIFICATION_TRACKER_EVENTS = {
+  archive: "notification_archived",
+  all_marked_read: "all_notifications_marked_read",
 };
 
-export const USER_EVENT_TRACKER_KEYS = {
-  add_details: "User details added",
-  onboarding_complete: "User onboarding completed",
+export const USER_TRACKER_EVENTS = {
+  add_details: "user_details_added",
+  onboarding_complete: "user_onboarding_completed",
 };
 
-export const ONBOARDING_EVENT_TRACKER_KEYS = {
-  root: "Onboarding",
-  step_1: "Onboarding step 1",
-  step_2: "Onboarding step 2",
+export const ONBOARDING_TRACKER_EVENTS = {
+  root: "onboarding",
+  step_1: "onboarding_step_1",
+  step_2: "onboarding_step_2",
 };
 
-export const SIDEBAR_EVENT_TRACKER_KEYS = {
-  click: "Sidenav clicked",
+export const SIDEBAR_TRACKER_EVENTS = {
+  click: "sidenav_clicked",
 };

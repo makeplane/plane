@@ -20,7 +20,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
@@ -311,7 +311,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         })),
       })
       .then(async () => {
-        captureEvent(MEMBER_EVENT_TRACKER_KEYS.invite, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           emails: [
             ...payload.emails.map((email) => ({
               email: email.email,
@@ -331,7 +331,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         await nextStep();
       })
       .catch((err) => {
-        captureEvent(MEMBER_EVENT_TRACKER_KEYS.invite, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           project_id: undefined,
           state: "FAILED",
           element: "Onboarding",

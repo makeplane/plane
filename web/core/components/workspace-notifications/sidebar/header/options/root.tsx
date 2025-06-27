@@ -2,7 +2,7 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
-import { ENotificationLoader, ENotificationQueryParamType, NOTIFICATION_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { ENotificationLoader, ENotificationQueryParamType, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Spinner, Tooltip } from "@plane/ui";
 // components
@@ -50,7 +50,7 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
         <div
           className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
           onClick={() => {
-            captureEvent(NOTIFICATION_EVENT_TRACKER_KEYS.all_marked_read);
+            captureEvent(NOTIFICATION_TRACKER_EVENTS.all_marked_read);
             handleMarkAllNotificationsAsRead();
           }}
         >

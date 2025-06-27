@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
-import { PROJECT_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import type { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -63,7 +63,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
 
         handleClose();
         captureProjectEvent({
-          eventName: PROJECT_EVENT_TRACKER_KEYS.delete,
+          eventName: PROJECT_TRACKER_EVENTS.delete,
           payload: { ...project, state: "SUCCESS", element: "Project general settings" },
         });
         setToast({
@@ -74,7 +74,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       })
       .catch(() => {
         captureProjectEvent({
-          eventName: PROJECT_EVENT_TRACKER_KEYS.delete,
+          eventName: PROJECT_TRACKER_EVENTS.delete,
           payload: { ...project, state: "FAILED", element: "Project general settings" },
         });
         setToast({

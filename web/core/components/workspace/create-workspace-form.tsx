@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 // types
@@ -72,7 +72,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await createWorkspace(formData)
             .then(async (res) => {
               captureWorkspaceEvent({
-                eventName: WORKSPACE_EVENT_TRACKER_KEYS.create,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   ...res,
                   state: "SUCCESS",
@@ -89,7 +89,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
             })
             .catch(() => {
               captureWorkspaceEvent({
-                eventName: WORKSPACE_EVENT_TRACKER_KEYS.create,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   state: "FAILED",
                   element: "Create workspace page",

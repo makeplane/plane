@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { E_PASSWORD_STRENGTH, ONBOARDING_EVENT_TRACKER_KEYS, USER_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_EVENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
@@ -143,11 +143,11 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureEvent(USER_EVENT_TRACKER_KEYS.add_details, {
+      captureEvent(USER_TRACKER_EVENTS.add_details, {
         use_case: formData.use_case,
         role: formData.role,
         state: "SUCCESS",
-        element: ONBOARDING_EVENT_TRACKER_KEYS.step_1,
+        element: ONBOARDING_TRACKER_EVENTS.step_1,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -159,9 +159,9 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         finishOnboarding();
       }
     } catch {
-      captureEvent(USER_EVENT_TRACKER_KEYS.add_details, {
+      captureEvent(USER_TRACKER_EVENTS.add_details, {
         state: "FAILED",
-        element: ONBOARDING_EVENT_TRACKER_KEYS.step_1,
+        element: ONBOARDING_TRACKER_EVENTS.step_1,
       });
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -183,9 +183,9 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         formData.password && handleSetPassword(formData.password),
       ]).then(() => setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION));
     } catch {
-      captureEvent(USER_EVENT_TRACKER_KEYS.add_details, {
+      captureEvent(USER_TRACKER_EVENTS.add_details, {
         state: "FAILED",
-        element: ONBOARDING_EVENT_TRACKER_KEYS.step_1,
+        element: ONBOARDING_TRACKER_EVENTS.step_1,
       });
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -205,11 +205,11 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         updateUserProfile(profileUpdatePayload),
         totalSteps > 2 && stepChange({ profile_complete: true }),
       ]);
-      captureEvent(USER_EVENT_TRACKER_KEYS.add_details, {
+      captureEvent(USER_TRACKER_EVENTS.add_details, {
         use_case: formData.use_case,
         role: formData.role,
         state: "SUCCESS",
-        element: ONBOARDING_EVENT_TRACKER_KEYS.step_2,
+        element: ONBOARDING_TRACKER_EVENTS.step_2,
       });
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -221,9 +221,9 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
         finishOnboarding();
       }
     } catch {
-      captureEvent(USER_EVENT_TRACKER_KEYS.add_details, {
+      captureEvent(USER_TRACKER_EVENTS.add_details, {
         state: "FAILED",
-        element: ONBOARDING_EVENT_TRACKER_KEYS.step_2,
+        element: ONBOARDING_TRACKER_EVENTS.step_2,
       });
       setToast({
         type: TOAST_TYPE.ERROR,

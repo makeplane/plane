@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { MODULE_EVENT_TRACKER_KEYS, PROJECT_ERROR_MESSAGES } from "@plane/constants";
+import { MODULE_TRACKER_EVENTS, PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IModule } from "@plane/types";
 // ui
@@ -52,7 +52,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           message: "Module deleted successfully.",
         });
         captureModuleEvent({
-          eventName: MODULE_EVENT_TRACKER_KEYS.delete,
+          eventName: MODULE_TRACKER_EVENTS.delete,
           payload: { ...data, state: "SUCCESS" },
         });
       })
@@ -67,7 +67,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           message: currentError.i18n_message && t(currentError.i18n_message),
         });
         captureModuleEvent({
-          eventName: MODULE_EVENT_TRACKER_KEYS.delete,
+          eventName: MODULE_TRACKER_EVENTS.delete,
           payload: { ...data, state: "FAILED" },
         });
       })

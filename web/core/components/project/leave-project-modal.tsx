@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { AlertTriangleIcon } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
-import { MEMBER_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { IProject } from "@plane/types";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -64,7 +64,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
-              captureEvent(MEMBER_EVENT_TRACKER_KEYS.project.leave, {
+              captureEvent(MEMBER_TRACKER_EVENTS.project.leave, {
                 state: "SUCCESS",
                 element: "Project settings members page",
               });
@@ -75,7 +75,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
-              captureEvent(MEMBER_EVENT_TRACKER_KEYS.project.leave, {
+              captureEvent(MEMBER_TRACKER_EVENTS.project.leave, {
                 state: "FAILED",
                 element: "Project settings members page",
               });

@@ -8,7 +8,7 @@ import {
   DEFAULT_GLOBAL_VIEWS_LIST,
   EUserPermissions,
   EUserPermissionsLevel,
-  GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS,
+  GLOBAL_VIEW_TOUR_TRACKER_EVENTS,
 } from "@plane/constants";
 import { TStaticViewTypes } from "@plane/types";
 // components
@@ -77,7 +77,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   // bring the active view to the centre of the header
   useEffect(() => {
     if (globalViewId && currentWorkspaceViews) {
-      captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.open, {
+      captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.open, {
         view_id: globalViewId,
         view_type: ["all-issues", "assigned", "created", "subscribed"].includes(globalViewId.toString())
           ? "Default"

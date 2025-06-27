@@ -2,7 +2,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // store
 import {
-  GROUP_WORKSPACE,
+  GROUP_WORKSPACE_TRACKER_EVENT,
   EventProps,
   IssueEventProps,
   getCycleEventPayload,
@@ -12,7 +12,7 @@ import {
   getProjectStateEventPayload,
   getWorkspaceEventPayload,
   getPageEventPayload,
-  WORKSPACE_EVENT_TRACKER_KEYS,
+  WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { CoreRootStore } from "./root.store";
 
@@ -89,7 +89,7 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
    */
   joinWorkspaceMetricGroup = (workspaceId?: string) => {
     if (!workspaceId) return;
-    posthog?.group(GROUP_WORKSPACE, workspaceId, {
+    posthog?.group(GROUP_WORKSPACE_TRACKER_EVENT, workspaceId, {
       date: new Date().toDateString(),
       workspace_id: workspaceId,
     });
@@ -115,7 +115,7 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
    */
   captureWorkspaceEvent = (props: EventProps) => {
     const { eventName, payload } = props;
-    if (eventName === WORKSPACE_EVENT_TRACKER_KEYS.create && payload.state == "SUCCESS") {
+    if (eventName === WORKSPACE_TRACKER_EVENTS.create && payload.state == "SUCCESS") {
       this.joinWorkspaceMetricGroup(payload.id);
     }
     const eventPayload: any = getWorkspaceEventPayload({

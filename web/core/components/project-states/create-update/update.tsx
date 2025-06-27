@@ -2,7 +2,7 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { EventProps, STATE_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { EventProps, STATE_TRACKER_EVENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
@@ -44,7 +44,7 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
     try {
       const stateResponse = await updateStateCallback(state.id, formData);
       captureEventIfEnabled({
-        eventName: STATE_EVENT_TRACKER_KEYS.update,
+        eventName: STATE_TRACKER_EVENTS.update,
         payload: {
           ...stateResponse,
           state: "SUCCESS",
@@ -74,7 +74,7 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
           message: "State could not be updated. Please try again.",
         });
         captureEventIfEnabled({
-          eventName: STATE_EVENT_TRACKER_KEYS.update,
+          eventName: STATE_TRACKER_EVENTS.update,
           payload: {
             ...formData,
             state: "FAILED",

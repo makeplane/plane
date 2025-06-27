@@ -4,7 +4,7 @@ import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { ETabIndices, WORK_ITEM_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
 import { useTranslation } from "@plane/i18n";
@@ -168,7 +168,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           setFormData(defaultIssueData);
         }
         captureIssueEvent({
-          eventName: WORK_ITEM_EVENT_TRACKER_KEYS.create,
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
             ...formData,
             state: "SUCCESS",
@@ -185,7 +185,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
       .catch((error) => {
         console.error(error);
         captureIssueEvent({
-          eventName: WORK_ITEM_EVENT_TRACKER_KEYS.create,
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
             ...formData,
             state: "FAILED",

@@ -4,12 +4,7 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // types
-import {
-  EIssuesStoreType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_EVENT_TRACKER_KEYS,
-} from "@plane/constants";
+import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 // ui
@@ -96,7 +91,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -107,7 +102,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         } catch (error) {
           console.log("Error in updating issue:", error);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -132,7 +127,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             message: t("entity.delete.success", { entity: t("issue.label") }),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             path: pathname,
           });
@@ -144,7 +139,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             message: t("entity.delete.failed", { entity: t("issue.label") }),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             path: pathname,
           });
@@ -154,14 +149,14 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
             path: pathname,
           });
         } catch (error) {
           console.log("Error in archiving issue:", error);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "FAILED", element: "Issue details page" },
             path: pathname,
           });
@@ -171,7 +166,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -186,7 +181,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -200,7 +195,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
         try {
           await addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -215,7 +210,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
             message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -241,7 +236,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           await removeFromCyclePromise;
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -251,7 +246,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         } catch {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "cycle_id",
@@ -277,7 +272,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
           await removeFromModulePromise;
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",
@@ -287,7 +282,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
           });
         } catch {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: "module_id",
@@ -306,7 +301,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       ) => {
         const promise = await changeModulesInIssue(workspaceSlug, projectId, issueId, addModuleIds, removeModuleIds);
         captureIssueEvent({
-          eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
           updates: {
             changed_property: "module_id",

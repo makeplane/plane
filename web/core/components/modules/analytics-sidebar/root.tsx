@@ -11,7 +11,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   EEstimateSystem,
-  MODULE_EVENT_TRACKER_KEYS,
+  MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -80,13 +80,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
       .then((res) => {
         captureModuleEvent({
-          eventName: MODULE_EVENT_TRACKER_KEYS.update,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
       .catch(() => {
         captureModuleEvent({
-          eventName: MODULE_EVENT_TRACKER_KEYS.update,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -98,7 +98,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     const payload = { metadata: {}, ...formData };
 
     await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
-      captureEvent(MODULE_EVENT_TRACKER_KEYS.link.create, {
+      captureEvent(MODULE_TRACKER_EVENTS.link.create, {
         module_id: moduleId,
         state: "SUCCESS",
       })
@@ -112,7 +112,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
       () =>
-        captureEvent(MODULE_EVENT_TRACKER_KEYS.link.update, {
+        captureEvent(MODULE_TRACKER_EVENTS.link.update, {
           module_id: moduleId,
           state: "SUCCESS",
         })
@@ -124,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        captureEvent(MODULE_EVENT_TRACKER_KEYS.link.delete, {
+        captureEvent(MODULE_TRACKER_EVENTS.link.delete, {
           module_id: moduleId,
           state: "SUCCESS",
         });

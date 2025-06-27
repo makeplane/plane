@@ -4,7 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { Loader, X } from "lucide-react";
 // plane imports
-import { EventProps, STATE_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { EventProps, STATE_TRACKER_EVENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -46,7 +46,7 @@ export const StateDelete: FC<TStateDelete> = observer((props) => {
     try {
       await deleteStateCallback(state.id);
       captureEventIfEnabled({
-        eventName: STATE_EVENT_TRACKER_KEYS.delete,
+        eventName: STATE_TRACKER_EVENTS.delete,
         payload: {
           ...state,
           state: "SUCCESS",
@@ -56,7 +56,7 @@ export const StateDelete: FC<TStateDelete> = observer((props) => {
     } catch (error) {
       const errorStatus = error as unknown as { status: number; data: { error: string } };
       captureEventIfEnabled({
-        eventName: STATE_EVENT_TRACKER_KEYS.delete,
+        eventName: STATE_TRACKER_EVENTS.delete,
         payload: {
           ...state,
           state: "FAILED",

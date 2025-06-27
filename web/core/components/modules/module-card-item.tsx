@@ -12,7 +12,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  MODULE_EVENT_TRACKER_KEYS,
+  MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
@@ -79,7 +79,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_EVENT_TRACKER_KEYS.favorite, {
+        captureEvent(MODULE_TRACKER_EVENTS.favorite, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -110,7 +110,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_EVENT_TRACKER_KEYS.unfavorite, {
+      captureEvent(MODULE_TRACKER_EVENTS.unfavorite, {
         module_id: moduleId,
         element: "Grid layout",
         state: "SUCCESS",

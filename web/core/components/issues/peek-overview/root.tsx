@@ -9,7 +9,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   EIssueServiceType,
-  WORK_ITEM_EVENT_TRACKER_KEYS,
+  WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, IWorkItemPeekOverview } from "@plane/types";
@@ -82,7 +82,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
               captureIssueEvent({
-                eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+                eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { ...data, issueId, state: "SUCCESS", element: "Issue peek-overview" },
                 updates: {
                   changed_property: Object.keys(data).join(","),
@@ -93,7 +93,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             })
             .catch(() => {
               captureIssueEvent({
-                eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+                eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: { state: "FAILED", element: "Issue peek-overview" },
                 path: pathname,
               });
@@ -109,7 +109,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         try {
           return issues?.removeIssue(workspaceSlug, projectId, issueId).then(() => {
             captureIssueEvent({
-              eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+              eventName: WORK_ITEM_TRACKER_EVENTS.delete,
               payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
               path: pathname,
             });
@@ -122,7 +122,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: pathname,
           });
@@ -133,13 +133,13 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           if (!issues?.archiveIssue) return;
           await issues.archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             path: pathname,
           });
         } catch {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: pathname,
           });
@@ -154,7 +154,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             message: t("issue.restore.success.message"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.restore,
+            eventName: WORK_ITEM_TRACKER_EVENTS.restore,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             path: pathname,
           });
@@ -165,7 +165,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             message: t("issue.restore.failed.message"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.restore,
+            eventName: WORK_ITEM_TRACKER_EVENTS.restore,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             path: pathname,
           });
@@ -176,7 +176,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
           fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -191,7 +191,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -205,7 +205,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         try {
           await issues.addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issueIds, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -220,7 +220,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
             message: t("issue.add.cycle.failed"),
           });
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -247,7 +247,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           await removeFromCyclePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -257,7 +257,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           });
         } catch {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "cycle_id",
@@ -283,7 +283,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         );
         fetchActivities(workspaceSlug, projectId, issueId);
         captureIssueEvent({
-          eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
           updates: {
             changed_property: "module_id",
@@ -310,7 +310,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           await removeFromModulePromise;
           fetchActivities(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { id: issueId, state: "SUCCESS", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",
@@ -320,7 +320,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
           });
         } catch {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.update,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { id: issueId, state: "FAILED", element: "Issue peek-overview" },
             updates: {
               changed_property: "module_id",

@@ -9,7 +9,7 @@ import {
   EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
-  WORK_ITEM_EVENT_TRACKER_KEYS,
+  WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
@@ -104,7 +104,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         router.push(redirectionPath);
         captureIssueEvent({
-          eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
           payload: { id: issueId, state: "SUCCESS", element: "Work item detail page" },
           path: pathname,
         });
@@ -116,7 +116,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
       captureIssueEvent({
-        eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
         payload: { id: issueId, state: "FAILED", element: "Work item detail page" },
         path: pathname,
       });
@@ -129,13 +129,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
       });
       captureIssueEvent({
-        eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
         path: pathname,
       });
     } catch {
       captureIssueEvent({
-        eventName: WORK_ITEM_EVENT_TRACKER_KEYS.archive,
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId, state: "FAILED", element: "Issue details page" },
         path: pathname,
       });

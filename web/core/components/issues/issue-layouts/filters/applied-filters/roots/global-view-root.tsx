@@ -13,7 +13,7 @@ import {
   EViewAccess,
   EUserPermissions,
   EUserPermissionsLevel,
-  GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS,
+  GLOBAL_VIEW_TOUR_TRACKER_EVENTS,
 } from "@plane/constants";
 import { IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 //ui
@@ -114,7 +114,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
 
     updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters).then((res) => {
       if (res)
-        captureEvent(GLOBAL_VIEW_TOUR_EVENT_TRACKER_KEYS.update, {
+        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.update, {
           view_id: res.id,
           applied_filters: res.filters,
           state: "SUCCESS",

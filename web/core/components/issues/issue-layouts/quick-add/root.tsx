@@ -6,7 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, WORK_ITEM_EVENT_TRACKER_KEYS } from "@plane/constants";
+import { EIssueLayoutTypes, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue } from "@plane/types";
@@ -137,14 +137,14 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
       await quickAddPromise
         .then((res) => {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.create,
+            eventName: WORK_ITEM_TRACKER_EVENTS.create,
             payload: { ...res, state: "SUCCESS", element: ` ${layout} quick add` },
             path: pathname,
           });
         })
         .catch(() => {
           captureIssueEvent({
-            eventName: WORK_ITEM_EVENT_TRACKER_KEYS.create,
+            eventName: WORK_ITEM_TRACKER_EVENTS.create,
             payload: { ...payload, state: "FAILED", element: `${layout}  quick ad` },
             path: pathname,
           });

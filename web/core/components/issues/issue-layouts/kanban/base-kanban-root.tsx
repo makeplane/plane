@@ -13,7 +13,7 @@ import {
   EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
-  WORK_ITEM_EVENT_TRACKER_KEYS,
+  WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
@@ -210,7 +210,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       setDeleteIssueModal(false);
       setDraggedIssueId(undefined);
       captureIssueEvent({
-        eventName: WORK_ITEM_EVENT_TRACKER_KEYS.delete,
+        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
         payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
         path: pathname,
       });
