@@ -32,7 +32,7 @@ export interface IThemeStore {
 export class ThemeStore implements IThemeStore {
   // observables
   isAnySidebarDropdownOpen: boolean | undefined = undefined;
-  isDockVisible: boolean | undefined = true;
+  isDockVisible: boolean | undefined = undefined;
   sidebarCollapsed: boolean | undefined = undefined;
   sidebarPeek: boolean | undefined = undefined;
   isExtendedSidebarOpened: boolean | undefined = undefined;
