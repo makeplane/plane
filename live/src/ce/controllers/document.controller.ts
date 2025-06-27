@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
 // helpers
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
+import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common";
 // decorators

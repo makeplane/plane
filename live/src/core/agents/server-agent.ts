@@ -4,8 +4,10 @@ import { Response } from "express";
 import { DirectConnection, Hocuspocus } from "@hocuspocus/server";
 import { v4 as uuidv4 } from "uuid";
 import { manualLogger } from "@/core/helpers/logger";
+import { TPage } from "@plane/types";
 import { HocusPocusServerContext } from "@/core/types/common";
 import { DocumentProcessor } from "@/plane-live/lib/document-processor";
+import { getDocumentHandler } from "@/core/handlers/page-handlers";
 
 /**
  * Metadata for a stored connection
@@ -53,7 +55,7 @@ export class ServerAgentManager {
   private static instance: ServerAgentManager;
   private connections: Map<string, ConnectionData>;
   public hocuspocusServer: Hocuspocus | null;
-  private cleanupInterval: ReturnType<typeof setTimeout> | null;
+  private cleanupInterval: ReturnType<typeof setTimeout> | null = null;
 
   /**
    * Private constructor to enforce singleton pattern
@@ -196,8 +198,20 @@ export class ServerAgentManager {
       async (doc) => {
         const xmlFragment = doc.getXmlFragment("default");
 
-        // Process the document using our extensible system
-        DocumentProcessor.process(xmlFragment, pageId, context, options);
+        let subPagesFromBackend: TPage[] | undefined = [];
+        if (!context.documentType) {
+          return;
+        }
+        const documentHandler = getDocumentHandler(context.documentType);
+        if (documentHandler && documentHandler.fetchSubPages) {
+          subPagesFromBackend = await documentHandler.fetchSubPages({
+            context,
+            pageId,
+          });
+        }
+
+        // // Process the document using our extensible system
+        DocumentProcessor.process(xmlFragment, subPagesFromBackend || [], options);
       },
       {
         ...context,

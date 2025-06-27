@@ -3,14 +3,14 @@ import type { Application, Request, Router } from "express";
 import expressWs from "express-ws";
 import type * as ws from "ws";
 import type { Hocuspocus } from "@hocuspocus/server";
+import http from "http";
 
 // Environment and configuration
 import { serverConfig, configureServerMiddleware } from "./config/server-config";
 
 // Core functionality
 import { getHocusPocusServer } from "@/core/hocuspocus-server";
-import { ProcessManager } from "@/core/process-manager";
-import { ShutdownManager } from "@/core/shutdown-manager";
+import { shutdownManager } from "@/core/shutdown-manager";
 
 import { registerControllers } from "./lib/controller.utils";
 
@@ -24,6 +24,10 @@ import { logger } from "@plane/logger";
 import { configureErrorHandlers } from "@/core/helpers/error-handling/error-handler";
 import { handleError } from "@/core/helpers/error-handling/error-factory";
 import { getAllControllers } from "./core/controller-registry";
+import { serverAgentManager } from "./core/agents/server-agent";
+import { serverAgentHandler } from "./core/document-types/server-agent-handlers";
+import { syncAgentHandler } from "./core/document-types/sync-agent-handlers";
+import { initializeDocumentHandlers } from "./ce/document-types";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
@@ -36,6 +40,7 @@ interface WebSocketRouter extends Router {
 export class Server {
   private readonly app: Application;
   private readonly port: number;
+  private httpServer: http.Server | null = null;
   private hocusPocusServer!: Hocuspocus;
   private redisManager: RedisManager;
 
@@ -101,6 +106,14 @@ export class Server {
 
     // Initialize the Hocuspocus server
     this.hocusPocusServer = await getHocusPocusServer();
+
+    // Initialize the server agent manager with the Hocuspocus server
+    serverAgentManager.initialize(this.hocusPocusServer);
+    serverAgentHandler.register();
+    syncAgentHandler.register();
+
+    // initialize all document handlers
+    initializeDocumentHandlers();
   }
 
   /**
@@ -135,19 +148,14 @@ export class Server {
    */
   async start() {
     try {
-      const server = this.app.listen(this.port, () => {
+      this.httpServer = this.app.listen(this.port, () => {
         logger.info(`Plane Live server has started at port ${this.port}`);
       });
 
-      // Register servers with ShutdownManager
-      const shutdownManager = ShutdownManager.getInstance();
-      shutdownManager.register(server, this.hocusPocusServer);
-
-      // Setup graceful termination via ProcessManager (for signal handling)
-      const processManager = new ProcessManager(this.hocusPocusServer, server);
-      processManager.registerTerminationHandlers();
-
-      return server;
+      if (this.httpServer) {
+        shutdownManager.register({ httpServer: this.httpServer });
+        shutdownManager.registerTerminationHandlers();
+      }
     } catch (error) {
       handleError(error, {
         errorType: "service-unavailable",
