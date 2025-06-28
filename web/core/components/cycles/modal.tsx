@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { mutate } from "swr";
 // types
-import { CYCLE_CREATED, CYCLE_UPDATED } from "@plane/constants";
+import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -64,7 +64,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle created successfully.",
         });
         captureCycleEvent({
-          eventName: CYCLE_CREATED,
+          eventName: CYCLE_TRACKER_EVENTS.create,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -75,7 +75,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: err?.detail ?? "Error in creating cycle. Please try again.",
         });
         captureCycleEvent({
-          eventName: CYCLE_CREATED,
+          eventName: CYCLE_TRACKER_EVENTS.create,
           payload: { ...payload, state: "FAILED" },
         });
       });
@@ -89,7 +89,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       .then((res) => {
         const changed_properties = Object.keys(dirtyFields);
         captureCycleEvent({
-          eventName: CYCLE_UPDATED,
+          eventName: CYCLE_TRACKER_EVENTS.update,
           payload: { ...res, changed_properties: changed_properties, state: "SUCCESS" },
         });
         setToast({
@@ -100,7 +100,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
       })
       .catch((err) => {
         captureCycleEvent({
-          eventName: CYCLE_UPDATED,
+          eventName: CYCLE_TRACKER_EVENTS.update,
           payload: { ...payload, state: "FAILED" },
         });
         setToast({

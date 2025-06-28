@@ -3,14 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+// Plane imports
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
-// ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
-// constants
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -241,7 +240,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         ),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
@@ -257,7 +256,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -303,7 +302,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: t("issue_updated_successfully"),
       });
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
         path: pathname,
       });
@@ -316,7 +315,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: error?.error ?? t("issue_could_not_be_updated"),
       });
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -334,8 +333,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
-    } catch (error) {
-      throw error;
     } finally {
       if (response != undefined && onSubmit) await onSubmit(response);
     }

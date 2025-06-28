@@ -6,7 +6,7 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
-import { NAVIGATE_TO_SIGNUP } from "@plane/constants";
+import { AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
@@ -63,7 +63,7 @@ const HomePage = observer(() => {
                     {t("auth.common.new_to_plane")}
                     <Link
                       href="/sign-up"
-                      onClick={() => captureEvent(NAVIGATE_TO_SIGNUP, {})}
+                      onClick={() => captureEvent(AUTH_TRACKER_EVENTS.navigate.sign_up, {})}
                       className="font-semibold text-custom-primary-100 hover:underline"
                     >
                       {t("auth.common.create_account")}

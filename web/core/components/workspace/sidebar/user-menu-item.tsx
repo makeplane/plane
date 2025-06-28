@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, SIDEBAR_CLICKED } from "@plane/constants";
+import { EUserPermissionsLevel, SIDEBAR_TRACKER_EVENTS } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -50,7 +50,7 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    captureEvent(SIDEBAR_CLICKED, {
+    captureEvent(SIDEBAR_TRACKER_EVENTS.click, {
       destination: itemKey,
     });
   };

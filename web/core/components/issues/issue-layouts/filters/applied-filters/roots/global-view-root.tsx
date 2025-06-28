@@ -5,18 +5,21 @@ import cloneDeep from "lodash/cloneDeep";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
-import { DEFAULT_GLOBAL_VIEWS_LIST, EIssueFilterType, GLOBAL_VIEW_UPDATED, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// Plane imports
+import {
+  DEFAULT_GLOBAL_VIEWS_LIST,
+  EIssueFilterType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  GLOBAL_VIEW_TOUR_TRACKER_EVENTS,
+} from "@plane/constants";
 import { EIssuesStoreType, EViewAccess, IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
-//ui
-// components
 import { Header, EHeaderVariant, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
-// constants
-// helpers
 // hooks
 import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";
@@ -106,7 +109,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
 
     updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters).then((res) => {
       if (res)
-        captureEvent(GLOBAL_VIEW_UPDATED, {
+        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.update, {
           view_id: res.id,
           applied_filters: res.filters,
           state: "SUCCESS",

@@ -7,7 +7,7 @@ import { Home } from "lucide-react";
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // ui
-import { GITHUB_REDIRECTED } from "@plane/constants";
+import { GITHUB_REDIRECTED_TRACKER_EVENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -39,7 +39,7 @@ export const WorkspaceDashboardHeader = () => {
         <Header.RightItem>
           <a
             onClick={() =>
-              captureEvent(GITHUB_REDIRECTED, {
+              captureEvent(GITHUB_REDIRECTED_TRACKER_EVENT, {
                 element: "navbar",
               })
             }
