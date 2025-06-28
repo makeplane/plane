@@ -1,9 +1,8 @@
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EStartOfTheWeek } from "@plane/constants";
 import { UserService } from "@plane/services";
-import { TUserProfile } from "@plane/types";
+import { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // store
 import { CoreRootStore } from "@/store/root.store";
 

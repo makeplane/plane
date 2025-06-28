@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 // ui
 //icons
-import { EIssuesStoreType } from "@plane/constants";
 import { ContrastIcon, TransferIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { useCycle, useIssues } from "@/hooks/store";
 //icons

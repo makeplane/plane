@@ -29,7 +29,7 @@ export type TInstanceGitlabAuthenticationConfigurationKeys =
   | "GITLAB_CLIENT_ID"
   | "GITLAB_CLIENT_SECRET";
 
-type TInstanceAuthenticationConfigurationKeys =
+export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
   | TInstanceGitlabAuthenticationConfigurationKeys;

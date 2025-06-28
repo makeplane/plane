@@ -1,6 +1,3 @@
-import { StateGroup } from "components/states";
-import { TIssuePriorities } from "../issues";
-
 // issues
 export * from "./issue";
 export * from "./issue_reaction";

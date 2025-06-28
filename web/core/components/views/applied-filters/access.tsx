@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 // icons
 import { X } from "lucide-react";
 // constants
-import { EViewAccess } from "@plane/constants";
 // helpers
 import { useTranslation } from "@plane/i18n";
+import { EViewAccess } from "@plane/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
 type Props = {

@@ -1,10 +1,10 @@
-import { EViewAccess } from "@plane/constants";
 import {
   IWorkspaceViewProps,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "./view-props";
+import { EViewAccess } from "./views";
 
 export interface IWorkspaceView {
   id: string;
@@ -16,7 +16,7 @@ export interface IWorkspaceView {
   updated_by: string;
   name: string;
   description: string;
-  filters: IIssueIIFilterOptions;
+  filters: IIssueFilterOptions;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
   query: any;

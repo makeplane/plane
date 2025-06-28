@@ -1,8 +1,7 @@
-import { ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
+import { EIssuesStoreType, ILayoutDisplayFiltersOptions, TIssueActivityComment } from "@plane/types";
 import {
   TIssueFilterPriorityObject,
   ISSUE_DISPLAY_PROPERTIES_KEYS,
-  EIssuesStoreType,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
 

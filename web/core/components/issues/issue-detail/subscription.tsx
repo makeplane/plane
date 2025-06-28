@@ -5,9 +5,10 @@ import isNil from "lodash/isNil";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
 // plane-i18n
-import { EUserPermissions, EUserPermissionsLevel, EIssueServiceType } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
+import { EIssueServiceType } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail, useUserPermissions } from "@/hooks/store";

@@ -4,8 +4,8 @@ import isEqual from "lodash/isEqual";
 import set from "lodash/set";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueFilterType, EViewAccess } from "@plane/constants";
-import { IIssueFilterOptions, IWorkspaceView } from "@plane/types";
+import { EIssueFilterType } from "@plane/constants";
+import { EViewAccess, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // constants
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -172,7 +172,7 @@ export class GlobalViewStore implements IGlobalViewStore {
 
       // applying the filters in the global view
       if (!isEqual(currentViewData?.filters || {}, currentView?.filters || {})) {
-        if (isEmpty(currentView?.filters)) {
+        if (!currentView?.filters || isEmpty(currentView?.filters)) {
           const currentGlobalViewFilters: IIssueFilterOptions = this.rootStore.issue.workspaceIssuesFilter.filters[
             viewId
           ].filters as IIssueFilterOptions;

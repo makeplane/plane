@@ -1,5 +1,5 @@
 // plane package imports
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { IInsightField, ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";

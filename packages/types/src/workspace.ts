@@ -1,6 +1,15 @@
-import type { ICycle, TProjectMembership, IUser, IUserLite, IWorkspaceViewProps, TPaginationInfo } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/constants"; // TODO: check if importing this over here causes circular dependency
+import type { TPaginationInfo } from "./common";
+import type { ICycle } from "./cycle";
 import { TUserPermissions } from "./enums";
+import { TProjectMembership } from "./project";
+import type { IUser, IUserLite } from "./users";
+import type { IWorkspaceViewProps } from "./view-props";
+
+export enum EUserWorkspaceRoles {
+  ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
+}
 
 export interface IWorkspace {
   readonly id: string;

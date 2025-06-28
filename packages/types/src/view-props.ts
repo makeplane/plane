@@ -160,13 +160,6 @@ export interface IWorkspaceIssueFilterOptions {
   project?: string[] | null;
 }
 
-export interface IWorkspaceGlobalViewDisplayFilterOptions {
-  order_by?: string | undefined;
-  type?: "active" | "backlog" | null;
-  sub_issue?: boolean;
-  layout?: TIssueViewOptions;
-}
-
 export interface IWorkspaceViewIssuesParams {
   assignees?: string | undefined;
   created_by?: string | undefined;
@@ -191,11 +184,6 @@ export interface IProjectViewProps {
 export interface IWorkspaceViewProps {
   filters: IIssueFilterOptions;
   display_filters: IIssueDisplayFilterOptions | undefined;
-  display_properties: IIssueDisplayProperties;
-}
-export interface IWorkspaceGlobalViewProps {
-  filters: IWorkspaceIssueFilterOptions;
-  display_filters: IWorkspaceIssueDisplayFilterOptions | undefined;
   display_properties: IIssueDisplayProperties;
 }
 

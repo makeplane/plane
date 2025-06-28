@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { Briefcase, UserRound } from "lucide-react";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { WorkItemInsightColumns, AnalyticsTableDataMap, ExportConfig } from "@plane/types";
+import { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
@@ -21,9 +21,14 @@ import { InsightTable } from "../insight-table";
 
 const analyticsService = new AnalyticsService();
 
+
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
-    export: ExportConfig<TData>;
+    export: {
+      key: string;
+      value: (row: Row<TData>) => string | number;
+      label?: string;
+    };
   }
 }
 

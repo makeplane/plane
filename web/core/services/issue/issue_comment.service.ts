@@ -1,8 +1,6 @@
 // plane types
-import { EIssueServiceType, API_BASE_URL } from "@plane/constants";
-import { TFileSignedURLResponse, TIssueComment, TIssueServiceType } from "@plane/types";
-// helpers
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/utils";
+import { API_BASE_URL } from "@plane/constants";
+import { EIssueServiceType, TIssueComment, TIssueServiceType } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";

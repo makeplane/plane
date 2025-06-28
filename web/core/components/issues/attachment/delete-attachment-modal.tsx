@@ -1,11 +1,9 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-// constants
-import { EIssueServiceType } from "@plane/constants";
 // plane-i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper

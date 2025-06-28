@@ -1,11 +1,31 @@
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
 import { TIssuePriorities } from "../issues";
 import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes, TIssuePublicComment } from "@/plane-web/types";
+import { TIssueRelationTypes } from "./issue_relation";
+import { TIssuePublicComment } from "./activity/issue_comment";
 
-// new issue structure types
+export enum EIssueServiceType {
+  ISSUES = "issues",
+  EPICS = "epics",
+  WORK_ITEMS = "work-items",
+}
+
+export enum EIssuesStoreType {
+  GLOBAL = "GLOBAL",
+  PROFILE = "PROFILE",
+  TEAM = "TEAM",
+  PROJECT = "PROJECT",
+  CYCLE = "CYCLE",
+  MODULE = "MODULE",
+  TEAM_VIEW = "TEAM_VIEW",
+  PROJECT_VIEW = "PROJECT_VIEW",
+  ARCHIVED = "ARCHIVED",
+  DRAFT = "DRAFT",
+  DEFAULT = "DEFAULT",
+  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
+  EPIC = "EPIC",
+}
 
 export type TBaseIssue = {
   id: string;
@@ -71,7 +91,7 @@ export type TIssueMap = {
   [issue_id: string]: TIssue;
 };
 
-type TIssueResponseResults =
+export type TIssueResponseResults =
   | TBaseIssue[]
   | {
       [key: string]: {
@@ -153,7 +173,7 @@ export interface IPublicIssue
   vote_items: IPublicVote[];
 }
 
-type TPublicIssueResponseResults =
+export type TPublicIssueResponseResults =
   | IPublicIssue[]
   | {
       [key: string]: {

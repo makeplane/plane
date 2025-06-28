@@ -2,9 +2,8 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks

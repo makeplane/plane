@@ -2,9 +2,8 @@ import { FC, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // hooks
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";

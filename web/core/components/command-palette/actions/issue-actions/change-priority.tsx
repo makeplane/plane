@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane constants
-import { EIssueServiceType, ISSUE_PRIORITIES } from "@plane/constants";
+import { ISSUE_PRIORITIES } from "@plane/constants";
 // plane types
-import { TIssue, TIssuePriorities } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssuePriorities } from "@plane/types";
 // mobx store
 import { PriorityIcon } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";

@@ -3,7 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EStartOfTheWeek, START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
+import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
+import { EStartOfTheWeek } from "@plane/types";
 import { CustomSelect, setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useUserProfile } from "@/hooks/store";

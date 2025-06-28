@@ -3,9 +3,8 @@
 import { useMemo } from "react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks

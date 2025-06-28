@@ -2,8 +2,9 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState, ComicBoxButton } from "@/components/empty-state";

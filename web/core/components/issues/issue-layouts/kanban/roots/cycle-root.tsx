@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 import { CycleIssueQuickActions } from "@/components/issues";
 // constants
 // hooks

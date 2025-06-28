@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useMemo, FC } from "react";
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { Breadcrumbs } from "@plane/ui";
 import { usePlatformOS } from "@/hooks/use-platform-os";

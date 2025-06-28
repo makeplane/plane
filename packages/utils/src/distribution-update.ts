@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import get from "lodash/get";
 import set from "lodash/set";
 // plane imports
-import { STATE_GROUPS, COMPLETED_STATE_GROUPS } from "@plane/constants";
+import { COMPLETED_STATE_GROUPS, STATE_DISTRIBUTION } from "@plane/constants";
 import { ICycle, IEstimatePoint, IModule, IState, TIssue } from "@plane/types";
 // helper
 import { getDate } from "./datetime";
@@ -31,34 +31,6 @@ export type DistributionUpdates = {
   pathUpdates: { path: string[]; value: number }[];
   assigneeUpdates: DistributionObjectUpdate[];
   labelUpdates: DistributionObjectUpdate[];
-};
-
-const STATE_DISTRIBUTION = {
-  [STATE_GROUPS.backlog.key]: {
-    key: STATE_GROUPS.backlog.key,
-    issues: "backlog_issues",
-    points: "backlog_estimate_points",
-  },
-  [STATE_GROUPS.unstarted.key]: {
-    key: STATE_GROUPS.unstarted.key,
-    issues: "unstarted_issues",
-    points: "unstarted_estimate_points",
-  },
-  [STATE_GROUPS.started.key]: {
-    key: STATE_GROUPS.started.key,
-    issues: "started_issues",
-    points: "started_estimate_points",
-  },
-  [STATE_GROUPS.completed.key]: {
-    key: STATE_GROUPS.completed.key,
-    issues: "completed_issues",
-    points: "completed_estimate_points",
-  },
-  [STATE_GROUPS.cancelled.key]: {
-    key: STATE_GROUPS.cancelled.key,
-    issues: "cancelled_issues",
-    points: "cancelled_estimate_points",
-  },
 };
 
 /**

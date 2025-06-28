@@ -4,9 +4,9 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel, EUserProjectRoles, EViewAccess } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TViewFilterProps } from "@plane/types";
+import { EUserProjectRoles, EViewAccess, TViewFilterProps } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";

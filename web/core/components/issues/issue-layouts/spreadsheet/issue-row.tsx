@@ -4,11 +4,11 @@ import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useStat
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
-import { EIssueServiceType, SPREADSHEET_SELECT_GROUP } from "@plane/constants";
+import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types";
 // ui
 import { ControlLink, Row, Tooltip } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";

@@ -15,9 +15,9 @@ import {
   MoveRight,
   Copy,
 } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel, EInboxIssueStatus } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TNameDescriptionLoader } from "@plane/types";
+import { EInboxIssueStatus, TNameDescriptionLoader } from "@plane/types";
 import { Button, ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components

@@ -2,12 +2,11 @@ import React, { useCallback } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
-// plane constants
 import useSWR from "swr";
-import { EIssueFilterType, EIssueLayoutTypes, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-// hooks
+// plane imports
+import { EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 // components
-// hooks
 import { EmptyState } from "@/components/common";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
 import { useGlobalView, useIssues } from "@/hooks/store";

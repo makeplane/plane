@@ -3,8 +3,9 @@
 import { FC, Fragment, useState } from "react";
 // components
 import { observer } from "mobx-react";
-import { EIssuesStoreType, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants

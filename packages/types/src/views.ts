@@ -1,10 +1,14 @@
-import { EViewAccess } from "@plane/constants";
 import { TLogoProps } from "./common";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
 } from "./view-props";
+
+export enum EViewAccess {
+  PRIVATE,
+  PUBLIC,
+}
 
 export interface IProjectView {
   id: string;

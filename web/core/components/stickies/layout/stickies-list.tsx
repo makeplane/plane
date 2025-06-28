@@ -9,8 +9,9 @@ import { usePathname } from "next/navigation";
 import Masonry from "react-masonry-component";
 import { Plus } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";

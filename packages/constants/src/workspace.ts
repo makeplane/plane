@@ -1,5 +1,4 @@
-import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
-import { EUserWorkspaceRoles } from "./user";
+import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
 
 export const ORGANIZATION_SIZE = [
   "Just myself", // TODO: translate

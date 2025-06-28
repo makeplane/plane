@@ -1,5 +1,5 @@
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // --------------- NOTE ----------------

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
-import { EViewAccess } from "@plane/constants";
-import { TViewFilterProps, TViewFilters } from "@plane/types";
+import { EViewAccess, TViewFilterProps, TViewFilters } from "@plane/types";
 // components
 import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
 import { FilterOption } from "@/components/issues";

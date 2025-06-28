@@ -3,9 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // types
-import { EProductSubscriptionEnum } from "@plane/constants";
 // plane imports
-import { IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getButtonStyling, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports

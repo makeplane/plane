@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 // components
-import { EIssuesStoreType } from "@plane/constants";
 import { ModuleIssueQuickActions } from "@/components/issues";
 // types
 // constants

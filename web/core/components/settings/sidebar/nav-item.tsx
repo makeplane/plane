@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserSettings } from "@/hooks/store";

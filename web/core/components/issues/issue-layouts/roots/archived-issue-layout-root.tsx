@@ -2,9 +2,9 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { EIssuesStoreType } from "@plane/types";
 // mobx store
 // components
-import { EIssuesStoreType } from "@plane/constants";
 import { LogoSpinner } from "@/components/common";
 import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot, IssuePeekOverview } from "@/components/issues";
 // ui

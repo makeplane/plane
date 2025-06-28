@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // types
-import { EViewAccess, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { IProjectView } from "@plane/types";
+import { EViewAccess, IProjectView } from "@plane/types";
 // ui
 import { Tooltip, FavoriteStar } from "@plane/ui";
 import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";

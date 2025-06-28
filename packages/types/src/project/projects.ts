@@ -1,6 +1,14 @@
-import { EUserProjectRoles } from "@plane/constants";
-import type { IUser, IUserLite, IWorkspace, TLogoProps, TStateGroups } from "..";
+import { TLogoProps } from "../common";
 import { TUserPermissions } from "../enums";
+import { TStateGroups } from "../state";
+import type { IUser, IUserLite } from "../users";
+import type { IWorkspace } from "../workspace";
+
+export enum EUserProjectRoles {
+  ADMIN = 20,
+  MEMBER = 15,
+  GUEST = 5,
+}
 
 export interface IPartialProject {
   id: string;
@@ -65,7 +73,7 @@ export interface IProjectLite {
   logo_props: TLogoProps;
 }
 
-type ProjectPreferences = {
+export type ProjectPreferences = {
   pages: {
     block_display: boolean;
   };

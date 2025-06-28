@@ -1,5 +1,4 @@
-import { EStartOfTheWeek } from "@plane/constants";
-import { TCalendarLayouts } from "@plane/types";
+import { EStartOfTheWeek, TCalendarLayouts } from "@plane/types";
 
 export const MONTHS_LIST: {
   [monthNumber: number]: {
