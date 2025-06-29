@@ -7,11 +7,11 @@ import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane editor
-import { EditorReadOnlyRefApi } from "@plane/editor";
+import { EditorRefApi } from "@plane/editor";
 // ui
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextEditor } from "@/components/editor";
 // services
 import { AIService } from "@/services/ai.service";
 const aiService = new AIService();
@@ -55,8 +55,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   // refs
-  const editorRef = useRef<EditorReadOnlyRefApi>(null);
-  const responseRef = useRef<any>(null);
+  const editorRef = useRef<EditorRefApi>(null);
+  const responseRef = useRef<EditorRefApi>(null);
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
@@ -217,7 +217,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {prompt && (
               <div className="text-sm">
                 Content:
-                <RichTextReadOnlyEditor
+                <RichTextEditor
+                  editable={false}
                   id="ai-assistant-content"
                   initialValue={prompt}
                   containerClassName="-m-3"
@@ -231,7 +232,8 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
             {response !== "" && (
               <div className="page-block-section max-h-[8rem] text-sm">
                 Response:
-                <RichTextReadOnlyEditor
+                <RichTextEditor
+                  editable={false}
                   id="ai-assistant-response"
                   initialValue={`<p>${response}</p>`}
                   ref={responseRef}

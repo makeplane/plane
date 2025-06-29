@@ -13,7 +13,6 @@ export {
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
-  RichTextReadOnlyEditorWithRef,
 } from "@/components/editors";
 
 export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";

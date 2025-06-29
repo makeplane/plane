@@ -9,7 +9,7 @@ import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 // editor
-import { RichTextReadOnlyEditor } from "@/components/editor/rich-text-editor/rich-text-read-only-editor";
+import { RichTextEditor } from "@/components/editor";
 // ui
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
@@ -73,7 +73,8 @@ export const ActivityList: React.FC<Props> = observer((props) => {
                         </p>
                       </div>
                       <div className="issue-comments-section p-0">
-                        <RichTextReadOnlyEditor
+                        <RichTextEditor
+                          editable={false}
                           id={activityItem.id}
                           initialValue={
                             activityItem?.new_value !== ""

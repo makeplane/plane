@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 import { IssueReactions } from "@/components/issues/peek-overview";
 import { usePublish } from "@/hooks/store";
 // types
@@ -25,7 +25,8 @@ export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
       </h6>
       <h4 className="break-words text-2xl font-medium">{issueDetails.name}</h4>
       {description !== "" && description !== "<p></p>" && (
-        <RichTextReadOnlyEditor
+        <RichTextEditor
+          editable={false}
           anchor={anchor}
           id={issueDetails.id}
           initialValue={

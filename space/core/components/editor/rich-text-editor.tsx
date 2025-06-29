@@ -9,18 +9,24 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // store hooks
 import { useMember } from "@/hooks/store";
 
-interface RichTextEditorWrapperProps
-  extends MakeOptional<
-    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
-    "disabledExtensions" | "flaggedExtensions"
-  > {
+type RichTextEditorWrapperProps = MakeOptional<
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
+> & {
   anchor: string;
-  uploadFile: TFileHandler["upload"];
   workspaceId: string;
-}
+} & (
+    | {
+        editable: false;
+      }
+    | {
+        editable: true;
+        uploadFile: TFileHandler["upload"];
+      }
+  );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, uploadFile, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
+  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
   const { getMemberById } = useMember();
   return (
     <RichTextEditorWithRef
@@ -32,9 +38,10 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       }}
       ref={ref}
       disabledExtensions={disabledExtensions ?? []}
+      editable={editable}
       fileHandler={getEditorFileHandlers({
         anchor,
-        uploadFile,
+        uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
       flaggedExtensions={flaggedExtensions ?? []}
