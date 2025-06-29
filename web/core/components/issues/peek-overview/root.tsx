@@ -331,7 +331,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         }
       },
     }),
-    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue, t]
+    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue]
   );
 
   useEffect(() => {
