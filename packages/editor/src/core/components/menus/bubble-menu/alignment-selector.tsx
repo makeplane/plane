@@ -57,7 +57,7 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
   ];
 
   return (
-    <div className="flex gap-0.5 px-2">
+    <div className="flex items-center gap-0.5 px-1.5 py-1">
       {textAlignmentOptions.map((item) => (
         <button
           key={item.renderKey}
@@ -67,13 +67,17 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
             item.command();
           }}
           className={cn(
-            "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
+            "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-all duration-200 ease-in-out",
             {
               "bg-custom-background-80 text-custom-text-100": item.isActive(),
             }
           )}
         >
-          <item.icon className="size-4" />
+          <item.icon
+            className={cn("size-4 transition-transform duration-200", {
+              "text-custom-text-100": item.isActive(),
+            })}
+          />
         </button>
       ))}
     </div>
