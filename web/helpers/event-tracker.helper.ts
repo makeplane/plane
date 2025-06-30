@@ -6,7 +6,7 @@ export type TElementContext = Record<string, any>;
 export type TEventContext = Record<string, any>;
 export type TInteractionType = "clicked" | "viewed" | "hovered";
 
-type TTrackElementParams = {
+type TCaptureElementParams = {
   elementName: TTrackingElement;
   interaction_type: TInteractionType;
   context?: TElementContext;
@@ -19,7 +19,7 @@ type TTrackElementParams = {
  * @param element - Generic UI element type
  * @param context - Context about where and why the interaction happened
  */
-const captureElement = (params: TTrackElementParams) => {
+const captureElement = (params: TCaptureElementParams) => {
   const { elementName, interaction_type, context } = params;
   if (!posthog) return;
 
@@ -34,43 +34,42 @@ const captureElement = (params: TTrackElementParams) => {
   posthog.capture(elementEvent, payload);
 };
 
-type TTrackClickParams = Omit<TTrackElementParams, "interaction_type">;
+type TCaptureClickParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
  * Track click events
  * @param element - The element that was clicked
  * @param context - Additional context
  */
-export const captureClick = (params: TTrackClickParams) => {
+export const captureClick = (params: TCaptureClickParams) => {
   captureElement({ ...params, interaction_type: "clicked" });
 };
 
-type TTrackViewParams = Omit<TTrackElementParams, "interaction_type">;
+type TCaptureViewParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
  * Track view events
  * @param element - The element that was viewed
  * @param context - Additional context
  */
-export const captureView = (params: TTrackViewParams) => {
+export const captureView = (params: TCaptureViewParams) => {
   captureElement({ ...params, interaction_type: "viewed" });
 };
 
-type TTrackHoverParams = Omit<TTrackElementParams, "interaction_type">;
+type TCaptureHoverParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
  * Track hover events
  * @param element - The element that was hovered
  * @param context - Additional context
  */
-export const captureHover = (params: TTrackHoverParams) => {
+export const captureHover = (params: TCaptureHoverParams) => {
   captureElement({ ...params, interaction_type: "hovered" });
 };
 
-type TTrackEventParams = {
+type TCaptureEventParams = {
   eventName: string;
   payload?: Record<string, any>;
   context?: TEventContext;
   state: TEventState;
 };
-
 /**
  * Track business events (outcomes, state changes, etc.)
  * This helps understand business metrics and conversion rates
@@ -80,7 +79,7 @@ type TTrackEventParams = {
  * @param payload - Event-specific data
  * @param context - Additional context
  */
-const captureEvent = (params: TTrackEventParams) => {
+const captureEvent = (params: TCaptureEventParams) => {
   const { eventName, payload, context, state } = params;
   if (!posthog) return;
 
@@ -94,21 +93,20 @@ const captureEvent = (params: TTrackEventParams) => {
   posthog.capture(eventName, finalPayload);
 };
 
-type TTrackSuccessParams = Omit<TTrackEventParams, "state">;
+type TCaptureSuccessParams = Omit<TCaptureEventParams, "state">;
 /**
  * Track success events
  * @param eventName - The name of the event
  * @param payload - Additional payload
  * @param context - Additional context
  */
-export const captureSuccess = (params: TTrackSuccessParams) => {
+export const captureSuccess = (params: TCaptureSuccessParams) => {
   captureEvent({ ...params, state: "SUCCESS" });
 };
 
-type TTrackErrorParams = Omit<TTrackEventParams, "state"> & {
-  error: Error | string;
+type TCaptureErrorParams = Omit<TCaptureEventParams, "state"> & {
+  error?: Error | string;
 };
-
 /**
  * Track error events
  * @param eventName - The name of the event
@@ -116,21 +114,20 @@ type TTrackErrorParams = Omit<TTrackEventParams, "state"> & {
  * @param payload - Additional payload
  * @param context - Additional context
  */
-export const captureError = (params: TTrackErrorParams) => {
+export const captureError = (params: TCaptureErrorParams) => {
   captureEvent({ ...params, state: "ERROR", payload: { ...params.payload, error: params.error } });
 };
 
-type TTrackElementAndEventParams = {
-  element: Omit<TTrackElementParams, "interaction_type">;
-  event: TTrackEventParams;
+type TCaptureElementAndEventParams = {
+  element: Omit<TCaptureElementParams, "interaction_type">;
+  event: TCaptureEventParams;
 };
-
 /**
  * Track both element interaction and business event together
  * @param element - The element that was interacted with
  * @param event - The business event that was triggered
  */
-export const captureElementAndEvent = (params: TTrackElementAndEventParams) => {
+export const captureElementAndEvent = (params: TCaptureElementAndEventParams) => {
   const { element, event } = params;
   // Track the element interaction first
   captureElement({ ...element, interaction_type: "clicked" });
