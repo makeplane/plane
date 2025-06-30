@@ -11,7 +11,8 @@ import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useWorkspace } from "@/hooks/store";
+import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -51,7 +52,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
   // form info
   const {
@@ -71,14 +71,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              captureWorkspaceEvent({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: {
-                  ...res,
-                  state: "SUCCESS",
-                  element: "Create workspace page",
-                },
-              });
+              trackSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
               setToast({
                 type: TOAST_TYPE.SUCCESS,
                 title: t("workspace_creation.toast.success.title"),
@@ -88,13 +81,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
-              captureWorkspaceEvent({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: {
-                  state: "FAILED",
-                  element: "Create workspace page",
-                },
-              });
+              trackError(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("workspace_creation.toast.error.title"),
@@ -248,7 +235,14 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+        <Button
+          data-ph-element="CREATE_WORKSPACE_BUTTON"
+          variant="primary"
+          type="submit"
+          size="md"
+          disabled={!isValid}
+          loading={isSubmitting}
+        >
           {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
         </Button>
         {!secondaryButton && (

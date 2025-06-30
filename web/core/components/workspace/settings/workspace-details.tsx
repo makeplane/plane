@@ -15,7 +15,8 @@ import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // helpers
 // hooks
-import { useEventTracker, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
 
@@ -31,7 +32,6 @@ export const WorkspaceDetails: FC = observer(() => {
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
-  const { captureWorkspaceEvent } = useEventTracker();
   const { currentWorkspace, updateWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
@@ -61,14 +61,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        captureWorkspaceEvent({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: {
-            ...res,
-            state: "SUCCESS",
-            element: "Workspace general settings page",
-          },
-        });
+        trackSuccess(WORKSPACE_TRACKER_EVENTS.update);
         setToast({
           title: "Success!",
           type: TOAST_TYPE.SUCCESS,
@@ -76,13 +69,7 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        captureWorkspaceEvent({
-          eventName: WORKSPACE_TRACKER_EVENTS.update,
-          payload: {
-            state: "FAILED",
-            element: "Workspace general settings page",
-          },
-        });
+        trackError(WORKSPACE_TRACKER_EVENTS.update);
         console.error(err);
       });
     setTimeout(() => {
@@ -282,7 +269,12 @@ export const WorkspaceDetails: FC = observer(() => {
 
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
-              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isLoading}>
+              <Button
+                data-ph-element="WORKSPACE_SETTINGS_UPDATE_WORKSPACE_BUTTON"
+                variant="primary"
+                onClick={handleSubmit(onSubmit)}
+                loading={isLoading}
+              >
                 {isLoading ? t("updating") : t("workspace_settings.settings.general.update_workspace")}
               </Button>
             </div>

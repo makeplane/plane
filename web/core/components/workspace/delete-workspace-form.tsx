@@ -13,7 +13,8 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { cn } from "@plane/utils";
-import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
+import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -31,7 +32,6 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   const { t } = useTranslation();
   const { getWorkspaceRedirectionUrl } = useWorkspace();
@@ -64,14 +64,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         await fetchCurrentUserSettings();
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
-        captureWorkspaceEvent({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: {
-            ...data,
-            state: "SUCCESS",
-            element: "Workspace general settings page",
-          },
-        });
+        trackSuccess(WORKSPACE_TRACKER_EVENTS.delete);
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.general.delete_modal.success_title"),
@@ -84,14 +77,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
           title: t("workspace_settings.settings.general.delete_modal.error_title"),
           message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
-        captureWorkspaceEvent({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: {
-            ...data,
-            state: "FAILED",
-            element: "Workspace general settings page",
-          },
-        });
+        trackError(WORKSPACE_TRACKER_EVENTS.delete);
       });
   };
 
@@ -169,7 +155,14 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {t("cancel")}
         </Button>
-        <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
+        <Button
+          data-ph-element="DELETE_WORKSPACE_BUTTON"
+          variant="danger"
+          size="sm"
+          type="submit"
+          disabled={!canDelete}
+          loading={isSubmitting}
+        >
           {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>

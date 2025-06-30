@@ -10,9 +10,7 @@ import {
   getModuleEventPayload,
   getProjectEventPayload,
   getProjectStateEventPayload,
-  getWorkspaceEventPayload,
   getPageEventPayload,
-  WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { CoreRootStore } from "./root.store";
 
@@ -26,7 +24,6 @@ export interface ICoreEventTrackerStore {
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload?: any) => void;
   joinWorkspaceMetricGroup: (workspaceId?: string) => void;
-  captureWorkspaceEvent: (props: EventProps) => void;
   captureProjectEvent: (props: EventProps) => void;
   captureCycleEvent: (props: EventProps) => void;
   captureModuleEvent: (props: EventProps) => void;
@@ -106,23 +103,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
       ...payload,
       element: payload?.element ?? this.trackElement,
     });
-    this.setTrackElement(undefined);
-  };
-
-  /**
-   * @description: Captures the workspace crud related events.
-   * @param {EventProps} props
-   */
-  captureWorkspaceEvent = (props: EventProps) => {
-    const { eventName, payload } = props;
-    if (eventName === WORKSPACE_TRACKER_EVENTS.create && payload.state == "SUCCESS") {
-      this.joinWorkspaceMetricGroup(payload.id);
-    }
-    const eventPayload: any = getWorkspaceEventPayload({
-      ...payload,
-      element: payload.element ?? this.trackElement,
-    });
-    posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
 

@@ -13,11 +13,7 @@ export type TInteractionType = "clicked" | "viewed" | "hovered";
  * @param element - Generic UI element type
  * @param context - Context about where and why the interaction happened
  */
-const trackElement = (
-  element: TTrackingElement,
-  interaction_type: TInteractionType,
-  context?: TElementContext
-) => {
+const trackElement = (element: TTrackingElement, interaction_type: TInteractionType, context?: TElementContext) => {
   if (!posthog) return;
 
   const elementEvent = `${element}_${interaction_type}`;
@@ -67,12 +63,7 @@ export const trackHover = (element: TTrackingElement, context?: TElementContext)
  * @param payload - Event-specific data
  * @param context - Additional context
  */
-const trackEvent = (
-  eventName: string,
-  state: TEventState,
-  payload?: Record<string, any>,
-  context?: TEventContext
-) => {
+const trackEvent = (eventName: string, state: TEventState, payload?: Record<string, any>, context?: TEventContext) => {
   if (!posthog) return;
 
   const finalPayload = {
@@ -104,8 +95,8 @@ export const trackSuccess = (eventName: string, payload?: Record<string, any>, c
  */
 export const trackError = (
   eventName: string,
-  error?: Error | string,
   payload?: Record<string, any>,
+  error?: Error | string,
   context?: TEventContext
 ) => {
   trackEvent(
