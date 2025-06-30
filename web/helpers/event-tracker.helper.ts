@@ -3,6 +3,7 @@ import posthog from "posthog-js";
 export type TEventState = "SUCCESS" | "ERROR";
 
 export type TTrackingElement =
+  | "RIGHT_HEADER_BUTTON"
   | "HEADER_BUTTON"
   | "SIDEBAR_BUTTON"
   | "EMPTY_STATE_BUTTON"

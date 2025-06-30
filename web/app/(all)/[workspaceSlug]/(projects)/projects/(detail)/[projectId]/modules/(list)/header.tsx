@@ -55,6 +55,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
+            data-ph-element="RIGHT_HEADER_BUTTON"
             onClick={() => {
               setTrackElement("Modules page");
               toggleCreateModuleModal(true);
