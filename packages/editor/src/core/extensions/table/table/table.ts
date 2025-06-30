@@ -23,7 +23,7 @@ import { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
-import { TableInsertPlugin } from "../plugins/table/insert-handlers/plugin";
+import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
 import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";

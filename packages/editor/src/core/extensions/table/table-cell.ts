@@ -2,7 +2,7 @@ import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
-import { TableCellSelectionOutlinePlugin } from "./plugins/table/selection-outline/plugin";
+import { TableCellSelectionOutlinePlugin } from "./plugins/selection-outline/plugin";
 import { DEFAULT_COLUMN_WIDTH } from "./table";
 
 export interface TableCellOptions {
