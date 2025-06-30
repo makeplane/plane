@@ -13,7 +13,7 @@ export type TInteractionType = "clicked" | "viewed" | "hovered";
  * @param element - Generic UI element type
  * @param context - Context about where and why the interaction happened
  */
-export const trackElement = (
+const trackElement = (
   element: TTrackingElement,
   interaction_type: TInteractionType,
   context?: TElementContext
@@ -67,7 +67,7 @@ export const trackHover = (element: TTrackingElement, context?: TElementContext)
  * @param payload - Event-specific data
  * @param context - Additional context
  */
-export const trackEvent = (
+const trackEvent = (
   eventName: string,
   state: TEventState,
   payload?: Record<string, any>,
