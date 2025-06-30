@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, ReactNode, useEffect } from "react";
+import React, { createContext, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
@@ -29,12 +29,6 @@ export const AppRailProvider = observer(({ children }: AppRailProviderProps) => 
 
   const isEnabled = false;
 
-  useEffect(() => {
-    if (!isEnabled && isAppRailVisible) {
-      setIsAppRailVisible(false);
-    }
-  }, [workspaceSlug]);
-
   const toggleAppRail = (value?: boolean) => {
     if (value === undefined) {
       setIsAppRailVisible(!isAppRailVisible);
@@ -45,7 +39,7 @@ export const AppRailProvider = observer(({ children }: AppRailProviderProps) => 
 
   const contextValue: AppRailContextType = {
     isEnabled,
-    shouldRenderAppRail: !!isAppRailVisible,
+    shouldRenderAppRail: !!isAppRailVisible && isEnabled,
     toggleAppRail,
   };
 
