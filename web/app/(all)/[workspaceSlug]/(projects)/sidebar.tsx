@@ -1,26 +1,28 @@
 import { FC, useEffect, useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
+import { PanelLeft } from "lucide-react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { cn } from "@plane/utils";
-import { SidebarDropdown, SidebarHelpSection, SidebarProjectsList, SidebarQuickActions } from "@/components/workspace";
+import { SidebarDropdown, SidebarProjectsList, SidebarQuickActions } from "@/components/workspace";
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { SidebarAppSwitcher } from "@/plane-web/components/sidebar";
+import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams-sidebar-list";
 
 export const AppSidebar: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const { toggleSidebar, sidebarCollapsed, sidebarPeek, toggleSidebarPeek } = useAppTheme();
+  const { shouldRenderAppRail } = useAppRail();
   const { groupedFavorites } = useFavorite();
   const windowSize = useSize();
   // refs
@@ -49,12 +51,24 @@ export const AppSidebar: FC = observer(() => {
 
   return (
     <>
-      <div className="px-4">
+      <div className="flex flex-col gap-2 px-4">
         {/* Workspace switcher and settings */}
-        <SidebarDropdown />
-        <div className="flex-shrink-0 h-4" />
-        {/* App switcher */}
-        {canPerformWorkspaceMemberActions && <SidebarAppSwitcher />}
+        {!shouldRenderAppRail && <SidebarDropdown />}
+
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Projects</span>
+          <div className="flex items-center gap-2">
+            <button
+              className="flex items-center justify-center size-6 rounded text-custom-text-200 hover:text-custom-primary-100 hover:bg-custom-background-90"
+              onClick={() => {
+                if (sidebarPeek) toggleSidebarPeek(false);
+                toggleSidebar();
+              }}
+            >
+              <PanelLeft className="size-4" />
+            </button>
+          </div>
+        </div>
         {/* Quick actions */}
         <SidebarQuickActions />
       </div>
@@ -68,7 +82,9 @@ export const AppSidebar: FC = observer(() => {
         <SidebarProjectsList />
       </div>
       {/* Help Section */}
-      <SidebarHelpSection />
+      <div className="flex items-center justify-center p-2 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
+        <WorkspaceEditionBadge />
+      </div>
     </>
   );
 });

@@ -7,6 +7,7 @@ import { useLocalStorage } from "@plane/hooks";
 // hooks
 import { ResizableSidebar } from "@/components/sidebar";
 import { useAppTheme } from "@/hooks/store";
+import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
@@ -24,6 +25,8 @@ export const ProjectAppSidebar: FC = observer(() => {
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
+  // hooks
+  const { shouldRenderAppRail } = useAppRail();
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
@@ -51,6 +54,7 @@ export const ProjectAppSidebar: FC = observer(() => {
         }
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
+        disablePeekTrigger={shouldRenderAppRail}
       >
         <AppSidebar />
       </ResizableSidebar>

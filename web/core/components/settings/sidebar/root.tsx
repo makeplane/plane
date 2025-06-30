@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { ScrollArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SettingsSidebarHeader } from "./header";
 import SettingsSidebarNavItem, { TSettingItem } from "./nav-item";
@@ -45,7 +46,10 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll">
+      <ScrollArea
+        className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll"
+        type="hover"
+      >
         {categories.map((category) => (
           <div key={category} className="py-3">
             <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>
@@ -69,7 +73,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
             )}
           </div>
         ))}
-      </div>
+      </ScrollArea>
     </div>
   );
 });
