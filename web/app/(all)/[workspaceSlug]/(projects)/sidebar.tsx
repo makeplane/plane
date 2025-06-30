@@ -73,7 +73,7 @@ export const AppSidebar: FC = observer(() => {
         {/* Quick actions */}
         <SidebarQuickActions />
       </div>
-      <div className="flex flex-col gap-1 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto pt-3 pb-0.5 vertical-scrollbar px-4">
+      <div className="flex flex-col gap-0.5 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto pt-3 pb-0.5 vertical-scrollbar px-4">
         <SidebarMenuItems />
         {/* Favorites Menu */}
         {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
