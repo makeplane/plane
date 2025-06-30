@@ -73,7 +73,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
       const target = event.target as HTMLElement;
       const element = target.getAttribute("data-ph-element");
       if (element) {
-        trackClick(element as TTrackingElement);
+        trackClick({ elementName: element as TTrackingElement });
       }
     };
 
