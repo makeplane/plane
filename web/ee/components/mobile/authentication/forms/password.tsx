@@ -199,10 +199,10 @@ export const MobileAuthPasswordForm: FC<TMobileAuthPasswordForm> = (props) => {
             )}
           </div>
         </div>
-        {((isPasswordConfirmationRequired && formData.password.length > 0 && !isPasswordStrengthValid) ||
-          passwordInputFocused) && (
-          <MobilePasswordStrengthMeter password={formData.password} isFocused={passwordInputFocused.password} />
-        )}
+        {isPasswordConfirmationRequired &&
+          ((formData.password.length > 0 && !isPasswordStrengthValid) || passwordInputFocused.password) && (
+            <MobilePasswordStrengthMeter password={formData.password} isFocused={passwordInputFocused.password} />
+          )}
       </div>
 
       {isPasswordConfirmationRequired && (
