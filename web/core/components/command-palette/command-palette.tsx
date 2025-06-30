@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, TRACKING_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
@@ -192,6 +192,7 @@ export const CommandPalette: FC = observer(() => {
 
       if (deleteKey) {
         if (performProjectBulkDeleteActions()) {
+          setTrackElement(TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM);
           shortcutsList.project.delete.action();
         }
       } else if (cmdClicked) {
@@ -208,6 +209,7 @@ export const CommandPalette: FC = observer(() => {
           Object.keys(shortcutsList.global).includes(keyPressed) &&
           ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
         ) {
+          setTrackElement(TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM);
           shortcutsList.global[keyPressed].action();
         }
         // workspace authorized actions
@@ -217,6 +219,7 @@ export const CommandPalette: FC = observer(() => {
           performWorkspaceCreateActions()
         ) {
           e.preventDefault();
+          setTrackElement(TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM);
           shortcutsList.workspace[keyPressed].action();
         }
         // project authorized actions
@@ -227,6 +230,7 @@ export const CommandPalette: FC = observer(() => {
         ) {
           e.preventDefault();
           // actions that can be performed only inside a project
+          setTrackElement(TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM);
           shortcutsList.project[keyPressed].action();
         }
       }

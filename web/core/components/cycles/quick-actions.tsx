@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CYCLE_TRACKER_EVENTS, EUserPermissions, EUserPermissionsLevel, TRACKING_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -14,7 +14,8 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 import { ArchiveCycleModal, CycleCreateUpdateModal, CycleDeleteModal } from "@/components/cycles";
 // helpers
 // hooks
-import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useCycle, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
 
@@ -35,7 +36,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { getCycleById, restoreCycle } = useCycle();
   const { t } = useTranslation();
@@ -69,7 +69,6 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
 
   const handleEditCycle = () => {
-    setTrackElement("Cycles page list layout");
     setUpdateModal(true);
   };
 
@@ -83,18 +82,29 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           title: t("project_cycles.action.restore.success.title"),
           message: t("project_cycles.action.restore.success.description"),
         });
+        captureSuccess({
+          eventName: CYCLE_TRACKER_EVENTS.restore,
+          payload: {
+            id: cycleId,
+          },
+        });
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/cycles`);
       })
-      .catch(() =>
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("project_cycles.action.restore.failed.title"),
           message: t("project_cycles.action.restore.failed.description"),
-        })
-      );
+        });
+        captureError({
+          eventName: CYCLE_TRACKER_EVENTS.restore,
+          payload: {
+            id: cycleId,
+          },
+        });
+      });
 
   const handleDeleteCycle = () => {
-    setTrackElement("Cycles page list layout");
     setDeleteModal(true);
   };
 
@@ -149,6 +159,16 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
 
   if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
 
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
+    ...item,
+    action: () => {
+      captureClick({
+        elementName: TRACKING_ELEMENTS.CONTEXT_MENU,
+      });
+      item.action();
+    },
+  }));
+
   return (
     <>
       {cycleDetails && (
@@ -187,7 +207,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           )}
         </div>
       )}
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect maxHeight="lg" buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -197,6 +217,9 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({
+                  elementName: TRACKING_ELEMENTS.QUICK_ACTIONS,
+                });
                 item.action();
               }}
               className={cn(

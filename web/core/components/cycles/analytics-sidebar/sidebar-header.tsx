@@ -1,11 +1,17 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArrowRight, ChevronRight } from "lucide-react";
 // Plane Imports
-import { CYCLE_TRACKER_EVENTS, CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  CYCLE_TRACKER_EVENTS,
+  CYCLE_STATUS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  TRACKING_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -13,13 +19,11 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 // hooks
-import { useCycle, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useCycle, useUserPermissions } from "@/hooks/store";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 // services
 import { CycleService } from "@/services/cycle.service";
-// local imports
-import { ArchiveCycleModal } from "../archived-cycles";
-import { CycleDeleteModal } from "../delete-modal";
 
 type Props = {
   workspaceSlug: string;
@@ -38,13 +42,9 @@ const cycleService = new CycleService();
 
 export const CycleSidebarHeader: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
-  // states
-  const [archiveCycleModal, setArchiveCycleModal] = useState(false);
-  const [cycleDeleteModal, setCycleDeleteModal] = useState(false);
   // hooks
   const { allowPermissions } = useUserPermissions();
   const { updateCycleDetails } = useCycle();
-  const { captureCycleEvent } = useEventTracker();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
 
@@ -61,29 +61,36 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
-  const submitChanges = async (data: Partial<ICycle>, changedProperty: string) => {
+  const submitChanges = async (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
 
     await updateCycleDetails(workspaceSlug.toString(), projectId.toString(), cycleDetails.id.toString(), data)
-      .then((res) => {
-        captureCycleEvent({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: {
-            ...res,
-            changed_properties: [changedProperty],
-            element: "Right side-peek",
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: TRACKING_ELEMENTS.RIGHT_SIDEBAR,
+          },
+          event: {
+            eventName: CYCLE_TRACKER_EVENTS.update,
             state: "SUCCESS",
+            payload: {
+              id: cycleDetails.id,
+            },
           },
         });
       })
 
       .catch(() => {
-        captureCycleEvent({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: {
-            ...data,
-            element: "Right side-peek",
-            state: "FAILED",
+        captureElementAndEvent({
+          element: {
+            elementName: TRACKING_ELEMENTS.RIGHT_SIDEBAR,
+          },
+          event: {
+            eventName: CYCLE_TRACKER_EVENTS.update,
+            state: "ERROR",
+            payload: {
+              id: cycleDetails.id,
+            },
           },
         });
       });
@@ -122,7 +129,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       isDateValid = true;
     }
     if (isDateValid) {
-      submitChanges(payload, "date_range");
+      submitChanges(payload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("project_cycles.action.update.success.title"),
@@ -145,24 +152,6 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
 
   return (
     <>
-      {cycleDetails && workspaceSlug && projectId && (
-        <>
-          <ArchiveCycleModal
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-            cycleId={cycleDetails.id}
-            isOpen={archiveCycleModal}
-            handleClose={() => setArchiveCycleModal(false)}
-          />
-          <CycleDeleteModal
-            cycle={cycleDetails}
-            isOpen={cycleDeleteModal}
-            handleClose={() => setCycleDeleteModal(false)}
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
-          />
-        </>
-      )}
       <div className="sticky z-10 top-0 pt-2 flex items-center justify-between bg-custom-sidebar-background-100">
         <div className="flex items-center justify-center size-5">
           <button
