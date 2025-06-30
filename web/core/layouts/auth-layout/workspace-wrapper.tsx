@@ -16,14 +16,11 @@ import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";
 // hooks
-import { AppRailProvider } from "@/hooks/context/app-rail-context";
 import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-import { WorkspaceContentWrapper } from "@/plane-web/components/workspace";
-// constants
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -238,9 +235,5 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
 
-  return (
-    <AppRailProvider>
-      <WorkspaceContentWrapper>{children}</WorkspaceContentWrapper>
-    </AppRailProvider>
-  );
+  return <>{children}</>;
 });
