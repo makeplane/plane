@@ -24,6 +24,7 @@
         margin-bottom: 0;
       }
 
+      /* Selected cell outline */
       &.selectedCell {
         user-select: none;
 
@@ -52,6 +53,7 @@
           border-right: 2px solid rgba(var(--color-primary-100));
         }
       }
+      /* End selected cell outline */
     }
 
     th {
