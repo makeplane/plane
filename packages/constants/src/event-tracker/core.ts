@@ -151,8 +151,8 @@ export const TRACKING_ELEMENTS = {
   RIGHT_HEADER_BUTTON: "right_header_button",
   EMPTY_STATE_BUTTON: "empty_state_button",
   COMMAND_PALETTE_ITEM: "command_palette_item",
-};
-export type TTrackingElement = keyof typeof TRACKING_ELEMENTS;
+} as const;
+export type TTrackingElement = (typeof TRACKING_ELEMENTS)[keyof typeof TRACKING_ELEMENTS];
 
 export const WORKSPACE_TRACKER_EVENTS = {
   create: "workspace_created",
