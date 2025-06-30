@@ -13,7 +13,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { cn } from "@plane/utils";
-import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -64,7 +64,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         await fetchCurrentUserSettings();
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
-        trackSuccess(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
+        captureSuccess(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.general.delete_modal.success_title"),
@@ -77,7 +77,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
           title: t("workspace_settings.settings.general.delete_modal.error_title"),
           message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
-        trackError(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
+        captureError(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
       });
   };
 

@@ -11,7 +11,7 @@ import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -68,12 +68,12 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                 title: t("workspace_creation.toast.success.title"),
                 message: t("workspace_creation.toast.success.message"),
               });
-              trackSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...workspaceResponse });
+              captureSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...workspaceResponse });
               await fetchWorkspaces();
               await completeStep(workspaceResponse.id);
             })
             .catch(() => {
-              trackError(WORKSPACE_TRACKER_EVENTS.create);
+              captureError(WORKSPACE_TRACKER_EVENTS.create);
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("workspace_creation.toast.error.title"),

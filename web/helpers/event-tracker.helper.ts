@@ -82,7 +82,7 @@ const trackEvent = (eventName: string, state: TEventState, payload?: Record<stri
  * @param payload - Additional payload
  * @param context - Additional context
  */
-export const trackSuccess = (eventName: string, payload?: Record<string, any>, context?: TEventContext) => {
+export const captureSuccess = (eventName: string, payload?: Record<string, any>, context?: TEventContext) => {
   trackEvent(eventName, "SUCCESS", payload, context);
 };
 
@@ -93,7 +93,7 @@ export const trackSuccess = (eventName: string, payload?: Record<string, any>, c
  * @param payload - Additional payload
  * @param context - Additional context
  */
-export const trackError = (
+export const captureError = (
   eventName: string,
   payload?: Record<string, any>,
   error?: Error | string,

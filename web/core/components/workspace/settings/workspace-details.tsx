@@ -15,7 +15,7 @@ import { LogoSpinner } from "@/components/common";
 import { WorkspaceImageUploadModal } from "@/components/core";
 // helpers
 // hooks
-import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web components
 import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
@@ -61,7 +61,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        trackSuccess(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
+        captureSuccess(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
         setToast({
           title: "Success!",
           type: TOAST_TYPE.SUCCESS,
@@ -69,7 +69,7 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        trackError(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
+        captureError(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
         console.error(err);
       });
     setTimeout(() => {

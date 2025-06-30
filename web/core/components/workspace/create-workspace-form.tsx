@@ -11,7 +11,7 @@ import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { trackError, trackSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
@@ -71,7 +71,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              trackSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
+              captureSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
               setToast({
                 type: TOAST_TYPE.SUCCESS,
                 title: t("workspace_creation.toast.success.title"),
@@ -81,7 +81,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
-              trackError(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
+              captureError(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("workspace_creation.toast.error.title"),
