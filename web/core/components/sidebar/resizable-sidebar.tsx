@@ -23,6 +23,7 @@ interface ResizableSidebarProps {
   extendedSidebar?: ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
   isAnySidebarDropdownOpen?: boolean;
+  disablePeekTrigger?: boolean;
 }
 
 export function ResizableSidebar({
@@ -42,6 +43,7 @@ export function ResizableSidebar({
   extendedSidebar,
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
+  disablePeekTrigger = false,
 }: ResizableSidebarProps) {
   // states
   const [isResizing, setIsResizing] = useState(false);
@@ -221,7 +223,7 @@ export function ResizableSidebar({
       </div>
 
       {/* Peek Trigger Area */}
-      {isCollapsed && (
+      {isCollapsed && !disablePeekTrigger && (
         <div
           className={cn(
             "fixed top-0 left-0 w-1 h-full z-50 bg-transparent",
