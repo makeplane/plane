@@ -68,12 +68,19 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                 title: t("workspace_creation.toast.success.title"),
                 message: t("workspace_creation.toast.success.message"),
               });
-              captureSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...workspaceResponse });
+              captureSuccess({
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
+                payload: { slug: formData.slug },
+              });
               await fetchWorkspaces();
               await completeStep(workspaceResponse.id);
             })
             .catch(() => {
-              captureError(WORKSPACE_TRACKER_EVENTS.create);
+              captureError({
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
+                payload: { slug: formData.slug },
+                error: new Error("Error creating workspace"),
+              });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("workspace_creation.toast.error.title"),

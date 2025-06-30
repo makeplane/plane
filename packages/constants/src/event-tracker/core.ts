@@ -151,6 +151,9 @@ export const TRACKING_ELEMENTS = {
   RIGHT_HEADER_BUTTON: "right_header_button",
   EMPTY_STATE_BUTTON: "empty_state_button",
   COMMAND_PALETTE_ITEM: "command_palette_item",
+  RIGHT_SIDEBAR: "right_sidebar",
+  QUICK_ACTIONS: "quick_actions",
+  CONTEXT_MENU: "context_menu",
 } as const;
 export type TTrackingElement = (typeof TRACKING_ELEMENTS)[keyof typeof TRACKING_ELEMENTS];
 

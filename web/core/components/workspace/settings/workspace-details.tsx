@@ -61,7 +61,10 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        captureSuccess(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
+        captureSuccess({
+          eventName: WORKSPACE_TRACKER_EVENTS.update,
+          payload: { slug: currentWorkspace.slug },
+        });
         setToast({
           title: "Success!",
           type: TOAST_TYPE.SUCCESS,
@@ -69,7 +72,11 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        captureError(WORKSPACE_TRACKER_EVENTS.update, { slug: currentWorkspace.slug });
+        captureError({
+          eventName: WORKSPACE_TRACKER_EVENTS.update,
+          payload: { slug: currentWorkspace.slug },
+          error: err,
+        });
         console.error(err);
       });
     setTimeout(() => {

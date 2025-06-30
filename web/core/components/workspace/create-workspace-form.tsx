@@ -71,7 +71,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              captureSuccess(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
+              captureSuccess({
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
+                payload: { slug: formData.slug },
+              });
               setToast({
                 type: TOAST_TYPE.SUCCESS,
                 title: t("workspace_creation.toast.success.title"),
@@ -81,7 +84,11 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
-              captureError(WORKSPACE_TRACKER_EVENTS.create, { ...formData });
+              captureError({
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
+                payload: { slug: formData.slug },
+                error: new Error("Error creating workspace"),
+              });
               setToast({
                 type: TOAST_TYPE.ERROR,
                 title: t("workspace_creation.toast.error.title"),

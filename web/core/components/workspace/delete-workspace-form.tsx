@@ -64,7 +64,10 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         await fetchCurrentUserSettings();
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
-        captureSuccess(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
+        captureSuccess({
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
+          payload: { slug: data.slug },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.general.delete_modal.success_title"),
@@ -77,7 +80,11 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
           title: t("workspace_settings.settings.general.delete_modal.error_title"),
           message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
-        captureError(WORKSPACE_TRACKER_EVENTS.delete, { slug: data.slug });
+        captureError({
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
+          payload: { slug: data.slug },
+          error: new Error("Error deleting workspace"),
+        });
       });
   };
 
