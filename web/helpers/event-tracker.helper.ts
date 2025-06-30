@@ -13,11 +13,7 @@ export type TInteractionType = "clicked" | "viewed" | "hovered";
  * @param element - Generic UI element type
  * @param context - Context about where and why the interaction happened
  */
-const trackElement = (
-  element: TTrackingElement,
-  interaction_type: TInteractionType,
-  context?: TElementContext
-) => {
+const trackElement = (element: TTrackingElement, interaction_type: TInteractionType, context?: TElementContext) => {
   if (!posthog) return;
 
   const elementEvent = `${element}_${interaction_type}`;
@@ -67,12 +63,7 @@ export const trackHover = (element: TTrackingElement, context?: TElementContext)
  * @param payload - Event-specific data
  * @param context - Additional context
  */
-const trackEvent = (
-  eventName: string,
-  state: TEventState,
-  payload?: Record<string, any>,
-  context?: TEventContext
-) => {
+const trackEvent = (eventName: string, state: TEventState, payload?: Record<string, any>, context?: TEventContext) => {
   if (!posthog) return;
 
   const finalPayload = {
@@ -119,6 +110,19 @@ export const trackError = (
   );
 };
 
+type TTrackElementAndEventParams = {
+  element: {
+    name: TTrackingElement;
+    context?: TElementContext;
+  };
+  event: {
+    name: string;
+    state: TEventState;
+    payload?: Record<string, any>;
+    context?: TEventContext;
+  };
+};
+
 /**
  * Track both element interaction and business event together
  * @param element - The element that was interacted with
@@ -128,17 +132,11 @@ export const trackError = (
  * @param eventPayload - Additional payload for the event
  * @param eventContext - Additional context for the event
  */
-export const trackElementAndEvent = (
-  element: TTrackingElement,
-  elementContext: TElementContext,
-  eventName: string,
-  eventState: TEventState,
-  eventPayload?: Record<string, any>,
-  eventContext?: TEventContext
-) => {
+export const trackElementAndEvent = (params: TTrackElementAndEventParams) => {
+  const { element, event } = params;
   // Track the element interaction first
-  trackElement(element, "clicked", elementContext);
+  trackElement(element.name, "clicked", element.context);
 
   // Then track the business event
-  trackEvent(eventName, eventState, eventPayload, eventContext);
+  trackEvent(event.name, event.state, event.payload, event.context);
 };
