@@ -16,11 +16,13 @@ import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/
 import { cn } from "@plane/utils";
 import { LogoSpinner } from "@/components/common";
 // hooks
+import { AppRailProvider } from "@/hooks/context/app-rail-context";
 import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
+import { WorkspaceContentWrapper } from "@/plane-web/components/workspace";
 // constants
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
@@ -136,7 +138,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // if list of workspaces are not there then we have to render the spinner
   if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
-      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
+      <div className="grid h-screen place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
@@ -236,5 +238,9 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
 
-  return <>{children}</>;
+  return (
+    <AppRailProvider>
+      <WorkspaceContentWrapper>{children}</WorkspaceContentWrapper>
+    </AppRailProvider>
+  );
 });

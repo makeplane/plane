@@ -166,7 +166,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // check if the project member apis is loading
   if (isParentLoading || (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null))
     return (
-      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
+      <div className="grid h-screen place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
