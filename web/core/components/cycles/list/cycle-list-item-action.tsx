@@ -11,7 +11,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
-  TRACKING_ELEMENTS,
+  CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -314,7 +314,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       )}
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
-          data-ph-element={TRACKING_ELEMENTS.LIST_ITEM}
+          data-ph-element={CYCLE_TRACKER_ELEMENTS.LIST_ITEM}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

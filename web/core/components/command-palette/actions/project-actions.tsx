@@ -3,7 +3,7 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { TRACKING_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store";
@@ -26,7 +26,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           onSelect={() => {
             closePalette();
             captureClick({
-              elementName: TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM,
+              elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ITEM,
             });
             toggleCreateCycleModal(true);
           }}
@@ -43,9 +43,6 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            captureClick({
-              elementName: TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM,
-            });
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
@@ -61,9 +58,6 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            captureClick({
-              elementName: TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM,
-            });
             toggleCreateViewModal(true);
           }}
           className="focus:outline-none"
@@ -79,9 +73,6 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            captureClick({
-              elementName: TRACKING_ELEMENTS.COMMAND_PALETTE_ITEM,
-            });
             toggleCreatePageModal({ isOpen: true });
           }}
           className="focus:outline-none"

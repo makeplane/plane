@@ -1,6 +1,8 @@
 // types
+import { CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // store
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { store } from "@/lib/store-context";
 
 export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
@@ -50,7 +52,10 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     q: {
       title: "Create a new cycle",
       description: "Create a new cycle in the current project",
-      action: () => toggleCreateCycleModal(true),
+      action: () => {
+        toggleCreateCycleModal(true);
+        captureClick({ elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ITEM });
+      },
     },
     v: {
       title: "Create a new view",

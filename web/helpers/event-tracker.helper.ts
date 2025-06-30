@@ -1,5 +1,4 @@
 import posthog from "posthog-js";
-import { TTrackingElement } from "@plane/constants";
 
 export type TEventState = "SUCCESS" | "ERROR";
 export type TElementContext = Record<string, any>;
@@ -7,7 +6,7 @@ export type TEventContext = Record<string, any>;
 export type TInteractionType = "clicked" | "viewed" | "hovered";
 
 type TCaptureElementParams = {
-  elementName: TTrackingElement;
+  elementName: string;
   interaction_type: TInteractionType;
   context?: TElementContext;
 };

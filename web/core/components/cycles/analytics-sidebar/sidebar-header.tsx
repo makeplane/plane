@@ -10,7 +10,7 @@ import {
   CYCLE_STATUS,
   EUserPermissions,
   EUserPermissionsLevel,
-  TRACKING_ELEMENTS,
+  CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
@@ -68,7 +68,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .then(() => {
         captureElementAndEvent({
           element: {
-            elementName: TRACKING_ELEMENTS.RIGHT_SIDEBAR,
+            elementName: CYCLE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
           },
           event: {
             eventName: CYCLE_TRACKER_EVENTS.update,
@@ -83,7 +83,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
       .catch(() => {
         captureElementAndEvent({
           element: {
-            elementName: TRACKING_ELEMENTS.RIGHT_SIDEBAR,
+            elementName: CYCLE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
           },
           event: {
             eventName: CYCLE_TRACKER_EVENTS.update,

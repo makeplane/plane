@@ -12,16 +12,6 @@ export type EventProps = {
   path?: string;
 };
 
-export const getWorkspaceEventPayload = (payload: any) => ({
-  workspace_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  organization_size: payload.organization_size,
-  first_time: payload.first_time,
-  state: payload.state,
-  element: payload.element,
-});
-
 export const getProjectEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
@@ -133,17 +123,6 @@ export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
 // Groups
 export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 
-export const TRACKING_ELEMENTS = {
-  RIGHT_HEADER_BUTTON: "right_header_button",
-  EMPTY_STATE_BUTTON: "empty_state_button",
-  COMMAND_PALETTE_ITEM: "command_palette_item",
-  RIGHT_SIDEBAR: "right_sidebar",
-  QUICK_ACTIONS: "quick_actions",
-  CONTEXT_MENU: "context_menu",
-  LIST_ITEM: "list_item",
-} as const;
-export type TTrackingElement = (typeof TRACKING_ELEMENTS)[keyof typeof TRACKING_ELEMENTS];
-
 export const WORKSPACE_TRACKER_EVENTS = {
   create: "workspace_created",
   update: "workspace_updated",
@@ -165,6 +144,15 @@ export const CYCLE_TRACKER_EVENTS = {
   archive: "cycle_archived",
   restore: "cycle_restored",
 };
+export const CYCLE_TRACKER_ELEMENTS = {
+  RIGHT_HEADER_BUTTON: "cycle_right_header_button",
+  EMPTY_STATE_BUTTON: "cycle_empty_state_button",
+  COMMAND_PALETTE_ITEM: "cycle_command_palette_item",
+  RIGHT_SIDEBAR: "cycle_right_sidebar",
+  QUICK_ACTIONS: "cycle_quick_actions",
+  CONTEXT_MENU: "cycle_context_menu",
+  LIST_ITEM: "cycle_list_item",
+} as const;
 
 export const MODULE_TRACKER_EVENTS = {
   create: "module_created",

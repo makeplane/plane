@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, TRACKING_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TCycleFilters } from "@plane/types";
 // components
@@ -99,7 +99,7 @@ const ProjectCyclesPage = observer(() => {
                   label={t("project_cycles.empty_state.general.primary_button.text")}
                   title={t("project_cycles.empty_state.general.primary_button.comic.title")}
                   description={t("project_cycles.empty_state.general.primary_button.comic.description")}
-                  data-ph-element={TRACKING_ELEMENTS.EMPTY_STATE_BUTTON}
+                  data-ph-element={CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_BUTTON}
                   onClick={() => {
                     setCreateModal(true);
                   }}

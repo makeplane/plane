@@ -6,7 +6,12 @@ import { observer } from "mobx-react";
 // icons
 import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
-import { CYCLE_TRACKER_EVENTS, EUserPermissions, EUserPermissionsLevel, TRACKING_ELEMENTS } from "@plane/constants";
+import {
+  CYCLE_TRACKER_EVENTS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  CYCLE_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
@@ -163,7 +168,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
     ...item,
     action: () => {
       captureClick({
-        elementName: TRACKING_ELEMENTS.CONTEXT_MENU,
+        elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
       });
       item.action();
     },
@@ -218,7 +223,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
                 e.preventDefault();
                 e.stopPropagation();
                 captureClick({
-                  elementName: TRACKING_ELEMENTS.QUICK_ACTIONS,
+                  elementName: CYCLE_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });
                 item.action();
               }}
