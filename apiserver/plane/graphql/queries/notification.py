@@ -41,24 +41,23 @@ class NotificationQuery:
         type: Optional[JSON] = "all",
         snoozed: Optional[bool] = None,
         archived: Optional[bool] = None,
-        read: Optional[str] = None,
         mentioned: Optional[bool] = False,
+        read: Optional[str] = None,
         cursor: Optional[str] = None,
     ) -> PaginatorResponse[NotificationType]:
         user = info.context.user
         user_id = str(user.id)
 
-        type_list = type.split(",")
-        q_filters = Q()
-
-        filters = Q(workspace__slug=slug, receiver_id=user_id)
-
-        # Base QuerySet
+        # Teamspace Filter
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(
             user_id=user_id, workspace_slug=slug
         )
-        queryset = (
-            Notification.objects.filter(filters)
+
+        # Inbox Filters
+        notification_queryset = (
+            Notification.objects.filter(workspace__slug=slug)
+            .filter(receiver_id=user_id)
+            .filter(entity_name__in=["issue", "epic"])
             .filter(project_teamspace_filter.query)
             .distinct()
             .select_related("workspace", "project", "triggered_by", "receiver")
@@ -66,38 +65,53 @@ class NotificationQuery:
         )
 
         now = timezone.now()
+        q_filters = Q()
 
         # Apply snoozed filter
         if snoozed is not None:
             if snoozed:
-                queryset = queryset.filter(
+                notification_queryset = notification_queryset.filter(
                     Q(snoozed_till__lt=now) | Q(snoozed_till__isnull=False)
                 )
             else:
-                queryset = queryset.filter(
+                notification_queryset = notification_queryset.filter(
                     Q(snoozed_till__gte=now) | Q(snoozed_till__isnull=True)
                 )
 
         # Apply archived filter
         if archived is not None:
             if archived:
-                queryset = queryset.filter(archived_at__isnull=False)
+                notification_queryset = notification_queryset.filter(
+                    archived_at__isnull=False
+                )
             else:
-                queryset = queryset.filter(archived_at__isnull=True)
+                notification_queryset = notification_queryset.filter(
+                    archived_at__isnull=True
+                )
 
         # Apply read filter
         if read is not None:
             if read == "true":
-                queryset = queryset.filter(read_at__isnull=False)
+                notification_queryset = notification_queryset.filter(
+                    read_at__isnull=False
+                )
             elif read == "false":
-                queryset = queryset.filter(read_at__isnull=True)
+                notification_queryset = notification_queryset.filter(
+                    read_at__isnull=True
+                )
 
+        # Apply mentioned filter
         if mentioned:
-            queryset = queryset.filter(sender__icontains="mentioned")
+            notification_queryset = notification_queryset.filter(
+                sender__icontains="mentioned"
+            )
         else:
-            queryset = queryset.exclude(sender__icontains="mentioned")
+            notification_queryset = notification_queryset.exclude(
+                sender__icontains="mentioned"
+            )
 
         # Subscribed issues
+        type_list = type.split(",")
         if "subscribed" in type_list:
             issue_ids = await sync_to_async(list)(
                 IssueSubscriber.objects.filter(
@@ -105,7 +119,9 @@ class NotificationQuery:
                 )
                 .annotate(
                     created=Exists(
-                        Issue.objects.filter(created_by=user, pk=OuterRef("issue_id"))
+                        Issue.objects.filter(
+                            created_by=user, pk=OuterRef("issue_id")
+                        ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
                     )
                 )
                 .annotate(
@@ -141,16 +157,16 @@ class NotificationQuery:
             )()
 
             if has_permission:
-                queryset = queryset.none()
+                notification_queryset = notification_queryset.none()
             else:
                 issue_ids = await sync_to_async(list)(
-                    Issue.objects.filter(
-                        workspace__slug=slug, created_by=user
-                    ).values_list("pk", flat=True)
+                    Issue.objects.filter(workspace__slug=slug, created_by=user)
+                    .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                    .values_list("pk", flat=True)
                 )
                 q_filters = Q(entity_identifier__in=issue_ids)
 
-        queryset = queryset.filter(q_filters)
-        notifications = await sync_to_async(list)(queryset)
+        notification_queryset = notification_queryset.filter(q_filters)
+        notifications = await sync_to_async(list)(notification_queryset)
 
         return paginate(results_object=notifications, cursor=cursor)

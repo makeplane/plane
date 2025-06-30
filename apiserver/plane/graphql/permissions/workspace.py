@@ -4,15 +4,16 @@ from typing import Any, Optional
 # Third-Party Imports
 from asgiref.sync import sync_to_async
 
-
 # Strawberry Imports
-from strawberry.types import Info
 from strawberry.permission import BasePermission
+from strawberry.types import Info
 
 # Local Imports
-from plane.graphql.utils.roles import Roles
+from plane.db.models import WorkspaceMember, Page
+from plane.ee.models import PageUser
 from plane.graphql.utils.error_codes import ERROR_CODES
-from plane.db.models import WorkspaceMember
+from plane.graphql.utils.roles import Roles
+from plane.graphql.helpers import is_shared_page_feature_flagged_async
 
 # Permission Mappings
 Admin = 20
@@ -107,6 +108,7 @@ class WorkspaceAdminPermission(IsAuthenticated):
         )()
 
 
+# Workspace Member permission
 class WorkspacePermission(IsAuthenticated):
     message = "User does not have permission to perform this action"
     error_extensions = {
@@ -128,12 +130,82 @@ class WorkspacePermission(IsAuthenticated):
 
         allowed_roles = [role.value for role in self.roles]
 
+        user = info.context.user
+        user_id = str(user.id)
+        workspace_slug = kwargs.get("slug")
+
         return await sync_to_async(
             WorkspaceMember.objects.filter(
-                member=self.user,
-                workspace__slug=kwargs.get("slug"),
+                member=user_id,
+                workspace__slug=workspace_slug,
                 is_active=True,
                 role__in=allowed_roles,
             ).exists,
             thread_sensitive=True,
         )()
+
+
+# Workspace Shared Page permission
+class WorkspaceSharedPagePermission(IsAuthenticated):
+    message = "User does not have permission to perform this action"
+    error_extensions = {
+        "code": "UNAUTHORIZED",
+        "statusCode": ERROR_CODES["USER_NOT_AUTHORIZED"],
+    }
+
+    async def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
+        if not await super().has_permission(source, info, **kwargs):
+            self.message = IsAuthenticated.message
+            self.error_extensions = IsAuthenticated.error_extensions
+            return False
+
+        user = info.context.user
+        user_id = str(user.id)
+        workspace_slug = kwargs.get("slug")
+        page_id = kwargs.get("page")
+
+        page = await sync_to_async(
+            Page.objects.filter(
+                workspace__slug=workspace_slug,
+                id=page_id,
+                
+            ).first,
+            thread_sensitive=True,
+        )()
+
+        # check if page exists
+        if not page:
+            return False
+
+        page_access = page.access
+        page_owned_by_id = str(page.owned_by_id)
+
+        # check if page is public
+        if page_access == 0:
+            return True
+
+        # check if page is private and owned by user
+        if page_access == 1 and page_owned_by_id == user_id:
+            return True
+
+        # check if shared pages feature flag is enabled
+        is_feature_flagged = await is_shared_page_feature_flagged_async(
+            user_id=user_id,
+            workspace_slug=workspace_slug,
+            raise_exception=False,
+        )
+
+        if not is_feature_flagged:
+            return False
+
+        # check if page is shared with user
+        page_can_be_accessed = await sync_to_async(
+            PageUser.objects.filter(
+                workspace__slug=workspace_slug,
+                page_id=page_id,
+                user_id=user_id,
+            ).exists,
+            thread_sensitive=True,
+        )()
+
+        return page_can_be_accessed

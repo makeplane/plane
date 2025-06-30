@@ -2,20 +2,22 @@ import uuid
 from urllib.parse import urlencode, urljoin
 
 # Django import
-from django.http import HttpResponseRedirect
-from django.views import View
 from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.utils import timezone
+from django.views import View
 
 # Module imports
+from plane.authentication.adapter.error import (
+    AUTHENTICATION_ERROR_CODES,
+    AuthenticationException,
+)
 from plane.authentication.provider.oauth.github import GitHubOAuthProvider
+from plane.authentication.utils.host import base_host
 from plane.authentication.utils.mobile.login import ValidateAuthToken
 from plane.authentication.utils.user_auth_workflow import post_user_auth_workflow
+from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.license.models import Instance
-from plane.authentication.utils.host import base_host
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-    AUTHENTICATION_ERROR_CODES,
-)
 
 
 class MobileGitHubOauthInitiateEndpoint(View):
@@ -115,10 +117,38 @@ class MobileGitHubCallbackEndpoint(View):
             )
             # getting the user from the google provider
             user = provider.authenticate()
+            user_id = str(user.id)
+            user_email = user.email
 
             # Login the user and record his device info
             session_token = ValidateAuthToken()
-            session_token.set_value(str(user.id))
+            session_token.set_value(user_id)
+
+            # if invitation_id is present
+            if invitation_id != "" and user_email:
+                # check the invitation is valid
+                invitation = WorkspaceMemberInvite.objects.filter(
+                    id=invitation_id, email=user_email
+                ).first()
+
+                # if not invitation.responded_at and invitation.accepted:
+                if invitation and not invitation.responded_at and invitation.accepted:
+                    # check the workspace is valid
+                    workspace = Workspace.objects.filter(
+                        id=invitation.workspace_id
+                    ).first()
+
+                    if workspace:
+                        invitation.responded_at = timezone.now()
+                        invitation.save()
+
+                        # add the user to the workspace
+                        workspace_member, _ = WorkspaceMember.objects.get_or_create(
+                            workspace_id=invitation.workspace.id,
+                            member_id=user_id,
+                        )
+                        workspace_member.role = invitation.role
+                        workspace_member.save()
 
             # redirect to referrer path
             url = urljoin(

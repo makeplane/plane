@@ -47,8 +47,10 @@ from .mutations.module import (
     ModuleIssueUserPropertyMutation,
 )
 from .mutations.notification import NotificationMutation
-from .mutations.page import PageFavoriteMutation, PageMutation, WorkspacePageMutation
-from .mutations.pages import (
+from .mutations.page import (
+    PageFavoriteMutation,
+    PageMutation,
+    WorkspacePageMutation,
     NestedChildArchivePageMutation,
     NestedChildDeletePageMutation,
     NestedChildRestorePageMutation,
@@ -121,14 +123,16 @@ from .queries.module import (
     ModuleQuery,
 )
 from .queries.notification import NotificationQuery
-from .queries.page import PageQuery, UserPageQuery, WorkspacePageQuery
-from .queries.pages import (
+from .queries.page import (
     NestedChildPagesQuery,
     NestedParentPagesQuery,
+    PageQuery,
+    UserPageQuery,
     WorkspaceNestedChildPagesQuery,
     WorkspaceNestedParentPagesQuery,
+    WorkspacePageQuery,
 )
-from .queries.project import ProjectMembersQuery, ProjectQuery, ProjectFeatureQuery
+from .queries.project import ProjectFeatureQuery, ProjectMembersQuery, ProjectQuery
 from .queries.roles import UserProjectRolesQuery
 from .queries.search import GlobalSearchQuery
 from .queries.state import StateQuery, WorkspaceStateQuery
@@ -145,6 +149,7 @@ from .queries.users import (
 from .queries.version_check import VersionCheckQuery
 from .queries.workspace import (
     PublicWorkspaceInviteQuery,
+    WorkspaceFeatureQuery,
     WorkspaceInviteQuery,
     WorkspaceIssuesInformationQuery,
     WorkspaceIssuesQuery,
@@ -152,7 +157,6 @@ from .queries.workspace import (
     WorkspaceMembersQuery,
     WorkspaceQuery,
     YourWorkQuery,
-    WorkspaceFeatureQuery,
 )
 
 

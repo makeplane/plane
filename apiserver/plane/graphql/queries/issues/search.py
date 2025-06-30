@@ -45,12 +45,10 @@ class IssuesSearchQuery:
         slug: str,
         project: Optional[strawberry.ID] = None,
         issue: Optional[strawberry.ID] = None,
-        module: Optional[strawberry.ID] = False,
-        cycle: Optional[bool] = False,
+        cursor: Optional[str] = None,
+        search: Optional[str] = None,
         relationType: Optional[bool] = False,
         subIssues: Optional[bool] = False,
-        search: Optional[str] = None,
-        cursor: Optional[str] = None,
         is_epic_related: Optional[bool] = False,
     ) -> PaginatorResponse[IssueLiteType]:
         user = info.context.user
@@ -60,8 +58,11 @@ class IssuesSearchQuery:
             user_id=user_id,
             workspace_slug=slug,
         )
+
         issue_queryset = (
             Issue.objects.filter(workspace__slug=slug)
+            # project teamspace filters
+            .filter(project_teamspace_filter.query)
             # issue intake filters
             .filter(
                 Q(issue_intake__status=1)
@@ -77,7 +78,6 @@ class IssuesSearchQuery:
             .filter(deleted_at__isnull=True)
             # draft filters
             .filter(is_draft=False)
-            .filter(project_teamspace_filter.query)
         )
 
         # epic filters
@@ -104,21 +104,16 @@ class IssuesSearchQuery:
         if project:
             issue_queryset = issue_queryset.filter(project_id=project)
 
-        # module issues
-        if module:
-            issue_queryset = issue_queryset.exclude(issue_module__module=module)
-
-        # cycle issues
-        if cycle:
-            issue_queryset = issue_queryset.exclude(issue_cycle__isnull=False)
-
         # issue relation issues
         if relationType and issue:
             issue_queryset = issue_queryset.filter(
                 ~Q(pk=issue),
-                ~Q(issue_related__issue=issue, issue_related__deleted_at__isnull=True),
                 ~Q(
-                    issue_relation__related_issue=issue,
+                    issue_related__issue_id=issue,
+                    issue_related__deleted_at__isnull=True,
+                ),
+                ~Q(
+                    issue_relation__related_issue_id=issue,
                     issue_related__deleted_at__isnull=True,
                 ),
             )

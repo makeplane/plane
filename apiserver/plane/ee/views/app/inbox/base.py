@@ -27,7 +27,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
                 workspace__slug=self.kwargs.get("slug"),
                 receiver_id=self.request.user.id,
             )
-            .select_related("workspace", "project," "triggered_by", "receiver")
+            .select_related("workspace", "project", "triggered_by", "receiver")
         )
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
