@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { API_BASE_URL } from "@plane/constants";
 import {
   TMobileCSRFToken,
   TEmailCheckRequest,
@@ -6,8 +7,6 @@ import {
   TMobileUser,
   TMobileWorkspaceInvitation,
 } from "@plane/types";
-// helpers
-import { API_BASE_URL  } from "@plane/constants";
 
 export class MobileAuthService {
   axiosInstance: AxiosInstance;

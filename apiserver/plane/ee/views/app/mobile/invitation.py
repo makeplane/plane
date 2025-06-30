@@ -17,7 +17,9 @@ class MobileWorkspaceInvitationEndpoint(APIView):
         model = WorkspaceMemberInvite
 
         try:
-            workspace_invitation = model.objects.get(id=invitation_id, email=email)
+            workspace_invitation = model.objects.get(
+                id=invitation_id, email=email, responded_at__isnull=True
+            )
 
             if workspace_invitation.accepted:
                 return Response({"error": "Invitation already accepted"}, status=400)
