@@ -1,39 +1,7 @@
 import posthog from "posthog-js";
+import { TTrackingElement } from "@plane/constants";
 
 export type TEventState = "SUCCESS" | "ERROR";
-
-export type TTrackingElement =
-  | "RIGHT_HEADER_BUTTON"
-  | "HEADER_BUTTON"
-  | "SIDEBAR_BUTTON"
-  | "EMPTY_STATE_BUTTON"
-  | "COMMAND_PALETTE_ITEM"
-  | "MODAL_BUTTON"
-  | "DROPDOWN_ITEM"
-  | "LIST_ITEM_BUTTON"
-  | "CARD_BUTTON"
-  | "TAB_BUTTON"
-  | "MENU_ITEM"
-  | "SEARCH_BAR"
-  | "FILTER_BUTTON";
-
-export type TEventName =
-  | "workspace_created"
-  | "workspace_updated"
-  | "workspace_deleted"
-  | "project_created"
-  | "project_updated"
-  | "project_deleted"
-  | "cycle_created"
-  | "cycle_updated"
-  | "cycle_deleted"
-  | "module_created"
-  | "module_updated"
-  | "module_deleted"
-  | "issue_created"
-  | "issue_updated"
-  | "issue_deleted";
-
 export type TElementContext = Record<string, any>;
 export type TEventContext = Record<string, any>;
 export type TInteractionType = "clicked" | "viewed" | "hovered";
@@ -52,7 +20,7 @@ export const trackElement = (
 ) => {
   if (!posthog) return;
 
-  const elementEvent = `${element}_${interaction_type}` ?? "element_interacted";
+  const elementEvent = `${element}_${interaction_type}`;
 
   const payload = {
     element_type: element,
@@ -100,7 +68,7 @@ export const trackHover = (element: TTrackingElement, context?: TElementContext)
  * @param context - Additional context
  */
 export const trackEvent = (
-  eventName: TEventName,
+  eventName: string,
   state: TEventState,
   payload?: Record<string, any>,
   context?: TEventContext
@@ -123,7 +91,7 @@ export const trackEvent = (
  * @param payload - Additional payload
  * @param context - Additional context
  */
-export const trackSuccess = (eventName: TEventName, payload?: Record<string, any>, context?: TEventContext) => {
+export const trackSuccess = (eventName: string, payload?: Record<string, any>, context?: TEventContext) => {
   trackEvent(eventName, "SUCCESS", payload, context);
 };
 
@@ -135,7 +103,7 @@ export const trackSuccess = (eventName: TEventName, payload?: Record<string, any
  * @param context - Additional context
  */
 export const trackError = (
-  eventName: TEventName,
+  eventName: string,
   error?: Error | string,
   payload?: Record<string, any>,
   context?: TEventContext
@@ -163,7 +131,7 @@ export const trackError = (
 export const trackElementAndEvent = (
   element: TTrackingElement,
   elementContext: TElementContext,
-  eventName: TEventName,
+  eventName: string,
   eventState: TEventState,
   eventPayload?: Record<string, any>,
   eventContext?: TEventContext

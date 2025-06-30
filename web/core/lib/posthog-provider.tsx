@@ -7,11 +7,11 @@ import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
-import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
+import { GROUP_WORKSPACE_TRACKER_EVENT, TTrackingElement } from "@plane/constants";
 // helpers
 import { getUserRole } from "@plane/utils";
 // hooks
-import { trackClick, TTrackingElement } from "@/helpers/event-tracker.helper";
+import { trackClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
@@ -71,8 +71,9 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   useEffect(() => {
     const clickHandler = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (target.hasAttribute("data-ph-element")) {
-        trackClick(target.getAttribute("data-ph-element") as TTrackingElement);
+      const element = target.getAttribute("data-ph-element");
+      if (element) {
+        trackClick(element as TTrackingElement);
       }
     };
 
