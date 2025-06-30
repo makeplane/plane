@@ -15,31 +15,17 @@ export type EventProps = {
 export const getProjectEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
-  identifier: payload.identifier,
-  project_visibility: payload.network == 2 ? "Public" : "Private",
-  changed_properties: payload.changed_properties,
-  lead_id: payload.project_lead,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
+  name: payload.name,
+  description: payload.description,
+  network: payload.network,
+  identifier: payload.identifier,
   state: payload.state,
   element: payload.element,
 });
 
-export const getModuleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
-  module_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  start_date: payload.start_date,
-  target_date: payload.target_date,
-  module_status: payload.status,
-  lead_id: payload.lead,
-  changed_properties: payload.changed_properties,
-  member_ids: payload.members,
-  state: payload.state,
-  element: payload.element,
-});
+
 
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
@@ -160,12 +146,24 @@ export const MODULE_TRACKER_EVENTS = {
   delete: "module_deleted",
   favorite: "module_favorited",
   unfavorite: "module_unfavorited",
+  archive: "module_archived",
+  restore: "module_restored",
   link: {
     create: "module_link_created",
     update: "module_link_updated",
     delete: "module_link_deleted",
   },
 };
+export const MODULE_TRACKER_ELEMENTS = {
+  RIGHT_HEADER_BUTTON: "module_right_header_button",
+  EMPTY_STATE_BUTTON: "module_empty_state_button",
+  COMMAND_PALETTE_ITEM: "module_command_palette_item",
+  RIGHT_SIDEBAR: "module_right_sidebar",
+  QUICK_ACTIONS: "module_quick_actions",
+  CONTEXT_MENU: "module_context_menu",
+  LIST_ITEM: "module_list_item",
+  CARD_ITEM: "module_card_item",
+} as const;
 
 export const WORK_ITEM_TRACKER_EVENTS = {
   create: "work_item_created",

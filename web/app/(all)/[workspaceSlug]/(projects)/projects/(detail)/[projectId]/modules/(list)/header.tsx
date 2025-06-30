@@ -3,14 +3,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { ModuleViewHeader } from "@/components/modules";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
@@ -22,7 +22,6 @@ export const ModulesListHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
   const { loader } = useProject();
@@ -55,9 +54,8 @@ export const ModulesListHeader: React.FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            data-ph-element="RIGHT_HEADER_BUTTON"
+            data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_BUTTON}
             onClick={() => {
-              setTrackElement("Modules page");
               toggleCreateModuleModal(true);
             }}
           >

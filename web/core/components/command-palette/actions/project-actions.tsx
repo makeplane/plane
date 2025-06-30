@@ -3,11 +3,12 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
+// helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
+// hooks
 import { useCommandPalette } from "@/hooks/store";
-// ui
 
 type Props = {
   closePalette: () => void;
@@ -43,6 +44,9 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            captureClick({
+              elementName: MODULE_TRACKER_ELEMENTS.COMMAND_PALETTE_ITEM,
+            });
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
