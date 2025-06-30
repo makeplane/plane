@@ -5,7 +5,7 @@ import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // icons
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
@@ -29,6 +29,7 @@ import {
   CycleDropdown,
   StateDropdown,
   DateRangeDropdown,
+  DateDropdown,
 } from "@/components/dropdowns";
 // constants
 // helpers
@@ -267,7 +268,15 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties || !issue.project_id) return null;
 
+  // date range is enabled only when both dates are available and both dates are enabled
+  const isDateRangeEnabled: boolean = Boolean(
+    issue.start_date && issue.target_date && displayProperties.start_date && displayProperties.due_date
+  );
+
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+
+  const minDate = getDate(issue.start_date);
+  const maxDate = getDate(issue.target_date);
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -312,7 +321,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey={["start_date", "due_date"]}
-        shouldRenderProperty={(properties) => !!(properties.start_date || properties.due_date)}
+        shouldRenderProperty={() => isDateRangeEnabled}
       >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateRangeDropdown
@@ -331,11 +340,58 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
             renderPlaceholder={false}
             customTooltipHeading="Date Range"
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* start date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="start_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={issue.start_date ?? null}
+            onChange={handleStartDate}
+            maxDate={maxDate}
+            placeholder={t("common.order_by.start_date")}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            optionsClassName="z-10"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* target/due date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="due_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={issue?.target_date ?? null}
+            onChange={handleTargetDate}
+            minDate={minDate}
+            placeholder={t("common.order_by.due_date")}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
+            optionsClassName="z-10"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>

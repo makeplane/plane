@@ -331,7 +331,8 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         }
       },
     }),
-    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue, t]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue]
   );
 
   useEffect(() => {
