@@ -96,7 +96,7 @@ export class CoreRootStore {
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
-    this.analytics = new AnalyticsStore();
+    this.analytics = new AnalyticsStore(this);
   }
 
   resetOnSignOut() {

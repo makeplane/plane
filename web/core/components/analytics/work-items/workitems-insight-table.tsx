@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Briefcase, UserRound } from "lucide-react";
 // plane package imports
+import { ANALYTICS_TRACKER_EVENTS, getAnalyticsExportAnalyticsEventPayload } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { WorkItemInsightColumns, AnalyticsTableDataMap, ExportConfig } from "@plane/types";
 // plane web components
@@ -13,6 +14,7 @@ import { getFileURL } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
+import { useEventTracker } from "@/hooks/store/use-event-tracker";
 import { useProject } from "@/hooks/store/use-project";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
@@ -34,6 +36,7 @@ const WorkItemsInsightTable = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
+  const { captureEvent } = useEventTracker();
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { data: workItemsData, isLoading } = useSWR(
     `insights-table-work-items-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
@@ -192,7 +195,18 @@ const WorkItemsInsightTable = observer(() => {
       columns={columns}
       columnsLabels={columnsLabels}
       headerText={isPeekView ? t("common.assignee") : t("common.projects")}
-      onExport={(rows) => workItemsData && exportCSV(rows, columns, workspaceSlug)}
+      onExport={(rows) => {
+        if (!workItemsData) return;
+        exportCSV(rows, columns, workspaceSlug);
+        captureEvent(
+          ANALYTICS_TRACKER_EVENTS.export_analytics,
+          getAnalyticsExportAnalyticsEventPayload({
+            workspace_id: workspaceSlug,
+            project_id: selectedProjects.join(","),
+            tab: "work-items",
+          })
+        );
+      }}
     />
   );
 });

@@ -4,7 +4,12 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  ANALYTICS_TRACKER_EVENTS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  getAnalyticsTabChangedEventPayload,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { type TabItem, Tabs } from "@plane/ui";
 // components
@@ -30,7 +35,7 @@ const AnalyticsPage = observer((props: Props) => {
 
   // hooks
   const router = useRouter();
-
+  const { captureEvent } = useEventTracker();
   // plane imports
   const { t } = useTranslation();
 
@@ -62,11 +67,19 @@ const AnalyticsPage = observer((props: Props) => {
         label: tab.label,
         content: <tab.content />,
         onClick: () => {
+          captureEvent(
+            ANALYTICS_TRACKER_EVENTS.tab_changed,
+            getAnalyticsTabChangedEventPayload({
+              workspace_id: currentWorkspace?.id,
+              project_id: workspaceProjectIds?.join(","),
+              tab: tab.key,
+            })
+          );
           router.push(`/${currentWorkspace?.slug}/analytics/${tab.key}`);
         },
         disabled: tab.isDisabled,
       })),
-    [ANALYTICS_TABS, router, currentWorkspace?.slug]
+    [ANALYTICS_TABS, captureEvent, currentWorkspace?.id, currentWorkspace?.slug, workspaceProjectIds, router]
   );
   const defaultTab = tabId || ANALYTICS_TABS[0].key;
 

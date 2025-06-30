@@ -1,5 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { ANALYTICS_DURATION_FILTER_OPTIONS, EIssuesStoreType } from "@plane/constants";
+import {
+  ANALYTICS_DURATION_FILTER_OPTIONS,
+  ANALYTICS_TRACKER_EVENTS,
+  getAnalyticsProjectChangedEventPayload,
+} from "@plane/constants";
 import { TAnalyticsTabsBase } from "@plane/types";
 import { CoreRootStore } from "./root.store";
 
@@ -35,7 +39,8 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
   selectedModule: string = "";
   isPeekView: boolean = false;
   isEpic: boolean = false;
-  constructor() {
+  rootStore: CoreRootStore;
+  constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
       // observables
       currentTab: observable.ref,
@@ -55,6 +60,8 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
       updateIsPeekView: action,
       updateIsEpic: action,
     });
+    // root store
+    this.rootStore = _rootStore;
   }
 
   get selectedDurationLabel() {
@@ -64,6 +71,14 @@ export abstract class BaseAnalyticsStore implements IBaseAnalyticsStore {
   updateSelectedProjects = (projects: string[]) => {
     try {
       runInAction(() => {
+        this.rootStore.eventTracker.captureEvent(
+          ANALYTICS_TRACKER_EVENTS.project_changed,
+          getAnalyticsProjectChangedEventPayload({
+            workspace_id: this.rootStore.workspaceRoot.currentWorkspace?.id,
+            project_id: projects[0],
+            project_ids: projects,
+          })
+        );
         this.selectedProjects = projects;
       });
     } catch (error) {

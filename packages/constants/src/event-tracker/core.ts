@@ -129,6 +129,24 @@ export const getIssueEventPayload = (props: IssueEventProps) => {
   return eventPayload;
 };
 
+export const getAnalyticsTabChangedEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.project_id,
+  tab: payload.tab,
+});
+
+export const getAnalyticsProjectChangedEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.project_id,
+  project_ids: payload.project_ids,
+});
+
+export const getAnalyticsExportAnalyticsEventPayload = (payload: any) => ({
+  workspace_id: payload.workspace_id,
+  project_id: payload.project_id,
+  tab: payload.tab,
+});
+
 export const getProjectStateEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
@@ -255,4 +273,10 @@ export const ONBOARDING_TRACKER_EVENTS = {
 
 export const SIDEBAR_TRACKER_EVENTS = {
   click: "sidenav_clicked",
+};
+
+export const ANALYTICS_TRACKER_EVENTS = {
+  tab_changed: "analytics_tab_changed",
+  project_changed: "analytics_project_changed",
+  export_analytics: "export_analytics",
 };
