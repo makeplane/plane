@@ -67,71 +67,16 @@
     }
   }
 
+  /* Selected status */
   &.ProseMirror-selectednode {
     table {
       background-color: rgba(var(--color-primary-100), 0.2);
     }
   }
-
-  /* Insert buttons */
-  .table-column-insert-button,
-  .table-row-insert-button {
-    position: absolute;
-    background-color: rgba(var(--color-background-90));
-    color: rgba(var(--color-text-300));
-    border: 1px solid rgba(var(--color-border-200));
-    border-radius: 4px;
-    display: grid;
-    place-items: center;
-    opacity: 0;
-    outline: none;
-    z-index: 1000;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background-color: rgba(var(--color-background-80));
-      color: rgba(var(--color-text-100));
-    }
-
-    &.dragging {
-      opacity: 1;
-      background-color: rgba(var(--color-primary-100), 0.2);
-      color: rgba(var(--color-text-100));
-    }
-
-    svg {
-      width: 12px;
-      height: 12px;
-    }
-  }
-
-  .table-column-insert-button {
-    top: 0;
-    right: -20px;
-    width: 20px;
-    height: 100%;
-    transform: translateX(50%);
-  }
-
-  .table-row-insert-button {
-    bottom: -20px;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    transform: translateY(50%);
-  }
-
-  /* Show buttons on table hover */
-  &:hover {
-    .table-column-insert-button,
-    .table-row-insert-button {
-      opacity: 1;
-    }
-  }
-  /* End insert buttons */
+  /* End selected status */
 }
 
-/* Rest of your existing CSS... */
+/* Column resizer */
 .table-wrapper table .column-resize-handle {
   position: absolute;
   right: -1px;
@@ -142,6 +87,7 @@
   background-color: rgba(var(--color-primary-100));
   pointer-events: none;
 }
+/* End column resizer */
 
 .table-wrapper .table-controls {
   position: absolute;
@@ -205,3 +151,65 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* Insert buttons */
+.table-wrapper {
+  .table-column-insert-button,
+  .table-row-insert-button {
+    position: absolute;
+    background-color: rgba(var(--color-background-90));
+    color: rgba(var(--color-text-300));
+    border: 1px solid rgba(var(--color-border-200));
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    outline: none;
+    z-index: 1000;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(var(--color-background-80));
+      color: rgba(var(--color-text-100));
+    }
+
+    &.dragging {
+      opacity: 1;
+      pointer-events: auto;
+      background-color: rgba(var(--color-primary-100), 0.2);
+      color: rgba(var(--color-text-100));
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .table-column-insert-button {
+    top: 0;
+    right: -20px;
+    width: 20px;
+    height: 100%;
+    transform: translateX(50%);
+  }
+
+  .table-row-insert-button {
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    transform: translateY(50%);
+  }
+
+  /* Show buttons on table hover */
+  &:hover {
+    .table-column-insert-button,
+    .table-row-insert-button {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+/* End insert buttons */
