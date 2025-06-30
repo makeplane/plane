@@ -1,6 +1,16 @@
 import { FC } from "react";
+import {
+  renderAdditionalAction,
+  renderAdditionalValue,
+  shouldShowConnector,
+} from "ee/components/workspace-notifications";
 import { TNotification } from "@plane/types";
-import { convertMinutesToHoursMinutesString, renderFormattedDate, sanitizeCommentForNotification, replaceUnderscoreIfSnakeCase, stripAndTruncateHTML } from "@plane/utils";
+import {
+  convertMinutesToHoursMinutesString,
+  renderFormattedDate,
+  sanitizeCommentForNotification,
+  stripAndTruncateHTML,
+} from "@plane/utils";
 // components
 // helpers
 import { LiteTextReadOnlyEditor } from "@/components/editor";
@@ -52,8 +62,7 @@ export const NotificationContent: FC<{
     }
     if (notificationField === "None") return null;
 
-    const baseAction = !["comment", "archived_at"].includes(notificationField) ? verb : "";
-    return `${baseAction} ${replaceUnderscoreIfSnakeCase(notificationField)}`;
+    return renderAdditionalAction(notificationField, verb);
   };
 
   const renderValue = () => {
@@ -70,19 +79,8 @@ export const NotificationContent: FC<{
       return newValue !== ""
         ? convertMinutesToHoursMinutesString(Number(newValue))
         : convertMinutesToHoursMinutesString(Number(oldValue));
-    return newValue;
+    return renderAdditionalValue(notificationField, newValue, oldValue);
   };
-
-  const shouldShowConnector = ![
-    "comment",
-    "archived_at",
-    "None",
-    "assignees",
-    "labels",
-    "start_date",
-    "target_date",
-    "parent",
-  ].includes(notificationField || "");
 
   return (
     <>
@@ -90,7 +88,7 @@ export const NotificationContent: FC<{
       <span className="text-custom-text-300">{renderAction()} </span>
       {verb !== "deleted" && (
         <>
-          {shouldShowConnector && <span className="text-custom-text-300">to </span>}
+          {shouldShowConnector(notificationField) && <span className="text-custom-text-300">to </span>}
           <span className="text-custom-text-100 font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">
