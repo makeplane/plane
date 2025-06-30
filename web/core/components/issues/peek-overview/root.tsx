@@ -26,7 +26,6 @@ import { useEventTracker, useIssueDetail, useIssues, useUserPermissions } from "
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 
-
 export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const {
     embedIssue = false,
@@ -335,6 +334,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
         }
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [fetchIssue, is_draft, issues, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId, restoreIssue]
   );
 
