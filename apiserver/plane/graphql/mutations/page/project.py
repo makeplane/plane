@@ -1,30 +1,21 @@
 # Python imports
 import base64
-
-# Strawberry imports
-import strawberry
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
-
-# Third-party imports
-from asgiref.sync import sync_to_async
 from typing import Optional
 
+# Third-party imports
+import strawberry
+from asgiref.sync import sync_to_async
+
+# Strawberry imports
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
 # Module imports
-from plane.graphql.utils.roles import Roles
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.db.models import Page, Project, ProjectPage, Workspace
 from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
 from plane.graphql.types.page import PageType
-from plane.db.models import (
-    WorkspaceMember,
-    ProjectMember,
-    Page,
-    ProjectPage,
-    UserFavorite,
-    Workspace,
-    Project,
-)
+from plane.graphql.utils.roles import Roles
 
 
 @strawberry.input
@@ -36,56 +27,6 @@ class PageInput:
     description_binary: Optional[str] = strawberry.field(default=None)
 
 
-@sync_to_async
-def get_workspace_member(slug: str, user_id: str):
-    try:
-        return WorkspaceMember.objects.get(
-            workspace__slug=slug, member_id=user_id, is_active=True
-        )
-    except WorkspaceMember.DoesNotExist:
-        return None
-
-
-@sync_to_async
-def get_project_member(slug: str, project: str, user_id: str):
-    try:
-        return ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project, member_id=user_id, is_active=True
-        )
-    except ProjectMember.DoesNotExist:
-        return None
-
-
-# workspace level mutations
-@strawberry.type
-class WorkspacePageMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
-    )
-    async def updateWorkspacePage(
-        self,
-        info: Info,
-        slug: str,
-        id: strawberry.ID,
-        name: Optional[str] = None,
-        description_html: Optional[str] = None,
-        logo_props: Optional[JSON] = None,
-        access: Optional[int] = None,
-    ) -> PageType:
-        page = await sync_to_async(Page.objects.get)(id=id)
-        if name is not None:
-            page.name = name
-        if description_html is not None:
-            page.description_html = description_html
-        if logo_props is not None:
-            page.logo_props = logo_props
-        if access is not None:
-            page.access = access
-        await sync_to_async(page.save)()
-        return page
-
-
-# project level mutations
 @strawberry.type
 class PageMutation:
     @strawberry.mutation(
@@ -211,37 +152,3 @@ class PageMutation:
             page.access = access
         await sync_to_async(page.save)()
         return page
-
-
-@strawberry.type
-class PageFavoriteMutation:
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def favoritePage(
-        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
-    ) -> bool:
-        _ = await sync_to_async(UserFavorite.objects.create)(
-            entity_identifier=page,
-            entity_type="page",
-            user=info.context.user,
-            project_id=project,
-        )
-        return True
-
-    @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
-    )
-    async def unFavoritePage(
-        self, info: Info, slug: str, project: strawberry.ID, page: strawberry.ID
-    ) -> bool:
-        page_favorite = await sync_to_async(UserFavorite.objects.get)(
-            entity_identifier=page,
-            entity_type="page",
-            user=info.context.user,
-            workspace__slug=slug,
-            project_id=project,
-        )
-        await sync_to_async(page_favorite.delete)()
-
-        return True

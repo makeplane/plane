@@ -74,13 +74,13 @@ class YourWorkQuery:
             query=page_project_member_base_query,
         )
         pages = await sync_to_async(list)(
-            Page.objects.filter(
-                workspace__slug=slug,
-                archived_at__isnull=True,
-                owned_by_id=user_id,
-            )
-            .filter(page_teamspace_filter.query)
+            Page.objects.filter(workspace__slug=slug)
+            .filter(owned_by_id=user_id)
+            .filter(parent__isnull=True)
             .filter(moved_to_page__isnull=True)
+            .filter(is_global=False)
+            .filter(archived_at__isnull=True)
+            .filter(page_teamspace_filter.query)
             .distinct()
             .values_list("id", flat=True)
         )

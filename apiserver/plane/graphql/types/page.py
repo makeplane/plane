@@ -1,19 +1,20 @@
 # Python imports
-from typing import Optional
 from datetime import date, datetime
+from typing import Optional
 
 # Third-party library imports
-from asgiref.sync import sync_to_async
-
-# Strawberry imports
 import strawberry
 import strawberry_django
+
+# Strawberry imports
+from asgiref.sync import sync_to_async
 from strawberry.scalars import JSON
 
 # Module imports
-from plane.graphql.utils.timezone import user_timezone_converter
 from plane.db.models import Page
+from plane.ee.models import PageUser
 from plane.graphql.types.project import ProjectLiteType
+from plane.graphql.utils.timezone import user_timezone_converter
 
 
 @strawberry_django.type(Page)
@@ -41,6 +42,8 @@ class PageType:
     deleted_at: Optional[datetime]
     projects: list[strawberry.ID]
     is_description_empty: bool
+    is_shared: bool
+    is_shared_access: int
     # teams: list[strawberry.ID]
     # labels: list[strawberry.ID]
 
@@ -74,6 +77,41 @@ class PageType:
     def updated_at(self, info) -> Optional[datetime]:
         converted_date = user_timezone_converter(info.context.user, self.updated_at)
         return converted_date
+
+    @strawberry.field
+    async def is_shared(self) -> bool:
+        if self.access == 0:
+            return False
+
+        workspace_slug = self.workspace.slug
+        page_id = self.id
+        shared_page = await sync_to_async(
+            lambda: PageUser.objects.filter(
+                workspace__slug=workspace_slug,
+                page_id=page_id,
+            ).first()
+        )()
+        if shared_page:
+            return True
+        return False
+
+    @strawberry.field
+    async def is_shared_access(self) -> int:
+        if self.access == 0:
+            return 0
+
+        workspace_slug = self.workspace.slug
+        page_id = self.id
+        shared_page = await sync_to_async(
+            lambda: PageUser.objects.filter(
+                workspace__slug=workspace_slug,
+                page_id=page_id,
+            ).first()
+        )()
+        if shared_page:
+            shared_page_access = shared_page.access
+            return shared_page_access
+        return 0
 
     # @strawberry.field
     # async def labels(self) -> list[strawberry.ID]:

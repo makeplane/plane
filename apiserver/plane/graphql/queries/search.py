@@ -259,7 +259,9 @@ async def filter_pages(
     for field in fields:
         q |= Q(**{f"{field}__icontains": query})
 
-    page_query = Page.objects.filter(workspace__slug=slug, archived_at__isnull=True)
+    page_query = Page.objects.filter(
+        workspace__slug=slug, archived_at__isnull=True, moved_to_page__isnull=True
+    )
     if project:
         user_id = str(user.id)
         project_teamspace_filter = await project_member_filter_via_teamspaces_async(

@@ -62,9 +62,9 @@ class TeamspaceMemberQuery:
             )
 
             return teamspace_members
-        except Exception:
-            message = "Something went wrong"
-            error_extensions = {
+        except Exception as e:
+            message = e.message or "Something went wrong"
+            error_extensions = e.extensions or {
                 "code": "SOMETHING_WENT_WRONG",
                 "statusCode": 400,
             }
