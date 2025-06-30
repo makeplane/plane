@@ -95,8 +95,8 @@ export const trackSuccess = (eventName: string, payload?: Record<string, any>, c
  */
 export const trackError = (
   eventName: string,
-  error?: Error | string,
   payload?: Record<string, any>,
+  error?: Error | string,
   context?: TEventContext
 ) => {
   trackEvent(
