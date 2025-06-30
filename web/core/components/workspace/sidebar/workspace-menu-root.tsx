@@ -17,6 +17,7 @@ import { AppSidebarItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web helpers
+import { useAppRail } from "@/hooks/use-app-rail";
 import { WorkspaceAppSwitcher } from "@/plane-web/components/workspace";
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -35,6 +36,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
   const { signOut } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
+  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   // derived values
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
   // translation
@@ -108,7 +110,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                   "group/menu-button flex justify-between flex-grow items-center gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none"
                 )}
               >
-                <WorkspaceAppSwitcher />
+                {isAppRailEnabled && !shouldRenderAppRail && <WorkspaceAppSwitcher />}
                 <Menu.Button
                   className={cn("flex items-center  gap-1 p-1 truncate", {
                     "justify-center text-center": renderLogoOnly,

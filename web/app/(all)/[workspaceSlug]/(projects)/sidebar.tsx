@@ -8,6 +8,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { SidebarDropdown, SidebarProjectsList, SidebarQuickActions } from "@/components/workspace";
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
+import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
 import { SidebarMenuItems } from "@/components/workspace/sidebar/sidebar-menu-items";
 // hooks
 import { useAppTheme, useUserPermissions } from "@/hooks/store";
@@ -82,8 +83,9 @@ export const AppSidebar: FC = observer(() => {
         <SidebarProjectsList />
       </div>
       {/* Help Section */}
-      <div className="flex items-center justify-center p-2 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
+      <div className="flex items-center justify-between p-2 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
         <WorkspaceEditionBadge />
+        {!shouldRenderAppRail && <HelpMenu />}
       </div>
     </>
   );
