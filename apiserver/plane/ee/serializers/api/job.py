@@ -1,7 +1,8 @@
 # Module imports
 from plane.ee.serializers import BaseSerializer
 from plane.ee.models import ImportJob, ImportReport
-from plane.db.models import User, Project, Workspace, IssueRelation
+from plane.db.models import User, Project, Workspace
+from plane.db.models.issue import IssueRelationChoices
 
 # Seriaizers
 from rest_framework import serializers
@@ -57,7 +58,7 @@ class ImportJobAPISerializer(BaseSerializer):
                 "relation_map must contain an 'issue' key"
             )
 
-        valid_relations = set(x[0] for x in IssueRelation.RELATION_CHOICES) | {
+        valid_relations = set(x[0] for x in IssueRelationChoices.choices) | {
             "parent_id"
         }
 
