@@ -5,3 +5,4 @@ export * from "./delete-workspace-section";
 export * from "./sidebar";
 export * from "./members";
 export * from "./content-wrapper";
+export * from "./app-switcher";
