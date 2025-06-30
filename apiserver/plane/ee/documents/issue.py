@@ -2,7 +2,14 @@ from django.conf import settings as django_settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
 from django_opensearch_dsl.registries import registry
-from plane.db.models import Issue, ProjectMember, Project, IssueComment
+from plane.db.models import (
+    Issue,
+    ProjectMember,
+    Project,
+    IssueComment,
+    IssueRelation,
+)
+from plane.db.models.issue import IssueRelationChoices
 
 from .base import BaseDocument, KnnVectorField, edge_ngram_analyzer
 
@@ -26,6 +33,8 @@ class IssueDocument(BaseDocument):
     pretty_sequence = fields.TextField()
     is_deleted = fields.BooleanField()
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+    duplicate_of = fields.ListField(fields.KeywordField())
+    not_duplicates_with = fields.ListField(fields.KeywordField())
 
     # KNN Vector fields for semantic search
     description_semantic = KnnVectorField(
@@ -91,6 +100,22 @@ class IssueDocument(BaseDocument):
                 queryset=ProjectMember.objects.filter(is_active=True),
                 to_attr="active_project_members",
             ),
+            Prefetch(
+                "issue_relation",
+                queryset=IssueRelation.objects.filter(
+                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    deleted_at__isnull=True,
+                ).only("related_issue_id"),
+                to_attr="duplicate_relations",
+            ),
+            Prefetch(
+                "issue_related",
+                queryset=IssueRelation.objects.filter(
+                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    deleted_at__isnull=True,
+                ).only("issue_id"),
+                to_attr="duplicate_relations_reverse",
+            ),
         )
 
     def get_instances_from_related(self, related_instance):
@@ -152,6 +177,42 @@ class IssueDocument(BaseDocument):
         Data preparation method for is_deleted field
         """
         return bool(instance.deleted_at)
+
+    def prepare_duplicate_of(self, instance):
+        """
+        Data preparation method for duplicate_of field
+        """
+        duplicate_of_ids = []
+
+        # Use prefetched duplicate relations if available
+        if hasattr(instance, "duplicate_relations"):
+            duplicate_of_ids.extend(
+                [relation.related_issue_id for relation in instance.duplicate_relations]
+            )
+        else:
+            # Fallback to database query if prefetch not available
+            duplicate_of_ids.extend(
+                instance.issue_relation.filter(
+                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    deleted_at__isnull=True,
+                ).values_list("related_issue_id", flat=True)
+            )
+
+        # Use prefetched reverse duplicate relations if available
+        if hasattr(instance, "duplicate_relations_reverse"):
+            duplicate_of_ids.extend(
+                [relation.issue_id for relation in instance.duplicate_relations_reverse]
+            )
+        else:
+            # Fallback to database query if prefetch not available
+            duplicate_of_ids.extend(
+                instance.issue_related.filter(
+                    relation_type=IssueRelationChoices.DUPLICATE.value,
+                    deleted_at__isnull=True,
+                ).values_list("issue_id", flat=True)
+            )
+
+        return list(set(duplicate_of_ids))  # Remove duplicates using set
 
 
 @registry.register_document

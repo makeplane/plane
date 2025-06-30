@@ -19,6 +19,12 @@ class PageDocument(BaseDocument):
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
     name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+    access = fields.IntegerField(attr="access")
+    owned_by_id = fields.KeywordField(attr="owned_by_id")
+    archived_at = fields.DateField(attr="archived_at")
+    is_locked = fields.BooleanField(attr="is_locked")
+    is_global = fields.BooleanField(attr="is_global")
+    parent_id = fields.KeywordField(attr="parent_id")
 
     # KNN Vector fields for semantic search
     description_semantic = KnnVectorField(
