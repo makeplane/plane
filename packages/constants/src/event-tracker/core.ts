@@ -35,20 +35,6 @@ export const getProjectEventPayload = (payload: any) => ({
   element: payload.element,
 });
 
-export const getCycleEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.project,
-  cycle_id: payload.id,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  start_date: payload.start_date,
-  target_date: payload.target_date,
-  cycle_status: payload.status,
-  changed_properties: payload.changed_properties,
-  state: payload.state,
-  element: payload.element,
-});
-
 export const getModuleEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -154,6 +140,7 @@ export const TRACKING_ELEMENTS = {
   RIGHT_SIDEBAR: "right_sidebar",
   QUICK_ACTIONS: "quick_actions",
   CONTEXT_MENU: "context_menu",
+  LIST_ITEM: "list_item",
 } as const;
 export type TTrackingElement = (typeof TRACKING_ELEMENTS)[keyof typeof TRACKING_ELEMENTS];
 
@@ -175,6 +162,8 @@ export const CYCLE_TRACKER_EVENTS = {
   delete: "cycle_deleted",
   favorite: "cycle_favorited",
   unfavorite: "cycle_unfavorited",
+  archive: "cycle_archived",
+  restore: "cycle_restored",
 };
 
 export const MODULE_TRACKER_EVENTS = {
