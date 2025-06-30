@@ -1,25 +1,30 @@
 # Python imports
 import json
 
+# Third-party imports
+import strawberry
+from asgiref.sync import sync_to_async
+
 # Django imports
 from django.utils import timezone
 
 # Strawberry imports
-import strawberry
-from strawberry.types import Info
 from strawberry.permission import PermissionExtension
-
-# Third-party imports
-from asgiref.sync import sync_to_async
+from strawberry.types import Info
 
 # Module imports
-from plane.graphql.utils.roles import Roles
-from plane.graphql.permissions.project import ProjectBasePermission, ProjectPermission
-from plane.db.models import Workspace, IssueRelation
+from plane.db.models import IssueRelation, Workspace
 from plane.graphql.bgtasks.issue_activity_task import issue_activity
+from plane.graphql.helpers import (
+    get_work_item_relation_type,
+    is_timeline_dependency_feature_flagged_async,
+)
+from plane.graphql.permissions.project import ProjectPermission
 from plane.graphql.utils.issue_activity import (
     convert_issue_relation_properties_to_activity_dict,
 )
+from plane.graphql.utils.roles import Roles
+from plane.graphql.types.issues.relation import WorkItemRelationTypes
 
 
 @strawberry.type
@@ -47,15 +52,40 @@ class IssueRelationMutation:
         if not workspace_details:
             return False
 
+        if relation_type in [
+            WorkItemRelationTypes.START_AFTER.value,
+            WorkItemRelationTypes.START_BEFORE.value,
+            WorkItemRelationTypes.FINISH_AFTER.value,
+            WorkItemRelationTypes.FINISH_BEFORE.value,
+        ]:
+            await is_timeline_dependency_feature_flagged_async(
+                user_id=str(info.context.user.id),
+                workspace_slug=slug,
+            )
+
         issue_relations = [
             IssueRelation(
-                issue_id=(related_issue_id if relation_type == "blocking" else issue),
+                issue_id=(
+                    related_issue_id
+                    if relation_type
+                    in [
+                        WorkItemRelationTypes.BLOCKING.value,
+                        WorkItemRelationTypes.START_AFTER.value,
+                        WorkItemRelationTypes.FINISH_AFTER.value,
+                    ]
+                    else issue
+                ),
                 related_issue_id=(
-                    issue if relation_type == "blocking" else related_issue_id
+                    issue
+                    if relation_type
+                    in [
+                        WorkItemRelationTypes.BLOCKING.value,
+                        WorkItemRelationTypes.START_AFTER.value,
+                        WorkItemRelationTypes.FINISH_AFTER.value,
+                    ]
+                    else related_issue_id
                 ),
-                relation_type=(
-                    "blocked_by" if relation_type == "blocking" else relation_type
-                ),
+                relation_type=get_work_item_relation_type(relation_type),
                 project_id=project,
                 workspace_id=workspace_details.id,
                 created_by=info.context.user,
@@ -89,7 +119,11 @@ class IssueRelationMutation:
 
     # removing issue relation
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[ProjectBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[ProjectPermission([Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def removeIssueRelation(
         self,
@@ -100,13 +134,40 @@ class IssueRelationMutation:
         relation_type: str,
         related_issue: strawberry.ID,
     ) -> bool:
+        if relation_type in [
+            WorkItemRelationTypes.START_AFTER.value,
+            WorkItemRelationTypes.START_BEFORE.value,
+            WorkItemRelationTypes.FINISH_AFTER.value,
+            WorkItemRelationTypes.FINISH_BEFORE.value,
+        ]:
+            await is_timeline_dependency_feature_flagged_async(
+                user_id=str(info.context.user.id),
+                workspace_slug=slug,
+            )
+
         issue_relation = await sync_to_async(
             lambda: IssueRelation.objects.get(
                 workspace__slug=slug,
                 project_id=project,
-                issue_id=(related_issue if relation_type == "blocking" else issue),
+                issue_id=(
+                    related_issue
+                    if relation_type
+                    in [
+                        WorkItemRelationTypes.BLOCKING.value,
+                        WorkItemRelationTypes.START_AFTER.value,
+                        WorkItemRelationTypes.FINISH_AFTER.value,
+                    ]
+                    else issue
+                ),
                 related_issue_id=(
-                    issue if relation_type == "blocking" else related_issue
+                    issue
+                    if relation_type
+                    in [
+                        WorkItemRelationTypes.BLOCKING.value,
+                        WorkItemRelationTypes.START_AFTER.value,
+                        WorkItemRelationTypes.FINISH_AFTER.value,
+                    ]
+                    else related_issue
                 ),
             )
         )()
@@ -123,7 +184,7 @@ class IssueRelationMutation:
 
         # Track the issue relation activity
         issue_activity.delay(
-            type="issue_relation.activity.created",
+            type="issue_relation.activity.deleted",
             requested_data=json.dumps(
                 {"related_issue": related_issue, "relation_type": relation_type}
             ),
