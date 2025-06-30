@@ -35,6 +35,7 @@ export type TEventName =
 
 export type TElementContext = Record<string, any>;
 export type TEventContext = Record<string, any>;
+export type TInteractionType = "clicked" | "viewed" | "hovered";
 
 /**
  * Track UI element interactions (clicks, hovers, views, etc.)
@@ -43,10 +44,14 @@ export type TEventContext = Record<string, any>;
  * @param element - Generic UI element type
  * @param context - Context about where and why the interaction happened
  */
-export const trackElement = (element: TTrackingElement, context?: TElementContext) => {
+export const trackElement = (
+  element: TTrackingElement,
+  interaction_type: TInteractionType,
+  context?: TElementContext
+) => {
   if (!posthog) return;
 
-  const elementEvent = "element_interacted";
+  const elementEvent = `${element}_${interaction_type}` ?? "element_interacted";
 
   const payload = {
     element_type: element,
@@ -63,7 +68,7 @@ export const trackElement = (element: TTrackingElement, context?: TElementContex
  * @param context - Additional context
  */
 export const trackClick = (element: TTrackingElement, context?: TElementContext) => {
-  trackElement(element, { ...context, interaction_type: "click" });
+  trackElement(element, "clicked", { ...context });
 };
 
 /**
@@ -72,7 +77,7 @@ export const trackClick = (element: TTrackingElement, context?: TElementContext)
  * @param context - Additional context
  */
 export const trackView = (element: TTrackingElement, context?: TElementContext) => {
-  trackElement(element, { ...context, interaction_type: "view" });
+  trackElement(element, "viewed", { ...context });
 };
 
 /**
@@ -81,7 +86,7 @@ export const trackView = (element: TTrackingElement, context?: TElementContext) 
  * @param context - Additional context
  */
 export const trackHover = (element: TTrackingElement, context?: TElementContext) => {
-  trackElement(element, { ...context, interaction_type: "hover" });
+  trackElement(element, "hovered", { ...context });
 };
 
 /**
@@ -163,7 +168,7 @@ export const trackElementAndEvent = (
   eventContext?: TEventContext
 ) => {
   // Track the element interaction first
-  trackElement(element, elementContext);
+  trackElement(element, "clicked", elementContext);
 
   // Then track the business event
   trackEvent(eventName, eventState, eventPayload, eventContext);
