@@ -11,7 +11,7 @@ import { GROUP_WORKSPACE_TRACKER_EVENT, TTrackingElement } from "@plane/constant
 // helpers
 import { getUserRole } from "@plane/utils";
 // hooks
-import { trackClick } from "@/helpers/event-tracker.helper";
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
@@ -73,7 +73,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
       const target = event.target as HTMLElement;
       const element = target.getAttribute("data-ph-element");
       if (element) {
-        trackClick({ elementName: element as TTrackingElement });
+        captureClick({ elementName: element as TTrackingElement });
       }
     };
 
