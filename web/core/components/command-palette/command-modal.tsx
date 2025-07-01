@@ -370,7 +370,6 @@ export const CommandModal: React.FC = observer(() => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  setTrackElement("Command palette");
                                   captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON });
                                   toggleCreateProjectModal(true);
                                 }}

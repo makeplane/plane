@@ -58,8 +58,8 @@ export const ProjectsBaseHeader = observer(() => {
             size="sm"
             onClick={() => {
               toggleCreateProjectModal(true);
-              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON });
             }}
+            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
             className="items-center gap-1"
           >
             <span className="hidden sm:inline-block">{t("workspace_projects.create.label")}</span>
