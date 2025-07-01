@@ -3,7 +3,7 @@ from logging import getLogger
 
 # Django imports
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 # Third Party imports
 from oauth2_provider.generators import generate_client_secret
@@ -35,61 +35,64 @@ def generate_application(
     if application_secret_model.objects.filter(key=f"x-{app_key}-id").exists():
         logger.info(f"Application for {app_key} already exists, skipping...")
         return None
+    
+    # check if app_key is in APPLICATIONS
+    if app_key not in APPLICATIONS:
+        raise KeyError(f"Application {app_key} not found")
 
     app_data = APPLICATIONS[app_key]
     app_slug = app_data["slug"]
     user = user_model.objects.get(id=user_id)
 
-    client_secret = generate_client_secret()
+    with transaction.atomic():
+        client_secret = generate_client_secret()
 
-    redirect_uris = f"{settings.SILO_URL}/api/{app_key}/plane-oauth/callback"
+        application_data = {
+            "name": app_data["name"],
+            "slug": app_slug,
+            "description_html": app_data["description_html"],
+            "short_description": app_data["short_description"],
+            "company_name": user.display_name,
+            "redirect_uris": app_data["redirect_uris"],
+            "skip_authorization": True,
+            "client_type": "confidential",
+            "authorization_grant_type": "authorization-code",
+            "user_id": user_id,
+            "client_secret": client_secret,
+        }
 
-    application_data = {
-        "name": app_data["name"],
-        "slug": app_slug,
-        "description_html": app_data["description_html"],
-        "short_description": app_data["short_description"],
-        "company_name": user.display_name,
-        "redirect_uris": redirect_uris,
-        "skip_authorization": True,
-        "client_type": "confidential",
-        "authorization_grant_type": "authorization-code",
-        "user_id": user_id,
-        "client_secret": client_secret,
-    }
+        # check if application already exists
+        application = application_model.objects.filter(slug=app_slug).first()
+        if application:
+            # Application already exists, update client_secret
+            application.client_secret = client_secret
+            application.redirect_uris = app_data["redirect_uris"]
+            application.save()
+        else:
+            application = application_model.objects.create(**application_data)
 
-    # check if application already exists
-    application = application_model.objects.filter(slug=app_slug).first()
-    if application:
-        # Application already exists, update client_secret
-        application.client_secret = client_secret
-        application.redirect_uris = redirect_uris
-        application.save()
-    else:
-        application = application_model.objects.create(**application_data)
+        encrypted_data = encrypt(client_secret)
+        client_secret = f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"
 
-    encrypted_data = encrypt(client_secret)
-    client_secret = (
-        f"{encrypted_data['iv']}:{encrypted_data['ciphertext']}:{encrypted_data['tag']}"
-    )
+        application_secret_model.objects.bulk_create(
+            [
+                application_secret_model(
+                    key=f"x-{app_key}-id", value=application.id, is_secured=False
+                ),
+                application_secret_model(
+                    key=f"x-{app_key}-client_id",
+                    value=application.client_id,
+                    is_secured=False,
+                ),
+                application_secret_model(
+                    key=f"x-{app_key}-client_secret",
+                    value=client_secret,
+                    is_secured=True,
+                ),
+            ]
+        )
 
-    application_secret_model.objects.bulk_create(
-        [
-            application_secret_model(
-                key=f"x-{app_key}-id", value=application.id, is_secured=False
-            ),
-            application_secret_model(
-                key=f"x-{app_key}-client_id",
-                value=application.client_id,
-                is_secured=False,
-            ),
-            application_secret_model(
-                key=f"x-{app_key}-client_secret", value=client_secret, is_secured=True
-            ),
-        ]
-    )
-
-    return application.id
+        return application.id
 
 
 def create_applications(
