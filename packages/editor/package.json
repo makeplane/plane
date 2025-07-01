@@ -36,6 +36,7 @@
   "dependencies": {
     "@floating-ui/react": "^0.26.4",
     "@hocuspocus/provider": "^2.15.0",
+    "@plane/hooks": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",

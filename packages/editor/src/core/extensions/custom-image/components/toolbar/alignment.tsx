@@ -1,9 +1,8 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 // plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 import { Tooltip } from "@plane/ui";
-// hooks
-import { useOutsideClickDetector } from "@/hooks/use-outside-click-detector";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
 import { IMAGE_ALIGNMENT_OPTIONS } from "../../utils";
