@@ -3,8 +3,9 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
+// hooks
 import { useCommandPalette } from "@/hooks/store";
 // ui
 
@@ -38,6 +39,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
       </Command.Group>
       <Command.Group heading="Module">
         <Command.Item
+          data-ph-element={MODULE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM}
           onSelect={() => {
             closePalette();
             toggleCreateModuleModal(true);

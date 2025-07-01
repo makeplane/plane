@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserProjectRoles, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
@@ -10,7 +10,7 @@ import { DetailedEmptyState, ComicBoxButton } from "@/components/empty-state";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayout, CycleModuleListLayout, GanttLayoutLoader } from "@/components/ui";
 // hooks
-import { useCommandPalette, useEventTracker, useModule, useModuleFilter, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useModule, useModuleFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
@@ -24,7 +24,6 @@ export const ModulesListView: React.FC = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
   const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
   const { allowPermissions } = useUserPermissions();
@@ -59,8 +58,8 @@ export const ModulesListView: React.FC = observer(() => {
             label={t("project_module.empty_state.general.primary_button.text")}
             title={t("project_module.empty_state.general.primary_button.comic.title")}
             description={t("project_module.empty_state.general.primary_button.comic.description")}
+            data-ph-element={MODULE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON}
             onClick={() => {
-              setTrackElement("Module empty state");
               toggleCreateModuleModal(true);
             }}
             disabled={!canPerformEmptyStateActions}
