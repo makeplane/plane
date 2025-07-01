@@ -17,8 +17,6 @@ import { AppSidebarItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 // plane web helpers
-import { useAppRail } from "@/hooks/use-app-rail";
-import { WorkspaceAppSwitcher } from "@/plane-web/components/workspace";
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
 import { WorkspaceLogo } from "../logo";
@@ -36,7 +34,6 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
   const { signOut } = useUser();
   const { updateUserProfile } = useUserProfile();
   const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
-  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   // derived values
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
   // translation
@@ -105,33 +102,29 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                 />
               </Menu.Button>
             ) : (
-              <div
+              <Menu.Button
                 className={cn(
-                  "group/menu-button flex justify-between flex-grow items-center gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none"
-                )}
-              >
-                {isAppRailEnabled && !shouldRenderAppRail && <WorkspaceAppSwitcher />}
-                <Menu.Button
-                  className={cn("flex items-center  gap-1 p-1 truncate", {
+                  "group/menu-button flex items-center  gap-1 p-1 truncate rounded text-sm font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:outline-none ",
+                  {
                     "justify-center text-center": renderLogoOnly,
                     "justify-between flex-grow": !renderLogoOnly,
-                  })}
-                  aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
-                >
-                  <div className="flex-grow flex items-center gap-2 truncate">
-                    <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
-                    <h4 className="truncate text-base font-medium text-custom-text-100">
-                      {activeWorkspace?.name ?? t("loading")}
-                    </h4>
-                  </div>
-                  <ChevronDown
-                    className={cn(
-                      "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
-                      { "rotate-180": open }
-                    )}
-                  />
-                </Menu.Button>
-              </div>
+                  }
+                )}
+                aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
+              >
+                <div className="flex-grow flex items-center gap-2 truncate">
+                  <WorkspaceLogo logo={activeWorkspace?.logo_url} name={activeWorkspace?.name} />
+                  <h4 className="truncate text-base font-medium text-custom-text-100">
+                    {activeWorkspace?.name ?? t("loading")}
+                  </h4>
+                </div>
+                <ChevronDown
+                  className={cn(
+                    "flex-shrink-0 mx-1 opacity-0 size-4 group-hover/menu-button:opacity-100 text-custom-sidebar-text-400 duration-300",
+                    { "rotate-180": open }
+                  )}
+                />
+              </Menu.Button>
             )}
 
             <Transition
