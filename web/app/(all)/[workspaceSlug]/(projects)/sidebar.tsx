@@ -1,11 +1,11 @@
 import { FC, useEffect, useRef } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { PanelLeft } from "lucide-react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
+import { AppSidebarToggleButton } from "@/components/sidebar";
 import { SidebarDropdown, SidebarProjectsList, SidebarQuickActions } from "@/components/workspace";
 import { SidebarFavoritesMenu } from "@/components/workspace/sidebar/favorites/favorites-menu";
 import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
@@ -22,8 +22,8 @@ import { SidebarTeamsList } from "@/plane-web/components/workspace/sidebar/teams
 export const AppSidebar: FC = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { toggleSidebar, sidebarCollapsed, sidebarPeek, toggleSidebarPeek } = useAppTheme();
-  const { shouldRenderAppRail } = useAppRail();
+  const { toggleSidebar, sidebarCollapsed } = useAppTheme();
+  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   const { groupedFavorites } = useFavorite();
   const windowSize = useSize();
   // refs
@@ -56,20 +56,14 @@ export const AppSidebar: FC = observer(() => {
         {/* Workspace switcher and settings */}
         {!shouldRenderAppRail && <SidebarDropdown />}
 
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Projects</span>
-          <div className="flex items-center gap-2">
-            <button
-              className="flex items-center justify-center size-6 rounded text-custom-text-200 hover:text-custom-primary-100 hover:bg-custom-background-90"
-              onClick={() => {
-                if (sidebarPeek) toggleSidebarPeek(false);
-                toggleSidebar();
-              }}
-            >
-              <PanelLeft className="size-4" />
-            </button>
+        {isAppRailEnabled && (
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Projects</span>
+            <div className="flex items-center gap-2">
+              <AppSidebarToggleButton />
+            </div>
           </div>
-        </div>
+        )}
         {/* Quick actions */}
         <SidebarQuickActions />
       </div>
@@ -83,9 +77,12 @@ export const AppSidebar: FC = observer(() => {
         <SidebarProjectsList />
       </div>
       {/* Help Section */}
-      <div className="flex items-center justify-between p-2 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
+      <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
         <WorkspaceEditionBadge />
-        {!shouldRenderAppRail && <HelpMenu />}
+        <div className="flex items-center gap-2">
+          {!shouldRenderAppRail && <HelpMenu />}
+          {!isAppRailEnabled && <AppSidebarToggleButton />}
+        </div>
       </div>
     </>
   );
