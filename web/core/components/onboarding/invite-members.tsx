@@ -20,7 +20,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
@@ -28,9 +28,8 @@ import { IUser, IWorkspace } from "@plane/types";
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { getUserRole } from "@plane/utils";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // assets
@@ -276,8 +275,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
   const { resolvedTheme } = useTheme();
-  // store hooks
-  const { captureEvent } = useEventTracker();
 
   const {
     control,
@@ -311,16 +308,11 @@ export const InviteMembers: React.FC<Props> = (props) => {
         })),
       })
       .then(async () => {
-        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
-          emails: [
-            ...payload.emails.map((email) => ({
-              email: email.email,
-              role: getUserRole(email.role),
-            })),
-          ],
-          project_id: undefined,
-          state: "SUCCESS",
-          element: "Onboarding",
+        captureSuccess({
+          eventName: MEMBER_TRACKER_EVENTS.invite,
+          payload: {
+            workspace: workspace.slug,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -331,10 +323,12 @@ export const InviteMembers: React.FC<Props> = (props) => {
         await nextStep();
       })
       .catch((err) => {
-        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
-          project_id: undefined,
-          state: "FAILED",
-          element: "Onboarding",
+        captureError({
+          eventName: MEMBER_TRACKER_EVENTS.invite,
+          payload: {
+            workspace: workspace.slug,
+          },
+          error: err,
         });
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -426,6 +420,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
                 size="lg"
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
+                data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
               >
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>

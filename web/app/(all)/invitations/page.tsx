@@ -9,19 +9,20 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
+import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { truncateText, getUserRole } from "@plane/utils";
+import { truncateText } from "@plane/utils";
 // components
 import { EmptyState } from "@/components/common";
 import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
@@ -43,7 +44,7 @@ const UserInvitationsPage = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { t } = useTranslation();
-  const { captureEvent, joinWorkspaceMetricGroup } = useEventTracker();
+  const { joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
 
@@ -86,14 +87,11 @@ const UserInvitationsPage = observer(() => {
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
-        captureEvent(MEMBER_TRACKER_EVENTS.accept, {
-          member_id: invitation?.id,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-          role: getUserRole((invitation?.role as unknown as EUserPermissions)!),
-          project_id: undefined,
-          accepted_from: "App",
-          state: "SUCCESS",
-          element: "Workspace invitations page",
+        captureSuccess({
+          eventName: MEMBER_TRACKER_EVENTS.accept,
+          payload: {
+            member_id: invitation?.id,
+          },
         });
         updateUserProfile({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
@@ -111,12 +109,13 @@ const UserInvitationsPage = observer(() => {
             setIsJoiningWorkspaces(false);
           });
       })
-      .catch(() => {
-        captureEvent(MEMBER_TRACKER_EVENTS.accept, {
-          project_id: undefined,
-          accepted_from: "App",
-          state: "FAILED",
-          element: "Workspace invitations page",
+      .catch((err) => {
+        captureError({
+          eventName: MEMBER_TRACKER_EVENTS.accept,
+          payload: {
+            member_id: invitationsRespond?.[0],
+          },
+          error: err,
         });
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -194,6 +193,7 @@ const UserInvitationsPage = observer(() => {
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
+                    data-ph-element={MEMBER_TRACKER_ELEMENTS.INVITATION_BUTTON}
                   >
                     {t("accept_and_join")}
                   </Button>

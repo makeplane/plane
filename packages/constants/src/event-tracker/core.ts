@@ -222,6 +222,17 @@ export const MEMBER_TRACKER_EVENTS = {
   },
 };
 
+export const MEMBER_TRACKER_ELEMENTS = {
+  HEADER_BUTTON: "header_add_member_button",
+  INVITATION_BUTTON: "accept_invitation_button",
+  ONBOARDING_JOIN_WORKSPACE: "workspace_join_continue_to_workspace_button",
+  ONBOARDING_INVITE_MEMBER: "invite_member_continue_button",
+  SIDEBAR_PROJECT_QUICK_ACTIONS: "sidebar_project_quick_actions",
+  PROJECT_MEMBER_TABLE_CONTEXT_MENU: "project_member_table_context_menu",
+  WORKSPACE_MEMBER_TABLE_CONTEXT_MENU: "workspace_member_table_context_menu",
+  WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU: "workspace_invitations_list_context_menu",
+} as const;
+
 export const AUTH_TRACKER_EVENTS = {
   navigate: {
     sign_up: "navigate_to_sign_up_page",

@@ -12,7 +12,7 @@ import { createRoot } from "react-dom/client";
 import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -23,7 +23,7 @@ import { Logo } from "@/components/common/logo";
 import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
 // helpers
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane-web components
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
@@ -59,7 +59,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { t } = useTranslation();
-  const { setTrackElement } = useEventTracker();
   const { getPartialProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
@@ -97,7 +96,6 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   );
 
   const handleLeaveProject = () => {
-    setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
     setLeaveProjectModal(true);
   };
 
@@ -376,7 +374,10 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                   </CustomMenu.MenuItem>
                   {/* leave project */}
                   {!isAuthorized && (
-                    <CustomMenu.MenuItem onClick={handleLeaveProject}>
+                    <CustomMenu.MenuItem
+                      onClick={handleLeaveProject}
+                      data-ph-element={MEMBER_TRACKER_ELEMENTS.SIDEBAR_PROJECT_QUICK_ACTIONS}
+                    >
                       <div className="flex items-center justify-start gap-2">
                         <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>{t("leave_project")}</span>
