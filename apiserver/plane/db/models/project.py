@@ -225,9 +225,11 @@ class Project(BaseModel):
 
     def save(self, *args, **kwargs):
         self.identifier = self.identifier.strip().upper()
+        # check is_adding value before calling super().save()
+        is_adding = self._state.adding
         project = super().save(*args, **kwargs)
         # Add app bots to the newly created project
-        if self._state.adding:
+        if is_adding:
             self.add_app_bots_to_project()
         return project
 
