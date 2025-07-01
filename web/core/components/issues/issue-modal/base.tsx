@@ -3,14 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+// Plane imports
 import { useTranslation } from "@plane/i18n";
-// types
-import type { TBaseIssue, TIssue } from "@plane/types";
-// ui
+import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+// components
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
-// constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

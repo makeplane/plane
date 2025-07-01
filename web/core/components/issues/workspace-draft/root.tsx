@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants/src/user";
+import { EUserPermissionsLevel } from "@plane/constants/src/user";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";

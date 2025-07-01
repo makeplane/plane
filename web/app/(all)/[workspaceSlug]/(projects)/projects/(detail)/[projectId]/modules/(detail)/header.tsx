@@ -8,7 +8,6 @@ import { PanelRight } from "lucide-react";
 // plane imports
 import {
   EIssueLayoutTypes,
-  EIssuesStoreType,
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
@@ -17,6 +16,7 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import {
+  EIssuesStoreType,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,

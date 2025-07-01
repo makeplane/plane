@@ -5,13 +5,8 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import {
-  EIssuesStoreType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

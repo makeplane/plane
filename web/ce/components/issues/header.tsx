@@ -4,18 +4,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink } from "lucide-react";
+// plane imports
 import {
-  EIssuesStoreType,
-  EProjectFeatureKey,
   EUserPermissions,
   EUserPermissionsLevel,
   SPACE_BASE_PATH,
   SPACE_BASE_URL,
   WORK_ITEM_TRACKER_ELEMENTS,
+  EProjectFeatureKey,
 } from "@plane/constants";
-// plane constants
 import { useTranslation } from "@plane/i18n";
-// ui
+import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common";

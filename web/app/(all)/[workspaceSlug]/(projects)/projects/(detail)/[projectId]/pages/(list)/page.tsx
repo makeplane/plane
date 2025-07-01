@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles, TPageNavigationTabs } from "@plane/types";
 // components
 import { PageHead } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";

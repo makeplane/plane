@@ -1,6 +1,5 @@
 //
-import { EStartOfTheWeek } from "@plane/constants";
-import type { ChartDataType } from "@plane/types";
+import { EStartOfTheWeek, ChartDataType } from "@plane/types";
 import { months, generateWeeks } from "../data";
 import { getNumberOfDaysBetweenTwoDates, getWeekNumberByDate } from "./helpers";
 export interface IDayBlock {

@@ -2,8 +2,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // Plane
-import { EIssueServiceType } from "@plane/constants";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 // components
 import { RelationIssueListItem } from "@/components/issues/relations";
 // Plane-web

@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EInboxIssueSource } from "@plane/constants";
+import { EInboxIssueSource } from "@plane/types";
 import { LayersIcon } from "@plane/ui";
 // hooks
 import { capitalizeFirstLetter } from "@plane/utils";

@@ -7,12 +7,11 @@ import { useParams } from "next/navigation";
 // plane imports
 import {
   ARCHIVABLE_STATE_GROUPS,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

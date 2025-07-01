@@ -2,15 +2,9 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EIssueFilterType,
-  EIssuesStoreType,
-  EUserPermissionsLevel,
-  EUserProjectRoles,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { captureClick } from "@/helpers/event-tracker.helper";

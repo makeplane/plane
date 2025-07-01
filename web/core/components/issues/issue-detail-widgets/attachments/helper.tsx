@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
-import { EIssueServiceType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssueServiceType } from "@plane/types";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks

@@ -3,21 +3,13 @@
 import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-// plane types
-import {
-  EIssuesStoreType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  EIssueServiceType,
-  WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
+// Plane imports
+import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IWorkItemPeekOverview } from "@plane/types";
-// plane ui
+import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // components
 import { IssueView, TIssueOperations } from "@/components/issues";
-// constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";

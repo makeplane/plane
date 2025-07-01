@@ -9,7 +9,6 @@ import { PanelRight } from "lucide-react";
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
@@ -19,6 +18,7 @@ import {
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import {
+  EIssuesStoreType,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,

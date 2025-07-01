@@ -1,12 +1,8 @@
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 // components
-import {
-  EIssuesStoreType,
-EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 import { EmptyState } from "@/components/common";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
