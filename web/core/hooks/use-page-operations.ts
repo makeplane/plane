@@ -111,7 +111,7 @@ export const usePageOperations = (
             payload: {
               id: page.id,
               from_access: access === EPageAccess.PUBLIC ? "Public" : "Private",
-              to_access: changedPageType === EPageAccess.PUBLIC ? "Public" : "Private",
+              to_access: access === EPageAccess.PUBLIC ? "Private" : "Public",
               state: "SUCCESS",
             },
           });
