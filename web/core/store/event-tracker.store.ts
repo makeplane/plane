@@ -5,9 +5,8 @@ import {
   GROUP_WORKSPACE_TRACKER_EVENT,
   EventProps,
   IssueEventProps,
-  getCycleEventPayload,
   getIssueEventPayload,
-  getModuleEventPayload,
+
   getProjectEventPayload,
   getProjectStateEventPayload,
   getPageEventPayload,
@@ -25,8 +24,6 @@ export interface ICoreEventTrackerStore {
   captureEvent: (eventName: string, payload?: any) => void;
   joinWorkspaceMetricGroup: (workspaceId?: string) => void;
   captureProjectEvent: (props: EventProps) => void;
-  captureCycleEvent: (props: EventProps) => void;
-  captureModuleEvent: (props: EventProps) => void;
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
@@ -46,7 +43,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
       setTrackElement: action,
       captureEvent: action,
       captureProjectEvent: action,
-      captureCycleEvent: action,
     });
     // store
     this.rootStore = _rootStore;
@@ -121,35 +117,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
     this.setTrackElement(undefined);
   };
 
-  /**
-   * @description: Captures the cycle related events.
-   * @param {EventProps} props
-   */
-  captureCycleEvent = (props: EventProps) => {
-    const { eventName, payload } = props;
-    const eventPayload: any = getCycleEventPayload({
-      ...this.getRequiredProperties,
-      ...payload,
-      element: payload.element ?? this.trackElement,
-    });
-    posthog?.capture(eventName, eventPayload);
-    this.setTrackElement(undefined);
-  };
-
-  /**
-   * @description: Captures the module related events.
-   * @param {EventProps} props
-   */
-  captureModuleEvent = (props: EventProps) => {
-    const { eventName, payload } = props;
-    const eventPayload: any = getModuleEventPayload({
-      ...this.getRequiredProperties,
-      ...payload,
-      element: payload.element ?? this.trackElement,
-    });
-    posthog?.capture(eventName, eventPayload);
-    this.setTrackElement(undefined);
-  };
 
   /**
    * @description: Captures the project pages related events.

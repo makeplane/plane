@@ -11,8 +11,10 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // components
 import { ModuleForm } from "@/components/modules";
 // constants
+// helpers
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useEventTracker, useModule, useProject } from "@/hooks/store";
+import { useModule, useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -37,7 +39,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const { captureModuleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createModule, updateModuleDetails } = useModule();
   const { isMobile } = usePlatformOS();
@@ -63,9 +64,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module created successfully.",
         });
-        captureModuleEvent({
+        captureSuccess({
           eventName: MODULE_TRACKER_EVENTS.create,
-          payload: { ...res, state: "SUCCESS" },
+          payload: { id: res.id },
         });
       })
       .catch((err) => {
@@ -74,14 +75,15 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
         });
-        captureModuleEvent({
+        captureError({
           eventName: MODULE_TRACKER_EVENTS.create,
-          payload: { ...data, state: "FAILED" },
+          payload: { id: data?.id },
+          error: err,
         });
       });
   };
 
-  const handleUpdateModule = async (payload: Partial<IModule>, dirtyFields: any) => {
+  const handleUpdateModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !data) return;
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
@@ -94,9 +96,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module updated successfully.",
         });
-        captureModuleEvent({
+        captureSuccess({
           eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { ...res, changed_properties: Object.keys(dirtyFields || {}), state: "SUCCESS" },
+          payload: { id: res.id },
         });
       })
       .catch((err) => {
@@ -105,21 +107,22 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
         });
-        captureModuleEvent({
+        captureError({
           eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { ...data, state: "FAILED" },
+          payload: { id: data.id },
+          error: err,
         });
       });
   };
 
-  const handleFormSubmit = async (formData: Partial<IModule>, dirtyFields: unknown) => {
+  const handleFormSubmit = async (formData: Partial<IModule>) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<IModule> = {
       ...formData,
     };
     if (!data) await handleCreateModule(payload);
-    else await handleUpdateModule(payload, dirtyFields);
+    else await handleUpdateModule(payload);
   };
 
   useEffect(() => {

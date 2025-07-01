@@ -16,7 +16,7 @@ import { DateRangeDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { useUser } from "@/hooks/store/user/user-user";
 
 type Props = {
-  handleFormSubmit: (values: Partial<ICycle>, dirtyFields: any) => Promise<void>;
+  handleFormSubmit: (values: Partial<ICycle>) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   projectId: string;
@@ -40,7 +40,7 @@ export const CycleForm: React.FC<Props> = (props) => {
   const { projectsWithCreatePermissions } = useUser();
   // form data
   const {
-    formState: { errors, isSubmitting, dirtyFields },
+    formState: { errors, isSubmitting },
     handleSubmit,
     control,
     reset,
@@ -64,7 +64,7 @@ export const CycleForm: React.FC<Props> = (props) => {
   }, [data, reset]);
 
   return (
-    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData, dirtyFields))}>
+    <form onSubmit={handleSubmit((formData) => handleFormSubmit(formData))}>
       <div className="space-y-5 p-5">
         <div className="flex items-center gap-x-3">
           {!status && (

@@ -12,6 +12,7 @@ import {
   EUserPermissionsLevel,
   EEstimateSystem,
   MODULE_TRACKER_EVENTS,
+  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
@@ -22,15 +23,10 @@ import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToas
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
-import {
-  ArchiveModuleModal,
-  DeleteModuleModal,
-  CreateUpdateModuleLinkModal,
-  ModuleAnalyticsProgress,
-  ModuleLinksList,
-} from "@/components/modules";
+import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
+import { captureElementAndEvent, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
+import { useModule, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 // plane web constants
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -50,8 +46,6 @@ type Props = {
 export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { moduleId, handleClose, isArchived } = props;
   // states
-  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
-  const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
   // router
@@ -62,7 +56,6 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
 
   const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
-  const { captureModuleEvent, captureEvent } = useEventTracker();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
 
   // derived values
@@ -79,15 +72,22 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
     updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
       .then((res) => {
-        captureModuleEvent({
-          eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
+        captureElementAndEvent({
+          element: {
+            elementName: MODULE_TRACKER_ELEMENTS.RIGHT_SIDEBAR,
+          },
+          event: {
+            eventName: MODULE_TRACKER_EVENTS.update,
+            payload: { id: res.id },
+            state: "SUCCESS",
+          },
         });
       })
-      .catch(() => {
-        captureModuleEvent({
+      .catch((error) => {
+        captureError({
           eventName: MODULE_TRACKER_EVENTS.update,
-          payload: { ...data, state: "FAILED" },
+          payload: { id: moduleId },
+          error,
         });
       });
   };
@@ -97,12 +97,20 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
-      captureEvent(MODULE_TRACKER_EVENTS.link.create, {
-        module_id: moduleId,
-        state: "SUCCESS",
-      })
-    );
+    await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
+      .then(() =>
+        captureSuccess({
+          eventName: MODULE_TRACKER_EVENTS.link.create,
+          payload: { id: moduleId },
+        })
+      )
+      .catch((error) => {
+        captureError({
+          eventName: MODULE_TRACKER_EVENTS.link.create,
+          payload: { id: moduleId },
+          error,
+        });
+      });
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
@@ -110,13 +118,20 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
-      () =>
-        captureEvent(MODULE_TRACKER_EVENTS.link.update, {
-          module_id: moduleId,
-          state: "SUCCESS",
+    await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
+      .then(() =>
+        captureSuccess({
+          eventName: MODULE_TRACKER_EVENTS.link.update,
+          payload: { id: moduleId },
         })
-    );
+      )
+      .catch((error) => {
+        captureError({
+          eventName: MODULE_TRACKER_EVENTS.link.update,
+          payload: { id: moduleId },
+          error,
+        });
+      });
   };
 
   const handleDeleteLink = async (linkId: string) => {
@@ -124,9 +139,9 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        captureEvent(MODULE_TRACKER_EVENTS.link.delete, {
-          module_id: moduleId,
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: MODULE_TRACKER_EVENTS.link.delete,
+          payload: { id: moduleId },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -139,6 +154,10 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Some error occurred",
+        });
+        captureError({
+          eventName: MODULE_TRACKER_EVENTS.link.delete,
+          payload: { id: moduleId },
         });
       });
   };
@@ -213,16 +232,6 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         createLink={handleCreateLink}
         updateLink={handleUpdateLink}
       />
-      {workspaceSlug && projectId && (
-        <ArchiveModuleModal
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          moduleId={moduleId}
-          isOpen={archiveModuleModal}
-          handleClose={() => setArchiveModuleModal(false)}
-        />
-      )}
-      <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
       <>
         <div
           className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}

@@ -12,6 +12,7 @@ import {
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
   MODULE_TRACKER_EVENTS,
+  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -24,8 +25,10 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
+// helpers
+import { captureElementAndEvent, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -42,7 +45,6 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
-  const { captureEvent } = useEventTracker();
 
   const { t } = useTranslation();
 
@@ -64,17 +66,28 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
-      () => {
+    const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId)
+      .then(() => {
         // open favorites menu if closed
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_TRACKER_EVENTS.favorite, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
+        captureElementAndEvent({
+          element: {
+            elementName: MODULE_TRACKER_ELEMENTS.LIST_ITEM,
+          },
+          event: {
+            eventName: MODULE_TRACKER_EVENTS.favorite,
+            payload: { id: moduleId },
+            state: "SUCCESS",
+          },
         });
-      }
-    );
+      })
+      .catch((error) => {
+        captureError({
+          eventName: MODULE_TRACKER_EVENTS.favorite,
+          payload: { id: moduleId },
+          error,
+        });
+      });
 
     setPromiseToast(addToFavoritePromise, {
       loading: "Adding module to favorites...",
@@ -98,13 +111,26 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       workspaceSlug.toString(),
       projectId.toString(),
       moduleId
-    ).then(() => {
-      captureEvent(MODULE_TRACKER_EVENTS.unfavorite, {
-        module_id: moduleId,
-        element: "Grid layout",
-        state: "SUCCESS",
+    )
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: MODULE_TRACKER_ELEMENTS.LIST_ITEM,
+          },
+          event: {
+            eventName: MODULE_TRACKER_EVENTS.unfavorite,
+            payload: { id: moduleId },
+            state: "SUCCESS",
+          },
+        });
+      })
+      .catch((error) => {
+        captureError({
+          eventName: MODULE_TRACKER_EVENTS.unfavorite,
+          payload: { id: moduleId },
+          error,
+        });
       });
-    });
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: "Removing module from favorites...",

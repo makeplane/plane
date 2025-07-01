@@ -13,6 +13,7 @@ import {
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
   MODULE_TRACKER_EVENTS,
+  MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
@@ -33,8 +34,9 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // helpers
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
-import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
@@ -56,7 +58,6 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
-  const { captureEvent } = useEventTracker();
 
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
@@ -79,10 +80,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_TRACKER_EVENTS.favorite, {
-          module_id: moduleId,
-          element: "Grid layout",
-          state: "SUCCESS",
+        captureElementAndEvent({
+          element: {
+            elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
+          },
+          event: {
+            eventName: MODULE_TRACKER_EVENTS.favorite,
+            payload: { id: moduleId },
+            state: "SUCCESS",
+          },
         });
       }
     );
@@ -110,10 +116,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_TRACKER_EVENTS.unfavorite, {
-        module_id: moduleId,
-        element: "Grid layout",
-        state: "SUCCESS",
+      captureElementAndEvent({
+        element: {
+          elementName: MODULE_TRACKER_ELEMENTS.CARD_ITEM,
+        },
+        event: {
+          eventName: MODULE_TRACKER_EVENTS.unfavorite,
+          payload: { id: moduleId },
+          state: "SUCCESS",
+        },
       });
     });
 
