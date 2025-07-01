@@ -5,15 +5,21 @@ import xor from "lodash/xor";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // icons
-import { Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
 // types
-import { ISSUE_UPDATED } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
-import { cn, getDate, renderFormattedPayloadDate, generateWorkItemLink, shouldHighlightIssueDueDate } from "@plane/utils";
+import {
+  cn,
+  getDate,
+  renderFormattedPayloadDate,
+  generateWorkItemLink,
+  shouldHighlightIssueDueDate,
+} from "@plane/utils";
 // components
 import {
   EstimateDropdown,
@@ -23,6 +29,7 @@ import {
   CycleDropdown,
   StateDropdown,
   DateRangeDropdown,
+  DateDropdown,
 } from "@/components/dropdowns";
 // constants
 // helpers
@@ -103,7 +110,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { state_id: stateId }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -118,7 +125,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { priority: value }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -133,7 +140,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { label_ids: ids }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -148,7 +155,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { assignee_ids: ids }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -173,7 +180,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       if (modulesToRemove.length > 0) issueOperations.removeModulesFromIssue(modulesToRemove);
 
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: pathname,
         updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
@@ -189,7 +196,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       else issueOperations.removeIssueFromCycle?.();
 
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...issue, state: "SUCCESS", element: currentLayout },
         path: pathname,
         updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
@@ -203,7 +210,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
             path: pathname,
             updates: {
@@ -220,7 +227,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
         () => {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...issue, state: "SUCCESS", element: currentLayout },
             path: pathname,
             updates: {
@@ -236,7 +243,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { estimate_point: value }).then(() => {
         captureIssueEvent({
-          eventName: ISSUE_UPDATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
           payload: { ...issue, state: "SUCCESS", element: currentLayout },
           path: pathname,
           updates: {
@@ -261,7 +268,15 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
 
   if (!displayProperties || !issue.project_id) return null;
 
+  // date range is enabled only when both dates are available and both dates are enabled
+  const isDateRangeEnabled: boolean = Boolean(
+    issue.start_date && issue.target_date && displayProperties.start_date && displayProperties.due_date
+  );
+
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
+
+  const minDate = getDate(issue.start_date);
+  const maxDate = getDate(issue.target_date);
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -306,7 +321,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC
         displayProperties={displayProperties}
         displayPropertyKey={["start_date", "due_date"]}
-        shouldRenderProperty={(properties) => !!(properties.start_date || properties.due_date)}
+        shouldRenderProperty={() => isDateRangeEnabled}
       >
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
           <DateRangeDropdown
@@ -325,11 +340,58 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
             renderPlaceholder={false}
             customTooltipHeading="Date Range"
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* start date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="start_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={issue.start_date ?? null}
+            onChange={handleStartDate}
+            maxDate={maxDate}
+            placeholder={t("common.order_by.start_date")}
+            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
+            optionsClassName="z-10"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
+          />
+        </div>
+      </WithDisplayPropertiesHOC>
+
+      {/* target/due date */}
+      <WithDisplayPropertiesHOC
+        displayProperties={displayProperties}
+        displayPropertyKey="due_date"
+        shouldRenderProperty={() => !isDateRangeEnabled}
+      >
+        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+          <DateDropdown
+            value={issue?.target_date ?? null}
+            onChange={handleTargetDate}
+            minDate={minDate}
+            placeholder={t("common.order_by.due_date")}
+            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
+            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+            clearIconClassName="!text-custom-text-100"
+            optionsClassName="z-10"
+            disabled={isReadOnly}
+            renderByDefault={isMobile}
+            showTooltip
           />
         </div>
       </WithDisplayPropertiesHOC>
@@ -503,7 +565,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
         <IssuePropertyLabels
           projectId={issue?.project_id || null}
-          value={issue?.label_ids || null}
+          value={issue?.label_ids || []}
           defaultOptions={defaultLabelOptions}
           onChange={handleLabel}
           disabled={isReadOnly}

@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
@@ -16,6 +17,7 @@ import { IssueDetailRoot } from "@/components/issues";
 import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
@@ -52,6 +54,13 @@ const IssueDetailsPage = observer(() => {
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
   const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
+
+  useWorkItemProperties(
+    projectId,
+    workspaceSlug.toString(),
+    issueId,
+    issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  );
 
   useEffect(() => {
     const handleToggleIssueDetailSidebar = () => {

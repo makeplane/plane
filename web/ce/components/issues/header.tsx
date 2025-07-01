@@ -4,13 +4,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink } from "lucide-react";
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
-// plane constants
+// plane imports
+import {
+  EUserPermissions,
+  EUserPermissionsLevel,
+  SPACE_BASE_PATH,
+  SPACE_BASE_URL,
+  EProjectFeatureKey,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Breadcrumbs, Button, LayersIcon, Tooltip, Header } from "@plane/ui";
+import { EIssuesStoreType } from "@plane/types";
+import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink, CountChip } from "@/components/common";
+import { CountChip } from "@/components/common";
 // constants
 import HeaderFilters from "@/components/issues/filters";
 // helpers
@@ -20,7 +26,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "../breadcrumbs/common";
 
 export const IssuesHeader = observer(() => {
   // router
@@ -52,18 +58,13 @@ export const IssuesHeader = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div className="flex items-center gap-2.5">
-          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
-
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
-                <BreadcrumbLink
-                  label={t("issue.label", { count: 2 })} // count is for pluralization
-                  icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
-                />
-              }
+        <div className="flex items-center gap-2.5 flex-grow">
+          <Breadcrumbs onBack={() => router.back()} isLoading={loader === "init-loader"} className="flex-grow-0">
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              featureKey={EProjectFeatureKey.WORK_ITEMS}
+              isLast
             />
           </Breadcrumbs>
           {issuesCount && issuesCount > 0 ? (

@@ -96,7 +96,7 @@ export const InstanceSignInForm: FC = (props) => {
     if (errorCode) {
       const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
       if (errorDetail) {
-        setErrorInfo(errorDetail);
+        setErrorInfo(errorDetail as unknown as TAuthErrorInfo);
       }
     }
   }, [errorCode]);

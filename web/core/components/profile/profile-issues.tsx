@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { EIssuesStoreType } from "@plane/types";
 // components
-import { EIssuesStoreType } from "@plane/constants";
 import { IssuePeekOverview, ProfileIssuesAppliedFiltersRoot } from "@/components/issues";
 import { ProfileIssuesKanBanLayout } from "@/components/issues/issue-layouts/kanban/roots/profile-issues-root";
 import { ProfileIssuesListLayout } from "@/components/issues/issue-layouts/list/roots/profile-issues-root";

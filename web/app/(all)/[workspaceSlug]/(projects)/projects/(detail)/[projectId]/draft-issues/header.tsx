@@ -4,11 +4,16 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
@@ -93,11 +98,10 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb />
+            <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
 
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              link={
+            <Breadcrumbs.Item
+              component={
                 <BreadcrumbLink
                   label="Draft work items"
                   icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}

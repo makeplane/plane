@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EStartOfTheWeek } from "@plane/constants";
 // components
 import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -37,6 +36,7 @@ type ChartViewRootProps = {
   enableReorder: boolean | ((blockId: string) => boolean);
   enableAddBlock: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
+  enableDependency: boolean | ((blockId: string) => boolean);
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   loadMoreBlocks?: () => void;
@@ -70,6 +70,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     enableReorder,
     enableAddBlock,
     enableSelection,
+    enableDependency,
     bottomSpacing,
     showAllBlocks,
     quickAdd,
@@ -204,6 +205,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
         enableReorder={enableReorder}
         enableSelection={enableSelection}
         enableAddBlock={enableAddBlock}
+        enableDependency={enableDependency}
         itemsContainerWidth={itemsContainerWidth}
         showAllBlocks={showAllBlocks}
         sidebarToRender={sidebarToRender}

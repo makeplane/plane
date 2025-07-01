@@ -4,7 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_CREATED, E_ONBOARDING } from "@plane/constants";
+import {
+  ONBOARDING_TRACKER_EVENTS,
+  ORGANIZATION_SIZE,
+  RESTRICTED_URLS,
+  WORKSPACE_TRACKER_EVENTS,
+} from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
@@ -69,12 +74,12 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                 message: t("workspace_creation.toast.success.message"),
               });
               captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   ...workspaceResponse,
                   state: "SUCCESS",
                   first_time: true,
-                  element: E_ONBOARDING,
+                  element: ONBOARDING_TRACKER_EVENTS.root,
                 },
               });
               await fetchWorkspaces();
@@ -82,11 +87,11 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
             })
             .catch(() => {
               captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   state: "FAILED",
                   first_time: true,
-                  element: E_ONBOARDING,
+                  element: ONBOARDING_TRACKER_EVENTS.root,
                 },
               });
               setToast({
@@ -263,7 +268,9 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">{t("workspace_creation.form.organization_size.placeholder")}</span>
+                      <span className="text-custom-text-400">
+                        {t("workspace_creation.form.organization_size.placeholder")}
+                      </span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-onboarding-border-100 !shadow-none !rounded-md"

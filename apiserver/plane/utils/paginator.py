@@ -102,6 +102,7 @@ class OffsetPaginator:
         max_limit=MAX_LIMIT,
         max_offset=None,
         on_results=None,
+        total_count_queryset=None,
     ):
         # Key tuple and remove `-` if descending order by
         self.key = (
@@ -115,6 +116,7 @@ class OffsetPaginator:
         self.max_limit = max_limit
         self.max_offset = max_offset
         self.on_results = on_results
+        self.total_count_queryset = total_count_queryset
 
     def get_result(self, limit=1000, cursor=None):
         # offset is page #
@@ -138,9 +140,9 @@ class OffsetPaginator:
             )
         # The current page
         page = cursor.offset
-        # The offset
-        offset = cursor.offset * cursor.value
-        stop = offset + (cursor.value or limit) + 1
+        # The offset - use limit instead of cursor.value for consistent pagination
+        offset = cursor.offset * limit
+        stop = offset + limit + 1
 
         if self.max_offset is not None and offset >= self.max_offset:
             raise BadPaginationError("Pagination offset too large")
@@ -148,11 +150,23 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
-        if cursor.value != limit:
+        # Duplicate the queryset so it does not evaluate on any python ops
+        page_results = queryset[offset:stop].values("id")
+
+        # Only slice from the end if we're going backwards (previous page)
+        if cursor.value != limit and cursor.is_prev:
             results = results[-(limit + 1) :]
 
+        total_count = (
+            self.total_count_queryset.count()
+            if self.total_count_queryset
+            else results.count()
+        )
+
+        # Check if there are more results available after the current page
+
         # Adjust cursors based on the results for pagination
-        next_cursor = Cursor(limit, page + 1, False, results.count() > limit)
+        next_cursor = Cursor(limit, page + 1, False, page_results.count() > limit)
         # If the page is greater than 0, then set the previous cursor
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
@@ -164,7 +178,7 @@ class OffsetPaginator:
             results = self.on_results(results)
 
         # Count the queryset
-        count = queryset.count()
+        count = total_count
 
         # Optionally, calculate the total count and max_hits if needed
         max_hits = math.ceil(count / limit)
@@ -196,6 +210,7 @@ class GroupedOffsetPaginator(OffsetPaginator):
         group_by_field_name,
         group_by_fields,
         count_filter,
+        total_count_queryset=None,
         *args,
         **kwargs,
     ):
@@ -404,6 +419,7 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         group_by_fields,
         sub_group_by_fields,
         count_filter,
+        total_count_queryset=None,
         *args,
         **kwargs,
     ):
@@ -694,6 +710,7 @@ class BasePaginator:
         sub_group_by_field_name=None,
         sub_group_by_fields=None,
         count_filter=None,
+        total_count_queryset=None,
         **paginator_kwargs,
     ):
         """Paginate the request"""
@@ -718,6 +735,8 @@ class BasePaginator:
                         sub_group_by_field_name
                     )
                     paginator_kwargs["sub_group_by_fields"] = sub_group_by_fields
+
+            paginator_kwargs["total_count_queryset"] = total_count_queryset
 
             paginator = paginator_cls(**paginator_kwargs)
 

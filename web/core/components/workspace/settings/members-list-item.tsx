@@ -4,7 +4,7 @@ import { FC } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 // ui
-import { WORKSPACE_MEMBER_LEAVE } from "@plane/constants";
+import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceMember } from "@plane/types";
 import { TOAST_TYPE, Table, setToast } from "@plane/ui";
@@ -45,7 +45,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
       .then(async () => {
         await fetchCurrentUserSettings();
         router.push(getWorkspaceRedirectionUrl());
-        captureEvent(WORKSPACE_MEMBER_LEAVE, {
+        captureEvent(MEMBER_TRACKER_EVENTS.workspace.leave, {
           state: "SUCCESS",
           element: "Workspace settings members page",
         });

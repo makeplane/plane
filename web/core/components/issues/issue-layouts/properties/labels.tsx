@@ -82,8 +82,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     }
   }, [isOpen, isMobile]);
 
-  if (!value) return null;
-
   let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 

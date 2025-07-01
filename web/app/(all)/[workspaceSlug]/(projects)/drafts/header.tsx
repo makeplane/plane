@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { PenSquare } from "lucide-react";
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
+import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, CountChip } from "@/components/common";
@@ -41,9 +42,8 @@ export const WorkspaceDraftHeader = observer(() => {
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
             <Breadcrumbs>
-              <Breadcrumbs.BreadcrumbItem
-                type="text"
-                link={
+              <Breadcrumbs.Item
+                component={
                   <BreadcrumbLink label={t("drafts")} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />
                 }
               />

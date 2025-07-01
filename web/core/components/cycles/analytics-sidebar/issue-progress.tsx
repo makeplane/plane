@@ -7,9 +7,9 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
+import { EIssuesStoreType, ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 // components
 import { getDate } from "@plane/utils";
 import { CycleProgressStats } from "@/components/cycles";

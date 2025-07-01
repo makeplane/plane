@@ -1,5 +1,5 @@
 // plane web components
-import { observer } from "mobx-react-lite";
+import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -9,7 +9,7 @@ import { ProjectSelect } from "./select/project";
 
 const AnalyticsFilterActions = observer(() => {
   const { selectedProjects, selectedDuration, updateSelectedProjects, updateSelectedDuration } = useAnalytics();
-  const { workspaceProjectIds } = useProject();
+  const { joinedProjectIds } = useProject();
   return (
     <div className="flex items-center justify-end gap-2">
       <ProjectSelect
@@ -17,7 +17,7 @@ const AnalyticsFilterActions = observer(() => {
         onChange={(val) => {
           updateSelectedProjects(val ?? []);
         }}
-        projectIds={workspaceProjectIds}
+        projectIds={joinedProjectIds}
       />
       {/* <DurationDropdown
         buttonVariant="border-with-text"

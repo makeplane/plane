@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -26,6 +26,7 @@
     "@plane/hooks": "*",
     "@plane/i18n": "*",
     "@plane/propel": "*",
+    "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
