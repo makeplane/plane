@@ -15,12 +15,12 @@ export type EventProps = {
 export const getProjectEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.id,
+  identifier: payload.identifier,
+  project_visibility: payload.network == 2 ? "Public" : "Private",
+  changed_properties: payload.changed_properties,
+  lead_id: payload.project_lead,
   created_at: payload.created_at,
   updated_at: payload.updated_at,
-  name: payload.name,
-  description: payload.description,
-  network: payload.network,
-  identifier: payload.identifier,
   state: payload.state,
   element: payload.element,
 });
