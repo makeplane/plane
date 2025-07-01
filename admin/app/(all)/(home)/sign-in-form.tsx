@@ -41,8 +41,7 @@ const defaultFromData: TFormData = {
   password: "",
 };
 
-export const InstanceSignInForm: FC = (props) => {
-  const {} = props;
+export const InstanceSignInForm: FC = () => {
   // search params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
@@ -72,7 +71,7 @@ export const InstanceSignInForm: FC = (props) => {
     if (errorCode && errorMessage) {
       switch (errorCode) {
         case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
+          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
         case EErrorCodes.REQUIRED_EMAIL_PASSWORD:
           return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD, message: errorMessage };
         case EErrorCodes.INVALID_EMAIL:
