@@ -58,7 +58,7 @@ export const ModulesListView: React.FC = observer(() => {
             label={t("project_module.empty_state.general.primary_button.text")}
             title={t("project_module.empty_state.general.primary_button.comic.title")}
             description={t("project_module.empty_state.general.primary_button.comic.description")}
-            data-ph-element={MODULE_TRACKER_ELEMENTS.EMPTY_STATE_BUTTON}
+            data-ph-element={MODULE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}
