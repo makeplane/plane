@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspaceView } from "@plane/types";
 import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -14,6 +14,7 @@ import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/compone
 // constants
 // helpers
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUser, useUserPermissions } from "@/hooks/store";
 
 type Props = {
@@ -93,6 +94,9 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({
+                  elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
+                });
                 item.action();
               }}
               className={cn(

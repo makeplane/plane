@@ -25,7 +25,6 @@ export const getProjectEventPayload = (payload: any) => ({
   element: payload.element,
 });
 
-
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -208,35 +207,46 @@ export const AUTH_TRACKER_EVENTS = {
   forgot_password: "forgot_password_clicked",
 };
 
-export const PRODUCT_TOUR_TRACKER_EVENTS = {
-  start: "product_tour_started",
-  complete: "product_tour_completed",
-  skip: "product_tour_skipped",
-};
-
-export const GLOBAL_VIEW_TOUR_TRACKER_EVENTS = {
+export const GLOBAL_VIEW_TRACKER_EVENTS = {
   create: "global_view_created",
   update: "global_view_updated",
   delete: "global_view_deleted",
   open: "global_view_opened",
+};
+export const GLOBAL_VIEW_TRACKER_ELEMENTS = {
+  RIGHT_HEADER_ADD_BUTTON: "global_view_right_header_add_button",
+  HEADER_SAVE_VIEW_BUTTON: "global_view_header_save_view_button",
+  QUICK_ACTIONS: "global_view_quick_actions",
+  LIST_ITEM: "global_view_list_item",
+};
+
+export const PRODUCT_TOUR_TRACKER_EVENTS = {
+  complete: "product_tour_completed",
+};
+export const PRODUCT_TOUR_TRACKER_ELEMENTS = {
+  START_BUTTON: "product_tour_start_button",
+  SKIP_BUTTON: "product_tour_skip_button",
+  CREATE_PROJECT_BUTTON: "product_tour_create_project_button",
 };
 
 export const NOTIFICATION_TRACKER_EVENTS = {
   archive: "notification_archived",
   all_marked_read: "all_notifications_marked_read",
 };
+export const NOTIFICATION_TRACKER_ELEMENTS = {
+  MARK_ALL_AS_READ_BUTTON: "mark_all_as_read_button",
+  ARCHIVE_BUTTON: "archive_button",
+  MARK_READ_BUTTON: "mark_read_button",
+};
 
 export const USER_TRACKER_EVENTS = {
   add_details: "user_details_added",
   onboarding_complete: "user_onboarding_completed",
 };
-
-export const ONBOARDING_TRACKER_EVENTS = {
-  root: "onboarding",
-  step_1: "onboarding_step_1",
-  step_2: "onboarding_step_2",
+export const ONBOARDING_TRACKER_ELEMENTS = {
+  PROFILE_SETUP_FORM: "onboarding_profile_setup_form",
 };
 
-export const SIDEBAR_TRACKER_EVENTS = {
-  click: "sidenav_clicked",
+export const SIDEBAR_TRACKER_ELEMENTS = {
+  USER_MENU_ITEM: "sidenav_user_menu_item",
 };

@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { GLOBAL_VIEW_TOUR_TRACKER_EVENTS } from "@plane/constants";
+import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useGlobalView, useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useGlobalView } from "@/hooks/store";
 
 type Props = {
   data: IWorkspaceView;
@@ -26,7 +27,6 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { deleteGlobalView } = useGlobalView();
-  const { captureEvent } = useEventTracker();
 
   const handleClose = () => onClose();
 
@@ -37,15 +37,20 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
 
     await deleteGlobalView(workspaceSlug.toString(), data.id)
       .then(() => {
-        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.delete, {
-          view_id: data.id,
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.delete,
+          payload: {
+            view_id: data.id,
+          },
         });
       })
       .catch((error: any) => {
-        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.delete, {
-          view_id: data.id,
-          state: "FAILED",
+        captureError({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.delete,
+          payload: {
+            view_id: data.id,
+          },
+          error: error,
         });
         setToast({
           type: TOAST_TYPE.ERROR,
