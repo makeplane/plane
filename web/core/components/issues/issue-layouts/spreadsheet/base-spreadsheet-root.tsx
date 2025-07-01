@@ -2,8 +2,8 @@ import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ALL_ISSUES, EIssueLayoutTypes, EIssuesStoreType, EIssueFilterType , EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { IIssueDisplayFilterOptions } from "@plane/types";
+import { ALL_ISSUES, EIssueLayoutTypes, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, IIssueDisplayFilterOptions } from "@plane/types";
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";

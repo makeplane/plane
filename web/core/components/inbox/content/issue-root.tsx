@@ -4,9 +4,9 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { EInboxIssueSource, ISSUE_ARCHIVED, ISSUE_DELETED } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
-import { TIssue, TNameDescriptionLoader } from "@plane/types";
+import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getTextContent } from "@plane/utils";
@@ -105,7 +105,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             message: "Work item deleted successfully",
           });
           captureIssueEvent({
-            eventName: ISSUE_DELETED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: _issueId, state: "SUCCESS", element: "Work item detail page" },
             path: pathname,
           });
@@ -117,7 +117,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             message: "Work item delete failed",
           });
           captureIssueEvent({
-            eventName: ISSUE_DELETED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: _issueId, state: "FAILED", element: "Work item detail page" },
             path: pathname,
           });
@@ -156,14 +156,14 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
           captureIssueEvent({
-            eventName: ISSUE_ARCHIVED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "SUCCESS", element: "Work item details page" },
             path: pathname,
           });
         } catch (error) {
           console.log("Error in archiving issue:", error);
           captureIssueEvent({
-            eventName: ISSUE_ARCHIVED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId, state: "FAILED", element: "Work item details page" },
             path: pathname,
           });

@@ -3,8 +3,7 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
-import { TIssueLink } from "@plane/types";
+import { EIssueServiceType, TIssueLink } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

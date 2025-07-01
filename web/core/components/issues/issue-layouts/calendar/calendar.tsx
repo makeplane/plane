@@ -5,9 +5,10 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueLayoutTypes, EIssueFilterType } from "@plane/constants";
 // types
-import type {
+import {
+  EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

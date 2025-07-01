@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -34,8 +34,11 @@
     "react-dom": "18.3.1"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
+    "@headlessui/react": "^1.7.3",
     "@hocuspocus/provider": "^2.15.0",
+    "@plane/constants": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",

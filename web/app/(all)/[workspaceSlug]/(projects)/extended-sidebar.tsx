@@ -4,7 +4,8 @@ import React, { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserWorkspaceRoles, WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
+import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useAppTheme, useWorkspace } from "@/hooks/store";
 // plane-web imports

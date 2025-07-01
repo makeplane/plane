@@ -1,13 +1,7 @@
 import { useParams, usePathname } from "next/navigation";
 import { ArrowUpToLine, Building, CreditCard, Users, Webhook } from "lucide-react";
-import {
-  EUserPermissionsLevel,
-  GROUPED_WORKSPACE_SETTINGS,
-  WORKSPACE_SETTINGS_CATEGORIES,
-  EUserWorkspaceRoles,
-  EUserPermissions,
-  WORKSPACE_SETTINGS_CATEGORY,
-} from "@plane/constants";
+import { EUserPermissionsLevel, GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_CATEGORIES, EUserPermissions, WORKSPACE_SETTINGS_CATEGORY } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { SettingsSidebar } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";

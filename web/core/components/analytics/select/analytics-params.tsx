@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 import { Calendar, SlidersHorizontal } from "lucide-react";
 // plane package imports
-import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, ChartYAxisMetric } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { IAnalyticsParams } from "@plane/types";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
+import { ChartYAxisMetric, IAnalyticsParams } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web components
 import { SelectXAxis } from "./select-x-axis";

@@ -271,15 +271,15 @@ class IssueBlocker(ProjectBaseModel):
         return f"{self.block.name} {self.blocked_by.name}"
 
 
-class IssueRelation(ProjectBaseModel):
-    RELATION_CHOICES = (
-        ("duplicate", "Duplicate"),
-        ("relates_to", "Relates To"),
-        ("blocked_by", "Blocked By"),
-        ("start_before", "Start Before"),
-        ("finish_before", "Finish Before"),
-    )
+class IssueRelationChoices(models.TextChoices):
+    DUPLICATE = "duplicate", "Duplicate"
+    RELATES_TO = "relates_to", "Relates To"
+    BLOCKED_BY = "blocked_by", "Blocked By"
+    START_BEFORE = "start_before", "Start Before"
+    FINISH_BEFORE = "finish_before", "Finish Before"
 
+
+class IssueRelation(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, related_name="issue_relation", on_delete=models.CASCADE
     )
@@ -288,9 +288,9 @@ class IssueRelation(ProjectBaseModel):
     )
     relation_type = models.CharField(
         max_length=20,
-        choices=RELATION_CHOICES,
+        choices=IssueRelationChoices.choices,
         verbose_name="Issue Relation Type",
-        default="blocked_by",
+        default=IssueRelationChoices.BLOCKED_BY,
     )
 
     class Meta:

@@ -6,7 +6,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { ChevronDown, Plus, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { ROLE, PROJECT_MEMBER_ADDED, EUserPermissions } from "@plane/constants";
+import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
@@ -86,7 +86,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
-        captureEvent(PROJECT_MEMBER_ADDED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.project.add, {
           members: [
             ...payload.members.map((member) => ({
               member_id: member.member_id,
@@ -99,7 +99,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       })
       .catch((error) => {
         console.error(error);
-        captureEvent(PROJECT_MEMBER_ADDED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.project.add, {
           state: "FAILED",
           element: "Project settings members page",
         });

@@ -5,14 +5,13 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
 import {
-  ISSUE_ARCHIVED,
-  ISSUE_DELETED,
   ARCHIVABLE_STATE_GROUPS,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components
@@ -105,19 +104,19 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         router.push(redirectionPath);
         captureIssueEvent({
-          eventName: ISSUE_DELETED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
           payload: { id: issueId, state: "SUCCESS", element: "Work item detail page" },
           path: pathname,
         });
       });
-    } catch (error) {
+    } catch {
       setToast({
         title: t("toast.error "),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
       captureIssueEvent({
-        eventName: ISSUE_DELETED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
         payload: { id: issueId, state: "FAILED", element: "Work item detail page" },
         path: pathname,
       });
@@ -130,13 +129,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
       });
       captureIssueEvent({
-        eventName: ISSUE_ARCHIVED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
         path: pathname,
       });
-    } catch (error) {
+    } catch {
       captureIssueEvent({
-        eventName: ISSUE_ARCHIVED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId, state: "FAILED", element: "Issue details page" },
         path: pathname,
       });

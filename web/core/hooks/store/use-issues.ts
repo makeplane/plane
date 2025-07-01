@@ -1,8 +1,6 @@
 import { useContext } from "react";
 import merge from "lodash/merge";
-import { EIssuesStoreType } from "@plane/constants";
-import { TIssueMap } from "@plane/types";
-// mobx store
+import { EIssuesStoreType, TIssueMap } from "@plane/types";
 import { StoreContext } from "@/lib/store-context";
 // plane web types
 import { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";

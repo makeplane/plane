@@ -5,8 +5,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { FileText, Layers } from "lucide-react";
-import { EUserPermissionsLevel, EUserPermissions, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 // plane ui
 import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components

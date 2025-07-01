@@ -6,9 +6,9 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EIssueFilterType, EIssuesStoreType, EEstimateSystem } from "@plane/constants";
+import { EIssueFilterType, EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions, TModulePlotType } from "@plane/types";
+import { EIssuesStoreType, IIssueFilterOptions, TModulePlotType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
 // constants

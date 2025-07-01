@@ -2,8 +2,7 @@ import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EViewAccess } from "@plane/constants";
-import { IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters } from "@plane/types";
+import { EViewAccess, IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters } from "@plane/types";
 // constants
 // helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";
