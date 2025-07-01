@@ -4,13 +4,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
-import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
+import { EUserWorkspaceRoles } from "@plane/types";
 import { PiChatLogo, UserActivityIcon } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// components
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
-// helpers
 // hooks
 import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
 

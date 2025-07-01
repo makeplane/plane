@@ -5,13 +5,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// Plane imports
 import { EUserWorkspaceRoles } from "@plane/types";
-// ui
 import { ContrastIcon, InitiativeIcon, TeamsIcon } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// components
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
-// helpers
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";

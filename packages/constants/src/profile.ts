@@ -1,5 +1,5 @@
-import { EXTENDED_PREFERENCE_OPTIONS, EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
 import { EStartOfTheWeek } from "@plane/types";
+import { EXTENDED_PREFERENCE_OPTIONS, EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
 
 export const PROFILE_SETTINGS = {
   profile: {
