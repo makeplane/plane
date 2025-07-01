@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import { EViewAccess } from "@plane/types";
 // plane imports
-import { EViewAccess } from "@plane/constants";
 import { Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";

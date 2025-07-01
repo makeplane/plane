@@ -1,8 +1,3 @@
-export enum EWorkItemTypeEntity {
-  WORK_ITEM = "WORK_ITEM",
-  EPIC = "EPIC",
-}
-
 export const DEFAULT_BACKGROUND_COLORS = [
   "#EF5974",
   "#FF7474",

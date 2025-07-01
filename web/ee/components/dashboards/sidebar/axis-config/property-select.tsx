@@ -1,7 +1,7 @@
 // plane imports
-import { EWidgetXAxisProperty, WIDGET_X_AXIS_PROPERTIES_LIST } from "@plane/constants";
+import { WIDGET_X_AXIS_PROPERTIES_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import { EWidgetXAxisProperty, TDashboardWidget } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../property-wrapper";

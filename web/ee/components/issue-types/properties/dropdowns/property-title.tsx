@@ -1,8 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty } from "@plane/types";
+import { EIssuePropertyType, TIssueProperty } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 

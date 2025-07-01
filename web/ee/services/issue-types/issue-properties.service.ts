@@ -1,6 +1,7 @@
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import {
+  EIssuePropertyType,
   IIssuePropertiesService,
   TCreateIssuePropertyPayload,
   TDeleteIssuePropertyPayload,
@@ -9,7 +10,6 @@ import {
   TIssuePropertyResponse,
   TUpdateIssuePropertyPayload,
 } from "@plane/types";
-import { API_BASE_URL  } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 

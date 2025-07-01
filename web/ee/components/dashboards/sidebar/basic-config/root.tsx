@@ -5,13 +5,16 @@ import { Controller, useFormContext } from "react-hook-form";
 import {
   CHART_WIDGETS_Y_AXIS_METRICS_LIST,
   DEFAULT_WIDGET_CHART_TYPE_PAYLOAD,
-  EWidgetChartModels,
-  EWidgetChartTypes,
-  EWidgetXAxisProperty,
   NUMBER_WIDGET_Y_AXIS_METRICS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import {
+  EWidgetChartModels,
+  EWidgetChartTypes,
+  EWidgetXAxisProperty,
+  TDashboardWidget,
+  TDashboardWidgetConfig,
+} from "@plane/types";
 // local components
 import { WidgetChartTypeIcon } from "../../widgets";
 import { DashboardWidgetChartTypesDropdown } from "../../widgets/dropdown";

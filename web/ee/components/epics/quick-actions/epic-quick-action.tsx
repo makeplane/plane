@@ -5,8 +5,8 @@ import pick from "lodash/pick";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel, EIssueServiceType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";

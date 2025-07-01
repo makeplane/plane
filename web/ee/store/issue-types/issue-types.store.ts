@@ -2,18 +2,19 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/constants";
 import {
-  TLoader,
-  TIssueType,
-  IIssueTypesService,
+  EWorkItemConversionType,
+  EWorkItemTypeEntity,
   IIssuePropertiesService,
   IIssuePropertyOptionsService,
   IIssueType,
+  IIssueTypesService,
   IIssueTypesStore,
-  TIssueTypesPromise,
-  TWorkItemTypesPropertiesOptions,
   TEpicPropertiesOptions,
+  TIssueType,
+  TIssueTypesPromise,
+  TLoader,
+  TWorkItemTypesPropertiesOptions,
 } from "@plane/types";
 import { buildWorkItemTypeSchema } from "@plane/utils";
 // local db utils

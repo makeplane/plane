@@ -7,10 +7,9 @@ import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { IActiveCycle } from "@plane/types";
+import { EIssuesStoreType, IActiveCycle } from "@plane/types";
 // ui
 import { Avatar, Loader, PriorityIcon, Tooltip } from "@plane/ui";
 // components

@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks

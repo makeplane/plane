@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
-import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // ui
 import { DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components

@@ -3,9 +3,15 @@ import { observer } from "mobx-react";
 import { v4 } from "uuid";
 import { InfoIcon, Plus } from "lucide-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TCreationListModes, TIssuePropertyPayload, IIssueType, TLoader } from "@plane/types";
+import {
+  EIssuePropertyType,
+  IIssueType,
+  TCreationListModes,
+  TIssueProperty,
+  TIssuePropertyPayload,
+  TLoader,
+} from "@plane/types";
 import { Button, Loader, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components

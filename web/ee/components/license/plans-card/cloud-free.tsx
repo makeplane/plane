@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling, Loader } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // helpers

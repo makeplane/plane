@@ -1,12 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  EProductSubscriptionEnum,
-  SUBSCRIPTION_WITH_BILLING_FREQUENCY,
-  SUBSCRIPTION_WITH_TRIAL,
-} from "@plane/constants";
-import { IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
+import { SUBSCRIPTION_WITH_BILLING_FREQUENCY, SUBSCRIPTION_WITH_TRIAL } from "@plane/constants";
+import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
 import { Loader } from "@plane/ui";
 import {
   cn,

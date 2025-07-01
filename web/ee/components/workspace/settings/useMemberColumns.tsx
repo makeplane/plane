@@ -1,5 +1,6 @@
 // plane imports
-import { EProductSubscriptionTier, EUserWorkspaceRoles } from "@plane/constants";
+import { EProductSubscriptionTier } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 // ce components
 import { useMemberColumns as useCeMemberColumns } from "@/ce/components/workspace/settings/useMemberColumns";
 // components

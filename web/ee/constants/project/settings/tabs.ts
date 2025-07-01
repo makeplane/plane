@@ -1,6 +1,7 @@
 // plane types
-import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissions } from "@plane/constants";
 // ui
+import { EUserProjectRoles } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 // ce constants
 import { PROJECT_SETTINGS as PROJECT_SETTINGS_CE } from "@/ce/constants/project";

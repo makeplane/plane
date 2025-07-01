@@ -3,9 +3,9 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueFilterType, EIssuesStoreType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 import { isIssueFilterActive  } from "@plane/utils";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";

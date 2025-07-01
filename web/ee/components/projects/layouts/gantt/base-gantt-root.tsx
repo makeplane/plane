@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
-import { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
 // components
 import { GanttChartRoot } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";

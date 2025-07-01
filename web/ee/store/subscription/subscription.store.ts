@@ -2,12 +2,8 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
-import {
-  DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA,
-  EProductSubscriptionEnum,
-  SUBSCRIPTION_WITH_SEATS_MANAGEMENT,
-} from "@plane/constants";
-import { IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
+import { DEFAULT_ADD_WORKSPACE_SEATS_MODAL_DATA, SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
+import { EProductSubscriptionEnum, IWorkspaceProductSubscription, TAddWorkspaceSeatsModal } from "@plane/types";
 // services
 import { PaymentService } from "@/plane-web/services/payment.service";
 // plane web store

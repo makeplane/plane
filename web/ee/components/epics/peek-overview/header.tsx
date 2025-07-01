@@ -5,14 +5,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Link2, MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 // plane imports
-import {
-  EIssueServiceType,
-  EIssuesStoreType,
-  EUserPermissionsLevel,
-  EUserProjectRoles,
-  EWorkItemConversionType,
-} from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType, TIssue } from "@plane/types";
 import {
   CenterPanelIcon,
   CustomSelect,

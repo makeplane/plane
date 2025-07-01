@@ -1,13 +1,9 @@
 import isEmpty from "lodash/isEmpty";
 // plane constants
-import {
-  EIssueGroupByToServerOptions,
-  EServerGroupByToFilterOptions,
-  EIssueFilterType,
-  EIssuesStoreType,
-} from "@plane/constants";
+import { EIssueGroupByToServerOptions, EServerGroupByToFilterOptions, EIssueFilterType } from "@plane/constants";
 // types
 import {
+  EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
@@ -19,7 +15,7 @@ import {
   TStaticViewTypes,
 } from "@plane/types";
 // helpers
-import { getComputedDisplayFilters, getComputedDisplayProperties  } from "@plane/utils";
+import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // lib
 import { storage } from "@/lib/local-storage";
 

@@ -6,8 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn  } from "@plane/utils";

@@ -6,11 +6,10 @@ import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";
 import { E_FEATURE_FLAGS, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-// import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { E_INTEGRATION_KEYS, SILO_ERROR_CODES } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
-import { UserAuthentication, IntegrationRoot, GithubHeader } from "@/plane-web/components/integrations/github";
+import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { GithubHeader, IntegrationRoot, UserAuthentication } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useFlag, useGithubIntegration, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // public images

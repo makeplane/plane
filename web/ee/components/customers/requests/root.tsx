@@ -1,8 +1,9 @@
 import React, { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
 import {

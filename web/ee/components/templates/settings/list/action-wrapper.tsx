@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuesStoreType, ETemplateLevel, ETemplateType } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
-import { TPage } from "@plane/types";
+import { EIssuesStoreType, ETemplateType, TPage } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { extractPageFormData } from "@plane/utils";

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 

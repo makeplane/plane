@@ -3,7 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
 import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";

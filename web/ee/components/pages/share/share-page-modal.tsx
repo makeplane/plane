@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-// constants
-import { EPageSharedUserAccess } from "@plane/constants";
 // plane imports
+import { EPageSharedUserAccess } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // types
 import { TPageShareFormUser } from "@/plane-web/hooks/pages/use-page-share-form";

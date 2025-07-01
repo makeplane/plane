@@ -4,7 +4,8 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // constants
-import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { SettingsMobileNav } from "@/components/settings";

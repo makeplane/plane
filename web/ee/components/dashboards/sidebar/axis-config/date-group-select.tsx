@@ -1,7 +1,7 @@
 // plane imports
-import { EWidgetXAxisDateGrouping, WIDGET_X_AXIS_DATE_GROUPINGS_LIST } from "@plane/constants";
+import { WIDGET_X_AXIS_DATE_GROUPINGS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import { EWidgetXAxisDateGrouping, TDashboardWidget } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../property-wrapper";

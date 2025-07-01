@@ -5,7 +5,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { BetaBadge, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks

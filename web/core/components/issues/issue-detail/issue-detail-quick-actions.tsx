@@ -6,13 +6,12 @@ import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
 import {
   ARCHIVABLE_STATE_GROUPS,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
   WORK_ITEM_TRACKER_EVENTS,
-  EWorkItemConversionType,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components

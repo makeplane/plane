@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";

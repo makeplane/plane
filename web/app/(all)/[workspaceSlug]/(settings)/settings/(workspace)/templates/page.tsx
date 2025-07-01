@@ -4,9 +4,10 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 // component
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // store hooks

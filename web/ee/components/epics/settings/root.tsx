@@ -4,8 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EWorkItemTypeEntity } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EWorkItemTypeEntity } from "@plane/types";
 import { setPromiseToast, ToggleSwitch, Tooltip } from "@plane/ui";
 // hooks
 import { SettingsHeading } from "@/components/settings";

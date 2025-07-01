@@ -4,7 +4,7 @@ import { FC } from "react";
 import { omit } from "lodash";
 import { observer } from "mobx-react";
 // constants
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // helpers

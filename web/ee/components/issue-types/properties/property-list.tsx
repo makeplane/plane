@@ -1,8 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
-import { IIssueProperty } from "@plane/types";
+import { EIssuePropertyType, IIssueProperty } from "@plane/types";
 // plane web imports
 import {
   IssuePropertyCreateListItem,

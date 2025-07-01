@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-import { EIssueServiceType, EWorkItemConversionType } from "@plane/constants";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import {
+  EIssueServiceType,
+  EWorkItemConversionType,
+  ISearchIssueResponse,
+  TIssue,
+  TIssuePropertyValueErrors,
+  TIssuePropertyValues,
+} from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // components

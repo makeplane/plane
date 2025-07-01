@@ -1,8 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button } from "@plane/ui";
 // helpers
 import { cn  } from "@plane/utils";

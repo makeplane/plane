@@ -4,13 +4,14 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { Layout, Layouts } from "react-grid-layout";
 // plane imports
+import { DEFAULT_WIDGET_CHART_TYPE_PAYLOAD, EWidgetGridBreakpoints } from "@plane/constants";
 import {
-  DEFAULT_WIDGET_CHART_TYPE_PAYLOAD,
   EWidgetChartModels,
   EWidgetChartTypes,
-  EWidgetGridBreakpoints,
-} from "@plane/constants";
-import { TDashboardWidget, TDashboardWidgetData, TDashboardWidgetsLayoutPayload } from "@plane/types";
+  TDashboardWidget,
+  TDashboardWidgetData,
+  TDashboardWidgetsLayoutPayload,
+} from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 import { DashboardWidgetInstance } from "./widget";

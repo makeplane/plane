@@ -4,8 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Control, Controller } from "react-hook-form";
 // plane imports
-import { ETabIndices, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, ISearchIssueResponse, TIssue } from "@plane/types";
 // components
 import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 import {

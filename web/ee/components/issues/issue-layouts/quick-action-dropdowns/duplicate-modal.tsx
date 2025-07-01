@@ -1,9 +1,8 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Info } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 import { CreateIssueToastActionItems } from "@/components/issues/create-issue-toast-action-items";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

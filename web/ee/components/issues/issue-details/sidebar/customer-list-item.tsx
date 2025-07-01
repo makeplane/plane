@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomersIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // components

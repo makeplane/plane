@@ -2,15 +2,9 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import {
-  E_FEATURE_FLAGS,
-  ETemplateLevel,
-  ETemplateType,
-  EUserPermissionsLevel,
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-} from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu, Button, TButtonSizes } from "@plane/ui";
 import {
   getCreateUpdateTemplateSettingsPath,

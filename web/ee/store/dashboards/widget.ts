@@ -1,17 +1,18 @@
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
+import { E_FEATURE_FLAGS, WIDGET_CHART_MODELS_LIST } from "@plane/constants";
+// plane types
 import {
-  E_FEATURE_FLAGS,
   EWidgetChartModels,
   EWidgetChartTypes,
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
-  WIDGET_CHART_MODELS_LIST,
-} from "@plane/constants";
-// plane types
-import { TDashboardWidget, TDashboardWidgetConfig, TDashboardWidgetData } from "@plane/types";
+  TDashboardWidget,
+  TDashboardWidgetConfig,
+  TDashboardWidgetData,
+} from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 import { TDashboardWidgetHelpers } from "./dashboard-widgets.store";

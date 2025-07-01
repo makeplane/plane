@@ -1,7 +1,7 @@
 import update from "lodash/update";
 import { computedFn } from "mobx-utils";
+import { EUserProjectRoles } from "@plane/types";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
 import { getHighestRole } from "@plane/utils";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";

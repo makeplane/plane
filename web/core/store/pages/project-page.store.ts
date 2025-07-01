@@ -2,8 +2,8 @@ import set from "lodash/set";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EUserPermissions, EUserProjectRoles } from "@plane/constants";
-import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import { EUserPermissions } from "@plane/constants";
+import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web store

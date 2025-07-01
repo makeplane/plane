@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { ProjectMultiSelectModal } from "@/components/project";

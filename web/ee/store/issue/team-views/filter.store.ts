@@ -4,16 +4,8 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // base class
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
-import {
-  IIssueFilterOptions,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  TIssueKanbanFilters,
-  IIssueFilters,
-  TIssueParams,
-  IssuePaginationOptions,
-} from "@plane/types";
+import { EIssueFilterType } from "@plane/constants";
+import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IIssueFilters, IssuePaginationOptions, TIssueKanbanFilters, TIssueParams } from "@plane/types";
 // helpers
 import { handleIssueQueryParamsByLayout  } from "@plane/utils";
 // plane web services

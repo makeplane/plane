@@ -7,15 +7,16 @@ import { useParams, usePathname } from "next/navigation";
 import { ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import { Logo, TeamsIcon, Tooltip } from "@plane/ui";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
 // helpers
 import { cn  } from "@plane/utils";
+import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web hooks

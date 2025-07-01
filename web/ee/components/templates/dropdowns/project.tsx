@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Plus, Shapes } from "lucide-react";
 // ui
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ETemplateType } from "@plane/types";
 import { Button, CustomSearchSelect, Loader } from "@plane/ui";
 // helpers
 import { cn, getCreateUpdateTemplateSettingsPath } from "@plane/utils";

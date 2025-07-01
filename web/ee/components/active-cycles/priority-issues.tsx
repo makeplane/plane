@@ -4,9 +4,8 @@ import Link from "next/link";
 import useSWR from "swr";
 import { CalendarCheck } from "lucide-react";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
 // types
-import { IActiveCycle } from "@plane/types";
+import { EIssuesStoreType, IActiveCycle } from "@plane/types";
 // ui
 import { Loader, PriorityIcon, Tooltip } from "@plane/ui";
 // components

@@ -7,7 +7,7 @@
     "moduleResolution": "Bundler",
     "allowJs": true,
     "resolveJsonModule": true,
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "inlineSources": true,
     "declaration": true,

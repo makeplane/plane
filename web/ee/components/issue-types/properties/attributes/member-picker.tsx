@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuePropertyType, ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
+import { ISSUE_PROPERTY_SETTINGS_CONFIGURATIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TOperationMode } from "@plane/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import {
   MemberValueSelect,

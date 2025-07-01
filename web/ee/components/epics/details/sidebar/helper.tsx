@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { EIssueServiceType } from "@plane/constants";
-import { TCommentsOperations, TIssueComment } from "@plane/types";
+import { EIssueServiceType, TCommentsOperations, TIssueComment } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList  } from "@plane/utils";

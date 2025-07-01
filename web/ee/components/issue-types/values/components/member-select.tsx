@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import { EIssuePropertyType, EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns";

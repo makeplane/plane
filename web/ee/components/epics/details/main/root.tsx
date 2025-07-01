@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
 // hooks

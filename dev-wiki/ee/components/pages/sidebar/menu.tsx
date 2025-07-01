@@ -1,9 +1,10 @@
+import { EUserWorkspaceRoles } from "@plane/types";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Home, LucideIcon } from "lucide-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@/helpers/common.helper";

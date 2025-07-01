@@ -15,11 +15,11 @@ import {
   EUserPermissionsLevel,
   GROUPED_WORKSPACE_SETTINGS,
   WORKSPACE_SETTINGS_CATEGORIES,
-  EUserWorkspaceRoles,
   EUserPermissions,
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
-import { TeamsIcon, InitiativeIcon, CustomersIcon, ProjectStatesIcon } from "@plane/ui";
+import { EUserWorkspaceRoles } from "@plane/types";
+import { CustomersIcon, InitiativeIcon, ProjectStatesIcon, TeamsIcon } from "@plane/ui";
 import { SettingsSidebar } from "@/components/settings";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";

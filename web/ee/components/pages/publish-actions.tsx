@@ -2,13 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EUserWorkspaceRoles,
-  EUserPermissionsLevel,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-  EUserProjectRoles,
-} from "@plane/constants";
+import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
 import { useUserPermissions } from "@/hooks/store";

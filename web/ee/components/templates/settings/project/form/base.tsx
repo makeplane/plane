@@ -1,13 +1,18 @@
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { EIssuePropertyType, EProjectPriority, PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
-// import { usePreventOutsideClick } from "@plane/hooks";
+import { EProjectPriority, PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { IIssueProperty, IIssueType, TProjectTemplateForm, TProjectTemplateFormData } from "@plane/types";
+import {
+  EIssuePropertyType,
+  IIssueProperty,
+  IIssueType,
+  TProjectTemplateForm,
+  TProjectTemplateFormData,
+} from "@plane/types";
 import { Button } from "@plane/ui";
 import {
   cn,

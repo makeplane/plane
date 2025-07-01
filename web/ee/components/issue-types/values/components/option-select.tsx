@@ -3,11 +3,16 @@ import { isEqual } from "lodash";
 import { observer } from "mobx-react";
 // components
 import { ChevronDown } from "lucide-react";
-import { EIssuePropertyType } from "@plane/constants";
-import { EIssuePropertyValueError, IIssueProperty, TIssueProperty, TPropertyValueVariant } from "@plane/types";
+import {
+  EIssuePropertyType,
+  EIssuePropertyValueError,
+  IIssueProperty,
+  TIssueProperty,
+  TPropertyValueVariant,
+} from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TOptionValueSelectProps = {
   propertyDetail: Partial<TIssueProperty<EIssuePropertyType.OPTION>>;

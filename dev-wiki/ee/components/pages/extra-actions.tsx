@@ -1,8 +1,9 @@
+import { EUserProjectRoles } from "@plane/types";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/ui";
 // types
 import { TPageHeaderExtraActionsProps } from "@/ce/components/pages/extra-actions";

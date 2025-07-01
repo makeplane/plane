@@ -5,16 +5,17 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 // types
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EIssuePropertyType, EIssuePropertyRelationType } from "@plane/constants";
 import {
-  TLogoProps,
-  TIssueProperty,
-  TIssuePropertyPayload,
-  TIssuePropertySettingsMap,
-  TIssuePropertyOption,
+  EIssuePropertyRelationType,
+  EIssuePropertyType,
+  ICustomPropertyStoreInstanceServices,
   IIssueProperty,
   IIssuePropertyOption,
-  ICustomPropertyStoreInstanceServices,
+  TIssueProperty,
+  TIssuePropertyOption,
+  TIssuePropertyPayload,
+  TIssuePropertySettingsMap,
+  TLogoProps,
 } from "@plane/types";
 // plane web store
 import { IssuePropertyOption } from "@/plane-web/store/issue-types";

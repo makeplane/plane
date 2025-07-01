@@ -1,9 +1,8 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 // components
-import { TIssuePriorities, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssuePriorities, TIssueServiceType } from "@plane/types";
 import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

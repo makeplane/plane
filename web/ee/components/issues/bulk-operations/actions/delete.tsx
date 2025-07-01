@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web components

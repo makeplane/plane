@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ETemplateType } from "@plane/types";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getTemplateSettingsBasePath, getTemplateTypeI18nName, projectTemplateFormDataToData } from "@plane/utils";

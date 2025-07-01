@@ -3,7 +3,7 @@ import React, { FC } from "react";
 import { isEmpty } from "lodash";
 import { observer } from "mobx-react";
 import { LayersIcon } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 import { getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";

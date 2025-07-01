@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { EUpdateStatus } from "@plane/types/src/enums";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";

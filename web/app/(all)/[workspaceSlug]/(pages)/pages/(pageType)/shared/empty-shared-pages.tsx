@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { Users, Crown } from "lucide-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks

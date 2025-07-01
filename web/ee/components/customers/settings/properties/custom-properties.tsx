@@ -3,11 +3,10 @@ import { observer } from "mobx-react";
 import { v4 } from "uuid";
 import { ChevronRight, Plus } from "lucide-react";
 // plane constants
-import { EIssuePropertyType } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
+import { EIssuePropertyType, TCreationListModes, TIssueProperty, TIssuePropertyPayload } from "@plane/types";
 // plane ui
 import { Button, Collapsible } from "@plane/ui";
 // helpers

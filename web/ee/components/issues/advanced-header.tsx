@@ -6,14 +6,9 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle, ExternalLink, RssIcon } from "lucide-react";
 // plane imports
-import {
-  EIssuesStoreType,
-  EUserPermissionsLevel, EProjectFeatureKey,
-  EUserProjectRoles,
-  SPACE_BASE_PATH,
-  SPACE_BASE_URL,
-} from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Button, Header, Tooltip } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common";

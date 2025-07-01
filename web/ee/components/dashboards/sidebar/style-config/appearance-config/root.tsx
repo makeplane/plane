@@ -1,8 +1,7 @@
 import { useFormContext } from "react-hook-form";
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes, TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 // local components
 import { AreaChartAppearanceConfig } from "./area-chart";
 import { AreaChartComparisonLineAppearanceConfig } from "./area-chart-comparison-line";

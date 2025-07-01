@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EViewAccess } from "@plane/constants";
-import { TViewFilterProps } from "@plane/types";
+import { EViewAccess, TViewFilterProps } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // constants
 import { ViewAppliedFiltersList } from "@/components/views/applied-filters";

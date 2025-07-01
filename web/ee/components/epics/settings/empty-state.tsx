@@ -4,8 +4,8 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Button, getButtonStyling, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { DetailedEmptyState } from "@/components/empty-state";

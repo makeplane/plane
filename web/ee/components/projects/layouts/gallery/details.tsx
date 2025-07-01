@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, LinkIcon, Lock, MoreHorizontal, Settings, Trash2 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import {
   ArchiveIcon,
   CustomMenu,

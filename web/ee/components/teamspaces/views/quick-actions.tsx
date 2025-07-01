@@ -4,8 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
-import { TTeamspaceView } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles, TTeamspaceView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks

@@ -2,8 +2,9 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";

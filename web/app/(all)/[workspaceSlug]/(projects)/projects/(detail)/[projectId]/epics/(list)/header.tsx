@@ -4,7 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel, EProjectFeatureKey } from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header } from "@plane/ui";
 // components

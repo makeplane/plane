@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
+import { ETemplateType, PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,

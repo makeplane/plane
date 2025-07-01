@@ -3,7 +3,8 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EWidgetChartTypes, EWidgetGridBreakpoints } from "@plane/constants";
+import { EWidgetGridBreakpoints } from "@plane/constants";
+import { EWidgetChartTypes } from "@plane/types";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 // chart types

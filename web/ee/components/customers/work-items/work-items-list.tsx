@@ -1,10 +1,10 @@
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import { EUserWorkspaceRoles, ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { ExistingIssuesListModal } from "@/components/core";
 // plane web components

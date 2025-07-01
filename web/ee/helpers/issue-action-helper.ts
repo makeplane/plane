@@ -1,17 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // types
-import {
-  IssuePaginationOptions,
-  TIssueKanbanFilters,
-  IIssueDisplayProperties,
-  IIssueDisplayFilterOptions,
-  IIssueFilterOptions,
-  TLoader,
-  TIssue,
-} from "@plane/types";
+import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IssuePaginationOptions, TIssue, TIssueKanbanFilters, TLoader } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssueActions } from "@/hooks/use-issues-actions";

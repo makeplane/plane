@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 // ui
 import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers

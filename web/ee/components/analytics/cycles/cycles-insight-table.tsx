@@ -1,11 +1,10 @@
 import { useMemo } from "react";
-import { ColumnDef, RowData } from "@tanstack/react-table";
+import { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { ExportConfig } from "@plane/types";
 import { CycleInsightColumns } from "@plane/types/src/analytics-extended";
 import { CycleGroupIcon, Logo, TCycleGroups } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
@@ -18,7 +17,11 @@ import { UserAvatarName } from "../user-avatar-name";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
-    export: ExportConfig<TData>;
+    export: {
+      key: string;
+      value: (row: Row<TData>) => string | number;
+      label?: string;
+    };
   }
 }
 

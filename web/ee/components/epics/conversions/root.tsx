@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";

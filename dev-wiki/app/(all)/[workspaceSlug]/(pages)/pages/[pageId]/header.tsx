@@ -6,9 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { FileText, ChevronRight } from "lucide-react";
 // constants
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 // types
-import { TPage } from "@plane/types";
+import { EUserWorkspaceRoles, TPage } from "@plane/types";
 // ui
 import { Button, CustomMenu, Header } from "@plane/ui";
 // components

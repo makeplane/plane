@@ -2,8 +2,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Button, CustomersIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";

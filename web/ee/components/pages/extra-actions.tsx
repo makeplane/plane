@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-// types
+// plane imports
 import { TPageHeaderExtraActionsProps } from "@/ce/components/pages";
 import { PagePublishActions } from "./publish-actions";
 

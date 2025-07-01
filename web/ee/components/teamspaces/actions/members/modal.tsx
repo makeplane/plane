@@ -3,8 +3,8 @@ import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { EUserWorkspaceRoles } from "@plane/constants";
 import {
   Avatar,
   Button,

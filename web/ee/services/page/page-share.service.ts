@@ -1,5 +1,6 @@
-// constants
-import { API_BASE_URL, EPageSharedUserAccess } from "@plane/constants";
+// plane imports
+import { API_BASE_URL } from "@plane/constants";
+import { EPageSharedUserAccess } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 

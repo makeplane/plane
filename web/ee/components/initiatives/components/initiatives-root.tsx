@@ -1,8 +1,9 @@
 import { isEmpty, size } from "lodash";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 import { ListLayoutLoader } from "@/components/ui";

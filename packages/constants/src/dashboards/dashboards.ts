@@ -1,16 +1,15 @@
-// plane imports
-import { TDashboardWidget } from "@plane/types";
 // local imports
-import { DEFAULT_WIDGET_COLOR, DEFAULT_WIDGET_COLOR_SCHEME } from "./widgets";
 import {
   EWidgetChartModels,
   EWidgetChartTypes,
-  EWidgetGridBreakpoints,
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
   EWidgetYAxisMetric,
-} from "./enums";
+  TDashboardWidget,
+} from "@plane/types";
 import { E_FEATURE_FLAGS } from "../feature-flag";
+import { DEFAULT_WIDGET_COLOR, DEFAULT_WIDGET_COLOR_SCHEME } from "./widgets";
+import { EWidgetGridBreakpoints } from "./enums";
 
 export const WIDGET_GRID_BREAKPOINTS: Record<EWidgetGridBreakpoints, number> = {
   [EWidgetGridBreakpoints.XXS]: 0,

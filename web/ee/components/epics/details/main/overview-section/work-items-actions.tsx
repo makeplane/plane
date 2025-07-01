@@ -1,9 +1,10 @@
 import { FC, useCallback } from "react";
 // constants
 import { observer } from "mobx-react";
-import { EIssueFilterType, EIssueServiceType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // types
 import {
+  EIssueServiceType,
   IIssueDisplayFilterOptions,
   TIssueServiceType,
   IIssueDisplayProperties,

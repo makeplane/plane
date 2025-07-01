@@ -2,9 +2,8 @@ import set from "lodash/set";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EPageAccess, EUserWorkspaceRoles, EUserPermissions } from "@plane/constants";
-import { TPage } from "@plane/types";
-// utils
+import { EPageAccess, EUserPermissions } from "@plane/constants";
+import { EUserWorkspaceRoles, TPage } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // plane web services
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";

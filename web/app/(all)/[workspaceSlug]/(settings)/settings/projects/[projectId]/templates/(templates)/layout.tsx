@@ -6,7 +6,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeftIcon } from "lucide-react";
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
 // hooks

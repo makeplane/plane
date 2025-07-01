@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
+import { ETemplateType } from "@plane/types";
 // plane web imports
 import { useProjectTemplates, useWorkItemTemplates, usePageTemplates } from "@/plane-web/hooks/store";
 // local imports

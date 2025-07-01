@@ -2,8 +2,8 @@ import orderBy from "lodash/orderBy";
 import { makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { EIssueServiceType, E_SORT_ORDER, EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
-import { TIssueActivityComment, TIssueServiceType } from "@plane/types";
+import { E_SORT_ORDER, EActivityFilterType, EActivityFilterTypeEE } from "@plane/constants";
+import { EIssueServiceType, TIssueActivityComment, TIssueServiceType } from "@plane/types";
 // ce store
 import {
   IIssueActivityStoreActions as IIssueActivityStoreActionsCe,

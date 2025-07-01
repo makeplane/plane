@@ -5,9 +5,8 @@ import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 // helpers
-import { TBillingFrequency, TSubscriptionPrice } from "@plane/types";
+import { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 // components
 import {

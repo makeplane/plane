@@ -6,11 +6,11 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
 import { Crown } from "lucide-react";
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
-import { SettingsHeading } from "@/components/settings";
 import { cn  } from "@plane/utils";
+import { SettingsHeading } from "@/components/settings";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.png";
 import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.png";

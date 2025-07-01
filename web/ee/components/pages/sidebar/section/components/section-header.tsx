@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronRight, LoaderCircle, Plus } from "lucide-react";
@@ -77,3 +77,4 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
     );
   }
 );
+SectionHeader.displayName = "SectionHeader";

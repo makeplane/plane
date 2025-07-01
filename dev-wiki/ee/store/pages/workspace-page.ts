@@ -2,8 +2,8 @@ import set from "lodash/set";
 import { computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
-import { TPage } from "@plane/types";
+import { EPageAccess } from "@plane/constants";
+import { EUserWorkspaceRoles, TPage } from "@plane/types";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // store

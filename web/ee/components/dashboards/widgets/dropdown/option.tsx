@@ -3,8 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Lock } from "lucide-react";
 // plane imports
-import { E_FEATURE_FLAGS, EProductSubscriptionEnum, EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EProductSubscriptionEnum, EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web helpers

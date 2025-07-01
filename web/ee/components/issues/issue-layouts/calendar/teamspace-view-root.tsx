@@ -2,7 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { ProjectIssueQuickActions } from "@/components/issues";
 import { BaseCalendarRoot } from "@/components/issues/issue-layouts/calendar/base-calendar-root";

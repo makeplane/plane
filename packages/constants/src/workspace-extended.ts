@@ -1,4 +1,4 @@
-import { EUserWorkspaceRoles } from "./user";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { IWorkspaceSidebarNavigationItem } from "./workspace";
 
 export const EXTENDED_WORKSPACE_SETTINGS = {

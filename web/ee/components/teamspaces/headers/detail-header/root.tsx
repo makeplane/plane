@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Rss, FileText, Layers, Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETeamspaceNavigationItem, EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import {
   Breadcrumbs,

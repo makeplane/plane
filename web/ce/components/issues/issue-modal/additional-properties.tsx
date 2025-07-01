@@ -1,5 +1,4 @@
-import { EWorkItemTypeEntity } from "@plane/constants";
-import { TIssueServiceType } from "@plane/types";
+import { EWorkItemTypeEntity, TIssueServiceType } from "@plane/types";
 
 export type TIssueAdditionalPropertiesProps = {
   issueId: string | undefined;

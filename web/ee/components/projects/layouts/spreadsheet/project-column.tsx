@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { useUserPermissions } from "@/hooks/store";
 import { IProjectDisplayProperties, SPREADSHEET_PROPERTY_DETAILS } from "@/plane-web/constants/project/spreadsheet";
 import { TProject } from "@/plane-web/types/projects";

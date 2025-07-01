@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { LinkIcon, MoreHorizontal, Trash2 } from "lucide-react";
 // Plane
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssueServiceType } from "@plane/types";
 import { CustomMenu, setToast, TContextMenuItem, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks

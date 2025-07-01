@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { LoaderIcon } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports

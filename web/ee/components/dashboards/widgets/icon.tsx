@@ -1,5 +1,5 @@
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import {
   BasicAreaChartIcon,
   BasicBarChartIcon,

@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { EPageSharedUserAccess } from "@plane/constants";
+// plane imports
+import { EPageSharedUserAccess } from "@plane/types";
+// local imports
 import { TPendingSharedUser } from "./types";
 import { UserListItem } from "./user-list-item";
 

@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane imports
-import { EIssueLayoutTypes, EViewAccess, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TTeamspaceView } from "@plane/types";
+import { EViewAccess, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TTeamspaceView } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components

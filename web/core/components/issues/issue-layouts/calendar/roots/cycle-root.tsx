@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/types";
 //hooks
-import { EIssuesStoreType } from "@plane/constants";
 import { CycleIssueQuickActions } from "@/components/issues";
 import { useCycle, useIssues } from "@/hooks/store";
 // components

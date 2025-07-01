@@ -6,7 +6,8 @@ import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";

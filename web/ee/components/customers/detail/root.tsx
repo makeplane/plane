@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane web components
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core";
 import { useUserPermissions, useWorkspace } from "@/hooks/store";

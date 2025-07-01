@@ -2,7 +2,8 @@
 
 import React from "react";
 import { ChevronDown } from "lucide-react";
-import { EPageSharedUserAccess } from "@plane/constants";
+// plane imports
+import { EPageSharedUserAccess } from "@plane/types";
 import { Avatar, Collapsible } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { TPageShareFormUser } from "../../../hooks/pages/use-page-share-form";

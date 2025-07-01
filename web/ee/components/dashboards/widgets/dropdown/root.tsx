@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes, WIDGET_DROPDOWN_SECTIONS } from "@plane/constants";
+import {  WIDGET_DROPDOWN_SECTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { DashboardWidgetChartTypesDropdownOption } from "./option";

@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TPageNavigationTabs } from "@plane/types";
+import { EUserWorkspaceRoles, TPageNavigationTabs } from "@plane/types";
 // components
 import { DetailedEmptyState } from "@/components/empty-state";
 import { PageListBlockRoot, PageLoader } from "@/components/pages";

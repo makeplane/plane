@@ -2,8 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { ExternalLink, RefreshCw } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn  } from "@plane/utils";

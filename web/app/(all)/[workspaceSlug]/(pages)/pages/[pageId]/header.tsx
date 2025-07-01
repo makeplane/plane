@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { FileText, ChevronRight } from "lucide-react";
-// types
+// plane imports
 import { TPage } from "@plane/types";
 // ui
 import { CustomMenu, Header } from "@plane/ui";

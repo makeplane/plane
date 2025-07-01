@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { EIssuePropertyType } from "@plane/constants";
-import { EIssuePropertyValueError, TIssueProperty, TPropertyValueVariant } from "@plane/types";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TBooleanInputProps = {
   value: string[];

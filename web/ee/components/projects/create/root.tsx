@@ -4,9 +4,9 @@ import { useState, FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, FormProvider } from "react-hook-form";
 // plane imports
-import { DEFAULT_PROJECT_FORM_VALUES, EUserProjectRoles, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProjectBulkAddFormData } from "@plane/types";
+import { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // types
 import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";

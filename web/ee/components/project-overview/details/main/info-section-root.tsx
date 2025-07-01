@@ -2,7 +2,8 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useProject, useUserPermissions } from "@/hooks/store";
 // types

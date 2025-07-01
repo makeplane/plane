@@ -1,7 +1,7 @@
 // plane imports
-import { ALL_WIDGETS_Y_AXIS_METRICS_LIST, EWidgetYAxisMetric } from "@plane/constants";
+import { ALL_WIDGETS_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../property-wrapper";

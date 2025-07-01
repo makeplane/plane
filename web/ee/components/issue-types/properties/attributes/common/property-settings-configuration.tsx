@@ -1,11 +1,10 @@
 import { get, set } from "lodash";
 import { observer } from "mobx-react";
 // components
-import { EIssuePropertyType } from "@plane/constants";
-import { TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
+import { EIssuePropertyType, TIssuePropertySettingsMap, TSettingsConfigurations } from "@plane/types";
+import { cn } from "@plane/utils";
 import { RadioInput } from "@/components/estimates";
 // helpers
-import { cn  } from "@plane/utils";
 // plane imports
 
 type TPropertySettingsConfigurationProps<T extends EIssuePropertyType> = {

@@ -4,9 +4,8 @@ import { FormEvent, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TTeamspace } from "@plane/types";
+import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
 import { cn, convertHexEmojiToDecimal, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";

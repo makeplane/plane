@@ -2,15 +2,22 @@ export * from "./root";
 
 import { getWeekOfMonth, isValid } from "date-fns";
 // plane imports
+import { TO_CAPITALIZE_PROPERTIES, WIDGET_X_AXIS_DATE_PROPERTIES } from "@plane/constants";
 import {
   EWidgetXAxisDateGrouping,
   EWidgetXAxisProperty,
-  TO_CAPITALIZE_PROPERTIES,
-  WIDGET_X_AXIS_DATE_PROPERTIES,
-} from "@plane/constants";
-import { TDashboardWidgetData, TDashboardWidgetDatum } from "@plane/types";
+  TDashboardWidgetData,
+  TDashboardWidgetDatum,
+} from "@plane/types";
 // helpers
-import { capitalizeFirstLetter, cn, hexToHsl, hslToHex, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
+import {
+  capitalizeFirstLetter,
+  cn,
+  hexToHsl,
+  hslToHex,
+  renderFormattedDate,
+  renderFormattedDateWithoutYear,
+} from "@plane/utils";
 // plane web store
 import { DashboardWidgetInstance } from "@/plane-web/store/dashboards/widget";
 

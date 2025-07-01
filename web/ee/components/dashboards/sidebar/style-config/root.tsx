@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { useFormContext } from "react-hook-form";
 import { ChevronRight } from "lucide-react";
 // plane imports
-import { EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartTypes, TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local components

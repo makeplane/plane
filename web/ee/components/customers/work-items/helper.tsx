@@ -1,12 +1,11 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // helper
-import { copyTextToClipboard  } from "@plane/utils";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useCustomers } from "@/plane-web/hooks/store";
@@ -21,7 +20,9 @@ export const useCustomerWorkItemOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TCustomerWorkItemOperations => {
   const { updateIssue } = useIssueDetail(issueServiceType);
-  const { workItems: { removeWorkItemFromCustomer } } = useCustomers();
+  const {
+    workItems: { removeWorkItemFromCustomer },
+  } = useCustomers();
   const pathname = usePathname();
   const { t } = useTranslation();
   // derived values

@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { ChevronRight } from "lucide-react";
 // plane imports
-import {
-  CIRCULAR_WIDGET_CHART_TYPES,
-  EWidgetChartTypes,
-  EWidgetYAxisMetric,
-  NUMBER_WIDGET_Y_AXIS_METRICS_LIST,
-} from "@plane/constants";
+import { CIRCULAR_WIDGET_CHART_TYPES, NUMBER_WIDGET_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import { EWidgetChartTypes, EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local components

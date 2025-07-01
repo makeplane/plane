@@ -1,8 +1,8 @@
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
-import { CHART_WIDGETS_Y_AXIS_METRICS_LIST, EWidgetYAxisMetric } from "@plane/constants";
+import { CHART_WIDGETS_Y_AXIS_METRICS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget } from "@plane/types";
+import { EWidgetYAxisMetric, TDashboardWidget } from "@plane/types";
 // local components
 import { WidgetMetricSelect } from "./metric-select";
 

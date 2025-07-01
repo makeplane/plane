@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { IssueReaction } from "@/components/issues";

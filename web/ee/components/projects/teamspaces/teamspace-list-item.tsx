@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleMinus } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TTeamspace } from "@plane/types";
+import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
 import {
   AlertModalCore,
   Avatar,

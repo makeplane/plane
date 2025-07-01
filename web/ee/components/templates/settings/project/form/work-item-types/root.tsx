@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
+import { EIssuePropertyType, IIssueProperty, IIssueType, TProjectTemplateForm } from "@plane/types";
 import { Button, setPromiseToast, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports

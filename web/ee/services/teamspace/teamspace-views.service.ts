@@ -1,7 +1,7 @@
 // plane constants
-import { EViewAccess, API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 // plane types
-import { TTeamspaceView, TPublishViewSettings, TIssuesResponse } from "@plane/types";
+import { EViewAccess, TIssuesResponse, TPublishViewSettings, TTeamspaceView } from "@plane/types";
 // helpers
 import { APIService } from "@/services/api.service";
 

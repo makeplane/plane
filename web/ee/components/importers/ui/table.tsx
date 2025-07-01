@@ -31,7 +31,7 @@ const ImporterTable = (props: TImporterTable) => {
             (item) =>
               item &&
               item?.id && (
-                <div className="relative grid grid-cols-2 items-center p-3 text-sm">
+                <div key={item.id} className="relative grid grid-cols-2 items-center p-3 text-sm">
                   <div className="text-custom-text-200">{item.name}</div>
                   {item.value}
                 </div>

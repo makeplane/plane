@@ -3,14 +3,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
 // plane imports
-import { EViewAccess, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
-import { TTeamspaceView } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles, EViewAccess, TTeamspaceView } from "@plane/types";
 import { Tooltip, FavoriteStar } from "@plane/ui";
 // components
+import { calculateTotalFilters } from "@plane/utils";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { DeleteProjectViewModal } from "@/components/views";
 // helpers
-import { calculateTotalFilters  } from "@plane/utils";
 // hooks
 import { useMember, useUserPermissions } from "@/hooks/store";
 // plane web components

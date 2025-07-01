@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import type { TIssue } from "@plane/types";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";

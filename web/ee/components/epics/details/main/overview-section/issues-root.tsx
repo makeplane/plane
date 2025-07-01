@@ -3,17 +3,16 @@ import React, { FC, useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
-import { TIssue, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, TIssue, TSubIssueOperations } from "@plane/types";
 import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
+import { cn  } from "@plane/utils";
 import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { SubIssuesListRoot } from "@/components/issues/issue-detail-widgets/sub-issues/issues-list/root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // helpers
-import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web imports

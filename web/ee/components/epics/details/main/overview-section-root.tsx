@@ -3,8 +3,8 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { EIssueServiceType } from "@plane/types";
 import { Tabs } from "@plane/ui";
 // components
 import { RelationActionButton } from "@/components/issues";

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import { observer } from "mobx-react";
 // ui
-import { EIssuePropertyType } from "@plane/constants";
 import {
+  EIssuePropertyType,
   EIssuePropertyValueError,
   TIssueProperty,
   TPropertyValueVariant,
@@ -11,7 +11,7 @@ import {
 } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane imports
 
 type TTextValueInputProps = {

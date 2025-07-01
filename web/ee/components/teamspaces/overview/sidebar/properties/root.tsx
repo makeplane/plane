@@ -2,15 +2,15 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { BriefcaseIcon, FileText, Layers, Loader as Spinner, Users } from "lucide-react";
+import { FileText, Layers, Loader as Spinner, Users } from "lucide-react";
+import { EUserWorkspaceRoles } from "@plane/types";
 // ui
-import { EUserWorkspaceRoles } from "@plane/constants";
 import { ContrastIcon, LayersIcon } from "@plane/ui";
 // components
-import { MemberDropdown } from "@/components/dropdowns";
-import { Props } from "@/components/icons/types";
 // hooks
 import { cn  } from "@plane/utils";
+import { MemberDropdown } from "@/components/dropdowns";
+import { Props } from "@/components/icons/types";
 // plane web hooks
 import { useMember } from "@/hooks/store";
 import { useTeamspaces } from "@/plane-web/hooks/store";

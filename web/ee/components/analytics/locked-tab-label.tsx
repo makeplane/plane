@@ -1,6 +1,6 @@
 import React from "react";
 import { Lock } from "lucide-react";
-import { EProductSubscriptionEnum } from "@plane/constants";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";

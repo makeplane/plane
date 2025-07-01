@@ -1,8 +1,8 @@
 "use client";
 import React, { FC } from "react";
 import { ArrowRight } from "lucide-react";
+import { EWorkItemConversionType } from "@plane/types";
 // plane imports
-import { EWorkItemConversionType } from "@plane/constants";
 import { EpicIcon, LayersIcon, Tooltip } from "@plane/ui";
 import { cn } from "@plane/utils";
 

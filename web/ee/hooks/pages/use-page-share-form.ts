@@ -1,6 +1,8 @@
 import { useEffect, useCallback, useMemo } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { EPageSharedUserAccess } from "@plane/constants";
+// plane imports
+import { EPageSharedUserAccess } from "@plane/types";
+// plane web imports
 import { TWorkspacePage } from "@/plane-web/store/pages/workspace-page";
 
 export type TPageShareFormUser = {

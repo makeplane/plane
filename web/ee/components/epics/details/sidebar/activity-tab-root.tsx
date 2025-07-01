@@ -3,17 +3,11 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import {
-  EIssueServiceType,
-  E_SORT_ORDER,
-  EActivityFilterType,
-  filterActivityOnSelectedFilters,
-} from "@plane/constants";
-
+import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TIssueActivityComment } from "@plane/types";
+import { EIssueServiceType, TIssueActivityComment } from "@plane/types";
 // components
 import { ActivitySortRoot } from "@/components/issues";
 // hooks

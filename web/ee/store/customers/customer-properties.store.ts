@@ -5,18 +5,18 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import { CustomerPropertiesOptionsService, CustomerPropertyService } from "@plane/services";
 // types
 import {
-  TIssueProperty,
-  TIssuePropertyOption,
-  TIssuePropertyPayload,
-  IIssueProperty,
+  EIssuePropertyType,
   IIssuePropertiesService,
+  IIssueProperty,
   IIssuePropertyOptionsService,
   TCustomerPropertiesOptions,
+  TIssueProperty,
+  TIssuePropertyOption,
   TIssuePropertyOptionsPayload,
+  TIssuePropertyPayload,
 } from "@plane/types";
 // plane-web store
 import { IssueProperty } from "@/plane-web/store/issue-types";

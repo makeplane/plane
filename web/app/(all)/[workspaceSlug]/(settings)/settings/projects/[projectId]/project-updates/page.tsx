@@ -4,8 +4,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 import { setPromiseToast, UpdatesIcon, ToggleSwitch } from "@plane/ui";
 import { NotAuthorizedView } from "@/components/auth-screens";
 // store hooks

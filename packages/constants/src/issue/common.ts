@@ -4,6 +4,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssue,
+  EIssuesStoreType,
 } from "@plane/types";
 import {
   ADDITIONAL_SPREADSHEET_PROPERTY_DETAILS,
@@ -48,28 +49,6 @@ export enum EIssueGroupBYServerToProperty {
   "target_date" = "target_date",
   "project_id" = "project_id",
   "created_by" = "created_by",
-}
-
-export enum EIssueServiceType {
-  ISSUES = "issues",
-  EPICS = "epics",
-  WORK_ITEMS = "work-items",
-}
-
-export enum EIssuesStoreType {
-  GLOBAL = "GLOBAL",
-  PROFILE = "PROFILE",
-  TEAM = "TEAM",
-  PROJECT = "PROJECT",
-  CYCLE = "CYCLE",
-  MODULE = "MODULE",
-  TEAM_VIEW = "TEAM_VIEW",
-  PROJECT_VIEW = "PROJECT_VIEW",
-  ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
-  DEFAULT = "DEFAULT",
-  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
-  EPIC = "EPIC",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -395,8 +374,3 @@ export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyo
   issue_type: "type_id",
   state_group: "state__group",
 } as const;
-
-export enum EWorkItemConversionType {
-  WORK_ITEM = "work_item",
-  EPIC = "epic",
-}

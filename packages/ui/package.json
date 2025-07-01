@@ -67,7 +67,6 @@
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.19",
-    "classnames": "^2.3.2",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",

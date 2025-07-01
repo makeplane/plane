@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/types";
 // plane constants
-import { EIssuesStoreType } from "@plane/constants";
 // components
 import { Button } from "@plane/ui";
 // hooks

@@ -1,4 +1,4 @@
-import { EProductSubscriptionEnum } from "./payment";
+import { EProductSubscriptionEnum } from "@plane/types";
 
 export enum E_FEATURE_FLAGS {
   BULK_OPS_ONE = "BULK_OPS_ONE",

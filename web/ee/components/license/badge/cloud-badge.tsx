@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks

@@ -5,9 +5,10 @@ import { useParams } from "next/navigation";
 import { MoreHorizontal, ArchiveIcon, ChevronRight, Settings } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // store hooks

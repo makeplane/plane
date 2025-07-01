@@ -4,11 +4,11 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
-import { EIssueServiceType, ETabIndices, EWorkItemTypeEntity } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // types
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity, type ISearchIssueResponse, type TIssue } from "@plane/types";
 // hooks
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // components

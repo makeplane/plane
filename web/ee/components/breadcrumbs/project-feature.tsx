@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 // ui
 import { RssIcon } from "lucide-react";
-import { EProjectFeatureKey, EUserProjectRoles } from "@plane/constants";
+import { EProjectFeatureKey } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 // components
 import { ProjectFeatureBreadcrumb as CEProjectFeatureBreadcrumb } from "@/ce/components/breadcrumbs";

@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EUserWorkspaceRoles, EPageAccess } from "@plane/constants";
+import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";

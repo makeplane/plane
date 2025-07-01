@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hooks

@@ -3,9 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Eye, LayoutGrid, Pencil, Plus } from "lucide-react";
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICustomSearchSelectOption } from "@plane/types";
+import { EWidgetChartModels, EWidgetChartTypes, ICustomSearchSelectOption } from "@plane/types";
 import {
   BreadcrumbNavigationSearchDropdown,
   Breadcrumbs,

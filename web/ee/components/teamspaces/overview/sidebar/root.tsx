@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
 import { cn  } from "@plane/utils";

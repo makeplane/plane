@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 // plane imports
-import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, EWidgetChartModels } from "@plane/constants";
-import { TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
+import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR } from "@plane/constants";
+import { EWidgetChartModels, TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
 // local imports
 import { generateExtendedColors, TWidgetComponentProps } from ".";
 

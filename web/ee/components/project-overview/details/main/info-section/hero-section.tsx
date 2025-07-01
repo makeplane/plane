@@ -2,8 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, PROJECT_TRACKER_EVENTS } from "@plane/constants";
-import { IProject, IWorkspace } from "@plane/types";
+import { EUserPermissionsLevel, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";

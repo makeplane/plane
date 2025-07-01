@@ -1,6 +1,7 @@
 // plane imports
-import { EIssuePropertyType, ETemplateType } from "@plane/constants";
 import {
+  EIssuePropertyType,
+  ETemplateType,
   IIssueLabel,
   IIssueProperty,
   IIssuePropertyOption,

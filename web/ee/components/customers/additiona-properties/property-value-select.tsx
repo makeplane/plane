@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "lucide-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import {
+  EIssuePropertyType,
   EIssuePropertyValueError,
   IIssueProperty,
   TDateAttributeDisplayOptions,

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
-import { EWidgetChartModels, EWidgetChartTypes } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
 import { getButtonStyling, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";

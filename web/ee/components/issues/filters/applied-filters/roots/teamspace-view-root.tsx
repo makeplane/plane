@@ -6,14 +6,8 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EIssueFilterType,
-  EIssuesStoreType,
-  EViewAccess,
-  EUserWorkspaceRoles,
-  EUserPermissionsLevel,
-} from "@plane/constants";
-import { IIssueFilterOptions, IProjectView } from "@plane/types";
+import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { AppliedFiltersList } from "@/components/issues";

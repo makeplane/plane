@@ -1,16 +1,16 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EWorkItemTypeEntity } from "@plane/types";
 // ui
-import { EWorkItemTypeEntity } from "@plane/constants";
 import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // ce components
+// helpers
+import { cn  } from "@plane/utils";
 import {
   IssueIdentifier as BaseIssueIdentifier,
   TIssueIdentifierProps,
 } from "@/ce/components/issues/issue-details/issue-identifier";
-// helpers
-import { cn  } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject } from "@/hooks/store";
 // plane web components

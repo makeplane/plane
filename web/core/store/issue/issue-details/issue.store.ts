@@ -1,8 +1,7 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
 // types
-import { TBaseIssue, TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TBaseIssue, TIssue, TIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services

@@ -3,8 +3,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
 // component
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";

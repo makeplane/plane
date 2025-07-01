@@ -2,9 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
-import { EWorkItemTypeEntity } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { Loader, setPromiseToast } from "@plane/ui";
+import { EWorkItemTypeEntity } from "@plane/types";
+import { Loader } from "@plane/ui";
 // plane web components
 import { IssueTypeListItem } from "@/plane-web/components/issue-types";
 // plane web hooks

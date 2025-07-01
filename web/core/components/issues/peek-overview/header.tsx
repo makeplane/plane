@@ -5,9 +5,9 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EWorkItemConversionType } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TNameDescriptionLoader } from "@plane/types";
+import { EWorkItemConversionType, TNameDescriptionLoader } from "@plane/types";
 import {
   ArchiveIcon,
   CenterPanelIcon,

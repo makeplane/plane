@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import {
+  EIssuePropertyType,
   EIssuePropertyValueError,
   TDateAttributeDisplayOptions,
   TIssueProperty,

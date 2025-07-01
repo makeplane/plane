@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // constants
-import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // types
-import { IIssueFilterOptions } from "@plane/types";
+import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Header, EHeaderVariant } from "@plane/ui";
 // components

@@ -2,7 +2,8 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { ControlLink, InitiativeIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

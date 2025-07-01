@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // ce imports
 import { TWorkItemTemplateSelect } from "@/ce/components/issues";

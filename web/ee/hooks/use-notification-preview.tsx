@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 import { TNotificationPreview } from "@/ce/hooks/use-notification-preview";
 import { IssuePeekOverview } from "@/components/issues";
 import { useAppTheme, useIssueDetail } from "@/hooks/store";

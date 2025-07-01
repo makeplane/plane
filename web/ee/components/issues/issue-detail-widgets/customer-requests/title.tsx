@@ -1,9 +1,8 @@
 "use client";
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

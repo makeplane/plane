@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // constants
-import { EUserProjectRoles, ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
+import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import { EUserProjectRoles, IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -20,8 +20,8 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const IssueEmbedCard: React.FC<Props> = observer((props) => {
-  return null;
+export const IssueEmbedCard: React.FC<Props> = observer((props) =>
+   null
   // const { issueId, projectId, workspaceSlug } = props;
   //
   // // states
@@ -114,4 +114,4 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   //     )}
   //   </div>
   // );
-});
+);

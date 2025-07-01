@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate  } from "@plane/utils";
 import { useMember, useUser, useUserPermissions } from "@/hooks/store";

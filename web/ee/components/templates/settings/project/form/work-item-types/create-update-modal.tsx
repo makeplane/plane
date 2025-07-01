@@ -1,8 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
-import { IIssueProperty, IIssueType, TIssueType } from "@plane/types";
+import { EIssuePropertyType, IIssueProperty, IIssueType, TIssueType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, getRandomIconName } from "@plane/ui";
 import {
   getRandomBackgroundColor,

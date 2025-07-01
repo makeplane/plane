@@ -4,13 +4,13 @@ import React, { FC, SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // Plane
-import { EIssueServiceType, EIssuesStoreType, TIssuePriorities } from "@plane/constants";
-import { IIssueDisplayProperties } from "@plane/types";
+import { TIssuePriorities } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, IIssueDisplayProperties } from "@plane/types";
 // components
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown, PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
 // helpers
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
-import { getDate, renderFormattedPayloadDate  } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";

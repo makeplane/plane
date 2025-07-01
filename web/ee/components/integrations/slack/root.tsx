@@ -32,6 +32,8 @@ export const SlackIntegrationRoot = observer(() => {
     disconnectUser,
   } = useSlackIntegration();
   const { t } = useTranslation();
+  // derived values
+  const firstAppConnectionId = appConnectionIds?.[0] ? getAppByConnectionId(appConnectionIds?.[0])?.id : null;
   // swr
   useSWR(
     workspaceSlug ? `SLACK_APP_CONNECTIONS_${workspaceSlug?.toString()}` : null,
@@ -117,7 +119,7 @@ export const SlackIntegrationRoot = observer(() => {
               return <ConnectedAppCard key={appId} data={app} handleDisconnect={handleAppDisconnect} />;
             })}
           </div>
-          <ProjectUpdatesRoot connectionId={getAppByConnectionId(appConnectionIds?.[0])?.id!} />
+          {firstAppConnectionId && <ProjectUpdatesRoot connectionId={firstAppConnectionId} />}
         </div>
       )}
     </>

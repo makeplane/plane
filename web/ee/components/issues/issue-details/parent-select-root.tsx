@@ -2,8 +2,8 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components

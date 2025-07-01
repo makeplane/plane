@@ -2,9 +2,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
+import { EUserProjectRoles, EUserWorkspaceRoles, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
 import { cn, TWorkItemSanitizationResult } from "@plane/utils";
 // components
 import { StateDropdown, PriorityDropdown, MemberDropdown, ModuleDropdown } from "@/components/dropdowns";

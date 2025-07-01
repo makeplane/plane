@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ETemplateType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ETemplateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getTemplateI18nLabel } from "@plane/utils";
 

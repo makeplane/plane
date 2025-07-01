@@ -6,7 +6,7 @@ import orderBy from "lodash/orderBy";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType, TNotification } from "@plane/types";
 import { calculateTimeAgo, convertToEpoch, cn } from "@plane/utils";
 import { MemberDropdown } from "@/components/dropdowns";
 //helpers
@@ -15,9 +15,8 @@ import { useIssueDetail, useWorkspaceNotifications } from "@/hooks/store";
 //components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { NotificationCardPreview, NotificationOption } from "@/plane-web/components/workspace-notifications";
-// eslint-disable-next-line import/order
-import { TNotification } from "@plane/types";
 import { useIssueType } from "@/plane-web/hooks/store";
+
 export interface INotificationItem {
   issueId: string;
   workspaceSlug: string;

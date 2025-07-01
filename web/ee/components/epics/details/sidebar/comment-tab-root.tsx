@@ -3,14 +3,10 @@
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
-import {
-  EIssueServiceType,
-  E_SORT_ORDER,
-  EActivityFilterType,
-  filterActivityOnSelectedFilters,
-} from "@plane/constants";
+import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues";

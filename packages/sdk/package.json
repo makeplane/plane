@@ -15,6 +15,7 @@
   "devDependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
-    "tsc-alias": "^1.8.10"
+    "tsc-alias": "^1.8.10",
+    "typescript": "5.8.3"
   }
 }

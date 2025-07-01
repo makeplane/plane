@@ -6,14 +6,15 @@ import omitBy from "lodash/omitBy";
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType, RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";
+import { RESTRICTED_WORK_ITEM_PROPERTY_DISPLAY_NAMES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
+  EIssuePropertyType,
   TIssueProperty,
-  TOperationMode,
   TIssuePropertyOption,
   TIssuePropertyOptionCreateUpdateData,
   TIssuePropertyPayload,
+  TOperationMode,
 } from "@plane/types";
 import { Button, InfoIcon, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 import { getIssuePropertyAttributeDisplayNameKey, cn } from "@plane/utils";

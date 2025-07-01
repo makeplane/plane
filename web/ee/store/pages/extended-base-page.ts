@@ -1,7 +1,9 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import { EPageSharedUserAccess } from "@plane/constants";
-import { TCollaborator, TPage, TPageExtended, TPageSharedUser } from "@plane/types";
+// plane imports
+import { EPageSharedUserAccess, TCollaborator, TPage, TPageExtended, TPageSharedUser } from "@plane/types";
+// plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
+// store
 import { TBasePageServices } from "@/store/pages/base-page";
 
 export type TExtendedPageInstance = TPageExtended & {

@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck2, CalendarClock, Signal, UserCircle2, Users } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { Button, DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";

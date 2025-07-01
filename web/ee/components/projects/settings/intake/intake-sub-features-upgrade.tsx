@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EProductSubscriptionEnum, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
 import { ToggleSwitch, Tooltip } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 import { TProperties } from "@/ce/constants";

@@ -4,8 +4,7 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity, TIssueServiceType } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";

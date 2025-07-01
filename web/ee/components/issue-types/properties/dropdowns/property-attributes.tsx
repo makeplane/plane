@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
-import { TIssueProperty, TOperationMode } from "@plane/types";
+import { EIssuePropertyType, TIssueProperty, TOperationMode } from "@plane/types";
 // plane web components
 import { SelectedAttributeProperties, TIssuePropertyFormError } from "@/plane-web/components/issue-types/properties";
 

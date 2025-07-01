@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel, E_FEATURE_FLAGS, EProjectFeatureKey } from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Button, Header, Popover, Loader } from "@plane/ui";
 // components
 import { InboxIssueCreateModalRoot } from "@/components/inbox";

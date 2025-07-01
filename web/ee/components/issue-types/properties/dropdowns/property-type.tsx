@@ -1,8 +1,14 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuePropertyRelationType, EIssuePropertyType, ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
+import { ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueProperty, TIssuePropertyTypeKeys, TOperationMode } from "@plane/types";
+import {
+  EIssuePropertyRelationType,
+  EIssuePropertyType,
+  TIssueProperty,
+  TIssuePropertyTypeKeys,
+  TOperationMode,
+} from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn, getIssuePropertyTypeDetails, getIssuePropertyTypeKey } from "@plane/utils";
 // plane web components

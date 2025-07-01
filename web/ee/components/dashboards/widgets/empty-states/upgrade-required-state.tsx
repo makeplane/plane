@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum, EWidgetGridBreakpoints } from "@plane/constants";
+import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";

@@ -2,8 +2,7 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType } from "@plane/constants";
-import { TStateAnalytics } from "@plane/types";
+import { EIssueServiceType, TStateAnalytics } from "@plane/types";
 import { InfoIcon, Tooltip } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

@@ -4,15 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 // plane imports
-import {
-  EIssueServiceType,
-  EIssuesStoreType,
-  EProjectFeatureKey,
-  EUserPermissionsLevel,
-  EUserProjectRoles,
-  EWorkItemConversionType,
-} from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EProjectFeatureKey, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType, TIssue } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

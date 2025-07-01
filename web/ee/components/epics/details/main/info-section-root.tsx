@@ -3,8 +3,8 @@
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
+import { EIssueServiceType } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

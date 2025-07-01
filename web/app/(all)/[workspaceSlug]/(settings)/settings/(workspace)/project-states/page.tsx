@@ -4,8 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserWorkspaceRoles } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";

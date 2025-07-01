@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
+import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // ce imports

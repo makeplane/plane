@@ -3,9 +3,8 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/constants";
 // ui
-import { TIssuePropertyValues, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EWorkItemTypeEntity, TIssuePropertyValues, TIssueServiceType } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 // plane web components
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types";

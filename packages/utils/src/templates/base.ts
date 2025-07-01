@@ -1,6 +1,6 @@
 // plane imports
-import { ETemplateLevel, ETemplateType } from "@plane/constants";
-import { TBaseTemplateWithData } from "@plane/types";
+import { ETemplateLevel } from "@plane/constants";
+import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
 
 /**
  * Gets the i18n name key for the template type

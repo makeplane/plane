@@ -3,12 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, Copy, Link } from "lucide-react";
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // ui
 import { Tooltip, TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
-import { calculateTimeAgo, getIconForLink, copyTextToClipboard } from "@plane/utils";
+import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store";

@@ -4,7 +4,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { IssuePeekOverview } from "@/components/issues";
 // hooks

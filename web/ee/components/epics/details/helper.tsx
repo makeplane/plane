@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

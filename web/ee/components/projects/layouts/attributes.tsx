@@ -2,9 +2,9 @@ import { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 import { Users } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import { EUserProjectRoles, IWorkspace } from "@plane/types";
 import { Avatar, PriorityIcon, Tooltip } from "@plane/ui";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
 // components

@@ -5,9 +5,9 @@ import uniq from "lodash/uniq";
 import update from "lodash/update";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EIssueServiceType } from "@plane/constants";
 // types
 import {
+  EIssueServiceType,
   TIssue,
   TIssueSubIssues,
   TIssueSubIssuesStateDistributionMap,

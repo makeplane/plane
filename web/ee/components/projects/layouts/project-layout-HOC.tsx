@@ -2,8 +2,9 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { GanttLayoutLoader, KanbanLayoutLoader, ListLayoutLoader, ProjectsLoader } from "@/components/ui";

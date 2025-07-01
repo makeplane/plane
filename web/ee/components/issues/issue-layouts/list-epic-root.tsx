@@ -2,7 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
 // hooks

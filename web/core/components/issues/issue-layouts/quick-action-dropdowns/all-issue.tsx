@@ -5,8 +5,8 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { EIssuesStoreType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

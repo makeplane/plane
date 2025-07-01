@@ -1,8 +1,8 @@
 import clone from "lodash/clone";
 import { action, makeObservable, runInAction } from "mobx";
-import { EIssueServiceType } from "@plane/constants";
 // types
 import {
+  EIssueServiceType,
   TIssue,
   TLoader,
   ViewFlags,

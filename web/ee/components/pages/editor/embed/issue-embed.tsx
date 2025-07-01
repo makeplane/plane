@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // constants
-import { EUserProjectRoles, ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
+import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import { EUserProjectRoles, IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components

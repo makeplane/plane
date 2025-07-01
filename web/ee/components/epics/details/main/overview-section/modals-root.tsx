@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, EIssuesStoreType } from "@plane/constants";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, ISearchIssueResponse, TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";

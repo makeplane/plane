@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // ce imports

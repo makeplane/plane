@@ -1,10 +1,9 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { EIssueServiceType } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
 import { TIssueOperations } from "@/components/issues";
+// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";

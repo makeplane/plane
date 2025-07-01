@@ -2,13 +2,12 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { CircleMinus, LinkIcon } from "lucide-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import { EIssueServiceType, TIssue } from "@plane/types";
 import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
-import { generateWorkItemLink  } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";

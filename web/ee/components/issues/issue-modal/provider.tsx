@@ -2,9 +2,16 @@ import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // plane imports
-import { DEFAULT_WORK_ITEM_FORM_VALUES, EWorkItemConversionType, EWorkItemTypeEntity } from "@plane/constants";
+import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse, TIssue, TIssuePropertyValueErrors, TIssuePropertyValues } from "@plane/types";
+import {
+  EWorkItemConversionType,
+  EWorkItemTypeEntity,
+  ISearchIssueResponse,
+  TIssue,
+  TIssuePropertyValueErrors,
+  TIssuePropertyValues,
+} from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,

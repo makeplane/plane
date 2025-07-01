@@ -1,4 +1,7 @@
-import { EPageSharedUserAccess } from "@plane/constants";
+import React from "react";
+// plane imports
+import { EPageSharedUserAccess } from "@plane/types";
+// local imports
 import { TPageShareFormReturn } from "@/plane-web/hooks/pages/use-page-share-form";
 import { EPageStoreType } from "@/plane-web/hooks/store";
 import { TPageSharedUser } from "@/plane-web/services/page/page-share.service";

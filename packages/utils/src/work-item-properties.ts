@@ -1,11 +1,8 @@
 // plane imports
+import { DROPDOWN_ATTRIBUTES, ISSUE_PROPERTY_TYPE_DETAILS } from "@plane/constants";
 import {
   EIssuePropertyRelationType,
   EIssuePropertyType,
-  DROPDOWN_ATTRIBUTES,
-  ISSUE_PROPERTY_TYPE_DETAILS,
-} from "@plane/constants";
-import {
   IIssueProperty,
   TDateAttributeDisplayOptions,
   TIssueProperty,

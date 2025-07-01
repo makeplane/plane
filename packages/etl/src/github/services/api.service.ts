@@ -1,5 +1,5 @@
 import { createAppAuth } from "@octokit/auth-app";
-import { Octokit } from "@octokit/rest";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { GithubApiProps, GithubIssue } from "../types";
 
 // Service connected with octokit and facilitating github data
@@ -30,7 +30,7 @@ export class GithubService {
     return user.data;
   }
 
-  async getAccessTokens(installationId: number) {
+  async getAccessTokens(installationId: number): Promise<RestEndpointMethodTypes["apps"]["createInstallationAccessToken"]["response"]> {
     const token = await this.client.apps.createInstallationAccessToken({
       installation_id: installationId,
     });
@@ -49,18 +49,18 @@ export class GithubService {
     return data;
   }
 
-  async createIssue(issue: GithubIssue) {
+  async createIssue(issue: GithubIssue): Promise<RestEndpointMethodTypes["issues"]["create"]["response"]> {
     return this.client.issues.create(issue);
   }
 
-  async updateIssue(id: number, issue: GithubIssue) {
+  async updateIssue(id: number, issue: GithubIssue): Promise<RestEndpointMethodTypes["issues"]["update"]["response"]> {
     return this.client.issues.update({
       issue_number: id,
       ...issue,
     });
   }
 
-  async createIssueComment(owner: string, repo: string, issue_number: number, body: string) {
+  async createIssueComment(owner: string, repo: string, issue_number: number, body: string): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
     return this.client.issues.createComment({
       owner,
       repo,
@@ -84,7 +84,7 @@ export class GithubService {
     return undefined;
   }
 
-  async updateIssueComment(owner: string, repo: string, comment_id: number, body: string) {
+  async updateIssueComment(owner: string, repo: string, comment_id: number, body: string): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
     return this.client.issues.updateComment({
       owner,
       repo,
@@ -141,7 +141,7 @@ export class GithubService {
     return issues;
   }
 
-  async getPullRequestComments(owner: string, repo: string, pull_number: number) {
+  async getPullRequestComments(owner: string, repo: string, pull_number: number): Promise<RestEndpointMethodTypes["issues"]["listComments"]["response"]> {
     return this.client.issues.listComments({
       owner,
       repo,
@@ -149,7 +149,7 @@ export class GithubService {
     });
   }
 
-  async updatePullRequestComment(owner: string, repo: string, comment_id: number, body: string) {
+  async updatePullRequestComment(owner: string, repo: string, comment_id: number, body: string): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
     return this.client.issues.updateComment({
       owner,
       repo,
@@ -158,7 +158,7 @@ export class GithubService {
     });
   }
 
-  async createPullRequestComment(owner: string, repo: string, pull_number: number, body: string) {
+  async createPullRequestComment(owner: string, repo: string, pull_number: number, body: string): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
     return this.client.issues.createComment({
       owner,
       repo,
@@ -167,20 +167,20 @@ export class GithubService {
     });
   }
 
-  async searchRepos(query: string) {
+  async searchRepos(query: string): Promise<RestEndpointMethodTypes["search"]["repos"]["response"]> {
     return this.client.search.repos({
       q: query,
     });
   }
 
-  async getIssues(owner: string, repo: string) {
+  async getIssues(owner: string, repo: string): Promise<RestEndpointMethodTypes["issues"]["listForRepo"]["response"]> {
     return this.client.issues.listForRepo({
       owner,
       repo,
     });
   }
 
-  async getIssue(owner: string, repo: string, issue_number: number) {
+  async getIssue(owner: string, repo: string, issue_number: number): Promise<RestEndpointMethodTypes["issues"]["get"]["response"]> {
     return this.client.issues.get({
       owner,
       repo,
@@ -228,46 +228,46 @@ export class GithubService {
     return response.data.body_html || null;
   }
 
-  async getLabels(owner: string, repo: string) {
+  async getLabels(owner: string, repo: string): Promise<RestEndpointMethodTypes["issues"]["listLabelsForRepo"]["response"]> {
     return this.client.issues.listLabelsForRepo({
       owner,
       repo,
     });
   }
 
-  async getProjects(owner: string, repo: string) {
+  async getProjects(owner: string, repo: string): Promise<RestEndpointMethodTypes["projects"]["listForRepo"]["response"]> {
     return this.client.projects.listForRepo({
       owner,
       repo,
     });
   }
 
-  async getProjectIssues(projectId: number) {
+  async getProjectIssues(projectId: number): Promise<RestEndpointMethodTypes["projects"]["listColumns"]["response"]> {
     return this.client.projects.listColumns({
       project_id: projectId,
     });
   }
 
-  async getOrganizationMembers(org: string) {
+  async getOrganizationMembers(org: string): Promise<RestEndpointMethodTypes["orgs"]["listMembers"]["response"]> {
     return this.client.orgs.listMembers({
       org: org,
     });
   }
 
-  async getUsersForRepo(owner: string, repo: string) {
+  async getUsersForRepo(owner: string, repo: string): Promise<RestEndpointMethodTypes["repos"]["listCollaborators"]["response"]> {
     return this.client.repos.listCollaborators({
       owner,
       repo,
     });
   }
 
-  async getInstallation(installationId: number) {
+  async getInstallation(installationId: number): Promise<RestEndpointMethodTypes["apps"]["getInstallation"]["response"]> {
     return this.client.apps.getInstallation({
       installation_id: installationId,
     });
   }
 
-  async deleteInstallation(installationId: number) {
+  async deleteInstallation(installationId: number): Promise<RestEndpointMethodTypes["apps"]["deleteInstallation"]["response"]> {
     return this.client.apps.deleteInstallation({
       installation_id: installationId,
     });

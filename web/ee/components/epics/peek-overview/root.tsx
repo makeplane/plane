@@ -4,8 +4,8 @@ import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EUserProjectRoles, EUserPermissionsLevel, EPIC_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue, IWorkItemPeekOverview } from "@plane/types";
+import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { TIssueOperations } from "@/components/issues";

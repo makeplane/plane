@@ -1,8 +1,8 @@
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
-import { EWidgetChartModels, LINE_CHART_LINE_TYPES } from "@plane/constants";
+import { LINE_CHART_LINE_TYPES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
+import { EWidgetChartModels, TDashboardWidget, TDashboardWidgetConfig } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // local components
 import { WidgetPropertyWrapper } from "../../property-wrapper";

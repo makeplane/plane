@@ -1,6 +1,6 @@
 // plane imports
-import { ETemplateType } from "@plane/constants";
 import {
+  ETemplateType,
   IUserLite,
   TProjectState,
   TProjectTemplate,

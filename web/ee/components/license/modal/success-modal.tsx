@@ -4,8 +4,8 @@ import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
+import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { EModalWidth, ModalCore, PlaneIcon, PlaneOneIcon } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 // helpers

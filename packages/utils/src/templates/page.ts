@@ -1,6 +1,5 @@
 // plane imports
-import { ETemplateType } from "@plane/constants";
-import { TPageTemplate, TPageTemplateForm, TPageTemplateFormData } from "@plane/types";
+import { ETemplateType, TPageTemplate, TPageTemplateForm, TPageTemplateFormData } from "@plane/types";
 // local imports
 import { extractTemplateBasicFormData } from "./base";
 

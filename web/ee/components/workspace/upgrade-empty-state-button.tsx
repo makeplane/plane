@@ -2,14 +2,9 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Crown } from "lucide-react";
 // plane imports
-import {
-  EProductSubscriptionEnum,
-  EProductSubscriptionTier,
-  FEATURE_TO_BASE_PLAN_MAP,
-  TSupportedFlagsForUpgrade,
-} from "@plane/constants";
+import { EProductSubscriptionTier, FEATURE_TO_BASE_PLAN_MAP, TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TProductSubscriptionType } from "@plane/types";
+import { EProductSubscriptionEnum, TProductSubscriptionType } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
