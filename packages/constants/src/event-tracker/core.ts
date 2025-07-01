@@ -145,9 +145,9 @@ export const CYCLE_TRACKER_EVENTS = {
   restore: "cycle_restored",
 };
 export const CYCLE_TRACKER_ELEMENTS = {
-  RIGHT_HEADER_BUTTON: "cycle_right_header_button",
-  EMPTY_STATE_BUTTON: "cycle_empty_state_button",
-  COMMAND_PALETTE_ITEM: "cycle_command_palette_item",
+  RIGHT_HEADER_ADD_BUTTON: "right_header_add_cycle_button",
+  EMPTY_STATE_ADD_BUTTON: "empty_state_add_cycle_button",
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_cycle_item",
   RIGHT_SIDEBAR: "cycle_right_sidebar",
   QUICK_ACTIONS: "cycle_quick_actions",
   CONTEXT_MENU: "cycle_context_menu",

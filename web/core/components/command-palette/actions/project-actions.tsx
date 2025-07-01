@@ -5,7 +5,6 @@ import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
 import { CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
-import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store";
 // ui
 
@@ -23,11 +22,9 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
     <>
       <Command.Group heading="Cycle">
         <Command.Item
+          data-ph-element={CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM}
           onSelect={() => {
             closePalette();
-            captureClick({
-              elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ITEM,
-            });
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"

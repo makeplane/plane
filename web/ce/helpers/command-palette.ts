@@ -54,7 +54,7 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
       description: "Create a new cycle in the current project",
       action: () => {
         toggleCreateCycleModal(true);
-        captureClick({ elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ITEM });
+        captureClick({ elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
       },
     },
     v: {
