@@ -242,12 +242,15 @@ export const PRODUCT_TOUR_TRACKER_ELEMENTS = {
 
 export const NOTIFICATION_TRACKER_EVENTS = {
   archive: "notification_archived",
+  unarchive: "notification_unarchived",
+  mark_read: "notification_marked_read",
+  mark_unread: "notification_marked_unread",
   all_marked_read: "all_notifications_marked_read",
 };
 export const NOTIFICATION_TRACKER_ELEMENTS = {
   MARK_ALL_AS_READ_BUTTON: "mark_all_as_read_button",
-  ARCHIVE_BUTTON: "archive_button",
-  MARK_READ_BUTTON: "mark_read_button",
+  ARCHIVE_UNARCHIVE_BUTTON: "archive_unarchive_button",
+  MARK_READ_UNREAD_BUTTON: "mark_read_unread_button",
 };
 
 export const USER_TRACKER_EVENTS = {

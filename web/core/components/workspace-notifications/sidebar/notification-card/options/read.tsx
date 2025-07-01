@@ -10,7 +10,7 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
 // hooks
-import { captureClick, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceNotifications } from "@/hooks/store";
 // store
 import { INotification } from "@/store/notifications/notification";
@@ -30,12 +30,9 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
   const handleNotificationUpdate = async () => {
     try {
       const request = data.read_at ? markNotificationAsUnRead : markNotificationAsRead;
-      captureClick({
-        elementName: NOTIFICATION_TRACKER_ELEMENTS.MARK_READ_BUTTON,
-      });
       await request(workspaceSlug);
       captureSuccess({
-        eventName: NOTIFICATION_TRACKER_EVENTS.all_marked_read,
+        eventName: data.read_at ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
         payload: {
           id: data?.data?.issue?.id,
           tab: currentNotificationTab,
@@ -47,11 +44,19 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
       });
     } catch (e) {
       console.error(e);
+      captureError({
+        eventName: data.read_at ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
+        payload: {
+          id: data?.data?.issue?.id,
+          tab: currentNotificationTab,
+        },
+      });
     }
   };
 
   return (
     <NotificationItemOptionButton
+      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_READ_UNREAD_BUTTON}
       tooltipContent={data.read_at ? t("notification.options.mark_unread") : t("notification.options.mark_read")}
       callBack={handleNotificationUpdate}
     >
