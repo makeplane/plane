@@ -22,7 +22,7 @@ import {
 // constants
 // store hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEventTracker, useGlobalView, useUserPermissions } from "@/hooks/store";
+import { useGlobalView, useUserPermissions } from "@/hooks/store";
 
 const ViewTab = observer((props: { viewId: string }) => {
   const { viewId } = props;
@@ -74,8 +74,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const { currentWorkspaceViews } = useGlobalView();
   const { allowPermissions } = useUserPermissions();
 
-  const { captureEvent } = useEventTracker();
-
   // bring the active view to the centre of the header
   useEffect(() => {
     if (globalViewId && currentWorkspaceViews) {
@@ -96,7 +94,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
         activeTabElement.scrollIntoView({ behavior: "smooth", inline: diff > 500 ? "center" : "nearest" });
       }
     }
-  }, [globalViewId, currentWorkspaceViews, containerRef, captureEvent]);
+  }, [globalViewId, currentWorkspaceViews, containerRef]);
 
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

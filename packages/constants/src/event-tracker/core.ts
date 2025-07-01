@@ -91,6 +91,8 @@ export const getProjectStateEventPayload = (payload: any) => ({
 
 // Dashboard Events
 export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
+export const HEADER_GITHUB_ICON = "header_github_icon";
+
 // Groups
 export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 
@@ -239,7 +241,30 @@ export const PROJECT_PAGE_TRACKER_EVENTS = {
   create: "project_page_created",
   update: "project_page_updated",
   delete: "project_page_deleted",
+  archive: "project_page_archived",
+  restore: "project_page_restored",
+  lock: "project_page_locked",
+  unlock: "project_page_unlocked",
+  access_update: "project_page_access_updated",
+  duplicate: "project_page_duplicated",
+  favorite: "project_page_favorited",
+  unfavorite: "project_page_unfavorited",
+  move: "project_page_moved",
 };
+
+export const PROJECT_PAGE_TRACKER_ELEMENTS = {
+  COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON: "command_palette_shortcut_create_page_button",
+  EMPTY_STATE_CREATE_BUTTON: "empty_state_create_page_button",
+  COMMAND_PALETTE_CREATE_BUTTON: "command_palette_create_page_button",
+  CONTEXT_MENU: "page_context_menu",
+  QUICK_ACTIONS: "page_quick_actions",
+  LIST_ITEM: "page_list_item",
+  FAVORITE_BUTTON: "page_favorite_button",
+  ARCHIVE_BUTTON: "page_archive_button",
+  LOCK_BUTTON: "page_lock_button",
+  ACCESS_TOGGLE: "page_access_toggle",
+  DUPLICATE_BUTTON: "page_duplicate_button",
+} as const;
 
 export const MEMBER_TRACKER_EVENTS = {
   invite: "member_invited",
@@ -325,4 +350,5 @@ export const ONBOARDING_TRACKER_ELEMENTS = {
 
 export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
+  CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
 };

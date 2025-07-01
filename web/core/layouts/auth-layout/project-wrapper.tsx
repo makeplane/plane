@@ -17,7 +17,6 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import {
   useCommandPalette,
   useCycle,
-  useEventTracker,
   useLabel,
   useMember,
   useModule,
@@ -46,7 +45,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();

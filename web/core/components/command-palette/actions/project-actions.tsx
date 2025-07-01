@@ -3,7 +3,7 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
-import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
@@ -70,6 +70,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
       </Command.Group>
       <Command.Group heading="Page">
         <Command.Item
+          data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON}
           onSelect={() => {
             closePalette();
             toggleCreatePageModal({ isOpen: true });
