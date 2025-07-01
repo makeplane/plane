@@ -1,5 +1,5 @@
 // types
-import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // store
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -45,7 +45,10 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     d: {
       title: "Create a new page",
       description: "Create a new page in the current project",
-      action: () => toggleCreatePageModal({ isOpen: true }),
+      action: () => {
+        toggleCreatePageModal({ isOpen: true });
+        captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
+      },
     },
     m: {
       title: "Create a new module",
