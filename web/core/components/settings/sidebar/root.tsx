@@ -52,7 +52,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       >
         {categories.map((category) => (
           <div key={category} className="py-3">
-            <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>
+            <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2 px-2">{t(category)}</span>
             {groupedSettings[category].length > 0 && (
               <div className="relative flex flex-col gap-0.5 h-full mt-2">
                 {groupedSettings[category].map(
