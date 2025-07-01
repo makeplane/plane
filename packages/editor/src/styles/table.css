@@ -9,6 +9,7 @@
     margin: 0.5rem 0 0 0;
     border: 1px solid rgba(var(--color-border-200));
     width: 100%;
+    transition: background-color 0.3s ease;
 
     td,
     th {
@@ -35,22 +36,23 @@
           left: -1px;
           height: calc(100% + 2px);
           width: calc(100% + 2px);
+          border: 2px solid transparent;
         }
 
         &.selectedCell-border-top::after {
-          border-top: 2px solid rgba(var(--color-primary-100));
+          border-top-color: rgba(var(--color-primary-100));
         }
 
         &.selectedCell-border-left::after {
-          border-left: 2px solid rgba(var(--color-primary-100));
+          border-left-color: rgba(var(--color-primary-100));
         }
 
         &.selectedCell-border-bottom::after {
-          border-bottom: 2px solid rgba(var(--color-primary-100));
+          border-bottom-color: rgba(var(--color-primary-100));
         }
 
         &.selectedCell-border-right::after {
-          border-right: 2px solid rgba(var(--color-primary-100));
+          border-right-color: rgba(var(--color-primary-100));
         }
       }
       /* End selected cell outline */
@@ -60,11 +62,15 @@
       font-weight: 500;
       text-align: left;
     }
+  }
 
-    tr[background="none"],
-    tr:not([background]) {
-      th {
-        background-color: rgba(var(--color-background-90));
+  &:not(.ProseMirror-selectednode) {
+    table {
+      tr[background="none"],
+      tr:not([background]) {
+        th {
+          background-color: rgba(var(--color-background-90));
+        }
       }
     }
   }
