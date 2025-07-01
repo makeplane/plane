@@ -155,7 +155,6 @@ def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
             entity.description_binary = base64.b64decode(
                 external_data.get("description_binary")
             )
-            print("Entity", entity)
             entity.save()
 
         return
