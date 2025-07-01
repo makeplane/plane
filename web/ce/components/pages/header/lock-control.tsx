@@ -4,7 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
+import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
@@ -77,7 +80,12 @@ export const PageLockControl = observer(({ page }: Props) => {
         <Tooltip tooltipContent="Lock" position="bottom">
           <button
             type="button"
-            onClick={toggleLock}
+            onClick={() => {
+              captureClick({
+                elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
+              });
+              toggleLock();
+            }}
             className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 transition-colors"
             aria-label="Lock"
           >
@@ -89,7 +97,12 @@ export const PageLockControl = observer(({ page }: Props) => {
       {displayState === "locked" && (
         <button
           type="button"
-          onClick={toggleLock}
+          onClick={() => {
+            captureClick({
+              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
+            });
+            toggleLock();
+          }}
           className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
           aria-label="Locked"
         >

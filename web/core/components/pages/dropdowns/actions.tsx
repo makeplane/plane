@@ -16,7 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 // constants
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -26,6 +26,7 @@ import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages";
 // helpers
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
@@ -92,14 +93,24 @@ export const PageActions: React.FC<Props> = observer((props) => {
     const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
-        action: pageOperations.toggleLock,
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON,
+          });
+          pageOperations.toggleLock();
+        },
         title: is_locked ? "Unlock" : "Lock",
         icon: is_locked ? LockKeyholeOpen : LockKeyhole,
         shouldRender: canCurrentUserLockPage,
       },
       {
         key: "toggle-access",
-        action: pageOperations.toggleAccess,
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ACCESS_TOGGLE,
+          });
+          pageOperations.toggleAccess();
+        },
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
@@ -120,21 +131,36 @@ export const PageActions: React.FC<Props> = observer((props) => {
       },
       {
         key: "make-a-copy",
-        action: pageOperations.duplicate,
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
+          });
+          pageOperations.duplicate();
+        },
         title: "Make a copy",
         icon: Copy,
         shouldRender: canCurrentUserDuplicatePage,
       },
       {
         key: "archive-restore",
-        action: pageOperations.toggleArchive,
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ARCHIVE_BUTTON,
+          });
+          pageOperations.toggleArchive();
+        },
         title: archived_at ? "Restore" : "Archive",
         icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
         shouldRender: canCurrentUserArchivePage,
       },
       {
         key: "delete",
-        action: () => setDeletePageModal(true),
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.CONTEXT_MENU,
+          });
+          setDeletePageModal(true);
+        },
         title: "Delete",
         icon: Trash2,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
