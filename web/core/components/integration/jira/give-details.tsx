@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
@@ -201,6 +202,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 <div>
                   <button
                     type="button"
+                    data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
                     onClick={() => {
                       setTrackElement("Jira import detail page");
                       toggleCreateProjectModal(true);

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Plus, Search } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn, copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -122,6 +122,7 @@ export const ExtendedProjectSidebar = observer(() => {
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
+                  data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
                   className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                   onClick={() => {
                     setIsProjectModalOpen(true);

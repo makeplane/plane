@@ -4,14 +4,15 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Briefcase } from "lucide-react";
 // i18n
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web constants
 // components
 import HeaderFilters from "./filters";
@@ -22,7 +23,6 @@ export const ProjectsBaseHeader = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
   const pathname = usePathname();
@@ -57,8 +57,8 @@ export const ProjectsBaseHeader = observer(() => {
           <Button
             size="sm"
             onClick={() => {
-              setTrackElement("Projects page");
               toggleCreateProjectModal(true);
+              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON });
             }}
             className="items-center gap-1"
           >

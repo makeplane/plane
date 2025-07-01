@@ -7,7 +7,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { Briefcase, ChevronRight, Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
@@ -17,7 +17,7 @@ import { CreateProjectModal } from "@/components/project";
 import { SidebarProjectsListItem } from "@/components/workspace";
 // helpers
 // hooks
-import { useAppTheme, useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
 
@@ -33,7 +33,6 @@ export const SidebarProjectsList: FC = observer(() => {
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { sidebarCollapsed } = useAppTheme();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
   const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
@@ -193,9 +192,9 @@ export const SidebarProjectsList: FC = observer(() => {
                     <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                       <button
                         type="button"
+                        data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
                         className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
                         onClick={() => {
-                          setTrackElement(`APP_SIDEBAR_JOINED_BLOCK`);
                           setIsProjectModalOpen(true);
                         }}
                         aria-label={t("aria_labels.projects_sidebar.create_new_project")}
@@ -277,8 +276,8 @@ export const SidebarProjectsList: FC = observer(() => {
                 "p-0 size-8 aspect-square justify-center mx-auto": sidebarCollapsed,
               }
             )}
+            data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
             onClick={() => {
-              setTrackElement("Sidebar");
               toggleCreateProjectModal(true);
             }}
           >

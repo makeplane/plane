@@ -1,5 +1,5 @@
 // types
-import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // store
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -24,7 +24,10 @@ export const getWorkspaceShortcutsList: () => TCommandPaletteActionList = () => 
     p: {
       title: "Create a new project",
       description: "Create a new project in the current workspace",
-      action: () => toggleCreateProjectModal(true),
+      action: () => {
+        toggleCreateProjectModal(true);
+        captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
+      },
     },
   };
 };

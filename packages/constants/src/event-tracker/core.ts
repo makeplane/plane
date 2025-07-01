@@ -12,19 +12,6 @@ export type EventProps = {
   path?: string;
 };
 
-export const getProjectEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.id,
-  identifier: payload.identifier,
-  project_visibility: payload.network == 2 ? "Public" : "Private",
-  changed_properties: payload.changed_properties,
-  lead_id: payload.project_lead,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  state: payload.state,
-  element: payload.element,
-});
-
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -117,6 +104,19 @@ export const PROJECT_TRACKER_EVENTS = {
   create: "project_created",
   update: "project_updated",
   delete: "project_deleted",
+};
+
+export const PROJECT_TRACKER_ELEMENTS = {
+  EXTENDED_SIDEBAR_ADD_BUTTON: "extended_sidebar_add_project_button",
+  SIDEBAR_CREATE_PROJECT_BUTTON: "sidebar_create_project_button",
+  SIDEBAR_CREATE_PROJECT_TOOLTIP: "sidebar_create_project_tooltip",
+  COMMAND_PALETTE_CREATE_BUTTON: "command_palette_create_project_button",
+  COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON: "command_palette_shortcut_create_project_button",
+  EMPTY_STATE_CREATE_PROJECT_BUTTON: "empty_state_create_project_button",
+  CREATE_HEADER_BUTTON: "create_project_header_button",
+  CREATE_FIRST_PROJECT_BUTTON: "create_first_project_button",
+  DELETE_PROJECT_BUTTON: "delete_project_button",
+  UPDATE_PROJECT_BUTTON: "update_project_button",
 };
 
 export const CYCLE_TRACKER_EVENTS = {
