@@ -1,20 +1,39 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2015", "DOM"],
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
     "module": "ESNext",
     "moduleResolution": "Node",
     "target": "ES6",
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/core/*"],
-      "@/styles/*": ["src/styles/*"],
-      "@/plane-editor/*": ["src/ce/*"]
+      "@/*": [
+        "src/core/*"
+      ],
+      "@/styles/*": [
+        "src/styles/*"
+      ],
+      "@/plane-editor/*": [
+        "src/ee/*"
+      ],
+      "@/ce/*": [
+        "src/ce/*"
+      ]
     },
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "index.d.ts"],
-  "exclude": ["dist", "build", "node_modules"]
+  "include": [
+    "src/**/*",
+    "index.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ]
 }

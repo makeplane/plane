@@ -11,8 +11,6 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-// constants
-
 // helpers
 // hooks
 import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";

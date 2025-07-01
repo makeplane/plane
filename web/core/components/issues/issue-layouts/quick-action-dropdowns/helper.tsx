@@ -167,7 +167,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     shouldRender: isEditingAllowed,
   });
 
-  const createCopyMenuItem = (): TContextMenuItem => {
+  const createCopyMenuItem = (workspaceSlug?: string): TContextMenuItem => {
     const baseItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
@@ -185,6 +185,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       setTrackElement,
       setCreateUpdateIssueModal,
       setDuplicateWorkItemModal,
+      workspaceSlug,
     });
   };
 
@@ -270,7 +271,7 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
   return useMemo(
     () => [
       factory.createEditMenuItem(),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createArchiveMenuItem(),
@@ -286,7 +287,7 @@ export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuI
   return useMemo(
     () => [
       factory.createEditMenuItem(),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createArchiveMenuItem(),
@@ -311,7 +312,7 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createRemoveFromCycleMenuItem(),
@@ -337,7 +338,7 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
   return useMemo(
     () => [
       factory.createEditMenuItem(customEditAction),
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createCopyLinkMenuItem(),
       factory.createRemoveFromModuleMenuItem(),

@@ -60,7 +60,7 @@ export const CreatePageModal: FC<Props> = (props) => {
     if (!workspaceSlug || !projectId) return;
 
     try {
-      const pageData = await createPage(pageFormData);
+      const pageData = await createPage?.(pageFormData);
       if (pageData) {
         capturePageEvent({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.create,

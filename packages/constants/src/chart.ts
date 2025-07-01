@@ -11,7 +11,7 @@ export enum ChartXAxisDateGrouping {
   YEAR = "YEAR",
 }
 
-export const TO_CAPITALIZE_PROPERTIES: ChartXAxisProperty[] = [
+export const TO_CAPITALIZE_CHART_PROPERTIES: ChartXAxisProperty[] = [
   ChartXAxisProperty.PRIORITY,
   ChartXAxisProperty.STATE_GROUPS,
 ];
