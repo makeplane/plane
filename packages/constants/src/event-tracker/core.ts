@@ -91,6 +91,8 @@ export const getProjectStateEventPayload = (payload: any) => ({
 
 // Dashboard Events
 export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
+export const HEADER_GITHUB_ICON = "header_github_icon";
+
 // Groups
 export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 
