@@ -1,13 +1,15 @@
-import { ACTIONS } from "../helpers/constants";
-import { PlainTextOption } from "../helpers/slack-options";
 import { PlainTextElement } from "@slack/types";
+import { ACTIONS } from "../helpers/constants";
+import { extractRichTextElements } from "../helpers/parse-issue-form";
+import { PlainTextOption } from "../helpers/slack-options";
+import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 import {
   CheckboxInputBlock,
   MultiExternalSelectInputBlock,
   PlainTextInputBlock,
+  RichTextInputBlock,
   StaticSelectInputBlock,
 } from "./custom-blocks";
-import { E_MESSAGE_ACTION_TYPES } from "../types/types";
 
 export type IssueModalViewFull = {
   type: "modal";
@@ -22,7 +24,7 @@ export type IssueModalViewFull = {
 export type IssueModalViewBlocks = [
   StaticSelectInputBlock,
   PlainTextInputBlock,
-  PlainTextInputBlock,
+  RichTextInputBlock,
   StaticSelectInputBlock,
   StaticSelectInputBlock,
   MultiExternalSelectInputBlock,
@@ -43,7 +45,8 @@ export const createIssueModalViewFull = (
   },
   title?: string,
   privateMetadata: string = "{}",
-  showThreadSync: boolean = true
+  showThreadSync: boolean = true,
+  messageBlocks?: any[] // Add optional messageBlocks parameter
 ): IssueModalViewFull => ({
   type: "modal",
   callback_id: E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM,
@@ -63,7 +66,6 @@ export const createIssueModalViewFull = (
     text: "Discard Issue",
     emoji: true,
   },
-  // @ts-ignore
   blocks: [
     {
       dispatch_action: true,
@@ -105,10 +107,12 @@ export const createIssueModalViewFull = (
       type: "input",
       optional: true,
       element: {
-        type: "plain_text_input",
+        type: "rich_text_input",
         action_id: ACTIONS.ISSUE_DESCRIPTION,
-        multiline: true,
-        initial_value: title ?? "",
+        initial_value: {
+          type: "rich_text",
+          elements: extractRichTextElements(title, messageBlocks),
+        },
         placeholder: {
           type: "plain_text",
           text: "Issue Description (Optional)",
@@ -181,24 +185,24 @@ export const createIssueModalViewFull = (
     ...(showThreadSync
       ? [
         {
-          type: "input",
+          type: "input" as const,
           optional: true,
           element: {
-            type: "checkboxes",
+            type: "checkboxes" as const,
             options: [
               {
                 text: {
                   type: "plain_text",
                   text: "Sync slack comments with plane comments and vice versa",
                   emoji: true,
-                },
+                } as PlainTextElement,
                 value: "true",
               },
             ],
             action_id: "enable_thread_sync",
           },
           label: {
-            type: "plain_text",
+            type: "plain_text" as const,
             text: "Thread Sync",
             emoji: true,
           },

@@ -1,17 +1,18 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
+import { IssueWithExpanded } from "@plane/sdk";
+import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
+import { downloadFile } from "@/helpers/utils";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
+import { getSlackContentParser } from "../../helpers/content-parser";
 import { parseIssueFormData, parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
-import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails, TSlackWorkspaceConnectionConfig } from "../../types/types";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
-import { env } from "@/env";
-import { IssueWithExpanded } from "@plane/sdk";
-import { credentials } from "amqplib";
 
 const apiClient = getAPIClient();
 
@@ -285,10 +286,10 @@ export const handleCreateNewWorkItemViewSubmission = async (
   details: TSlackConnectionDetails,
   data: TViewSubmissionPayload
 ) => {
-  const { workspaceConnection, slackService, planeClient } = details;
+  const { workspaceConnection, slackService, planeClient, botCredentials } = details;
 
   try {
-    const parsedData = parseIssueFormData(data.view.state.values);
+    const parsedData = await parseIssueFormData(data.view.state.values);
     const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
     if (
@@ -298,14 +299,35 @@ export const handleCreateNewWorkItemViewSubmission = async (
       logger.info(`[SLACK] Unsupported payload type: ${metadata.entityType}`);
       return;
     }
+    const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig
 
     const slackUser = await slackService.getUserInfo(data.user.id);
     const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
     const member = members.find((m: any) => m.email === slackUser?.user.profile.email);
 
+    const userMap = new Map<string, string>()
+    config.userMap?.forEach((user) => {
+      userMap.set(user.slackUser, user.planeUserId)
+    })
+
+    const parser = getSlackContentParser({
+      userMap,
+      teamDomain: data.team.domain
+    })
+
+    let parsedDescription: string;
+
+    try {
+      parsedDescription = await parser.toPlaneHtml(parsedData.description ?? "<p></p>");
+    } catch (error) {
+      logger.error("[SLACK] Error parsing issue description:", error);
+      // Fallback to the original description or a safe default
+      parsedDescription = parsedData.description ?? "<p></p>";
+    }
+
     const issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.project, {
       name: parsedData.title,
-      description_html: parsedData.description == null ? "<p></p>" : parsedData.description,
+      description_html: parsedDescription,
       created_by: member?.id,
       state: parsedData.state,
       priority: parsedData.priority,
@@ -339,11 +361,12 @@ export const handleCreateNewWorkItemViewSubmission = async (
         slackService,
         apiClient,
         workspaceConnection,
+        planeClient,
         parsedData,
         metadata as SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
         linkBack,
         issue,
-        credentials
+        botCredentials
       );
     } else if (metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION) {
       /* For command project selection,
@@ -373,12 +396,43 @@ async function handleShortcutProjectSelection(
   slackService: any,
   apiClient: any,
   workspaceConnection: any,
+  planeClient: any,
   parsedData: any,
   metadata: SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
   linkBack: any,
   issue: any,
   credentials: any
 ) {
+  if (metadata.entityPayload.message.ts) {
+    const response = await slackService.getMessage(
+      metadata.entityPayload.channel.id,
+      metadata.entityPayload.message?.ts
+    );
+
+    if (response && response.ok && response.messages && response.messages.length > 0) {
+      const message = response.messages[0];
+      if (message.files && credentials.source_access_token) {
+        const fileUploadPromises = message.files.map(async (file: any) => {
+          const blob = await downloadFile(file.url_private_download, `Bearer ${credentials.source_access_token}`);
+          if (blob) {
+            await planeClient.issue.uploadAttachment(
+              workspaceConnection.workspace_slug,
+              parsedData.project,
+              issue.id,
+              blob as File,
+              file.name,
+              file.size,
+              {
+                type: file.mimetype,
+              }
+            );
+          }
+        });
+        await Promise.all(fileUploadPromises);
+      }
+    }
+  }
+
   // Send thread message
   const res = await slackService.sendThreadMessage(
     metadata.entityPayload.channel.id,

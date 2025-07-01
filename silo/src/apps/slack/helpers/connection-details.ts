@@ -1,13 +1,13 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createSlackService } from "@plane/etl/slack";
 import { Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
+import { TWorkspaceCredential, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { slackAuth } from "../auth/auth";
-import { getRefreshCredentialHandler } from "./update-credentials";
-import { TWorkspaceCredential, TWorkspaceConnection } from "@plane/types";
 import { TSlackConnectionDetails, TSlackWorkspaceConnectionConfig } from "../types/types";
+import { getRefreshCredentialHandler } from "./update-credentials";
 
 const apiClient = getAPIClient();
 
@@ -73,6 +73,7 @@ export const getConnectionDetails = async (
   return {
     workspaceConnection,
     credentials,
+    botCredentials: adminCredentials,
     slackService,
     planeClient,
     missingUserCredentials: !userCredentials,
@@ -265,6 +266,7 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
   );
 
   return {
+    workspaceConnection,
     entityConnection,
     slackService,
     isUser,

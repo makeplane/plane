@@ -1,14 +1,14 @@
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TMessageActionPayload } from "@plane/etl/slack";
 import { convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
 import { createProjectSelectionModal } from "@/apps/slack/views";
 import { logger } from "@/logger";
+import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
+import { ENTITIES } from "../../helpers/constants";
+import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
 import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/link-issue-modal";
-import { E_MESSAGE_ACTION_TYPES } from "../../types/types";
-import { getAPIClient } from "@/services/client";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { ENTITIES } from "../../helpers/constants";
 
 const apiClient = getAPIClient();
 
@@ -149,6 +149,7 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
     message: {
       text: data.message.text,
       ts: data.message.ts,
+      blocks: data.message.blocks,
     },
     channel: {
       id: data.channel.id,

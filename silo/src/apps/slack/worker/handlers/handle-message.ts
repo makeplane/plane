@@ -3,7 +3,10 @@ import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
+import { getSlackContentParser } from "../../helpers/content-parser";
+import { extractRichTextElements, richTextBlockToMrkdwn } from "../../helpers/parse-issue-form";
 import { extractPlaneResource } from "../../helpers/parse-plane-resources";
+import { TSlackWorkspaceConnectionConfig } from "../../types/types";
 import { createCycleLinkback } from "../../views/cycle-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createModuleLinkback } from "../../views/module-linkback";
@@ -68,18 +71,37 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
 
     const eConnection = entityConnection[0];
 
+    const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
+
     const members = await planeClient.users.list(workspaceConnection.workspace_slug, eConnection.project_id ?? "");
     const userInfo = await slackService.getUserInfo(data.event.user);
     const issueId = eConnection.entity_slug ?? eConnection.issue_id;
 
     const planeUser = members.find((member) => member.email === userInfo?.user.profile.email);
 
+    const userMap = new Map<string, string>();
+    config.userMap?.forEach((user) => {
+      userMap.set(user.slackUser, user.planeUserId);
+    });
+
+    const parser = getSlackContentParser({
+      userMap,
+      teamDomain: workspaceConnection.connection_slug ?? "",
+    });
+
+    const richTextElements = extractRichTextElements(data.event.text, data.event.blocks);
+    const richText = richTextBlockToMrkdwn({
+      type: "rich_text",
+      elements: richTextElements
+    })
+    const parsedDescription = await parser.toPlaneHtml(richText);
+
     await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
       eConnection.project_id ?? "",
       issueId ?? "",
       {
-        comment_html: `<p>${data.event.text}</p>`,
+        comment_html: parsedDescription,
         external_source: "SLACK_COMMENT",
         external_id: data.event.event_ts,
         created_by: planeUser?.id,
@@ -108,7 +130,6 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
         if (resource === null) return;
 
         if (resource.type === "issue") {
-
           if (resource.workspaceSlug !== workspaceConnection.workspace_slug) return;
 
           const issue = await planeClient.issue.getIssueByIdentifierWithFields(
@@ -119,13 +140,7 @@ export const handleLinkSharedEvent = async (data: SlackEventPayload) => {
           );
           const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project.id ?? "");
 
-          const linkBack = createSlackLinkback(
-            workspaceConnection.workspace_slug,
-            issue,
-            states.results,
-            false,
-            true
-          );
+          const linkBack = createSlackLinkback(workspaceConnection.workspace_slug, issue, states.results, false, true);
 
           unfurlMap[link.url] = linkBack;
         } else {

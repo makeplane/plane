@@ -1,34 +1,48 @@
 import { HTMLElement } from "node-html-parser";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { IParserExtension } from "../../types";
 
-const MENTION_REGEX = /@([\w.-]+)/g
-
 export type ExternalMentionParserConfig = {
-  userMap: Map<string, string>;
+  // The symbol to use for mentions
+  mentionSymbol?: string;
+
+  // Entity map to map mentions to entities
+  entityMap: Map<string, string>;
+
   // Add new options for fallback handling
   fallbackOptions?: {
     // If the user is not found in the userMap, we can replace the mention with a link
-    replaceWithLink?: (mention: string) => [label: string, url: string]
+    replaceWithLink?: (mention: string) => [label: string, url: string];
   };
-}
+};
 
-export class ExternalUserMentionParserExtension implements IParserExtension {
-  constructor(private readonly config: ExternalMentionParserConfig) { }
+export class ExternalMentionParserExtension implements IParserExtension {
+  private readonly MENTION_REGEX: RegExp;
+
+  constructor(private readonly config: ExternalMentionParserConfig) {
+    this.config.mentionSymbol = this.config.mentionSymbol ?? "@";
+    this.MENTION_REGEX = new RegExp(`${this.config.mentionSymbol}([\\w.-]+)`, "g");
+  }
 
   shouldParse(node: HTMLElement): boolean {
-    // Check if paragraph contains @ symbol anywhere in the text
-    return node.tagName === "P" && MENTION_REGEX.test(node.textContent)
+    // Only process if the node contains mentions with THIS extension's symbol
+    // Reset the regex before testing
+    this.MENTION_REGEX.lastIndex = 0;
+    const hasMatch = (node.textContent && this.MENTION_REGEX.test(node.textContent)) || false;
+    return hasMatch;
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
     const text = node.textContent;
+
     if (!text) {
       return Promise.resolve(node);
     }
 
-    // Find all mentions in the text
-    const mentions = text.match(MENTION_REGEX);
+    // Reset regex and find all mentions for THIS symbol only
+    this.MENTION_REGEX.lastIndex = 0;
+    const mentions = text.match(this.MENTION_REGEX);
+
     if (!mentions || mentions.length === 0) {
       return node;
     }
@@ -39,12 +53,12 @@ export class ExternalUserMentionParserExtension implements IParserExtension {
     }
 
     // If we have just a single mention that's the entire content, use original logic
-    const displayName = mentions[0].replace("@", "");
-    const userId = this.config.userMap.get(displayName);
+    const displayName = mentions[0].replace(this.config.mentionSymbol ?? "@", "");
+    const entityId = this.config.entityMap.get(displayName);
 
-    if (userId) {
+    if (entityId) {
       // User found in map - create a mention component
-      const mention = this.createMentionComponent(userId);
+      const mention = this.createMentionComponent(entityId);
       return mention;
     } else if (this.config.fallbackOptions) {
       // User not found - create an external link as fallback
@@ -56,39 +70,43 @@ export class ExternalUserMentionParserExtension implements IParserExtension {
   }
 
   private handleMixedContent(node: HTMLElement, mentions: string[]): HTMLElement {
-    let html = node.textContent;
+    // Use innerHTML to preserve existing HTML elements (like links from previous extensions)
+    let html = node.innerHTML || node.textContent;
+    // Only process mentions that match THIS extension's symbol
+    const relevantMentions = mentions.filter((mention) => mention.startsWith(this.config.mentionSymbol ?? "@"));
 
-    // Process each mention and replace it in the HTML
-    for (const mention of mentions) {
-      const username = mention.replace("@", "");
-      const userId = this.config.userMap.get(username);
+    // Process each relevant mention and replace it in the HTML
+    for (const mention of relevantMentions) {
+      const mentionText = mention.replace(this.config.mentionSymbol ?? "@", "");
+      const entityId = this.config.entityMap.get(mentionText);
 
-      if (userId) {
+      if (entityId) {
         // Create mention component
-        const mentionComponent = this.createMentionComponent(userId);
+        const mentionComponent = this.createMentionComponent(entityId);
         const mentionHtml = mentionComponent.toString();
         html = html.replace(mention, mentionHtml);
       } else if (this.config.fallbackOptions?.replaceWithLink) {
         // Create fallback link
-        const [label, url] = this.config.fallbackOptions.replaceWithLink(username);
-        const linkHtml = `<a href="${url}">${label}</a>`;
-        html = html.replace(mention, linkHtml);
+        const [label, url] = this.config.fallbackOptions.replaceWithLink(mentionText);
+        const linkElement = new HTMLElement("a", {}, "");
+        linkElement.setAttribute("href", encodeURIComponent(url));
+        linkElement.setAttribute("target", "_blank");
+        linkElement.textContent = label;
+        html = html.replace(mention, linkElement.toString());
       }
     }
 
-    // Create a new paragraph with the processed HTML
-    const newParagraph = new HTMLElement("p", {}, "");
+    // Create a new element with the same tag as the original
+    const newElement = new HTMLElement(node.tagName ? node.tagName.toLowerCase() : "p", {}, "");
 
-    if (node.getAttribute("class")) {
-      newParagraph.setAttribute("class", node.getAttribute("class")!);
+    // Copy all attributes from the original node
+    for (const [key, value] of Object.entries(node.attributes)) {
+      newElement.setAttribute(key, value);
     }
 
-    // Set the innerHTML of the paragraph
-    // Note: This requires that your HTML parser supports setting innerHTML
-    // If not, you may need a different approach to construct the DOM
-    newParagraph.set_content(html);
-
-    return newParagraph;
+    // Set the processed content
+    newElement.set_content(html);
+    return newElement;
   }
 
   private createMentionComponent(userId: string): HTMLElement {
@@ -117,8 +135,9 @@ export class ExternalUserMentionParserExtension implements IParserExtension {
       return node;
     }
 
-    const [label, url] = this.config.fallbackOptions.replaceWithLink(node.textContent.replace("@", ""));
-
+    const [label, url] = this.config.fallbackOptions.replaceWithLink(
+      node.textContent.replace(this.config.mentionSymbol ?? "@", "")
+    );
     const linkElement = new HTMLElement("a", {}, "");
     linkElement.setAttribute("href", url);
     linkElement.textContent = label;

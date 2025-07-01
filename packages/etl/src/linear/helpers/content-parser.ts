@@ -2,7 +2,7 @@ import { E_IMPORTER_KEYS } from "@/core";
 import {
   ContentParser,
   ExternalImageParserExtension,
-  ExternalUserMentionParserExtension,
+  ExternalMentionParserExtension,
   ExternalFileParserExtension,
 } from "@/parser";
 import { LinearContentParserConfig } from "../types";
@@ -26,8 +26,8 @@ export const getContentParser = (config: LinearContentParserConfig) => {
     apiBaseUrl: config.apiBaseUrl,
     downloadableUrlPrefix: "https://uploads.linear.app",
   });
-  const userMentionParserExtension = new ExternalUserMentionParserExtension({
-    userMap: config.userMap,
+  const userMentionParserExtension = new ExternalMentionParserExtension({
+    entityMap: config.userMap,
   });
 
   const issueMentionParserExtension = new LinearIssueMentionParserExtension({

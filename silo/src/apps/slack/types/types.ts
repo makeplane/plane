@@ -1,7 +1,7 @@
 import { ISlackChannel, ISlackUser, SlackService, TSlackPayload } from "@plane/etl/slack";
-import { ENTITIES } from "../helpers/constants";
 import { PlaneActivity, Client as PlaneClient } from "@plane/sdk";
 import { TWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { ENTITIES } from "../helpers/constants";
 
 export interface ParsedIssueData {
   project: string;
@@ -38,6 +38,7 @@ export type ShortcutActionPayload = {
     text?: string;
     thread_ts?: string;
     ts?: string;
+    blocks?: any[];
   };
   channel: {
     id: string;
@@ -66,6 +67,7 @@ export type TSlackWorkspaceConnectionConfig = {
 export type TSlackConnectionDetails = {
   workspaceConnection: TWorkspaceConnection;
   credentials: TWorkspaceCredential;
+  botCredentials: TWorkspaceCredential;
   slackService: SlackService;
   planeClient: PlaneClient;
   missingUserCredentials?: boolean;
@@ -107,13 +109,13 @@ export type ActivityForSlack = {
   field: string;
   actor: string;
 } & (
-  | {
+    | {
       isArrayField: true;
       removed: string[];
       added: string[];
     }
-  | {
+    | {
       isArrayField: false;
       newValue: string;
     }
-);
+  );

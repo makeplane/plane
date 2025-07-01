@@ -553,8 +553,8 @@ export default class SlackController {
         }
 
         const { workspaceConnection, planeClient } = details;
-        const values = parseIssueFormData(payload.view.state.values);
-        const labels = await planeClient.label.list(workspaceConnection.workspace_slug, values.project);
+        const values = await parseIssueFormData(payload.view.state.values);
+        const labels = await planeClient.label.list(workspaceConnection.workspace_id, values.project);
         const filteredLabels = labels.results
           .filter((label) => label.name.toLowerCase().includes(text.toLowerCase()))
           .sort((a, b) => a.name.localeCompare(b.name));
