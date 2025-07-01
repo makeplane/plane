@@ -226,7 +226,7 @@ export function ResizableSidebar({
       {isCollapsed && !disablePeekTrigger && (
         <div
           className={cn(
-            "fixed top-0 left-0 w-1 h-full z-50 bg-transparent",
+            "absolute top-0 left-0 w-1 h-full z-50 bg-transparent",
             "transition-opacity duration-200",
             isHoveringTrigger ? "opacity-100" : "opacity-0"
           )}
@@ -240,7 +240,7 @@ export function ResizableSidebar({
       {/* Peek View */}
       <div
         className={cn(
-          "fixed left-0 z-30 bg-custom-background-100 shadow-sm",
+          "absolute left-0 z-30 bg-custom-background-100 shadow-sm h-full",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed && showPeek ? "translate-x-0 opacity-100" : "translate-x-[-100%] opacity-0",
           "pointer-events-none",
@@ -249,8 +249,6 @@ export function ResizableSidebar({
         )}
         style={{
           width: `${width}px`,
-          height: "calc(100% - 6rem)",
-          top: "3rem",
         }}
         onMouseEnter={handlePeekEnter}
         onMouseLeave={handlePeekLeave}
@@ -260,9 +258,8 @@ export function ResizableSidebar({
         <aside
           className={cn(
             "group/sidebar h-full w-full bg-custom-background-100 overflow-hidden relative flex flex-col z-20 pt-4",
-            "self-center border-y border-r border-custom-sidebar-border-200 rounded-md rounded-tl-none rounded-bl-none",
-            isAnyExtendedSidebarExpanded && "rounded-none",
-            !isResizing && !isAnyExtendedSidebarExpanded && "border-r"
+            "self-center border-r border-custom-sidebar-border-200 rounded-md rounded-tl-none rounded-bl-none",
+            isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
           {children}

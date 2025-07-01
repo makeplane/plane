@@ -120,7 +120,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                 </div>
                 <ChevronDown
                   className={cn(
-                    "flex-shrink-0 mx-1 opacity-0 size-4 group-hover/menu-button:opacity-100 text-custom-sidebar-text-400 duration-300",
+                    "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
                     { "rotate-180": open }
                   )}
                 />

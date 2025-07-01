@@ -52,13 +52,13 @@ export const AppSidebar: FC = observer(() => {
 
   return (
     <>
-      <div className="flex flex-col gap-2 px-3">
+      <div className="flex flex-col gap-3 px-3">
         {/* Workspace switcher and settings */}
         {!shouldRenderAppRail && <SidebarDropdown />}
 
         {isAppRailEnabled && (
           <div className="flex items-center justify-between gap-2">
-            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Projects</span>
+            <span className="text-md text-custom-text-200 font-medium pt-1">Projects</span>
             <div className="flex items-center gap-2">
               <AppSidebarToggleButton />
             </div>
