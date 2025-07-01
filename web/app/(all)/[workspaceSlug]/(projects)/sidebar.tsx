@@ -52,7 +52,7 @@ export const AppSidebar: FC = observer(() => {
 
   return (
     <>
-      <div className="flex flex-col gap-2 px-4">
+      <div className="flex flex-col gap-2 px-3">
         {/* Workspace switcher and settings */}
         {!shouldRenderAppRail && <SidebarDropdown />}
 
@@ -67,7 +67,7 @@ export const AppSidebar: FC = observer(() => {
         {/* Quick actions */}
         <SidebarQuickActions />
       </div>
-      <div className="flex flex-col gap-0.5 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto pt-3 pb-0.5 vertical-scrollbar px-4">
+      <div className="flex flex-col gap-3 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar px-3 pt-3 pb-0.5">
         <SidebarMenuItems />
         {/* Favorites Menu */}
         {canPerformWorkspaceMemberActions && !isFavoriteEmpty && <SidebarFavoritesMenu />}
