@@ -96,6 +96,11 @@ export const HEADER_GITHUB_ICON = "header_github_icon";
 // Groups
 export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 
+// Command palette tracker
+export const COMMAND_PALETTE_TRACKER_ELEMENTS = {
+  COMMAND_PALETTE_SHORTCUT_KEY: "command_palette_shortcut_key",
+};
+
 export const WORKSPACE_TRACKER_EVENTS = {
   create: "workspace_created",
   update: "workspace_updated",
@@ -125,6 +130,8 @@ export const PROJECT_TRACKER_ELEMENTS = {
   CREATE_FIRST_PROJECT_BUTTON: "create_first_project_button",
   DELETE_PROJECT_BUTTON: "delete_project_button",
   UPDATE_PROJECT_BUTTON: "update_project_button",
+  CREATE_PROJECT_JIRA_IMPORT_DETAIL_PAGE: "create_project_jira_import_detail_page",
+  TOGGLE_FEATURE: "toggle_project_feature",
 };
 
 export const CYCLE_TRACKER_EVENTS = {
@@ -173,6 +180,7 @@ export const MODULE_TRACKER_ELEMENTS = {
 
 export const WORK_ITEM_TRACKER_EVENTS = {
   create: "work_item_created",
+  add_existing: "work_item_add_existing",
   update: "work_item_updated",
   delete: "work_item_deleted",
   archive: "work_item_archived",
@@ -185,10 +193,12 @@ export const WORK_ITEM_TRACKER_EVENTS = {
     update: "sub_issue_updated",
     remove: "sub_issue_removed",
     delete: "sub_issue_deleted",
+    create: "sub_issue_created",
+    add_existing: "sub_issue_add_existing",
   },
   draft: {
     create: "draft_work_item_created",
-  }
+  },
 };
 
 export const WORK_ITEM_TRACKER_ELEMENTS = {
@@ -198,7 +208,7 @@ export const WORK_ITEM_TRACKER_ELEMENTS = {
     CYCLE: "cycle_header_add_work_item_button",
     MODULE: "module_header_add_work_item_button",
   },
-  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_work_item_item",
+  COMMAND_PALETTE_ADD_BUTTON: "command_palette_add_work_item_button",
   EMPTY_STATE_ADD_BUTTON: {
     WORK_ITEMS: "work_items_empty_state_add_work_item_button",
     PROJECT_VIEW: "project_view_empty_state_add_work_item_button",

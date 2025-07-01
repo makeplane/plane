@@ -12,13 +12,13 @@ import { IJiraImporterForm } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@plane/utils";
-import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useProject } from "@/hooks/store";
 // types
 
 export const JiraGetImportDetail: React.FC = observer(() => {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, getProjectById } = useProject();
   // form info
   const {
@@ -204,7 +204,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     type="button"
                     data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
                     onClick={() => {
-                      setTrackElement("Jira import detail page");
+                      captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_PROJECT_JIRA_IMPORT_DETAIL_PAGE });
                       toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"

@@ -4,13 +4,13 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
-import { EPageAccess, EProjectFeatureKey } from "@plane/constants";
+import { EPageAccess, EProjectFeatureKey, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
 // plane web hooks
@@ -27,11 +27,9 @@ export const PagesListHeader = observer(() => {
   // store hooks
   const { currentProjectDetails, loader } = useProject();
   const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
-  const { setTrackElement } = useEventTracker();
   // handle page create
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
-    setTrackElement("Project pages page");
 
     const payload: Partial<TPage> = {
       access: pageType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
@@ -66,7 +64,13 @@ export const PagesListHeader = observer(() => {
       </Header.LeftItem>
       {canCurrentUserCreatePage ? (
         <Header.RightItem>
-          <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleCreatePage}
+            loading={isCreatingPage}
+            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
+          >
             {isCreatingPage ? "Adding" : "Add page"}
           </Button>
         </Header.RightItem>
