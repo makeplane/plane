@@ -1,6 +1,6 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
-import { CustomCalloutBlock } from "@/extensions";
+import { CustomCalloutBlock, CustomCalloutNodeViewProps } from "@/extensions/callout";
 // config
 import { CustomCalloutExtensionConfig } from "./extension-config";
 
@@ -9,6 +9,8 @@ export const CustomCalloutReadOnlyExtension = CustomCalloutExtensionConfig.exten
   draggable: false,
 
   addNodeView() {
-    return ReactNodeViewRenderer(CustomCalloutBlock);
+    return ReactNodeViewRenderer((props) => (
+      <CustomCalloutBlock {...props} node={props.node as CustomCalloutNodeViewProps["node"]} />
+    ));
   },
 });
