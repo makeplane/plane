@@ -177,7 +177,54 @@ export const WORK_ITEM_TRACKER_EVENTS = {
   delete: "work_item_deleted",
   archive: "work_item_archived",
   restore: "work_item_restored",
+  attachment: {
+    add: "work_item_attachment_added",
+    remove: "work_item_attachment_removed",
+  },
+  sub_issue: {
+    update: "sub_issue_updated",
+    remove: "sub_issue_removed",
+    delete: "sub_issue_deleted",
+  },
+  draft: {
+    create: "draft_work_item_created",
+  }
 };
+
+export const WORK_ITEM_TRACKER_ELEMENTS = {
+  HEADER_ADD_BUTTON: {
+    WORK_ITEMS: "work_items_header_add_work_item_button",
+    PROJECT_VIEW: "project_view_header_add_work_item_button",
+    CYCLE: "cycle_header_add_work_item_button",
+    MODULE: "module_header_add_work_item_button",
+  },
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_work_item_item",
+  EMPTY_STATE_ADD_BUTTON: {
+    WORK_ITEMS: "work_items_empty_state_add_work_item_button",
+    PROJECT_VIEW: "project_view_empty_state_add_work_item_button",
+    CYCLE: "cycle_empty_state_add_work_item_button",
+    MODULE: "module_empty_state_add_work_item_button",
+    GLOBAL_VIEW: "global_view_empty_state_add_work_item_button",
+  },
+  QUICK_ACTIONS: {
+    WORK_ITEMS: "work_items_quick_actions",
+    PROJECT_VIEW: "project_view_work_items_quick_actions",
+    CYCLE: "cycle_work_items_quick_actions",
+    MODULE: "module_work_items_quick_actions",
+    GLOBAL_VIEW: "global_view_work_items_quick_actions",
+    ARCHIVED: "archived_work_items_quick_actions",
+    DRAFT: "draft_work_items_quick_actions",
+  },
+  CONTEXT_MENU: {
+    WORK_ITEMS: "work_items_context_menu",
+    PROJECT_VIEW: "project_view_context_menu",
+    CYCLE: "cycle_context_menu",
+    MODULE: "module_context_menu",
+    GLOBAL_VIEW: "global_view_context_menu",
+    ARCHIVED: "archived_context_menu",
+    DRAFT: "draft_context_menu",
+  },
+} as const;
 
 export const STATE_TRACKER_EVENTS = {
   create: "state_created",

@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
 import xor from "lodash/xor";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // types
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns";
 // constants
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
@@ -21,9 +22,7 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
   const { issue, disabled, onClose } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // hooks
-  const { captureIssueEvent } = useEventTracker();
   const {
     issues: { changeModulesInIssue },
   } = useIssuesStore();
@@ -41,18 +40,14 @@ export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
       }
       changeModulesInIssue(workspaceSlug.toString(), issue.project_id, issue.id, modulesToAdd, modulesToRemove);
 
-      captureIssueEvent({
-        eventName: "Work item updated",
+      captureSuccess({
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: {
-          ...issue,
-          module_ids: moduleIds,
-          element: "Spreadsheet layout",
+          id: issue.id,
         },
-        updates: { changed_property: "module_ids", change_details: { module_ids: moduleIds } },
-        path: pathname,
       });
     },
-    [workspaceSlug, issue, changeModulesInIssue, captureIssueEvent, pathname]
+    [workspaceSlug, issue, changeModulesInIssue]
   );
 
   return (

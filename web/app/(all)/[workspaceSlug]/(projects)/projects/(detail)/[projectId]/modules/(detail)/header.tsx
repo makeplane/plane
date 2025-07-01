@@ -14,6 +14,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
+  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import {
   ICustomSearchSelectOption,
@@ -31,7 +32,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { ModuleQuickActions } from "@/components/modules";
 // hooks
 import {
-  useEventTracker,
   useLabel,
   useMember,
   useModule,
@@ -66,7 +66,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const { updateFilters } = useIssuesActions(EIssuesStoreType.MODULE);
   const { projectModuleIds, getModuleById } = useModule();
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   const { projectLabels } = useLabel();
@@ -259,9 +258,9 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               <Button
                 className="hidden sm:flex"
                 onClick={() => {
-                  setTrackElement("Module work items page");
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
+                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
                 size="sm"
               >
                 Add work item

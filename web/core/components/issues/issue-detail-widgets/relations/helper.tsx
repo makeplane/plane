@@ -1,6 +1,5 @@
 "use client";
 import { useMemo } from "react";
-import { usePathname } from "next/navigation";
 // plane imports
 import { EIssueServiceType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -8,7 +7,8 @@ import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { useEventTracker, useIssueDetail } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store";
 
 export type TRelationIssueOperations = {
   copyLink: (path: string) => void;
@@ -20,8 +20,6 @@ export const useRelationOperations = (
   issueServiceType: TIssueServiceType = EIssueServiceType.ISSUES
 ): TRelationIssueOperations => {
   const { updateIssue, removeIssue } = useIssueDetail(issueServiceType);
-  const { captureIssueEvent } = useEventTracker();
-  const pathname = usePathname();
   const { t } = useTranslation();
   // derived values
   const entityName = issueServiceType === EIssueServiceType.ISSUES ? "Work item" : "Epic";
@@ -40,29 +38,20 @@ export const useRelationOperations = (
       update: async (workspaceSlug, projectId, issueId, data) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
-          captureIssueEvent({
+          captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: pathname,
+            payload: { id: issueId },
           });
           setToast({
             title: t("toast.success"),
             type: TOAST_TYPE.SUCCESS,
             message: t("entity.update.success", { entity: entityName }),
           });
-        } catch {
-          captureIssueEvent({
+        } catch (error) {
+          captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.update,
-            payload: { state: "FAILED", element: "Issue detail page" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: pathname,
+            payload: { id: issueId },
+            error: error as Error,
           });
           setToast({
             title: t("toast.error"),
@@ -74,22 +63,21 @@ export const useRelationOperations = (
       remove: async (workspaceSlug, projectId, issueId) => {
         try {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
-            captureIssueEvent({
+            captureSuccess({
               eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-              payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-              path: pathname,
+              payload: { id: issueId },
             });
           });
-        } catch {
-          captureIssueEvent({
+        } catch (error) {
+          captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: pathname,
+            payload: { id: issueId },
+            error: error as Error,
           });
         }
       },
     }),
-    [captureIssueEvent, entityName, pathname, removeIssue, t, updateIssue]
+    [entityName, removeIssue, t, updateIssue]
   );
 
   return issueOperations;

@@ -5,13 +5,19 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useEventTracker, useUserPermissions } from "@/hooks/store";
 // local imports
 import { IQuickActionProps } from "../list/list-view-types";
@@ -81,6 +87,14 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
 
   const MENU_ITEMS = useDraftIssueMenuItems(menuItemProps);
 
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: () => {
+      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.DRAFT });
+      item.action();
+    },
+  }));
+
   return (
     <>
       {/* Modals */}
@@ -104,7 +118,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         isDraft={isDraftIssue}
       />
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
         ellipsis
         placement={placements}
@@ -122,6 +136,7 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.DRAFT });
                 item.action();
               }}
               className={cn(

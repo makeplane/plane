@@ -2,13 +2,20 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EIssuesStoreType, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import {
+  EIssueFilterType,
+  EIssuesStoreType,
+  EUserPermissionsLevel,
+  EUserProjectRoles,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueFilterOptions } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ProjectEmptyState: React.FC = observer(() => {
@@ -18,7 +25,6 @@ export const ProjectEmptyState: React.FC = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -76,7 +82,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
               title={t("project_issues.empty_state.no_issues.primary_button.comic.title")}
               description={t("project_issues.empty_state.no_issues.primary_button.comic.description")}
               onClick={() => {
-                setTrackElement("Project issue empty state");
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.WORK_ITEMS });
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               }}
               disabled={!canPerformEmptyStateActions}

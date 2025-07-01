@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   EIssueLayoutTypes,
   EIssueServiceType,
@@ -18,7 +18,8 @@ import {
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 //hooks
-import { useEventTracker, useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
+import { captureError } from "@/helpers/event-tracker.helper";
+import { useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
@@ -63,11 +64,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
-  const pathname = usePathname();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
   const { allowPermissions } = useUserPermissions();
-  const { captureIssueEvent } = useEventTracker();
   const { issueMap, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
@@ -209,10 +208,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     await removeIssue(draggedIssue.project_id, draggedIssueId).finally(() => {
       setDeleteIssueModal(false);
       setDraggedIssueId(undefined);
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: draggedIssueId, state: "FAILED", element: "Kanban layout drag & drop" },
-        path: pathname,
+        payload: { id: draggedIssueId },
+        error: new Error("Kanban layout drag & drop"),
       });
     });
   };
