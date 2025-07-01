@@ -7,8 +7,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
-    "build": "tsup",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
@@ -45,6 +45,7 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
+    "@plane/typescript-config": "*",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.0",
@@ -52,11 +53,11 @@
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
     "@types/pino-http": "^5.8.4",
-    "@plane/typescript-config": "*",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
+    "tsx": "^4.20.3",
     "typescript": "5.8.3"
   }
 }

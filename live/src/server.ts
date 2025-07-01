@@ -1,7 +1,7 @@
 import compression from "compression";
 import cors from "cors";
 import expressWs from "express-ws";
-import express from "express";
+import express, { Request, Response } from "express";
 import helmet from "helmet";
 // hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
@@ -38,18 +38,18 @@ app.use(express.urlencoded({ extended: true }));
 // cors middleware
 app.use(cors());
 
-const router = express.Router();
+const router: any = express.Router();
 
 const HocusPocusServer = await getHocusPocusServer().catch((err) => {
   manualLogger.error("Failed to initialize HocusPocusServer:", err);
   process.exit(1);
 });
 
-router.get("/health", (_req, res) => {
+router.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "OK" });
 });
 
-router.ws("/collaboration", (ws, req) => {
+router.ws("/collaboration", (ws: any, req: any) => {
   try {
     HocusPocusServer.handleConnection(ws, req);
   } catch (err) {
@@ -58,7 +58,7 @@ router.ws("/collaboration", (ws, req) => {
   }
 });
 
-router.post("/convert-document", (req, res) => {
+router.post("/convert-document", (req: Request, res: Response) => {
   const { description_html, variant } = req.body as TConvertDocumentRequestBody;
   try {
     if (description_html === undefined || variant === undefined) {
@@ -85,7 +85,7 @@ router.post("/convert-document", (req, res) => {
 
 app.use(process.env.LIVE_BASE_PATH || "/live", router);
 
-app.use((_req, res) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).send("Not Found");
 });
 
