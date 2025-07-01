@@ -1,32 +1,24 @@
 "use client";
 
 import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
 // types
-import {
-  CYCLE_FAVORITED,
-  CYCLE_UNFAVORITED,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-} from "@plane/constants";
+import { CYCLE_TRACKER_EVENTS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
 // ui
 import { Avatar, AvatarGroup, FavoriteStar, LayersIcon, Tooltip, TransferIcon, setPromiseToast } from "@plane/ui";
+import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components
 import { CycleQuickActions, TransferIssuesModal } from "@/components/cycles";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { getDate } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
+import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
-import { generateQueryParams } from "@/helpers/router.helper";
 import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -64,7 +56,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
+  const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -77,7 +69,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // form
-  const { control, reset, getValues } = useForm({
+  const { reset } = useForm({
     defaultValues,
   });
 
@@ -109,7 +101,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
       () => {
         if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-        captureEvent(CYCLE_FAVORITED, {
+        captureEvent(CYCLE_TRACKER_EVENTS.favorite, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
@@ -139,7 +131,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       projectId.toString(),
       cycleId
     ).then(() => {
-      captureEvent(CYCLE_UNFAVORITED, {
+      captureEvent(CYCLE_TRACKER_EVENTS.unfavorite, {
         cycle_id: cycleId,
         element: "List layout",
         state: "SUCCESS",
@@ -230,9 +222,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
             >
               <div className="flex gap-1 text-xs text-custom-text-300 font-medium items-center">
                 <CalendarDays className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.start_date && <span>{format(parseISO(cycleDetails.start_date), "MMM dd, yyyy")}</span>}
-                <ArrowRight className="h-3 w-3 flex-shrink-0 my-auto" />
-                {cycleDetails.end_date && <span>{format(parseISO(cycleDetails.end_date), "MMM dd, yyyy")}</span>}
+                <MergedDateDisplay startDate={cycleDetails.start_date} endDate={cycleDetails.end_date} />
               </div>
             </Tooltip>
             {projectUTCOffset && (
@@ -269,6 +259,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
                   {renderFormattedDateInUserTimezone(cycleDetails.end_date ?? "")}
                 </span>
               }
+              mergeDates
               required={cycleDetails.status !== "draft"}
               disabled
               hideIcon={{

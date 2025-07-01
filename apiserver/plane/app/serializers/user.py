@@ -3,11 +3,22 @@ from rest_framework import serializers
 
 # Module import
 from plane.db.models import Account, Profile, User, Workspace, WorkspaceMemberInvite
+from plane.utils.url import contains_url
 
 from .base import BaseSerializer
 
 
 class UserSerializer(BaseSerializer):
+    def validate_first_name(self, value):
+        if contains_url(value):
+            raise serializers.ValidationError("First name cannot contain a URL.")
+        return value
+
+    def validate_last_name(self, value):
+        if contains_url(value):
+            raise serializers.ValidationError("Last name cannot contain a URL.")
+        return value
+
     class Meta:
         model = User
         # Exclude password field from the serializer
@@ -99,11 +110,16 @@ class UserMeSettingsSerializer(BaseSerializer):
                 workspace_member__member=obj.id,
                 workspace_member__is_active=True,
             ).first()
+            logo_asset_url = workspace.logo_asset.asset_url if workspace.logo_asset is not None else ""
             return {
                 "last_workspace_id": profile.last_workspace_id,
                 "last_workspace_slug": (
                     workspace.slug if workspace is not None else ""
                 ),
+                "last_workspace_name": (
+                    workspace.name if workspace is not None else ""
+                ),
+                "last_workspace_logo": (logo_asset_url),
                 "fallback_workspace_id": profile.last_workspace_id,
                 "fallback_workspace_slug": (
                     workspace.slug if workspace is not None else ""

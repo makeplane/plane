@@ -4,10 +4,11 @@ import React from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tooltip } from "@plane/ui";
+// plane imports
+import { cn } from "@plane/utils";
 // ui
 import { ReactionSelector } from "@/components/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks

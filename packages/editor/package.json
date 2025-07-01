@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -81,8 +81,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "postcss": "^8.4.38",
-    "tsup": "^8.4.0",
-    "typescript": "5.3.3"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   },
   "keywords": [
     "editor",

@@ -8,11 +8,10 @@ import { SquareUser } from "lucide-react";
 // types
 import {
   MODULE_STATUS,
-  MODULE_FAVORITED,
-  MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
+  MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
@@ -20,12 +19,12 @@ import { IModule } from "@plane/types";
 // ui
 import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
 // components
+import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 // hooks
-import { renderFormattedPayloadDate, getDate } from "@/helpers/date-time.helper";
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
@@ -69,7 +68,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       () => {
         // open favorites menu if closed
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_FAVORITED, {
+        captureEvent(MODULE_TRACKER_EVENTS.favorite, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -100,7 +99,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_UNFAVORITED, {
+      captureEvent(MODULE_TRACKER_EVENTS.unfavorite, {
         module_id: moduleId,
         element: "Grid layout",
         state: "SUCCESS",
@@ -158,6 +157,7 @@ export const ModuleListItemAction: FC<Props> = observer((props) => {
             target_date: val?.to ? renderFormattedPayloadDate(val.to) : null,
           });
         }}
+        mergeDates
         placeholder={{
           from: t("start_date"),
           to: t("end_date"),

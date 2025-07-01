@@ -48,11 +48,6 @@ class CycleSerializer(BaseSerializer):
             if not project_id:
                 raise serializers.ValidationError("Project ID is required")
 
-            is_start_date_end_date_equal = (
-                True
-                if str(data.get("start_date")) == str(data.get("end_date"))
-                else False
-            )
             data["start_date"] = convert_to_utc(
                 date=str(data.get("start_date").date()),
                 project_id=project_id,
@@ -61,7 +56,6 @@ class CycleSerializer(BaseSerializer):
             data["end_date"] = convert_to_utc(
                 date=str(data.get("end_date", None).date()),
                 project_id=project_id,
-                is_start_date_end_date_equal=is_start_date_end_date_equal,
             )
         return data
 

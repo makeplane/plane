@@ -11,9 +11,9 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // components
+import { isCommentEmpty } from "@plane/utils";
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 //
@@ -161,9 +161,11 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
                 return asset_id;
               }}
               projectId={projectId?.toString() ?? ""}
-              editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
               parentClassName="p-2"
-              />
+              displayConfig={{
+                fontSize: "small-font",
+              }}
+            />
           </div>
           <div className="flex gap-1 self-end">
             {!isEmpty && (
@@ -208,9 +210,11 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
             initialValue={comment.comment_html ?? ""}
             workspaceId={workspaceId}
             workspaceSlug={workspaceSlug}
-            editorClassName="[&>*]:!py-0 [&>*]:!text-sm"
             containerClassName="!py-1"
             projectId={(projectId as string) ?? ""}
+            displayConfig={{
+              fontSize: "small-font",
+            }}
           />
           <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
         </div>

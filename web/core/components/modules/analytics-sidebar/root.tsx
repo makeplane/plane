@@ -6,21 +6,21 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane types
 import {
   MODULE_STATUS,
-  MODULE_LINK_CREATED,
-  MODULE_LINK_DELETED,
-  MODULE_LINK_UPDATED,
-  MODULE_UPDATED,
   EUserPermissions,
   EUserPermissionsLevel,
+  EEstimateSystem,
+  MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
+// plane types
 import { useTranslation } from "@plane/i18n";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
 import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
 // components
+// helpers
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
 import {
   ArchiveModuleModal,
@@ -29,13 +29,9 @@ import {
   ModuleAnalyticsProgress,
   ModuleLinksList,
 } from "@/components/modules";
-// helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // hooks
 import { useModule, useEventTracker, useProjectEstimates, useUserPermissions } from "@/hooks/store";
 // plane web constants
-import { EEstimateSystem } from "@/plane-web/constants/estimates";
-
 const defaultValues: Partial<IModule> = {
   lead_id: "",
   member_ids: [],
@@ -84,13 +80,13 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), data)
       .then((res) => {
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...res, changed_properties: Object.keys(data)[0], element: "Right side-peek", state: "SUCCESS" },
         });
       })
       .catch(() => {
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -102,7 +98,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
     const payload = { metadata: {}, ...formData };
 
     await createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload).then(() =>
-      captureEvent(MODULE_LINK_CREATED, {
+      captureEvent(MODULE_TRACKER_EVENTS.link.create, {
         module_id: moduleId,
         state: "SUCCESS",
       })
@@ -116,7 +112,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     await updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload).then(
       () =>
-        captureEvent(MODULE_LINK_UPDATED, {
+        captureEvent(MODULE_TRACKER_EVENTS.link.update, {
           module_id: moduleId,
           state: "SUCCESS",
         })
@@ -128,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        captureEvent(MODULE_LINK_DELETED, {
+        captureEvent(MODULE_TRACKER_EVENTS.link.delete, {
           module_id: moduleId,
           state: "SUCCESS",
         });

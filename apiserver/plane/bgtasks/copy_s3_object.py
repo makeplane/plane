@@ -12,6 +12,7 @@ from plane.db.models import FileAsset, Page, Issue
 from plane.utils.exception_logger import log_exception
 from plane.settings.storage import S3Storage
 from celery import shared_task
+from plane.utils.url import normalize_url_path
 
 
 def get_entity_id_field(entity_type, entity_id):
@@ -67,11 +68,14 @@ def sync_with_external_service(entity_name, description_html):
             "description_html": description_html,
             "variant": "rich" if entity_name == "PAGE" else "document",
         }
-        response = requests.post(
-            f"{settings.LIVE_BASE_URL}/convert-document/",
-            json=data,
-            headers=None,
-        )
+
+        live_url = settings.LIVE_URL
+        if not live_url:
+            return {}
+
+        url = normalize_url_path(f"{live_url}/convert-document/")
+
+        response = requests.post(url, json=data, headers=None)
         if response.status_code == 200:
             return response.json()
     except requests.RequestException as e:

@@ -18,7 +18,6 @@
     "pro": "Pro",
     "upgrade": "Apgreyd"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "Gönder",
   "cancel": "İptal",
   "loading": "Yükleniyor",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Proje favorilerden kaldırılamadı. Lütfen tekrar deneyin.",
   "project_created_successfully": "Proje başarıyla oluşturuldu",
   "project_created_successfully_description": "Proje başarıyla oluşturuldu. Artık iş öğeleri eklemeye başlayabilirsiniz.",
+  "project_name_already_taken": "Proje ismi zaten kullanılıyor.",
+  "project_identifier_already_taken": "Proje kimliği zaten kullanılıyor.",
   "project_cover_image_alt": "Proje kapak resmi",
   "name_is_required": "Ad gereklidir",
   "title_should_be_less_than_255_characters": "Başlık 255 karakterden az olmalı",
@@ -367,12 +367,12 @@
   "work_management": "İş Yönetimi",
   "projects_and_issues": "Projeler ve İş Öğeleri",
   "projects_and_issues_description": "Bu projede bu özellikleri açıp kapatın.",
-  "cycles_description": "İşleri proje başına uygun şekilde zaman dilimlerine ayırın ve sıklığı değiştirin.",
-  "modules_description": "Kendi liderleri ve atananları olan alt proje benzeri gruplar oluşturun.",
-  "views_description": "Sıralama, filtre ve görüntüleme seçeneklerini kaydedin veya paylaşın.",
-  "pages_description": "Herhangi bir şey yazabilirsiniz.",
-  "intake_description": "Abone olduğunuz iş öğelerinden haberdar olun. Bildirim almak için etkinleştirin.",
-  "time_tracking_description": "İş öğeleri ve projelerde harcanan zamanı takip edin.",
+  "cycles_description": "Projeye göre işi zamanla sınırlandırın ve gerektiğinde zaman dilimini ayarlayın. Bir döngü 2 hafta, bir sonraki 1 hafta olabilir.",
+  "modules_description": "İşi, özel liderler ve atanmış kişilerle alt projelere ayırın.",
+  "views_description": "Özel sıralamaları, filtreleri ve görüntüleme seçeneklerini kaydedin veya ekibinizle paylaşın.",
+  "pages_description": "Serbest biçimli içerikler oluşturun ve düzenleyin; notlar, belgeler, her şey.",
+  "intake_description": "Üye olmayanların hata, geri bildirim ve öneri paylaşmasına izin verin; iş akışınızı bozmadan.",
+  "time_tracking_description": "İş öğeleri ve projelerde harcanan zamanı kaydedin.",
   "work_management_description": "İşlerinizi ve projelerinizi kolayca yönetin.",
   "documentation": "Dokümantasyon",
   "message_support": "Destekle iletişim",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "Yeni şifre eski şifreden farklı olmalı",
   "edited": "düzenlendi",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Oluşturulma tarihi",
@@ -512,12 +511,10 @@
       "name": "Ad"
     }
   },
-
   "toast": {
     "success": "Başarılı!",
     "error": "Hata!"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "Hızlı başlangıç rehberiniz",
@@ -614,7 +610,6 @@
     "title": "Ana Sayfa",
     "star_us_on_github": "Bizi GitHub'da yıldızlayın"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "Tümü",
     "states": "Durumlar",
@@ -756,7 +750,8 @@
         "message": "Bir hata oluştu. Lütfen tekrar deneyin."
       },
       "required": "Bu alan gereklidir",
-      "entity_required": "{entity} gereklidir"
+      "entity_required": "{entity} gereklidir",
+      "restricted_entity": "{entity} kısıtlanmıştır"
     },
     "update_link": "Bağlantıyı güncelle",
     "attach": "Ekle",
@@ -858,6 +853,7 @@
     "live": "Canlı",
     "change_history": "Değişiklik Geçmişi",
     "coming_soon": "Çok Yakında",
+    "member": "Üye",
     "members": "Üyeler",
     "you": "Siz",
     "upgrade_cta": {
@@ -872,22 +868,36 @@
     "deleting": "Siliniyor",
     "pending": "Beklemede",
     "invite": "Davet Et",
-    "view": "Görünüm"
+    "view": "Görünüm",
+    "deactivated_user": "Devre dışı bırakılmış kullanıcı",
+    "apply": "Uygula",
+    "applying": "Uygulanıyor",
+    "users": "Kullanıcılar",
+    "admins": "Yöneticiler",
+    "guests": "Misafirler",
+    "on_track": "Yolunda",
+    "off_track": "Yolunda değil",
+    "at_risk": "Risk altında",
+    "timeline": "Zaman çizelgesi",
+    "completion": "Tamamlama",
+    "upcoming": "Yaklaşan",
+    "completed": "Tamamlandı",
+    "in_progress": "Devam ediyor",
+    "planned": "Planlandı",
+    "paused": "Durduruldu",
+    "no_of": "{entity} sayısı"
   },
-
   "chart": {
     "x_axis": "X ekseni",
     "y_axis": "Y ekseni",
     "metric": "Metrik"
   },
-
   "form": {
     "title": {
       "required": "Başlık gereklidir",
       "max_length": "Başlık {length} karakterden az olmalı"
     }
   },
-
   "entity": {
     "grouping_title": "{entity} Gruplandırma",
     "priority": "{entity} Önceliği",
@@ -911,7 +921,6 @@
       "failed": "{entity} eklenirken hata oluştu"
     }
   },
-
   "epic": {
     "all": "Tüm Epikler",
     "label": "{count, plural, one {Epik} other {Epikler}}",
@@ -929,7 +938,6 @@
       "required": "Epik başlığı gereklidir."
     }
   },
-
   "issue": {
     "label": "{count, plural, one {İş öğesi} other {İş öğeleri}}",
     "all": "Tüm İş Öğeleri",
@@ -1092,11 +1100,12 @@
     "select": {
       "error": "Lütfen en az bir iş öğesi seçin",
       "empty": "Hiç iş öğesi seçilmedi",
-      "add_selected": "Seçilen iş öğelerini ekle"
+      "add_selected": "Seçilen iş öğelerini ekle",
+      "select_all": "Tümünü seç",
+      "deselect_all": "Tümünü seçme"
     },
     "open_in_full_screen": "İş öğesini tam ekranda aç"
   },
-
   "attachment": {
     "error": "Dosya eklenemedi. Tekrar yüklemeyi deneyin.",
     "only_one_file_allowed": "Aynı anda yalnızca bir dosya yüklenebilir.",
@@ -1104,7 +1113,6 @@
     "drag_and_drop": "Yüklemek için herhangi bir yere sürükleyip bırakın",
     "delete": "Eki sil"
   },
-
   "label": {
     "select": "Etiket seç",
     "create": {
@@ -1114,7 +1122,6 @@
       "type": "Yeni etiket eklemek için yazın"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "Alt iş öğesi başarıyla güncellendi",
@@ -1123,9 +1130,20 @@
     "remove": {
       "success": "Alt iş öğesi başarıyla kaldırıldı",
       "error": "Alt iş öğesi kaldırılırken hata oluştu"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Alt iş öğelerinizin filtreleriyle eşleşmiyor.",
+        "description": "Tüm alt iş öğelerini görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      },
+      "list_filters": {
+        "title": "İş öğelerinizin filtreleriyle eşleşmiyor.",
+        "description": "Tüm iş öğelerini görmek için tüm uygulanan filtreleri temizleyin.",
+        "action": "Filtreleri temizle"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {Görünüm} other {Görünümler}}",
     "create": {
@@ -1135,7 +1153,6 @@
       "label": "Görünümü Güncelle"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1221,7 +1238,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "Çalışma Alanınızı Oluşturun",
     "subheading": "Plane'i kullanmaya başlamak için bir çalışma alanı oluşturmalı veya katılmalısınız.",
@@ -1273,7 +1289,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1289,7 +1304,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "Analitik",
     "page_label": "{workspace} - Analitik",
@@ -1321,20 +1335,38 @@
       "custom": "Özel Analitik"
     },
     "empty_state": {
-      "general": {
-        "title": "İlerlemeyi, iş yükünü ve tahsisatları izleyin. Eğilimleri tespit edin, engelleri kaldırın ve işleri hızlandırın",
-        "description": "Kapsam ve talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve ekiplerin performansını izleyin ve projenizin zamanında ilerlemesini sağlayın.",
-        "primary_button": {
-          "text": "İlk projenizi başlatın",
-          "comic": {
-            "title": "Analitik Döngüler + Modüllerle en iyi şekilde çalışır",
-            "description": "Öncelikle, iş öğelerinizi Döngülere zamanlayın ve mümkünse, bir döngüden uzun süren iş öğelerini Modüllerde gruplayın. Her ikisini de sol gezintide bulabilirsiniz."
-          }
-        }
+      "customized_insights": {
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "created_vs_resolved": {
+        "description": "Zaman içinde oluşturulan ve çözümlenen iş öğeleri burada gösterilecektir.",
+        "title": "Henüz veri yok"
+      },
+      "project_insights": {
+        "title": "Henüz veri yok",
+        "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
       }
-    }
+    },
+    "created_vs_resolved": "Oluşturulan vs Çözülen",
+    "customized_insights": "Özelleştirilmiş İçgörüler",
+    "backlog_work_items": "Backlog {entity}",
+    "active_projects": "Aktif Projeler",
+    "trend_on_charts": "Grafiklerdeki eğilim",
+    "all_projects": "Tüm Projeler",
+    "summary_of_projects": "Projelerin Özeti",
+    "project_insights": "Proje İçgörüleri",
+    "started_work_items": "Başlatılan {entity}",
+    "total_work_items": "Toplam {entity}",
+    "total_projects": "Toplam Proje",
+    "total_admins": "Toplam Yönetici",
+    "total_users": "Toplam Kullanıcı",
+    "total_intake": "Toplam Gelir",
+    "un_started_work_items": "Başlanmamış {entity}",
+    "total_guests": "Toplam Misafir",
+    "completed_work_items": "Tamamlanmış {entity}",
+    "total": "Toplam {entity}"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {Proje} other {Projeler}}",
     "create": {
@@ -1409,7 +1441,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "Görünüm ekle",
     "empty_state": {
@@ -1444,7 +1475,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "Çalışma Alanı Ayarları",
     "page_label": "{workspace} - Genel ayarlar",
@@ -1626,7 +1656,6 @@
       }
     }
   },
-
   "profile": {
     "label": "Profil",
     "page_label": "Sizin İşleriniz",
@@ -1689,7 +1718,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "Proje ID girin",
@@ -1812,7 +1840,6 @@
         "auto_close_status": "Otomatik kapatma durumu"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "Henüz etiket yok",
@@ -1825,7 +1852,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "Döngü ekle",
     "more_details": "Daha fazla detay",
@@ -1951,7 +1977,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1980,7 +2005,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "Modül Ekle",
     "update_module": "Modülü Güncelle",
@@ -2034,7 +2058,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2054,7 +2077,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2084,7 +2106,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2092,7 +2113,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2103,7 +2123,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2112,7 +2131,6 @@
       }
     }
   },
-
   "notification": {
     "label": "Bildirimler",
     "page_label": "{workspace} - Bildirimler",
@@ -2169,7 +2187,6 @@
       "custom": "Özel"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2189,7 +2206,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2229,7 +2245,6 @@
       }
     }
   },
-
   "workspace_draft_issues": {
     "draft_an_issue": "Taslak iş öğesi oluştur",
     "empty_state": {
@@ -2253,7 +2268,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "Yapışkan Notlarınız",
     "placeholder": "buraya yazmak için tıkla",
@@ -2311,7 +2325,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "Misafir",
@@ -2326,7 +2339,6 @@
       "description": "Çalışma alanı içinde tüm izinler aktif."
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "Ürün / Proje Yöneticisi",
     "development_or_engineering": "Geliştirme / Mühendislik",
@@ -2339,7 +2351,6 @@
     "human_resources": "İnsan Kaynakları",
     "other": "Diğer"
   },
-
   "importer": {
     "github": {
       "title": "Github",
@@ -2350,7 +2361,6 @@
       "description": "Jira projelerinden ve epiklerinden iş öğelerini içe aktarın."
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2373,14 +2383,12 @@
       "short_description": "JSON olarak aktar"
     }
   },
-
   "default_global_view": {
     "all_issues": "Tüm iş öğeleri",
     "assigned": "Atanan",
     "created": "Oluşturulan",
     "subscribed": "Abone olunan"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2403,7 +2411,6 @@
       }
     }
   },
-
   "project_modules": {
     "status": {
       "backlog": "Bekleme Listesi",
@@ -2427,20 +2434,21 @@
       "manual": "Manuel"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Döngü} other {Döngüler}}",
     "no_cycle": "Döngü yok"
   },
-
   "module": {
     "label": "{count, plural, one {Modül} other {Modüller}}",
     "no_module": "Modül yok"
   },
-
   "description_versions": {
     "last_edited_by": "Son düzenleyen",
     "previously_edited_by": "Önceki düzenleyen",
     "edited_by": "Tarafından düzenlendi"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
   }
 }

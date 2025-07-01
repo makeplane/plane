@@ -6,12 +6,12 @@ import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { TIssuePublicComment } from "@plane/types";
+import { getFileURL } from "@plane/utils";
 // components
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
@@ -144,6 +144,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               id={comment.id}
               initialValue={comment.comment_html}
+              displayConfig={{
+                fontSize: "small-font",
+              }}
             />
             <CommentReactions anchor={anchor} commentId={comment.id} />
           </div>

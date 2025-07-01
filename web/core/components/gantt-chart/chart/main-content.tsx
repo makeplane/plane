@@ -2,23 +2,18 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
+import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core";
 import {
-  ChartDataType,
   GanttChartBlocksList,
   GanttChartSidebar,
-  IBlockUpdateData,
-  IBlockUpdateDependencyData,
-  IGanttBlock,
   MonthChartView,
   QuarterChartView,
-  TGanttViews,
   WeekChartView,
 } from "@/components/gantt-chart";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
@@ -46,6 +41,7 @@ type Props = {
   enableReorder: boolean | ((blockId: string) => boolean);
   enableSelection: boolean | ((blockId: string) => boolean);
   enableAddBlock: boolean | ((blockId: string) => boolean);
+  enableDependency: boolean | ((blockId: string) => boolean);
   itemsContainerWidth: number;
   showAllBlocks: boolean;
   sidebarToRender: (props: any) => React.ReactNode;
@@ -72,6 +68,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
     enableReorder,
     enableAddBlock,
     enableSelection,
+    enableDependency,
     itemsContainerWidth,
     showAllBlocks,
     sidebarToRender,
@@ -220,6 +217,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                       enableBlockRightResize={enableBlockRightResize}
                       enableBlockMove={enableBlockMove}
                       ganttContainerRef={ganttContainerRef}
+                      enableDependency={enableDependency}
                       showAllBlocks={showAllBlocks}
                       updateBlockDates={updateBlockDates}
                     />

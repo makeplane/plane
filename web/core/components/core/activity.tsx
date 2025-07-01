@@ -21,11 +21,9 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { IIssueActivity } from "@plane/types";
-import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake } from "@plane/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, Intake, EpicIcon } from "@plane/ui";
+import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { capitalizeFirstLetter } from "@/helpers/string.helper";
 import { useLabel } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -196,15 +194,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            uploaded a new{" "}
-            <a
-              href={`${activity.new_value}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
-            >
-              attachment
-            </a>
+            uploaded a new attachment
             {showIssue && (
               <>
                 {" "}
@@ -279,6 +269,12 @@ const activityDetails: {
             created <IssueLink activity={activity} />
           </>
         );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to an epic
+          </>
+        );
       else
         return (
           <>
@@ -287,6 +283,29 @@ const activityDetails: {
         );
     },
     icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+  },
+  epic: {
+    message: (activity) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            created <IssueLink activity={activity} />
+          </>
+        );
+      else if (activity.verb === "converted")
+        return (
+          <>
+            converted <IssueLink activity={activity} /> to a work item
+          </>
+        );
+      else
+        return (
+          <>
+            deleted <IssueLink activity={activity} />
+          </>
+        );
+    },
+    icon: <EpicIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -735,10 +754,11 @@ type ActivityMessageProps = {
 export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
   // router params
   const { workspaceSlug } = useParams();
+  const activityField = activity.field ?? "issue";
 
   return (
     <>
-      {activityDetails[activity.field as keyof typeof activityDetails]?.message(
+      {activityDetails[activityField as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
         workspaceSlug ? workspaceSlug.toString() : (activity.workspace_detail?.slug ?? "")

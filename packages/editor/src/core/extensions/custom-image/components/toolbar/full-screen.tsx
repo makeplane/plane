@@ -1,14 +1,14 @@
 import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
 
 type Props = {
   image: {
-    src: string;
-    height: string;
     width: string;
+    height: string;
     aspectRatio: number;
+    src: string;
   };
   isOpen: boolean;
   toggleFullScreenMode: (val: boolean) => void;
@@ -189,7 +189,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     <>
       <div
         className={cn("fixed inset-0 size-full z-20 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
-          "opacity-100 pointer-events-auto": isFullScreenEnabled,
+          "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
           "cursor-default": !isDragging,
           "cursor-grabbing": isDragging,
         })}

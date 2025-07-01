@@ -2,17 +2,16 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/constants";
 // plane imports
-import { TInboxIssueCurrentTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
+import { cn } from "@plane/utils";
 import { SimpleEmptyState } from "@/components/empty-state";
 import { FiltersRoot, InboxIssueAppliedFilters, InboxIssueList } from "@/components/inbox";
 import { InboxSidebarLoader } from "@/components/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { EInboxIssueCurrentTab } from "@/helpers/inbox.helper";
 // hooks
 import { useProject, useProjectInbox } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -75,7 +74,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     if (workspaceSlug && projectId && currentTab && filteredInboxIssueIds.length > 0) {
       if (inboxIssueId === undefined) {
         router.push(
-          `/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
+          `/${workspaceSlug}/projects/${projectId}/intake?currentTab=${currentTab}&inboxIssueId=${filteredInboxIssueIds[0]}`
         );
       }
     }
@@ -95,7 +94,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
               onClick={() => {
                 if (currentTab != option?.key) {
                   handleCurrentTab(workspaceSlug, projectId, option?.key);
-                  router.push(`/${workspaceSlug}/projects/${projectId}/inbox?currentTab=${option?.key}`);
+                  router.push(`/${workspaceSlug}/projects/${projectId}/intake?currentTab=${option?.key}`);
                 }
               }}
             >

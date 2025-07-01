@@ -38,13 +38,21 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
   // states
   const [activeLine, setActiveLine] = useState<string | null>(null);
   const [activeLegend, setActiveLegend] = useState<string | null>(null);
+
   // derived values
-  const itemKeys = useMemo(() => lines.map((line) => line.key), [lines]);
-  const itemLabels: Record<string, string> = useMemo(
-    () => lines.reduce((acc, line) => ({ ...acc, [line.key]: line.label }), {}),
-    [lines]
-  );
-  const itemDotColors = useMemo(() => lines.reduce((acc, line) => ({ ...acc, [line.key]: line.stroke }), {}), [lines]);
+  const { itemKeys, itemLabels, itemDotColors } = useMemo(() => {
+    const keys: string[] = [];
+    const labels: Record<string, string> = {};
+    const colors: Record<string, string> = {};
+
+    for (const line of lines) {
+      keys.push(line.key);
+      labels[line.key] = line.label;
+      colors[line.key] = line.stroke;
+    }
+
+    return { itemKeys: keys, itemLabels: labels, itemDotColors: colors };
+  }, [lines]);
 
   const renderLines = useMemo(
     () =>
@@ -114,7 +122,7 @@ export const LineChart = React.memo(<K extends string, T extends string>(props: 
                 angle: -90,
                 position: "bottom",
                 offset: -24,
-                dx: -16,
+                dx: yAxis.dx ?? -16,
                 className: AXIS_LABEL_CLASSNAME,
               }
             }

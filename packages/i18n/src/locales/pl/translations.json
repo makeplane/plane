@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nie udało się usunąć projektu z ulubionych. Spróbuj ponownie.",
   "project_created_successfully": "Projekt utworzono pomyślnie",
   "project_created_successfully_description": "Projekt został pomyślnie utworzony. Teraz możesz dodawać elementy pracy.",
+  "project_name_already_taken": "Nazwa projektu jest już zajęta.",
+  "project_identifier_already_taken": "Identyfikator projektu jest już zajęty.",
   "project_cover_image_alt": "Obraz w tle projektu",
   "name_is_required": "Nazwa jest wymagana",
   "title_should_be_less_than_255_characters": "Nazwa musi mieć mniej niż 255 znaków",
@@ -365,12 +367,12 @@
   "work_management": "Zarządzanie pracą",
   "projects_and_issues": "Projekty i elementy pracy",
   "projects_and_issues_description": "Włączaj lub wyłączaj te funkcje w projekcie.",
-  "cycles_description": "Ograniczaj pracę w czasie, zmieniaj częstotliwość pomiędzy okresami.",
-  "modules_description": "Grupuj pracę w podobne podprojekty z własnymi leaderami i przypisanymi osobami.",
-  "views_description": "Zapisuj sortowanie, filtry i opcje wyświetlania do późniejszego użytku lub udostępniania.",
-  "pages_description": "Pisz dowolne treści w standardowej formie.",
-  "intake_description": "Śledź zgłoszenia, aby mieć wgląd w nowe zadania i prośby.",
-  "time_tracking_description": "Rejestruj czas spędzony na poszczególnych elementach pracy i projektach.",
+  "cycles_description": "Określ ramy czasowe pracy dla każdego projektu i dostosuj okres w razie potrzeby. Jeden cykl może trwać 2 tygodnie, a następny 1 tydzień.",
+  "modules_description": "Organizuj pracę w podprojekty z dedykowanymi liderami i przypisanymi osobami.",
+  "views_description": "Zapisz niestandardowe sortowania, filtry i opcje wyświetlania lub udostępnij je zespołowi.",
+  "pages_description": "Twórz i edytuj treści o swobodnej formie – notatki, dokumenty, cokolwiek.",
+  "intake_description": "Pozwól osobom spoza zespołu zgłaszać błędy, opinie i sugestie bez zakłócania przepływu pracy.",
+  "time_tracking_description": "Rejestruj czas spędzony na elementach pracy i projektach.",
   "work_management_description": "Łatwo zarządzaj swoją pracą i projektami.",
   "documentation": "Dokumentacja",
   "message_support": "Skontaktuj się z pomocą",
@@ -500,10 +502,8 @@
   "export": "Eksportuj",
   "member": "{count, plural, one{# członek} few{# członkowie} other{# członków}}",
   "new_password_must_be_different_from_old_password": "Nowe hasło musi być innym niż stare hasło",
-
   "edited": "Edytowano",
   "bot": "Bot",
-
   "project_view": {
     "sort_by": {
       "created_at": "Utworzono dnia",
@@ -750,7 +750,8 @@
         "message": "Coś poszło nie tak. Spróbuj ponownie."
       },
       "required": "To pole jest wymagane",
-      "entity_required": "{entity} jest wymagane"
+      "entity_required": "{entity} jest wymagane",
+      "restricted_entity": "{entity} jest ograniczony"
     },
     "update_link": "Zaktualizuj link",
     "attach": "Dołącz",
@@ -851,6 +852,7 @@
     "live": "Na żywo",
     "change_history": "Historia zmian",
     "coming_soon": "Wkrótce",
+    "member": "Członek",
     "members": "Członkowie",
     "you": "Ty",
     "upgrade_cta": {
@@ -866,7 +868,23 @@
     "pending": "Oczekujące",
     "invite": "Zaproś",
     "view": "Widok",
-    "deactivated_user": "Dezaktywowany użytkownik"
+    "deactivated_user": "Dezaktywowany użytkownik",
+    "apply": "Zastosuj",
+    "applying": "Zastosowanie",
+    "users": "Użytkownicy",
+    "admins": "Administratorzy",
+    "guests": "Goście",
+    "on_track": "Na dobrej drodze",
+    "off_track": "Poza planem",
+    "at_risk": "W zagrożeniu",
+    "timeline": "Oś czasu",
+    "completion": "Zakończenie",
+    "upcoming": "Nadchodzące",
+    "completed": "Zakończone",
+    "in_progress": "W trakcie",
+    "planned": "Zaplanowane",
+    "paused": "Wstrzymane",
+    "no_of": "Liczba {entity}"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -1081,7 +1099,9 @@
     "select": {
       "error": "Wybierz co najmniej jeden element pracy",
       "empty": "Nie wybrano żadnych elementów pracy",
-      "add_selected": "Dodaj wybrane elementy pracy"
+      "add_selected": "Dodaj wybrane elementy pracy",
+      "select_all": "Wybierz wszystko",
+      "deselect_all": "Odznacz wszystko"
     },
     "open_in_full_screen": "Otwórz element pracy na pełnym ekranie"
   },
@@ -1109,6 +1129,18 @@
     "remove": {
       "success": "Podrzędny element pracy usunięto pomyślnie",
       "error": "Błąd podczas usuwania elementu podrzędnego"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "Nie masz elementów podrzędnych, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy podrzędne, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      },
+      "list_filters": {
+        "title": "Nie masz elementów pracy, które pasują do filtrów, które zastosowałeś.",
+        "description": "Aby zobaczyć wszystkie elementy pracy, wyczyść wszystkie zastosowane filtry.",
+        "action": "Wyczyść filtry"
+      }
     }
   },
   "view": {
@@ -1302,18 +1334,37 @@
       "custom": "Analizy niestandardowe"
     },
     "empty_state": {
-      "general": {
-        "title": "Śledź postępy, obciążenie i alokacje. Identyfikuj trendy, usuwaj przeszkody i przyspieszaj pracę",
-        "description": "Obserwuj zakres vs. zapotrzebowanie, szacunki i zakres. Sprawdzaj wydajność członków i zespołów, upewnij się, że projekty kończą się na czas.",
-        "primary_button": {
-          "text": "Zacznij pierwszy projekt",
-          "comic": {
-            "title": "Analizy najlepiej działają z Cyklem + Modułami",
-            "description": "Najpierw ogranicz pracę w cyklach i grupuj zadania w modułach obejmujących wiele cykli. Znajdziesz je w menu po lewej."
-          }
-        }
+      "customized_insights": {
+        "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj.",
+        "title": "Brak danych"
+      },
+      "created_vs_resolved": {
+        "description": "Elementy pracy utworzone i rozwiązane w czasie pojawią się tutaj.",
+        "title": "Brak danych"
+      },
+      "project_insights": {
+        "title": "Brak danych",
+        "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj."
       }
-    }
+    },
+    "created_vs_resolved": "Utworzone vs Rozwiązane",
+    "customized_insights": "Dostosowane informacje",
+    "backlog_work_items": "{entity} w backlogu",
+    "active_projects": "Aktywne projekty",
+    "trend_on_charts": "Trend na wykresach",
+    "all_projects": "Wszystkie projekty",
+    "summary_of_projects": "Podsumowanie projektów",
+    "project_insights": "Wgląd w projekt",
+    "started_work_items": "Rozpoczęte {entity}",
+    "total_work_items": "Łączna liczba {entity}",
+    "total_projects": "Łączna liczba projektów",
+    "total_admins": "Łączna liczba administratorów",
+    "total_users": "Łączna liczba użytkowników",
+    "total_intake": "Całkowity dochód",
+    "un_started_work_items": "Nierozpoczęte {entity}",
+    "total_guests": "Łączna liczba gości",
+    "completed_work_items": "Ukończone {entity}",
+    "total": "Łączna liczba {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektów}}",
@@ -2404,20 +2455,21 @@
       "manual": "Ręcznie"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {Cykl} few {Cykle} other {Cyklów}}",
     "no_cycle": "Brak cyklu"
   },
-
   "module": {
     "label": "{count, plural, one {Moduł} few {Moduły} other {Modułów}}",
     "no_module": "Brak modułu"
   },
-
   "description_versions": {
     "last_edited_by": "Ostatnio edytowane przez",
     "previously_edited_by": "Wcześniej edytowane przez",
     "edited_by": "Edytowane przez"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Plane nie mogła się uruchomić.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wybierz View Logs z setup.sh i logów Docker, aby mieć pewność."
   }
 }

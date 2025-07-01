@@ -42,7 +42,7 @@ quote-style = "double"
 indent-style = "space"
 
 # Respect magic trailing commas.
-skip-magic-trailing-comma = true
+# skip-magic-trailing-comma = true
 
 # Automatically detect the appropriate line ending.
 line-ending = "auto"

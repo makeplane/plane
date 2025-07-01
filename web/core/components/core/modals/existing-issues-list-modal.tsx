@@ -9,9 +9,8 @@ import { useTranslation } from "@plane/i18n";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -108,6 +107,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
         setIsSearching(false);
         setIsLoading(false);
       });
+  };
+
+  const handleSelectIssues = () => {
+    setSelectedIssues((prevData) => (prevData.length === filteredIssues.length ? [] : [...filteredIssues]));
   };
 
   useEffect(() => {
@@ -317,15 +320,31 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </Combobox.Options>
                 </Combobox>
-                <div className="flex items-center justify-end gap-2 p-3">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
-                    {t("common.cancel")}
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="link-primary"
+                    size="sm"
+                    onClick={handleSelectIssues}
+                    disabled={filteredIssues.length === 0}
+                  >
+                    {selectedIssues.length === issues.length
+                      ? t("issue.select.deselect_all")
+                      : t("issue.select.select_all")}
                   </Button>
-                  {selectedIssues.length > 0 && (
-                    <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
+                  <div className="flex items-center justify-end gap-2 p-3">
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      {t("common.cancel")}
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={onSubmit}
+                      loading={isSubmitting}
+                      disabled={isSubmitting || selectedIssues.length === 0}
+                    >
                       {isSubmitting ? t("common.adding") : t("issue.select.add_selected")}
                     </Button>
-                  )}
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

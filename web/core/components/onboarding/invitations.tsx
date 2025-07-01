@@ -2,16 +2,15 @@
 
 import React, { useState } from "react";
 // plane imports
-import { ROLE, MEMBER_ACCEPTED } from "@plane/constants";
+import { ROLE, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 // types
 import { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Button, Checkbox, Spinner } from "@plane/ui";
+import { truncateText, getUserRole } from "@plane/utils";
 // constants
 // helpers
 import { WorkspaceLogo } from "@/components/workspace/logo";
-import { truncateText } from "@/helpers/string.helper";
-import { getUserRole } from "@/helpers/user.helper";
 // hooks
 import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 // services
@@ -51,7 +50,7 @@ export const Invitations: React.FC<Props> = (props) => {
 
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
-      captureEvent(MEMBER_ACCEPTED, {
+      captureEvent(MEMBER_TRACKER_EVENTS.accept, {
         member_id: invitation?.id,
         role: getUserRole(invitation?.role as any),
         project_id: undefined,
@@ -64,7 +63,7 @@ export const Invitations: React.FC<Props> = (props) => {
       await handleNextStep();
     } catch (error) {
       console.error(error);
-      captureEvent(MEMBER_ACCEPTED, {
+      captureEvent(MEMBER_TRACKER_EVENTS.accept, {
         member_id: invitation?.id,
         role: getUserRole(invitation?.role as any),
         project_id: undefined,

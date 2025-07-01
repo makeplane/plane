@@ -1,18 +1,17 @@
 "use client";
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { EIssueServiceType, ISSUE_DELETED, ISSUE_UPDATED } from "@plane/constants";
+// plane imports
+import { EIssueServiceType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
-// constants
-// helper
-import { copyTextToClipboard } from "@/helpers/string.helper";
+import { copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useEventTracker, useIssueDetail } from "@/hooks/store";
 
 export type TRelationIssueOperations = {
-  copyText: (text: string) => void;
+  copyLink: (path: string) => void;
   update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 };
@@ -29,9 +28,8 @@ export const useRelationOperations = (
 
   const issueOperations: TRelationIssueOperations = useMemo(
     () => ({
-      copyText: (text: string) => {
-        const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-        copyTextToClipboard(`${originURL}${text}`).then(() => {
+      copyLink: (path) => {
+        copyUrlToClipboard(path).then(() => {
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("common.link_copied"),
@@ -39,11 +37,11 @@ export const useRelationOperations = (
           });
         });
       },
-      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+      update: async (workspaceSlug, projectId, issueId, data) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { ...data, issueId, state: "SUCCESS", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -56,9 +54,9 @@ export const useRelationOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: t("entity.update.success", { entity: entityName }),
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
-            eventName: ISSUE_UPDATED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
             payload: { state: "FAILED", element: "Issue detail page" },
             updates: {
               changed_property: Object.keys(data).join(","),
@@ -73,25 +71,25 @@ export const useRelationOperations = (
           });
         }
       },
-      remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
+      remove: async (workspaceSlug, projectId, issueId) => {
         try {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
             captureIssueEvent({
-              eventName: ISSUE_DELETED,
+              eventName: WORK_ITEM_TRACKER_EVENTS.delete,
               payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
               path: pathname,
             });
           });
-        } catch (error) {
+        } catch {
           captureIssueEvent({
-            eventName: ISSUE_DELETED,
+            eventName: WORK_ITEM_TRACKER_EVENTS.delete,
             payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
             path: pathname,
           });
         }
       },
     }),
-    [pathname, removeIssue, updateIssue]
+    [captureIssueEvent, entityName, pathname, removeIssue, t, updateIssue]
   );
 
   return issueOperations;

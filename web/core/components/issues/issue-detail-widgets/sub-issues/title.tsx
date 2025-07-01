@@ -1,34 +1,43 @@
 "use client";
-import React, { FC } from "react";
+
+import { FC } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
-// components
-import { SubIssuesActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {
   isOpen: boolean;
   parentIssueId: string;
   disabled: boolean;
   issueServiceType?: TIssueServiceType;
+  projectId: string;
+  workspaceSlug: string;
 };
 
 export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
-  const { isOpen, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const {
+    isOpen,
+    parentIssueId,
+    disabled,
+    issueServiceType = EIssueServiceType.ISSUES,
+    projectId,
+    workspaceSlug,
+  } = props;
+  // translation
   const { t } = useTranslation();
   // store hooks
   const {
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
   } = useIssueDetail(issueServiceType);
-
-  // derived data
+  // derived values
   const subIssuesDistribution = stateDistributionByIssueId(parentIssueId);
   const subIssues = subIssuesByIssueId(parentIssueId);
-
   // if there are no sub-issues, return null
   if (!subIssues) return null;
 
@@ -50,9 +59,12 @@ export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
         </div>
       }
       actionItemElement={
-        !disabled && (
-          <SubIssuesActionButton issueId={parentIssueId} disabled={disabled} issueServiceType={issueServiceType} />
-        )
+        <SubWorkItemTitleActions
+          projectId={projectId}
+          parentId={parentIssueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
       }
     />
   );

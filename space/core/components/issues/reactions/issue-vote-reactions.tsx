@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+// plane imports
 import { Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails, useUser } from "@/hooks/store";

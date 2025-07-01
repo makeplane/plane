@@ -6,18 +6,18 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
+import { MoreHorizontal } from "lucide-react";
 import { EIssueServiceType } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
 import { ControlLink, DropIndicator, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
 // helpers
-import { cn } from "@/helpers/common.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useKanbanView, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -60,8 +60,24 @@ interface IssueDetailsBlockProps {
 
 const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
+  // refs
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
   // hooks
   const { isMobile } = usePlatformOS();
+
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
 
   // derived values
   const subIssueCount = issue?.sub_issues_count ?? 0;
@@ -70,6 +86,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
     e.stopPropagation();
     e.preventDefault();
   };
+
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
   return (
     <>
@@ -85,12 +103,14 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         <div
           className={cn("absolute -top-1 right-0", {
             "hidden group-hover/kanban-block:block": !isMobile,
+            "!block": isMenuActive,
           })}
           onClick={handleEventPropagation}
         >
           {quickActions({
             issue,
             parentRef: cardRef,
+            customActionButton,
           })}
         </div>
       </div>

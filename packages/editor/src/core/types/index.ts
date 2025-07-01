@@ -4,7 +4,7 @@ export * from "./config";
 export * from "./editor";
 export * from "./embed";
 export * from "./extensions";
-export * from "./image";
+export * from "./hook";
 export * from "./mention";
 export * from "./slash-commands-suggestion";
 export * from "@/plane-editor/types";

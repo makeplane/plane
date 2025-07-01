@@ -4,18 +4,17 @@ import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // plane imports
-import { ETabIndices, ISSUE_CREATED } from "@plane/constants";
+import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // types
 import { useTranslation } from "@plane/i18n";
 import { TIssue } from "@plane/types";
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { getTabIndex } from "@/helpers/tab-indices.helper";
 // hooks
 import { useEventTracker, useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -162,14 +161,14 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           setUploadedAssetIds([]);
         }
         if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/inbox/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
           handleModalClose();
         } else {
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
         captureIssueEvent({
-          eventName: ISSUE_CREATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
             ...formData,
             state: "SUCCESS",
@@ -186,7 +185,7 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
       .catch((error) => {
         console.error(error);
         captureIssueEvent({
-          eventName: ISSUE_CREATED,
+          eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
             ...formData,
             state: "FAILED",

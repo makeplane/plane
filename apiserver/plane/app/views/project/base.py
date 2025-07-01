@@ -275,14 +275,14 @@ class ProjectViewSet(BaseViewSet):
                 states = [
                     {
                         "name": "Backlog",
-                        "color": "#A3A3A3",
+                        "color": "#60646C",
                         "sequence": 15000,
                         "group": "backlog",
                         "default": True,
                     },
                     {
                         "name": "Todo",
-                        "color": "#3A3A3A",
+                        "color": "#60646C",
                         "sequence": 25000,
                         "group": "unstarted",
                     },
@@ -294,13 +294,13 @@ class ProjectViewSet(BaseViewSet):
                     },
                     {
                         "name": "Done",
-                        "color": "#16A34A",
+                        "color": "#46A758",
                         "sequence": 45000,
                         "group": "completed",
                     },
                     {
                         "name": "Cancelled",
-                        "color": "#EF4444",
+                        "color": "#9AA4BC",
                         "sequence": 55000,
                         "group": "cancelled",
                     },
@@ -341,7 +341,10 @@ class ProjectViewSet(BaseViewSet):
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
-                    {"name": "The project name is already taken"},
+                    {
+                        "name": "The project name is already taken",
+                        "code": "PROJECT_NAME_ALREADY_EXIST",
+                    },
                     status=status.HTTP_409_CONFLICT,
                 )
         except Workspace.DoesNotExist:
@@ -350,7 +353,10 @@ class ProjectViewSet(BaseViewSet):
             )
         except serializers.ValidationError:
             return Response(
-                {"identifier": "The project identifier is already taken"},
+                {
+                    "identifier": "The project identifier is already taken",
+                    "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                },
                 status=status.HTTP_409_CONFLICT,
             )
 
@@ -445,7 +451,7 @@ class ProjectViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
         ):
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=pk, workspace__slug=slug)
             project.delete()
             webhook_activity.delay(
                 event="project",

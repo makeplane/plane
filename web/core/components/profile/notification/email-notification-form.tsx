@@ -9,7 +9,7 @@ import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
 // services
 import { UserService } from "@/services/user.service";
 // types
- interface IEmailNotificationFormProps {
+interface IEmailNotificationFormProps {
   data: IUserEmailNotificationSettings;
 }
 
@@ -20,10 +20,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
   const { data } = props;
   const { t } = useTranslation();
   // form data
-  const {
-    control,
-    reset,
-  } = useForm<IUserEmailNotificationSettings>({
+  const { control, reset } = useForm<IUserEmailNotificationSettings>({
     defaultValues: {
       ...data,
     },
@@ -55,10 +52,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
 
   return (
     <>
-      <div className="pt-6 text-lg font-medium text-custom-text-100">{t("notify_me_when")}:</div>
       {/* Notification Settings */}
-      <div className="flex flex-col py-2">
-        <div className="flex gap-2 items-center pt-6">
+      <div className="flex flex-col py-2 w-full">
+        <div className="flex gap-2 items-center pt-2">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">{t("property_changes")}</div>
             <div className="text-sm font-normal text-custom-text-300">{t("property_changes_description")}</div>
@@ -83,9 +79,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         <div className="flex gap-2 items-center pt-6 pb-2">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">{t("state_change")}</div>
-            <div className="text-sm font-normal text-custom-text-300">
-              {t("state_change_description")}
-            </div>
+            <div className="text-sm font-normal text-custom-text-300">{t("state_change_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -129,9 +123,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">{t("comments")}</div>
-            <div className="text-sm font-normal text-custom-text-300">
-              {t("comments_description")}
-            </div>
+            <div className="text-sm font-normal text-custom-text-300">{t("comments_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -153,9 +145,7 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
             <div className="pb-1 text-base font-medium text-custom-text-100">{t("mentions")}</div>
-            <div className="text-sm font-normal text-custom-text-300">
-              {t("mentions_description")}
-            </div>
+            <div className="text-sm font-normal text-custom-text-300">{t("mentions_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller

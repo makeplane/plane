@@ -4,6 +4,7 @@ import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // plane imports
+import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
@@ -74,7 +75,7 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
             <ChevronDown className="w-4 h-4" />
           </div>
           <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
-            <StateGroupIcon stateGroup={groupKey} height="16px" width="16px" />
+            <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
           </div>
           <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -6,20 +6,21 @@ import {
   EProductSubscriptionEnum,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
 } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
+import { SettingsHeading } from "@/components/settings";
 import { getSubscriptionTextColor } from "@/components/workspace/billing/subscription";
 // local imports
 import { PlansComparison } from "./comparison/root";
 
 export const BillingRoot = observer(() => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen] = useState(false);
   const [productBillingFrequency, setProductBillingFrequency] = useState<TProductBillingFrequency>(
     DEFAULT_PRODUCT_BILLING_FREQUENCY
   );
+  const { t } = useTranslation();
 
   /**
    * Retrieves the billing frequency for a given subscription type
@@ -40,34 +41,13 @@ export const BillingRoot = observer(() => {
   const setBillingFrequency = (subscriptionType: EProductSubscriptionEnum, frequency: TBillingFrequency): void =>
     setProductBillingFrequency({ ...productBillingFrequency, [subscriptionType]: frequency });
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollTop = container.scrollTop;
-      const isScrolled = isCompareAllFeaturesSectionOpen ? scrollTop > 0 : false;
-      setIsScrolled(isScrolled);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [isCompareAllFeaturesSectionOpen]);
-
   return (
     <section className="relative size-full flex flex-col overflow-y-auto scrollbar-hide">
-      <div>
-        <div className="flex items-center">
-          <h3 className="text-xl font-medium flex gap-4">Billing and plans</h3>
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          "transition-all duration-500 ease-in-out will-change-[height,opacity]",
-          isScrolled ? "h-0 opacity-0 pointer-events-none" : "h-[300px] opacity-100"
-        )}
-      >
+      <SettingsHeading
+        title={t("workspace_settings.settings.billing_and_plans.heading")}
+        description={t("workspace_settings.settings.billing_and_plans.description")}
+      />
+      <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
           <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg")}>
             <div className="flex gap-2 font-medium items-center justify-between">
@@ -87,13 +67,10 @@ export const BillingRoot = observer(() => {
         <div className="text-xl font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
-        ref={containerRef}
-        isScrolled={isScrolled}
         isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
         getBillingFrequency={getBillingFrequency}
         setBillingFrequency={setBillingFrequency}
         setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
-        setIsScrolled={setIsScrolled}
       />
     </section>
   );

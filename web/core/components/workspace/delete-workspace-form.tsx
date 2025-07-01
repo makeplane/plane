@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { AlertTriangle } from "lucide-react";
 // types
-import { WORKSPACE_DELETED } from "@plane/constants";
+import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspace } from "@plane/types";
 // ui
@@ -13,7 +13,7 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
 import { cn } from "@plane/utils";
-import { useEventTracker, useWorkspace } from "@/hooks/store";
+import { useEventTracker, useUserSettings, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -34,6 +34,8 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
   const { captureWorkspaceEvent } = useEventTracker();
   const { deleteWorkspace } = useWorkspace();
   const { t } = useTranslation();
+  const { getWorkspaceRedirectionUrl } = useWorkspace();
+  const { fetchCurrentUserSettings } = useUserSettings();
   // form info
   const {
     control,
@@ -58,11 +60,12 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
     if (!data || !canDelete) return;
 
     await deleteWorkspace(data.slug)
-      .then(() => {
+      .then(async () => {
+        await fetchCurrentUserSettings();
         handleClose();
-        router.push("/profile");
+        router.push(getWorkspaceRedirectionUrl());
         captureWorkspaceEvent({
-          eventName: WORKSPACE_DELETED,
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "SUCCESS",
@@ -82,7 +85,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
           message: t("workspace_settings.settings.general.delete_modal.error_message"),
         });
         captureWorkspaceEvent({
-          eventName: WORKSPACE_DELETED,
+          eventName: WORKSPACE_TRACKER_EVENTS.delete,
           payload: {
             ...data,
             state: "FAILED",

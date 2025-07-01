@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from "axios";
 // plane types
+import { API_BASE_URL } from "@plane/constants";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
-import { API_BASE_URL } from "@/helpers/common.helper";
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
+import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -230,6 +230,19 @@ export class FileService extends APIService {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async checkIfAssetExists(
+    workspaceSlug: string,
+    assetId: string
+  ): Promise<{
+    exists: boolean;
+  }> {
+    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

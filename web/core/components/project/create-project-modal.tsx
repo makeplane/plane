@@ -1,9 +1,10 @@
 import { useEffect, FC, useState } from "react";
-// plane ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
+// plane ui
 // helpers
-import { getAssetIdFromUrl } from "@/helpers/file.helper";
-import { checkURLValidity } from "@/helpers/string.helper";
+// hooks
+import useKeypress from "@/hooks/use-keypress";
 // plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 // plane web types
@@ -54,8 +55,12 @@ export const CreateProjectModal: FC<Props> = (props) => {
     }
   };
 
+  useKeypress("Escape", () => {
+    if (isOpen) onClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       {currentStep === EProjectCreationSteps.CREATE_PROJECT && (
         <CreateProjectForm
           setToFavorite={setToFavorite}

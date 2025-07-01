@@ -6,6 +6,7 @@ from django.conf import settings
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 
+
 def user_login(request, user, is_app=False, is_admin=False, is_space=False):
     login(request=request, user=user)
 

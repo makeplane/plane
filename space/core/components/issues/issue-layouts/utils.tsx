@@ -3,7 +3,7 @@
 import isNil from "lodash/isNil";
 import { ContrastIcon } from "lucide-react";
 // types
-import { ISSUE_PRIORITIES } from "@plane/constants";
+import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -117,7 +117,7 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
     name: state.name,
     icon: (
       <div className="h-3.5 w-3.5 rounded-full">
-        <StateGroupIcon stateGroup={state.group} color={state.color} width="14" height="14" />
+        <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.MD} />
       </div>
     ),
     payload: { state_id: state.id },

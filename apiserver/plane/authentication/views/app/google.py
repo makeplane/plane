@@ -20,6 +20,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.utils.path_validator import validate_next_path
 
+
 class GoogleOauthInitiateEndpoint(View):
     def get(self, request):
         request.session["host"] = base_host(request=request, is_app=True)
@@ -95,7 +96,9 @@ class GoogleCallbackEndpoint(View):
             # Get the redirection path
             path = get_redirection_path(user=user)
             # redirect to referer path
-            url = urljoin(base_host, str(validate_next_path(next_path)) if next_path else path)
+            url = urljoin(
+                base_host, str(validate_next_path(next_path)) if next_path else path
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()

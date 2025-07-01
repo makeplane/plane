@@ -3,7 +3,8 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // components
-import { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@/components/gantt-chart";
+import type { ChartDataType, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { currentViewDataWithView } from "@/components/gantt-chart/data";
 import {
   getDateFromPositionOnGantt,
@@ -11,7 +12,6 @@ import {
   getPositionFromDate,
 } from "@/components/gantt-chart/views/helpers";
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 // store
 import { RootStore } from "@/plane-web/store/root.store";
 
@@ -22,6 +22,7 @@ type BlockData = {
   sort_order: number | null;
   start_date?: string | undefined | null;
   target_date?: string | undefined | null;
+  project_id?: string | undefined | null;
 };
 
 export interface IBaseTimelineStore {
@@ -194,6 +195,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
         sort_order: blockData?.sort_order ?? undefined,
         start_date: blockData?.start_date ?? undefined,
         target_date: blockData?.target_date ?? undefined,
+        project_id: blockData?.project_id ?? undefined,
       };
       if (this.currentViewData && (this.currentViewData?.data?.startDate || this.currentViewData?.data?.dayWidth)) {
         block.position = getItemPositionWidth(this.currentViewData, block);

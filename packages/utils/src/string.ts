@@ -56,22 +56,6 @@ export const createSimilarString = (str: string) => {
 };
 
 /**
- * @description Copies text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<void>} Promise that resolves when copying is complete
- * @example
- * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
- */
-export const copyTextToClipboard = async (text: string): Promise<void> => {
-  if (typeof navigator === "undefined") return;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error("Failed to copy text: ", err);
-  }
-};
-
-/**
  * @description Copies full URL (origin + path) to clipboard
  * @param {string} path - URL path to copy
  * @returns {Promise<void>} Promise that resolves when copying is complete
@@ -84,36 +68,6 @@ export const copyUrlToClipboard = async (path: string) => {
   // create URL object and ensure proper path formatting
   const url = new URL(path, originUrl);
   await copyTextToClipboard(url.toString());
-};
-
-/**
- * @description Generates a deterministic HSL color based on input string
- * @param {string} string - Input string to generate color from
- * @returns {string} HSL color string
- * @example
- * generateRandomColor("hello") // returns consistent HSL color for "hello"
- * generateRandomColor("") // returns "rgb(var(--color-primary-100))"
- */
-export const generateRandomColor = (string: string): string => {
-  if (!string) return "rgb(var(--color-primary-100))";
-
-  string = `${string}`;
-
-  const uniqueId = string.length.toString() + string;
-  const combinedString = uniqueId + string;
-
-  const hash = Array.from(combinedString).reduce((acc, char) => {
-    const charCode = char.charCodeAt(0);
-    return (acc << 5) - acc + charCode;
-  }, 0);
-
-  const hue = hash % 360;
-  const saturation = 70;
-  const lightness = 60;
-
-  const randomColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-
-  return randomColor;
 };
 
 /**
@@ -176,39 +130,30 @@ export const objToQueryParams = (obj: any) => {
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
- * @description: This function will remove all the HTML tags from the string
+ * @description : This function will remove all the HTML tags from the string
+ * @param {string} htmlString
+ * @return {string}
+ * @example :
+ * const html = "<p>Some text</p>";
+const text = stripHTML(html);
+console.log(text); // Some text
+ */
+export const sanitizeHTML = (htmlString: string) => {
+  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
+};
+
+/**
+ * @description: This function will remove all the HTML tags from the string and truncate the string to the specified length
  * @param {string} html
+ * @param {number} length
  * @return {string}
  * @example:
  * const html = "<p>Some text</p>";
- * const text = stripHTML(html);
+ * const text = stripAndTruncateHTML(html);
  * console.log(text); // Some text
  */
-/**
- * @description Sanitizes HTML string by removing tags and properly escaping entities
- * @param {string} htmlString - HTML string to sanitize
- * @returns {string} Sanitized string with escaped HTML entities
- * @example
- * sanitizeHTML("<p>Hello & 'world'</p>") // returns "Hello &amp; &apos;world&apos;"
- */
-export const sanitizeHTML = (htmlString: string) => {
-  if (!htmlString) return "";
-
-  // First use DOMPurify to remove all HTML tags while preserving text content
-  const sanitizedText = DOMPurify.sanitize(htmlString, {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [],
-    USE_PROFILES: {
-      html: false,
-      svg: false,
-      svgFilters: false,
-      mathMl: false,
-    },
-  });
-
-  // Additional escaping for quotes and apostrophes
-  return sanitizedText.trim().replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-};
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(sanitizeHTML(html), length);
 
 /**
  * @returns {boolean} true if email is valid, false otherwise
@@ -275,43 +220,101 @@ export const checkURLValidity = (url: string): boolean => {
   return urlPattern.test(url);
 };
 
-// Browser-only clipboard functions
-// let copyTextToClipboard: (text: string) => Promise<void>;
+/**
+ * Combines array elements with a separator and adds a conjunction before the last element
+ * @param array Array of strings to combine
+ * @param separator Separator to use between elements (default: ", ")
+ * @param conjunction Conjunction to use before last element (default: "and")
+ * @returns Combined string with conjunction before the last element
+ */
+export const joinWithConjunction = (array: string[], separator: string = ", ", conjunction: string = "and"): string => {
+  if (!array || array.length === 0) return "";
+  if (array.length === 1) return array[0];
+  if (array.length === 2) return `${array[0]} ${conjunction} ${array[1]}`;
 
-// if (typeof window !== "undefined") {
-//   const fallbackCopyTextToClipboard = (text: string) => {
-//     const textArea = document.createElement("textarea");
-//     textArea.value = text;
+  const lastElement = array[array.length - 1];
+  const elementsExceptLast = array.slice(0, -1);
 
-//     // Avoid scrolling to bottom
-//     textArea.style.top = "0";
-//     textArea.style.left = "0";
-//     textArea.style.position = "fixed";
+  return `${elementsExceptLast.join(separator)}${separator}${conjunction} ${lastElement}`;
+};
 
-//     document.body.appendChild(textArea);
-//     textArea.focus();
-//     textArea.select();
+/**
+ * @description Ensures a URL has a protocol
+ * @param {string} url
+ * @returns {string}
+ * @example
+ * ensureUrlHasProtocol("example.com") => "http://example.com"
+ */
+export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
 
-//     try {
-//       // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
-//       // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-//       document.execCommand("copy");
-//     } catch (err) {}
+/**
+ * @returns {boolean} true if searchQuery is substring of text in the same order, false otherwise
+ * @description Returns true if searchQuery is substring of text in the same order, false otherwise
+ * @param {string} text string to compare from
+ * @param {string} searchQuery
+ * @example substringMatch("hello world", "hlo") => true
+ * @example substringMatch("hello world", "hoe") => false
+ */
+export const substringMatch = (text: string, searchQuery: string): boolean => {
+  try {
+    let searchIndex = 0;
 
-//     document.body.removeChild(textArea);
-//   };
+    for (let i = 0; i < text.length; i++) {
+      if (text[i].toLowerCase() === searchQuery[searchIndex]?.toLowerCase()) searchIndex++;
 
-//   copyTextToClipboard = async (text: string) => {
-//     if (!navigator.clipboard) {
-//       fallbackCopyTextToClipboard(text);
-//       return;
-//     }
-//     await navigator.clipboard.writeText(text);
-//   };
-// } else {
-//   copyTextToClipboard = async () => {
-//     throw new Error("copyTextToClipboard is only available in browser environments");
-//   };
-// }
+      // All characters of searchQuery found in order
+      if (searchIndex === searchQuery.length) return true;
+    }
 
-// export { copyTextToClipboard };
+    // Not all characters of searchQuery found in order
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+const fallbackCopyTextToClipboard = (text: string) => {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+    document.execCommand("copy");
+  } catch (err) {
+    // catch fallback error
+  }
+
+  document.body.removeChild(textArea);
+};
+
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+export const copyTextToClipboard = async (text: string): Promise<void> => {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  await navigator.clipboard.writeText(text);
+};

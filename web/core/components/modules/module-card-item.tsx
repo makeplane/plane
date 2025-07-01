@@ -9,11 +9,10 @@ import { Info, SquareUser } from "lucide-react";
 import {
   MODULE_STATUS,
   PROGRESS_STATE_GROUPS_DETAILS,
-  MODULE_FAVORITED,
-  MODULE_UNFAVORITED,
   EUserPermissions,
   EUserPermissionsLevel,
   IS_FAVORITE_MENU_OPEN,
+  MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { IModule } from "@plane/types";
@@ -27,14 +26,13 @@ import {
   setPromiseToast,
   setToast,
 } from "@plane/ui";
+import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // helpers
-import { getDate, renderFormattedPayloadDate } from "@/helpers/date-time.helper";
-import { generateQueryParams } from "@/helpers/router.helper";
 // hooks
 import { useEventTracker, useMember, useModule, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -81,7 +79,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     const addToFavoritePromise = addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), moduleId).then(
       () => {
         if (!storedValue) toggleFavoriteMenu(true);
-        captureEvent(MODULE_FAVORITED, {
+        captureEvent(MODULE_TRACKER_EVENTS.favorite, {
           module_id: moduleId,
           element: "Grid layout",
           state: "SUCCESS",
@@ -112,7 +110,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       projectId.toString(),
       moduleId
     ).then(() => {
-      captureEvent(MODULE_UNFAVORITED, {
+      captureEvent(MODULE_TRACKER_EVENTS.unfavorite, {
         module_id: moduleId,
         element: "Grid layout",
         state: "SUCCESS",

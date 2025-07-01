@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -20,7 +20,7 @@ import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, MEMBER_INVITED, EUserPermissions } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { IUser, IWorkspace } from "@plane/types";
@@ -28,7 +28,7 @@ import { IUser, IWorkspace } from "@plane/types";
 import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // helpers
-import { getUserRole } from "@/helpers/user.helper";
+import { getUserRole } from "@plane/utils";
 // hooks
 import { useEventTracker } from "@/hooks/store";
 // services
@@ -311,7 +311,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         })),
       })
       .then(async () => {
-        captureEvent(MEMBER_INVITED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           emails: [
             ...payload.emails.map((email) => ({
               email: email.email,
@@ -331,7 +331,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         await nextStep();
       })
       .catch((err) => {
-        captureEvent(MEMBER_INVITED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.invite, {
           project_id: undefined,
           state: "FAILED",
           element: "Onboarding",

@@ -3,7 +3,7 @@
 import { FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
-import { NETWORK_CHOICES, PROJECT_UPDATED } from "@plane/constants";
+import { NETWORK_CHOICES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { IProject, IWorkspace } from "@plane/types";
@@ -19,15 +19,13 @@ import {
   EmojiIconPickerTypes,
   Tooltip,
 } from "@plane/ui";
+import { renderFormattedDate, convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 import { ImagePickerPopover } from "@/components/core";
 import { TimezoneSelect } from "@/components/global";
 import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-import { renderFormattedDate } from "@/helpers/date-time.helper";
-import { convertHexEmojiToDecimal } from "@/helpers/emoji.helper";
-import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useEventTracker, useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -97,7 +95,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         const changed_properties = Object.keys(dirtyFields);
 
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {
             ...res,
             changed_properties: changed_properties,
@@ -113,7 +111,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         captureProjectEvent({
-          eventName: PROJECT_UPDATED,
+          eventName: PROJECT_TRACKER_EVENTS.update,
           payload: { ...payload, state: "FAILED", element: "Project general settings" },
         });
         setToast({

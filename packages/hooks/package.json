@@ -1,6 +1,6 @@
 {
   "name": "@plane/hooks",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "license": "AGPL-3.0",
   "description": "React hooks that are shared across multiple apps internally",
   "private": true,
@@ -22,7 +22,7 @@
     "@plane/eslint-config": "*",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
-    "tsup": "^8.4.0",
-    "typescript": "^5.3.3"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }

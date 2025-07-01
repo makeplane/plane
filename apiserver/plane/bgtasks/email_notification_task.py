@@ -284,6 +284,7 @@ def send_email_notification(
                 "project": str(issue.project.name),
                 "user_preference": f"{base_api}/profile/preferences/email",
                 "comments": comments,
+                "entity_type": "issue",
             }
             html_content = render_to_string(
                 "emails/notifications/issue-updates.html", context
@@ -309,7 +310,7 @@ def send_email_notification(
                 )
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
-                logging.getLogger("plane").info("Email Sent Successfully")
+                logging.getLogger("plane.worker").info("Email Sent Successfully")
 
                 # Update the logs
                 EmailNotificationLog.objects.filter(
@@ -325,7 +326,7 @@ def send_email_notification(
                 release_lock(lock_id=lock_id)
                 return
         else:
-            logging.getLogger("plane").info("Duplicate email received skipping")
+            logging.getLogger("plane.worker").info("Duplicate email received skipping")
             return
     except (Issue.DoesNotExist, User.DoesNotExist):
         release_lock(lock_id=lock_id)

@@ -10,15 +10,16 @@ import {
   EUserPermissionsLevel,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { IBlockUpdateData, TIssue } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // hooks
-import { GanttChartRoot, IBlockUpdateData, IssueGanttSidebar } from "@/components/gantt-chart";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+import { GanttChartRoot } from "@/components/gantt-chart/root";
+import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
 import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
 //constants
 // helpers
-import { renderFormattedPayloadDate } from "@/helpers/date-time.helper";
 //hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -97,14 +98,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         target_date?: string;
       }[]
     ) =>
-      issues.updateIssueDates(workspaceSlug.toString(), projectId.toString(), updates).catch(() => {
+      issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
           message: "Error while updating work item dates, Please try again Later",
         });
       }),
-    [issues]
+    [issues, projectId, workspaceSlug]
   );
 
   const quickAdd =
@@ -145,6 +146,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
             canLoadMoreBlocks={nextPageResults}
             updateBlockDates={updateBlockDates}
             showAllBlocks
+            enableDependency
             isEpic={isEpic}
           />
         </div>

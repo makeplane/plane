@@ -5,12 +5,11 @@ import { EIssueServiceType } from "@plane/constants";
 import { TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
 import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
+import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns";
 // helpers
-import { calculateTimeAgo } from "@/helpers/date-time.helper";
-import { generateWorkItemLink } from "@/helpers/issue.helper";
 // hooks
 import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
 // plane web components
@@ -95,7 +94,12 @@ export const RecentIssue = observer((props: BlockProps) => {
         <div className="flex gap-4">
           <Tooltip tooltipHeading="State" tooltipContent={state?.name ?? "State"}>
             <div>
-              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} className="h-4 w-4 my-auto" />
+              <StateGroupIcon
+                stateGroup={state?.group ?? "backlog"}
+                color={state?.color}
+                className="h-4 w-4 my-auto"
+                percentage={state?.order}
+              />
             </div>
           </Tooltip>
           <Tooltip tooltipHeading="Priority" tooltipContent={issueDetails?.priority ?? "Priority"}>

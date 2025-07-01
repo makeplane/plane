@@ -12,14 +12,13 @@ import { useTranslation } from "@plane/i18n";
 import { TModuleFilters } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
+import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils
-import { cn } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules/dropdowns";
 // constants
 // helpers
-import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

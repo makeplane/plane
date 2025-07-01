@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 // types
-import { MODULE_CREATED, MODULE_UPDATED } from "@plane/constants";
+import { MODULE_TRACKER_EVENTS } from "@plane/constants";
 import type { IModule } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,6 +13,7 @@ import { ModuleForm } from "@/components/modules";
 // constants
 // hooks
 import { useEventTracker, useModule, useProject } from "@/hooks/store";
+import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -63,7 +64,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module created successfully.",
         });
         captureModuleEvent({
-          eventName: MODULE_CREATED,
+          eventName: MODULE_TRACKER_EVENTS.create,
           payload: { ...res, state: "SUCCESS" },
         });
       })
@@ -74,7 +75,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err?.detail ?? err?.error ?? "Module could not be created. Please try again.",
         });
         captureModuleEvent({
-          eventName: MODULE_CREATED,
+          eventName: MODULE_TRACKER_EVENTS.create,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -94,7 +95,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: "Module updated successfully.",
         });
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...res, changed_properties: Object.keys(dirtyFields || {}), state: "SUCCESS" },
         });
       })
@@ -105,7 +106,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           message: err?.detail ?? err?.error ?? "Module could not be updated. Please try again.",
         });
         captureModuleEvent({
-          eventName: MODULE_UPDATED,
+          eventName: MODULE_TRACKER_EVENTS.update,
           payload: { ...data, state: "FAILED" },
         });
       });
@@ -142,8 +143,12 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
       setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
+  useKeypress("Escape", () => {
+    if (isOpen) handleClose();
+  });
+
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>
+    <ModalCore isOpen={isOpen} position={EModalPosition.TOP} width={EModalWidth.XXL}>
       <ModuleForm
         handleFormSubmit={handleFormSubmit}
         handleClose={handleClose}

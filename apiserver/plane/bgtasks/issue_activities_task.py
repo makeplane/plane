@@ -1650,40 +1650,6 @@ def issue_activity(
 
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
-        # Post the updates to segway for integrations and webhooks
-        if len(issue_activities_created):
-            for activity in issue_activities_created:
-                webhook_activity.delay(
-                    event=(
-                        "issue_comment"
-                        if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
-                    ),
-                    event_id=(
-                        activity.issue_comment_id
-                        if activity.field == "comment"
-                        else intake
-                        if intake
-                        else activity.issue_id
-                    ),
-                    verb=activity.verb,
-                    field=(
-                        "description" if activity.field == "comment" else activity.field
-                    ),
-                    old_value=(
-                        activity.old_value if activity.old_value != "" else None
-                    ),
-                    new_value=(
-                        activity.new_value if activity.new_value != "" else None
-                    ),
-                    actor_id=activity.actor_id,
-                    current_site=origin,
-                    slug=activity.workspace.slug,
-                    old_identifier=activity.old_identifier,
-                    new_identifier=activity.new_identifier,
-                )
 
         if notification:
             notifications.delay(

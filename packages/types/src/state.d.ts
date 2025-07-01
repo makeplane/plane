@@ -12,6 +12,7 @@ export interface IState {
   project_id: string;
   sequence: number;
   workspace_id: string;
+  order: number;
 }
 
 export interface IStateLite {

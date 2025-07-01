@@ -12,7 +12,7 @@ import {
 // ui
 import { ContrastIcon, DiceIcon } from "@plane/ui";
 // helpers
-import { generateWorkItemLink } from "@/helpers/issue.helper";
+import { generateWorkItemLink } from "@plane/utils";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
 
@@ -93,7 +93,9 @@ export const commandGroups: TCommandGroups = {
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {
       let redirectProjectId = page?.project_ids?.[0];
       if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
-      return `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`;
+      return redirectProjectId
+        ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
+        : `/${page?.workspace__slug}/pages/${page?.id}`;
     },
     title: "Pages",
   },

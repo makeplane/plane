@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { EIssuesStoreType, ISSUE_CREATED, ISSUE_UPDATED } from "@plane/constants";
+import { EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TBaseIssue, TIssue } from "@plane/types";
@@ -13,7 +13,12 @@ import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issu
 // constants
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useCycle, useIssues, useModule, useIssueDetail, useUser, useProject } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useEventTracker } from "@/hooks/store/use-event-tracker";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
@@ -59,14 +64,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { t } = useTranslation();
   const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId, workItem } = useParams();
-  const { projectsWithCreatePermissions } = useUser();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
   const { issues } = useIssues(storeType);
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
-  const { handleCreateUpdatePropertyValues } = useIssueModal();
+  const { allowedProjectIds, handleCreateUpdatePropertyValues } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // pathname
   const pathname = usePathname();
@@ -76,7 +80,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const routerProjectIdentifier = workItem?.toString().split("-")[0];
   const projectIdFromRouter = getProjectByIdentifier(routerProjectIdentifier)?.id;
   const projectId = data?.project_id ?? routerProjectId?.toString() ?? projectIdFromRouter;
-  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     setDescription(undefined);
@@ -114,10 +117,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       return;
     }
 
-    // if data is not present, set active project to the project
-    // in the url. This has the least priority.
-    if (projectIdsWithCreatePermissions && projectIdsWithCreatePermissions.length > 0 && !activeProjectId)
-      setActiveProjectId(projectId?.toString() ?? projectIdsWithCreatePermissions?.[0]);
+    // if data is not present, set active project to the first project in the allowedProjectIds array
+    if (allowedProjectIds && allowedProjectIds.length > 0 && !activeProjectId)
+      setActiveProjectId(projectId?.toString() ?? allowedProjectIds?.[0]);
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
@@ -239,7 +241,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         ),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...response, state: "SUCCESS" },
         path: pathname,
       });
@@ -255,7 +257,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
       captureIssueEvent({
-        eventName: ISSUE_CREATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.create,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -301,7 +303,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: t("issue_updated_successfully"),
       });
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, issueId: data.id, state: "SUCCESS" },
         path: pathname,
       });
@@ -314,7 +316,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         message: error?.error ?? t("issue_could_not_be_updated"),
       });
       captureIssueEvent({
-        eventName: ISSUE_UPDATED,
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: { ...payload, state: "FAILED" },
         path: pathname,
       });
@@ -332,8 +334,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (beforeFormSubmit) await beforeFormSubmit();
       if (!data?.id) response = await handleCreateIssue(payload, is_draft_issue);
       else response = await handleUpdateIssue(payload);
-    } catch (error) {
-      throw error;
     } finally {
       if (response != undefined && onSubmit) await onSubmit(response);
     }
@@ -346,7 +346,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const handleDuplicateIssueModal = (value: boolean) => setIsDuplicateModalOpen(value);
 
   // don't open the modal if there are no projects
-  if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
+  if (!allowedProjectIds || allowedProjectIds.length === 0 || !activeProjectId) return null;
 
   const commonIssueModalProps: IssueFormProps = {
     issueTitleRef: issueTitleRef,
@@ -375,7 +375,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   return (
     <ModalCore
       isOpen={isOpen}
-      handleClose={() => handleClose(true)}
       position={EModalPosition.TOP}
       width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
       className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"

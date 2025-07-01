@@ -7,12 +7,11 @@ import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 // plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
+import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor";
 // constants
-import { cn } from "@/helpers/common.helper";
 // helpers
-import { isCommentEmpty } from "@/helpers/string.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 // services
@@ -125,7 +124,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 ref={editorRef}
                 initialValue={value ?? "<p></p>"}
-                containerClassName="min-h-min [&_p]:!p-0 [&_p]:!text-sm"
+                containerClassName="min-h-min"
                 onChange={(comment_json, comment_html) => onChange(comment_html)}
                 accessSpecifier={accessValue ?? EIssueCommentAccessSpecifier.INTERNAL}
                 handleAccessChange={onAccessChange}
@@ -137,6 +136,9 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 }}
                 showToolbarInitially={showToolbarInitially}
                 parentClassName="p-2"
+                displayConfig={{
+                  fontSize: "small-font",
+                }}
               />
             )}
           />

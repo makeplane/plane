@@ -18,7 +18,6 @@
     "pro": "专业版",
     "upgrade": "升级"
   },
-
   "auth": {
     "common": {
       "email": {
@@ -168,7 +167,6 @@
       }
     }
   },
-
   "submit": "提交",
   "cancel": "取消",
   "loading": "加载中",
@@ -318,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "无法从收藏中移除项目。请重试。",
   "project_created_successfully": "项目创建成功",
   "project_created_successfully_description": "项目创建成功。您现在可以开始添加工作项了。",
+  "project_name_already_taken": "项目名称已被使用。",
+  "project_identifier_already_taken": "项目标识符已被使用。",
   "project_cover_image_alt": "项目封面图片",
   "name_is_required": "名称为必填项",
   "title_should_be_less_than_255_characters": "标题应少于255个字符",
@@ -367,12 +367,12 @@
   "work_management": "工作管理",
   "projects_and_issues": "项目和工作项",
   "projects_and_issues_description": "在此项目中开启或关闭这些功能。",
-  "cycles_description": "根据项目需要设置时间框，可以根据不同时期更改频率。",
-  "modules_description": "将工作分组为类似子项目的设置，具有各自的负责人和分配者。",
-  "views_description": "保存排序、筛选和显示选项以供后续使用或分享。",
-  "pages_description": "像写任何东西一样写任何东西。",
-  "intake_description": "及时了解您订阅的工作项。启用此功能以获取通知。",
-  "time_tracking_description": "跟踪工作项和项目的时间消耗。",
+  "cycles_description": "为每个项目设置时间框，并根据需要调整周期。一个周期可以是两周，下一个周期是一周。",
+  "modules_description": "将工作组织为子项目，并指定专门的负责人和受理人。",
+  "views_description": "保存自定义排序、筛选和显示选项，或与团队共享。",
+  "pages_description": "创建和编辑自由格式的内容：笔记、文档，任何内容。",
+  "intake_description": "允许非成员提交 Bug、反馈和建议，且不会干扰您的工作流程。",
+  "time_tracking_description": "记录在工作项和项目上花费的时间。",
   "work_management_description": "轻松管理您的工作和项目。",
   "documentation": "文档",
   "message_support": "联系支持",
@@ -504,7 +504,6 @@
   "new_password_must_be_different_from_old_password": "新密码必须不同于旧密码",
   "edited": "已编辑",
   "bot": "机器人",
-
   "project_view": {
     "sort_by": {
       "created_at": "创建时间",
@@ -512,12 +511,10 @@
       "name": "名称"
     }
   },
-
   "toast": {
     "success": "成功！",
     "error": "错误！"
   },
-
   "links": {
     "toasts": {
       "created": {
@@ -546,7 +543,6 @@
       }
     }
   },
-
   "home": {
     "empty": {
       "quickstart_guide": "快速入门指南",
@@ -614,7 +610,6 @@
     "title": "首页",
     "star_us_on_github": "在GitHub上为我们加星"
   },
-
   "link": {
     "modal": {
       "url": {
@@ -628,7 +623,6 @@
       }
     }
   },
-
   "common": {
     "all": "全部",
     "states": "状态",
@@ -756,7 +750,8 @@
         "message": "发生错误。请重试。"
       },
       "required": "此字段为必填项",
-      "entity_required": "{entity}为必填项"
+      "entity_required": "{entity}为必填项",
+      "restricted_entity": "{entity}已被限制"
     },
     "update_link": "更新链接",
     "attach": "附加",
@@ -856,6 +851,7 @@
     "live": "实时",
     "change_history": "变更历史",
     "coming_soon": "即将推出",
+    "member": "成员",
     "members": "成员",
     "you": "你",
     "upgrade_cta": {
@@ -871,22 +867,35 @@
     "pending": "待处理",
     "invite": "邀请",
     "view": "查看",
-    "deactivated_user": "已停用用户"
+    "deactivated_user": "已停用用户",
+    "apply": "应用",
+    "applying": "应用中",
+    "users": "用户",
+    "admins": "管理员",
+    "guests": "访客",
+    "on_track": "进展顺利",
+    "off_track": "偏离轨道",
+    "at_risk": "有风险",
+    "timeline": "时间轴",
+    "completion": "完成",
+    "upcoming": "即将发生",
+    "completed": "已完成",
+    "in_progress": "进行中",
+    "planned": "已计划",
+    "paused": "暂停",
+    "no_of": "{entity} 的数量"
   },
-
   "chart": {
     "x_axis": "X轴",
     "y_axis": "Y轴",
     "metric": "指标"
   },
-
   "form": {
     "title": {
       "required": "标题为必填项",
       "max_length": "标题应少于 {length} 个字符"
     }
   },
-
   "entity": {
     "grouping_title": "{entity}分组",
     "priority": "{entity}优先级",
@@ -910,7 +919,6 @@
       "failed": "添加{entity}时出错"
     }
   },
-
   "epic": {
     "all": "所有史诗",
     "label": "{count, plural, one {史诗} other {史诗}}",
@@ -928,7 +936,6 @@
       "required": "史诗标题为必填项"
     }
   },
-
   "issue": {
     "label": "{count, plural, one {工作项} other {工作项}}",
     "all": "所有工作项",
@@ -1091,11 +1098,12 @@
     "select": {
       "error": "请至少选择一个工作项",
       "empty": "未选择工作项",
-      "add_selected": "添加所选工作项"
+      "add_selected": "添加所选工作项",
+      "select_all": "全选",
+      "deselect_all": "取消全选"
     },
     "open_in_full_screen": "在全屏中打开工作项"
   },
-
   "attachment": {
     "error": "无法附加文件。请重新上传。",
     "only_one_file_allowed": "一次只能上传一个文件。",
@@ -1103,7 +1111,6 @@
     "drag_and_drop": "拖放到任意位置以上传",
     "delete": "删除附件"
   },
-
   "label": {
     "select": "选择标签",
     "create": {
@@ -1113,7 +1120,6 @@
       "type": "输入以添加新标签"
     }
   },
-
   "sub_work_item": {
     "update": {
       "success": "子工作项更新成功",
@@ -1122,9 +1128,20 @@
     "remove": {
       "success": "子工作项移除成功",
       "error": "移除子工作项时出错"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "您没有符合您应用的过滤器的子工作项。",
+        "description": "要查看所有子工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      },
+      "list_filters": {
+        "title": "您没有符合您应用的过滤器的工作项。",
+        "description": "要查看所有工作项，请清除所有应用的过滤器。",
+        "action": "清除过滤器"
+      }
     }
   },
-
   "view": {
     "label": "{count, plural, one {视图} other {视图}}",
     "create": {
@@ -1134,7 +1151,6 @@
       "label": "更新视图"
     }
   },
-
   "inbox_issue": {
     "status": {
       "pending": {
@@ -1220,7 +1236,6 @@
       }
     }
   },
-
   "workspace_creation": {
     "heading": "创建您的工作区",
     "subheading": "要开始使用 Plane，您需要创建或加入一个工作区。",
@@ -1272,7 +1287,6 @@
       }
     }
   },
-
   "workspace_dashboard": {
     "empty_state": {
       "general": {
@@ -1288,7 +1302,6 @@
       }
     }
   },
-
   "workspace_analytics": {
     "label": "分析",
     "page_label": "{workspace} - 分析",
@@ -1320,20 +1333,38 @@
       "custom": "自定义分析"
     },
     "empty_state": {
-      "general": {
-        "title": "跟踪进度、工作量和分配。发现趋势、消除障碍并加快工作进度",
-        "description": "查看范围与需求、估算和范围蔓延。获取团队成员和团队的表现，确保您的项目按时运行。",
-        "primary_button": {
-          "text": "开始您的第一个项目",
-          "comic": {
-            "title": "分析在周期 + 模块中效果最佳",
-            "description": "首先，将您的工作项限定在周期中，如果可能的话，将跨越多个周期的工作项分组到模块中。在左侧导航栏中查看这两项。"
-          }
-        }
+      "customized_insights": {
+        "description": "分配给您的工作项将按状态分类显示在此处。",
+        "title": "暂无数据"
+      },
+      "created_vs_resolved": {
+        "description": "随着时间推移创建和解决的工作项将显示在此处。",
+        "title": "暂无数据"
+      },
+      "project_insights": {
+        "title": "暂无数据",
+        "description": "分配给您的工作项将按状态分类显示在此处。"
       }
-    }
+    },
+    "created_vs_resolved": "已创建 vs 已解决",
+    "customized_insights": "自定义洞察",
+    "backlog_work_items": "待办的{entity}",
+    "active_projects": "活跃项目",
+    "trend_on_charts": "图表趋势",
+    "all_projects": "所有项目",
+    "summary_of_projects": "项目概览",
+    "project_insights": "项目洞察",
+    "started_work_items": "已开始的{entity}",
+    "total_work_items": "{entity}总数",
+    "total_projects": "项目总数",
+    "total_admins": "管理员总数",
+    "total_users": "用户总数",
+    "total_intake": "总收入",
+    "un_started_work_items": "未开始的{entity}",
+    "total_guests": "访客总数",
+    "completed_work_items": "已完成的{entity}",
+    "total": "{entity}总数"
   },
-
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
     "create": {
@@ -1407,7 +1438,6 @@
       }
     }
   },
-
   "workspace_views": {
     "add_view": "添加视图",
     "empty_state": {
@@ -1442,7 +1472,6 @@
       }
     }
   },
-
   "workspace_settings": {
     "label": "工作区设置",
     "page_label": "{workspace} - 常规设置",
@@ -1624,7 +1653,6 @@
       }
     }
   },
-
   "profile": {
     "label": "个人资料",
     "page_label": "您的工作",
@@ -1687,7 +1715,6 @@
       }
     }
   },
-
   "project_settings": {
     "general": {
       "enter_project_id": "输入项目 ID",
@@ -1814,7 +1841,6 @@
         "auto_close_status": "自动关闭状态"
       }
     },
-
     "empty_state": {
       "labels": {
         "title": "尚无标签",
@@ -1827,7 +1853,6 @@
       }
     }
   },
-
   "project_cycles": {
     "add_cycle": "添加周期",
     "more_details": "更多详情",
@@ -1953,7 +1978,6 @@
       }
     }
   },
-
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -1982,7 +2006,6 @@
       }
     }
   },
-
   "project_module": {
     "add_module": "添加模块",
     "update_module": "更新模块",
@@ -2036,7 +2059,6 @@
       }
     }
   },
-
   "project_views": {
     "empty_state": {
       "general": {
@@ -2056,7 +2078,6 @@
       }
     }
   },
-
   "project_page": {
     "empty_state": {
       "general": {
@@ -2086,7 +2107,6 @@
       }
     }
   },
-
   "command_k": {
     "empty_state": {
       "search": {
@@ -2094,7 +2114,6 @@
       }
     }
   },
-
   "issue_relation": {
     "empty_state": {
       "search": {
@@ -2105,7 +2124,6 @@
       }
     }
   },
-
   "issue_comment": {
     "empty_state": {
       "general": {
@@ -2114,7 +2132,6 @@
       }
     }
   },
-
   "notification": {
     "label": "收件箱",
     "page_label": "{workspace} - 收件箱",
@@ -2171,7 +2188,6 @@
       "custom": "自定义"
     }
   },
-
   "active_cycle": {
     "empty_state": {
       "progress": {
@@ -2191,7 +2207,6 @@
       }
     }
   },
-
   "disabled_project": {
     "empty_state": {
       "inbox": {
@@ -2254,7 +2269,6 @@
       }
     }
   },
-
   "stickies": {
     "title": "您的便签",
     "placeholder": "点击此处输入",
@@ -2312,7 +2326,6 @@
       }
     }
   },
-
   "role_details": {
     "guest": {
       "title": "访客",
@@ -2327,7 +2340,6 @@
       "description": "在工作区内所有权限均设置为允许。"
     }
   },
-
   "user_roles": {
     "product_or_project_manager": "产品/项目经理",
     "development_or_engineering": "开发/工程",
@@ -2340,7 +2352,6 @@
     "human_resources": "人力资源",
     "other": "其他"
   },
-
   "importer": {
     "github": {
       "title": "GitHub",
@@ -2351,7 +2362,6 @@
       "description": "从 Jira 项目和史诗导入工作项和史诗。"
     }
   },
-
   "exporter": {
     "csv": {
       "title": "CSV",
@@ -2380,7 +2390,6 @@
     "created": "已创建",
     "subscribed": "已订阅"
   },
-
   "themes": {
     "theme_options": {
       "system_preference": {
@@ -2426,20 +2435,21 @@
       "manual": "手动"
     }
   },
-
   "cycle": {
     "label": "{count, plural, one {周期} other {周期}}",
     "no_cycle": "无周期"
   },
-
   "module": {
     "label": "{count, plural, one {模块} other {模块}}",
     "no_module": "无模块"
   },
-
   "description_versions": {
     "last_edited_by": "最后编辑者",
     "previously_edited_by": "之前编辑者",
     "edited_by": "编辑者"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
   }
 }

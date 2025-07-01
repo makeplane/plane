@@ -11,10 +11,10 @@ import { EIssueFilterType, EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 // components
+import { getDate } from "@plane/utils";
 import { CycleProgressStats } from "@/components/cycles";
 // constants
 // helpers
-import { getDate } from "@/helpers/date-time.helper";
 // hooks
 import { useIssues, useCycle } from "@/hooks/store";
 // plane web components
@@ -32,7 +32,7 @@ type Options = {
 
 export const cycleEstimateOptions: Options[] = [
   { value: "issues", label: "Work items" },
-  { value: "points", label: "Points" },
+  { value: "points", label: "Estimates" },
 ];
 export const cycleChartOptions: Options[] = [
   { value: "burndown", label: "Burn-down" },

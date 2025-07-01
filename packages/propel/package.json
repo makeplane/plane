@@ -1,6 +1,6 @@
 {
   "name": "@plane/propel",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -9,10 +9,13 @@
   },
   "exports": {
     "./ui/*": "./src/ui/*.tsx",
-    "./charts/*": "./src/charts/*/index.ts"
+    "./charts/*": "./src/charts/*/index.ts",
+    "./table": "./src/table/index.ts",
+    "./styles/fonts": "./src/styles/fonts/index.css"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
+    "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
@@ -26,6 +29,6 @@
     "@plane/typescript-config": "*",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

@@ -1,11 +1,13 @@
+"use client";
+
 import React from "react";
 // plane imports
-import { EditorReadOnlyRefApi, IRichTextReadOnlyEditor, RichTextReadOnlyEditorWithRef } from "@plane/editor";
+import { EditorReadOnlyRefApi, IRichTextReadOnlyEditorProps, RichTextReadOnlyEditorWithRef } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 // components
+import { cn } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { cn } from "@/helpers/common.helper";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 // store hooks
@@ -14,8 +16,8 @@ import { useMember } from "@/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type RichTextReadOnlyEditorWrapperProps = MakeOptional<
-  Omit<IRichTextReadOnlyEditor, "fileHandler" | "mentionHandler">,
-  "disabledExtensions"
+  Omit<IRichTextReadOnlyEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
 > & {
   workspaceId: string;
   workspaceSlug: string;
@@ -28,14 +30,15 @@ export const RichTextReadOnlyEditor = React.forwardRef<EditorReadOnlyRefApi, Ric
     const { getUserDetails } = useMember();
 
     // editor flaggings
-    const { richTextEditor: disabledExtensions } = useEditorFlagging(workspaceSlug?.toString());
+    const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
     // editor config
     const { getReadOnlyEditorFileHandlers } = useEditorConfig();
 
     return (
       <RichTextReadOnlyEditorWithRef
         ref={ref}
-        disabledExtensions={[...disabledExtensions, ...(additionalDisabledExtensions ?? [])]}
+        disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+        flaggedExtensions={richTextEditorExtensions.flagged}
         fileHandler={getReadOnlyEditorFileHandlers({
           projectId,
           workspaceId,

@@ -1,9 +1,9 @@
 import React, { RefObject } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { IGanttBlock } from "@/components/gantt-chart";
+import type { IGanttBlock } from "@plane/types";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 //  Plane-web
 import { LeftDependencyDraggable, RightDependencyDraggable } from "@/plane-web/components/gantt-chart";
 //
@@ -18,6 +18,7 @@ type Props = {
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
+  enableDependency: boolean | ((blockId: string) => boolean);
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
 
@@ -29,6 +30,7 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
     enableBlockLeftResize,
     enableBlockRightResize,
     enableBlockMove,
+    enableDependency,
     isMoving,
     ganttContainerRef,
   } = props;
@@ -36,7 +38,9 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
   return (
     <div className="group w-full z-[5] relative inline-flex h-full cursor-pointer items-center font-medium transition-all">
       {/* left resize drag handle */}
-      <LeftDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) && (
+        <LeftDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      )}
       <LeftResizable
         enableBlockLeftResize={enableBlockLeftResize}
         handleBlockDrag={handleBlockDrag}
@@ -58,7 +62,9 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
         isMoving={isMoving}
         position={block.position}
       />
-      <RightDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      {(typeof enableDependency === "function" ? enableDependency(block.id) : enableDependency) && (
+        <RightDependencyDraggable block={block} ganttContainerRef={ganttContainerRef} />
+      )}
     </div>
   );
 });

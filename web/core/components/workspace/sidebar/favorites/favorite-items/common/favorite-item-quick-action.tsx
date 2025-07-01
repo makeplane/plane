@@ -1,11 +1,13 @@
 "use client";
 import React, { FC } from "react";
+import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";
+// plane imports
+import { useTranslation } from "@plane/i18n";
 import { IFavorite } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 
 type Props = {
   ref: React.MutableRefObject<HTMLDivElement | null>;
@@ -15,19 +17,22 @@ type Props = {
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavoriteItemQuickAction: FC<Props> = (props) => {
+export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
   const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
+  // translation
+  const { t } = useTranslation();
+
   return (
     <CustomMenu
       customButton={
         <span
           ref={ref}
           className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-          onClick={() => onChange(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
         </span>
       }
+      menuButtonOnClick={() => onChange(!isMenuActive)}
       className={cn(
         "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
         {
@@ -36,6 +41,7 @@ export const FavoriteItemQuickAction: FC<Props> = (props) => {
       )}
       customButtonClassName="grid place-items-center"
       placement="bottom-start"
+      ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
     >
       <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
         <span className="flex items-center justify-start gap-2">
@@ -45,4 +51,4 @@ export const FavoriteItemQuickAction: FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+});

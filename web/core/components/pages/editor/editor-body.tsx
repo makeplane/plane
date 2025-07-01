@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-// plane imports
+import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -10,15 +10,14 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
+// plane imports
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 import { PageContentBrowser, PageContentLoader, PageEditorTitle } from "@/components/pages";
 // helpers
-import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@/helpers/common.helper";
-import { generateRandomColor } from "@/helpers/string.helper";
 // hooks
 import { useEditorMention } from "@/hooks/editor";
 import { useUser, useWorkspace, useMember } from "@/hooks/store";
@@ -82,7 +81,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
-  const { documentEditor: disabledExtensions } = useEditorFlagging(workspaceSlug);
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
   // derived values
@@ -147,7 +146,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     () => ({
       id: currentUser?.id ?? "",
       name: currentUser?.display_name ?? "",
-      color: generateRandomColor(currentUser?.id ?? ""),
+      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
     }),
     [currentUser?.display_name, currentUser?.id]
   );
@@ -214,7 +213,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}
           user={userConfig}
-          disabledExtensions={disabledExtensions}
+          disabledExtensions={documentEditorExtensions.disabled}
+          flaggedExtensions={documentEditorExtensions.flagged}
           aiHandler={{
             menu: getAIMenu,
           }}

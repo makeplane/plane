@@ -1,3 +1,4 @@
+import { EStartOfTheWeek } from "@plane/constants";
 import { TCalendarLayouts } from "@plane/types";
 
 export const MONTHS_LIST: {
@@ -60,35 +61,43 @@ export const DAYS_LIST: {
   [dayIndex: number]: {
     shortTitle: string;
     title: string;
+    value: EStartOfTheWeek;
   };
 } = {
   1: {
     shortTitle: "Sun",
     title: "Sunday",
+    value: EStartOfTheWeek.SUNDAY,
   },
   2: {
     shortTitle: "Mon",
     title: "Monday",
+    value: EStartOfTheWeek.MONDAY,
   },
   3: {
     shortTitle: "Tue",
     title: "Tuesday",
+    value: EStartOfTheWeek.TUESDAY,
   },
   4: {
     shortTitle: "Wed",
     title: "Wednesday",
+    value: EStartOfTheWeek.WEDNESDAY,
   },
   5: {
     shortTitle: "Thu",
     title: "Thursday",
+    value: EStartOfTheWeek.THURSDAY,
   },
   6: {
     shortTitle: "Fri",
     title: "Friday",
+    value: EStartOfTheWeek.FRIDAY,
   },
   7: {
     shortTitle: "Sat",
     title: "Saturday",
+    value: EStartOfTheWeek.SATURDAY,
   },
 };
 
