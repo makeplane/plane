@@ -12,7 +12,8 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { WorkspaceViewForm } from "@/components/workspace";
 // constants
 // store hooks
-import { useEventTracker, useGlobalView } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -29,7 +30,6 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
   const { workspaceSlug } = useParams();
   // store hooks
   const { createGlobalView, updateGlobalView } = useGlobalView();
-  const { captureEvent } = useEventTracker();
 
   const handleClose = () => {
     onClose();
@@ -47,10 +47,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
 
     await createGlobalView(workspaceSlug.toString(), payloadData)
       .then((res) => {
-        captureEvent(GLOBAL_VIEW_TRACKER_EVENTS.create, {
-          view_id: res.id,
-          applied_filters: res.filters,
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.create,
+          payload: {
+            id: res.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -62,9 +63,8 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         handleClose();
       })
       .catch(() => {
-        captureEvent(GLOBAL_VIEW_TRACKER_EVENTS.create, {
-          applied_filters: payload?.filters,
-          state: "FAILED",
+        captureError({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.create,
         });
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -87,10 +87,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
     await updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
       .then((res) => {
         if (res) {
-          captureEvent(GLOBAL_VIEW_TRACKER_EVENTS.update, {
-            view_id: res.id,
-            applied_filters: res.filters,
-            state: "SUCCESS",
+          captureSuccess({
+            eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
+            payload: {
+              id: res.id,
+            },
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -101,10 +102,11 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) 
         }
       })
       .catch(() => {
-        captureEvent(GLOBAL_VIEW_TRACKER_EVENTS.update, {
-          view_id: data.id,
-          applied_filters: data.filters,
-          state: "FAILED",
+        captureError({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
+          payload: {
+            id: data.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.ERROR,

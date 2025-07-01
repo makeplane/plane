@@ -303,4 +303,5 @@ export const ONBOARDING_TRACKER_ELEMENTS = {
 
 export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
+  CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
 };
