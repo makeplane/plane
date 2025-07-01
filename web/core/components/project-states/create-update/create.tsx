@@ -2,13 +2,13 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { EventProps, STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
+import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type TStateCreate = {
   groupKey: TStateGroups;
@@ -19,16 +19,9 @@ type TStateCreate = {
 
 export const StateCreate: FC<TStateCreate> = observer((props) => {
   const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
-  // hooks
-  const { captureProjectStateEvent, setTrackElement } = useEventTracker();
+
   // states
   const [loader, setLoader] = useState(false);
-
-  const captureEventIfEnabled = (props: EventProps) => {
-    if (shouldTrackEvents) {
-      captureProjectStateEvent(props);
-    }
-  };
 
   const onCancel = () => {
     setLoader(false);
@@ -38,19 +31,15 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
   const onSubmit = async (formData: Partial<IState>) => {
     if (!groupKey) return { status: "error" };
 
-    if (shouldTrackEvents) {
-      setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-    }
     try {
-      const stateResponse = await createStateCallback({ ...formData, group: groupKey });
-      captureEventIfEnabled({
-        eventName: STATE_TRACKER_EVENTS.create,
-        payload: {
-          ...stateResponse,
-          state: "SUCCESS",
-          element: "Project settings states page",
-        },
-      });
+      await createStateCallback({ ...formData, group: groupKey });
+      if (shouldTrackEvents)
+        captureSuccess({
+          eventName: STATE_TRACKER_EVENTS.create,
+          payload: {
+            state_group: groupKey,
+          },
+        });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -60,14 +49,13 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
       return { status: "success" };
     } catch (error) {
       const errorStatus = error as unknown as { status: number; data: { error: string } };
-      captureEventIfEnabled({
-        eventName: STATE_TRACKER_EVENTS.create,
-        payload: {
-          ...formData,
-          state: "FAILED",
-          element: "Project settings states page",
-        },
-      });
+      if (shouldTrackEvents)
+        captureError({
+          eventName: STATE_TRACKER_EVENTS.create,
+          payload: {
+            state_group: groupKey,
+          },
+        });
       if (errorStatus?.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,

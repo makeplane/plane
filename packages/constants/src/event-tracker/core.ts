@@ -176,6 +176,11 @@ export const STATE_TRACKER_EVENTS = {
   update: "state_updated",
   delete: "state_deleted",
 };
+export const STATE_TRACKER_ELEMENTS = {
+  STATE_GROUP_ADD_BUTTON: "state_group_add_button",
+  STATE_LIST_CROSS_BUTTON: "state_list_cross_button",
+  STATE_LIST_EDIT_BUTTON: "state_list_edit_button",
+};
 
 export const PROJECT_PAGE_TRACKER_EVENTS = {
   create: "project_page_created",

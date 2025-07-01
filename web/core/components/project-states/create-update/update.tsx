@@ -2,13 +2,13 @@
 
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { EventProps, STATE_TRACKER_EVENTS } from "@plane/constants";
+import { STATE_TRACKER_EVENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type TStateUpdate = {
   state: IState;
@@ -19,8 +19,6 @@ type TStateUpdate = {
 
 export const StateUpdate: FC<TStateUpdate> = observer((props) => {
   const { state, updateStateCallback, shouldTrackEvents, handleClose } = props;
-  // hooks
-  const { captureProjectStateEvent, setTrackElement } = useEventTracker();
   // states
   const [loader, setLoader] = useState(false);
 
@@ -29,28 +27,19 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
     handleClose();
   };
 
-  const captureEventIfEnabled = (props: EventProps) => {
-    if (shouldTrackEvents) {
-      captureProjectStateEvent(props);
-    }
-  };
-
   const onSubmit = async (formData: Partial<IState>) => {
     if (!state.id) return { status: "error" };
 
-    if (shouldTrackEvents) {
-      setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-    }
     try {
-      const stateResponse = await updateStateCallback(state.id, formData);
-      captureEventIfEnabled({
-        eventName: STATE_TRACKER_EVENTS.update,
-        payload: {
-          ...stateResponse,
-          state: "SUCCESS",
-          element: "Project settings states page",
-        },
-      });
+      await updateStateCallback(state.id, formData);
+      if (shouldTrackEvents) {
+        captureSuccess({
+          eventName: STATE_TRACKER_EVENTS.update,
+          payload: {
+            state_group: state.group,
+          },
+        });
+      }
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -73,14 +62,14 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
           title: "Error!",
           message: "State could not be updated. Please try again.",
         });
-        captureEventIfEnabled({
-          eventName: STATE_TRACKER_EVENTS.update,
-          payload: {
-            ...formData,
-            state: "FAILED",
-            element: "Project settings states page",
-          },
-        });
+        if (shouldTrackEvents) {
+          captureError({
+            eventName: STATE_TRACKER_EVENTS.update,
+            payload: {
+              state_group: state.group,
+            },
+          });
+        }
         return { status: "error" };
       }
     }
