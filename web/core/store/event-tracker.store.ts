@@ -2,7 +2,6 @@ import { action, computed, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
 // store
 import {
-  GROUP_WORKSPACE_TRACKER_EVENT,
   EventProps,
   IssueEventProps,
   getIssueEventPayload,
@@ -20,7 +19,6 @@ export interface ICoreEventTrackerStore {
   resetSession: () => void;
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload?: any) => void;
-  joinWorkspaceMetricGroup: (workspaceId?: string) => void;
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
@@ -69,19 +67,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
    */
   resetSession = () => {
     posthog?.reset();
-  };
-
-  /**
-   * @description: Creates the workspace metric group.
-   * @param {string} userEmail
-   * @param {string} workspaceId
-   */
-  joinWorkspaceMetricGroup = (workspaceId?: string) => {
-    if (!workspaceId) return;
-    posthog?.group(GROUP_WORKSPACE_TRACKER_EVENT, workspaceId, {
-      date: new Date().toDateString(),
-      workspace_id: workspaceId,
-    });
   };
 
   /**

@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS, GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -22,8 +22,8 @@ import { WorkspaceLogo } from "@/components/workspace/logo";
 import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 // hooks
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useEventTracker, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { captureError, captureSuccess, joinEventGroup } from "@/helpers/event-tracker.helper";
+import { useUser, useUserProfile, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -44,7 +44,6 @@ const UserInvitationsPage = observer(() => {
   const router = useAppRouter();
   // store hooks
   const { t } = useTranslation();
-  const { joinWorkspaceMetricGroup } = useEventTracker();
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
 
@@ -86,7 +85,12 @@ const UserInvitationsPage = observer(() => {
         const firstInviteId = invitationsRespond[0];
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
-        joinWorkspaceMetricGroup(redirectWorkspace?.id);
+        if (redirectWorkspace?.id) {
+          joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, redirectWorkspace?.id, {
+            date: new Date().toDateString(),
+            workspace_id: redirectWorkspace?.id,
+          });
+        }
         captureSuccess({
           eventName: MEMBER_TRACKER_EVENTS.accept,
           payload: {

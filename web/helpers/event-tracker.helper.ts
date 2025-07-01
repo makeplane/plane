@@ -5,6 +5,16 @@ export type TElementContext = Record<string, any>;
 export type TEventContext = Record<string, any>;
 export type TInteractionType = "clicked" | "viewed" | "hovered";
 
+/**
+ * Join a event group in PostHog
+ * @param groupName - The name of the group
+ * @param groupId - The ID of the group
+ * @param properties - The properties of the group
+ */
+export const joinEventGroup = (groupName: string, groupId: string, properties: Record<string, any>) => {
+  posthog?.group(groupName, groupId, properties);
+};
+
 type TCaptureElementParams = {
   elementName: string;
   interaction_type: TInteractionType;

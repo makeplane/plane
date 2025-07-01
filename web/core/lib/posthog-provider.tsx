@@ -11,7 +11,7 @@ import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 // helpers
 import { getUserRole } from "@plane/utils";
 // hooks
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { captureClick, joinEventGroup } from "@/helpers/event-tracker.helper";
 import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
@@ -49,7 +49,10 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
       });
       if (currentWorkspace) {
-        posthog?.group(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id);
+        joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id, {
+          date: new Date().toDateString(),
+          workspace_id: currentWorkspace?.id,
+        });
       }
     }
   }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
