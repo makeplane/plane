@@ -37,6 +37,7 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
           eventName: STATE_TRACKER_EVENTS.update,
           payload: {
             state_group: state.group,
+            id: state.id,
           },
         });
       }
@@ -67,6 +68,7 @@ export const StateUpdate: FC<TStateUpdate> = observer((props) => {
             eventName: STATE_TRACKER_EVENTS.update,
             payload: {
               state_group: state.group,
+              id: state.id,
             },
           });
         }

@@ -178,7 +178,7 @@ export const STATE_TRACKER_EVENTS = {
 };
 export const STATE_TRACKER_ELEMENTS = {
   STATE_GROUP_ADD_BUTTON: "state_group_add_button",
-  STATE_LIST_CROSS_BUTTON: "state_list_cross_button",
+  STATE_LIST_DELETE_BUTTON: "state_list_delete_button",
   STATE_LIST_EDIT_BUTTON: "state_list_edit_button",
 };
 

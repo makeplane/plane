@@ -32,12 +32,13 @@ export const StateCreate: FC<TStateCreate> = observer((props) => {
     if (!groupKey) return { status: "error" };
 
     try {
-      await createStateCallback({ ...formData, group: groupKey });
+      const response = await createStateCallback({ ...formData, group: groupKey });
       if (shouldTrackEvents)
         captureSuccess({
           eventName: STATE_TRACKER_EVENTS.create,
           payload: {
             state_group: groupKey,
+            id: response.id,
           },
         });
       setToast({

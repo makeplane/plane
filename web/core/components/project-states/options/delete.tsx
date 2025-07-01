@@ -101,7 +101,7 @@ export const StateDelete: FC<TStateDelete> = observer((props) => {
         )}
         disabled={isDeleteDisabled}
         onClick={() => setIsDeleteModal(true)}
-        data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_CROSS_BUTTON}
+        data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_DELETE_BUTTON}
       >
         <Tooltip
           tooltipContent={
