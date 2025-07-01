@@ -4,7 +4,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { API_BASE_URL, EAdminAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import { API_BASE_URL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
 import { AuthService } from "@plane/services";
 import { Button, Input, Spinner } from "@plane/ui";
 // components
@@ -53,7 +53,7 @@ export const InstanceSignInForm: FC = (props) => {
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState<TFormData>(defaultFromData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
+  const [errorInfo, setErrorInfo] = useState<TAdminAuthErrorInfo | undefined>(undefined);
 
   const handleFormChange = (key: keyof TFormData, value: string | boolean) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -96,7 +96,7 @@ export const InstanceSignInForm: FC = (props) => {
     if (errorCode) {
       const errorDetail = authErrorHandler(errorCode?.toString() as EAdminAuthErrorCodes);
       if (errorDetail) {
-        setErrorInfo(errorDetail as unknown as TAuthErrorInfo);
+        setErrorInfo(errorDetail);
       }
     }
   }, [errorCode]);
