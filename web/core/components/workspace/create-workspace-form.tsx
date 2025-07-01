@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_CREATED } from "@plane/constants";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 // types
@@ -72,7 +72,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await createWorkspace(formData)
             .then(async (res) => {
               captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   ...res,
                   state: "SUCCESS",
@@ -89,7 +89,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
             })
             .catch(() => {
               captureWorkspaceEvent({
-                eventName: WORKSPACE_CREATED,
+                eventName: WORKSPACE_TRACKER_EVENTS.create,
                 payload: {
                   state: "FAILED",
                   element: "Create workspace page",
@@ -135,8 +135,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               rules={{
                 required: t("common.errors.required"),
                 validate: (value) =>
-                  /^[\w\s-]*$/.test(value) ||
-                  t("workspace_creation.errors.validation.name_alphanumeric"),
+                  /^[\w\s-]*$/.test(value) || t("workspace_creation.errors.validation.name_alphanumeric"),
                 maxLength: {
                   value: 80,
                   message: t("workspace_creation.errors.validation.name_length"),
@@ -199,7 +198,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               )}
             />
           </div>
-          {slugError && <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>}
+          {slugError && (
+            <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+          )}
           {invalidSlug && (
             <p className="text-sm text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
@@ -221,7 +222,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">{t("workspace_creation.form.organization_size.placeholder")}</span>
+                      <span className="text-custom-text-400">
+                        {t("workspace_creation.form.organization_size.placeholder")}
+                      </span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"

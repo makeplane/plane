@@ -4,6 +4,7 @@ import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 // plane web store
 import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
+import { EventTrackerStore, IEventTrackerStore } from "@/plane-web/store/event-tracker.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
@@ -12,7 +13,6 @@ import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
 import { DashboardStore, IDashboardStore } from "./dashboard.store";
 import { EditorAssetStore, IEditorAssetStore } from "./editor/asset.store";
 import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
-import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
 import { FavoriteStore, IFavoriteStore } from "./favorite.store";
 import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
 import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
@@ -86,7 +86,7 @@ export class CoreRootStore {
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.eventTracker = new EventTrackerStore(this);
+    this.eventTracker = new EventTrackerStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
@@ -120,7 +120,7 @@ export class CoreRootStore {
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.eventTracker = new EventTrackerStore(this);
+    this.eventTracker = new EventTrackerStore(this as unknown as RootStore);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
