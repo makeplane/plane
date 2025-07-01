@@ -4,13 +4,13 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { CyclesViewHeader } from "@/components/cycles";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
@@ -23,7 +23,6 @@ export const CyclesListHeader: FC = observer(() => {
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { currentProjectDetails, loader } = useProject();
   const { t } = useTranslation();
@@ -51,8 +50,8 @@ export const CyclesListHeader: FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
+            data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
-              setTrackElement("Cycles page");
               toggleCreateCycleModal(true);
             }}
           >

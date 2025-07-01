@@ -6,7 +6,13 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
 // types
-import { CYCLE_TRACKER_EVENTS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import {
+  CYCLE_TRACKER_EVENTS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  IS_FAVORITE_MENU_OPEN,
+  CYCLE_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
@@ -19,7 +25,8 @@ import { DateRangeDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MergedDateDisplay } from "@/components/dropdowns/merged-date";
 // hooks
-import { useCycle, useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useCycle, useMember, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
@@ -57,7 +64,6 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const pathname = usePathname();
   // store hooks
   const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
-  const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
   // local storage
@@ -98,16 +104,25 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
-      () => {
+    const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
         if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-        captureEvent(CYCLE_TRACKER_EVENTS.favorite, {
-          cycle_id: cycleId,
-          element: "List layout",
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: CYCLE_TRACKER_EVENTS.favorite,
+          payload: {
+            id: cycleId,
+          },
         });
-      }
-    );
+      })
+      .catch((error) => {
+        captureError({
+          eventName: CYCLE_TRACKER_EVENTS.favorite,
+          payload: {
+            id: cycleId,
+          },
+          error,
+        });
+      });
 
     setPromiseToast(addToFavoritePromise, {
       loading: t("project_cycles.action.favorite.loading"),
@@ -126,17 +141,24 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    const removeFromFavoritePromise = removeCycleFromFavorites(
-      workspaceSlug?.toString(),
-      projectId.toString(),
-      cycleId
-    ).then(() => {
-      captureEvent(CYCLE_TRACKER_EVENTS.unfavorite, {
-        cycle_id: cycleId,
-        element: "List layout",
-        state: "SUCCESS",
+    const removeFromFavoritePromise = removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId)
+      .then(() => {
+        captureSuccess({
+          eventName: CYCLE_TRACKER_EVENTS.unfavorite,
+          payload: {
+            id: cycleId,
+          },
+        });
+      })
+      .catch((error) => {
+        captureError({
+          eventName: CYCLE_TRACKER_EVENTS.unfavorite,
+          payload: {
+            id: cycleId,
+          },
+          error,
+        });
       });
-    });
 
     setPromiseToast(removeFromFavoritePromise, {
       loading: t("project_cycles.action.unfavorite.loading"),
@@ -292,6 +314,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       )}
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
+          data-ph-element={CYCLE_TRACKER_ELEMENTS.LIST_ITEM}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
