@@ -150,6 +150,8 @@ class OffsetPaginator:
             raise BadPaginationError("Pagination offset cannot be negative")
 
         results = queryset[offset:stop]
+        # Duplicate the queryset so it does not evaluate on any python ops
+        page_results = queryset[offset:stop].values("id")
 
         # Only slice from the end if we're going backwards (previous page)
         if cursor.value != limit and cursor.is_prev:
@@ -164,7 +166,7 @@ class OffsetPaginator:
         # Check if there are more results available after the current page
 
         # Adjust cursors based on the results for pagination
-        next_cursor = Cursor(limit, page + 1, False, len(results) > limit)
+        next_cursor = Cursor(limit, page + 1, False, page_results.count() > limit)
         # If the page is greater than 0, then set the previous cursor
         prev_cursor = Cursor(limit, page - 1, True, page > 0)
 
