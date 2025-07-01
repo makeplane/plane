@@ -1,135 +1,141 @@
 import compression from "compression";
 import cors from "cors";
 import expressWs from "express-ws";
-import express from "express";
+import express, { Request, Response } from "express";
 import helmet from "helmet";
 // hocuspocus server
 import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
 // helpers
 import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document.js";
 import { logger, manualLogger } from "@/core/helpers/logger.js";
-import { errorHandler } from "@/core/helpers/error-handler.js";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common.js";
 
-const app: any = express();
-expressWs(app);
+export class Server {
+  private app: any;
+  private router: any;
+  private hocuspocusServer: any;
 
-app.set("port", process.env.PORT || 3000);
-
-// Security middleware
-app.use(helmet());
-
-// Middleware for response compression
-app.use(
-  compression({
-    level: 6,
-    threshold: 5 * 1000,
-  })
-);
-
-// Logging middleware
-app.use(logger);
-
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// cors middleware
-app.use(cors());
-
-const router = express.Router();
-
-const HocusPocusServer = await getHocusPocusServer().catch((err) => {
-  manualLogger.error("Failed to initialize HocusPocusServer:", err);
-  process.exit(1);
-});
-
-router.get("/health", (_req, res) => {
-  res.status(200).json({ status: "OK" });
-});
-
-router.ws("/collaboration", (ws, req) => {
-  try {
-    HocusPocusServer.handleConnection(ws, req);
-  } catch (err) {
-    manualLogger.error("WebSocket connection error:", err);
-    ws.close();
+  constructor() {
+    this.app = express();
+    this.router = express.Router();
+    expressWs(this.app);
+    this.app.set("port", process.env.PORT || 3000);
+    this.setupMiddleware();
+    this.setupHocusPocus();
+    this.setupRoutes();
   }
-});
 
-router.post("/convert-document", (req, res) => {
-  const { description_html, variant } = req.body as TConvertDocumentRequestBody;
-  try {
-    if (description_html === undefined || variant === undefined) {
-      res.status(400).send({
-        message: "Missing required fields",
-      });
-      return;
-    }
-    const { description, description_binary } = convertHTMLDocumentToAllFormats({
-      document_html: description_html,
-      variant,
-    });
-    res.status(200).json({
-      description,
-      description_binary,
-    });
-  } catch (error) {
-    manualLogger.error("Error in /convert-document endpoint:", error);
-    res.status(500).send({
-      message: `Internal server error. ${error}`,
+  private setupMiddleware() {
+    // Security middleware
+    this.app.use(helmet());
+    // Middleware for response compression
+    this.app.use(compression({ level: 6, threshold: 5 * 1000 }));
+    // Logging middleware
+    this.app.use(logger);
+    // Body parsing middleware
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    // cors middleware
+    this.app.use(cors());
+    this.app.use(process.env.LIVE_BASE_PATH || "/live", this.router);
+  }
+
+  private async setupHocusPocus() {
+    this.hocuspocusServer = await getHocusPocusServer().catch((err) => {
+      manualLogger.error("Failed to initialize HocusPocusServer:", err);
+      process.exit(1);
     });
   }
-});
 
-app.use(process.env.LIVE_BASE_PATH || "/live", router);
+  private setupRoutes() {
+    this.router.get("/health", (_req: Request, res: Response) => {
+      res.status(200).json({ status: "OK" });
+    });
 
-app.use((_req, res) => {
-  res.status(404).send("Not Found");
-});
+    this.router.ws("/collaboration", (ws: any, req: Request) => {
+      try {
+        this.hocuspocusServer.handleConnection(ws, req);
+      } catch (err) {
+        manualLogger.error("WebSocket connection error:", err);
+        ws.close();
+      }
+    });
 
-app.use(errorHandler);
+    this.router.post("/convert-document", (req: Request, res: Response) => {
+      const { description_html, variant } = req.body as TConvertDocumentRequestBody;
+      try {
+        if (description_html === undefined || variant === undefined) {
+          res.status(400).send({
+            message: "Missing required fields",
+          });
+          return;
+        }
+        const { description, description_binary } = convertHTMLDocumentToAllFormats({
+          document_html: description_html,
+          variant,
+        });
+        res.status(200).json({
+          description,
+          description_binary,
+        });
+      } catch (error) {
+        manualLogger.error("Error in /convert-document endpoint:", error);
+        res.status(500).send({
+          message: `Internal server error. ${error}`,
+        });
+      }
+    });
 
-const liveServer = app.listen(app.get("port"), () => {
-  manualLogger.info(`Plane Live server has started at port ${app.get("port")}`);
-});
+    this.app.use((err: any, _req: Request, res: Response) => {
+      res.status(404).send("Not Found");
+    });
 
-const gracefulShutdown = async () => {
-  manualLogger.info("Starting graceful shutdown...");
+    // this.app.use((err: any, _req: Request, res: Response) => {
+    //   // Set the response status
+    //   res.status(err.status || 500);
 
-  try {
+    //   // Send the response
+    //   res.json({
+    //     error: {
+    //       message: process.env.NODE_ENV === "production" ? "An unexpected error occurred" : err.message,
+    //       ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
+    //     },
+    //   });
+    // });
+  }
+
+  public listen() {
+    this.app.listen(this.app.get("port"), () => {
+      manualLogger.info(`Plane Live server has started at port ${this.app.get("port")}`);
+    });
+  }
+
+  public async destroy() {
     // Close the HocusPocus server WebSocket connections
-    await HocusPocusServer.destroy();
+    await this.hocuspocusServer.destroy();
     manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
-
     // Close the Express server
-    liveServer.close(() => {
+    this.app.close(() => {
       manualLogger.info("Express server closed gracefully.");
       process.exit(1);
     });
-  } catch (err) {
-    manualLogger.error("Error during shutdown:", err);
-    process.exit(1);
   }
+}
 
-  // Forcefully shut down after 10 seconds if not closed
-  setTimeout(() => {
-    manualLogger.error("Forcing shutdown...");
-    process.exit(1);
-  }, 10000);
-};
+const server = new Server();
+server.listen();
 
 // Graceful shutdown on unhandled rejection
-process.on("unhandledRejection", (err: any) => {
+process.on("unhandledRejection", async (err: any) => {
   manualLogger.info("Unhandled Rejection: ", err);
   manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
-  gracefulShutdown();
+  await server.destroy();
 });
 
 // Graceful shutdown on uncaught exception
-process.on("uncaughtException", (err: any) => {
+process.on("uncaughtException", async (err: any) => {
   manualLogger.info("Uncaught Exception: ", err);
   manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
-  gracefulShutdown();
+  await server.destroy();
 });

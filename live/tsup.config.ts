@@ -1,20 +1,15 @@
-import { defineConfig, Options } from "tsup";
+import { defineConfig } from "tsup";
 
-export default defineConfig((options: Options) => ({
+export default defineConfig({
   entry: ["src/server.ts"],
-  format: ["esm"],
-  dts: false,
-  clean: true,
-  target: "node18",
-  sourcemap: true,
+  format: ["esm", "cjs"],
+  dts: true,
   splitting: false,
-  bundle: true,
+  sourcemap: true,
+  minify: false,
+  target: "node18",
   outDir: "dist",
-  esbuildOptions(options) {
-    options.alias = {
-      "@/core": "./src/core",
-      "@/plane-live": "./src/ce"
-    };
+  env: {
+    NODE_ENV: process.env.NODE_ENV || "development",
   },
-  ...options,
-}));
+});

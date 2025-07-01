@@ -8,10 +8,14 @@
   "type": "module",
   "scripts": {
     "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
-    "build": "tsup",
-    "start": "node dist/server.js",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "build": "tsc --noEmit && tsup",
+    "start": "node --env-file=.env dist/server.js",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +49,8 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.0",
@@ -52,7 +58,6 @@
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
     "@types/pino-http": "^5.8.4",
-    "@plane/typescript-config": "*",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",

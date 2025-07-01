@@ -1,1 +1,1 @@
-export * from "../../ce/lib/update-document.js"
+export * from "../../ce/lib/update-document.js";
