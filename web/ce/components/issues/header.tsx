@@ -11,6 +11,7 @@ import {
   EUserPermissionsLevel,
   SPACE_BASE_PATH,
   SPACE_BASE_URL,
+  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 // plane constants
 import { useTranslation } from "@plane/i18n";
@@ -22,7 +23,7 @@ import { CountChip } from "@/components/common";
 import HeaderFilters from "@/components/issues/filters";
 // helpers
 // hooks
-import { useEventTracker, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -43,7 +44,6 @@ export const IssuesHeader = observer(() => {
   const { currentProjectDetails, loader } = useProject();
 
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
 
@@ -105,9 +105,9 @@ export const IssuesHeader = observer(() => {
         {canUserCreateIssue ? (
           <Button
             onClick={() => {
-              setTrackElement("Project work items page");
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
             }}
+            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
             size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>

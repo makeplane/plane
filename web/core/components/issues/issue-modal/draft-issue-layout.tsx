@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { TIssue } from "@plane/types";
@@ -14,8 +15,9 @@ import { isEmptyHtmlString } from "@plane/utils";
 import { ConfirmIssueDiscard } from "@/components/issues";
 // helpers
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useWorkspaceDraftIssues } from "@/hooks/store";
 // local components
 import { IssueFormRoot, type IssueFormProps } from "./form";
 
@@ -30,10 +32,7 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);
   // router params
   const { workspaceSlug } = useParams();
-  // pathname
-  const pathname = usePathname();
   // store hooks
-  const { captureIssueEvent } = useEventTracker();
   const { handleCreateUpdatePropertyValues } = useIssueModal();
   const { createIssue } = useWorkspaceDraftIssues();
   const { t } = useTranslation();
@@ -92,26 +91,25 @@ export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
           title: `${t("success")}!`,
           message: t("workspace_draft_issues.toasts.created.success"),
         });
-        captureIssueEvent({
-          eventName: "Draft work item created",
-          payload: { ...res, state: "SUCCESS" },
-          path: pathname,
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.draft.create,
+          payload: { id: res?.id },
         });
         onChange(null);
         setIssueDiscardModal(false);
         onClose();
         return res;
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: `${t("error")}!`,
           message: t("workspace_draft_issues.toasts.created.error"),
         });
-        captureIssueEvent({
-          eventName: "Draft work item created",
-          payload: { ...payload, state: "FAILED" },
-          path: pathname,
+        captureError({
+          eventName: WORK_ITEM_TRACKER_EVENTS.draft.create,
+          payload: { id: payload.id },
+          error,
         });
       });
 

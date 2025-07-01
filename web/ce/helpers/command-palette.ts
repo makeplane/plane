@@ -1,5 +1,5 @@
 // types
-import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // store
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -12,7 +12,10 @@ export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
     c: {
       title: "Create a new work item",
       description: "Create a new work item in the current project",
-      action: () => toggleCreateIssueModal(true),
+      action: () => {
+        toggleCreateIssueModal(true);
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
+      },
     },
   };
 };

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { EIssuesStoreType, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
@@ -12,9 +12,9 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // constants
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useEventTracker } from "@/hooks/store/use-event-tracker";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useModule } from "@/hooks/store/use-module";
@@ -62,7 +62,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   // store hooks
   const { t } = useTranslation();
-  const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId, workItem } = useParams();
   const { fetchCycleDetails } = useCycle();
   const { fetchModuleDetails } = useModule();
@@ -72,8 +71,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { fetchIssue } = useIssueDetail();
   const { allowedProjectIds, handleCreateUpdatePropertyValues } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
-  // pathname
-  const pathname = usePathname();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -240,10 +237,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           />
         ),
       });
-      captureIssueEvent({
+      captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { ...response, state: "SUCCESS" },
-        path: pathname,
+        payload: { id: response.id },
       });
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
@@ -256,10 +252,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         title: t("error"),
         message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
       });
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { ...payload, state: "FAILED" },
-        path: pathname,
+        payload: { id: payload.id },
+        error: error as Error,
       });
       throw error;
     }
@@ -302,10 +298,9 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         title: t("success"),
         message: t("issue_updated_successfully"),
       });
-      captureIssueEvent({
+      captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { ...payload, issueId: data.id, state: "SUCCESS" },
-        path: pathname,
+        payload: { id: data.id },
       });
       handleClose();
     } catch (error: any) {
@@ -315,10 +310,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         title: t("error"),
         message: error?.error ?? t("issue_could_not_be_updated"),
       });
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { ...payload, state: "FAILED" },
-        path: pathname,
+        payload: { id: data.id },
+        error: error as Error,
       });
     }
   };

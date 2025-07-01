@@ -4,13 +4,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import {
+  EIssuesStoreType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DeleteIssueModal } from "@/components/issues";
 // helpers
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
@@ -63,6 +69,13 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
 
   const MENU_ITEMS = useArchivedIssueMenuItems(menuItemProps);
 
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: () => {
+      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
+      item.action();
+    },
+  }));
   return (
     <>
       {/* Modals */}
@@ -73,7 +86,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
         onSubmit={handleDelete}
       />
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
         ellipsis
         customButton={customActionButton}
@@ -93,6 +106,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
                 e.preventDefault();
                 e.stopPropagation();
                 item.action();
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
               }}
               className={cn(
                 "flex items-center gap-2",
