@@ -5,7 +5,13 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 // constants
-import { ORGANIZATION_SIZE, EUserPermissions, EUserPermissionsLevel, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+import {
+  ORGANIZATION_SIZE,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORKSPACE_TRACKER_EVENTS,
+  WORKSPACE_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
@@ -277,7 +283,7 @@ export const WorkspaceDetails: FC = observer(() => {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button
-                data-ph-element="WORKSPACE_SETTINGS_UPDATE_WORKSPACE_BUTTON"
+                data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
                 onClick={handleSubmit(onSubmit)}
                 loading={isLoading}

@@ -99,6 +99,12 @@ export const WORKSPACE_TRACKER_EVENTS = {
   update: "workspace_updated",
   delete: "workspace_deleted",
 };
+export const WORKSPACE_TRACKER_ELEMENTS = {
+  DELETE_WORKSPACE_BUTTON: "delete_workspace_button",
+  ONBOARDING_CREATE_WORKSPACE_BUTTON: "onboarding_create_workspace_button",
+  CREATE_WORKSPACE_BUTTON: "create_workspace_button",
+  UPDATE_WORKSPACE_BUTTON: "update_workspace_button",
+};
 
 export const PROJECT_TRACKER_EVENTS = {
   create: "project_created",

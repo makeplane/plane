@@ -4,7 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constants
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+import {
+  ORGANIZATION_SIZE,
+  RESTRICTED_URLS,
+  WORKSPACE_TRACKER_EVENTS,
+  WORKSPACE_TRACKER_ELEMENTS,
+} from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
@@ -278,7 +283,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <Button
-          data-ph-element="ONBOARDING_CREATE_WORKSPACE_BUTTON"
+          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
           size="lg"
