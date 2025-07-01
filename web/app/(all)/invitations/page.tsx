@@ -193,7 +193,7 @@ const UserInvitationsPage = observer(() => {
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.INVITATION_BUTTON}
+                    data-ph-element={MEMBER_TRACKER_ELEMENTS.ACCEPT_INVITATION_BUTTON}
                   >
                     {t("accept_and_join")}
                   </Button>

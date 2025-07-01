@@ -73,7 +73,7 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
             onClick={() => {
               setInviteModal(true);
             }}
-            data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_BUTTON}
+            data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
           >
             {t("add_member")}
           </Button>

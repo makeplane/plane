@@ -25,7 +25,6 @@ export const getProjectEventPayload = (payload: any) => ({
   element: payload.element,
 });
 
-
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -197,8 +196,8 @@ export const MEMBER_TRACKER_EVENTS = {
 };
 
 export const MEMBER_TRACKER_ELEMENTS = {
-  HEADER_BUTTON: "header_add_member_button",
-  INVITATION_BUTTON: "accept_invitation_button",
+  HEADER_ADD_BUTTON: "header_add_member_button",
+  ACCEPT_INVITATION_BUTTON: "accept_invitation_button",
   ONBOARDING_JOIN_WORKSPACE: "workspace_join_continue_to_workspace_button",
   ONBOARDING_INVITE_MEMBER: "invite_member_continue_button",
   SIDEBAR_PROJECT_QUICK_ACTIONS: "sidebar_project_quick_actions",
