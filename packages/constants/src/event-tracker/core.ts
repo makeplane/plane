@@ -194,7 +194,6 @@ export const MEMBER_TRACKER_EVENTS = {
     leave: "workspace_member_left",
   },
 };
-
 export const MEMBER_TRACKER_ELEMENTS = {
   HEADER_ADD_BUTTON: "header_add_member_button",
   ACCEPT_INVITATION_BUTTON: "accept_invitation_button",
@@ -207,15 +206,20 @@ export const MEMBER_TRACKER_ELEMENTS = {
 } as const;
 
 export const AUTH_TRACKER_EVENTS = {
-  navigate: {
-    sign_up: "navigate_to_sign_up_page",
-    sign_in: "navigate_to_sign_in_page",
-  },
   code_verify: "code_verified",
   sign_up_with_password: "sign_up_with_password",
   sign_in_with_password: "sign_in_with_password",
-  sign_in_with_code: "sign_in_with_magic_link",
   forgot_password: "forgot_password_clicked",
+  new_code_requested: "new_code_requested",
+};
+export const AUTH_TRACKER_ELEMENTS = {
+  NAVIGATE_TO_SIGN_UP: "navigate_to_sign_up",
+  FORGOT_PASSWORD_FROM_SIGNIN: "forgot_password_from_signin",
+  SIGNUP_FROM_FORGOT_PASSWORD: "signup_from_forgot_password",
+  SIGN_IN_FROM_SIGNUP: "sign_in_from_signup",
+  SIGN_IN_WITH_UNIQUE_CODE: "sign_in_with_unique_code",
+  REQUEST_NEW_CODE: "request_new_code",
+  VERIFY_CODE: "verify_code",
 };
 
 export const GLOBAL_VIEW_TRACKER_EVENTS = {
