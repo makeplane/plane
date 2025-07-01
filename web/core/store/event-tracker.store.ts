@@ -6,8 +6,6 @@ import {
   EventProps,
   IssueEventProps,
   getIssueEventPayload,
-
-  getProjectEventPayload,
   getProjectStateEventPayload,
   getPageEventPayload,
 } from "@plane/constants";
@@ -23,7 +21,6 @@ export interface ICoreEventTrackerStore {
   setTrackElement: (element: string) => void;
   captureEvent: (eventName: string, payload?: any) => void;
   joinWorkspaceMetricGroup: (workspaceId?: string) => void;
-  captureProjectEvent: (props: EventProps) => void;
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
@@ -42,7 +39,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
       resetSession: action,
       setTrackElement: action,
       captureEvent: action,
-      captureProjectEvent: action,
     });
     // store
     this.rootStore = _rootStore;
@@ -101,22 +97,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
     });
     this.setTrackElement(undefined);
   };
-
-  /**
-   * @description: Captures the project related events.
-   * @param {EventProps} props
-   */
-  captureProjectEvent = (props: EventProps) => {
-    const { eventName, payload } = props;
-    const eventPayload: any = getProjectEventPayload({
-      ...this.getRequiredProperties,
-      ...payload,
-      element: payload.element ?? this.trackElement,
-    });
-    posthog?.capture(eventName, eventPayload);
-    this.setTrackElement(undefined);
-  };
-
 
   /**
    * @description: Captures the project pages related events.
