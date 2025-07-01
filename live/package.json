@@ -7,8 +7,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "dev": "nodemon --exec \"node -r ./src/index.ts\" -e .ts",
+    "build": "tsc && tsc-alias",
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:errors": "eslint src --ext .ts,.tsx --quiet"
@@ -55,9 +55,8 @@
     "@types/pino-http": "^5.8.4",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
-    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "tsup": "8.4.0",
-    "tsx": "^4.20.3",
     "typescript": "5.8.3"
   }
 }

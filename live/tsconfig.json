@@ -1,15 +1,16 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "lib": ["ES2015"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "outDir": "./dist",
-    "rootDir": ".",
-    "baseUrl": ".",
+    "rootDir": "./src",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/plane-live/*": ["./src/ce/*"]
+      "@/*": ["./*"],
+      "@/plane-live/*": ["./ce/*"]
     },
     "removeComments": true,
     "esModuleInterop": true,
@@ -18,6 +19,6 @@
     "inlineSources": true,
     "sourceRoot": "/"
   },
-  "include": ["src/**/*.ts", "tsup.config.ts"],
+  "include": ["src"],
   "exclude": ["./dist", "./build", "./node_modules"]
 }
