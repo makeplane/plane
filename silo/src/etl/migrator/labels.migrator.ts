@@ -11,7 +11,7 @@ export const createLabelsForIssues = async (
   workspaceSlug: string,
   projectId: string
 ): Promise<ExIssueLabel[]> => {
-  const createOrUpdateLabel = async (label: ExIssueLabel) => {
+  const createOrUpdateLabel = async (label: ExIssueLabel): Promise<ExIssueLabel | undefined> => {
     try {
       const createdLabel: ExIssueLabel | undefined = await protect(
         planeClient.label.create.bind(planeClient.label),
@@ -31,5 +31,5 @@ export const createLabelsForIssues = async (
   };
 
   const createdLabels = await processBatchPromises(labels, createOrUpdateLabel, 5);
-  return createdLabels?.filter((label) => label !== undefined) ?? [];
+  return createdLabels.filter((label) => label !== undefined) as ExIssueLabel[];
 };

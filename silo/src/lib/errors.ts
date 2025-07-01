@@ -80,6 +80,10 @@ export async function protect<T>(fn: (...args: any[]) => Promise<T>, ...args: an
         logger.info(`Rate limit exceeded (429). Retrying in ${Math.ceil(backoffTime / 1000)} seconds...`);
         await wait(backoffTime);
         continue;
+      } else if (error instanceof AxiosError && error.response?.status === 502) {
+        logger.info("502 error ====== in protect, retrying in 5 seconds...");
+        await wait(5000);
+        continue;
       }
 
       throw error;

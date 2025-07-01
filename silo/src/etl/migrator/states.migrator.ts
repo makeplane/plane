@@ -3,6 +3,11 @@ import { processBatchPromises } from "@/helpers/methods";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
 
+type TCreateState = {
+  source_state: any;
+  target_state: Partial<ExState>;
+};
+
 /* ----------------------------- State Creation Utilities ----------------------------- */
 export const createStates = async (
   jobId: string,
@@ -12,7 +17,7 @@ export const createStates = async (
   projectId: string,
   existingStates: ExState[]
 ): Promise<{ source_state: any; target_state: Partial<ExState> }[]> => {
-  const createState = async (state: { source_state: any; target_state: Partial<ExState> }) => {
+  const createState = async (state: TCreateState): Promise<TCreateState | undefined> => {
     try {
       // check if the state already exists (by external_id or by name) BEFORE calling the API
       const existingStateById = existingStates.find(
@@ -51,5 +56,5 @@ export const createStates = async (
   // batch the state creation
   const createdStates = await processBatchPromises(states, createState, 2);
 
-  return createdStates?.filter((state) => state !== undefined) ?? [];
+  return createdStates.filter((state) => state !== undefined) as TCreateState[];
 };

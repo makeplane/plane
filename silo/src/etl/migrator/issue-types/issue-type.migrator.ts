@@ -16,7 +16,7 @@ type TCreateOrUpdateIssueTypes = {
 export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes): Promise<ExIssueType[]> => {
   const { jobId, issueTypes, planeClient, workspaceSlug, projectId, method } = props;
 
-  const createOrUpdateIssueType = async (issueType: Partial<ExIssueType>) => {
+  const createOrUpdateIssueType = async (issueType: Partial<ExIssueType>): Promise<ExIssueType | undefined> => {
     try {
       let createdUpdatedIssueType: ExIssueType | undefined;
       if (method === "create") {
@@ -60,5 +60,5 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
 
   const createdUpdatedIssueTypes = await processBatchPromises(issueTypes, createOrUpdateIssueType, 5);
 
-  return createdUpdatedIssueTypes?.filter((issueType) => issueType !== undefined) ?? [];
+  return createdUpdatedIssueTypes.filter((issueType) => issueType !== undefined) as ExIssueType[];
 };

@@ -31,14 +31,14 @@ export const createOrUpdateIssueProperties = async (
     props;
 
   // Process a single issue property
-  const processIssueProperty = async (issueProperty: Partial<ExIssueProperty>): Promise<ExIssueProperty | null> => {
+  const processIssueProperty = async (issueProperty: Partial<ExIssueProperty>): Promise<ExIssueProperty | undefined> => {
     try {
       const issueType = issueTypesMap.get(issueProperty.type_id || "") || defaultIssueType;
       if (!issueType) {
         logger.error(
           `[${jobId.slice(0, 7)}] Issue type not found for the issue property: ${issueProperty.display_name}`
         );
-        return null;
+        return undefined;
       }
 
       let createdUpdatedIssueProperty: ExIssueProperty | undefined;
@@ -68,14 +68,14 @@ export const createOrUpdateIssueProperties = async (
         `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
         error
       );
-      return null;
+      return undefined;
     }
   };
 
   // Process all issue properties in batches of 5
   const createdUpdatedIssueProperties = await processBatchPromises(issueProperties, processIssueProperty, 5);
 
-  return createdUpdatedIssueProperties;
+  return createdUpdatedIssueProperties.filter((property) => property !== undefined) as ExIssueProperty[];
 };
 
 export const createOrUpdateIssuePropertiesOptions = async (
@@ -85,7 +85,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
 
   const processIssuePropertyOption = async (
     issuePropertyOption: Partial<ExIssuePropertyOption>
-  ): Promise<ExIssuePropertyOption | null> => {
+  ): Promise<ExIssuePropertyOption | undefined> => {
     let createdUpdatedIssuePropertyOption: ExIssuePropertyOption | undefined;
     try {
       const issueProperty = issuePropertyMap.get(issuePropertyOption.property_id || "");
@@ -93,7 +93,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
         logger.error(
           `[${jobId.slice(0, 7)}] Issue property not found for the issue property option: ${issuePropertyOption.name}`
         );
-        return null;
+        return undefined;
       }
 
       if (method === "create") {
@@ -121,7 +121,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
         `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`,
         error
       );
-      return null;
+      return undefined;
     }
   };
 
@@ -131,5 +131,5 @@ export const createOrUpdateIssuePropertiesOptions = async (
     5
   );
 
-  return createdUpdatedIssuePropertiesOptions;
+  return createdUpdatedIssuePropertiesOptions.filter((option) => option !== undefined) as ExIssuePropertyOption[];
 };

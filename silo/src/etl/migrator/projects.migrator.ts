@@ -14,8 +14,8 @@ export const createProjects = async (
   planeClient: PlaneClient,
   workspaceSlug: string,
   existingProjects: ExProject[]
-) => {
-  const createProject = async (project: Partial<ExProject>) => {
+): Promise<ExProject[]> => {
+  const createProject = async (project: Partial<ExProject>): Promise<ExProject | undefined> => {
     try {
       const existingProject = existingProjects.find((exProject) => exProject.external_id === project.external_id);
       if (existingProject) {
@@ -45,7 +45,7 @@ export const createProjects = async (
 
   const createdProjects = await processBatchPromises(projects, createProject, 5);
 
-  return createdProjects?.filter((project) => project !== undefined) ?? [];
+  return createdProjects.filter((project) => project !== undefined) as ExProject[];
 };
 
 export const enableIssueTypeForProject = async (

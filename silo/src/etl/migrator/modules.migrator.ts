@@ -91,7 +91,7 @@ export const createAllModules = async (
   workspaceSlug: string,
   projectId: string
 ): Promise<{ id: string; issues: string[] }[]> => {
-  const createOrUpdateModule = async (module: ExModule) => {
+  const createOrUpdateModule = async (module: ExModule): Promise<{ id: string; issues: string[] } | undefined> => {
     try {
       const createdModule = await protect(
         planeClient.modules.create.bind(planeClient.modules),
@@ -115,5 +115,5 @@ export const createAllModules = async (
 
   const createdModules = await processBatchPromises(modules, createOrUpdateModule, 5);
 
-  return createdModules?.filter((module) => module !== undefined) ?? [];
+  return createdModules.filter((module) => module !== undefined) as { id: string; issues: string[] }[];
 };
