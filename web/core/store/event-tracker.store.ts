@@ -24,7 +24,6 @@ export interface ICoreEventTrackerStore {
   captureEvent: (eventName: string, payload?: any) => void;
   joinWorkspaceMetricGroup: (workspaceId?: string) => void;
   captureProjectEvent: (props: EventProps) => void;
-
   capturePageEvent: (props: EventProps) => void;
   captureIssueEvent: (props: IssueEventProps) => void;
   captureProjectStateEvent: (props: EventProps) => void;
@@ -117,7 +116,6 @@ export abstract class CoreEventTrackerStore implements ICoreEventTrackerStore {
     posthog?.capture(eventName, eventPayload);
     this.setTrackElement(undefined);
   };
-
 
 
   /**

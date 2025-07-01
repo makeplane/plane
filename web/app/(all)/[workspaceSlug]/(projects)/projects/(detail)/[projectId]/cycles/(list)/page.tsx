@@ -99,7 +99,7 @@ const ProjectCyclesPage = observer(() => {
                   label={t("project_cycles.empty_state.general.primary_button.text")}
                   title={t("project_cycles.empty_state.general.primary_button.comic.title")}
                   description={t("project_cycles.empty_state.general.primary_button.comic.description")}
-                  data-ph-element={CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_BUTTON}
+                  data-ph-element={CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON}
                   onClick={() => {
                     setCreateModal(true);
                   }}

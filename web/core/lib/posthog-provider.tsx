@@ -71,9 +71,13 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   useEffect(() => {
     const clickHandler = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const element = target.getAttribute("data-ph-element");
-      if (element) {
-        captureClick({ elementName: element });
+      // Use closest to find the nearest parent element with data-ph-element attribute
+      const elementWithAttribute = target.closest("[data-ph-element]") as HTMLElement;
+      if (elementWithAttribute) {
+        const element = elementWithAttribute.getAttribute("data-ph-element");
+        if (element) {
+          captureClick({ elementName: element });
+        }
       }
     };
 

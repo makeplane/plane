@@ -26,7 +26,6 @@ export const getProjectEventPayload = (payload: any) => ({
 });
 
 
-
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -131,9 +130,9 @@ export const CYCLE_TRACKER_EVENTS = {
   restore: "cycle_restored",
 };
 export const CYCLE_TRACKER_ELEMENTS = {
-  RIGHT_HEADER_BUTTON: "cycle_right_header_button",
-  EMPTY_STATE_BUTTON: "cycle_empty_state_button",
-  COMMAND_PALETTE_ITEM: "cycle_command_palette_item",
+  RIGHT_HEADER_ADD_BUTTON: "right_header_add_cycle_button",
+  EMPTY_STATE_ADD_BUTTON: "empty_state_add_cycle_button",
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_cycle_item",
   RIGHT_SIDEBAR: "cycle_right_sidebar",
   QUICK_ACTIONS: "cycle_quick_actions",
   CONTEXT_MENU: "cycle_context_menu",
@@ -155,9 +154,9 @@ export const MODULE_TRACKER_EVENTS = {
   },
 };
 export const MODULE_TRACKER_ELEMENTS = {
-  RIGHT_HEADER_BUTTON: "module_right_header_button",
-  EMPTY_STATE_BUTTON: "module_empty_state_button",
-  COMMAND_PALETTE_ITEM: "module_command_palette_item",
+  RIGHT_HEADER_ADD_BUTTON: "right_header_add_module_button",
+  EMPTY_STATE_ADD_BUTTON: "empty_state_add_module_button",
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_module_item",
   RIGHT_SIDEBAR: "module_right_sidebar",
   QUICK_ACTIONS: "module_quick_actions",
   CONTEXT_MENU: "module_context_menu",

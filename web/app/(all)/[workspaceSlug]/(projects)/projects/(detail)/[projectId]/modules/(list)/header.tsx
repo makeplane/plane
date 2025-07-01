@@ -54,7 +54,7 @@ export const ModulesListHeader: React.FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_BUTTON}
+            data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateModuleModal(true);
             }}

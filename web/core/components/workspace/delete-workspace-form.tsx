@@ -162,14 +162,7 @@ export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {t("cancel")}
         </Button>
-        <Button
-          data-ph-element="DELETE_WORKSPACE_BUTTON"
-          variant="danger"
-          size="sm"
-          type="submit"
-          disabled={!canDelete}
-          loading={isSubmitting}
-        >
+        <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
           {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>

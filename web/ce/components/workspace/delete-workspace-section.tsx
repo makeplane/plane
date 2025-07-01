@@ -48,7 +48,11 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
                 {t("workspace_settings.settings.general.delete_workspace_description")}
               </span>
               <div>
-                <Button variant="danger" onClick={() => setDeleteWorkspaceModal(true)}>
+                <Button
+                  variant="danger"
+                  onClick={() => setDeleteWorkspaceModal(true)}
+                  data-ph-element="WORKSPACE_SETTINGS_DELETE_WORKSPACE_BUTTON"
+                >
                   {t("workspace_settings.settings.general.delete_btn")}
                 </Button>
               </div>

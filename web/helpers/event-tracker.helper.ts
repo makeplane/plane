@@ -12,7 +12,7 @@ type TCaptureElementParams = {
 };
 
 /**
- * Track UI element interactions (clicks, hovers, views, etc.)
+ * Capture UI element interactions (clicks, hovers, views, etc.)
  * This helps understand user behavior and interaction patterns
  *
  * @param element - Generic UI element type
@@ -35,7 +35,7 @@ const captureElement = (params: TCaptureElementParams) => {
 
 type TCaptureClickParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
- * Track click events
+ * Capture click events
  * @param element - The element that was clicked
  * @param context - Additional context
  */
@@ -45,7 +45,7 @@ export const captureClick = (params: TCaptureClickParams) => {
 
 type TCaptureViewParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
- * Track view events
+ * Capture view events
  * @param element - The element that was viewed
  * @param context - Additional context
  */
@@ -55,7 +55,7 @@ export const captureView = (params: TCaptureViewParams) => {
 
 type TCaptureHoverParams = Omit<TCaptureElementParams, "interaction_type">;
 /**
- * Track hover events
+ * Capture hover events
  * @param element - The element that was hovered
  * @param context - Additional context
  */
@@ -70,7 +70,7 @@ type TCaptureEventParams = {
   state: TEventState;
 };
 /**
- * Track business events (outcomes, state changes, etc.)
+ * Capture business events (outcomes, state changes, etc.)
  * This helps understand business metrics and conversion rates
  *
  * @param eventName - Business event name (e.g., "cycle_created", "project_updated")
@@ -94,7 +94,7 @@ const captureEvent = (params: TCaptureEventParams) => {
 
 type TCaptureSuccessParams = Omit<TCaptureEventParams, "state">;
 /**
- * Track success events
+ * Capture success events
  * @param eventName - The name of the event
  * @param payload - Additional payload
  * @param context - Additional context
@@ -107,7 +107,7 @@ type TCaptureErrorParams = Omit<TCaptureEventParams, "state"> & {
   error?: Error | string;
 };
 /**
- * Track error events
+ * Capture error events
  * @param eventName - The name of the event
  * @param error - The error object
  * @param payload - Additional payload
@@ -122,13 +122,13 @@ type TCaptureElementAndEventParams = {
   event: TCaptureEventParams;
 };
 /**
- * Track both element interaction and business event together
+ * Capture both element interaction and business event together
  * @param element - The element that was interacted with
  * @param event - The business event that was triggered
  */
 export const captureElementAndEvent = (params: TCaptureElementAndEventParams) => {
   const { element, event } = params;
-  // Track the element interaction first
+  // Capture the element interaction first
   captureElement({ ...element, interaction_type: "clicked" });
 
   // Then capture the business event

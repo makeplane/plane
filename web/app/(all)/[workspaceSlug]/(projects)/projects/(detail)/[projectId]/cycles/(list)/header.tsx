@@ -50,7 +50,7 @@ export const CyclesListHeader: FC = observer(() => {
           <Button
             variant="primary"
             size="sm"
-            data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_BUTTON}
+            data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateCycleModal(true);
             }}
