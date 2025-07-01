@@ -17,7 +17,7 @@ import { DeleteIssueModal } from "@/components/issues";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssues, useUserPermissions } from "@/hooks/store";
 // types
 import { IQuickActionProps } from "../list/list-view-types";
 // helper
@@ -41,7 +41,6 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
@@ -59,7 +58,6 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
     isEditingAllowed,
     isDeletingAllowed: isEditingAllowed,
     isRestoringAllowed: !!isRestoringAllowed,
-    setTrackElement,
     setIssueToEdit: () => {},
     setCreateUpdateIssueModal: () => {},
     setDeleteIssueModal,

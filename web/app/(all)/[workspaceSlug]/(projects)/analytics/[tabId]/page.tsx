@@ -13,7 +13,7 @@ import { PageHead } from "@/components/core";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 
@@ -37,7 +37,6 @@ const AnalyticsPage = observer((props: Props) => {
 
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -102,7 +101,6 @@ const AnalyticsPage = observer((props: Props) => {
                   title={t("workspace_analytics.empty_state.general.primary_button.comic.title")}
                   description={t("workspace_analytics.empty_state.general.primary_button.comic.description")}
                   onClick={() => {
-                    setTrackElement("Analytics empty state");
                     toggleCreateProjectModal(true);
                     captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
                   }}

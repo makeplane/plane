@@ -20,7 +20,7 @@ export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
       description: "Create a new work item in the current project",
       action: () => {
         toggleCreateIssueModal(true);
-        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON });
       },
     },
   };

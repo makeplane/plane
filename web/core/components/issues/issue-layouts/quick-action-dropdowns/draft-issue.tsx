@@ -18,7 +18,7 @@ import { cn } from "@plane/utils";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store";
 // local imports
 import { IQuickActionProps } from "../list/list-view-types";
 import { useDraftIssueMenuItems, MenuItemFactoryProps } from "./helper";
@@ -43,7 +43,6 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { setTrackElement } = useEventTracker();
   // derived values
   const activeLayout = "Draft Issues";
   // auth
@@ -76,7 +75,6 @@ export const DraftIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     isEditingAllowed,
     isDeletingAllowed,
     isDraftIssue,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,

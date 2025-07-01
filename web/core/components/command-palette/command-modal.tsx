@@ -12,6 +12,7 @@ import {
   EUserPermissions,
   EUserPermissionsLevel,
   PROJECT_TRACKER_ELEMENTS,
+  WORK_ITEM_TRACKER_ELEMENTS,
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -34,14 +35,7 @@ import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import {
-  useCommandPalette,
-  useEventTracker,
-  useIssueDetail,
-  useProject,
-  useUser,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useCommandPalette, useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -80,7 +74,6 @@ export const CommandModal: React.FC = observer(() => {
   const { isCommandPaletteOpen, toggleCommandPaletteModal, toggleCreateIssueModal, toggleCreateProjectModal } =
     useCommandPalette();
   const { allowPermissions } = useUserPermissions();
-  const { setTrackElement } = useEventTracker();
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
   // fetch work item details using identifier
@@ -352,7 +345,9 @@ export const CommandModal: React.FC = observer(() => {
                                 <Command.Item
                                   onSelect={() => {
                                     closePalette();
-                                    setTrackElement("Command Palette");
+                                    captureClick({
+                                      elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON,
+                                    });
                                     toggleCreateIssueModal(true);
                                   }}
                                   className="focus:bg-custom-background-80"

@@ -19,7 +19,7 @@ import { cn } from "@plane/utils";
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useEventTracker, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
+import { useIssues, useProjectState, useUserPermissions, useProject } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -48,7 +48,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
   // router
   const { workspaceSlug, moduleId } = useParams();
   // store hooks
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
@@ -84,7 +83,6 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = observer((pr
     isArchivingAllowed,
     isDeletingAllowed,
     isInArchivableGroup,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
