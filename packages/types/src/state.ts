@@ -1,5 +1,3 @@
-import { IProject, IProjectLite, IWorkspaceLite } from "@plane/types";
-
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export interface IState {

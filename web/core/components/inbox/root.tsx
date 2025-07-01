@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
-import { EInboxIssueCurrentTab } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EInboxIssueCurrentTab } from "@plane/types";
 import { Intake } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";

@@ -21,7 +21,7 @@ export type TChartData<K extends string, T extends string> = {
   [key in K]: string | number;
 } & Record<T, any>;
 
-type TChartProps<K extends string, T extends string> = {
+export type TChartProps<K extends string, T extends string> = {
   data: TChartData<K, T>[];
   xAxis: {
     key: keyof TChartData<K, T>;

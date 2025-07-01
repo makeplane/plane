@@ -1,22 +1,18 @@
-import { ReactElement } from "react";
-import { KeyedMutator } from "swr";
-import type {
-  ICycle,
-  IModule,
-  IUserLite,
-  IProjectLite,
-  IWorkspaceLite,
-  IStateLite,
-  Properties,
-  IIssueDisplayFilterOptions,
-  TIssue,
-  IIssueFilterOptions,
+import { ICycle } from "./cycle";
+import { TIssue } from "./issues/issue";
+import { IModule } from "./module";
+import { IProjectLite } from "./project";
+import { IStateLite } from "./state";
+import { IUserLite } from "./users";
+import {
   IIssueDisplayProperties,
-  TIssueGroupByOptions,
-  TIssueOrderByOptions,
-  TIssueGroupingFilters,
+  IIssueFilterOptions,
   TIssueExtraOptions,
-} from "@plane/types";
+  TIssueGroupByOptions,
+  TIssueGroupingFilters,
+  TIssueOrderByOptions,
+} from "./view-props";
+import { IWorkspaceLite, Properties } from "./workspace";
 
 export interface IIssueCycle {
   id: string;
@@ -68,17 +64,6 @@ export interface ILinkDetails {
   metadata: any;
   title: string;
   url: string;
-}
-
-export type IssueRelationType = "duplicate" | "relates_to" | "blocked_by";
-
-export interface IssueRelation {
-  id: string;
-  issue: string;
-  issue_detail: BlockeIssueDetail;
-  relation_type: IssueRelationType;
-  related_issue: string;
-  relation: "blocking" | null;
 }
 
 export interface ISubIssuesState {
@@ -186,20 +171,6 @@ export interface IIssueAttachment {
   workspace: string;
 }
 
-export interface IIssueViewProps {
-  groupedIssues: { [key: string]: TIssue[] } | undefined;
-  displayFilters: IIssueDisplayFilterOptions | undefined;
-  isEmpty: boolean;
-  mutateIssues: KeyedMutator<
-    | TIssue[]
-    | {
-        [key: string]: TIssue[];
-      }
-  >;
-  params: any;
-  properties: Properties;
-}
-
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
 
 export interface ViewFlags {
@@ -220,7 +191,7 @@ export type GroupByColumnTypes =
   | "created_by"
   | "team_project";
 
-type TGetColumns = {
+export type TGetColumns = {
   isWorkspaceLevel?: boolean;
   projectId?: string;
 };
@@ -228,7 +199,7 @@ type TGetColumns = {
 export interface IGroupByColumn {
   id: string;
   name: string;
-  icon?: ReactElement | undefined;
+  icon?: React.ReactElement | undefined;
   payload: Partial<TIssue>;
   isDropDisabled?: boolean;
   dropErrorMessage?: string;
@@ -243,7 +214,7 @@ export interface IIssueListRow {
   groupId: string;
   type: "HEADER" | "NO_ISSUES" | "QUICK_ADD" | "ISSUE";
   name?: string;
-  icon?: ReactElement | undefined;
+  icon?: React.ReactElement | undefined;
   payload?: Partial<TIssue>;
 }
 
