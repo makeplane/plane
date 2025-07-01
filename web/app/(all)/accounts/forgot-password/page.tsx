@@ -9,14 +9,15 @@ import { Controller, useForm } from "react-hook-form";
 // icons
 import { CircleCheck } from "lucide-react";
 // plane imports
-import { AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useEventTracker, useInstance } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useInstance } from "@/hooks/store";
 import useTimer from "@/hooks/use-timer";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
@@ -45,8 +46,6 @@ const ForgotPasswordPage = observer(() => {
   const email = searchParams.get("email");
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { captureEvent } = useEventTracker();
   const { config } = useInstance();
   // hooks
   const { resolvedTheme } = useTheme();
@@ -71,8 +70,11 @@ const ForgotPasswordPage = observer(() => {
         email: formData.email,
       })
       .then(() => {
-        captureEvent(AUTH_TRACKER_EVENTS.forgot_password, {
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: AUTH_TRACKER_EVENTS.forgot_password,
+          payload: {
+            email: formData.email,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -82,8 +84,11 @@ const ForgotPasswordPage = observer(() => {
         setResendCodeTimer(30);
       })
       .catch((err) => {
-        captureEvent(AUTH_TRACKER_EVENTS.forgot_password, {
-          state: "FAILED",
+        captureError({
+          eventName: AUTH_TRACKER_EVENTS.forgot_password,
+          payload: {
+            email: formData.email,
+          },
         });
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -120,7 +125,7 @@ const ForgotPasswordPage = observer(() => {
                 {t("auth.common.new_to_plane")}
                 <Link
                   href="/"
-                  onClick={() => captureEvent(AUTH_TRACKER_EVENTS.navigate.sign_up, {})}
+                  data-ph-element={AUTH_TRACKER_ELEMENTS.SIGNUP_FROM_FORGOT_PASSWORD}
                   className="font-semibold text-custom-primary-100 hover:underline"
                 >
                   {t("auth.common.create_account")}
