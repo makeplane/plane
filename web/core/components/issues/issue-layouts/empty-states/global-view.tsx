@@ -1,7 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserPermissionsLevel, EUserWorkspaceRoles, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  EUserPermissionsLevel,
+  EUserWorkspaceRoles,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";

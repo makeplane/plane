@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 // types
+import { WORKSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace } from "@plane/types";
 // ui
@@ -51,7 +52,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
                 <Button
                   variant="danger"
                   onClick={() => setDeleteWorkspaceModal(true)}
-                  data-ph-element="WORKSPACE_SETTINGS_DELETE_WORKSPACE_BUTTON"
+                  data-ph-element={WORKSPACE_TRACKER_ELEMENTS.DELETE_WORKSPACE_BUTTON}
                 >
                   {t("workspace_settings.settings.general.delete_btn")}
                 </Button>

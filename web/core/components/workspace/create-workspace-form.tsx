@@ -3,7 +3,12 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+import {
+  ORGANIZATION_SIZE,
+  RESTRICTED_URLS,
+  WORKSPACE_TRACKER_ELEMENTS,
+  WORKSPACE_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 // types
@@ -243,7 +248,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
       <div className="flex items-center gap-4">
         {secondaryButton}
         <Button
-          data-ph-element="CREATE_WORKSPACE_BUTTON"
+          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
           size="md"
