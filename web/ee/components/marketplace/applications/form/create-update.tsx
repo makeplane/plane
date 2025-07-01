@@ -22,6 +22,7 @@ import { GeneratedCredentialsModal, RegenerateClientSecret } from "@/plane-web/c
 import { useApplications } from "@/plane-web/hooks/store";
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
 // local imports
+import { CustomCheckbox } from "../ui/checkbox";
 import { SelectCategories } from "./select-categories";
 import { UploadAppAttachments } from "./upload-attachments";
 
@@ -50,9 +51,11 @@ const defaultFormData: Partial<TUserApplication> = {
   redirect_uris: "",
   allowed_origins: "",
   logo_url: "",
+  website: "",
   categories: [],
   attachments: [],
   attachments_urls: [],
+  is_mentionable: false,
 };
 
 export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
@@ -192,11 +195,11 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                 <Camera className="w-5 h-5 text-custom-text-400" />
               </div>
             )}
-            <Button onClick={() => setIsImageModalOpen(true)} variant="outline-primary" className="text-sm">
+            <button onClick={() => setIsImageModalOpen(true)} className="text-sm text-custom-primary-100 font-medium">
               {t("workspace_settings.settings.applications.upload_logo")}
-            </Button>
+            </button>
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <Input
               id="name"
               type="text"
@@ -209,7 +212,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.name && <p className="text-red-500 text-xs">{errors.name.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <Input
               id="short_description"
               type="text"
@@ -225,7 +228,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             {errors.short_description && <p className="text-red-500 text-xs">{errors.short_description.message}</p>}
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <Controller
               name="description_html"
               control={control}
@@ -249,6 +252,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
                   placeholder={t("workspace_settings.settings.applications.app_description_title")}
                   editorClassName="text-xs"
                   containerClassName="resize-none min-h-24 text-xs border-[0.5px] border-custom-border-200 rounded-md px-3 py-2"
+                  displayConfig={{ fontSize: "small-font" }}
                   uploadFile={async (blockId, file) => {
                     try {
                       const { asset_id } = await uploadEditorAsset({
@@ -272,7 +276,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.description_html && <p className="text-red-500 text-xs">{errors.description_html.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.app_slug_title")}
             </div>
@@ -288,7 +292,32 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.slug && <p className="text-red-500 text-xs">{errors.slug.message}</p>}
           </div>
-          <div tabIndex={5}>
+          <CustomCheckbox
+            label="Is mentionable"
+            checked={watch("is_mentionable") ?? false}
+            onChange={(value) => setValue("is_mentionable", value)}
+          />
+          <div className="flex flex-col gap-1">
+            <div className="text-sm text-custom-text-300">
+              {t("workspace_settings.settings.applications.website_title")}
+            </div>
+            <Input
+              id="website"
+              type="text"
+              className="w-full resize-none text-sm"
+              hasError={Boolean(errors.website)}
+              tabIndex={4}
+              {...register("website", {
+                pattern: {
+                  value: singleUrlRegex,
+                  message: t("workspace_settings.settings.applications.invalid_website_error"),
+                },
+              })}
+              onChange={(e) => handleTextChange("website", e.target.value)}
+            />
+            {errors.website && <p className="text-red-500 text-xs">{errors.website.message}</p>}
+          </div>
+          <div tabIndex={5} className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.categories_description")}
             </div>
@@ -301,7 +330,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
               />
             )}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.app_maker_title")}
             </div>
@@ -317,7 +346,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.company_name && <p className="text-red-500 text-xs">{errors.company_name.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.webhook_url_title")}
             </div>
@@ -337,7 +366,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.webhook_url && <p className="text-red-500 text-xs">{errors.webhook_url.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.redirect_uris_title")}
             </div>
@@ -359,7 +388,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.redirect_uris && <p className="text-red-500 text-xs">{errors.redirect_uris.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.authorized_javascript_origins_title")}
             </div>
@@ -380,7 +409,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.allowed_origins && <p className="text-red-500 text-xs">{errors.allowed_origins.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.contact_email_title")}
             </div>
@@ -400,7 +429,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.contact_email && <p className="text-red-500 text-xs">{errors.contact_email.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.privacy_policy_url_title")}
             </div>
@@ -420,7 +449,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.privacy_policy_url && <p className="text-red-500 text-xs">{errors.privacy_policy_url.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.terms_of_service_url_title")}
             </div>
@@ -443,7 +472,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             )}
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.support_url_title")}
             </div>
@@ -464,7 +493,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             {errors.support_url && <p className="text-red-500 text-xs">{errors.support_url.message}</p>}
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.video_url_title")}
             </div>
@@ -484,7 +513,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.video_url && <p className="text-red-500 text-xs">{errors.video_url.message}</p>}
           </div>
-          <div>
+          <div className="flex flex-col gap-1">
             <div className="text-sm text-custom-text-300">
               {t("workspace_settings.settings.applications.setup_url_title")}
             </div>

@@ -572,6 +572,8 @@
         "your_apps": "Ihre Apps",
         "connect": "Verbinden",
         "connected": "Verbunden",
+        "install": "Installieren",
+        "installed": "Installiert",
         "app_available": "Sie haben diese App für die Verwendung mit einem Plane-Workspace verfügbar gemacht",
         "app_available_description": "Verbinden Sie einen Plane-Workspace, um die Nutzung zu beginnen",
         "client_id_and_secret": "Client-ID und Secret",

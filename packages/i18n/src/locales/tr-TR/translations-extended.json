@@ -587,6 +587,8 @@
         "your_apps": "Aplikasyonlarınız",
         "connect": "Bağlan",
         "connected": "Bağlandı",
+        "install": "Yükle",
+        "installed": "Yüklendi",
         "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
         "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
         "client_id_and_secret": "Klayınt ID ve Sikrıt",

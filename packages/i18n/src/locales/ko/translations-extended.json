@@ -572,6 +572,8 @@
         "your_apps": "내 앱",
         "connect": "연결",
         "connected": "연결됨",
+        "install": "설치",
+        "installed": "설치됨",
         "app_available": "이 앱을 Plane 워크스페이스에서 사용할 수 있게 되었습니다",
         "app_available_description": "사용을 시작하려면 Plane 워크스페이스에 연결하세요",
         "client_id_and_secret": "클라이언트 ID와 시크릿",

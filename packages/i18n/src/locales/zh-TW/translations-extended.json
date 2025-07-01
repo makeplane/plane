@@ -572,6 +572,8 @@
         "your_apps": "您的應用",
         "connect": "連接",
         "connected": "已連接",
+        "install": "安裝",
+        "installed": "已安裝",
         "app_available": "您已使此應用可用於Plane工作空間",
         "app_available_description": "連接Plane工作空間以開始使用",
         "client_id_and_secret": "客戶端ID和密鑰",

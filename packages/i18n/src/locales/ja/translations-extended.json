@@ -571,6 +571,8 @@
         "your_apps": "あなたのアプリ",
         "connect": "接続",
         "connected": "接続済み",
+        "install": "インストール",
+        "installed": "インストール済み",
         "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
         "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
         "client_id_and_secret": "クライアントIDとシークレット",

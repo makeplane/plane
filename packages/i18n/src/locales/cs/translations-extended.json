@@ -572,6 +572,8 @@
         "your_apps": "Vaše aplikace",
         "connect": "Připojit",
         "connected": "Připojeno",
+        "install": "Instalovat",
+        "installed": "Instalováno",
         "app_available": "Tuto aplikaci jste zpřístupnili pro použití s pracovním prostorem Plane",
         "app_available_description": "Připojte pracovní prostor Plane pro začátek používání",
         "client_id_and_secret": "ID a Tajemství Klienta",

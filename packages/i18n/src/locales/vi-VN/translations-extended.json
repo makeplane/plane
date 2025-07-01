@@ -562,6 +562,8 @@
         "your_apps": "Ứng dụng của bạn",
         "connect": "Kết nối",
         "connected": "Đã kết nối",
+        "install": "Cài đặt",
+        "installed": "Đã cài đặt",
         "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
         "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",

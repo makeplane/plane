@@ -571,6 +571,8 @@
         "your_apps": "Aplicațiile tale",
         "connect": "Conectează",
         "connected": "Conectat",
+        "install": "Instalează",
+        "installed": "Instalat",
         "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Plane",
         "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
         "client_id_and_secret": "ID-ul clientului și Secretul",

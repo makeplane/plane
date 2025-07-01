@@ -572,6 +572,8 @@
         "your_apps": "Aplikasi Anda",
         "connect": "Koneksi",
         "connected": "Terhubung",
+        "install": "Pasang",
+        "installed": "Terpasang",
         "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
         "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
         "client_id_and_secret": "ID klien dan Rahasia",

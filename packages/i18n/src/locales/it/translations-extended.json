@@ -570,6 +570,8 @@
         "your_apps": "Le tue app",
         "connect": "Connetti",
         "connected": "Connesso",
+        "install": "Installa",
+        "installed": "Installato",
         "app_available": "Hai reso questa app disponibile per l'uso con un workspace Plane",
         "app_available_description": "Connetti un workspace Plane per iniziare a usarla",
         "client_id_and_secret": "ID e Secret Cliente",
