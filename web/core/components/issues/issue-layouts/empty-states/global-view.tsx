@@ -1,11 +1,17 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, EUserPermissionsLevel, EUserWorkspaceRoles } from "@plane/constants";
+import {
+  EIssuesStoreType,
+  EUserPermissionsLevel,
+  EUserWorkspaceRoles,
+  PROJECT_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
@@ -47,6 +53,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             onClick={() => {
               setTrackElement("All issues empty state");
               toggleCreateProjectModal(true);
+              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
             }}
             disabled={!hasMemberLevelPermission}
           />

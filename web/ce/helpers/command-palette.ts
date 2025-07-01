@@ -24,7 +24,10 @@ export const getWorkspaceShortcutsList: () => TCommandPaletteActionList = () => 
     p: {
       title: "Create a new project",
       description: "Create a new project in the current workspace",
-      action: () => toggleCreateProjectModal(true),
+      action: () => {
+        toggleCreateProjectModal(true);
+        captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
+      },
     },
   };
 };

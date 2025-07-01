@@ -10,7 +10,7 @@ import { ArchiveIcon, TOAST_TYPE, setToast } from "@plane/ui";
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // constants
 // hooks
-import { captureClick, captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceNotifications } from "@/hooks/store";
 // store
 import { INotification } from "@/store/notifications/notification";
@@ -30,12 +30,9 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
   const handleNotificationUpdate = async () => {
     try {
       const request = data.archived_at ? unArchiveNotification : archiveNotification;
-      captureClick({
-        elementName: NOTIFICATION_TRACKER_ELEMENTS.ARCHIVE_BUTTON,
-      });
       await request(workspaceSlug);
       captureSuccess({
-        eventName: NOTIFICATION_TRACKER_EVENTS.archive,
+        eventName: data.archived_at ? NOTIFICATION_TRACKER_EVENTS.unarchive : NOTIFICATION_TRACKER_EVENTS.archive,
         payload: {
           id: data?.data?.issue?.id,
           tab: currentNotificationTab,
@@ -47,11 +44,19 @@ export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> =
       });
     } catch (e) {
       console.error(e);
+      captureError({
+        eventName: data.archived_at ? NOTIFICATION_TRACKER_EVENTS.unarchive : NOTIFICATION_TRACKER_EVENTS.archive,
+        payload: {
+          id: data?.data?.issue?.id,
+          tab: currentNotificationTab,
+        },
+      });
     }
   };
 
   return (
     <NotificationItemOptionButton
+      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.ARCHIVE_UNARCHIVE_BUTTON}
       tooltipContent={
         data.archived_at ? t("notification.options.mark_unarchive") : t("notification.options.mark_archive")
       }

@@ -12,19 +12,6 @@ export type EventProps = {
   path?: string;
 };
 
-export const getProjectEventPayload = (payload: any) => ({
-  workspace_id: payload.workspace_id,
-  project_id: payload.id,
-  identifier: payload.identifier,
-  project_visibility: payload.network == 2 ? "Public" : "Private",
-  changed_properties: payload.changed_properties,
-  lead_id: payload.project_lead,
-  created_at: payload.created_at,
-  updated_at: payload.updated_at,
-  state: payload.state,
-  element: payload.element,
-});
-
 export const getPageEventPayload = (payload: any) => ({
   workspace_id: payload.workspace_id,
   project_id: payload.project,
@@ -119,6 +106,19 @@ export const PROJECT_TRACKER_EVENTS = {
   delete: "project_deleted",
 };
 
+export const PROJECT_TRACKER_ELEMENTS = {
+  EXTENDED_SIDEBAR_ADD_BUTTON: "extended_sidebar_add_project_button",
+  SIDEBAR_CREATE_PROJECT_BUTTON: "sidebar_create_project_button",
+  SIDEBAR_CREATE_PROJECT_TOOLTIP: "sidebar_create_project_tooltip",
+  COMMAND_PALETTE_CREATE_BUTTON: "command_palette_create_project_button",
+  COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON: "command_palette_shortcut_create_project_button",
+  EMPTY_STATE_CREATE_PROJECT_BUTTON: "empty_state_create_project_button",
+  CREATE_HEADER_BUTTON: "create_project_header_button",
+  CREATE_FIRST_PROJECT_BUTTON: "create_first_project_button",
+  DELETE_PROJECT_BUTTON: "delete_project_button",
+  UPDATE_PROJECT_BUTTON: "update_project_button",
+};
+
 export const CYCLE_TRACKER_EVENTS = {
   create: "cycle_created",
   update: "cycle_updated",
@@ -176,6 +176,11 @@ export const STATE_TRACKER_EVENTS = {
   update: "state_updated",
   delete: "state_deleted",
 };
+export const STATE_TRACKER_ELEMENTS = {
+  STATE_GROUP_ADD_BUTTON: "state_group_add_button",
+  STATE_LIST_DELETE_BUTTON: "state_list_delete_button",
+  STATE_LIST_EDIT_BUTTON: "state_list_edit_button",
+};
 
 export const PROJECT_PAGE_TRACKER_EVENTS = {
   create: "project_page_created",
@@ -217,7 +222,6 @@ export const MEMBER_TRACKER_EVENTS = {
     leave: "workspace_member_left",
   },
 };
-
 export const MEMBER_TRACKER_ELEMENTS = {
   HEADER_ADD_BUTTON: "header_add_member_button",
   ACCEPT_INVITATION_BUTTON: "accept_invitation_button",
@@ -230,15 +234,20 @@ export const MEMBER_TRACKER_ELEMENTS = {
 } as const;
 
 export const AUTH_TRACKER_EVENTS = {
-  navigate: {
-    sign_up: "navigate_to_sign_up_page",
-    sign_in: "navigate_to_sign_in_page",
-  },
   code_verify: "code_verified",
   sign_up_with_password: "sign_up_with_password",
   sign_in_with_password: "sign_in_with_password",
-  sign_in_with_code: "sign_in_with_magic_link",
   forgot_password: "forgot_password_clicked",
+  new_code_requested: "new_code_requested",
+};
+export const AUTH_TRACKER_ELEMENTS = {
+  NAVIGATE_TO_SIGN_UP: "navigate_to_sign_up",
+  FORGOT_PASSWORD_FROM_SIGNIN: "forgot_password_from_signin",
+  SIGNUP_FROM_FORGOT_PASSWORD: "signup_from_forgot_password",
+  SIGN_IN_FROM_SIGNUP: "sign_in_from_signup",
+  SIGN_IN_WITH_UNIQUE_CODE: "sign_in_with_unique_code",
+  REQUEST_NEW_CODE: "request_new_code",
+  VERIFY_CODE: "verify_code",
 };
 
 export const GLOBAL_VIEW_TRACKER_EVENTS = {
@@ -265,12 +274,15 @@ export const PRODUCT_TOUR_TRACKER_ELEMENTS = {
 
 export const NOTIFICATION_TRACKER_EVENTS = {
   archive: "notification_archived",
+  unarchive: "notification_unarchived",
+  mark_read: "notification_marked_read",
+  mark_unread: "notification_marked_unread",
   all_marked_read: "all_notifications_marked_read",
 };
 export const NOTIFICATION_TRACKER_ELEMENTS = {
   MARK_ALL_AS_READ_BUTTON: "mark_all_as_read_button",
-  ARCHIVE_BUTTON: "archive_button",
-  MARK_READ_BUTTON: "mark_read_button",
+  ARCHIVE_UNARCHIVE_BUTTON: "archive_unarchive_button",
+  MARK_READ_UNREAD_BUTTON: "mark_read_unread_button",
 };
 
 export const USER_TRACKER_EVENTS = {

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useCommandPalette } from "@/hooks/store";
@@ -27,7 +28,11 @@ const ProjectSettingsPage = () => {
         <Link href="https://plane.so/" target="_blank" className={cn(getButtonStyling("neutral-primary", "sm"))}>
           Learn more about projects
         </Link>
-        <Button size="sm" onClick={() => toggleCreateProjectModal(true)}>
+        <Button
+          size="sm"
+          onClick={() => toggleCreateProjectModal(true)}
+          data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
+        >
           Start your first project
         </Button>
       </div>
