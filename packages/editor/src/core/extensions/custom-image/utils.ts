@@ -31,3 +31,5 @@ export const ensurePixelString = <TDefault>(
 
   return value;
 };
+
+export const getImageBlockId = (id: string) => `editor-image-block-${id}`;

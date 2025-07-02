@@ -4,7 +4,7 @@ import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // plane imports
-import { EIconSize } from "@plane/constants";
+import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
@@ -81,6 +81,7 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
         </div>
         <button
           type="button"
+          data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
             "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
             (!isEditable || createState) && "cursor-not-allowed text-custom-text-400 hover:text-custom-text-400"

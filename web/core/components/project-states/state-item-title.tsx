@@ -2,7 +2,7 @@ import { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
 // plane imports
-import { EIconSize } from "@plane/constants";
+import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // local imports
@@ -70,6 +70,7 @@ export const StateItemTitle = observer((props: TStateItemTitleProps) => {
             <button
               className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-text-200 hover:text-custom-text-100"
               onClick={() => setUpdateStateModal(true)}
+              data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >
               <Pencil className="w-3 h-3" />
             </button>

@@ -2,7 +2,6 @@
 
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
@@ -14,9 +13,9 @@ import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { InboxIssueTitle, InboxIssueDescription, InboxIssueProperties } from "@/components/inbox/modals/create-modal";
 // constants
-// helpers
 // hooks
-import { useEventTracker, useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProject, useProjectInbox, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -53,14 +52,12 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // router
   const router = useAppRouter();
-  const pathname = usePathname();
   // refs
   const descriptionEditorRef = useRef<EditorRefApi>(null);
   const submitBtnRef = useRef<HTMLButtonElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
   // hooks
-  const { captureIssueEvent } = useEventTracker();
   const { createInboxIssue } = useProjectInbox();
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
@@ -167,14 +164,11 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureIssueEvent({
+        captureSuccess({
           eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
-            ...formData,
-            state: "SUCCESS",
-            element: "Inbox page",
+            id: res?.issue?.id,
           },
-          path: pathname,
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -184,14 +178,12 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
       })
       .catch((error) => {
         console.error(error);
-        captureIssueEvent({
+        captureError({
           eventName: WORK_ITEM_TRACKER_EVENTS.create,
           payload: {
-            ...formData,
-            state: "FAILED",
-            element: "Inbox page",
+            id: formData?.id,
           },
-          path: pathname,
+          error: error as Error,
         });
         setToast({
           type: TOAST_TYPE.ERROR,

@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // ui
-import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
+import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { TourSidebar } from "@/components/onboarding";
 // constants
 // hooks
-import { useCommandPalette, useEventTracker, useUser } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useUser } from "@/hooks/store";
 // assets
 import CyclesTour from "@/public/onboarding/cycles.webp";
 import IssuesTour from "@/public/onboarding/issues.webp";
@@ -85,7 +86,6 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   const [step, setStep] = useState<TTourSteps>("welcome");
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement, captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
@@ -112,7 +112,9 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureEvent(PRODUCT_TOUR_TRACKER_EVENTS.start);
+                      captureClick({
+                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.START_BUTTON,
+                      });
                       setStep("work-items");
                     }}
                   >
@@ -122,7 +124,9 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     type="button"
                     className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
                     onClick={() => {
-                      captureEvent(PRODUCT_TOUR_TRACKER_EVENTS.skip);
+                      captureClick({
+                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
+                      });
                       onComplete();
                     }}
                   >
@@ -171,7 +175,9 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
-                      setTrackElement("Product tour");
+                      captureClick({
+                        elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.CREATE_PROJECT_BUTTON,
+                      });
                       onComplete();
                       toggleCreateProjectModal(true);
                     }}

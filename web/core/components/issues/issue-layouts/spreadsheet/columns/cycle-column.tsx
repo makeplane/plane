@@ -1,12 +1,13 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // types
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue } from "@plane/types";
 // components
 import { CycleDropdown } from "@/components/dropdowns";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 
 type Props = {
@@ -19,9 +20,7 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
   const { issue, disabled, onClose } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // hooks
-  const { captureIssueEvent } = useEventTracker();
   const {
     issues: { addCycleToIssue, removeCycleFromIssue },
   } = useIssuesStore();
@@ -31,18 +30,14 @@ export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
       if (!workspaceSlug || !issue || !issue.project_id || issue.cycle_id === cycleId) return;
       if (cycleId) await addCycleToIssue(workspaceSlug.toString(), issue.project_id, cycleId, issue.id);
       else await removeCycleFromIssue(workspaceSlug.toString(), issue.project_id, issue.id);
-      captureIssueEvent({
-        eventName: "Work item updated",
+      captureSuccess({
+        eventName: WORK_ITEM_TRACKER_EVENTS.update,
         payload: {
-          ...issue,
-          cycle_id: cycleId,
-          element: "Spreadsheet layout",
+          id: issue.id,
         },
-        updates: { changed_property: "cycle", change_details: { cycle_id: cycleId } },
-        path: pathname,
       });
     },
-    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue, captureIssueEvent, pathname]
+    [workspaceSlug, issue, addCycleToIssue, removeCycleFromIssue]
   );
 
   return (

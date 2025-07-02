@@ -1,3 +1,4 @@
+import { CharacterCountStorage } from "@tiptap/extension-character-count";
 // constants
 import type { EmojiStorage } from "@tiptap/extension-emoji";
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -15,6 +16,7 @@ export type ExtensionStorageMap = {
   [CORE_EXTENSIONS.HEADINGS_LIST]: HeadingExtensionStorage;
   [CORE_EXTENSIONS.UTILITY]: UtilityExtensionStorage;
   [CORE_EXTENSIONS.EMOJI]: EmojiStorage;
+  [CORE_EXTENSIONS.CHARACTER_COUNT]: CharacterCountStorage;
 };
 
 export type ExtensionFileSetStorageKey = Extract<keyof ImageExtensionStorage, "deletedImageSet">;

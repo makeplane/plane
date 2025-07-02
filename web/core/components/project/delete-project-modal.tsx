@@ -12,7 +12,8 @@ import type { IProject } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useEventTracker, useProject } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProject } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type DeleteProjectModal = {
@@ -29,7 +30,6 @@ const defaultValues = {
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store hooks
-  const { captureProjectEvent } = useEventTracker();
   const { deleteProject } = useProject();
   // router
   const router = useAppRouter();
@@ -62,9 +62,11 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
-        captureProjectEvent({
+        captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: { ...project, state: "SUCCESS", element: "Project general settings" },
+          payload: {
+            id: project.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -73,9 +75,11 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
-        captureProjectEvent({
+        captureError({
           eventName: PROJECT_TRACKER_EVENTS.delete,
-          payload: { ...project, state: "FAILED", element: "Project general settings" },
+          payload: {
+            id: project.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.ERROR,

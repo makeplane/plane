@@ -6,7 +6,7 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
-import { AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 import { PageHead } from "@/components/core";
@@ -14,7 +14,7 @@ import { PageHead } from "@/components/core";
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useEventTracker, useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // wrappers
@@ -29,8 +29,6 @@ const HomePage = observer(() => {
   const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
-  // hooks
-  const { captureEvent } = useEventTracker();
   // store
   const { config } = useInstance();
   // derived values
@@ -63,7 +61,7 @@ const HomePage = observer(() => {
                     {t("auth.common.new_to_plane")}
                     <Link
                       href="/sign-up"
-                      onClick={() => captureEvent(AUTH_TRACKER_EVENTS.navigate.sign_up, {})}
+                      data-ph-element={AUTH_TRACKER_ELEMENTS.NAVIGATE_TO_SIGN_UP}
                       className="font-semibold text-custom-primary-100 hover:underline"
                     >
                       {t("auth.common.create_account")}

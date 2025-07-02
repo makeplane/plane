@@ -11,7 +11,7 @@ import {
   EIssueFilterType,
   EUserPermissions,
   EUserPermissionsLevel,
-  GLOBAL_VIEW_TOUR_TRACKER_EVENTS,
+  GLOBAL_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
 import { EIssuesStoreType, EViewAccess, IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant, Loader } from "@plane/ui";
@@ -21,7 +21,8 @@ import { AppliedFiltersList } from "@/components/issues";
 import { UpdateViewComponent } from "@/components/views/update-view-component";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace";
 // hooks
-import { useEventTracker, useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useGlobalView, useIssues, useLabel, useUser, useUserPermissions } from "@/hooks/store";
 import { getAreFiltersEqual } from "../../../utils";
 
 type Props = {
@@ -39,7 +40,6 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { workspaceLabels } = useLabel();
   const { globalViewMap, updateGlobalView } = useGlobalView();
-  const { captureEvent } = useEventTracker();
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
 
@@ -107,15 +107,25 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
   const handleUpdateView = () => {
     if (!workspaceSlug || !globalViewId) return;
 
-    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters).then((res) => {
-      if (res)
-        captureEvent(GLOBAL_VIEW_TOUR_TRACKER_EVENTS.update, {
-          view_id: res.id,
-          applied_filters: res.filters,
-          state: "SUCCESS",
-          element: "Spreadsheet view",
+    updateGlobalView(workspaceSlug.toString(), globalViewId.toString(), viewFilters)
+      .then((res) => {
+        if (res)
+          captureSuccess({
+            eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
+            payload: {
+              view_id: globalViewId,
+            },
+          });
+      })
+      .catch((error) => {
+        captureError({
+          eventName: GLOBAL_VIEW_TRACKER_EVENTS.update,
+          payload: {
+            view_id: globalViewId,
+          },
+          error: error,
         });
-    });
+      });
   };
 
   // add a placeholder object instead of appliedFilters if it is undefined

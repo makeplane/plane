@@ -5,20 +5,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
 // plane ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
-import {
-  useCommandPalette,
-  useEventTracker,
-  useProject,
-  useUser,
-  useUserPermissions,
-  useWorkspace,
-} from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web constants
 
 export const NoProjectsEmptyState = observer(() => {
@@ -27,7 +21,6 @@ export const NoProjectsEmptyState = observer(() => {
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { data: currentUser } = useUser();
   const { joinedProjectIds } = useProject();
   const { currentWorkspace: activeWorkspace } = useWorkspace();
@@ -59,8 +52,8 @@ export const NoProjectsEmptyState = observer(() => {
           if (!canCreateProject) return;
           e.preventDefault();
           e.stopPropagation();
-          setTrackElement("Sidebar");
           toggleCreateProjectModal(true);
+          captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
         },
         disabled: !canCreateProject,
       },

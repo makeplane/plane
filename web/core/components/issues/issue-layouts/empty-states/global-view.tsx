@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const GlobalViewEmptyState: React.FC = observer(() => {
@@ -17,7 +18,6 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   // store hooks
   const { workspaceProjectIds } = useProject();
   const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const hasMemberLevelPermission = allowPermissions(
@@ -46,8 +46,8 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             title={t("workspace_projects.empty_state.no_projects.primary_button.comic.title")}
             description={t("workspace_projects.empty_state.no_projects.primary_button.comic.description")}
             onClick={() => {
-              setTrackElement("All issues empty state");
               toggleCreateProjectModal(true);
+              captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.GLOBAL_VIEW });
             }}
             disabled={!hasMemberLevelPermission}
           />
@@ -67,7 +67,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
           ? {
               text: t(`workspace_views.empty_state.${resolvedCurrentView}.primary_button.text`),
               onClick: () => {
-                setTrackElement("All issues empty state");
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.GLOBAL_VIEW });
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
               },
               disabled: !hasMemberLevelPermission,
