@@ -17,7 +17,7 @@ import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
 // helpers
 // hooks
-import { captureSuccess } from "@/helpers/event-tracker.helper";
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store";
 
 type TUserProfileForm = {
@@ -126,9 +126,6 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
     const promises = [updateCurrentUserDetail, updateCurrentUserProfile];
     const updateUserAndProfile = Promise.all(promises);
 
-    captureSuccess({
-      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
-    });
     setPromiseToast(updateUserAndProfile, {
       loading: "Updating...",
       success: {
@@ -140,6 +137,17 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
+    updateUserAndProfile
+      .then(() => {
+        captureSuccess({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
+        });
+      });
   };
 
   return (

@@ -72,18 +72,6 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
     applyThemeChange(payload);
 
     const updateCurrentUserThemePromise = updateUserTheme(payload);
-    captureElementAndEvent({
-      element: {
-        elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
-      },
-      event: {
-        eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
-        payload: {
-          theme: payload.theme,
-        },
-        state: "SUCCESS",
-      },
-    });
     setPromiseToast(updateCurrentUserThemePromise, {
       loading: t("updating_theme"),
       success: {
@@ -95,6 +83,35 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
         message: () => t("failed_to_update_the_theme"),
       },
     });
+    updateCurrentUserThemePromise
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
+          },
+          event: {
+            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
+            payload: {
+              theme: payload.theme,
+            },
+            state: "SUCCESS",
+          },
+        });
+      })
+      .catch(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
+          },
+          event: {
+            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
+            payload: {
+              theme: payload.theme,
+            },
+            state: "ERROR",
+          },
+        });
+      });
 
     return;
   };
