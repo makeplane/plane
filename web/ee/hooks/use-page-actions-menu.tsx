@@ -34,7 +34,12 @@ export const usePageActionsMenu = (props: {
   const router = useAppRouter();
 
   // derived values
-  const { is_locked, archived_at, canCurrentUserLockPage, editorRef } = page;
+  const {
+    is_locked,
+    archived_at,
+    canCurrentUserLockPage,
+    editor: { editorRef },
+  } = page;
 
   // Custom menu items
   const customMenuItems: (TContextMenuItem & { key: TPageActions })[] = [

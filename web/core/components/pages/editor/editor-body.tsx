@@ -103,7 +103,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     id: pageId,
     isContentEditable,
     editor: { editorRef, updateAssetsList },
-    setSyncingStatus
+    setSyncingStatus,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
@@ -258,18 +258,25 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
             </div>
           </div>
         )}
-        <div className="page-header-container group/page-header">
-          <div className={blockWidthClassName}>
-            <PageEditorHeaderRoot
-              isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
-              isPageLoading={isPageLoading}
-              page={page}
-              projectId={projectId}
-              titleEditorRef={titleEditorRef}
-              workspaceSlug={workspaceSlug}
-            />
+        <div
+          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
+          style={{
+            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
+            animationDelay: "100ms",
+          }}
+        >
+          <div className="page-header-container group/page-header">
+            <div className={blockWidthClassName}>
+              <PageEditorHeaderRoot
+                isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
+                isPageLoading={isPageLoading}
+                page={page}
+                projectId={projectId}
+                titleEditorRef={titleEditorRef}
+                workspaceSlug={workspaceSlug}
+              />
+            </div>
           </div>
-
           <CollaborativeDocumentEditorWithRef
             editable={isContentEditable}
             id={pageId}

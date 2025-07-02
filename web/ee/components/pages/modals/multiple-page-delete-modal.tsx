@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // constants
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // ui
 import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers

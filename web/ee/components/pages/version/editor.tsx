@@ -17,7 +17,7 @@ import { IssueEmbedCard } from "@/plane-web/components/pages";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
-  const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails } = props;
+  const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -36,7 +36,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
     fontStyle,
   };
 
-  if (!isCurrentVersionActive && !versionDetails)
+  if (!versionDetails)
     return (
       <div className="size-full px-5">
         <Loader className="relative space-y-4">
@@ -78,7 +78,7 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       </div>
     );
 
-  const description = isCurrentVersionActive ? currentVersionDescription : versionDetails?.description_html;
+  const description = versionDetails?.description_html;
   if (description === undefined || description?.trim() === "") return null;
 
   return (

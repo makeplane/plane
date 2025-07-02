@@ -43,7 +43,7 @@ export const useRealtimePageEvents = ({
 
   const { data: currentUser } = useUser();
   // derived values
-  const editorRef = page.editorRef;
+  const { editorRef } = page.editor;
 
   // Helper function to safely get user display text
   const getUserDisplayText = useCallback(

@@ -43,7 +43,7 @@ export const TemplateSelectModal: React.FC<TTemplateSelectModalProps> = observer
   // store hooks
   const { getAllTemplates, getTemplateById } = usePageTemplates();
   // derived values
-  const editorRef = page.editorRef;
+  const { editorRef } = page.editor;
   const allPageTemplates = getAllTemplates(workspaceSlug);
   const filteredTemplates = useMemo(
     () =>

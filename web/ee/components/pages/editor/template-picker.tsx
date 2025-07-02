@@ -17,7 +17,10 @@ export const PageTemplatePicker: React.FC<TPageTemplatePickerProps> = observer((
   const [isApplyTemplateModalOpen, setIsApplyTemplateModalOpen] = useState(false);
   // derived values
   const isPageTemplatesFeatureEnabled = useFlag(workspaceSlug, "PAGE_TEMPLATES");
-  const { isContentEditable, editorRef } = page;
+  const {
+    isContentEditable,
+    editor: { editorRef },
+  } = page;
 
   if (!isPageTemplatesFeatureEnabled) return <PageTemplatePickerCE {...props} />;
 

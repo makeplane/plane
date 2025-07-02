@@ -8,10 +8,9 @@ import { ChevronRight } from "lucide-react";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { TIssue } from "@plane/types";
+import { cn } from "@plane/utils";
 // ce imports
 import { TIssueFields, TIssueTypeSelectProps } from "@/ce/components/issues";
-// helpers
-import { cn  } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 // plane web imports

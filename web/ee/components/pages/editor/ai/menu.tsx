@@ -2,14 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronRight, CornerDownRight, LucideIcon, PencilLine, RefreshCcw, Sparkles } from "lucide-react";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane ui
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { RichTextReadOnlyEditor } from "@/components/editor";
-// helpers
-import { cn  } from "@plane/utils";
 // plane web constants
 import { AI_EDITOR_TASKS } from "@/plane-web/constants/ai";
 // services
