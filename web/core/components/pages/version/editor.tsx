@@ -21,14 +21,12 @@ import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
-  currentVersionDescription: string | null;
-  isCurrentVersionActive: boolean;
   versionDetails: TPageVersion | undefined;
   storeType: EPageStoreType;
 };
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
-  const { activeVersion, currentVersionDescription, isCurrentVersionActive, versionDetails, storeType } = props;
+  const { activeVersion, storeType, versionDetails } = props;
   // store hooks
   const { getUserDetails } = useMember();
   // params
@@ -60,7 +58,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
     [versionDetails?.sub_pages_data]
   );
 
-  if (!isCurrentVersionActive && !versionDetails)
+  if ( !versionDetails)
     return (
       <div className="size-full px-5">
         <Loader className="relative space-y-4">
@@ -102,7 +100,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       </div>
     );
 
-  const description = isCurrentVersionActive ? currentVersionDescription : versionDetails?.description_html;
+  const description = versionDetails?.description_html;
   if (description === undefined || description?.trim() === "") return null;
 
   return (

@@ -14,6 +14,7 @@ import {
   ListTodo,
   MessageSquareText,
   MinusSquare,
+  Smile,
   Table,
   TextQuote,
 } from "lucide-react";
@@ -251,6 +252,17 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
             icon: <MinusSquare className="size-3.5" />,
             command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHorizontalRule().run(),
+          },
+          {
+            commandKey: "emoji",
+            key: "emoji",
+            title: "Emoji",
+            description: "Insert an emoji",
+            searchTerms: ["emoji", "icons", "reaction", "emoticon", "emotags"],
+            icon: <Smile className="size-3.5" />,
+            command: ({ editor, range }) => {
+              editor.chain().focus().insertContentAt(range, "<p>:</p>").run();
+            },
           },
         ],
       },

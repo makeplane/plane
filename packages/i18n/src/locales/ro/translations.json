@@ -2466,5 +2466,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Plane au eșuat să pornească.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Alegeți View Logs din setup.sh și logurile Docker pentru a fi siguri."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Contur",
+        "empty_state": {
+          "title": "Titluri lipsă",
+          "description": "Să punem câteva titluri în această pagină pentru a le vedea aici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Cuvinte",
+          "characters": "Caractere",
+          "paragraphs": "Paragrafe",
+          "read_time": "Timp de citire"
+        },
+        "actors_info": {
+          "edited_by": "Editat de",
+          "created_by": "Creat de"
+        },
+        "version_history": {
+          "label": "Istoricul versiunilor",
+          "current_version": "Versiunea curentă"
+        }
+      },
+      "assets": {
+        "label": "Resurse",
+        "download_button": "Descarcă",
+        "empty_state": {
+          "title": "Imagini lipsă",
+          "description": "Adăugați imagini pentru a le vedea aici."
+        }
+      }
+    },
+    "open_button": "Deschide panoul de navigare",
+    "close_button": "Închide panoul de navigare",
+    "outline_floating_button": "Deschide conturul"
   }
 }
