@@ -17,6 +17,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
   setEditorContainer: (editorContainer: HTMLDivElement | null) => void;
   setFailedToLoadImage: (isError: boolean) => void;
   src: string | undefined;
+  downloadSrc: string | undefined;
 };
 
 export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
@@ -32,9 +33,16 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     setEditorContainer,
     setFailedToLoadImage,
     src: resolvedImageSrc,
+    downloadSrc: resolvedDownloadSrc,
     updateAttributes,
   } = props;
-  const { width: nodeWidth, height: nodeHeight, aspectRatio: nodeAspectRatio, src: imgNodeSrc } = node.attrs;
+  const {
+    width: nodeWidth,
+    height: nodeHeight,
+    aspectRatio: nodeAspectRatio,
+    src: imgNodeSrc,
+    alignment: nodeAlignment,
+  } = node.attrs;
   // states
   const [size, setSize] = useState<TCustomImageSize>({
     width: ensurePixelString(nodeWidth, "35%") ?? "35%",
@@ -131,12 +139,17 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
 
-      const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
-      const newHeight = newWidth / size.aspectRatio;
-
-      setSize((prevSize) => ({ ...prevSize, width: `${newWidth}px`, height: `${newHeight}px` }));
+      if (nodeAlignment === "right") {
+        const newWidth = Math.max(containerRect.current.right - clientX, MIN_SIZE);
+        const newHeight = newWidth / size.aspectRatio;
+        setSize((prevSize) => ({ ...prevSize, width: `${newWidth}px`, height: `${newHeight}px` }));
+      } else {
+        const newWidth = Math.max(clientX - containerRect.current.left, MIN_SIZE);
+        const newHeight = newWidth / size.aspectRatio;
+        setSize((prevSize) => ({ ...prevSize, width: `${newWidth}px`, height: `${newHeight}px` }));
+      }
     },
-    [size.aspectRatio]
+    [nodeAlignment, size.aspectRatio]
   );
 
   const handleResizeEnd = useCallback(() => {
@@ -188,7 +201,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   // show the image upload status only when the resolvedImageSrc is not ready
   const showUploadStatus = !resolvedImageSrc;
   // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageUtils = resolvedImageSrc && initialResizeComplete;
+  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete;
   // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
   const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
   // show the preview image from the file system if the remote image's src is not set
@@ -197,108 +210,117 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   return (
     <div
       id={getImageBlockId(node.attrs.id ?? "")}
-      ref={containerRef}
-      className="group/image-component relative inline-block max-w-full"
-      onMouseDown={handleImageMouseDown}
-      style={{
-        width: size.width,
-        ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
-      }}
+      className={cn("w-fit max-w-full transition-all", {
+        "ml-[50%] -translate-x-1/2": nodeAlignment === "center",
+        "ml-[100%] -translate-x-full": nodeAlignment === "right",
+      })}
     >
-      {showImageLoader && (
-        <div
-          className="animate-pulse bg-custom-background-80 rounded-md"
-          style={{ width: size.width, height: size.height }}
-        />
-      )}
-      <img
-        ref={imageRef}
-        src={displayedImageSrc}
-        onLoad={handleImageLoad}
-        onError={async (e) => {
-          // for old image extension this command doesn't exist or if the image failed to load for the first time
-          if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
-            setFailedToLoadImage(true);
-            return;
-          }
-
-          try {
-            setHasErroredOnFirstLoad(true);
-            // this is a type error from tiptap, don't remove await until it's fixed
-            if (!imgNodeSrc) {
-              throw new Error("No source image to restore from");
-            }
-            await extension.options.restoreImage?.(imgNodeSrc);
-            if (!imageRef.current) {
-              throw new Error("Image reference not found");
-            }
-            if (!resolvedImageSrc) {
-              throw new Error("No resolved image source available");
-            }
-            imageRef.current.src = resolvedImageSrc;
-          } catch {
-            // if the image failed to even restore, then show the error state
-            setFailedToLoadImage(true);
-            console.error("Error while loading image", e);
-          } finally {
-            setHasErroredOnFirstLoad(false);
-            setHasTriedRestoringImageOnce(true);
-          }
-        }}
-        width={size.width}
-        className={cn("image-component block rounded-md", {
-          // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
-          hidden: showImageLoader,
-          "read-only-image": !editor.isEditable,
-          "blur-sm opacity-80 loading-image": !resolvedImageSrc,
-        })}
+      <div
+        ref={containerRef}
+        className="group/image-component relative inline-block max-w-full"
+        onMouseDown={handleImageMouseDown}
         style={{
           width: size.width,
           ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
         }}
-      />
-      {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
-      {showImageUtils && (
-        <ImageToolbarRoot
-          containerClassName={
-            "absolute top-1 right-1 z-20 bg-black/40 rounded opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto transition-opacity"
-          }
-          image={{
+      >
+        {showImageLoader && (
+          <div
+            className="animate-pulse bg-custom-background-80 rounded-md"
+            style={{ width: size.width, height: size.height }}
+          />
+        )}
+        <img
+          ref={imageRef}
+          src={displayedImageSrc}
+          onLoad={handleImageLoad}
+          onError={async (e) => {
+            // for old image extension this command doesn't exist or if the image failed to load for the first time
+            if (!extension.options.restoreImage || hasTriedRestoringImageOnce) {
+              setFailedToLoadImage(true);
+              return;
+            }
+
+            try {
+              setHasErroredOnFirstLoad(true);
+              // this is a type error from tiptap, don't remove await until it's fixed
+              if (!imgNodeSrc) {
+                throw new Error("No source image to restore from");
+              }
+              await extension.options.restoreImage?.(imgNodeSrc);
+              if (!imageRef.current) {
+                throw new Error("Image reference not found");
+              }
+              if (!resolvedImageSrc) {
+                throw new Error("No resolved image source available");
+              }
+              imageRef.current.src = resolvedImageSrc;
+            } catch {
+              // if the image failed to even restore, then show the error state
+              setFailedToLoadImage(true);
+              console.error("Error while loading image", e);
+            } finally {
+              setHasErroredOnFirstLoad(false);
+              setHasTriedRestoringImageOnce(true);
+            }
+          }}
+          width={size.width}
+          className={cn("image-component block rounded-md", {
+            // hide the image while the background calculations of the image loader are in progress (to avoid flickering) and show the loader until then
+            hidden: showImageLoader,
+            "read-only-image": !editor.isEditable,
+            "blur-sm opacity-80 loading-image": !resolvedImageSrc,
+          })}
+          style={{
             width: size.width,
-            height: size.height,
-            aspectRatio: size.aspectRatio === null ? 1 : size.aspectRatio,
-            src: resolvedImageSrc,
+            ...(size.aspectRatio && { aspectRatio: size.aspectRatio }),
           }}
         />
-      )}
-      {selected && displayedImageSrc === resolvedImageSrc && (
-        <div className="absolute inset-0 size-full bg-custom-primary-500/30" />
-      )}
-      {showImageResizer && (
-        <>
-          <div
-            className={cn(
-              "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
-              {
-                "opacity-100": isResizing,
-                "opacity-0 group-hover/image-component:opacity-100": !isResizing,
-              }
-            )}
+        {showUploadStatus && node.attrs.id && <ImageUploadStatus editor={editor} nodeId={node.attrs.id} />}
+        {showImageToolbar && (
+          <ImageToolbarRoot
+            alignment={nodeAlignment ?? "left"}
+            width={size.width}
+            height={size.height}
+            aspectRatio={size.aspectRatio === null ? 1 : size.aspectRatio}
+            src={resolvedImageSrc}
+            downloadSrc={resolvedDownloadSrc}
+            handleAlignmentChange={(alignment) =>
+              updateAttributesSafely({ alignment }, "Failed to update attributes while changing alignment:")
+            }
           />
-          <div
-            className={cn(
-              "absolute bottom-0 right-0 translate-y-1/2 translate-x-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white cursor-nwse-resize transition-opacity duration-100 ease-in-out",
-              {
-                "opacity-100 pointer-events-auto": isResizing,
-                "opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto":
-                  !isResizing,
-              }
-            )}
-            onMouseDown={handleResizeStart}
-            onTouchStart={handleResizeStart}
-          />
-        </>
-      )}
+        )}
+        {selected && displayedImageSrc === resolvedImageSrc && (
+          <div className="absolute inset-0 size-full bg-custom-primary-500/30 pointer-events-none" />
+        )}
+        {showImageResizer && (
+          <>
+            <div
+              className={cn(
+                "absolute inset-0 border-2 border-custom-primary-100 pointer-events-none rounded-md transition-opacity duration-100 ease-in-out",
+                {
+                  "opacity-100": isResizing,
+                  "opacity-0 group-hover/image-component:opacity-100": !isResizing,
+                }
+              )}
+            />
+            <div
+              className={cn(
+                "absolute bottom-0 translate-y-1/2 size-4 rounded-full bg-custom-primary-100 border-2 border-white transition-opacity duration-100 ease-in-out",
+                {
+                  "opacity-100 pointer-events-auto": isResizing,
+                  "opacity-0 pointer-events-none group-hover/image-component:opacity-100 group-hover/image-component:pointer-events-auto":
+                    !isResizing,
+                  "left-0 -translate-x-1/2 cursor-nesw-resize": nodeAlignment === "right",
+                  "right-0 translate-x-1/2 cursor-nwse-resize": nodeAlignment !== "right",
+                }
+              )}
+              onMouseDown={handleResizeStart}
+              onTouchStart={handleResizeStart}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 };

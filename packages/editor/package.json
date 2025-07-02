@@ -39,6 +39,7 @@
     "@headlessui/react": "^1.7.3",
     "@hocuspocus/provider": "^2.15.0",
     "@plane/constants": "*",
+    "@plane/hooks": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
     "@plane/utils": "*",
