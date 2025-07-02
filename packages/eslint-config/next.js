@@ -53,7 +53,7 @@ module.exports = {
       },
     ],
     "import/order": [
-      "error",
+      "warn",
       {
         groups: ["builtin", "external", "internal", "parent", "sibling"],
         pathGroups: [
@@ -80,6 +80,11 @@ module.exports = {
           {
             pattern: "@/**",
             group: "internal",
+          },
+          {
+            pattern: "public/**",
+            group: "internal",
+            position: "after",
           },
         ],
         pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
