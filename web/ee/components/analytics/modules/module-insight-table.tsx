@@ -4,16 +4,21 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Briefcase } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { ModuleInsightColumns } from "@plane/types/src/analytics-extended";
+import { ModuleInsightColumns } from "@plane/types";
 import { Logo, ModuleStatusIcon } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
+// components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
+// hooks
 import { useMember } from "@/hooks/store";
 import { useAnalytics } from "@/hooks/store/use-analytics";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 import { UserAvatarName } from "../user-avatar-name";
+
 const analyticsService = new AnalyticsService();
 
 const ModulesInsightTable = observer(() => {

@@ -3,7 +3,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Activity } from "lucide-react";
-import { EUpdateEntityType } from "@plane/types/src/enums";
+// plane imports
+import { EUpdateEntityType } from "@plane/types";
 import { CommentFillIcon, InfoFillIcon, UpdatesIcon } from "@plane/ui";
 // hooks
 import { useAppTheme } from "@/hooks/store";

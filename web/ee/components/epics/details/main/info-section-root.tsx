@@ -4,8 +4,7 @@ import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
-import { EIssueServiceType } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // components

@@ -32,6 +32,7 @@ import { syncAgentHandler } from "./core/document-types/sync-agent-handlers";
 
 // WebSocket router type definition
 interface WebSocketRouter extends Router {
+  // eslint-disable-next-line no-unused-vars
   ws: (_path: string, _handler: (ws: ws.WebSocket, req: Request) => void) => void;
 }
 

@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { UserCircle2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { EFileAssetType } from "@plane/types/src/enums";
+// plane imports
+import { EFileAssetType } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-// helpers
 import { checkURLValidity, getAssetIdFromUrl, getFileURL } from "@plane/utils";
-// services
+// hooks
 import { useWorkspace } from "@/hooks/store";
+// services
 import { FileService } from "@/services/file.service";
 
 const fileService = new FileService();
@@ -35,9 +36,9 @@ export const AppImageUploadModal: React.FC<Props> = observer((props) => {
 
   const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
-  const { currentWorkspace } = useWorkspace()
-  const workspaceSlug = currentWorkspace?.slug
-  const workspaceId = currentWorkspace?.id
+  const { currentWorkspace } = useWorkspace();
+  const workspaceSlug = currentWorkspace?.slug;
+  const workspaceId = currentWorkspace?.id;
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
@@ -115,7 +116,10 @@ export const AppImageUploadModal: React.FC<Props> = observer((props) => {
                 Upload Image
               </Dialog.Title>
               <div className="mt-4">
-                <div {...getRootProps()} className="relative h-80 w-80 border-2 border-dashed border-custom-border-200 rounded-lg flex items-center justify-center cursor-pointer">
+                <div
+                  {...getRootProps()}
+                  className="relative h-80 w-80 border-2 border-dashed border-custom-border-200 rounded-lg flex items-center justify-center cursor-pointer"
+                >
                   {image || initialValue ? (
                     <img
                       src={image ? URL.createObjectURL(image) : getFileURL(initialValue ?? "")}

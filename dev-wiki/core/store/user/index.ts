@@ -3,8 +3,7 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import { IUser } from "@plane/types";
-import { TUserPermissions } from "@plane/types/src/enums";
+import { TUserPermissions, IUser } from "@plane/types";
 // helpers
 import { API_BASE_URL } from "@/helpers/common.helper";
 // plane web imports

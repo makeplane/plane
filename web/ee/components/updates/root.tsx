@@ -5,16 +5,16 @@ import { Plus } from "lucide-react";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-// components
 import { useTranslation } from "@plane/i18n";
-import { TUpdate, TUpdateOperations } from "@plane/types";
-import { EUpdateEntityType } from "@plane/types/src/enums";
+import { EUpdateEntityType, TUpdate, TUpdateOperations } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+// components
 import { ActivitySortRoot } from "@/components/issues";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
 import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";
 import { NewUpdate } from "./new-update";
+
 type TProps = {
   entityType: EUpdateEntityType;
   entityId: string;

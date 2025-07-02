@@ -5,14 +5,15 @@ import { Database, Paperclip } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { CustomerService } from "@plane/services";
-import { ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, ISearchIssueResponse, TCustomerRequest, TProjectIssuesSearchParams } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, Input, LayersIcon, setToast, TOAST_TYPE, ModalCore } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
+// components
 import { ExistingIssuesListModal } from "@/components/core";
-// plane web imports
 import { RichTextEditor } from "@/components/editor";
+// hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
+// plane web components
 import { RequestAttachmentsList, SourceCreateUpdateModal, SourceItem } from "@/plane-web/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
 // plane web services

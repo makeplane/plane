@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles, TTeamspace } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, EUserWorkspaceRoles, TTeamspace } from "@plane/types";
 import { Button, CustomEmojiIconPicker, Input, Logo } from "@plane/ui";
 import { cn, convertHexEmojiToDecimal, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components

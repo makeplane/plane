@@ -3,8 +3,7 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { MoveRight, Trash2, X } from "lucide-react";
-import { TEstimatePointsObject } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
+import { EEstimateSystem, TEstimatePointsObject } from "@plane/types";
 import { Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // ce imports
 import { convertMinutesToHoursMinutesString } from "@plane/utils";

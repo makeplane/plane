@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
-import { TCommentLoader, TUpdate, TUpdateComment, TUpdateOperations } from "@plane/types";
-import { EUpdateEntityType } from "@plane/types/src/enums";
+import { EUpdateEntityType, TCommentLoader, TUpdate, TUpdateComment, TUpdateOperations } from "@plane/types";
 import { useUser } from "@/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";
@@ -23,7 +22,10 @@ export const useEpicUpdates = (workspaceSlug: string, projectId: string, epicId:
     comments: { patchComment: _patchComment, fetchComments: _fetchComments },
   } = useUpdateDetail(EUpdateEntityType.EPIC);
   const {
-    initiative: { epics: {fetchInitiativeEpics}, fetchInitiativeAnalytics },
+    initiative: {
+      epics: { fetchInitiativeEpics },
+      fetchInitiativeAnalytics,
+    },
   } = useInitiatives();
   const { data: currentUser } = useUser();
   const pathName = usePathname();

@@ -1,7 +1,6 @@
 // plane imports
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
-import { TDocumentPayload } from "@plane/types";
-import { TEditorAssetType } from "@plane/types/src/enums";
+import { TEditorAssetType, TDocumentPayload } from "@plane/types";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
 // services

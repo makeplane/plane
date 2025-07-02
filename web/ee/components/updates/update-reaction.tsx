@@ -2,15 +2,15 @@
 
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { IUser, TUpdateOperations } from "@plane/types";
-// components
-import { EUpdateEntityType } from "@plane/types/src/enums";
+import { EUpdateEntityType, IUser, TUpdateOperations } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-// helper
 import { cn, formatTextList } from "@plane/utils";
+// components
 import { ReactionSelector } from "@/components/issues";
-import { renderEmoji  } from "@/helpers/emoji.helper";
+// helpers
+import { renderEmoji } from "@/helpers/emoji.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useUpdateDetail } from "@/plane-web/hooks/use-update-detail";

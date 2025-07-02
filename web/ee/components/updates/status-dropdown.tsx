@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { EUpdateStatus } from "@plane/types/src/enums";
+import { EUpdateStatus } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn, generateIconColors } from "@plane/utils";
 import { StatusOptions, UpdateStatusIcons } from "./status-icons";

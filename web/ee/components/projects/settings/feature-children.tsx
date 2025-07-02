@@ -1,7 +1,10 @@
 import { observer } from "mobx-react";
-import { E_FEATURE_FLAGS } from "@plane/constants/src/feature-flag";
+// plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { IProject } from "@plane/types";
+// plane web components
 import { INTAKE_FEATURES_LIST } from "@/plane-web/constants";
+// hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import IntakeSubFeatures from "./intake/intake-sub-features";
 import IntakeSubFeaturesUpgrade from "./intake/intake-sub-features-upgrade";

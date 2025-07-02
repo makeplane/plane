@@ -2,18 +2,22 @@ import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IChartResponse, TChartData, TCycleGroups, TScatterPointItem } from "@plane/types";
-import { ICycleProgressData } from "@plane/types/src/analytics-extended";
+import { ICycleProgressData, IChartResponse, TChartData, TCycleGroups } from "@plane/types";
 import { CYCLE_GROUP_COLORS, CYCLE_GROUP_I18N_LABELS } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
+// components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
 import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
+// hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
+// local components
 import ModulesCyclesTooltip, { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
 
 const analyticsService = new AnalyticsService();

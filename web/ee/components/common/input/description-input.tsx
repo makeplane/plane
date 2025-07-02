@@ -7,8 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorReadOnlyRefApi, EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TNameDescriptionLoader } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components

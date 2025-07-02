@@ -4,13 +4,11 @@ import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemTemplateForm } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TWorkItemTemplateForm } from "@plane/types";
 import { Input } from "@plane/ui";
-// components
 import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
+// components
 import { RichTextEditor } from "@/components/editor";
-// helpers
 // hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks

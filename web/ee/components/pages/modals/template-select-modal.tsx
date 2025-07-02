@@ -6,8 +6,7 @@ import { Combobox } from "@headlessui/react";
 import { EditorTitleRefApi, getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
-import { TPageTemplate } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TPageTemplate } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

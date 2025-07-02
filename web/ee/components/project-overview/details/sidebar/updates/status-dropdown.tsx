@@ -3,7 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Rocket, TriangleAlert, CircleAlert } from "lucide-react";
-import { EUpdateStatus } from "@plane/types/src/enums";
+// plane imports
+import { EUpdateStatus } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 

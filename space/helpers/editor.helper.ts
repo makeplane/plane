@@ -27,16 +27,19 @@ type TArgs = {
 export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "workspaceId">): TReadOnlyFileHandler => {
   const { anchor, workspaceId } = args;
 
+  const getAssetSrc = async (path: string) => {
+    if (!path) return "";
+    if (path?.startsWith("http")) {
+      return path;
+    } else {
+      return getEditorAssetSrc(anchor, path) ?? "";
+    }
+  };
+
   return {
     checkIfAssetExists: async () => true,
-    getAssetSrc: async (path) => {
-      if (!path) return "";
-      if (path?.startsWith("http")) {
-        return path;
-      } else {
-        return getEditorAssetSrc(anchor, path) ?? "";
-      }
-    },
+    getAssetDownloadSrc: getAssetSrc,
+    getAssetSrc: getAssetSrc,
     restore: async (src: string) => {
       if (src?.startsWith("http")) {
         await sitesFileService.restoreOldEditorAsset(workspaceId, src);

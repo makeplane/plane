@@ -1,25 +1,18 @@
-import { useMemo, FC, useCallback } from "react";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { download, generateCsv } from "export-to-csv";
+import { useMemo } from "react";
+import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase, UserRound } from "lucide-react";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { WorkItemInsightColumns, AnalyticsTableDataMap } from "@plane/types";
-// plane web components
-import { UserInsightColumns } from "@plane/types/src/analytics-extended";
-import { Avatar } from "@plane/ui";
-import { getFileURL } from "@plane/utils";
+import { UserInsightColumns } from "@plane/types";
+// components
 import { InsightTable } from "@/components/analytics/insight-table";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
-import { useProject } from "@/hooks/store/use-project";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
 import { UserAvatarName } from "../user-avatar-name";
-// plane web components
 
 const analyticsService = new AnalyticsService();
 

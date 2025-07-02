@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { EUpdateStatus } from "@plane/types/src/enums";
+import { EUpdateStatus } from "@plane/types";
 import { InitiativesUpdateService } from "@/plane-web/services";
 
 const initiativeUpdateService = new InitiativesUpdateService();

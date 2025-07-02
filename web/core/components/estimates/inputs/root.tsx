@@ -1,6 +1,5 @@
 import { FC } from "react";
-import { TEstimateSystemKeys } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
+import { EEstimateSystem, TEstimateSystemKeys } from "@plane/types";
 // components
 import { EstimateNumberInput, EstimateTextInput } from "@/components/estimates/inputs";
 import { EstimateTimeInput } from "@/plane-web/components/estimates/inputs";

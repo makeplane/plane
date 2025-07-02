@@ -2,8 +2,7 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { DocumentEditorWithRef, TExtensions } from "@plane/editor";
-import { TSearchEntityRequestPayload } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TSearchEntityRequestPayload } from "@plane/types";
 import { generateRandomColor, hslToHex } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
