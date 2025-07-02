@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
-import { TCommentsOperations, TIssueActivity, TIssueComment } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TCommentsOperations, TIssueComment } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 import { useEditorAsset, useIssueDetail, useMember, useUser } from "@/hooks/store";

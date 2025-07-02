@@ -1,9 +1,10 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ES2015",
+    "moduleResolution": "Bundler",
     "lib": ["ES2015"],
+    "target": "ES2015",
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
@@ -16,6 +17,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "inlineSources": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "sourceRoot": "/"
   },
   "include": ["src/**/*.ts", "tsup.config.ts"],

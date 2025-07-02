@@ -1,5 +1,4 @@
-import { TEstimateSystemKeys } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
+import { TEstimateSystemKeys, EEstimateSystem } from "@plane/types";
 
 export const isEstimateSystemEnabled = (key: TEstimateSystemKeys) => {
   switch (key) {
