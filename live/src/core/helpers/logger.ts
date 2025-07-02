@@ -1,4 +1,5 @@
 import { pinoHttp } from "pino-http";
+import { Logger } from "pino";
 
 const transport = {
   target: "pino-pretty",
@@ -35,4 +36,4 @@ export const logger = pinoHttp({
   },
 });
 
-export const manualLogger = logger.logger;
+export const manualLogger: Logger = logger.logger;

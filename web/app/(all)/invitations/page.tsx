@@ -9,7 +9,7 @@ import { useTheme } from "next-themes";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE, MEMBER_ACCEPTED, EUserPermissions } from "@plane/constants";
+import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -86,7 +86,7 @@ const UserInvitationsPage = observer(() => {
         const invitation = invitations?.find((i) => i.id === firstInviteId);
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
         joinWorkspaceMetricGroup(redirectWorkspace?.id);
-        captureEvent(MEMBER_ACCEPTED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.accept, {
           member_id: invitation?.id,
           // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           role: getUserRole((invitation?.role as unknown as EUserPermissions)!),
@@ -112,7 +112,7 @@ const UserInvitationsPage = observer(() => {
           });
       })
       .catch(() => {
-        captureEvent(MEMBER_ACCEPTED, {
+        captureEvent(MEMBER_TRACKER_EVENTS.accept, {
           project_id: undefined,
           accepted_from: "App",
           state: "FAILED",

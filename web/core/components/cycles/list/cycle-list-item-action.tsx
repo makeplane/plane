@@ -6,13 +6,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Eye, Users, ArrowRight, CalendarDays } from "lucide-react";
 // types
-import {
-  CYCLE_FAVORITED,
-  CYCLE_UNFAVORITED,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-} from "@plane/constants";
+import { CYCLE_TRACKER_EVENTS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { ICycle, TCycleGroups } from "@plane/types";
@@ -62,7 +56,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const { addCycleToFavorites, removeCycleFromFavorites, updateCycleDetails } = useCycle();
+  const { addCycleToFavorites, removeCycleFromFavorites } = useCycle();
   const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
@@ -75,7 +69,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
   const { getUserDetails } = useMember();
 
   // form
-  const { control, reset, getValues } = useForm({
+  const { reset } = useForm({
     defaultValues,
   });
 
@@ -107,7 +101,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
     const addToFavoritePromise = addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycleId).then(
       () => {
         if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-        captureEvent(CYCLE_FAVORITED, {
+        captureEvent(CYCLE_TRACKER_EVENTS.favorite, {
           cycle_id: cycleId,
           element: "List layout",
           state: "SUCCESS",
@@ -137,7 +131,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       projectId.toString(),
       cycleId
     ).then(() => {
-      captureEvent(CYCLE_UNFAVORITED, {
+      captureEvent(CYCLE_TRACKER_EVENTS.unfavorite, {
         cycle_id: cycleId,
         element: "List layout",
         state: "SUCCESS",

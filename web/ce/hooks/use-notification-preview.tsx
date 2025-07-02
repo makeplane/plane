@@ -1,5 +1,4 @@
-import { EIssueServiceType } from "@plane/constants";
-import { IWorkItemPeekOverview } from "@plane/types";
+import { EIssueServiceType, IWorkItemPeekOverview } from "@plane/types";
 import { IssuePeekOverview } from "@/components/issues";
 import { useIssueDetail } from "@/hooks/store";
 import { TPeekIssue } from "@/store/issue/issue-details/root.store";

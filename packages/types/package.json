@@ -1,8 +1,8 @@
 {
   "name": "@plane/types",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "license": "AGPL-3.0",
   "private": true,
-  "types": "./src/index.d.ts",
-  "main": "./src/index.d.ts"
+  "types": "./src/index.ts",
+  "main": "./src/index.ts"
 }

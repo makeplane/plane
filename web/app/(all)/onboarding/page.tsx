@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // types
-import { USER_ONBOARDING_COMPLETED } from "@plane/constants";
+import { USER_TRACKER_EVENTS } from "@plane/constants";
 import { TOnboardingSteps, TUserProfile } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -73,7 +73,7 @@ const OnboardingPage = observer(() => {
 
     await finishUserOnboarding()
       .then(() => {
-        captureEvent(USER_ONBOARDING_COMPLETED, {
+        captureEvent(USER_TRACKER_EVENTS.onboarding_complete, {
           email: user.email,
           user_id: user.id,
           status: "SUCCESS",

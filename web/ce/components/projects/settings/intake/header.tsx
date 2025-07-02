@@ -36,7 +36,7 @@ export const ProjectInboxHeader: FC = observer(() => {
   return (
     <Header>
       <Header.LeftItem>
-        <div className="flex items-center gap-4 flex-grow border">
+        <div className="flex items-center gap-4 flex-grow">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
             <CommonProjectBreadcrumbs
               workspaceSlug={workspaceSlug?.toString() ?? ""}

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import Image, { StaticImageData } from "next/image";
 import { X } from "lucide-react";
 // ui
-import { PRODUCT_TOUR_SKIPPED, PRODUCT_TOUR_STARTED } from "@plane/constants";
+import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 // components
 import { TourSidebar } from "@/components/onboarding";
@@ -112,7 +112,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                   <Button
                     variant="primary"
                     onClick={() => {
-                      captureEvent(PRODUCT_TOUR_STARTED);
+                      captureEvent(PRODUCT_TOUR_TRACKER_EVENTS.start);
                       setStep("work-items");
                     }}
                   >
@@ -122,7 +122,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     type="button"
                     className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
                     onClick={() => {
-                      captureEvent(PRODUCT_TOUR_SKIPPED);
+                      captureEvent(PRODUCT_TOUR_TRACKER_EVENTS.skip);
                       onComplete();
                     }}
                   >

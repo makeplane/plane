@@ -1,8 +1,9 @@
 import { FC, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
-import { EIssueFilterType, EIssueServiceType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import {
+  EIssueServiceType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

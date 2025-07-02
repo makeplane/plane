@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { EmptyState } from "@/components/common";
