@@ -26,6 +26,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
 
   const [isUploaded, setIsUploaded] = useState(false);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
+  const [resolvedDownloadSrc, setResolvedDownloadSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
   const [failedToLoadImage, setFailedToLoadImage] = useState(false);
 
@@ -53,12 +54,15 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   useEffect(() => {
     if (!imgNodeSrc) {
       setResolvedSrc(undefined);
+      setResolvedDownloadSrc(undefined);
       return;
     }
 
     const getImageSource = async () => {
       const url = await extension.options.getImageSource?.(imgNodeSrc);
       setResolvedSrc(url);
+      const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
+      setResolvedDownloadSrc(downloadUrl);
     };
     getImageSource();
   }, [imgNodeSrc, extension.options]);
@@ -73,6 +77,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
             setEditorContainer={setEditorContainer}
             setFailedToLoadImage={setFailedToLoadImage}
             src={resolvedSrc}
+            downloadSrc={resolvedDownloadSrc}
             {...props}
           />
         ) : (
