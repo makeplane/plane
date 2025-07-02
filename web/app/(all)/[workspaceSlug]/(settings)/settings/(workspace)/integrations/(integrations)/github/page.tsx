@@ -126,10 +126,10 @@ const GitHubIntegration: FC<{ searchParams?: { error: string } }> = observer(({ 
       {/* header */}
       <GithubHeader />
       {/* integration auth root */}
-      <UserAuthentication />
+      <UserAuthentication isEnterprise={false} />
 
       {/* integration root */}
-      {organization && <IntegrationRoot />}
+      {organization && <IntegrationRoot isEnterprise={false} />}
     </div>
   );
 });

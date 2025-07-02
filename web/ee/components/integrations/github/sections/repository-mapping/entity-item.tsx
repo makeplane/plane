@@ -20,17 +20,18 @@ import { IntegrationsMapping } from "../../../ui/integrations-mapping";
 type TEntityConnectionItem = {
   project: IProject;
   entityConnection: TGithubEntityConnection;
+  isEnterprise: boolean;
 };
 
 export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) => {
   // props
-  const { project, entityConnection } = props;
+  const { project, entityConnection, isEnterprise } = props;
 
   // hooks
   const { resolvedTheme } = useTheme();
   const {
     entity: { deleteEntity },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
@@ -88,7 +89,7 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
         </div>
       </ModalCore>
 
-      <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} />
+      <FormEdit modal={editModal} handleModal={setEditModal} data={entityConnection} isEnterprise={isEnterprise} />
 
       <IntegrationsMapping
         entityName={`${entityConnection?.entity_data?.name} (${entityConnection?.entity_data?.full_name})`}

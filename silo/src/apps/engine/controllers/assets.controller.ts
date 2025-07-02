@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Controller, Get, Post } from "@/lib";
-import { Client } from "@plane/sdk";
-import { env } from "@/env";
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { responseHandler } from "@/helpers/response-handler";
+import { Controller, Get } from "@/lib";
 import { getAPIClient } from "@/services/client";
 
 const apiClient = getAPIClient();
@@ -43,10 +43,7 @@ export class AssetsController {
       const workspaceConnection = workspaceConnections[0];
 
       // Create Plane Client, with the help of the recieved token
-      const planeClient = new Client({
-        baseURL: env.API_BASE_URL,
-        apiToken: credential.target_access_token,
-      });
+      const planeClient = await getPlaneAPIClient(credential, source.toUpperCase() as E_INTEGRATION_KEYS)
 
       // Get the presigned url for the asset
       const asset = await planeClient.assets.getAssetInfo(workspaceConnection.workspace_slug, id);

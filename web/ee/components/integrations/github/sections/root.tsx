@@ -5,8 +5,12 @@ import { observer } from "mobx-react";
 // plane web components
 import { RepositoryMappingRoot } from "@/plane-web/components/integrations/github";
 
-export const IntegrationRoot: FC = observer(() => (
+interface IIntegrationRootProps {
+  isEnterprise: boolean;
+}
+
+export const IntegrationRoot: FC<IIntegrationRootProps> = observer(({ isEnterprise }) => (
   <div className="relative space-y-4">
-    <RepositoryMappingRoot />
+    <RepositoryMappingRoot isEnterprise={isEnterprise} />
   </div>
 ));

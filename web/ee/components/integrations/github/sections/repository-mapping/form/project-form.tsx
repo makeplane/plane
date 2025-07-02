@@ -20,11 +20,12 @@ import GithubLightLogo from "@/public/services/github-light.svg";
 type TProjectForm = {
   value: TProjectMap;
   handleChange: <T extends keyof TProjectMap>(key: T, value: TProjectMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 export const ProjectForm: FC<TProjectForm> = observer((props) => {
   // props
-  const { value, handleChange } = props;
+  const { value, handleChange, isEnterprise } = props;
 
   // hooks
   const { resolvedTheme } = useTheme();
@@ -33,7 +34,7 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
     projectIdsByWorkspaceSlug,
     getProjectById,
     data: { githubRepositoryIds, githubRepositoryById },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
 
   // derived values
   const githubLogo = resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo;

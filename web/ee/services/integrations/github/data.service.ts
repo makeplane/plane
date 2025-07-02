@@ -6,9 +6,9 @@ export class GithubDataService {
   protected baseURL: string;
   private axiosInstance: AxiosInstance;
 
-  constructor(baseURL: string) {
-    this.baseURL = baseURL;
-    this.axiosInstance = axios.create({ baseURL, withCredentials: true });
+  constructor(baseURL: string, isEnterprise: boolean = false) {
+    this.baseURL = `${baseURL}/api/${isEnterprise ? "github-enterprise" : "github"}`;
+    this.axiosInstance = axios.create({ baseURL: this.baseURL, withCredentials: true });
   }
 
   /**
@@ -18,7 +18,7 @@ export class GithubDataService {
    */
   fetchGithubRepositories = async (workspaceId: string): Promise<TGithubRepository[] | undefined | undefined> =>
     await this.axiosInstance
-      .get(`/api/github/${workspaceId}/repos`)
+      .get(`/${workspaceId}/repos`)
       .then((res) => res.data)
       .catch((error) => {
         throw error?.response?.data;

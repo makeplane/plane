@@ -6,12 +6,12 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 // plane web services
+import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubEntityService } from "@/plane-web/services/integrations/github";
 // plane web store
 import { IGithubStore } from "@/plane-web/store/integrations";
 // plane web types
 import { TGithubEntityConnection } from "@/plane-web/types/integrations";
-import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 
 export interface IGithubEntityStore {
   // store instances
@@ -36,8 +36,9 @@ export class GithubEntityStore implements IGithubEntityStore {
   entityMap: Record<string, Record<string, Record<string, TGithubEntityConnection>>> = {}; // workspaceId -> workspaceConnectionId -> entityId -> entity
   // service
   private service: GithubEntityService;
+  private isEnterprise: boolean;
 
-  constructor(protected store: IGithubStore) {
+  constructor(protected store: IGithubStore, isEnterprise: boolean = false) {
     makeObservable(this, {
       // observables
       entityMap: observable,
@@ -51,6 +52,7 @@ export class GithubEntityStore implements IGithubEntityStore {
       deleteEntity: action,
     });
 
+    this.isEnterprise = isEnterprise;
     this.service = new GithubEntityService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
   }
 
@@ -158,7 +160,7 @@ export class GithubEntityStore implements IGithubEntityStore {
         project_id: entity.project_id,
         workspace_connection_id: workspaceConnectionId,
         entity_id: entity.entity_id,
-        entity_type: E_INTEGRATION_KEYS.GITHUB,
+        entity_type: this.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
         entity_slug: githubRepo.full_name,
         entity_data: githubRepo,
         config: entity.config,

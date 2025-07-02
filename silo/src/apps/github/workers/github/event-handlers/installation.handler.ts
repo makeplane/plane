@@ -1,4 +1,4 @@
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { GithubWebhookPayload } from "@plane/etl/github";
 import { E_GITHUB_DISCONNECT_SOURCE } from "@/apps/github/types";
 import { getAPIClient } from "@/services/client";
@@ -6,10 +6,14 @@ import { planeOAuthService } from "@/services/oauth/auth";
 
 const apiClient = getAPIClient();
 
+type GithubWebhookInstallationDeleted = GithubWebhookPayload["webhook-installation-deleted"] & {
+  isEnterprise: boolean;
+};
+
 export const handleInstallationEvents = async (action: string, data: unknown): Promise<boolean> => {
   switch (action) {
     case "deleted": {
-      await handleInstallationDeletion(data as unknown as GithubWebhookPayload["webhook-installation-deleted"]);
+      await handleInstallationDeletion(data as unknown as GithubWebhookInstallationDeleted);
       return true;
     }
     default: {
@@ -18,11 +22,12 @@ export const handleInstallationEvents = async (action: string, data: unknown): P
   }
 };
 
-export const handleInstallationDeletion = async (data: GithubWebhookPayload["webhook-installation-deleted"]) => {
+export const handleInstallationDeletion = async (data: GithubWebhookInstallationDeleted) => {
   const installationId = data.installation.id;
+  const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
 
   const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    source: E_INTEGRATION_KEYS.GITHUB,
+    source: ghIntegrationKey,
     source_access_token: installationId.toString(),
   });
 
@@ -30,7 +35,7 @@ export const handleInstallationDeletion = async (data: GithubWebhookPayload["web
     // Get the connection by it's credential id
     const credential = credentials[0];
     const connections = await apiClient.workspaceConnection.listWorkspaceConnections({
-      connection_type: E_INTEGRATION_KEYS.GITHUB,
+      connection_type: ghIntegrationKey,
       credential_id: credential.id,
     });
 
@@ -48,7 +53,7 @@ export const handleInstallationDeletion = async (data: GithubWebhookPayload["web
     await planeOAuthService.deleteTokenFromCache(credential);
     // delete the associated users token
     const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-      source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+      source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
       workspace_id: credential.workspace_id,
     });
 

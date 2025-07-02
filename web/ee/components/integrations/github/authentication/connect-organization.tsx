@@ -4,11 +4,16 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { Button, Loader } from "@plane/ui";
+import { Button, EModalWidth, ModalCore, Loader } from "@plane/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
+import { GithubEnterpriseServerAppForm } from "./server-app-form";
 
-export const ConnectOrganization: FC = observer(() => {
+interface IConnectOrganizationProps {
+  isEnterprise: boolean;
+}
+
+export const ConnectOrganization: FC<IConnectOrganizationProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
@@ -19,16 +24,23 @@ export const ConnectOrganization: FC = observer(() => {
       connectWorkspaceConnection,
       disconnectWorkspaceConnection,
     },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
 
   // states
   const [isConnectionSetup, setIsConnectionSetup] = useState<boolean>(false);
+  const [isServerAppFormOpen, setIsServerAppFormOpen] = useState<boolean>(false);
 
   // derived values
   const workspaceId = workspace?.id || undefined;
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
   const workspaceConnection = workspaceConnectionId ? workspaceConnectionById(workspaceConnectionId) : undefined;
   const { t } = useTranslation();
+
+  // after server app form is submitted, connect the organization
+  const handleServerAppFormSubmitSuccess = async () => {
+    await handleConnectOrganization();
+    setIsServerAppFormOpen(false);
+  };
 
   // handlers
   const handleConnectOrganization = async () => {
@@ -55,8 +67,10 @@ export const ConnectOrganization: FC = observer(() => {
   };
 
   const handleGithubAuth = () => {
-    if (!workspaceConnectionId) handleConnectOrganization();
-    else handleDisconnectOrganization();
+    if (!workspaceConnectionId) {
+      if (isEnterprise) setIsServerAppFormOpen(true);
+      else handleConnectOrganization();
+    } else handleDisconnectOrganization();
   };
 
   // fetching github workspace connection connection
@@ -75,6 +89,12 @@ export const ConnectOrganization: FC = observer(() => {
 
   return (
     <div className="relative flex justify-between items-center gap-4 p-4 border border-custom-border-100 rounded">
+      <ModalCore isOpen={isServerAppFormOpen} handleClose={() => setIsServerAppFormOpen(false)} width={EModalWidth.XXL}>
+        <GithubEnterpriseServerAppForm
+          handleFormSubmitSuccess={handleServerAppFormSubmitSuccess}
+          handleClose={() => setIsServerAppFormOpen(false)}
+        />
+      </ModalCore>
       {workspaceConnection ? (
         <div className="w-full relative flex items-center gap-4">
           <div className="flex-shrink-0 w-11 h-11 rounded overflow-hidden relative">

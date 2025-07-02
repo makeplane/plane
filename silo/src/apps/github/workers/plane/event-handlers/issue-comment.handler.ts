@@ -1,12 +1,11 @@
-import { E_ENTITY_CONNECTION_KEYS, E_INTEGRATION_KEYS } from "@plane/etl/core";
-import { createGithubService, GithubService, ContentParser } from "@plane/etl/github";
+import { E_INTEGRATION_ENTITY_CONNECTION_MAP, E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { GithubService, ContentParser } from "@plane/etl/github";
 import { ExIssue, ExIssueComment, PlaneWebhookPayload } from "@plane/sdk";
-import { TWorkspaceCredential } from "@plane/types";
+import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { getGithubService, getGithubUserService } from "@/apps/github/helpers";
 import { GithubEntityConnection, GithubWorkspaceConnection } from "@/apps/github/types";
-import { env } from "@/env";
 import { getConnectionDetailsForPlane } from "@/helpers/connection";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHeaders } from "@/types";
@@ -23,7 +22,7 @@ export const handleIssueCommentWebhook = async (
 ) => {
   // Store a key associated with the data in the store
   // If the key is present, then we need to requeue all that task and process them again
-  if (payload && payload && payload.id) {
+  if (payload && payload.id) {
     // @ts-ignore
     const exist = await store.get(`silo:comment:${payload.id}`);
     if (exist) {
@@ -40,18 +39,20 @@ export const handleIssueCommentWebhook = async (
 
 const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => {
   try {
+    const ghIntegrationKey = payload.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
     const { workspaceConnection, entityConnection, credentials } = await getConnectionDetailsForPlane(
       payload.workspace,
-      payload.project
+      payload.project,
+      payload.isEnterprise
     );
 
-    if(!workspaceConnection.target_hostname || !credentials.target_access_token) {
+    if (!workspaceConnection.target_hostname || !credentials.target_access_token) {
       logger.error("Target hostname or target access token not found");
-      return
+      return;
     }
 
     // Get the Plane API client
-    const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.GITHUB);
+    const planeClient = await getPlaneAPIClient(credentials, ghIntegrationKey);
 
     // Get the issue associated with the comment
     const issue = await planeClient.issue.getIssue(
@@ -64,15 +65,15 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       return logger.info(`Issue ${payload.issue} not synced with GitHub, aborting comment sync`);
     }
 
-    if(!credentials.source_access_token) {
+    if (!credentials.source_access_token) {
       logger.error("Source access token not found");
       return;
     }
 
-    const githubService = createGithubService(
-      env.GITHUB_APP_ID,
-      env.GITHUB_PRIVATE_KEY,
-      credentials.source_access_token
+    const githubService = getGithubService(
+      workspaceConnection as TGithubWorkspaceConnection,
+      credentials.source_access_token,
+      payload.isEnterprise
     );
 
     const comment = await planeClient.issueComment.getComment(
@@ -88,14 +89,15 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
       comment,
       workspaceConnection,
       entityConnection,
-      credentials
+      credentials,
+      ghIntegrationKey
     );
     await store.set(`silo:comment:${githubComment.data.id}`, "true");
 
     if (
       !comment.external_id ||
       !comment.external_source ||
-      (comment.external_source && comment.external_source !== E_INTEGRATION_KEYS.GITHUB)
+      (comment.external_source && comment.external_source !== ghIntegrationKey)
     ) {
       await planeClient.issueComment.update(
         entityConnection.workspace_slug,
@@ -104,7 +106,7 @@ const handleCommentSync = async (store: Store, payload: PlaneWebhookPayload) => 
         payload.id,
         {
           external_id: githubComment.data.id.toString(),
-          external_source: E_INTEGRATION_KEYS.GITHUB,
+          external_source: ghIntegrationKey,
         }
       );
     }
@@ -119,10 +121,12 @@ const createOrUpdateGitHubComment = async (
   comment: ExIssueComment,
   workspaceConnection: GithubWorkspaceConnection,
   entityConnection: GithubEntityConnection,
-  credentials: TWorkspaceCredential
+  credentials: TWorkspaceCredential,
+  ghIntegrationKey: E_INTEGRATION_KEYS
 ) => {
   const owner = (entityConnection.entity_slug ?? "").split("/")[0];
   const repo = (entityConnection.entity_slug ?? "").split("/")[1];
+  const isEnterprise = ghIntegrationKey === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE;
 
   const assetImagePrefix = imagePrefix + workspaceConnection.workspace_id + "/" + credentials.user_id;
 
@@ -131,22 +135,23 @@ const createOrUpdateGitHubComment = async (
   const markdown = ContentParser.toMarkdown(cleanHtml, assetImagePrefix);
 
   // Find the credentials for the comment creator
-  const userCredentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    source: E_ENTITY_CONNECTION_KEYS.GITHUB_USER,
+  const [userCredential] = await apiClient.workspaceCredential.listWorkspaceCredentials({
+    source: E_INTEGRATION_ENTITY_CONNECTION_MAP[ghIntegrationKey],
     workspace_id: entityConnection.workspace_id,
     user_id: comment.updated_by || comment.created_by,
   });
 
   let userGithubService = githubService;
 
-  if (userCredentials && userCredentials.length !== 0 && userCredentials[0].source_access_token) {
-    userGithubService = new GithubService({
-      forUser: true,
-      accessToken: userCredentials[0].source_access_token,
-    });
+  if (userCredential?.source_access_token) {
+    userGithubService = getGithubUserService(
+      workspaceConnection as TGithubWorkspaceConnection,
+      userCredential.source_access_token,
+      isEnterprise
+    );
   }
 
-  if (comment.external_id && comment.external_source && comment.external_source === E_INTEGRATION_KEYS.GITHUB) {
+  if (comment.external_id && comment.external_source && comment.external_source === ghIntegrationKey) {
     return userGithubService.updateIssueComment(owner, repo, Number(comment.external_id), markdown);
   } else {
     return userGithubService.createIssueComment(owner, repo, Number(issue.external_id), markdown);

@@ -1,10 +1,9 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import { GithubPullRequestDedupPayload } from "@plane/etl/github";
+import { TGithubWorkspaceConnection } from "@plane/types";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubIntegrationService } from "@/apps/github/services/github.service";
-import {
-  PullRequestWebhookActions
-} from "@/apps/github/types";
+import { PullRequestWebhookActions } from "@/apps/github/types";
 import { env } from "@/env";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { getPlaneAppDetails } from "@/helpers/plane-app-details";
@@ -20,8 +19,9 @@ export const handlePullRequestEvents = async (action: PullRequestWebhookActions,
 };
 
 const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
+  const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
   const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    source: E_INTEGRATION_KEYS.GITHUB,
+    source: ghIntegrationKey,
     source_access_token: data.installationId.toString(),
   });
 
@@ -48,19 +48,38 @@ const handlePullRequestOpened = async (data: GithubPullRequestDedupPayload) => {
     credentials: planeCredentials as TServiceCredentials,
     installationId: data.installationId.toString(),
     repositoryId: data.repositoryId.toString(),
+    isEnterprise: data.isEnterprise,
   });
 
   // Get the Plane API client
-  const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
+  const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
 
-  const pullRequestBehaviour = new PullRequestBehaviour(
-    E_INTEGRATION_KEYS.GITHUB,
-    workspaceConnection.workspace_slug,
-    new GithubIntegrationService({
+  // Create the pull request service based on the type of integration
+  let pullRequestService: GithubIntegrationService;
+  if (data.isEnterprise) {
+    const appConfig = (workspaceConnection as TGithubWorkspaceConnection)?.connection_data?.appConfig;
+    if (!appConfig) {
+      throw new Error("GitHub Enterprise app config not found");
+    }
+    pullRequestService = new GithubIntegrationService({
+      appId: appConfig.appId,
+      privateKey: appConfig.privateKey,
+      installationId: data.installationId.toString(),
+      baseGithubUrl: appConfig.baseUrl,
+    });
+  } else {
+    pullRequestService = new GithubIntegrationService({
       appId: env.GITHUB_APP_ID!,
       privateKey: env.GITHUB_PRIVATE_KEY!,
       installationId: data.installationId.toString(),
-    }),
+    });
+  }
+
+  // Create the pull request behaviour
+  const pullRequestBehaviour = new PullRequestBehaviour(
+    E_INTEGRATION_KEYS.GITHUB,
+    workspaceConnection.workspace_slug,
+    pullRequestService,
     planeClient,
     allEntityConnectionsForRepository
   );

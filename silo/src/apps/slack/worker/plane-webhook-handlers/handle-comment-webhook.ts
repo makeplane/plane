@@ -21,16 +21,14 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     payload: data,
   });
 
-  const details = await getConnectionDetailsForIssue(
-    {
-      id: data.data.issue,
-      workspace: data.data.workspace,
-      project: data.data.project,
-      issue: data.data.issue,
-      event: payload.event,
-    },
-    data.data.created_by
-  );
+  const details = await getConnectionDetailsForIssue({
+    id: data.data.issue,
+    workspace: data.data.workspace,
+    project: data.data.project,
+    issue: data.data.issue,
+    event: payload.event,
+    isEnterprise: false,
+  }, data.data.created_by);
 
   if (!details) {
     logger.error("No details found for issue comment webhook", {

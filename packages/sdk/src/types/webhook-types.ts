@@ -93,6 +93,7 @@ export type PlaneWebhookPayload = {
   workspace: string;
   project: string;
   issue: string;
+  isEnterprise: boolean;
 };
 
 export type PlaneIssueWebhookPayload = PlaneWebhookPayload;

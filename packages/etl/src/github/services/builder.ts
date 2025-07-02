@@ -1,14 +1,29 @@
 import { GithubService } from "./api.service";
-import { GithubAuthService } from "./auth.service";
+import { GithubAuthService, GithubEnterpriseAuthService } from "./auth.service";
 
 export const createGithubAuth = (
   appName: string = "",
   clientId: string = "",
   clientSecret: string = "",
-  callbackUrl: string
+  callbackUrl: string,
+  baseGithubUrl?: string,
+  isEnterprise?: boolean
 ): GithubAuthService => {
   if (!appName || !clientId || !clientSecret) {
     console.error("[GITHUB] App name, client ID and client secret are required");
+  }
+
+  if (isEnterprise) {
+    if (!baseGithubUrl) {
+      throw new Error("Base GitHub URL is required for enterprise");
+    }
+    return new GithubEnterpriseAuthService({
+      appName,
+      clientId,
+      clientSecret,
+      callbackUrl,
+      baseGithubUrl,
+    });
   }
   return new GithubAuthService({
     appName,
@@ -21,7 +36,8 @@ export const createGithubAuth = (
 export const createGithubService = (
   GithubAppId: string | undefined,
   GithubPrivateKey: string | undefined,
-  installationId: string
+  installationId: string,
+  baseGithubUrl?: string
 ): GithubService => {
   if (!GithubAppId || !GithubPrivateKey) {
     throw new Error("GithubAppId and GithubPrivateKey are required");
@@ -31,15 +47,17 @@ export const createGithubService = (
     privateKey: GithubPrivateKey,
     installationId,
     forUser: false,
+    baseGithubUrl,
   });
 };
 
-export const createGithubUserService = (accessToken: string): GithubService => {
+export const createGithubUserService = (accessToken: string, baseGithubUrl?: string): GithubService => {
   if (!accessToken) {
     throw new Error("Access token is required");
   }
   return new GithubService({
     accessToken,
     forUser: true,
+    baseGithubUrl,
   });
 };

@@ -12,11 +12,12 @@ const apiClient = getAPIClient();
 
 export const getConnectionDetailsForPlane = async (
   workspace: string,
-  project: string
+  project: string,
+  isEnterprise: boolean
 ): Promise<PlaneConnectionDetails> => {
   const entityConnectionArray = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: workspace,
-    entity_type: E_INTEGRATION_KEYS.GITHUB,
+    entity_type: isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
     project_id: project,
   });
 

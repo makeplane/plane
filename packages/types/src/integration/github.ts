@@ -56,7 +56,8 @@ export type TGithubWorkspaceConnectionConfig = {
       name: string;
       avatarUrl: string;
     },
-    githubUser: TGithubUserConnectionData
+    githubUser?: TGithubUserConnectionData,
+    integrationUser?: TGithubUserConnectionData
   }[]
 }
 
@@ -84,6 +85,7 @@ export type TGithubWorkspaceConnectionData = {
   site_admin: boolean;
   starred_at?: string | undefined;
   user_view_type?: string | undefined;
+  appConfig?: TGithubAppConfig | undefined;
 } | {
   description?: string | null | undefined;
   html_url: string;
@@ -95,10 +97,21 @@ export type TGithubWorkspaceConnectionData = {
   created_at: string | null;
   updated_at: string | null;
   avatar_url: string;
+  appConfig?: TGithubAppConfig | undefined;
+}
+
+export type TGithubAppConfig = {
+  appId: string;
+  appName: string;
+  baseUrl: string;
+  clientId: string;
+  clientSecret: string;
+  privateKey: string;
+  webhookSecret: string;
 }
 
 // github workspace connection
-export type TGithubWorkspaceConnection = TWorkspaceConnection<TGithubWorkspaceConnectionData, TGithubWorkspaceConnectionConfig>;
+export type TGithubWorkspaceConnection = TWorkspaceConnection<TGithubWorkspaceConnectionConfig, TGithubWorkspaceConnectionData>;
 
 
 // github entity connection

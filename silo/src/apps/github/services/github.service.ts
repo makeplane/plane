@@ -1,4 +1,4 @@
-import { GithubApiProps, GithubService as GithubAPIService, GithubIssueComment } from "@plane/etl/github";
+import { AppAuthParams, createGithubService, GithubApiProps, GithubService as GithubAPIService, GithubIssueComment } from "@plane/etl/github";
 import { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
 
 /**
@@ -11,8 +11,8 @@ export class GithubIntegrationService implements IPullRequestService {
    * Constructor
    * @param params - The parameters
    */
-  constructor(params: GithubApiProps) {
-    this.apiService = new GithubAPIService(params);
+  constructor(params: AppAuthParams) {
+    this.apiService = createGithubService(params.appId, params.privateKey, params.installationId, params.baseGithubUrl);
   }
 
   /**

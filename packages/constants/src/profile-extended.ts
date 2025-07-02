@@ -9,11 +9,12 @@ export const EXTENDED_PROFILE_ACTION_LINKS = {
 
 export enum E_INTEGRATION_KEYS {
   GITHUB = "GITHUB",
+  GITHUB_ENTERPRISE = "GITHUB_ENTERPRISE",
   GITLAB = "GITLAB",
   SLACK = "SLACK",
 }
 
-export type TUserConnection = E_INTEGRATION_KEYS.GITHUB | E_INTEGRATION_KEYS.SLACK;
+export type TUserConnection = E_INTEGRATION_KEYS.GITHUB | E_INTEGRATION_KEYS.SLACK | E_INTEGRATION_KEYS.GITHUB_ENTERPRISE;
 
 export type TPersonalAccountProvider = {
   key: TUserConnection;
@@ -32,6 +33,11 @@ export const USER_CONNECTION_PROVIDERS: Record<TUserConnection, TPersonalAccount
     name: "Slack",
     description:
       "Connect your Slack account to Plane to get the most out of your team collaboration and communication.",
+  },
+  GITHUB_ENTERPRISE: {
+    key: E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
+    name: "GitHub Enterprise",
+    description: "Connect your GitHub Enterprise account to Plane to get the most out of your development workflow.",
   },
 } as const;
 

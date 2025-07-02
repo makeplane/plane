@@ -31,8 +31,9 @@ export class GithubDataStore implements IGithubDataStore {
   githubUsers: Record<string, Record<string, object>> = {}; // organizationId -> githubUserId -> githubUser
   // service
   private service: GithubDataService;
+  private isEnterprise: boolean;
 
-  constructor(protected store: IGithubStore) {
+  constructor(protected store: IGithubStore, isEnterprise: boolean = false) {
     makeObservable(this, {
       // observables
       githubRepositories: observable,
@@ -45,7 +46,8 @@ export class GithubDataStore implements IGithubDataStore {
       fetchGithubUsers: action,
     });
 
-    this.service = new GithubDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.isEnterprise = isEnterprise;
+    this.service = new GithubDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), isEnterprise);
   }
 
   // computed

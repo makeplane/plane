@@ -112,6 +112,12 @@ export const ConnectionMapper = observer(
       auth: { connectGithubUserCredential, disconnectGithubUserCredential },
       fetchExternalApiToken: fetchGithubExternalApiToken,
     } = useGithubIntegration();
+    const {
+      auth: {
+        connectGithubUserCredential: connectGithubEnterpriseUserCredential,
+        disconnectGithubUserCredential: disconnectGithubEnterpriseUserCredential,
+      },
+    } = useGithubIntegration(true);
     const user = useUser();
 
     const { isLoading: isLoadingExternalApiTokens } = useSWR(
@@ -139,6 +145,14 @@ export const ConnectionMapper = observer(
       } else if (source === E_INTEGRATION_KEYS.SLACK) {
         const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
         if (response) window.open(response, "_self");
+      } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
+        const response = await connectGithubEnterpriseUserCredential(
+          selectedWorkspace.id,
+          selectedWorkspace.slug,
+          user.data?.id,
+          true
+        );
+        if (response) window.open(response, "_self");
       }
     };
 
@@ -147,6 +161,8 @@ export const ConnectionMapper = observer(
         await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
       } else if (source === E_INTEGRATION_KEYS.SLACK) {
         await disconnectUser(selectedWorkspace.id);
+      } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
+        await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
       }
 
       setConnections(

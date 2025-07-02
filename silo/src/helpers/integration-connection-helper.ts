@@ -58,7 +58,7 @@ class IntegrationConnectionHelper {
   }: {
     connection_type?: string;
     workspace_id?: string;
-    connection_id: string;
+    connection_id?: string;
   }): Promise<TWorkspaceConnection | null> {
     const connections = await this.apiClient.workspaceConnection.listWorkspaceConnections({
       connection_type,
@@ -288,7 +288,7 @@ class IntegrationConnectionHelper {
   }: {
     workspace_id: string;
     source: string;
-    user_id: string;
+    user_id?: string;
   }): Promise<TWorkspaceCredential[]> {
     return this.apiClient.workspaceCredential.listWorkspaceCredentials({
       workspace_id,

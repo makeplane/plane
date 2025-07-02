@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { env } from "@/env";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Get, Post, useValidateUserAuthentication } from "@/lib";
 import { OAuthController } from "./controller";
@@ -38,15 +39,33 @@ export class OAuthRoutes {
     }
   }
 
+  @Post("/:provider/auth/config-key/:workspaceId")
+  @useValidateUserAuthentication()
+  @enrichIntegrationKey()
+  async getConfigKey(req: Request, res: Response) {
+    try {
+      const { integrationKey, workspaceId } = req.params;
+      const { config } = req.body;
+      const configKey = await this.controller.getConfigKey(integrationKey as E_INTEGRATION_KEYS, workspaceId, config);
+      return res.json({ configKey });
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
   @Post("/:provider/auth/url")
   @useValidateUserAuthentication()
   @enrichIntegrationKey()
   async getAuthURL(req: Request, res: Response) {
     try {
       const { integrationKey } = req.params;
-      const { workspace_id, workspace_slug, plane_api_token, target_host, user_id } = req.body;
+      const { workspace_id, workspace_slug, user_id, plane_api_token, plane_app_installation_id, config_key } = req.body;
 
-      if (!workspace_id || !workspace_slug || !plane_api_token || !target_host || !user_id) {
+      if (!workspace_id || !workspace_slug || !user_id) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      if (!plane_api_token && !plane_app_installation_id) {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
@@ -54,11 +73,42 @@ export class OAuthRoutes {
         workspace_id,
         workspace_slug,
         plane_api_token,
-        target_host,
+        target_host: env.API_BASE_URL,
         user_id,
+        plane_app_installation_id,
+        config_key,
       });
 
-      res.json({ url: authUrl });
+      res.send(authUrl);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Post("/:provider/auth/user/url")
+  @useValidateUserAuthentication()
+  @enrichIntegrationKey()
+  async getUserAuthUrl(req: Request, res: Response) {
+    try {
+      const { integrationKey } = req.params;
+      const { workspace_id, workspace_slug, user_id, plane_api_token, profile_redirect } = req.body;
+
+      if (!workspace_id || !workspace_slug || !user_id) {
+        return res.status(400).send({
+          message: "Bad Request, expected workspace_id, workspace_slug, user_id and plane_api_token to be present.",
+        });
+      }
+
+      const authUrl = await this.controller.getUserAuthUrl(integrationKey as E_INTEGRATION_KEYS, {
+        workspace_id,
+        workspace_slug,
+        user_id,
+        plane_api_token,
+        profile_redirect,
+        target_host: env.API_BASE_URL,
+      });
+
+      res.send(authUrl);
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -69,20 +119,15 @@ export class OAuthRoutes {
   async authCallback(req: Request, res: Response) {
     try {
       const { integrationKey } = req.params;
-      const { code, state: stateQuery, app_installation_id: plane_app_installation_id } = req.query;
-      let state = stateQuery as string;
+      const { code, state, ...additionalParams } = req.query;
 
-      // If the state is not provided, use the plane_app_installation_id
-      // this is used for plane's internal app installation flow
-      if (!state && plane_app_installation_id) {
-        state = plane_app_installation_id as string;
-      }
-
-      if (!code || !state) {
-        return res.status(400).json({ message: "Missing required parameters" });
-      }
-
-      return this.controller.handleCallback(integrationKey as E_INTEGRATION_KEYS, code as string, state as string, res);
+      return this.controller.handleCallback(
+        integrationKey as E_INTEGRATION_KEYS,
+        code as string,
+        state as string,
+        (additionalParams || {}) as Record<string, string>,
+        res
+      );
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -103,6 +148,50 @@ export class OAuthRoutes {
         integrationKey as E_INTEGRATION_KEYS,
         code as string,
         state as string,
+        res
+      );
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/:provider/auth/user/callback")
+  @enrichIntegrationKey()
+  async preUserCallback(req: Request, res: Response) {
+    try {
+      const { integrationKey } = req.params;
+      const { code, state } = req.query;
+
+      if (!code || !state) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      await this.controller.handleRedirectToPlaneOAuth(
+        integrationKey as E_INTEGRATION_KEYS,
+        code as string,
+        state as string,
+        res
+      );
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/:provider/plane-oauth/callback")
+  @enrichIntegrationKey()
+  async postUserCallback(req: Request, res: Response) {
+    try {
+      const { integrationKey } = req.params;
+      const { code: planeOAuthCode, state: encodedState } = req.query;
+
+      if (!planeOAuthCode || !encodedState) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      await this.controller.handlePlaneOAuthCallback(
+        integrationKey as E_INTEGRATION_KEYS,
+        planeOAuthCode as string,
+        encodedState as string,
         res
       );
     } catch (error) {
@@ -135,6 +224,20 @@ export class OAuthRoutes {
       const { integrationKey, workspaceId, userId } = req.params;
       await this.controller.disconnectUser(integrationKey as E_INTEGRATION_KEYS, workspaceId, userId);
       return res.sendStatus(200);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/:provider/plane-app-details")
+  @enrichIntegrationKey()
+  async getPlaneAppDetails(req: Request, res: Response) {
+    try {
+      const { integrationKey } = req.params;
+      const { planeAppId, planeAppClientId } = await this.controller.getPlaneAppDetails(
+        integrationKey as E_INTEGRATION_KEYS
+      );
+      return res.json({ appId: planeAppId, clientId: planeAppClientId });
     } catch (error) {
       return responseHandler(res, 500, error);
     }

@@ -12,3 +12,6 @@ export enum E_STATE_MAP_KEYS {
   MR_MERGED = "MR_MERGED",
   MR_CLOSED = "MR_CLOSED",
 }
+
+export const GITHUB_LABEL = "github";
+export const PLANE_LABEL = "plane";

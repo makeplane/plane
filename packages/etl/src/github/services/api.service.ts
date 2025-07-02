@@ -5,15 +5,17 @@ import { GithubApiProps, GithubIssue } from "../types";
 // Service connected with octokit and facilitating github data
 export class GithubService {
   client: Octokit;
+  baseGithubUrl: string;
 
   constructor(params: GithubApiProps) {
+    this.baseGithubUrl = params.baseGithubUrl ? `${params.baseGithubUrl}/api/v3` : "https://api.github.com";
     if (params.forUser) {
       this.client = new Octokit({
         auth: params.accessToken,
+        baseUrl: this.baseGithubUrl,
       });
     } else {
       const decodedKey = Buffer.from(params.privateKey, "base64").toString("ascii");
-
       this.client = new Octokit({
         authStrategy: createAppAuth,
         auth: {
@@ -21,6 +23,7 @@ export class GithubService {
           privateKey: decodedKey,
           installationId: params.installationId,
         },
+        baseUrl: this.baseGithubUrl,
       });
     }
   }
@@ -202,7 +205,7 @@ export class GithubService {
     const variables = {
       owner,
       repo,
-      number: issueNumber
+      number: issueNumber,
     };
 
     const response = await this.client.graphql<{
@@ -221,8 +224,8 @@ export class GithubService {
       repo,
       comment_id: commentId,
       mediaType: {
-        format: "html"
-      }
+        format: "html",
+      },
     });
 
     return response.data.body_html || null;

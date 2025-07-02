@@ -28,7 +28,11 @@ export const stateMapInit: TStateMap = {
   [E_STATE_MAP_KEYS.MR_CLOSED]: undefined,
 };
 
-export const RepositoryMappingRoot: FC = observer(() => {
+interface IRepositoryMappingRootProps {
+  isEnterprise: boolean;
+}
+
+export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
@@ -37,7 +41,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
     auth: { workspaceConnectionIds },
     data: { fetchGithubRepositories },
     entity: { entityIds, entityById, fetchEntities },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
   const { t } = useTranslation();
 
   // states
@@ -116,7 +120,12 @@ export const RepositoryMappingRoot: FC = observer(() => {
               <div key={index}>
                 <div className="space-y-4">
                   {(entityConnection[projectId] || []).map((connection, index) => (
-                    <EntityConnectionItem key={index} project={project} entityConnection={connection} />
+                    <EntityConnectionItem
+                      key={index}
+                      project={project}
+                      entityConnection={connection}
+                      isEnterprise={isEnterprise}
+                    />
                   ))}
                 </div>
               </div>
@@ -125,7 +134,7 @@ export const RepositoryMappingRoot: FC = observer(() => {
         </div>
       )}
 
-      <FormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} />
+      <FormCreate modal={modalCreateOpen} handleModal={setModalCreateOpen} isEnterprise={isEnterprise} />
     </div>
   );
 });

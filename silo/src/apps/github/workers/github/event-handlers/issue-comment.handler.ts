@@ -1,18 +1,17 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
 import {
-  createGithubService,
-  GithubService,
   GithubWebhookPayload,
   transformGitHubComment,
   WebhookGitHubComment,
 } from "@plane/etl/github";
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
+import { TGithubWorkspaceConnection } from "@plane/types";
+import { getGithubService } from "@/apps/github/helpers";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { GithubEntityConnection } from "@/apps/github/types";
 
 import { env } from "@/env";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
@@ -21,6 +20,10 @@ import { shouldSync } from "./issue.handler";
 const apiClient = getAPIClient();
 
 export type GithubCommentAction = "created" | "edited" | "deleted";
+
+export type GithubCommentWebhookPayload = GithubWebhookPayload["webhook-issue-comment-created" | "webhook-issue-comment-edited"] & {
+  isEnterprise: boolean;
+};
 
 export const handleIssueComment = async (store: Store, action: GithubCommentAction, data: unknown) => {
   // @ts-expect-error
@@ -39,7 +42,7 @@ export const handleIssueComment = async (store: Store, action: GithubCommentActi
   await syncCommentWithPlane(
     store,
     action,
-    data as GithubWebhookPayload["webhook-issue-comment-created" | "webhook-issue-comment-edited"]
+    data as GithubCommentWebhookPayload
   );
 
   return true;
@@ -48,13 +51,14 @@ export const handleIssueComment = async (store: Store, action: GithubCommentActi
 export const syncCommentWithPlane = async (
   store: Store,
   action: GithubCommentAction,
-  data: GithubWebhookPayload["webhook-issue-comment-created" | "webhook-issue-comment-edited"]
+  data: GithubCommentWebhookPayload
 ) => {
   if (!data.installation || !shouldSync(data.issue.labels) || data.comment.user?.type !== "User") {
     return;
   }
+  const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
   const [planeCredentials] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-    source: E_INTEGRATION_KEYS.GITHUB,
+    source: ghIntegrationKey,
     source_access_token: data.installation.id.toString(),
   });
   const accountId = data.organization ? data.organization.id : data.repository.owner.id;
@@ -64,6 +68,7 @@ export const syncCommentWithPlane = async (
     credentials: planeCredentials as TServiceCredentials,
     installationId: data.installation.id.toString(),
     repositoryId: data.repository.id.toString(),
+    isEnterprise: data.isEnterprise,
   });
 
   if (!workspaceConnection.target_hostname) {
@@ -72,9 +77,9 @@ export const syncCommentWithPlane = async (
 
   if (!entityConnection) return;
 
-  const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
+  const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
 
-  const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installation.id.toString());
+  const ghService = getGithubService(workspaceConnection as TGithubWorkspaceConnection, data.installation.id.toString(), data.isEnterprise);
   const commentHtml = await ghService.getCommentHtml(
     data.repository.owner.login,
     data.repository.name,
@@ -82,7 +87,7 @@ export const syncCommentWithPlane = async (
     data.comment.id
   );
 
-  const issue = await getPlaneIssue(planeClient, entityConnection, data.issue.number.toString());
+  const issue = await getPlaneIssue(planeClient, entityConnection, data.issue.number.toString(), ghIntegrationKey);
 
   const userMap: Record<string, string> = Object.fromEntries(
     workspaceConnection.config.userMap.map((obj: any) => [obj.githubUser.login, obj.planeUser.id])
@@ -101,14 +106,14 @@ export const syncCommentWithPlane = async (
       entityConnection.project_id ?? "",
       issue.id,
       data.comment.id.toString(),
-      E_INTEGRATION_KEYS.GITHUB
+      ghIntegrationKey
     );
   } catch (error) { }
 
   const planeComment = await transformGitHubComment(
     data.comment as unknown as WebhookGitHubComment,
     commentHtml ?? "<p></p>",
-    encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github"),
+    encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + `/api/assets/${ghIntegrationKey.toLowerCase()}`),
     issue.id,
     data.repository.full_name,
     workspaceConnection.workspace_slug,
@@ -140,13 +145,13 @@ export const syncCommentWithPlane = async (
   }
 };
 
-const getPlaneIssue = async (planeClient: PlaneClient, entityConnection: GithubEntityConnection, issueId: string) => {
+const getPlaneIssue = async (planeClient: PlaneClient, entityConnection: GithubEntityConnection, issueId: string, ghIntegrationKey: string) => {
   try {
     return await planeClient.issue.getIssueWithExternalId(
       entityConnection.workspace_slug,
       entityConnection.project_id ?? "",
       issueId.toString(),
-      E_INTEGRATION_KEYS.GITHUB
+      ghIntegrationKey
     );
   } catch {
     throw new Error("Issue not found in Plane");

@@ -48,7 +48,7 @@ export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
 
       {isSupported ? (
         <div className="flex-shrink-0">
-          <Link href={`/${workspaceSlug}/settings/integrations/${provider.key}`}>
+          <Link href={`/${workspaceSlug}/settings/integrations/${provider.urlSlug}`}>
             <span>
               <Button variant="accent-primary" size="sm">
                 {t("integrations.configure")}

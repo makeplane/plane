@@ -15,6 +15,7 @@ type TStateForm = {
   projectId: string | undefined;
   value: TStateMap;
   handleChange: <T extends keyof TStateMap>(key: T, value: TStateMap[T]) => void;
+  isEnterprise: boolean;
 };
 
 const GIT_PR_DATA: { key: TStateMapKeys; title: string }[] = [
@@ -46,12 +47,12 @@ const GIT_PR_DATA: { key: TStateMapKeys; title: string }[] = [
 
 export const StateForm: FC<TStateForm> = observer((props) => {
   // props
-  const { projectId, value, handleChange } = props;
+  const { projectId, value, handleChange, isEnterprise } = props;
 
   const { t } = useTranslation();
 
   // hooks
-  const { stateIdsByProjectId, getStateById } = useGithubIntegration();
+  const { stateIdsByProjectId, getStateById } = useGithubIntegration(isEnterprise);
 
   // derived values
   const planeProjectStates = ((projectId && stateIdsByProjectId(projectId)) || [])

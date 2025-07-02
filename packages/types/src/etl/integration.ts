@@ -4,6 +4,7 @@ export enum E_INTEGRATION_KEYS {
   GITLAB = "GITLAB",
   SLACK = "SLACK",
   PRD_AGENT = "PRD_AGENT",
+  GITHUB_ENTERPRISE = "GITHUB_ENTERPRISE",
 }
 export type TIntegrationKeys = keyof typeof E_INTEGRATION_KEYS;
 

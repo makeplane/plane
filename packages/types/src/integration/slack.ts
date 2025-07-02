@@ -13,7 +13,7 @@ export type TSlackWorkspaceConnectionData = {
 };
 
 // slack workspace connection
-export type TSlackWorkspaceConnection = TWorkspaceConnection<TSlackWorkspaceConnectionData, TSlackWorkspaceConnectionConfig>;
+export type TSlackWorkspaceConnection = TWorkspaceConnection<TSlackWorkspaceConnectionConfig, TSlackWorkspaceConnectionData>;
 
 // slack entity connection
 export type TSlackEntityConnection = TWorkspaceEntityConnection<TSlackEntityConnectionConfig>;

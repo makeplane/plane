@@ -16,18 +16,19 @@ type TFormEdit = {
   modal: boolean;
   handleModal: Dispatch<SetStateAction<boolean>>;
   data: TGithubEntityConnection;
+  isEnterprise: boolean;
 };
 
 export const FormEdit: FC<TFormEdit> = observer((props) => {
   // props
-  const { modal, handleModal, data } = props;
+  const { modal, handleModal, data, isEnterprise } = props;
 
   // hooks
   const {
     workspace,
     fetchStates,
     entity: { updateEntity },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
 
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -106,7 +107,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
         <div className="text-xl font-medium text-custom-text-200">Link Github repository and Plane project</div>
 
         <div className="space-y-4">
-          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} />
+          <ProjectForm value={projectMap} handleChange={handleProjectMapChange} isEnterprise={isEnterprise} />
 
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
@@ -120,6 +121,7 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
                 projectId={projectMap?.projectId || undefined}
                 value={stateMap}
                 handleChange={handleStateMapChange}
+                isEnterprise={isEnterprise}
               />
             </div>
           </div>

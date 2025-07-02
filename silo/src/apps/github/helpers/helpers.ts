@@ -13,6 +13,7 @@ export const getConnectionDetails = async (props: {
   credentials: TWorkspaceCredential;
   installationId: string;
   repositoryId: string;
+  isEnterprise: boolean;
 }): Promise<{
   workspaceConnection: ReturnType<typeof verifyWorkspaceConnection>;
   allEntityConnectionsForRepository: ReturnType<typeof verifyEntityConnections>;
@@ -31,7 +32,7 @@ export const getConnectionDetails = async (props: {
   // Get the entity connection for the given repository
   const entityConnections = await apiClient.workspaceEntityConnection.listWorkspaceEntityConnections({
     workspace_id: props.credentials.workspace_id!,
-    entity_type: E_INTEGRATION_KEYS.GITHUB,
+    entity_type: props.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB,
     entity_id: props.repositoryId.toString(),
   });
 

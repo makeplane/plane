@@ -8,7 +8,11 @@ import { Button } from "@plane/ui";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 
-export const ConnectPersonalAccount: FC = observer(() => {
+interface IConnectPersonalAccountProps {
+  isEnterprise: boolean;
+}
+
+export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     workspace,
@@ -19,7 +23,7 @@ export const ConnectPersonalAccount: FC = observer(() => {
       connectGithubUserCredential,
       disconnectGithubUserCredential,
     },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
 
   // states
   const [isConnectionSetup, setIsConnectionSetup] = useState<boolean>(false);

@@ -1,9 +1,9 @@
 import { PlaneWebhookPayload } from "@plane/sdk";
+import { logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
 import { handleIssueWebhook } from "./event-handlers/issue.handler";
-import { logger } from "@/logger";
 export class PlaneGithubWebhookWorker extends TaskHandler {
   mq: MQ;
   store: Store;

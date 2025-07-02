@@ -83,4 +83,21 @@ export class PlaneOAuthStrategy implements OAuthStrategy {
   disconnectUser(wsConnection: TWorkspaceConnection, wsCredential: TWorkspaceCredential): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
+
+  async handleRedirectToPlaneOAuth(
+    code: string,
+    state: string
+  ): Promise<{ stateBuffer: string; redirectUri?: string }> {
+    throw new Error("Method not implemented.");
+  }
+
+  async handlePlaneOAuthCallback(
+    encodedIntegrationState: string
+  ): Promise<{ response: OAuthTokenResponse; state: OAuthState; redirectUri?: string }> {
+    throw new Error("Method not implemented.");
+  }
+
+  async generateConfigKey(data: object, workspaceId: string): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
 }

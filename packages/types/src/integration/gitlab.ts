@@ -35,7 +35,7 @@ export type TGitlabWorkspaceConnectionData = {
 }
 
 // gitlab workspace connection
-export type TGitlabWorkspaceConnection = TWorkspaceConnection<TGitlabWorkspaceConnectionData, TGitlabWorkspaceConnectionConfig>;
+export type TGitlabWorkspaceConnection = TWorkspaceConnection<TGitlabWorkspaceConnectionConfig, TGitlabWorkspaceConnectionData>;
 
 // gitlab entity connection
 export type TGitlabEntityConnection = TWorkspaceEntityConnection<TGitlabEntityConnectionConfig>;

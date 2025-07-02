@@ -1,16 +1,16 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import {
-  createGithubService,
   GithubIssueDedupPayload,
   transformGitHubIssue,
   WebhookGitHubIssue,
 } from "@plane/etl/github";
 import { ExIssue } from "@plane/sdk";
-import { TWorkspaceCredential } from "@plane/types";
+import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
+import { getGithubService } from "@/apps/github/helpers";
 import { getConnectionDetails } from "@/apps/github/helpers/helpers";
 import { env } from "@/env";
+import { GITHUB_LABEL } from "@/helpers/constants";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
-import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { Store } from "@/worker/base";
@@ -61,14 +61,15 @@ export const shouldSync = (labels: { name: string }[]): boolean =>
 
 export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPayload) => {
   try {
-    logger.info(`[GITHUB][ISSUE] Received webhook event from github 🐱 --------- [CREATE|UPDATE]`);
+    const ghIntegrationKey = data.isEnterprise ? E_INTEGRATION_KEYS.GITHUB_ENTERPRISE : E_INTEGRATION_KEYS.GITHUB;
+    logger.info(`${ghIntegrationKey}[ISSUE] Received webhook event from github 🐱 --------- [CREATE|UPDATE]`);
     const [planeCredentials] = await apiClient.workspaceCredential.listWorkspaceCredentials({
-      source: E_INTEGRATION_KEYS.GITHUB,
+      source: ghIntegrationKey,
       source_access_token: data.installationId.toString(),
     });
 
     if (!planeCredentials) {
-      logger.info("[GITHUB][ISSUE] No plane credentials found, skipping", {
+      logger.info(`${ghIntegrationKey}[ISSUE] No plane credentials found, skipping`, {
         installationId: data.installationId,
         accountId: data.accountId,
         repositoryId: data.repositoryId,
@@ -81,6 +82,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
       credentials: planeCredentials as TWorkspaceCredential,
       installationId: data.installationId.toString(),
       repositoryId: data.repositoryId.toString(),
+      isEnterprise: data.isEnterprise,
     });
 
     if (!workspaceConnection.target_hostname) {
@@ -88,11 +90,11 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     }
 
     // If the Plane GitHub App client ID or client secret is not found, return
-    const planeClient = await getPlaneAPIClient(planeCredentials, E_INTEGRATION_KEYS.GITHUB);
+    const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
 
     let issue: ExIssue | null = null;
 
-    const ghService = createGithubService(env.GITHUB_APP_ID, env.GITHUB_PRIVATE_KEY, data.installationId.toString());
+    const ghService = getGithubService(workspaceConnection as TGithubWorkspaceConnection, data.installationId.toString(), data.isEnterprise);
     const ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
     const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
     // replace the issue body with the html body
@@ -104,7 +106,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         entityConnection.workspace_slug,
         entityConnection.project_id ?? "",
         data.issueNumber.toString(),
-        E_INTEGRATION_KEYS.GITHUB
+        ghIntegrationKey
       );
     } catch (error) { }
 
@@ -117,7 +119,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     const planeIssue = await transformGitHubIssue(
       ghIssue.data as WebhookGitHubIssue,
       bodyHtml ?? "<p></p>",
-      encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + "/api/assets/github"),
+      encodeURI(env.SILO_API_BASE_URL + env.SILO_BASE_PATH + `/api/assets/${ghIntegrationKey.toLowerCase()}`),
       planeClient,
       data.repositoryName,
       userMap,
@@ -142,7 +144,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
     if (planeIssue.labels) {
       const labels = (await planeClient.label.list(entityConnection.workspace_slug, entityConnection.project_id ?? ""))
         .results;
-      const githubLabel = labels.find((l) => l.name.toLowerCase() === E_INTEGRATION_KEYS.GITHUB);
+      const githubLabel = labels.find((l) => l.name.toLowerCase() === GITHUB_LABEL);
 
       if (githubLabel) {
         planeIssue.labels.push(githubLabel.name);
@@ -163,7 +165,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
               name: label.name,
               color: `#${label.color}`,
               external_id: label.id ? label.id.toString() : label.name,
-              external_source: E_INTEGRATION_KEYS.GITHUB,
+              external_source: ghIntegrationKey,
             }
           );
 

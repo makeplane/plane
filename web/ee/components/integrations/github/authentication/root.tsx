@@ -7,11 +7,15 @@ import { ConnectOrganization, ConnectPersonalAccount } from "@/plane-web/compone
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 
-export const UserAuthentication: FC = observer(() => {
+interface IUserAuthenticationProps {
+  isEnterprise: boolean;
+}
+
+export const UserAuthentication: FC<IUserAuthenticationProps> = observer(({ isEnterprise }) => {
   // hooks
   const {
     auth: { workspaceConnectionIds, workspaceConnectionById },
-  } = useGithubIntegration();
+  } = useGithubIntegration(isEnterprise);
 
   // derived values
   const workspaceConnectionId = workspaceConnectionIds[0] || undefined;
@@ -19,8 +23,8 @@ export const UserAuthentication: FC = observer(() => {
 
   return (
     <div className="relative space-y-4">
-      <ConnectOrganization />
-      {workspaceConnection && <ConnectPersonalAccount />}
+      <ConnectOrganization isEnterprise={isEnterprise} />
+      {workspaceConnection && <ConnectPersonalAccount isEnterprise={isEnterprise} />}
     </div>
   );
 });

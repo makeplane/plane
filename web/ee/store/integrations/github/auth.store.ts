@@ -7,6 +7,7 @@ import { computedFn } from "mobx-utils";
 import { API_BASE_URL, SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
 import { GithubAuthorizeState, GithubUserAuthState } from "@plane/etl/github";
 // plane web services
+import { TGithubAppConfig } from "@plane/types";
 import { GithubAuthService } from "@/plane-web/services/integrations/github";
 // plane web store
 import { ApplicationService } from "@/plane-web/services/marketplace";
@@ -18,6 +19,7 @@ export interface IGithubAuthStore {
   // observables
   workspaceConnectionMap: Record<string, Record<string, TGithubWorkspaceConnection>>; // workspaceId -> organizationId -> TGithubWorkspaceConnection
   githubUserCredentialsMap: Record<string, Record<string, TGithubWorkspaceUserConnection>>; // workspaceId -> userId -> TGithubWorkspaceUserConnection
+  appConfigKey: string; // configKey
   // computed
   workspaceConnectionIds: string[];
   githubUserCredentialIds: string[];
@@ -26,6 +28,7 @@ export interface IGithubAuthStore {
   githubUserCredentialById: (userId: string) => TGithubWorkspaceUserConnection | undefined;
   // actions
   fetchWorkspaceConnection: () => Promise<TGithubWorkspaceConnection[] | undefined>;
+  fetchAppConfigKey: (config: TGithubAppConfig) => Promise<string | undefined>;
   connectWorkspaceConnection: () => Promise<string | undefined>;
   disconnectWorkspaceConnection: () => Promise<void>;
   fetchGithubUserCredential: (
@@ -43,21 +46,25 @@ export interface IGithubAuthStore {
 
 export class GithubAuthStore implements IGithubAuthStore {
   // observables
+  appConfigKey: string = ""; // configKey
   workspaceConnectionMap: Record<string, Record<string, TGithubWorkspaceConnection>> = {}; // workspaceId -> organizationId -> TGithubWorkspaceConnection
   githubUserCredentialsMap: Record<string, Record<string, TGithubWorkspaceUserConnection>> = {}; // workspaceId -> userId -> TGithubWorkspaceUserConnection
   // service
   private service: GithubAuthService;
   private applicationService: ApplicationService;
-  constructor(protected store: IGithubStore) {
+  private isEnterprise: boolean;
+  constructor(protected store: IGithubStore, isEnterprise: boolean = false) {
     makeObservable(this, {
       // observables
       workspaceConnectionMap: observable,
       githubUserCredentialsMap: observable,
+      appConfigKey: observable,
       // computed
       workspaceConnectionIds: computed,
       githubUserCredentialIds: computed,
       // actions
       fetchWorkspaceConnection: action,
+      fetchAppConfigKey: action,
       connectWorkspaceConnection: action,
       disconnectWorkspaceConnection: action,
       fetchGithubUserCredential: action,
@@ -65,7 +72,8 @@ export class GithubAuthStore implements IGithubAuthStore {
       disconnectGithubUserCredential: action,
     });
 
-    this.service = new GithubAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.isEnterprise = isEnterprise;
+    this.service = new GithubAuthService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), isEnterprise);
     this.applicationService = new ApplicationService();
   }
 
@@ -118,6 +126,28 @@ export class GithubAuthStore implements IGithubAuthStore {
   });
 
   // actions
+
+  /**
+   * @description fetch app config key - will call this before connecting to the organization
+   * @param { TGithubAppConfig } config
+   * @returns { Promise<void> }
+   */
+  fetchAppConfigKey = async (config: TGithubAppConfig): Promise<string | undefined> => {
+    try {
+      const workspaceId = this.store.workspace?.id;
+      if (!workspaceId) return;
+
+      const { configKey } = await this.service.fetchAppConfigKey(workspaceId, config);
+      runInAction(() => {
+        this.appConfigKey = configKey;
+      });
+      return configKey;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   /**
    * @description fetch github organization
    * @returns { Promise<TGithubWorkspaceConnection[] | undefined> }
@@ -130,7 +160,7 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       const response = await this.service.fetchOrganizationConnection(workspaceId);
       if (response) {
-        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/github/plane-webhook`);
+        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/${this.isEnterprise ? "github-enterprise" : "github"}/plane-webhook`);
         runInAction(() => {
           response.forEach((data) => {
             if (data.id) set(this.workspaceConnectionMap, [workspaceId, data.id], data);
@@ -158,6 +188,16 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       if (!workspaceId || !workspaceSlug || !externalApiToken || !userId) return undefined;
 
+      let config_key: string | undefined;
+
+      if (this.isEnterprise) {
+        if (!this.appConfigKey) {
+          console.error("App config key is required");
+          return undefined;
+        }
+        config_key = this.appConfigKey;
+      }
+
       // create app installation and get the installation id
       // send installation id as well in the state payload
       // TOOD: get the app id from backend env
@@ -171,11 +211,15 @@ export class GithubAuthStore implements IGithubAuthStore {
         target_host: targetHostname,
         user_id: userId,
         plane_app_installation_id: appInstallation?.id,
+        config_key: config_key,
       };
       const response = await this.service.connectOrganization(payload);
-      await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/github/plane-webhook`);
+      await this.store.fetchWebhookConnection(
+        `${SILO_BASE_PATH}/api/${this.isEnterprise ? "github-enterprise" : "github"}/plane-webhook`
+      );
       return response;
     } catch (error) {
+      console.error("error in connectWorkspaceConnection", error);
       throw error;
     }
   };

@@ -14,6 +14,7 @@ export type TPersonalAccountConnectProps = {
 export const IntegrationIcon = {
   GITHUB: GithubIcon,
   SLACK: SlackIcon,
+  GITHUB_ENTERPRISE: GithubIcon,
 };
 
 export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) {

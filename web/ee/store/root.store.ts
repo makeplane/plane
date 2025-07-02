@@ -72,6 +72,8 @@ import {
   GitlabStore,
   IConnectionStore,
   ConnectionStore,
+  GithubEnterpriseStore,
+  IGithubEnterpriseStore,
 } from "./integrations";
 
 import { EpicAnalytics, IEpicAnalyticStore } from "./issue/epic/analytic.store";
@@ -123,6 +125,7 @@ export class RootStore extends CoreRootStore {
   connections: IConnectionStore;
   slackIntegration: ISlackStore;
   githubIntegration: IGithubStore;
+  githubEnterpriseIntegration: IGithubEnterpriseStore;
   gitlabIntegration: IGitlabStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
@@ -172,6 +175,7 @@ export class RootStore extends CoreRootStore {
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
     this.githubIntegration = new GithubStore(this);
+    this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
@@ -220,6 +224,7 @@ export class RootStore extends CoreRootStore {
     this.connections = new ConnectionStore(this);
     this.slackIntegration = new SlackStore(this);
     this.githubIntegration = new GithubStore(this);
+    this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);

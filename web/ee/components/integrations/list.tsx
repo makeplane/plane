@@ -14,6 +14,7 @@ import SlackLogo from "@/public/services/slack.png";
 
 export type IntegrationProps = {
   flag: TFeatureFlags;
+  urlSlug: string;
   title: string;
   key: string;
   logo: StaticImageData;
@@ -23,6 +24,7 @@ export type IntegrationProps = {
 const INTEGRATIONS_LIST: IntegrationProps[] = [
   {
     flag: E_FEATURE_FLAGS.GITHUB_INTEGRATION,
+    urlSlug: "github",
     key: "github",
     title: "GitHub",
     logo: GitHubLogo,
@@ -30,6 +32,7 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
   },
   {
     flag: E_FEATURE_FLAGS.GITLAB_INTEGRATION,
+    urlSlug: "gitlab",
     key: "gitlab",
     title: "GitLab",
     logo: GitlabLogo,
@@ -37,9 +40,18 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
   },
   {
     flag: E_FEATURE_FLAGS.SLACK_INTEGRATION,
+    urlSlug: "slack",
     key: "slack",
     title: "Slack",
     logo: SlackLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.GITHUB_ENTERPRISE_INTEGRATION,
+    urlSlug: "github-enterprise",
+    key: "github_enterprise",
+    title: "GitHub Enterprise",
+    logo: GitHubLogo,
     beta: true,
   },
 ];

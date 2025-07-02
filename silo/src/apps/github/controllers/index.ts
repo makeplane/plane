@@ -255,7 +255,7 @@ export default class GithubController {
       const installation = await service.getInstallation(Number(installation_id));
 
       // In cases of partial installations, the account is might not be present, or absense of scopes.
-      if (!installation.data.account) {
+      if (!installation?.data?.account) {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_INSTALLATION_ACCOUNT}`);
       }
 
