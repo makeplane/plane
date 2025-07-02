@@ -21,3 +21,5 @@ export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./text-align";
 export * from "./utility";
+export * from "./smooth-cursor";
+export * from "./code-mark";
