@@ -30,6 +30,7 @@
     "@plane/constants": "*",
     "@plane/decorators": "*",
     "@plane/editor": "*",
+    "@plane/logger": "*",
     "@plane/types": "*",
     "@sentry/core": "^9.5.0",
     "@sentry/node": "^9.5.0",
