@@ -5,6 +5,8 @@ import {
   SUBSCRIPTION_REDIRECTION_URLS,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
   TALK_TO_SALES_URL,
+  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
+  WORKSPACE_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
@@ -16,6 +18,7 @@ import { DiscountInfo } from "@/components/license/modal/card/discount-info";
 import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 import { TPlanDetail } from "@/constants/plans";
 // local imports
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { PlanFrequencyToggle } from "./frequency-toggle";
 
 type TPlanDetailProps = {
@@ -49,6 +52,12 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
     const frequency = billingFrequency ?? "year";
     // Get the redirection URL based on the subscription type and billing frequency
     const redirectUrl = SUBSCRIPTION_REDIRECTION_URLS[subscriptionType][frequency] ?? TALK_TO_SALES_URL;
+    captureSuccess({
+      eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.upgrade_plan_redirected,
+      payload: {
+        subscriptionType,
+      },
+    });
     // Open the URL in a new tab
     window.open(redirectUrl, "_blank");
   };
@@ -101,7 +110,15 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
 
       {/* Subscription button */}
       <div className={cn("flex flex-col gap-1 py-3 items-start transition-all duration-300")}>
-        <button onClick={handleRedirection} className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}>
+        <button
+          onClick={handleRedirection}
+          className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}
+          data-ph-element={
+            isSubscriptionActive
+              ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
+              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILING_TALK_TO_SALES_BUTTON
+          }
+        >
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
         </button>
       </div>
