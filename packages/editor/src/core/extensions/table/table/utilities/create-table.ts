@@ -3,14 +3,18 @@ import { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model";
 import { createCell } from "@/extensions/table/table/utilities/create-cell";
 import { getTableNodeTypes } from "@/extensions/table/table/utilities/get-table-node-types";
 
-export function createTable(
-  schema: Schema,
-  rowsCount: number,
-  colsCount: number,
-  withHeaderRow: boolean,
-  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>,
-  columnWidth: number = 100
-): ProsemirrorNode {
+type Props = {
+  schema: Schema;
+  rowsCount: number;
+  colsCount: number;
+  withHeaderRow: boolean;
+  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>;
+  columnWidth: number;
+};
+
+export const createTable = (props: Props): ProsemirrorNode => {
+  const { schema, rowsCount, colsCount, withHeaderRow, cellContent, columnWidth } = props;
+
   const types = getTableNodeTypes(schema);
   const headerCells: ProsemirrorNode[] = [];
   const cells: ProsemirrorNode[] = [];
@@ -38,4 +42,4 @@ export function createTable(
   }
 
   return types.table.createChecked(null, rows);
-}
+};

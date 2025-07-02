@@ -2474,5 +2474,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大綱",
+        "empty_state": {
+          "title": "缺少標題",
+          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+        }
+      },
+      "info": {
+        "label": "資訊",
+        "document_info": {
+          "words": "字數",
+          "characters": "字元數",
+          "paragraphs": "段落數",
+          "read_time": "閱讀時間"
+        },
+        "actors_info": {
+          "edited_by": "編輯者",
+          "created_by": "建立者"
+        },
+        "version_history": {
+          "label": "版本歷史",
+          "current_version": "目前版本"
+        }
+      },
+      "assets": {
+        "label": "資源",
+        "download_button": "下載",
+        "empty_state": {
+          "title": "缺少圖片",
+          "description": "添加圖片以在這裡查看它們。"
+        }
+      }
+    },
+    "open_button": "打開導航面板",
+    "close_button": "關閉導航面板",
+    "outline_floating_button": "打開大綱"
   }
 }

@@ -20,6 +20,7 @@ import { useTitleEditor } from "./use-title-editor";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
+    onAssetChange,
     onChange,
     onTransaction,
     isSmoothCursorEnabled,
@@ -161,6 +162,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     handleEditorReady,
     isSmoothCursorEnabled,
     mentionHandler,
+    onAssetChange,
     onChange,
     onTransaction,
     placeholder,

@@ -1,26 +1,40 @@
 import { Extension } from "@tiptap/core";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
 import { restorePublicImages } from "@/helpers/image-helpers";
 // plugins
+import { TAdditionalActiveDropbarExtensions } from "@/plane-editor/types/utils";
 import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
-// types
-import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
 // prosemirror plugins
 import { codemark } from "./code-mark";
+
+import type { IEditorProps, TEditorAsset, TFileHandler, TReadOnlyFileHandler } from "@/types";
+type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
   interface Commands {
     utility: {
       updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
+      updateAssetsList: (
+        args:
+          | {
+              asset: TEditorAsset;
+            }
+          | {
+              idToRemove: string;
+            }
+      ) => () => void;
     };
   }
 }
 
 export interface UtilityExtensionStorage {
+  assetsList: TEditorAsset[];
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
+  activeDropbarExtensions: TActiveDropbarExtensions[];
 }
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
@@ -58,8 +72,10 @@ export const UtilityExtension = (props: Props) => {
 
     addStorage() {
       return {
+        assetsList: [],
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
+        activeDropbarExtensions: [],
       };
     },
 
@@ -67,6 +83,21 @@ export const UtilityExtension = (props: Props) => {
       return {
         updateAssetsUploadStatus: (updatedStatus) => () => {
           this.storage.assetsUploadStatus = updatedStatus;
+        },
+        updateAssetsList: (args) => () => {
+          const uniqueAssets = new Set(this.storage.assetsList);
+          if ("asset" in args) {
+            const alreadyExists = this.storage.assetsList.find((asset) => asset.id === args.asset.id);
+            if (!alreadyExists) {
+              uniqueAssets.add(args.asset);
+            }
+          } else if ("idToRemove" in args) {
+            const asset = this.storage.assetsList.find((asset) => asset.id === args.idToRemove);
+            if (asset) {
+              uniqueAssets.delete(asset);
+            }
+          }
+          this.storage.assetsList = Array.from(uniqueAssets);
         },
       };
     },

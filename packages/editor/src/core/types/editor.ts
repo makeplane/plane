@@ -1,5 +1,5 @@
-import type { Extensions, JSONContent } from "@tiptap/core";
-import type { Selection } from "@tiptap/pm/state";
+import { Extensions, JSONContent } from "@tiptap/core";
+import { Selection } from "@tiptap/pm/state";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // helpers
@@ -11,6 +11,7 @@ import type {
   TDisplayConfig,
   TDocumentEventEmitter,
   TDocumentEventsServer,
+  TEditorAsset,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
@@ -49,7 +50,8 @@ export type TEditorCommands =
   | "text-align"
   | "callout"
   | "page-embed"
-  | "attachment";
+  | "attachment"
+  | "emoji";
 
 export type TCommandExtraProps = {
   image: {
@@ -78,22 +80,25 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
+export type TDocumentInfo = {
+  characters: number;
+  paragraphs: number;
+  words: number;
+};
+
 // editor refs
 export type EditorReadOnlyRefApi = {
-  getMarkDown: () => string;
+  clearEditor: (emitUpdate?: boolean) => void;
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
     json: JSONContent | null;
   };
-  clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
+  getDocumentInfo: () => TDocumentInfo;
+  getHeadings: () => IMarking[];
+  getMarkDown: () => string;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => {
-    characters: number;
-    paragraphs: number;
-    words: number;
-  };
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
 };
 
 // title ref api
@@ -103,22 +108,9 @@ export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
-  getCurrentCursorPosition: () => number | undefined;
-  setEditorValueAtCursorPosition: (content: string) => void;
-  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
-  onStateChange: (callback: () => void) => () => void;
-  setFocusAtPosition: (position: number) => void;
-  isEditorReadyToDiscard: () => boolean;
   editorHasSynced: () => boolean;
-  getSelectedText: () => string | null;
-  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
-  setProviderDocument: (value: Uint8Array) => void;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
-  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
+  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
   findAndDeleteNode: (
     {
       attribute,
@@ -129,6 +121,19 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
     },
     nodeName: string
   ) => void;
+  getCurrentCursorPosition: () => number | undefined;
+  getSelectedText: () => string | null;
+  insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
+  isEditorReadyToDiscard: () => boolean;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
+  listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  onStateChange: (callback: () => void) => () => void;
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
+  setFocusAtPosition: (position: number) => void;
+  setProviderDocument: (value: Uint8Array) => void;
 }
 
 // editor props
@@ -147,6 +152,7 @@ export interface IEditorProps {
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
   isSmoothCursorEnabled: boolean;
   onEnterKeyPress?: (e?: any) => void;

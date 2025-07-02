@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // components
-import { PageInfoPopover, PageOptionsDropdown } from "@/components/pages";
+import { PageOptionsDropdown } from "@/components/pages";
 // plane web components
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
@@ -31,7 +31,6 @@ export const PageHeaderActions: React.FC<Props> = observer((props) => {
       <PageOfflineBadge />
       <PageLockControl page={page} storeType={storeType} />
       <PageMoveControl page={page} />
-      <PageInfoPopover page={page} />
       <PageCopyLinkControl page={page} />
       <PageFavoriteControl page={page} />
       <PageShareControl page={page} storeType={storeType} />

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
@@ -78,8 +78,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { allowedProjectIds, handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   const { getIssueTypeById } = useIssueTypes();
-  // pathname
-  const pathname = usePathname();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values

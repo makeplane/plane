@@ -12,8 +12,7 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-// plane types
-// plane imports
+import { useTranslation } from "@plane/i18n";
 import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 // plane ui
 import { ERowVariant, Row } from "@plane/ui";
@@ -56,7 +55,9 @@ type Props = {
   editorForwardRef: React.RefObject<EditorRefApi>;
   handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
+  handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
+  isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
   projectId?: string;
@@ -71,7 +72,9 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
     editorForwardRef,
     handleConnectionStatus,
     handleEditorReady,
+    handleOpenNavigationPane,
     handlers,
+    isNavigationPaneOpen,
     page,
     storeType,
     webhookConnectionParams,
@@ -96,7 +99,12 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { getWorkspaceBySlug } = useWorkspace();
   const { getUserDetails } = useMember();
   // derived values
-  const { id: pageId, isContentEditable, editorRef, setSyncingStatus } = page;
+  const {
+    id: pageId,
+    isContentEditable,
+    editor: { editorRef, updateAssetsList },
+    setSyncingStatus
+  } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   const isTitleEmpty = !page.name || page.name.trim() === "";
   // Simple animation effect that triggers on mount
@@ -125,6 +133,8 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString(), storeType);
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
+  // translation
+  const { t } = useTranslation();
   // derived values
   const displayConfig: TDisplayConfig = useMemo(
     () => ({
@@ -228,38 +238,36 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="relative w-full flex-shrink-0">
-        {/* table of contents - Sticky position */}
-        <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
-          <div className="sticky top-[72px]">
-            <div className="group/page-toc relative px-page-x">
-              <div className="cursor-pointer max-h-[50vh] overflow-hidden">
-                <PageContentBrowser editorRef={editorRef} showOutline />
-              </div>
-              <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                <PageContentBrowser editorRef={editorRef} />
+        {/* table of content */}
+        {!isNavigationPaneOpen && (
+          <div className="page-summary-container absolute h-full right-0 top-[64px] z-[5]">
+            <div className="sticky top-[72px]">
+              <div className="group/page-toc relative px-page-x">
+                <div
+                  className="!cursor-pointer max-h-[50vh] overflow-hidden"
+                  role="button"
+                  aria-label={t("page_navigation_pane.outline_floating_button")}
+                  onClick={handleOpenNavigationPane}
+                >
+                  <PageContentBrowser editorRef={editorRef} showOutline />
+                </div>
+                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                  <PageContentBrowser editorRef={editorRef} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div
-          className={`${isVisible ? "animate-editor-fade-in" : "opacity-0"}`}
-          style={{
-            animation: isVisible ? "editorFadeIn 0.5s var(--ease-out-cubic) forwards" : "none",
-            animationDelay: "100ms",
-          }}
-        >
-          <div className="page-header-container group/page-header">
-            <div className={blockWidthClassName}>
-              <PageEditorHeaderRoot
-                titleEditorRef={titleEditorRef}
-                isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
-                isPageLoading={isPageLoading}
-                page={page}
-                projectId={projectId}
-                workspaceSlug={workspaceSlug}
-              />
-            </div>
+        )}
+        <div className="page-header-container group/page-header">
+          <div className={blockWidthClassName}>
+            <PageEditorHeaderRoot
+              isEditorContentEmpty={isDescriptionEmpty && isTitleEmpty}
+              isPageLoading={isPageLoading}
+              page={page}
+              projectId={projectId}
+              titleEditorRef={titleEditorRef}
+              workspaceSlug={workspaceSlug}
+            />
           </div>
 
           <CollaborativeDocumentEditorWithRef
@@ -281,6 +289,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
               getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
             }}
+            onAssetChange={updateAssetsList}
             onChange={(_json, html) => {
               setIsDescriptionEmpty(isCommentEmpty(html));
             }}

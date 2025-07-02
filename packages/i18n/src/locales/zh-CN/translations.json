@@ -2453,5 +2453,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大纲",
+        "empty_state": {
+          "title": "缺少标题",
+          "description": "让我们在这个页面添加一些标题来在这里查看它们。"
+        }
+      },
+      "info": {
+        "label": "信息",
+        "document_info": {
+          "words": "字数",
+          "characters": "字符数",
+          "paragraphs": "段落数",
+          "read_time": "阅读时间"
+        },
+        "actors_info": {
+          "edited_by": "编辑者",
+          "created_by": "创建者"
+        },
+        "version_history": {
+          "label": "版本历史",
+          "current_version": "当前版本"
+        }
+      },
+      "assets": {
+        "label": "资源",
+        "download_button": "下载",
+        "empty_state": {
+          "title": "缺少图片",
+          "description": "添加图片以在这里查看它们。"
+        }
+      }
+    },
+    "open_button": "打开导航面板",
+    "close_button": "关闭导航面板",
+    "outline_floating_button": "打开大纲"
   }
 }

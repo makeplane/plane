@@ -39,5 +39,8 @@ export { useEditor } from "@/hooks/use-editor";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 
+export { CORE_EXTENSIONS } from "@/constants/extension";
+export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+
 // types
 export * from "@/types";

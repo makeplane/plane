@@ -19,8 +19,6 @@ import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } fr
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
-    onChange,
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
@@ -36,6 +34,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     id,
     mentionHandler,
     pageRestorationInProgress,
+    onAssetChange,
+    onChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -73,6 +74,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       id,
       isSmoothCursorEnabled,
       mentionHandler,
+      onAssetChange,
       onChange,
       onTransaction,
       placeholder,

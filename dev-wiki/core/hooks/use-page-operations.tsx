@@ -1,11 +1,14 @@
 import { useMemo } from "react";
-// plane imports
-import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+// constants
+import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
 import { useLocalStorage } from "@plane/hooks";
 import { EPageAccess } from "@plane/types/src/enums";
+// ui
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
+// helpers
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCollaborativePageActions } from "@/hooks/use-collaborative-page-actions";
 // store types
@@ -80,6 +83,13 @@ export const usePageOperations = (
               message: "Page duplicated successfully.",
             });
           }, 3000);
+          captureSuccess({
+            eventName: PROJECT_PAGE_TRACKER_EVENTS.duplicate,
+            payload: {
+              id: page.id,
+              state: "SUCCESS",
+            },
+          });
         } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -92,17 +102,33 @@ export const usePageOperations = (
       openInNewTab: () => window.open(pageLink, "_blank"),
       toggleAccess: async () => {
         const changedPageType = access === EPageAccess.PUBLIC ? "private" : "public";
+        const eventName = PROJECT_PAGE_TRACKER_EVENTS.access_update;
+
         try {
           if (access === EPageAccess.PUBLIC)
             await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-private" });
           else await executeCollaborativeAction({ type: "sendMessageToServer", message: "make-public" });
+
+          captureSuccess({
+            eventName,
+            payload: {
+              id: page.id,
+              from_access: access === EPageAccess.PUBLIC ? "Public" : "Private",
+              to_access: access === EPageAccess.PUBLIC ? "Private" : "Public",
+              state: "SUCCESS",
+            },
+          });
 
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: `The page has been marked ${changedPageType} and moved to the ${changedPageType} section.`,
           });
-        } catch {
+        } catch (error: any) {
+          captureError({
+            eventName,
+            error,
+          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
@@ -114,12 +140,23 @@ export const usePageOperations = (
         if (archived_at) {
           try {
             await executeCollaborativeAction({ type: "sendMessageToServer", message: "unarchive" });
+            captureSuccess({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.restore,
+              payload: {
+                id: page.id,
+                state: "SUCCESS",
+              },
+            });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
               message: "Page restored successfully.",
             });
-          } catch {
+          } catch (error: any) {
+            captureError({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.restore,
+              error,
+            });
             setToast({
               type: TOAST_TYPE.ERROR,
               title: "Error!",
@@ -129,12 +166,23 @@ export const usePageOperations = (
         } else {
           try {
             await executeCollaborativeAction({ type: "sendMessageToServer", message: "archive" });
+            captureSuccess({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.archive,
+              payload: {
+                id: page.id,
+                state: "SUCCESS",
+              },
+            });
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",
               message: "Page archived successfully.",
             });
-          } catch {
+          } catch (error: any) {
+            captureError({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.archive,
+              error,
+            });
             setToast({
               type: TOAST_TYPE.ERROR,
               title: "Error!",
@@ -145,22 +193,50 @@ export const usePageOperations = (
       },
       toggleFavorite: () => {
         if (is_favorite) {
-          removePageFromFavorites().then(() =>
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Page removed from favorites.",
+          removePageFromFavorites()
+            .then(() => {
+              captureSuccess({
+                eventName: PROJECT_PAGE_TRACKER_EVENTS.unfavorite,
+                payload: {
+                  id: page.id,
+                  state: "SUCCESS",
+                },
+              });
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "Success!",
+                message: "Page removed from favorites.",
+              });
             })
-          );
-        } else {
-          addToFavorites().then(() => {
-            if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: "Page added to favorites.",
+            .catch((error) => {
+              captureError({
+                eventName: PROJECT_PAGE_TRACKER_EVENTS.unfavorite,
+                error,
+              });
             });
-          });
+        } else {
+          addToFavorites()
+            .then(() => {
+              captureSuccess({
+                eventName: PROJECT_PAGE_TRACKER_EVENTS.favorite,
+                payload: {
+                  id: page.id,
+                  state: "SUCCESS",
+                },
+              });
+              if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
+              setToast({
+                type: TOAST_TYPE.SUCCESS,
+                title: "Success!",
+                message: "Page added to favorites.",
+              });
+            })
+            .catch((error) => {
+              captureError({
+                eventName: PROJECT_PAGE_TRACKER_EVENTS.favorite,
+                error,
+              });
+            });
         }
       },
       toggleLock: async ({ recursive = false }: { recursive?: boolean } = {}) => {
@@ -172,7 +248,18 @@ export const usePageOperations = (
               title: "Success!",
               message: "Page unlocked successfully.",
             });
-          } catch {
+            captureSuccess({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.unlock,
+              payload: {
+                id: page.id,
+                state: "SUCCESS",
+              },
+            });
+          } catch (error: any) {
+            captureError({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.unlock,
+              error,
+            });
             setToast({
               type: TOAST_TYPE.ERROR,
               title: "Error!",
@@ -187,7 +274,18 @@ export const usePageOperations = (
               title: "Success!",
               message: "Page locked successfully.",
             });
-          } catch {
+            captureSuccess({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.lock,
+              payload: {
+                id: page.id,
+                state: "SUCCESS",
+              },
+            });
+          } catch (error: any) {
+            captureError({
+              eventName: PROJECT_PAGE_TRACKER_EVENTS.lock,
+              error,
+            });
             setToast({
               type: TOAST_TYPE.ERROR,
               title: "Error!",
@@ -207,6 +305,7 @@ export const usePageOperations = (
     is_favorite,
     is_locked,
     isFavoriteMenuOpen,
+    page.id,
     removePageFromFavorites,
     toggleFavoriteMenu,
   ]);
