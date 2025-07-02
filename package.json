@@ -6,13 +6,8 @@
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
-    "web",
-    "space",
-    "admin",
-    "live",
-    "silo",
-    "packages/*",
-    "dev-wiki"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
