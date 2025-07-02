@@ -160,7 +160,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       />
       <Header>
         <Header.LeftItem>
-          <div className="flex items-center gap-2 flex-grow">
+          <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
               <CommonProjectBreadcrumbs
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
