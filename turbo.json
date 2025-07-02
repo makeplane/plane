@@ -34,11 +34,32 @@
       "persistent": true,
       "dependsOn": ["^build"]
     },
+    "check:types": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "check:lint": {
+      "cache": false
+    },
+    "check:format": {
+      "cache": false
+    },
+    "check": {
+      "dependsOn": ["check:format", "check:lint", "check:types"],
+      "cache": false
+    },
+    "fix:lint": {
+      "cache": false
+    },
+    "fix:format": {
+      "cache": false
+    },
+    "fix": {
+      "dependsOn": ["fix:format", "fix:lint"],
+      "cache": false
+    },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint": {
       "outputs": []
     },
     "start": {
