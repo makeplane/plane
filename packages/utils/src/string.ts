@@ -318,3 +318,39 @@ export const copyTextToClipboard = async (text: string): Promise<void> => {
   }
   await navigator.clipboard.writeText(text);
 };
+
+/**
+ * @description Joins URL path segments properly, removing duplicate slashes
+ * @param {...string} segments - URL path segments to join
+ * @returns {string} Properly joined URL path
+ * @example
+ * joinUrlPath("/workspace", "/projects") => "/workspace/projects"
+ * joinUrlPath("/workspace", "projects") => "/workspace/projects"
+ * joinUrlPath("workspace", "projects") => "workspace/projects"
+ * joinUrlPath("/workspace/", "/projects/") => "/workspace/projects/"
+ */
+export const joinUrlPath = (...segments: string[]): string => {
+  if (segments.length === 0) return "";
+
+  // Filter out empty segments
+  const validSegments = segments.filter((segment) => segment !== "");
+  if (validSegments.length === 0) return "";
+
+  // Join segments and normalize slashes
+  const joined = validSegments
+    .map((segment, index) => {
+      // Remove leading slashes from all segments except the first
+      if (index > 0) {
+        segment = segment.replace(/^\/+/, "");
+      }
+      // Remove trailing slashes from all segments except the last
+      if (index < validSegments.length - 1) {
+        segment = segment.replace(/\/+$/, "");
+      }
+      return segment;
+    })
+    .join("/");
+
+  // Clean up any duplicate slashes that might have been created
+  return joined.replace(/\/+/g, "/");
+};
