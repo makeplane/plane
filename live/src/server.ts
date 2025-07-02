@@ -15,6 +15,7 @@ export class Server {
   private app: any;
   private router: any;
   private hocuspocusServer: any;
+  private serverInstance: any;
 
   constructor() {
     this.app = express();
@@ -87,26 +88,13 @@ export class Server {
       }
     });
 
-    this.app.use((err: any, _req: Request, res: Response) => {
+    this.app.use((_req: Request, res: Response) => {
       res.status(404).send("Not Found");
     });
-
-    // this.app.use((err: any, _req: Request, res: Response) => {
-    //   // Set the response status
-    //   res.status(err.status || 500);
-
-    //   // Send the response
-    //   res.json({
-    //     error: {
-    //       message: process.env.NODE_ENV === "production" ? "An unexpected error occurred" : err.message,
-    //       ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
-    //     },
-    //   });
-    // });
   }
 
   public listen() {
-    this.app.listen(this.app.get("port"), () => {
+    this.serverInstance = this.app.listen(this.app.get("port"), () => {
       manualLogger.info(`Plane Live server has started at port ${this.app.get("port")}`);
     });
   }
@@ -116,7 +104,7 @@ export class Server {
     await this.hocuspocusServer.destroy();
     manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
     // Close the Express server
-    this.app.close(() => {
+    this.serverInstance.close(() => {
       manualLogger.info("Express server closed gracefully.");
       process.exit(1);
     });
