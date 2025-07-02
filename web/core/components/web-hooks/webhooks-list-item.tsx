@@ -25,34 +25,35 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
 
   const handleToggle = () => {
     if (!workspaceSlug || !webhook.id) return;
-    try {
-      updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active });
-      captureElementAndEvent({
-        element: {
-          elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
-        },
-        event: {
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
-          state: "SUCCESS",
-          payload: {
-            webhook: webhook.url,
+    updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active })
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
           },
-        },
-      });
-    } catch (error) {
-      captureElementAndEvent({
-        element: {
-          elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
-        },
-        event: {
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
-          state: "ERROR",
-          payload: {
-            webhook: webhook.url,
+          event: {
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
+            state: "SUCCESS",
+            payload: {
+              webhook: webhook.url,
+            },
           },
-        },
+        });
+      })
+      .catch(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
+          },
+          event: {
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
+            state: "ERROR",
+            payload: {
+              webhook: webhook.url,
+            },
+          },
+        });
       });
-    }
   };
 
   return (

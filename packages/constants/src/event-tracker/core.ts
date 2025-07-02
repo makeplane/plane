@@ -285,8 +285,8 @@ export const WORKSPACE_SETTINGS_TRACKER_EVENTS = {
 };
 export const WORKSPACE_SETTINGS_TRACKER_ELEMENTS = {
   // Billing
-  BILLING_UPGRADE_BUTTON: (subscriptionType: EProductSubscriptionEnum) => `biling_upgrade_${subscriptionType}_button`,
-  BILING_TALK_TO_SALES_BUTTON: "biling_talk_to_sales_button",
+  BILLING_UPGRADE_BUTTON: (subscriptionType: EProductSubscriptionEnum) => `billing_upgrade_${subscriptionType}_button`,
+  BILLING_TALK_TO_SALES_BUTTON: "billing_talk_to_sales_button",
   // Exports
   EXPORT_BUTTON: "export_button",
   // Webhooks

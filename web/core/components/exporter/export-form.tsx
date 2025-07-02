@@ -101,13 +101,14 @@ export const ExportForm = (props: Props) => {
             }),
           });
         })
-        .catch(() => {
+        .catch((error) => {
           setExportLoading(false);
           captureError({
             eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
             payload: {
               provider: formData.provider.provider,
             },
+            error: error as Error,
           });
           setToast({
             type: TOAST_TYPE.ERROR,

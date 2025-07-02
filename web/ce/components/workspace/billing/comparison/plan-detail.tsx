@@ -116,7 +116,7 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
           data-ph-element={
             isSubscriptionActive
               ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
-              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILING_TALK_TO_SALES_BUTTON
+              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_TALK_TO_SALES_BUTTON
           }
         >
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
