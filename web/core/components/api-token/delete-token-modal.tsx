@@ -3,6 +3,7 @@
 import { useState, FC } from "react";
 import { mutate } from "swr";
 // types
+import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
@@ -10,6 +11,7 @@ import { IApiToken } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -48,6 +50,12 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
           (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
           false
         );
+        captureSuccess({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
+          payload: {
+            token: tokenId,
+          },
+        });
 
         handleClose();
       })
@@ -58,6 +66,15 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
           message: err?.message ?? t("workspace_settings.settings.api_tokens.delete.error.message"),
         })
       )
+      .catch((err) => {
+        captureError({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_deleted,
+          payload: {
+            token: tokenId,
+          },
+          error: err as Error,
+        });
+      })
       .finally(() => setDeleteLoading(false));
   };
 

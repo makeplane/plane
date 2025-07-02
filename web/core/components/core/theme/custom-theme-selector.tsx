@@ -4,11 +4,13 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUserTheme } from "@plane/types";
 // ui
 import { Button, InputColorPicker, setPromiseToast } from "@plane/ui";
 // hooks
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store";
 
 type TCustomThemeSelector = {
@@ -81,6 +83,35 @@ export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((pro
         message: () => t("failed_to_update_the_theme"),
       },
     });
+    updateCurrentUserThemePromise
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
+          },
+          event: {
+            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
+            payload: {
+              theme: payload.theme,
+            },
+            state: "SUCCESS",
+          },
+        });
+      })
+      .catch(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.THEME_DROPDOWN,
+          },
+          event: {
+            eventName: PROFILE_SETTINGS_TRACKER_EVENTS.theme_updated,
+            payload: {
+              theme: payload.theme,
+            },
+            state: "ERROR",
+          },
+        });
+      });
 
     return;
   };

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { mutate } from "swr";
 // types
+import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { APITokenService } from "@plane/services";
 import { IApiToken } from "@plane/types";
 // ui
@@ -12,6 +13,7 @@ import { renderFormattedDate, csvDownload } from "@plane/utils";
 import { CreateApiTokenForm, GeneratedTokenDetails } from "@/components/api-token";
 // fetch-keys
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
 // services
 
@@ -66,12 +68,22 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
           },
           false
         );
+        captureSuccess({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
+          payload: {
+            token: res.id,
+          },
+        });
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err.message || err.detail,
+        });
+
+        captureError({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.pat_created,
         });
 
         throw err;
