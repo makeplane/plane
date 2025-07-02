@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { intersection } from "lodash";
 import { Controller, useForm } from "react-hook-form";
-import { EUserPermissions, EUserPermissionsLevel, EXPORTERS_LIST } from "@plane/constants";
+import {
+  EUserPermissions,
+  EUserPermissionsLevel,
+  EXPORTERS_LIST,
+  WORKSPACE_SETTINGS_TRACKER_EVENTS,
+  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomSearchSelect, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject, useUser, useUserPermissions } from "@/hooks/store";
 import { ProjectExportService } from "@/services/project/project-export.service";
 
@@ -73,6 +80,12 @@ export const ExportForm = (props: Props) => {
         .then(() => {
           mutateServices();
           setExportLoading(false);
+          captureSuccess({
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
+            payload: {
+              provider: formData.provider.provider,
+            },
+          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: t("workspace_settings.settings.exports.modal.toasts.success.title"),
@@ -88,8 +101,15 @@ export const ExportForm = (props: Props) => {
             }),
           });
         })
-        .catch(() => {
+        .catch((error) => {
           setExportLoading(false);
+          captureError({
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.csv_exported,
+            payload: {
+              provider: formData.provider.provider,
+            },
+            error: error as Error,
+          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("error"),
@@ -163,7 +183,12 @@ export const ExportForm = (props: Props) => {
         </div>
       </div>
       <div className="flex items-center justify-between ">
-        <Button variant="primary" type="submit" loading={exportLoading}>
+        <Button
+          variant="primary"
+          type="submit"
+          loading={exportLoading}
+          data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EXPORT_BUTTON}
+        >
           {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
         </Button>
       </div>

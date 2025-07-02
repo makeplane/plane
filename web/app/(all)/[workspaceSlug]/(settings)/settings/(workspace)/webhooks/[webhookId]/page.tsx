@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { IWebhook } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
@@ -14,6 +14,7 @@ import { PageHead } from "@/components/core";
 import { SettingsContentWrapper } from "@/components/settings";
 import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/components/web-hooks";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
 
 const WebhookDetailsPage = observer(() => {
@@ -55,6 +56,12 @@ const WebhookDetailsPage = observer(() => {
     };
     await updateWebhook(workspaceSlug.toString(), formData.id, payload)
       .then(() => {
+        captureSuccess({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
+          payload: {
+            webhook: formData.id,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -62,6 +69,13 @@ const WebhookDetailsPage = observer(() => {
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
+          payload: {
+            webhook: formData.id,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",

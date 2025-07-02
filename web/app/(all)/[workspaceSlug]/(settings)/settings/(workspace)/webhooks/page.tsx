@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens";
@@ -15,6 +15,7 @@ import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
 import { WebhookSettingsLoader } from "@/components/ui";
 import { WebhooksList, CreateWebhookModal } from "@/components/web-hooks";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUserPermissions, useWebhook, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
@@ -71,7 +72,12 @@ const WebhooksListPage = observer(() => {
           description={t("workspace_settings.settings.webhooks.description")}
           button={{
             label: t("workspace_settings.settings.webhooks.add_webhook"),
-            onClick: () => setShowCreateWebhookModal(true),
+            onClick: () => {
+              captureClick({
+                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_WEBHOOK_BUTTON,
+              });
+              setShowCreateWebhookModal(true);
+            },
           }}
         />
         {Object.keys(webhooks).length > 0 ? (
@@ -89,7 +95,12 @@ const WebhooksListPage = observer(() => {
                 size="md"
                 primaryButton={{
                   text: t("workspace_settings.settings.webhooks.add_webhook"),
-                  onClick: () => setShowCreateWebhookModal(true),
+                  onClick: () => {
+                    captureClick({
+                      elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
+                    });
+                    setShowCreateWebhookModal(true);
+                  },
                 }}
               />
             </div>
