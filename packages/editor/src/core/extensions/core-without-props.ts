@@ -14,6 +14,7 @@ import { CustomCodeInlineExtension } from "./code-inline";
 import { CustomColorExtension } from "./custom-color";
 import { CustomImageExtensionConfig } from "./custom-image/extension-config";
 import { CustomLinkExtension } from "./custom-link";
+import { EmojiExtension } from "./emoji/extension";
 import { CustomHorizontalRule } from "./horizontal-rule";
 import { ImageExtensionConfig } from "./image";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
@@ -55,6 +56,7 @@ export const CoreEditorExtensionsWithoutProps = [
     },
     dropcursor: false,
   }),
+  EmojiExtension,
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {

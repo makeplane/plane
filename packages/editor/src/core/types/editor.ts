@@ -47,7 +47,8 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
-  | "attachment";
+  | "attachment"
+  | "emoji";
 
 export type TCommandExtraProps = {
   image: {
