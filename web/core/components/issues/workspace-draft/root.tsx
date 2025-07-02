@@ -4,8 +4,7 @@ import { FC, Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants/src/user";
+import { EUserPermissionsLevel, EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components

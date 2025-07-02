@@ -4,24 +4,19 @@ import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-// editor
 import { EditorRefApi } from "@plane/editor";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
-import { TIssue } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
-// ui
+import { EFileAssetType, TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
-// helpers
 // hooks
 import { useEditorAsset, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web services
+// services
 import { WorkspaceService } from "@/plane-web/services";
+
 const workspaceService = new WorkspaceService();
 
 type TInboxIssueDescription = {

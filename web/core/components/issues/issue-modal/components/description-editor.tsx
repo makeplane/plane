@@ -11,8 +11,7 @@ import { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { TIssue } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TIssue } from "@plane/types";
 // ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";

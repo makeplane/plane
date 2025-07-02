@@ -6,8 +6,8 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EProjectNetwork } from "@plane/types";
 // components
-import { EProjectNetwork } from "@plane/types/src/enums";
 import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";

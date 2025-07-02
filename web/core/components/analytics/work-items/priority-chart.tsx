@@ -15,8 +15,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
-import { TBarItem, TChart, TChartDatum } from "@plane/types/src/charts";
+import { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 // plane web components
 import { Button } from "@plane/ui";
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
