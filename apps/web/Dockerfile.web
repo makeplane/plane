@@ -73,7 +73,8 @@ COPY --from=installer /app/web/package.json .
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=installer /app/web/.next/standalone ./
-COPY --from=installer /app/web/.next ./web/.next
+
+COPY --from=installer /app/web/.next/static ./web/.next/static
 COPY --from=installer /app/web/public ./web/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
