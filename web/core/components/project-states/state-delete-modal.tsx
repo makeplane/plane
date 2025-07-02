@@ -10,7 +10,8 @@ import type { IState } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useEventTracker, useProjectState } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProjectState } from "@/hooks/store";
 
 type TStateDeleteModal = {
   isOpen: boolean;
@@ -24,8 +25,6 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   // router
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { captureProjectStateEvent } = useEventTracker();
   const { deleteState } = useProjectState();
 
   const handleClose = () => {
@@ -40,11 +39,10 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
 
     await deleteState(workspaceSlug.toString(), data.project_id, data.id)
       .then(() => {
-        captureProjectStateEvent({
+        captureSuccess({
           eventName: STATE_TRACKER_EVENTS.delete,
           payload: {
-            ...data,
-            state: "SUCCESS",
+            id: data.id,
           },
         });
         handleClose();
@@ -63,11 +61,10 @@ export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) =>
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
-        captureProjectStateEvent({
+        captureError({
           eventName: STATE_TRACKER_EVENTS.delete,
           payload: {
-            ...data,
-            state: "FAILED",
+            id: data.id,
           },
         });
       })

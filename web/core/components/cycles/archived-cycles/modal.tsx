@@ -3,8 +3,10 @@
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
+import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -42,16 +44,28 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
           title: "Archive success",
           message: "Your archives can be found in project archives.",
         });
+        captureSuccess({
+          eventName: CYCLE_TRACKER_EVENTS.archive,
+          payload: {
+            id: cycleId,
+          },
+        });
         onClose();
         router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
       })
-      .catch(() =>
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Cycle could not be archived. Please try again.",
-        })
-      )
+        });
+        captureError({
+          eventName: CYCLE_TRACKER_EVENTS.archive,
+          payload: {
+            id: cycleId,
+          },
+        });
+      })
       .finally(() => setIsArchiving(false));
   };
 

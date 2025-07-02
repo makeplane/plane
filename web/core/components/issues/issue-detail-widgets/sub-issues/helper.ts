@@ -1,21 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // hooks
-import { useEventTracker, useIssueDetail, useProjectState } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail, useProjectState } from "@/hooks/store";
 // plane web helpers
 import { updateEpicAnalytics } from "@/plane-web/helpers/epic-analytics";
 
 export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSubIssueOperations => {
   // router
   const { epicId: epicIdParam } = useParams();
-  const pathname = usePathname();
   // translation
   const { t } = useTranslation();
   // store hooks
@@ -32,7 +33,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
   const { peekIssue: epicPeekIssue } = useIssueDetail(EIssueServiceType.EPICS);
   // const { updateEpicAnalytics } = useIssueTypes();
   const { updateAnalytics } = updateEpicAnalytics();
-  const { captureIssueEvent } = useEventTracker();
 
   // derived values
   const epicId = epicIdParam || epicPeekIssue?.issueId;
@@ -128,14 +128,9 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
               }
             }
           }
-          captureIssueEvent({
-            eventName: "Sub-issue updated",
-            payload: { ...oldIssue, ...issueData, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: Object.keys(issueData).join(","),
-              change_details: Object.values(issueData).join(","),
-            },
-            path: pathname,
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
+            payload: { id: issueId, parent_id: parentIssueId },
           });
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -143,15 +138,11 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             message: t("sub_work_item.update.success"),
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch {
-          captureIssueEvent({
-            eventName: "Sub-issue updated",
-            payload: { ...oldIssue, ...issueData, state: "FAILED", element: "Issue detail page" },
-            updates: {
-              changed_property: Object.keys(issueData).join(","),
-              change_details: Object.values(issueData).join(","),
-            },
-            path: pathname,
+        } catch (error) {
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.update,
+            payload: { id: issueId, parent_id: parentIssueId },
+            error: error as Error,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -179,25 +170,16 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
             title: t("toast.success"),
             message: t("sub_work_item.remove.success"),
           });
-          captureIssueEvent({
-            eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: "parent_id",
-              change_details: parentIssueId,
-            },
-            path: pathname,
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
+            payload: { id: issueId, parent_id: parentIssueId },
           });
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
-        } catch {
-          captureIssueEvent({
-            eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            updates: {
-              changed_property: "parent_id",
-              change_details: parentIssueId,
-            },
-            path: pathname,
+        } catch (error) {
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.remove,
+            payload: { id: issueId, parent_id: parentIssueId },
+            error: error as Error,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -210,18 +192,17 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
         try {
           setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           return deleteSubIssue(workspaceSlug, projectId, parentIssueId, issueId).then(() => {
-            captureIssueEvent({
-              eventName: "Sub-issue deleted",
-              payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-              path: pathname,
+            captureSuccess({
+              eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
+              payload: { id: issueId, parent_id: parentIssueId },
             });
             setSubIssueHelpers(parentIssueId, "issue_loader", issueId);
           });
-        } catch {
-          captureIssueEvent({
-            eventName: "Sub-issue removed",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            path: pathname,
+        } catch (error) {
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.sub_issue.delete,
+            payload: { id: issueId, parent_id: parentIssueId },
+            error: error as Error,
           });
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -232,7 +213,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       },
     }),
     [
-      captureIssueEvent,
       createSubIssues,
       deleteSubIssue,
       epicId,
@@ -240,7 +220,6 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
       getIssueById,
       getStateById,
       issueServiceType,
-      pathname,
       removeSubIssue,
       setSubIssueHelpers,
       t,

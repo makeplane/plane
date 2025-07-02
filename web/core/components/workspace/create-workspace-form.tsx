@@ -3,7 +3,12 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ORGANIZATION_SIZE, RESTRICTED_URLS, WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
+import {
+  ORGANIZATION_SIZE,
+  RESTRICTED_URLS,
+  WORKSPACE_TRACKER_ELEMENTS,
+  WORKSPACE_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 // types
@@ -11,7 +16,8 @@ import { IWorkspace } from "@plane/types";
 // ui
 import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useWorkspace } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -51,7 +57,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   // store hooks
-  const { captureWorkspaceEvent } = useEventTracker();
   const { createWorkspace } = useWorkspace();
   // form info
   const {
@@ -71,13 +76,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
           await createWorkspace(formData)
             .then(async (res) => {
-              captureWorkspaceEvent({
+              captureSuccess({
                 eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: {
-                  ...res,
-                  state: "SUCCESS",
-                  element: "Create workspace page",
-                },
+                payload: { slug: formData.slug },
               });
               setToast({
                 type: TOAST_TYPE.SUCCESS,
@@ -88,12 +89,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() => {
-              captureWorkspaceEvent({
+              captureError({
                 eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: {
-                  state: "FAILED",
-                  element: "Create workspace page",
-                },
+                payload: { slug: formData.slug },
+                error: new Error("Error creating workspace"),
               });
               setToast({
                 type: TOAST_TYPE.ERROR,
@@ -248,7 +247,14 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
       <div className="flex items-center gap-4">
         {secondaryButton}
-        <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+        <Button
+          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.CREATE_WORKSPACE_BUTTON}
+          variant="primary"
+          type="submit"
+          size="md"
+          disabled={!isValid}
+          loading={isSubmitting}
+        >
           {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
         </Button>
         {!secondaryButton && (

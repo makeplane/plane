@@ -16,7 +16,8 @@ import { USER_WORKSPACES_LIST } from "@/constants/fetch-keys";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser, useWorkspace, useUserProfile, useEventTracker } from "@/hooks/store";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
+import { useUser, useWorkspace, useUserProfile } from "@/hooks/store";
 // wrappers
 import { AuthenticationWrapper } from "@/lib/wrappers";
 import { WorkspaceService } from "@/plane-web/services";
@@ -35,7 +36,6 @@ const OnboardingPage = observer(() => {
   const [step, setStep] = useState<EOnboardingSteps | null>(null);
   const [totalSteps, setTotalSteps] = useState<number | null>(null);
   // store hooks
-  const { captureEvent } = useEventTracker();
   const { isLoading: userLoader, data: user, updateCurrentUser } = useUser();
   const { data: profile, updateUserProfile, finishUserOnboarding } = useUserProfile();
   const { workspaces, fetchWorkspaces } = useWorkspace();
@@ -73,10 +73,12 @@ const OnboardingPage = observer(() => {
 
     await finishUserOnboarding()
       .then(() => {
-        captureEvent(USER_TRACKER_EVENTS.onboarding_complete, {
-          email: user.email,
-          user_id: user.id,
-          status: "SUCCESS",
+        captureSuccess({
+          eventName: USER_TRACKER_EVENTS.onboarding_complete,
+          payload: {
+            email: user.email,
+            user_id: user.id,
+          },
         });
       })
       .catch(() => {

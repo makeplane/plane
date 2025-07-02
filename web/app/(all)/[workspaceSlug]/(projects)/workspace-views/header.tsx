@@ -8,8 +8,9 @@ import { Layers } from "lucide-react";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  DEFAULT_GLOBAL_VIEWS_LIST,
   EIssueLayoutTypes,
+  GLOBAL_VIEW_TRACKER_ELEMENTS,
+  DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
@@ -225,7 +226,12 @@ export const GlobalIssuesHeader = observer(() => {
             <></>
           )}
 
-          <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+          <Button
+            variant="primary"
+            size="sm"
+            data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
+            onClick={() => setCreateViewModal(true)}
+          >
             {t("workspace_views.add_view")}
           </Button>
           <div className="hidden md:block">

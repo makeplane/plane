@@ -7,13 +7,15 @@ import { useParams } from "next/navigation";
 // icons
 import { Pencil, Trash2 } from "lucide-react";
 // ui
+import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { CustomMenu } from "@plane/ui";
 import { calculateTotalFilters, truncateText } from "@plane/utils";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
 // helpers
 // store hooks
-import { useEventTracker, useGlobalView } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useGlobalView } from "@/hooks/store";
 
 type Props = { viewId: string };
 
@@ -26,7 +28,6 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { getViewDetailsById } = useGlobalView();
-  const { setTrackElement } = useEventTracker();
   // derived data
   const view = getViewDetailsById(viewId);
 
@@ -58,7 +59,9 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        setTrackElement("List view");
+                        captureClick({
+                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
+                        });
                         setUpdateViewModal(true);
                       }}
                     >
@@ -71,6 +74,9 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        captureClick({
+                          elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
+                        });
                         setDeleteViewModal(true);
                       }}
                     >

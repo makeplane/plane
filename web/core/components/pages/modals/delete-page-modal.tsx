@@ -8,7 +8,7 @@ import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
@@ -28,7 +28,6 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(storeType);
-  const { capturePageEvent } = useEventTracker();
   if (!page || !page.id) return null;
   // derived values
   const { id: pageId, name } = page;
@@ -45,11 +44,10 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
     setIsDeleting(true);
     await removePage(pageId)
       .then(() => {
-        capturePageEvent({
+        captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
           payload: {
-            ...page,
-            state: "SUCCESS",
+            id: pageId,
           },
         });
         handleClose();
@@ -64,11 +62,10 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
         }
       })
       .catch(() => {
-        capturePageEvent({
+        captureError({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
           payload: {
-            ...page,
-            state: "FAILED",
+            id: pageId,
           },
         });
         setToast({

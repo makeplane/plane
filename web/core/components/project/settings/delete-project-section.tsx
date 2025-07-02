@@ -4,6 +4,7 @@ import React from "react";
 import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { IProject } from "@plane/types";
 // ui
 import { Button, Loader } from "@plane/ui";
@@ -43,7 +44,11 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
                 <div>
                   {projectDetails ? (
                     <div>
-                      <Button variant="danger" onClick={handleDelete}>
+                      <Button
+                        variant="danger"
+                        onClick={handleDelete}
+                        data-ph-element={PROJECT_TRACKER_ELEMENTS.DELETE_PROJECT_BUTTON}
+                      >
                         Delete my project
                       </Button>
                     </div>

@@ -1,15 +1,14 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // types
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { IIssueDisplayProperties, TIssue } from "@plane/types";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 // components
 import { SPREADSHEET_COLUMNS } from "@/plane-web/components/issues/issue-layouts/utils";
 import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-// utils
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -23,9 +22,7 @@ type Props = {
 export const IssueColumn = observer((props: Props) => {
   const { displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
   // router
-  const pathname = usePathname();
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
-  const { captureIssueEvent } = useEventTracker();
 
   const shouldRenderProperty = shouldRenderColumn(property);
 
@@ -46,18 +43,14 @@ export const IssueColumn = observer((props: Props) => {
       >
         <Column
           issue={issueDetail}
-          onChange={(issue: TIssue, data: Partial<TIssue>, updates: any) =>
+          onChange={(issue: TIssue, data: Partial<TIssue>) =>
             updateIssue &&
             updateIssue(issue.project_id, issue.id, data).then(() => {
-              captureIssueEvent({
-                eventName: "Issue updated",
+              captureSuccess({
+                eventName: WORK_ITEM_TRACKER_EVENTS.update,
                 payload: {
-                  ...issue,
-                  ...data,
-                  element: "Spreadsheet layout",
+                  id: issue.id,
                 },
-                updates: updates,
-                path: pathname,
               });
             })
           }
