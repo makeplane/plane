@@ -3,11 +3,13 @@ import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { LayersIcon, Plus } from "lucide-react";
 // plane imports
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
-import { useEventTracker, useIssueDetail } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store";
 
 type Props = {
   issueId: string;
@@ -28,7 +30,6 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
     setIssueCrudOperationState,
     issueCrudOperationState,
   } = useIssueDetail(issueServiceType);
-  const { setTrackElement } = useEventTracker();
 
   // derived values
   const issue = getIssueById(issueId);
@@ -52,13 +53,13 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
   };
 
   const handleCreateNew = () => {
-    setTrackElement("Issue detail nested sub-issue");
+    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.create });
     handleIssueCrudState("create", issueId, null);
     toggleCreateIssueModal(true);
   };
 
   const handleAddExisting = () => {
-    setTrackElement("Issue detail nested sub-issue");
+    captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.sub_issue.add_existing });
     handleIssueCrudState("existing", issueId, null);
     toggleSubIssuesModal(issue.id);
   };

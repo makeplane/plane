@@ -1,18 +1,21 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
 import useSWR from "swr";
+// plane imports
 import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { TourRoot } from "@/components/onboarding";
-// constants
 // helpers
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile, useEventTracker, useUser } from "@/hooks/store";
+import { useUserProfile, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
 import useSize from "@/hooks/use-window-size";
+// plane web components
 import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
+// local imports
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
 
@@ -21,7 +24,6 @@ export const WorkspaceHomeView = observer(() => {
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
-  const { captureEvent } = useEventTracker();
   const { toggleWidgetSettings, fetchWidgets } = useHome();
   const [windowWidth] = useSize();
 
@@ -38,9 +40,11 @@ export const WorkspaceHomeView = observer(() => {
   const handleTourCompleted = () => {
     updateTourCompleted()
       .then(() => {
-        captureEvent(PRODUCT_TOUR_TRACKER_EVENTS.complete, {
-          user_id: currentUser?.id,
-          state: "SUCCESS",
+        captureSuccess({
+          eventName: PRODUCT_TOUR_TRACKER_EVENTS.complete,
+          payload: {
+            user_id: currentUser?.id,
+          },
         });
       })
       .catch((error) => {

@@ -5,21 +5,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
 // helpers
 // hooks
-import {
-  useEventTracker,
-  useUser,
-  useAppTheme,
-  useCommandPalette,
-  useUserPermissions,
-  useIssueDetail,
-} from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useUser, useAppTheme, useCommandPalette, useUserPermissions, useIssueDetail } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import {
@@ -42,7 +36,6 @@ export const CommandPalette: FC = observer(() => {
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
   const { toggleSidebar } = useAppTheme();
-  const { setTrackElement } = useEventTracker();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
   const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
@@ -203,7 +196,7 @@ export const CommandPalette: FC = observer(() => {
           toggleSidebar();
         }
       } else if (!isAnyModalOpen) {
-        setTrackElement("Shortcut key");
+        captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
         if (
           Object.keys(shortcutsList.global).includes(keyPressed) &&
           ((!projectId && performAnyProjectCreateActions()) || performProjectCreateActions())
@@ -242,7 +235,6 @@ export const CommandPalette: FC = observer(() => {
       performProjectCreateActions,
       performWorkspaceCreateActions,
       projectId,
-      setTrackElement,
       shortcutsList,
       toggleCommandPaletteModal,
       toggleShortcutModal,

@@ -6,14 +6,15 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
-import { useCommandPalette, useCycle, useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useCycle, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const CycleEmptyState: React.FC = observer(() => {
@@ -27,7 +28,6 @@ export const CycleEmptyState: React.FC = observer(() => {
   const { getCycleById } = useCycle();
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
@@ -133,7 +133,7 @@ export const CycleEmptyState: React.FC = observer(() => {
             primaryButton={{
               text: t("project_cycles.empty_state.no_issues.primary_button.text"),
               onClick: () => {
-                setTrackElement("Cycle issue empty state");
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
                 toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
               },
               disabled: !canPerformEmptyStateActions,

@@ -4,7 +4,6 @@ import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
 // plane web store
 import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
-import { EventTrackerStore, IEventTrackerStore } from "@/plane-web/store/event-tracker.store";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
@@ -55,7 +54,6 @@ export class CoreRootStore {
   router: IRouterStore;
   commandPalette: ICommandPaletteStore;
   theme: IThemeStore;
-  eventTracker: IEventTrackerStore;
   instance: IInstanceStore;
   user: IUserStore;
   projectInbox: IProjectInboxStore;
@@ -86,7 +84,6 @@ export class CoreRootStore {
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.eventTracker = new EventTrackerStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
@@ -120,7 +117,6 @@ export class CoreRootStore {
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
-    this.eventTracker = new EventTrackerStore(this as unknown as RootStore);
     this.projectInbox = new ProjectInboxStore(this);
     this.projectPages = new ProjectPageStore(this as unknown as RootStore);
     this.multipleSelect = new MultipleSelectStore();

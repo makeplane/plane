@@ -5,13 +5,14 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, LinkIcon, Trash2 } from "lucide-react";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomSelect, TOAST_TYPE, setToast, TContextMenuItem, CustomMenu } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember, useUserPermissions } from "@/hooks/store";
 
 type Props = {
@@ -93,7 +94,12 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
     },
     {
       key: "remove",
-      action: () => setRemoveMemberModal(true),
+      action: () => {
+        captureClick({
+          elementName: MEMBER_TRACKER_ELEMENTS.WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU,
+        });
+        setRemoveMemberModal(true);
+      },
       title: t("common.remove"),
       icon: Trash2,
       shouldRender: isAdmin,

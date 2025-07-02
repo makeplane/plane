@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, SIDEBAR_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -12,7 +12,8 @@ import { Tooltip } from "@plane/ui";
 import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
 // hooks
-import { useAppTheme, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useAppTheme, useUserPermissions } from "@/hooks/store";
 
 export interface SidebarUserMenuItemProps {
   item: {
@@ -34,7 +35,6 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
   // package hooks
   const { t } = useTranslation();
   // store hooks
-  const { captureEvent } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
@@ -50,8 +50,11 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    captureEvent(SIDEBAR_TRACKER_EVENTS.click, {
-      destination: itemKey,
+    captureClick({
+      elementName: SIDEBAR_TRACKER_ELEMENTS.USER_MENU_ITEM,
+      context: {
+        destination: itemKey,
+      },
     });
   };
 

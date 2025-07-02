@@ -11,6 +11,7 @@ import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 // helpers
 import { getUserRole } from "@plane/utils";
 // hooks
+import { captureClick, joinEventGroup } from "@/helpers/event-tracker.helper";
 import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
@@ -33,6 +34,8 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   );
   const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug?.toString());
   const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
+  const is_posthog_enabled =
+    process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
     if (user) {
@@ -46,7 +49,10 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
       });
       if (currentWorkspace) {
-        posthog?.group(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id);
+        joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id, {
+          date: new Date().toDateString(),
+          workspace_id: currentWorkspace?.id,
+        });
       }
     }
   }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
@@ -65,7 +71,29 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
     }
   }, []);
 
-  if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled)
+  useEffect(() => {
+    const clickHandler = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      // Use closest to find the nearest parent element with data-ph-element attribute
+      const elementWithAttribute = target.closest("[data-ph-element]") as HTMLElement;
+      if (elementWithAttribute) {
+        const element = elementWithAttribute.getAttribute("data-ph-element");
+        if (element) {
+          captureClick({ elementName: element });
+        }
+      }
+    };
+
+    if (is_posthog_enabled) {
+      document.addEventListener("click", clickHandler);
+    }
+
+    return () => {
+      document.removeEventListener("click", clickHandler);
+    };
+  }, [is_posthog_enabled]);
+
+  if (is_posthog_enabled)
     return (
       <PHProvider client={posthog}>
         <PostHogPageView />

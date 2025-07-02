@@ -12,7 +12,8 @@ import ProjectCommonAttributes from "@/components/project/create/common-attribut
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
-import { useEventTracker, useProject } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProject } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import { TProject } from "@/plane-web/types/projects";
@@ -32,7 +33,6 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();
-  const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -70,25 +70,30 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         if (coverImage) {
           await updateCoverImageStatus(res.id, coverImage);
         }
-        const newPayload = {
-          ...res,
-          state: "SUCCESS",
-        };
-        captureProjectEvent({
+        captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: newPayload,
+          payload: {
+            identifier: formData.identifier,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),
           message: t("project_created_successfully"),
         });
+
         if (setToFavorite) {
           handleAddToFavorites(res.id);
         }
         handleNextStep(res.id);
       })
       .catch((err) => {
+        captureError({
+          eventName: PROJECT_TRACKER_EVENTS.create,
+          payload: {
+            identifier: formData.identifier,
+          },
+        });
         if (err?.data.code === "PROJECT_NAME_ALREADY_EXIST") {
           setToast({
             type: TOAST_TYPE.ERROR,

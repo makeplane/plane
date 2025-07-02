@@ -10,7 +10,6 @@ export interface CopyMenuHelperProps {
     shouldRender: boolean;
   };
   activeLayout: string;
-  setTrackElement: (element: string) => void;
   setCreateUpdateIssueModal: (open: boolean) => void;
   setDuplicateWorkItemModal?: (open: boolean) => void;
 }
