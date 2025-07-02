@@ -5,14 +5,15 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EIssuesStoreType } from "@plane/constants";
-import { TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ARCHIVABLE_STATE_GROUPS, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIssuesStoreType, TIssue } from "@plane/types";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
-import { useEventTracker, useProject, useProjectState } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useProject, useProjectState } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -39,8 +40,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { setTrackElement } = useEventTracker();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // derived values
@@ -70,7 +69,6 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
     isArchivingAllowed,
     isDeletingAllowed: isEditingAllowed,
     isInArchivableGroup,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -83,6 +81,14 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
   };
 
   const MENU_ITEMS = useAllIssueMenuItems(menuItemProps);
+
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: () => {
+      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.GLOBAL_VIEW });
+      item.action();
+    },
+  }));
 
   return (
     <>
@@ -122,7 +128,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
         />
       )}
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
         ellipsis
         customButton={customActionButton}
@@ -171,6 +177,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.GLOBAL_VIEW });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -208,6 +215,7 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.GLOBAL_VIEW });
                 item.action();
               }}
               className={cn(

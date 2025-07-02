@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
-import { API_BASE_URL, AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Input, Spinner } from "@plane/ui";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import useTimer from "@/hooks/use-timer";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -38,8 +38,6 @@ const defaultValues: TUniqueCodeFormValues = {
 
 export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
   const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
-  // hooks
-  const { captureEvent } = useEventTracker();
   // derived values
   const defaultResetTimerValue = 5;
   // states
@@ -62,10 +60,22 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       setResendCodeTimer(defaultResetTimerValue);
       handleFormChange("code", uniqueCode?.code || "");
       setIsRequestingNewCode(false);
+      captureSuccess({
+        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
+        payload: {
+          email: email,
+        },
+      });
     } catch {
       setResendCodeTimer(0);
       console.error("Error while requesting new code");
       setIsRequestingNewCode(false);
+      captureError({
+        eventName: AUTH_TRACKER_EVENTS.new_code_requested,
+        payload: {
+          email: email,
+        },
+      });
     }
   };
 
@@ -84,12 +94,23 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => {
         setIsSubmitting(true);
-        captureEvent(AUTH_TRACKER_EVENTS.code_verify, {
-          state: "SUCCESS",
-          first_time: !isExistingEmail,
+        captureSuccess({
+          eventName: AUTH_TRACKER_EVENTS.code_verify,
+          payload: {
+            state: "SUCCESS",
+            first_time: !isExistingEmail,
+          },
         });
       }}
-      onError={() => setIsSubmitting(false)}
+      onError={() => {
+        setIsSubmitting(false);
+        captureError({
+          eventName: AUTH_TRACKER_EVENTS.code_verify,
+          payload: {
+            state: "FAILED",
+          },
+        });
+      }}
     >
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
@@ -145,6 +166,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           </p>
           <button
             type="button"
+            data-ph-element={AUTH_TRACKER_ELEMENTS.REQUEST_NEW_CODE}
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
@@ -163,7 +185,14 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-2.5">
-        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-full"
+          size="lg"
+          disabled={isButtonDisabled}
+          data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
+        >
           {isRequestingNewCode ? (
             t("auth.common.unique_code.sending_code")
           ) : isSubmitting ? (

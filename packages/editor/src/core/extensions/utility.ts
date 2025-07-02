@@ -1,5 +1,4 @@
 import { Extension } from "@tiptap/core";
-// prosemirror plugins
 import codemark from "prosemirror-codemark";
 // helpers
 import { restorePublicImages } from "@/helpers/image-helpers";
@@ -8,17 +7,27 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
-import type { IEditorProps, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { IEditorProps, TEditorAsset, TFileHandler, TReadOnlyFileHandler } from "@/types";
 
 declare module "@tiptap/core" {
   interface Commands {
     utility: {
       updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
+      updateAssetsList: (
+        args:
+          | {
+              asset: TEditorAsset;
+            }
+          | {
+              idToRemove: string;
+            }
+      ) => () => void;
     };
   }
 }
 
 export interface UtilityExtensionStorage {
+  assetsList: TEditorAsset[];
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
 }
@@ -58,6 +67,7 @@ export const UtilityExtension = (props: Props) => {
 
     addStorage() {
       return {
+        assetsList: [],
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
       };
@@ -67,6 +77,21 @@ export const UtilityExtension = (props: Props) => {
       return {
         updateAssetsUploadStatus: (updatedStatus) => () => {
           this.storage.assetsUploadStatus = updatedStatus;
+        },
+        updateAssetsList: (args) => () => {
+          const uniqueAssets = new Set(this.storage.assetsList);
+          if ("asset" in args) {
+            const alreadyExists = this.storage.assetsList.find((asset) => asset.id === args.asset.id);
+            if (!alreadyExists) {
+              uniqueAssets.add(args.asset);
+            }
+          } else if ("idToRemove" in args) {
+            const asset = this.storage.assetsList.find((asset) => asset.id === args.idToRemove);
+            if (asset) {
+              uniqueAssets.delete(asset);
+            }
+          }
+          this.storage.assetsList = Array.from(uniqueAssets);
         },
       };
     },

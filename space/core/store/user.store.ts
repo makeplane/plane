@@ -2,13 +2,11 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { UserService } from "@plane/services";
-import { IUser } from "@plane/types";
+import { ActorDetail, IUser } from "@plane/types";
 // store types
 import { ProfileStore, IProfileStore } from "@/store/profile.store";
 // store
 import { CoreRootStore } from "@/store/root.store";
-// types
-import { ActorDetail } from "@/types/issue";
 
 type TUserErrorStatus = {
   status: string;

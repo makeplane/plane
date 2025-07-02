@@ -4,7 +4,7 @@ import { FC, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { EProjectNetwork } from "@plane/types/src/enums";
@@ -12,11 +12,11 @@ import { JoinProject } from "@/components/auth-screens";
 import { LogoSpinner } from "@/components/common";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import {
   useCommandPalette,
   useCycle,
-  useEventTracker,
   useLabel,
   useMember,
   useModule,
@@ -45,7 +45,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
@@ -195,8 +194,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
               title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
               description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
               onClick={() => {
-                setTrackElement("Project empty state");
                 toggleCreateProjectModal(true);
+                captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
               }}
               disabled={!canPerformEmptyStateActions}
             />

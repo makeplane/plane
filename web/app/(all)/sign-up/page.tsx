@@ -6,14 +6,12 @@ import Link from "next/link";
 // ui
 import { useTheme } from "next-themes";
 // components
-import { AUTH_TRACKER_EVENTS } from "@plane/constants";
+import { AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AuthRoot } from "@/components/account";
 // constants
 // helpers
 import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
-// hooks
-import { useEventTracker } from "@/hooks/store";
 // assets
 import { AuthenticationWrapper } from "@/lib/wrappers";
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
@@ -26,8 +24,6 @@ export type AuthType = "sign-in" | "sign-up";
 const SignInPage = observer(() => {
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { captureEvent } = useEventTracker();
   // hooks
   const { resolvedTheme } = useTheme();
 
@@ -54,7 +50,7 @@ const SignInPage = observer(() => {
               {t("auth.common.already_have_an_account")}
               <Link
                 href="/"
-                onClick={() => captureEvent(AUTH_TRACKER_EVENTS.navigate.sign_in, {})}
+                data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_FROM_SIGNUP}
                 className="font-semibold text-custom-primary-100 hover:underline"
               >
                 {t("auth.common.login")}

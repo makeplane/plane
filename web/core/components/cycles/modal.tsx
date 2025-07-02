@@ -12,7 +12,8 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 import { CycleForm } from "@/components/cycles";
 // constants
 // hooks
-import { useEventTracker, useCycle, useProject } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useCycle, useProject } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -35,7 +36,6 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);
   // store hooks
-  const { captureCycleEvent } = useEventTracker();
   const { workspaceProjectIds } = useProject();
   const { createCycle, updateCycleDetails } = useCycle();
   const { isMobile } = usePlatformOS();
@@ -63,9 +63,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        captureCycleEvent({
+        captureSuccess({
           eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: { ...res, state: "SUCCESS" },
+          payload: {
+            id: res.id,
+          },
         });
       })
       .catch((err) => {
@@ -74,23 +76,24 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Error!",
           message: err?.detail ?? "Error in creating cycle. Please try again.",
         });
-        captureCycleEvent({
+        captureError({
           eventName: CYCLE_TRACKER_EVENTS.create,
-          payload: { ...payload, state: "FAILED" },
+          error: err,
         });
       });
   };
 
-  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>, dirtyFields: any) => {
+  const handleUpdateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
       .then((res) => {
-        const changed_properties = Object.keys(dirtyFields);
-        captureCycleEvent({
+        captureSuccess({
           eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: { ...res, changed_properties: changed_properties, state: "SUCCESS" },
+          payload: {
+            id: res.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -99,14 +102,14 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
         });
       })
       .catch((err) => {
-        captureCycleEvent({
-          eventName: CYCLE_TRACKER_EVENTS.update,
-          payload: { ...payload, state: "FAILED" },
-        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Error in updating cycle. Please try again.",
+        });
+        captureError({
+          eventName: CYCLE_TRACKER_EVENTS.update,
+          error: err,
         });
       });
   };
@@ -121,7 +124,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     return status;
   };
 
-  const handleFormSubmit = async (formData: Partial<ICycle>, dirtyFields: any) => {
+  const handleFormSubmit = async (formData: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId) return;
 
     const payload: Partial<ICycle> = {
@@ -145,7 +148,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
     }
 
     if (isDateValid) {
-      if (data) await handleUpdateCycle(data.id, payload, dirtyFields);
+      if (data) await handleUpdateCycle(data.id, payload);
       else {
         await handleCreateCycle(payload).then(() => {
           setCycleTab("all");

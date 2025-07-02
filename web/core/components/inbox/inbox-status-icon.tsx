@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2, Clock, Copy, XCircle } from "lucide-react";
-import { TInboxIssueStatus, EInboxIssueStatus } from "@plane/constants";
+import { TInboxIssueStatus, EInboxIssueStatus } from "@plane/types";
 import { cn } from "@plane/utils";
 
 export const ICON_PROPERTIES = {

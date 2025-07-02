@@ -12,7 +12,8 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast 
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useMember, useUserPermissions } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
@@ -45,7 +46,6 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { captureEvent } = useEventTracker();
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     project: { getProjectMemberDetails, bulkAddMembersToProject },
@@ -86,22 +86,22 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.SUCCESS,
           message: "Members added successfully.",
         });
-        captureEvent(MEMBER_TRACKER_EVENTS.project.add, {
-          members: [
-            ...payload.members.map((member) => ({
-              member_id: member.member_id,
-              role: ROLE[member.role],
-            })),
-          ],
-          state: "SUCCESS",
-          element: "Project settings members page",
+
+        captureSuccess({
+          eventName: MEMBER_TRACKER_EVENTS.project.add,
+          payload: {
+            members: [...payload.members.map((member) => member.member_id)],
+          },
         });
       })
       .catch((error) => {
         console.error(error);
-        captureEvent(MEMBER_TRACKER_EVENTS.project.add, {
-          state: "FAILED",
-          element: "Project settings members page",
+        captureError({
+          eventName: MEMBER_TRACKER_EVENTS.project.add,
+          payload: {
+            members: [...payload.members.map((member) => member.member_id)],
+          },
+          error: error,
         });
       })
       .finally(() => {

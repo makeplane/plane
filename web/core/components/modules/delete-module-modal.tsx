@@ -10,8 +10,10 @@ import type { IModule } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // constants
+// helpers
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useEventTracker, useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -28,7 +30,6 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const router = useAppRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = useParams();
   // store hooks
-  const { captureModuleEvent } = useEventTracker();
   const { deleteModule } = useModule();
   const { t } = useTranslation();
 
@@ -51,9 +52,9 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module deleted successfully.",
         });
-        captureModuleEvent({
+        captureSuccess({
           eventName: MODULE_TRACKER_EVENTS.delete,
-          payload: { ...data, state: "SUCCESS" },
+          payload: { id: data.id },
         });
       })
       .catch((errors) => {
@@ -66,9 +67,10 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           type: TOAST_TYPE.ERROR,
           message: currentError.i18n_message && t(currentError.i18n_message),
         });
-        captureModuleEvent({
+        captureError({
           eventName: MODULE_TRACKER_EVENTS.delete,
-          payload: { ...data, state: "FAILED" },
+          payload: { id: data.id },
+          error: errors,
         });
       })
       .finally(() => handleClose());

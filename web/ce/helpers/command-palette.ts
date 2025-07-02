@@ -1,6 +1,14 @@
 // types
+import {
+  CYCLE_TRACKER_ELEMENTS,
+  MODULE_TRACKER_ELEMENTS,
+  PROJECT_PAGE_TRACKER_ELEMENTS,
+  PROJECT_TRACKER_ELEMENTS,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
 // store
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { store } from "@/lib/store-context";
 
 export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
@@ -10,7 +18,10 @@ export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
     c: {
       title: "Create a new work item",
       description: "Create a new work item in the current project",
-      action: () => toggleCreateIssueModal(true),
+      action: () => {
+        toggleCreateIssueModal(true);
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON });
+      },
     },
   };
 };
@@ -22,7 +33,10 @@ export const getWorkspaceShortcutsList: () => TCommandPaletteActionList = () => 
     p: {
       title: "Create a new project",
       description: "Create a new project in the current workspace",
-      action: () => toggleCreateProjectModal(true),
+      action: () => {
+        toggleCreateProjectModal(true);
+        captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
+      },
     },
   };
 };
@@ -40,17 +54,26 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     d: {
       title: "Create a new page",
       description: "Create a new page in the current project",
-      action: () => toggleCreatePageModal({ isOpen: true }),
+      action: () => {
+        toggleCreatePageModal({ isOpen: true });
+        captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
+      },
     },
     m: {
       title: "Create a new module",
       description: "Create a new module in the current project",
-      action: () => toggleCreateModuleModal(true),
+      action: () => {
+        toggleCreateModuleModal(true);
+        captureClick({ elementName: MODULE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
+      },
     },
     q: {
       title: "Create a new cycle",
       description: "Create a new cycle in the current project",
-      action: () => toggleCreateCycleModal(true),
+      action: () => {
+        toggleCreateCycleModal(true);
+        captureClick({ elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
+      },
     },
     v: {
       title: "Create a new view",

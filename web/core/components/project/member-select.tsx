@@ -4,8 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
+import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { EUserProjectRoles } from "@plane/constants";
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";

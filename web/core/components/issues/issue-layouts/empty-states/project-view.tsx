@@ -1,18 +1,18 @@
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 // components
-import { EIssuesStoreType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EIssuesStoreType } from "@plane/types";
 import { EmptyState } from "@/components/common";
-// constants
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // assets
 import emptyIssue from "@/public/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
 
   // auth
@@ -33,7 +33,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
                 text: "New work item",
                 icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
                 onClick: () => {
-                  setTrackElement("View work item empty state");
+                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.PROJECT_VIEW });
                   toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
                 },
               }

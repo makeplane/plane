@@ -1,5 +1,5 @@
-import { EViewAccess, API_BASE_URL } from "@plane/constants";
-import { TPublishViewSettings } from "@plane/types";
+import { API_BASE_URL } from "@plane/constants";
+import { EViewAccess, TPublishViewSettings } from "@plane/types";
 import { ViewService as CoreViewService } from "@/services/view.service";
 
 export class ViewService extends CoreViewService {

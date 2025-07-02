@@ -55,3 +55,4 @@ export const IMAGE_ALIGNMENT_OPTIONS: {
     icon: AlignRight,
   },
 ];
+export const getImageBlockId = (id: string) => `editor-image-block-${id}`;

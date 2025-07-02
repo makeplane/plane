@@ -2,9 +2,8 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EIssueServiceType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
 import { RelationIssueList } from "@/components/issues";

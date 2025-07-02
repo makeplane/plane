@@ -4,8 +4,8 @@ import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { EUserProjectRoles, EUserPermissionsLevel } from "@plane/constants";
-import { IState, TStateOperationsCallbacks } from "@plane/types";
+import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserProjectRoles, IState, TStateOperationsCallbacks } from "@plane/types";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
 import { useProjectState, useUserPermissions } from "@/hooks/store";

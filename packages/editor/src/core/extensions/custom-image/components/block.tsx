@@ -4,7 +4,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 import { cn } from "@plane/utils";
 // local imports
 import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
-import { ensurePixelString } from "../utils";
+import { ensurePixelString, getImageBlockId } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 import { ImageToolbarRoot } from "./toolbar";
 import { ImageUploadStatus } from "./upload-status";
@@ -209,6 +209,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   return (
     <div
+      id={getImageBlockId(node.attrs.id ?? "")}
       className={cn("w-fit max-w-full transition-all", {
         "ml-[50%] -translate-x-1/2": nodeAlignment === "center",
         "ml-[100%] -translate-x-full": nodeAlignment === "right",

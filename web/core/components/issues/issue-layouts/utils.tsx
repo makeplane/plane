@@ -11,8 +11,9 @@ import uniq from "lodash/uniq";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { ContrastIcon } from "lucide-react";
 // plane types
-import { EIconSize, EIssuesStoreType, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
 import {
+  EIssuesStoreType,
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,

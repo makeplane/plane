@@ -4,26 +4,25 @@ import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
-// plane constants
+// plane imports
 import {
-  DEFAULT_GLOBAL_VIEWS_LIST,
   EIssueFilterType,
-  EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EIssueLayoutTypes
+  EIssueLayoutTypes,
+  GLOBAL_VIEW_TRACKER_ELEMENTS,
+  DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import {
-  ICustomSearchSelectOption,
+  EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  ICustomSearchSelectOption,
 } from "@plane/types";
-// ui
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-// components
 import { isIssueFilterActive } from "@plane/utils";
+// components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "@/components/issues";
 import {
@@ -31,7 +30,6 @@ import {
   WorkspaceViewQuickActions,
   DefaultWorkspaceViewQuickActions,
 } from "@/components/workspace";
-// helpers
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -228,7 +226,12 @@ export const GlobalIssuesHeader = observer(() => {
             <></>
           )}
 
-          <Button variant="primary" size="sm" onClick={() => setCreateViewModal(true)}>
+          <Button
+            variant="primary"
+            size="sm"
+            data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
+            onClick={() => setCreateViewModal(true)}
+          >
             {t("workspace_views.add_view")}
           </Button>
           <div className="hidden md:block">

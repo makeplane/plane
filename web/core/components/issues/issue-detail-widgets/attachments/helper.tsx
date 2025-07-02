@@ -1,11 +1,12 @@
 "use client";
 import { useMemo } from "react";
-import { EIssueServiceType } from "@plane/constants";
-import { TIssueServiceType } from "@plane/types";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // plane ui
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useIssueDetail } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store";
 // types
 import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 
@@ -32,7 +33,6 @@ export const useAttachmentOperations = (
   const {
     attachment: { createAttachment, removeAttachment, getAttachmentsUploadStatusByIssueId },
   } = useIssueDetail(issueServiceType);
-  const { captureIssueEvent } = useEventTracker();
 
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -52,19 +52,16 @@ export const useAttachmentOperations = (
             },
           });
 
-          const res = await attachmentUploadPromise;
-          captureIssueEvent({
-            eventName: "Issue attachment added",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: res.id,
-            },
+          await attachmentUploadPromise;
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.add,
+            payload: { id: issueId },
           });
         } catch (error) {
-          captureIssueEvent({
-            eventName: "Issue attachment added",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.add,
+            payload: { id: issueId },
+            error: error as Error,
           });
           throw error;
         }
@@ -78,22 +75,15 @@ export const useAttachmentOperations = (
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
-          captureIssueEvent({
-            eventName: "Issue attachment deleted",
-            payload: { id: issueId, state: "SUCCESS", element: "Issue detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: "",
-            },
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.remove,
+            payload: { id: issueId },
           });
         } catch (error) {
-          captureIssueEvent({
-            eventName: "Issue attachment deleted",
-            payload: { id: issueId, state: "FAILED", element: "Issue detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: "",
-            },
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.attachment.remove,
+            payload: { id: issueId },
+            error: error as Error,
           });
           setToast({
             message: "The Attachment could not be removed",
@@ -103,7 +93,7 @@ export const useAttachmentOperations = (
         }
       },
     }),
-    [captureIssueEvent, workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, issueId, createAttachment, removeAttachment]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByIssueId(issueId);
 

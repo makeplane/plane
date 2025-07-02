@@ -4,14 +4,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // components
 import { ProjectMemberListItem, SendProjectInvitationModal } from "@/components/project";
 import { MembersSettingsLoader } from "@/components/ui";
 // hooks
-import { useEventTracker, useMember, useUserPermissions } from "@/hooks/store";
+import { useMember, useUserPermissions } from "@/hooks/store";
 
 type TProjectMemberListProps = {
   projectId: string;
@@ -23,8 +23,6 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  // store hooks
-  const { setTrackElement } = useEventTracker();
   const {
     project: { projectMemberIds, getProjectMemberDetails },
   } = useMember();
@@ -73,9 +71,9 @@ export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((pr
             variant="primary"
             size="sm"
             onClick={() => {
-              setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
               setInviteModal(true);
             }}
+            data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
           >
             {t("add_member")}
           </Button>

@@ -25,18 +25,6 @@ export enum EUserPermissionsLevel {
   PROJECT = "PROJECT",
 }
 
-export enum EUserWorkspaceRoles {
-  ADMIN = 20,
-  MEMBER = 15,
-  GUEST = 5,
-}
-
-export enum EUserProjectRoles {
-  ADMIN = 20,
-  MEMBER = 15,
-  GUEST = 5,
-}
-
 export type TUserPermissionsLevel = EUserPermissionsLevel;
 
 export enum EUserPermissions {

@@ -34,8 +34,6 @@ const defaultValues: TUniqueCodeFormValues = {
 
 export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
   const { mode, email, nextPath, handleEmailClear, generateEmailUniqueCode } = props;
-  // hooks
-  // const { captureEvent } = useEventTracker();
   // derived values
   const defaultResetTimerValue = 5;
   // states
