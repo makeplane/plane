@@ -6,14 +6,10 @@ import { IFormattedInstanceConfiguration, TInstanceOIDCAuthenticationConfigurati
 import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import {
-  ConfirmDiscardModal,
-  ControllerInput,
-  TControllerInputFormField,
-  CopyField,
-  TCopyField,
-  CodeBlock,
-} from "@/components/common";
+import { CodeBlock } from "@/components/common/code-block";
+import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
+import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import { TCopyField, CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 
