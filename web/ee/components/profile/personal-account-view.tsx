@@ -1,6 +1,7 @@
 // plane imports
 import { TPersonalAccountProvider, TUserConnection } from "@plane/constants";
 import { Button, GithubIcon, Loader, SlackIcon } from "@plane/ui";
+import { ConnectionLoader } from "./loader";
 
 export type TPersonalAccountConnectProps = {
   provider: TPersonalAccountProvider;
@@ -25,43 +26,10 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
 
   const Icon = IntegrationIcon[provider.key];
 
-  if (isConnectionLoading) {
-    return (
-      <div className="flex flex-col border border-custom-border-200 rounded-s p-4 mb-2 justify-center">
-        {/* Icon and Title Section */}
-        <div className="flex items-center gap-1">
-          <Loader>
-            <Loader.Item height="32px" width="32px" />
-          </Loader>
-          <Loader>
-            <Loader.Item height="24px" width="80px" />
-          </Loader>
-        </div>
-
-        {/* Description Section */}
-        <div className="pt-2 pb-4">
-          <Loader>
-            <Loader.Item height="16px" width="100%" />
-          </Loader>
-        </div>
-
-        {/* Connection Status Section */}
-        <div className="rounded-s bg-neutral-100 p-2 flex justify-between items-center border-[1px] border-custom-border-300">
-          <div className="flex-1">
-            <Loader>
-              <Loader.Item height="16px" width="80%" />
-            </Loader>
-          </div>
-          <Loader>
-            <Loader.Item height="24px" width="64px" />
-          </Loader>
-        </div>
-      </div>
-    );
-  }
+  if (isConnectionLoading) return <ConnectionLoader />;
 
   return (
-    <div className="flex flex-col border border-custom-border-200 rounded-s p-4 mb-2 justify-center">
+    <div className="flex flex-col border border-custom-border-200 rounded p-4 mb-2 justify-center">
       <div className="flex items-center gap-2">
         {Icon && <Icon className="w-8 h-8" />}
         <div className="text-lg font-medium">{provider.name}</div>
@@ -69,7 +37,7 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
       <div className="text-sm text-gray-500 pt-2 pb-4">{provider.description}</div>
 
       {connectionSlug ? (
-        <div className="rounded-s bg-custom-background-400 p-2 flex justify-between items-center border-[1px] border-custom-border-300">
+        <div className="rounded p-2 flex justify-between items-center border-[1px] border-custom-border-300">
           <p className="text-sm text-gray-400 font-medium">
             Your team uses <span className="underline">{connectionSlug}</span>.
           </p>
@@ -83,7 +51,7 @@ export function PersonalAccountConnectView(props: TPersonalAccountConnectProps) 
           </Button>
         </div>
       ) : (
-        <div className="rounded-s p-2 flex justify-between ml-auto items-center">
+        <div className="rounded p-2 flex justify-between ml-auto items-center">
           <Button
             size="sm"
             onClick={isUserConnected ? () => handleDisconnection(provider.key) : () => handleConnection(provider.key)}

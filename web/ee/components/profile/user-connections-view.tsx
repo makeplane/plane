@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
@@ -9,24 +10,22 @@ import { TUserConnection, USER_CONNECTION_PROVIDERS } from "@plane/constants";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
-import { PersonalAccountConnectView } from "@/components/profile/connection/personal-account-view";
-import { WorkspaceSwitch } from "@/components/profile/connection/workspace-switch";
 import { useUser, useWorkspace } from "@/hooks/store";
 import { useGithubIntegration } from "@/plane-web/hooks/store";
 import { useConnections } from "@/plane-web/hooks/store/integrations/use-connection";
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
+import { ConnectionLoader } from "./loader";
+import { PersonalAccountConnectView } from "./personal-account-view";
 
-export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: string }) => {
-  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace | null>(null);
-  const { workspaces, loader } = useWorkspace();
-
-  const handleWorkspaceChange = (workspace: IWorkspace) => {
-    setSelectedWorkspace(workspace);
-  };
-
-  const [connections, setConnections] = useState<TWorkspaceUserConnection[]>();
-
+export const UserConnectionsView = observer(() => {
+  // route params
+  const { workspaceSlug } = useParams();
+  // store
+  const { getWorkspaceBySlug } = useWorkspace();
   const { fetchUserConnections, getConnectionsByWorkspaceSlug } = useConnections();
+  // derived
+  const selectedWorkspace = getWorkspaceBySlug(workspaceSlug as string);
+  const connections = selectedWorkspace && getConnectionsByWorkspaceSlug(selectedWorkspace?.slug);
 
   const { isLoading } = useSWR(
     selectedWorkspace ? `USER_INTEGRATION_CONNECTIONS_${selectedWorkspace.slug?.toString()}` : null,
@@ -34,40 +33,14 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
     { errorRetryCount: 0, revalidateOnFocus: true, revalidateIfStale: false }
   );
 
-  useEffect(() => {
-    if (selectedWorkspace && !isLoading) {
-      let response = getConnectionsByWorkspaceSlug(selectedWorkspace.slug);
-      response = (response || []).reduce((allConnections: any, connection: any) => {
-        if (connection.connectionType !== E_INTEGRATION_KEYS.GITLAB) {
-          allConnections.push(connection);
-        }
-        return allConnections;
-      }, []);
-      setConnections(response);
-    }
-
-    if (!selectedWorkspace && workspaceId) {
-      const workspace = workspaces[workspaceId as string];
-      if (workspace) {
-        setSelectedWorkspace(workspace);
-      }
-    }
-  }, [selectedWorkspace, isLoading, workspaceId, loader, workspaces]);
-
-  return !isLoading ? (
-    <>
-      <div className="w-full gap-4 py-6 sm:gap-16">
-        <div className="col-span-12 sm:col-span-6">
-          <h4 className="text-lg font-semibold text-custom-text-100" />
-          <p className="text-sm text-custom-text-100 mb-2">
-            Select workspace for which you need to customize connection preferences.
-          </p>
-        </div>
-        <div className="col-span-12 sm:col-span-6">
-          <WorkspaceSwitch workspaces={workspaces} value={selectedWorkspace} onChange={handleWorkspaceChange} />
-        </div>
+  if (isLoading)
+    return (
+      <div className="w-full my-6">
+        <ConnectionLoader />
       </div>
-
+    );
+  return (
+    <>
       {selectedWorkspace ? (
         connections && connections.length > 0 ? (
           <>
@@ -88,7 +61,7 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
           </>
         ) : (
           <div className="w-full py-6 sm:gap-16">
-            <div className="flex gap-2 items-center col-span-12 p-4 border border-custom-border-400 bg-custom-background-400 rounded-md">
+            <div className="flex gap-2 items-center col-span-12 p-4 border border-custom-border-100 rounded-md">
               <Grid2x2X size={16} className="text-custom-primary-300" />
               <p className="text-sm text-custom-text-200 col-span-12 font-medium">
                 No integration is currently connected to the selected workspace.
@@ -98,8 +71,6 @@ export const UserConnectionsView = observer(({ workspaceId }: { workspaceId: str
         )
       ) : null}
     </>
-  ) : (
-    <div>Loading...</div>
   );
 });
 

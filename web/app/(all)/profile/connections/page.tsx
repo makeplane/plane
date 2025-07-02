@@ -14,7 +14,6 @@ export default function ProfileNotificationPage() {
   const { t } = useTranslation();
   const params = useSearchParams();
   const errorCode = params.get("error");
-  const workspaceId = params.get("workspaceId");
 
   useEffect(() => {
     if (!errorCode) {
@@ -36,7 +35,7 @@ export default function ProfileNotificationPage() {
       <PageHead title="Profile - Connections" />
       <ProfileSettingContentWrapper>
         <ProfileSettingContentHeader title="Connections" description="Manage your workspace connections settings." />
-        <UserConnectionsView workspaceId={workspaceId ?? ""} />
+        <UserConnectionsView />
       </ProfileSettingContentWrapper>
     </>
   );

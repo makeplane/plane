@@ -3,7 +3,7 @@ import { set } from "lodash";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane web root store
 import { SILO_BASE_PATH, SILO_BASE_URL } from "@plane/constants";
-import { ConnectionService } from "@plane/etl/core";
+import { ConnectionService, E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TWorkspaceUserConnection } from "@plane/types";
 import { RootStore } from "@/plane-web/store/root.store";
 import { IIntegrationBaseStore, IntegrationBaseStore } from ".";
@@ -11,10 +11,8 @@ import { IIntegrationBaseStore, IntegrationBaseStore } from ".";
 export interface IConnectionStore extends IIntegrationBaseStore {
   // observables
   userConnections: Record<string, TWorkspaceUserConnection[]>; // workspaceSlug -> user connections
-
   // helper actions
   getConnectionsByWorkspaceSlug: (workspaceSlug: string) => TWorkspaceUserConnection[] | undefined;
-
   // actions
   fetchUserConnections: (
     workspaceId?: string,
@@ -44,8 +42,15 @@ export class ConnectionStore extends IntegrationBaseStore implements IConnection
    * @param { string } workspaceSlug
    * @returns { TUserWorkspaceConnection<any>[] | undefined }
    */
-  getConnectionsByWorkspaceSlug = (workspaceSlug: string): TWorkspaceUserConnection[] | undefined =>
-    this.userConnections[workspaceSlug];
+  getConnectionsByWorkspaceSlug = (workspaceSlug: string): TWorkspaceUserConnection[] | undefined => {
+    const connections = this.userConnections[workspaceSlug];
+    return (connections || []).reduce((allConnections: any, connection: any) => {
+      if (connection.connectionType !== E_INTEGRATION_KEYS.GITLAB) {
+        allConnections.push(connection);
+      }
+      return allConnections;
+    }, []);
+  };
 
   /**
    * @description get user connections
