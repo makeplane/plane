@@ -19,7 +19,7 @@ import {
 // hooks
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
-import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
+import { NotificationListRoot } from "@/plane-web/components/workspace-notifications";
 
 export const NotificationsSidebarRoot: FC = observer(() => {
   const { workspaceSlug } = useParams();
