@@ -1,6 +1,5 @@
-
 [program:web]
-command=node /app/web/web/server.js
+command=node /app/apps/web/web/server.js
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout
@@ -10,7 +9,7 @@ stderr_logfile_maxbytes=0
 environment=PORT=3001,HOSTNAME=0.0.0.0
 
 [program:space]
-command=node /app/space/space/server.js
+command=node /app/apps/space/space/server.js
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout
@@ -20,7 +19,7 @@ stderr_logfile_maxbytes=0
 environment=PORT=3002,HOSTNAME=0.0.0.0
 
 [program:admin]
-command=node /app/admin/admin/server.js
+command=node /app/apps/admin/admin/server.js
 autostart=true
 autorestart=true
 stdout_logfile=/dev/stdout

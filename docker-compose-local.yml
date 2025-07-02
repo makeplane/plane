@@ -66,14 +66,14 @@ services:
   # web:
   #   build:
   #     context: .
-  #     dockerfile: ./web/Dockerfile.dev
+  #     dockerfile: ./apps/web/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./web:/app/web
+  #     - ./apps/web:/app/apps/web
   #   env_file:
-  #     - ./web/.env
+  #     - ./apps/web/.env
   #   depends_on:
   #     - api
   #     - worker
@@ -81,12 +81,12 @@ services:
   # space:
   #   build:
   #     context: .
-  #     dockerfile: ./space/Dockerfile.dev
+  #     dockerfile: ./apps/space/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./space:/app/space
+  #     - ./apps/space:/app/apps/space
   #   depends_on:
   #     - api
   #     - worker
@@ -95,12 +95,12 @@ services:
   # admin:
   #   build:
   #     context: .
-  #     dockerfile: ./admin/Dockerfile.dev
+  #     dockerfile: ./apps/admin/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./admin:/app/admin
+  #     - ./apps/admin:/app/apps/admin
   #   depends_on:
   #     - api
   #     - worker
@@ -109,12 +109,12 @@ services:
   # live:
   #   build:
   #     context: .
-  #     dockerfile: ./live/Dockerfile.dev
+  #     dockerfile: ./apps/live/Dockerfile.dev
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   volumes:
-  #     - ./live:/app/live
+  #     - ./apps/live:/app/apps/live
   #   depends_on:
   #     - api
   #     - worker

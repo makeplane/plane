@@ -54,7 +54,7 @@ x-app-env: &app-env
 services:
   web:
     image: artifacts.plane.so/makeplane/plane-frontend:${APP_RELEASE:-stable}
-    command: node web/server.js web
+    command: node apps/web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -65,7 +65,7 @@ services:
 
   space:
     image: artifacts.plane.so/makeplane/plane-space:${APP_RELEASE:-stable}
-    command: node space/server.js space
+    command: node apps/space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -77,7 +77,7 @@ services:
 
   admin:
     image: artifacts.plane.so/makeplane/plane-admin:${APP_RELEASE:-stable}
-    command: node admin/server.js admin
+    command: node apps/admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -88,7 +88,7 @@ services:
 
   live:
     image: artifacts.plane.so/makeplane/plane-live:${APP_RELEASE:-stable}
-    command: node live/dist/server.js live
+    command: node apps/live/dist/server.js live
     environment:
       <<: [*live-env]
     deploy:

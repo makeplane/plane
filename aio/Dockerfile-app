@@ -87,23 +87,23 @@ RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/
 
 # NEXTJS BUILDS
-COPY --from=installer /app/web/next.config.js ./web/
-COPY --from=installer /app/web/package.json ./web/
-COPY --from=installer /app/web/.next/standalone ./web
-COPY --from=installer /app/web/.next/static ./web/web/.next/static
-COPY --from=installer /app/web/public ./web/web/public
+COPY --from=installer /app/apps/web/next.config.js ./web/
+COPY --from=installer /app/apps/web/package.json ./web/
+COPY --from=installer /app/apps/web/.next/standalone ./web
+COPY --from=installer /app/apps/web/.next/static ./web/web/.next/static
+COPY --from=installer /app/apps/web/public ./web/web/public
 
-COPY --from=installer /app/space/next.config.js ./space/
-COPY --from=installer /app/space/package.json ./space/
-COPY --from=installer /app/space/.next/standalone ./space
-COPY --from=installer /app/space/.next/static ./space/space/.next/static
-COPY --from=installer /app/space/public ./space/space/public
+COPY --from=installer /app/apps/space/next.config.js ./space/
+COPY --from=installer /app/apps/space/package.json ./space/
+COPY --from=installer /app/apps/space/.next/standalone ./space
+COPY --from=installer /app/apps/space/.next/static ./space/space/.next/static
+COPY --from=installer /app/apps/space/public ./space/space/public
 
-COPY --from=installer /app/admin/next.config.js ./admin/
-COPY --from=installer /app/admin/package.json ./admin/
-COPY --from=installer /app/admin/.next/standalone ./admin
-COPY --from=installer /app/admin/.next/static ./admin/admin/.next/static
-COPY --from=installer /app/admin/public ./admin/admin/public
+COPY --from=installer /app/apps/admin/next.config.js ./admin/
+COPY --from=installer /app/apps/admin/package.json ./admin/
+COPY --from=installer /app/apps/admin/.next/standalone ./admin
+COPY --from=installer /app/apps/admin/.next/static ./admin/admin/.next/static
+COPY --from=installer /app/apps/admin/public ./admin/admin/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL

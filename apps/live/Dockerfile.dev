@@ -10,6 +10,6 @@ EXPOSE 3003
 
 ENV TURBO_TELEMETRY_DISABLED 1
 
-VOLUME [ "/app/node_modules", "/app/live/node_modules"]
+VOLUME [ "/app/node_modules", "/app/apps/live/node_modules"]
 
 CMD ["yarn","dev", "--filter=live"]
