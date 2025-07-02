@@ -268,3 +268,38 @@ export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
   CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
 };
+
+export const PROFILE_SETTINGS_TRACKER_EVENTS = {
+  // Account
+  deactivate_account: "deactivate_account",
+  update_profile: "update_profile",
+  // Preferences
+  first_day_updated: "first_day_updated",
+  language_updated: "language_updated",
+  timezone_updated: "timezone_updated",
+  theme_updated: "theme_updated",
+  // Notifications
+  notifications_updated: "notifications_updated",
+  // PAT
+  pat_created: "pat_created",
+  pat_deleted: "pat_deleted",
+};
+export const PROFILE_SETTINGS_TRACKER_ELEMENTS = {
+  // Account
+  SAVE_CHANGES_BUTTON: "save_changes_button",
+  DEACTIVATE_ACCOUNT_BUTTON: "deactivate_account_button",
+  // Preferences
+  THEME_DROPDOWN: "preferences_theme_dropdown",
+  FIRST_DAY_OF_WEEK_DROPDOWN: "preferences_first_day_of_week_dropdown",
+  LANGUAGE_DROPDOWN: "preferences_language_dropdown",
+  TIMEZONE_DROPDOWN: "preferences_timezone_dropdown",
+  // Notifications
+  PROPERTY_CHANGES_TOGGLE: "notifications_property_changes_toggle",
+  STATE_CHANGES_TOGGLE: "notifications_state_changes_toggle",
+  COMMENTS_TOGGLE: "notifications_comments_toggle",
+  MENTIONS_TOGGLE: "notifications_mentions_toggle",
+  // PAT
+  HEADER_ADD_PAT_BUTTON: "header_add_pat_button",
+  EMPTY_STATE_ADD_PAT_BUTTON: "empty_state_add_pat_button",
+  LIST_ITEM_DELETE_ICON: "list_item_delete_icon",
+};

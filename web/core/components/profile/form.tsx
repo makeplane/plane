@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
@@ -16,6 +17,7 @@ import { DeactivateAccountModal } from "@/components/account";
 import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
 // helpers
 // hooks
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store";
 
 type TUserProfileForm = {
@@ -124,6 +126,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
     const promises = [updateCurrentUserDetail, updateCurrentUserProfile];
     const updateUserAndProfile = Promise.all(promises);
 
+    captureSuccess({
+      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
+    });
     setPromiseToast(updateUserAndProfile, {
       loading: "Updating...",
       success: {
@@ -344,7 +349,12 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between pt-6 pb-8">
-              <Button variant="primary" type="submit" loading={isLoading}>
+              <Button
+                variant="primary"
+                type="submit"
+                loading={isLoading}
+                data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.SAVE_CHANGES_BUTTON}
+              >
                 {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
@@ -371,7 +381,11 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 <div className="flex flex-col gap-8">
                   <span className="text-sm tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
-                    <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>
+                    <Button
+                      variant="danger"
+                      onClick={() => setDeactivateAccountModal(true)}
+                      data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
+                    >
                       {t("deactivate_account")}
                     </Button>
                   </div>
