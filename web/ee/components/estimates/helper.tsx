@@ -1,6 +1,5 @@
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import { TEstimateSystemKeys } from "@plane/types";
-import { EEstimateSystem } from "@plane/types/src/enums";
+import { EEstimateSystem, TEstimateSystemKeys } from "@plane/types";
 import { store } from "@/lib/store-context";
 
 export const isEstimateSystemEnabled = (key: TEstimateSystemKeys) => {

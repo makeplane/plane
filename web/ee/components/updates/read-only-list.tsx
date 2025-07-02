@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TUpdate } from "@plane/types";
-import { EUpdateEntityType, EUpdateStatus } from "@plane/types/src/enums";
+import { TUpdate, EUpdateEntityType, EUpdateStatus } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 import { useMember } from "@/hooks/store";

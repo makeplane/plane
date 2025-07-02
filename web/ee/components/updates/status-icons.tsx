@@ -1,4 +1,4 @@
-import { EUpdateStatus } from "@plane/types/src/enums";
+import { EUpdateStatus } from "@plane/types";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
 import { cn, generateIconColors } from "@plane/utils";
 

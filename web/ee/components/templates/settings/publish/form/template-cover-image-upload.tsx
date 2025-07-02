@@ -5,7 +5,7 @@ import { ImageUp, Upload, X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { checkURLValidity, cn, getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // store hooks

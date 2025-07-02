@@ -1,4 +1,4 @@
-import { EUpdateStatus } from "@plane/types/src/enums";
+import { EUpdateStatus } from "@plane/types";
 import { TProjectUpdateReaction } from "./update_reaction";
 
 export enum EProjectUpdateStatus {

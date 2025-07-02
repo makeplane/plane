@@ -3,8 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { projectTemplateService } from "@plane/services";
-import { IWorkspace } from "@plane/types";
-import { EUserPermissions } from "@plane/types/src/enums";
+import { EUserPermissions, IWorkspace } from "@plane/types";
 import { Button, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { orderWorkspacesList } from "@plane/utils";
 // hooks

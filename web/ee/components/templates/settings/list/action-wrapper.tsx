@@ -5,8 +5,7 @@ import { ETemplateLevel } from "@plane/constants";
 import { getEditorContentWithReplacedAssets } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { FileService } from "@plane/services";
-import { EIssuesStoreType, ETemplateType, TPage } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, EIssuesStoreType, ETemplateType, TPage } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { extractPageFormData } from "@plane/utils";
 // components

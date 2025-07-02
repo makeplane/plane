@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { EIssueServiceType, TCommentsOperations, TIssueComment } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+// plane imports
+import { EFileAssetType, EIssueServiceType, TCommentsOperations, TIssueComment } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { formatTextList  } from "@plane/utils";
+import { formatTextList } from "@plane/utils";
+// hooks
 import { useEditorAsset, useIssueDetail, useMember, useUser } from "@/hooks/store";
 
 export const useCommentOperations = (

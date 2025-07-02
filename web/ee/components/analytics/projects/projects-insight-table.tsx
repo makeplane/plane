@@ -1,22 +1,21 @@
 import { useMemo } from "react";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { download, generateCsv } from "export-to-csv";
+import { ColumnDef } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// plane package imports
 import { Briefcase } from "lucide-react";
+// plane package imports
 import { useTranslation } from "@plane/i18n";
-// plane web components
-import { ProjectInsightColumns } from "@plane/types/src/analytics-extended";
+import { ProjectInsightColumns } from "@plane/types";
 import { Logo } from "@plane/ui";
+// components
 import { exportCSV } from "@/components/analytics/export";
 import { InsightTable } from "@/components/analytics/insight-table";
-// hooks
 import TrendPiece from "@/components/analytics/trend-piece";
+// hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
+// services
 import { AnalyticsService } from "@/services/analytics.service";
-// plane web components
 
 const analyticsService = new AnalyticsService();
 

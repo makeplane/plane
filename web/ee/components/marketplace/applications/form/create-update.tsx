@@ -7,8 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Camera } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TUserApplication } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TUserApplication } from "@plane/types";
 import { Button, Input, Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL } from "@plane/utils";
 // components

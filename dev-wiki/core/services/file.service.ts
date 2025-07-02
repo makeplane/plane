@@ -1,8 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 // plane types
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // helpers
-import { EFileAssetType } from "@plane/types/src/enums";
 import { API_BASE_URL } from "@/helpers/common.helper";
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@/helpers/file.helper";
 // services

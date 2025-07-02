@@ -2,12 +2,12 @@ import { FC, useState } from "react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType } from "@plane/types";
 import { Button, Input, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getDate, getDescriptionPlaceholderI18n, renderFormattedPayloadDate } from "@plane/utils";
+// components
 import { DateRangeDropdown, MemberDropdown, ProjectDropdown } from "@/components/dropdowns";
 import { RichTextEditor } from "@/components/editor";
-// helpers
 // hooks
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks

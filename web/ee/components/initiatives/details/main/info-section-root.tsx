@@ -2,9 +2,10 @@
 
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { EFileAssetType } from "@plane/types/src/enums";
-// components
+// plane imports
+import { EFileAssetType } from "@plane/types";
 import { InitiativeIcon } from "@plane/ui";
+// plane web components
 import { InfoSection } from "@/plane-web/components/common/layout/main/sections/info-root";
 import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

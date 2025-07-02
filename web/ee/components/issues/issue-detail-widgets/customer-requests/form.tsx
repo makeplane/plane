@@ -5,12 +5,11 @@ import { mutate } from "swr";
 import { Database, Paperclip } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCustomerRequest } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TCustomerRequest } from "@plane/types";
 import { Button, EModalPosition, EModalWidth, Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // plane web imports
 import { RichTextEditor } from "@/components/editor";
-import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import useKeypress from "@/hooks/use-keypress";
 

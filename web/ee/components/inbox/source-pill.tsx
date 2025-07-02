@@ -1,9 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Zap, ListTodo, Mail } from "lucide-react";
-import { E_FEATURE_FLAGS } from "@plane/constants/src/feature-flag";
+// plane imports
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { EInboxIssueSource } from "@plane/types";
+// plane web components
 import { TInboxSourcePill } from "@/ce/components/inbox/source-pill";
+// hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
 const sourcePillMap = {

@@ -4,8 +4,7 @@ import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCustomerPayload } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { setToast, Tabs, TOAST_TYPE } from "@plane/ui";
 // hooks
 import { useWorkspace } from "@/hooks/store";

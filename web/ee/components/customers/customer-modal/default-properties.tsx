@@ -6,9 +6,7 @@ import { CUSTOMER_CONTRACT_STATUS, CUSTOMER_STAGES, ETabIndices } from "@plane/c
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { TCustomerPayload } from "@plane/types";
-// plane ui
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TCustomerPayload } from "@plane/types";
 import { CustomersIcon, CustomSearchSelect, Input, setToast, TOAST_TYPE } from "@plane/ui";
 // utils
 import { getDescriptionPlaceholderI18n, getFileURL, getTabIndex } from "@plane/utils";

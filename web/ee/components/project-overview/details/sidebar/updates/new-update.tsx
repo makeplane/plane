@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { EUpdateStatus } from "@plane/types/src/enums";
+// plane imports
+import { EUpdateStatus } from "@plane/types";
 import { Button, TextArea } from "@plane/ui";
+// plane web types
 import { TProjectUpdate } from "@/plane-web/types";
+// components
 import { StatusDropdown } from "./status-dropdown";
 
 type TProps = {

@@ -2,17 +2,20 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+// plane imports
 import { MODULE_STATUS, MODULE_STATUS_COLORS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IChartResponse, TChartData, TModuleStatus } from "@plane/types";
-import { IModuleProgressData } from "@plane/types/src/analytics-extended";
+import { IModuleProgressData, IChartResponse, TChartData, TModuleStatus } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
+// components
 import AnalyticsSectionWrapper from "@/components/analytics/analytics-section-wrapper";
 import AnalyticsEmptyState from "@/components/analytics/empty-state";
 import { ChartLoader } from "@/components/analytics/loaders";
+// hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+8; // services
 import { AnalyticsService } from "@/services/analytics.service";
 import ModulesCyclesTooltip, { ICycleModuleTooltipProps } from "../modules-cycles-tooltip";
 

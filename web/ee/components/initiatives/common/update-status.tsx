@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
-import { TUpdate } from "@plane/types";
-import { EUpdateEntityType, EUpdateStatus } from "@plane/types/src/enums";
+// plane imports
+import { EUpdateEntityType, EUpdateStatus, TUpdate } from "@plane/types";
 import { EpicIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
+// plane web components
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
+// local components
 import { UpdateList } from "../../updates/read-only-list";
 
 type TStatusPills = {

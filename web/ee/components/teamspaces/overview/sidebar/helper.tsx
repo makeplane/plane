@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+// plane imports
+import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { formatTextList  } from "@plane/utils";
+import { formatTextList } from "@plane/utils";
+// hooks
 import { useEditorAsset, useMember, useUser } from "@/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store";
 

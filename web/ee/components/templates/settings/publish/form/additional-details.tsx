@@ -2,8 +2,7 @@ import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TPublishTemplateFormWithData } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import { EFileAssetType, TPublishTemplateFormWithData } from "@plane/types";
 import { Input, PillInput } from "@plane/ui";
 import { cn, checkEmailValidity, checkURLValidity } from "@plane/utils";
 import { UploadAppAttachments } from "@/plane-web/components/marketplace/applications/form/upload-attachments";

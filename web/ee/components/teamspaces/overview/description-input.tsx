@@ -6,14 +6,11 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TTeamspace, TNameDescriptionLoader } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
-// ui
+import { EFileAssetType, TTeamspace, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
+import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
 import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
-// helpers
-import { getDescriptionPlaceholderI18n  } from "@plane/utils";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
