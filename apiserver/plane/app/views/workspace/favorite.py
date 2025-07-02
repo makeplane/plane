@@ -12,7 +12,6 @@ from plane.db.models import UserFavorite, Workspace
 from plane.app.serializers import UserFavoriteSerializer
 from plane.app.permissions import allow_permission, ROLE
 
-
 class WorkspaceFavoriteEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def get(self, request, slug):
@@ -23,10 +22,9 @@ class WorkspaceFavoriteEndpoint(BaseAPIView):
             Q(project__isnull=True) & ~Q(entity_type="page")
             | (
                 Q(project__isnull=False)
-                & Q(project__project_projectmember__member=request.user)
-                & Q(project__project_projectmember__is_active=True)
             )
         )
+
         serializer = UserFavoriteSerializer(favorites, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
