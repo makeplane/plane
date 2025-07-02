@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
 
-from plane.db.models import User
+from plane.db.models import User, Workspace, WorkspaceMember
 from plane.db.models.api import APIToken
 
 
@@ -118,3 +118,23 @@ def plane_server(live_server):
     Returns a live Django server for testing HTTP requests.
     """
     return live_server
+
+
+@pytest.fixture
+def workspace(create_user):
+    """
+    Create a new workspace and return the
+    corresponding Workspace model instance.
+    """
+    # Create the workspace using the model
+    created_workspace = Workspace.objects.create(
+        name="Test Workspace",
+        owner=create_user,
+        slug="test-workspace",
+    )
+
+    WorkspaceMember.objects.create(
+            workspace=created_workspace, member=create_user, role=20
+        )
+    
+    return created_workspace
