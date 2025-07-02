@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Timer } from "lucide-react";
 // helpers
-import { convertMinutesToHoursMinutesString  } from "@plane/utils";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 // plane web components

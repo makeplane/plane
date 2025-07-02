@@ -38,6 +38,7 @@ class OAuthTokenRateThrottle(SimpleRateThrottle):
     """
     Throttle for API endpoints using OAuth tokens
     """
+
     rate = "5000/minute"
     scope = "oauth_api_token"
 

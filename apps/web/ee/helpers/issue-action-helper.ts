@@ -3,7 +3,16 @@ import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType } from "@plane/constants";
 // types
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IssuePaginationOptions, TIssue, TIssueKanbanFilters, TLoader } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IssuePaginationOptions,
+  TIssue,
+  TIssueKanbanFilters,
+  TLoader,
+} from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store";
 import { IssueActions } from "@/hooks/use-issues-actions";

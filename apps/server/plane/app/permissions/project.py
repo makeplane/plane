@@ -15,6 +15,7 @@ Admin: int = 20  # Administrator level access
 Member: int = 15  # Regular member level access
 Guest: int = 5  # Guest/restricted level access
 
+
 def check_teamspace_membership(view, request: Request) -> bool:
     """
     Check if the user is a member of any teamspace associated with the project.
@@ -58,6 +59,7 @@ class ProjectBasePermission(BasePermission):
     - CREATE operations require workspace admin/member role
     - UPDATE operations require project admin role
     """
+
     def has_permission(self, request, view) -> bool:
         if request.user.is_anonymous:
             return False
@@ -197,6 +199,7 @@ class ProjectLitePermission(BasePermission):
     - Verifies project membership
     - Falls back to teamspace membership check
     """
+
     def has_permission(self, request, view) -> bool:
         if request.user.is_anonymous:
             return False

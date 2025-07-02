@@ -6,7 +6,7 @@ import { EWorkItemTypeEntity } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // ce components
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import {
   IssueIdentifier as BaseIssueIdentifier,
   TIssueIdentifierProps,

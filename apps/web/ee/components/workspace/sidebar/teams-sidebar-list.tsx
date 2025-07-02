@@ -15,7 +15,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { Logo, TeamsIcon, Tooltip } from "@plane/ui";
 // components
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useCommandPalette, useUserPermissions } from "@/hooks/store";

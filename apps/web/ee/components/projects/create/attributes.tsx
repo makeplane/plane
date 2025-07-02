@@ -8,7 +8,7 @@ import { CustomSelect } from "@plane/ui";
 import { DateRangeDropdown, MemberDropdown, PriorityDropdown } from "@/components/dropdowns";
 import { ProjectNetworkIcon } from "@/components/project";
 // helpers
-import { renderFormattedPayloadDate, getDate  } from "@plane/utils";
+import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 // plane web imports
 import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { TProject } from "@/plane-web/types/projects";

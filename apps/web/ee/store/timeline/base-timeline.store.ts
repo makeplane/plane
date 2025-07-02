@@ -6,7 +6,7 @@ import { action, autorun, computed, makeObservable, observable, runInAction } fr
 import { computedFn } from "mobx-utils";
 //
 import { IBlockUpdateDependencyData } from "@plane/types";
-import { renderFormattedPayloadDate  } from "@plane/utils";
+import { renderFormattedPayloadDate } from "@plane/utils";
 import {
   BaseTimeLineStore as ExtendableTimelineStore,
   IBaseTimelineStore as IExtendableTimelineStore,

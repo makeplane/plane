@@ -36,8 +36,8 @@ export class ProjectStateService extends CoreProjectStateService {
     projectId: string,
     params:
       | {
-        created_at__gt: string;
-      }
+          created_at__gt: string;
+        }
       | object = {}
   ): Promise<TWorkflowChangeHistory[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/workflow-activity/`, {

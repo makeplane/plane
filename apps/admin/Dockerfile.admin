@@ -1,4 +1,4 @@
-FROM node:20-alpine as base
+FROM node:20-alpine AS base
 
 # *****************************************************************************
 # STAGE 1: Build the project
@@ -46,8 +46,8 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 RUN yarn turbo run build --filter=admin
 
@@ -57,12 +57,16 @@ RUN yarn turbo run build --filter=admin
 FROM base AS runner
 WORKDIR /app
 
-COPY --from=installer /app/admin/next.config.js .
-COPY --from=installer /app/admin/package.json .
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
-COPY --from=installer /app/admin/.next/standalone ./
-COPY --from=installer /app/admin/.next/static ./admin/.next/static
-COPY --from=installer /app/admin/public ./admin/public
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=installer /app/apps/admin/.next/standalone ./
+COPY --from=installer /app/apps/admin/.next/static ./apps/admin/.next/static
+COPY --from=installer /app/apps/admin/public ./apps/admin/public
 
 ARG NEXT_PUBLIC_API_BASE_URL=""
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
@@ -82,7 +86,7 @@ ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
 ARG NEXT_PUBLIC_WEB_BASE_URL=""
 ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
 
-ENV NEXT_TELEMETRY_DISABLED 1
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
