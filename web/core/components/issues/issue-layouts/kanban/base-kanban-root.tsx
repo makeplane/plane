@@ -17,7 +17,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 //hooks
-import { captureError } from "@/helpers/event-tracker.helper";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -204,15 +204,23 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
     if (!draggedIssueId || !draggedIssue) return;
 
-    await removeIssue(draggedIssue.project_id, draggedIssueId).finally(() => {
-      setDeleteIssueModal(false);
-      setDraggedIssueId(undefined);
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: draggedIssueId },
-        error: new Error("Kanban layout drag & drop"),
+    await removeIssue(draggedIssue.project_id, draggedIssueId)
+      .then(() => {
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
+          payload: { id: draggedIssueId },
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
+          payload: { id: draggedIssueId },
+        });
+      })
+      .finally(() => {
+        setDeleteIssueModal(false);
+        setDraggedIssueId(undefined);
       });
-    });
   };
 
   const handleCollapsedGroups = useCallback(

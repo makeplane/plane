@@ -1,37 +1,39 @@
-import { ExternalLink, Maximize, Minus, Plus, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 // plane imports
 import { cn } from "@plane/utils";
-
-type Props = {
-  image: {
-    width: string;
-    height: string;
-    aspectRatio: number;
-    src: string;
-  };
-  isOpen: boolean;
-  toggleFullScreenMode: (val: boolean) => void;
-};
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 2;
 const ZOOM_SPEED = 0.05;
 const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
-export const ImageFullScreenAction: React.FC<Props> = (props) => {
-  const { image, isOpen: isFullScreenEnabled, toggleFullScreenMode } = props;
-  const { src, width, aspectRatio } = image;
+type Props = {
+  aspectRatio: number;
+  isFullScreenEnabled: boolean;
+  downloadSrc: string;
+  src: string;
+  toggleFullScreenMode: (val: boolean) => void;
+  width: string;
+};
+
+const ImageFullScreenModalWithoutPortal = (props: Props) => {
+  const { aspectRatio, isFullScreenEnabled, downloadSrc, src, toggleFullScreenMode, width } = props;
+  // refs
+  const dragStart = useRef({ x: 0, y: 0 });
+  const dragOffset = useRef({ x: 0, y: 0 });
 
   const [magnification, setMagnification] = useState<number>(1);
   const [initialMagnification, setInitialMagnification] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
-  const dragStart = useRef({ x: 0, y: 0 });
-  const dragOffset = useRef({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  const widthInNumber = useMemo(() => Number(width?.replace("px", "")), [width]);
+  const widthInNumber = useMemo(() => {
+    if (!width) return 0;
+    return Number(width.replace("px", ""));
+  }, [width]);
 
   const setImageRef = useCallback(
     (node: HTMLImageElement | null) => {
@@ -148,7 +150,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
       e.preventDefault();
 
       // Handle pinch-to-zoom
-      if (e.ctrlKey) {
+      if (e.ctrlKey || e.metaKey) {
         const delta = e.deltaY;
         setMagnification((prev) => {
           const newZoom = prev * (1 - delta * ZOOM_SPEED);
@@ -165,7 +167,7 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
         return;
       }
     },
-    [isFullScreenEnabled, magnification]
+    [isFullScreenEnabled]
   );
 
   // Event listeners
@@ -185,84 +187,99 @@ export const ImageFullScreenAction: React.FC<Props> = (props) => {
     };
   }, [isFullScreenEnabled, handleKeyDown, handleMouseMove, handleMouseUp, handleWheel]);
 
+  if (!isFullScreenEnabled) return null;
+
   return (
-    <>
+    <div
+      className={cn("fixed inset-0 size-full z-30 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
+        "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
+        "cursor-default": !isDragging,
+        "cursor-grabbing": isDragging,
+      })}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Fullscreen image viewer"
+    >
       <div
-        className={cn("fixed inset-0 size-full z-20 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
-          "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
-          "cursor-default": !isDragging,
-          "cursor-grabbing": isDragging,
-        })}
+        ref={modalRef}
+        onMouseDown={(e) => e.target === modalRef.current && handleClose()}
+        className="relative size-full grid place-items-center overflow-hidden"
       >
-        <div
-          ref={modalRef}
-          onMouseDown={(e) => e.target === modalRef.current && handleClose()}
-          className="relative size-full grid place-items-center overflow-hidden"
+        <button
+          type="button"
+          onClick={handleClose}
+          className="absolute top-10 right-10 size-8 grid place-items-center"
+          aria-label="Close image viewer"
         >
-          <button
-            type="button"
-            onClick={handleClose}
-            className="absolute top-10 right-10 size-8 grid place-items-center"
-          >
-            <X className="size-8 text-white/60 hover:text-white transition-colors" />
-          </button>
-          <img
-            ref={setImageRef}
-            src={src}
-            className="read-only-image rounded-lg"
-            style={{
-              width: `${widthInNumber * initialMagnification}px`,
-              maxWidth: "none",
-              maxHeight: "none",
-              aspectRatio,
-              position: "relative",
-              transform: `scale(${magnification})`,
-              transformOrigin: "center",
-              transition: "width 0.2s ease, transform 0.2s ease",
-            }}
-            onMouseDown={handleMouseDown}
-          />
-          <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
-            <div className="flex items-center">
-              <button
-                type="button"
-                onClick={() => handleMagnification("decrease")}
-                className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
-                disabled={magnification <= MIN_ZOOM}
-              >
-                <Minus className="size-4" />
-              </button>
-              <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
-              <button
-                type="button"
-                onClick={() => handleMagnification("increase")}
-                className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
-                disabled={magnification >= MAX_ZOOM}
-              >
-                <Plus className="size-4" />
-              </button>
-            </div>
+          <X className="size-8 text-white/60 hover:text-white transition-colors" />
+        </button>
+        <img
+          ref={setImageRef}
+          src={src}
+          className="read-only-image rounded-lg"
+          style={{
+            width: `${widthInNumber * initialMagnification}px`,
+            maxWidth: "none",
+            maxHeight: "none",
+            aspectRatio,
+            position: "relative",
+            transform: `scale(${magnification})`,
+            transformOrigin: "center",
+            transition: "width 0.2s ease, transform 0.2s ease",
+          }}
+          onMouseDown={handleMouseDown}
+        />
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1 rounded-md border border-white/20 py-2 divide-x divide-white/20 bg-black">
+          <div className="flex items-center">
             <button
               type="button"
-              onClick={() => window.open(src, "_blank")}
-              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              onClick={() => handleMagnification("decrease")}
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              disabled={magnification <= MIN_ZOOM}
+              aria-label="Zoom out"
             >
-              <ExternalLink className="size-4" />
+              <Minus className="size-4" />
+            </button>
+            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <button
+              type="button"
+              onClick={() => handleMagnification("increase")}
+              className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
+              disabled={magnification >= MAX_ZOOM}
+              aria-label="Zoom in"
+            >
+              <Plus className="size-4" />
             </button>
           </div>
+          <button
+            type="button"
+            onClick={() => window.open(downloadSrc, "_blank")}
+            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+            aria-label="Download image"
+          >
+            <Download className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => window.open(src, "_blank")}
+            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+            aria-label="Open image in new tab"
+          >
+            <ExternalLink className="size-4" />
+          </button>
         </div>
       </div>
-      <button
-        type="button"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleFullScreenMode(true);
-        }}
-        className="size-5 grid place-items-center hover:bg-black/40 text-white rounded transition-colors"
-      >
-        <Maximize className="size-3" />
-      </button>
-    </>
+    </div>
   );
+};
+
+export const ImageFullScreenModal: React.FC<Props> = (props) => {
+  let modal = <ImageFullScreenModalWithoutPortal {...props} />;
+  const portal = document.querySelector("#editor-portal");
+  if (portal) {
+    modal = ReactDOM.createPortal(modal, portal);
+  } else {
+    console.warn("Portal element #editor-portal not found. Rendering inline.");
+  }
+  return modal;
 };
