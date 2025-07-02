@@ -6,10 +6,13 @@ import traceback
 from django.conf import settings
 
 
-def log_exception(e):
+def log_exception(e, warning=False):
     # Log the error
     logger = logging.getLogger("plane.exception")
-    logger.exception(e)
+    if warning:
+        logger.warning(e)
+    else:
+        logger.exception(e)
 
     if settings.DEBUG:
         # Print the traceback if in debug mode
