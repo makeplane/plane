@@ -23,7 +23,6 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
 
 export type TQuickAddIssueForm = {
-  ref: React.RefObject<HTMLFormElement>;
   isOpen: boolean;
   projectDetail: IProject;
   hasError: boolean;
