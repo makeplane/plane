@@ -4,12 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 // plane imports
+import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { CustomMenu, Tooltip } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
@@ -79,6 +81,9 @@ export const ProjectAttachmentsListItem: FC<Props> = observer((props) => {
                   e.preventDefault();
                   e.stopPropagation();
                   toggleDeleteAttachmentModal(attachmentId);
+                  captureClick({
+                    elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.ATTACHMENT_ITEM_CONTEXT_MENU,
+                  });
                 }}
               >
                 <div className="flex items-center gap-2">

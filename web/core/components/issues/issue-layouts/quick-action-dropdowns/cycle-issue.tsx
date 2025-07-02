@@ -5,14 +5,20 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  ARCHIVABLE_STATE_GROUPS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
-import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 // plane web hooks
@@ -43,8 +49,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // router
   const { workspaceSlug, cycleId } = useParams();
-  // store hooks
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
@@ -83,7 +87,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
     isDeletingAllowed,
     isInArchivableGroup,
     issueTypeDetail,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -98,6 +101,14 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
   };
 
   const MENU_ITEMS = useCycleIssueMenuItems(menuItemProps);
+
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: () => {
+      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
+      item.action();
+    },
+  }));
 
   return (
     <>
@@ -137,7 +148,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
         />
       )}
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
         ellipsis
         placement={placements}
@@ -186,6 +197,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -223,6 +235,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = observer((pro
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.CYCLE });
                 item.action();
               }}
               className={cn(

@@ -1,15 +1,16 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
+import { EUserPermissionsLevel, EUserPermissions, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper } from "@plane/ui";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { ProjectCard } from "@/components/project";
 import { ProjectsLoader } from "@/components/ui";
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // assets
 import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
@@ -26,7 +27,6 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const {
     loader,
     fetchStatus,
@@ -65,8 +65,8 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
             title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
             description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
             onClick={() => {
-              setTrackElement("Project empty state");
               toggleCreateProjectModal(true);
+              captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
             }}
             disabled={!canPerformEmptyStateActions}
           />

@@ -8,7 +8,7 @@ import { TPage } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { PageForm } from "@/components/pages";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -32,7 +32,6 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
   const router = useRouter();
   // store hooks
   const { createPage } = usePageStore(EPageStoreType.WORKSPACE);
-  const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -52,7 +51,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
     try {
       const pageData = await createPage(pageFormData);
       if (pageData) {
-        capturePageEvent({
+        captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
           payload: {
             ...pageData,
@@ -63,7 +62,7 @@ export const WikiCreatePageModal: FC<Props> = observer((props) => {
         if (redirectionEnabled) router.push(`/${workspaceSlug}/pages/${pageData.id}`);
       }
     } catch {
-      capturePageEvent({
+      captureError({
         eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
         payload: {
           state: "FAILED",

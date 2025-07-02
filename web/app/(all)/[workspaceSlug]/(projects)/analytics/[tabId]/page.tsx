@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { type TabItem, Tabs } from "@plane/ui";
 // components
@@ -12,7 +12,8 @@ import AnalyticsFilterActions from "@/components/analytics/analytics-filter-acti
 import { PageHead } from "@/components/core";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useProject, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 import { useFlag } from "@/plane-web/hooks/store";
@@ -37,7 +38,6 @@ const AnalyticsPage = observer((props: Props) => {
 
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { workspaceProjectIds, loader } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -105,8 +105,8 @@ const AnalyticsPage = observer((props: Props) => {
                   title={t("workspace_analytics.empty_state.general.primary_button.comic.title")}
                   description={t("workspace_analytics.empty_state.general.primary_button.comic.description")}
                   onClick={() => {
-                    setTrackElement("Analytics empty state");
                     toggleCreateProjectModal(true);
+                    captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
                   }}
                   disabled={!canPerformEmptyStateActions}
                 />

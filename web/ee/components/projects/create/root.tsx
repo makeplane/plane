@@ -14,7 +14,8 @@ import { TCreateProjectFormProps } from "@/ce/components/projects/create/root";
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 // hooks
-import { useEventTracker, useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useMember, useProject, useUser, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
@@ -36,7 +37,6 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
 export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((props) => {
   const { setToFavorite, workspaceSlug, onClose, handleNextStep, data, updateCoverImageStatus } = props;
   // store
-  const { captureProjectEvent } = useEventTracker();
   const { addProjectToFavorites, createProject } = useProject();
   const { projectCreationLoader, createProjectUsingTemplate } = useProjectAdvanced();
   // states
@@ -131,18 +131,17 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
         if (coverImage && allowAssetStatusUpdate) {
           await updateCoverImageStatus(res.id, coverImage);
         }
-        const newPayload = {
-          ...res,
-          state: "SUCCESS",
-        };
         if (allowBulkAddMembers && membersPayload.length > 0) {
           bulkAddMembersToProject(workspaceSlug.toString(), res.id, {
             members: membersPayload,
           });
         }
-        captureProjectEvent({
+        captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: newPayload,
+          payload: {
+            identifier: formData.identifier,
+            id: res.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -163,11 +162,10 @@ export const CreateProjectFormBase: FC<TCreateProjectFormProps> = observer((prop
             title: "Error!",
             message: err.data[key],
           });
-          captureProjectEvent({
+          captureError({
             eventName: PROJECT_TRACKER_EVENTS.create,
             payload: {
-              ...formData,
-              state: "FAILED",
+              identifier: formData.identifier,
             },
           });
         });

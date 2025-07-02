@@ -1,9 +1,11 @@
 "use client";
 import { useMemo } from "react";
 // plane ui
+import { PROJECT_OVERVIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
 // hooks
-import { useEventTracker, useProject } from "@/hooks/store";
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
+import { useProject } from "@/hooks/store";
 // types
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";
 import { TAttachmentUploadStatus } from "@/plane-web/store/projects/project-details/attachment.store";
@@ -25,7 +27,6 @@ export type TAttachmentHelpers = {
 export const useAttachmentOperations = (workspaceSlug: string, projectId: string): TAttachmentHelpers => {
   const { createAttachment, removeAttachment, getAttachmentsUploadStatusByProjectId } = useProjectAttachments();
   const { setLastCollapsibleAction } = useProject();
-  const { captureProjectEvent } = useEventTracker();
 
   const attachmentOperations: TAttachmentOperations = useMemo(
     () => ({
@@ -45,21 +46,17 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
             },
           });
 
-          const res = await attachmentUploadPromise;
-          captureProjectEvent({
-            eventName: "Project attachment added",
-            payload: { id: projectId, state: "SUCCESS", element: "Project detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: res.id,
-            },
+          await attachmentUploadPromise;
+          captureSuccess({
+            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_added,
+            payload: { id: projectId },
           });
 
           setLastCollapsibleAction("attachments");
         } catch (error) {
-          captureProjectEvent({
-            eventName: "Project attachment added",
-            payload: { id: projectId, state: "FAILED", element: "Project detail page" },
+          captureError({
+            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_added,
+            payload: { id: projectId },
           });
           throw error;
         }
@@ -73,22 +70,14 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
             type: TOAST_TYPE.SUCCESS,
             title: "Attachment removed",
           });
-          captureProjectEvent({
-            eventName: "Project attachment deleted",
-            payload: { id: projectId, state: "SUCCESS", element: "Project detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: "",
-            },
+          captureSuccess({
+            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_removed,
+            payload: { id: projectId, attachment_id: attachmentId },
           });
         } catch (error) {
-          captureProjectEvent({
-            eventName: "Project attachment deleted",
-            payload: { id: projectId, state: "FAILED", element: "Project detail page" },
-            updates: {
-              changed_property: "attachment",
-              change_details: "",
-            },
+          captureError({
+            eventName: PROJECT_OVERVIEW_TRACKER_EVENTS.attachment_removed,
+            payload: { id: projectId, attachment_id: attachmentId },
           });
           setToast({
             message: "The Attachment could not be removed",
@@ -98,7 +87,7 @@ export const useAttachmentOperations = (workspaceSlug: string, projectId: string
         }
       },
     }),
-    [captureProjectEvent, workspaceSlug, projectId, createAttachment, removeAttachment]
+    [workspaceSlug, projectId, createAttachment, removeAttachment]
   );
   const attachmentsUploadStatus = getAttachmentsUploadStatusByProjectId(projectId);
 

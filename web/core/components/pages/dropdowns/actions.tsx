@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Copy, ExternalLink, Globe2, Link, Lock, Trash2 } from "lucide-react";
 // constants
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -13,6 +13,7 @@ import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages";
 // helpers
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
@@ -74,7 +75,12 @@ export const PageActions: React.FC<Props> = observer((props) => {
     () => [
       {
         key: "toggle-access",
-        action: pageOperations.toggleAccess,
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.ACCESS_TOGGLE,
+          });
+          pageOperations.toggleAccess();
+        },
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
@@ -95,14 +101,24 @@ export const PageActions: React.FC<Props> = observer((props) => {
       },
       {
         key: "make-a-copy",
-        action: () => pageOperations.duplicate(realtimeEvents),
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.DUPLICATE_BUTTON,
+          });
+          pageOperations.duplicate(realtimeEvents);
+        },
         title: "Make a copy",
         icon: Copy,
         shouldRender: canCurrentUserDuplicatePage,
       },
       {
         key: "delete",
-        action: () => setDeletePageModal(true),
+        action: () => {
+          captureClick({
+            elementName: PROJECT_PAGE_TRACKER_ELEMENTS.CONTEXT_MENU,
+          });
+          setDeletePageModal(true);
+        },
         title: "Delete",
         icon: Trash2,
         shouldRender: canCurrentUserDeletePage && !!archived_at,

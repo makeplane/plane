@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// hooks
-import { useEventTracker } from "@/hooks/store";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // types
 import { TPageInstance } from "@/store/pages/base-page";
 
@@ -25,8 +25,6 @@ export const ConfirmationModal: React.FC<TConfirmationModalProps> = observer((pr
   const { page, isOpen, onClose, action, title, contentText, successMessage, errorMessage, eventName } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
-  // store hooks
-  const { capturePageEvent } = useEventTracker();
 
   if (!page || !page.id) return null;
 
@@ -39,7 +37,7 @@ export const ConfirmationModal: React.FC<TConfirmationModalProps> = observer((pr
     setIsLoading(true);
     try {
       await action();
-      capturePageEvent({
+      captureSuccess({
         eventName,
         payload: {
           ...page,
@@ -53,7 +51,7 @@ export const ConfirmationModal: React.FC<TConfirmationModalProps> = observer((pr
         message: successMessage,
       });
     } catch (error) {
-      capturePageEvent({
+      captureError({
         eventName,
         payload: {
           ...page,

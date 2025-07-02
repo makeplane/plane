@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
@@ -13,9 +14,7 @@ import { cn } from "@plane/utils";
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
 import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
-// helpers
-// hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
@@ -59,8 +58,6 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
   const pathname = usePathname();
-  // hooks
-  const { setTrackElement } = useEventTracker();
   const storeType = useIssueStoreType();
   // derived values
   const isDraftIssue = pathname.includes("draft-issue");
@@ -136,7 +133,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             >
               <CustomMenu.MenuItem
                 onClick={() => {
-                  setTrackElement("List layout");
+                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                   setIsOpen(true);
                 }}
               >
@@ -144,7 +141,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
               </CustomMenu.MenuItem>
               <CustomMenu.MenuItem
                 onClick={() => {
-                  setTrackElement("List layout");
+                  captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.add_existing });
                   setOpenExistingIssueListModal(true);
                 }}
               >
@@ -155,7 +152,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
             <div
               className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
               onClick={() => {
-                setTrackElement("List layout");
+                captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);
               }}
             >

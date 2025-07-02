@@ -2,14 +2,20 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { CheckCheck, RefreshCw } from "lucide-react";
 // plane imports
-import { ENotificationLoader, ENotificationQueryParamType, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
+import {
+  ENotificationLoader,
+  ENotificationQueryParamType,
+  NOTIFICATION_TRACKER_ELEMENTS,
+  NOTIFICATION_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Spinner, Tooltip } from "@plane/ui";
 // components
 import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
 // constants
 // hooks
-import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
+import { useWorkspaceNotifications } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TNotificationSidebarHeaderOptions = {
@@ -21,7 +27,6 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
   // hooks
   const { isMobile } = usePlatformOS();
   const { loader, getNotifications, markAllNotificationsAsRead } = useWorkspaceNotifications();
-  const { captureEvent } = useEventTracker();
   const { t } = useTranslation();
 
   const refreshNotifications = async () => {
@@ -49,8 +54,11 @@ export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOpti
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <div
           className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
+          data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
           onClick={() => {
-            captureEvent(NOTIFICATION_TRACKER_EVENTS.all_marked_read);
+            captureSuccess({
+              eventName: NOTIFICATION_TRACKER_EVENTS.all_marked_read,
+            });
             handleMarkAllNotificationsAsRead();
           }}
         >

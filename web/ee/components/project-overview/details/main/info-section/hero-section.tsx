@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_OVERVIEW_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { EUserProjectRoles, IProject, IWorkspace } from "@plane/types";
 import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo, setToast, TOAST_TYPE } from "@plane/ui";
 // components
@@ -10,7 +10,8 @@ import { convertHexEmojiToDecimal, getFileURL } from "@plane/utils";
 import { ImagePickerPopover } from "@/components/core";
 // helpers
 // hooks
-import { useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProject, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { TProject } from "@/plane-web/types";
 
@@ -26,15 +27,9 @@ export const HeroSection = observer((props: THeroSection) => {
   const { project, workspaceSlug } = props;
   const [isOpen, setIsOpen] = useState(false);
   const { allowPermissions } = useUserPermissions();
-  const { captureProjectEvent } = useEventTracker();
   const { updateProject } = useProject();
   // form info
-  const {
-    handleSubmit,
-    control,
-    formState: { dirtyFields },
-    getValues,
-  } = useForm<IProject>({
+  const { handleSubmit, control, getValues } = useForm<IProject>({
     defaultValues: {
       ...project,
       workspace: (project.workspace as IWorkspace).id,
@@ -52,16 +47,11 @@ export const HeroSection = observer((props: THeroSection) => {
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
     return updateProject(workspaceSlug.toString(), project.id, payload)
-      .then((res) => {
-        const changed_properties = Object.keys(dirtyFields);
-
-        captureProjectEvent({
+      .then(() => {
+        captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.update,
           payload: {
-            ...res,
-            changed_properties: changed_properties,
-            state: "SUCCESS",
-            element: "Project general settings",
+            id: project.id,
           },
         });
         setToast({
@@ -71,9 +61,11 @@ export const HeroSection = observer((props: THeroSection) => {
         });
       })
       .catch((error) => {
-        captureProjectEvent({
+        captureError({
           eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: { ...payload, state: "FAILED", element: "Project general settings" },
+          payload: {
+            id: project.id,
+          },
         });
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -87,7 +79,9 @@ export const HeroSection = observer((props: THeroSection) => {
     const payload: Partial<IProject> = {
       logo_props: getValues<"logo_props">("logo_props"),
     };
-
+    captureClick({
+      elementName: PROJECT_OVERVIEW_TRACKER_ELEMENTS.HEADER_EMOJI_PICKER,
+    });
     handleUpdateChange(payload);
   };
 

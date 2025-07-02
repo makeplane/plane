@@ -7,7 +7,6 @@ export * from "./use-cycle";
 export * from "./use-cycle-filter";
 export * from "./use-dashboard";
 export * from "./use-editor-asset";
-export * from "./use-event-tracker";
 export * from "./use-global-view";
 export * from "./use-inbox-issues";
 export * from "./use-instance";

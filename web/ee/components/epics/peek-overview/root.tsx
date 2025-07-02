@@ -2,7 +2,6 @@
 
 import { FC, useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // plane imports
 import { EPIC_TRACKER_EVENTS, EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EUserProjectRoles, TIssue, IWorkItemPeekOverview } from "@plane/types";
@@ -10,14 +9,14 @@ import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { TIssueOperations } from "@/components/issues";
 // hooks
-import { useEventTracker, useIssueDetail, useUserPermissions } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { EpicView } from "./view";
 
 export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const { embedIssue = false, embedRemoveCurrentNotification } = props;
-  const pathname = usePathname();
   // store hook
   const { allowPermissions } = useUserPermissions();
 
@@ -27,7 +26,6 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
     issue: { fetchIssue, getIsFetchingIssueDetails, updateIssue, removeIssue },
     fetchActivities,
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { captureIssueEvent } = useEventTracker();
   useWorkItemProperties(peekIssue?.projectId, peekIssue?.workspaceSlug, peekIssue?.issueId, EIssueServiceType.EPICS);
   // state
   const [error, setError] = useState(false);
@@ -53,21 +51,19 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
           await updateIssue(workspaceSlug, projectId, issueId, data)
             .then(async () => {
               fetchActivities(workspaceSlug, projectId, issueId);
-              captureIssueEvent({
+              captureSuccess({
                 eventName: EPIC_TRACKER_EVENTS.update,
-                payload: { ...data, issueId, state: "SUCCESS", element: "Work item peek-overview" },
-                updates: {
-                  changed_property: Object.keys(data).join(","),
-                  change_details: Object.values(data).join(","),
+                payload: {
+                  id: issueId,
                 },
-                path: pathname,
               });
             })
             .catch(() => {
-              captureIssueEvent({
+              captureError({
                 eventName: EPIC_TRACKER_EVENTS.update,
-                payload: { state: "FAILED", element: "Work item peek-overview" },
-                path: pathname,
+                payload: {
+                  id: issueId,
+                },
               });
               setToast({
                 title: "Error!",
@@ -80,10 +76,11 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           return removeIssue(workspaceSlug, projectId, issueId).then(() => {
-            captureIssueEvent({
+            captureSuccess({
               eventName: EPIC_TRACKER_EVENTS.delete,
-              payload: { id: issueId, state: "SUCCESS", element: "Work item peek-overview" },
-              path: pathname,
+              payload: {
+                id: issueId,
+              },
             });
             removeRoutePeekId();
           });
@@ -93,15 +90,16 @@ export const EpicPeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
             type: TOAST_TYPE.ERROR,
             message: "Work item delete failed",
           });
-          captureIssueEvent({
+          captureError({
             eventName: EPIC_TRACKER_EVENTS.delete,
-            payload: { id: issueId, state: "FAILED", element: "Work item peek-overview" },
-            path: pathname,
+            payload: {
+              id: issueId,
+            },
           });
         }
       },
     }),
-    [fetchIssue, updateIssue, removeIssue, fetchActivities, captureIssueEvent, pathname, removeRoutePeekId]
+    [fetchIssue, updateIssue, removeIssue, fetchActivities, removeRoutePeekId]
   );
 
   useEffect(() => {

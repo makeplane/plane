@@ -2,12 +2,11 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 // plane imports
 import { TOAST_TYPE, setToast, AlertModalCore } from "@plane/ui";
 // helpers
 import { getPageName } from "@/helpers/page.helper";
-// import { useEventTracker } from "@/hooks/store";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { TPageInstance } from "@/store/pages/base-page";
@@ -24,8 +23,6 @@ export const WikiDeletePageModal: React.FC<TConfirmPageDeletionProps> = observer
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(EPageStoreType.WORKSPACE);
-  const { workspaceSlug } = useParams();
-  // const { captureEvent } = useEventTracker();
 
   const router = useRouter();
   if (!page) return null;

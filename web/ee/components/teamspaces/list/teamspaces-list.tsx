@@ -8,7 +8,7 @@ import { EUserWorkspaceRoles } from "@plane/types";
 import { ListLayout } from "@/components/core/list/list-root";
 import { DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces, useTeamspaceFilter } from "@/plane-web/hooks/store";
@@ -29,7 +29,6 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateTeamspaceModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   // plane web hooks
   const { allTeamSpaceIds, filteredTeamSpaceIds, loader } = useTeamspaces();
@@ -52,7 +51,6 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
         primaryButton={{
           text: t("teamspaces.empty_state.general.primary_button.text"),
           onClick: () => {
-            setTrackElement("Teamspace empty state");
             toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
           },
           disabled: !hasWorkspaceAdminLevelPermissions,

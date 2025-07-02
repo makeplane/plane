@@ -7,7 +7,7 @@ import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { PageForm } from "@/components/pages";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
@@ -42,7 +42,6 @@ export const CreatePageModal: FC<Props> = (props) => {
   const router = useAppRouter();
   // store hooks
   const { createPage } = usePageStore(storeType);
-  const { capturePageEvent } = useEventTracker();
   const handlePageFormData = <T extends keyof TPage>(key: T, value: TPage[T]) =>
     setPageFormData((prev) => ({ ...prev, [key]: value }));
 
@@ -62,22 +61,19 @@ export const CreatePageModal: FC<Props> = (props) => {
     try {
       const pageData = await createPage?.(pageFormData);
       if (pageData) {
-        capturePageEvent({
+        captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
           payload: {
-            ...pageData,
-            state: "SUCCESS",
+            id: pageData.id,
           },
         });
         handleStateClear();
         if (redirectionEnabled) router.push(`/${workspaceSlug}/projects/${projectId}/pages/${pageData.id}`);
       }
-    } catch {
-      capturePageEvent({
+    } catch (error: any) {
+      captureError({
         eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
-        payload: {
-          state: "FAILED",
-        },
+        error,
       });
     }
   };

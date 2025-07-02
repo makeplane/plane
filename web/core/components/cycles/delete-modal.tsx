@@ -10,9 +10,10 @@ import { useTranslation } from "@plane/i18n";
 import { ICycle } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useEventTracker, useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 interface ICycleDelete {
@@ -28,7 +29,6 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   // states
   const [loader, setLoader] = useState(false);
   // store hooks
-  const { captureCycleEvent } = useEventTracker();
   const { deleteCycle } = useCycle();
   const { t } = useTranslation();
   // router
@@ -50,9 +50,11 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             title: "Success!",
             message: "Cycle deleted successfully.",
           });
-          captureCycleEvent({
+          captureSuccess({
             eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: { ...cycle, state: "SUCCESS" },
+            payload: {
+              id: cycle.id,
+            },
           });
 
           // NOTE: This operation is for enterprise edition only
@@ -76,13 +78,16 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
             type: TOAST_TYPE.ERROR,
             message: currentError.i18n_message && t(currentError.i18n_message),
           });
-          captureCycleEvent({
+          captureError({
             eventName: CYCLE_TRACKER_EVENTS.delete,
-            payload: { ...cycle, state: "FAILED" },
+            payload: {
+              id: cycle.id,
+            },
+            error: errors,
           });
         })
         .finally(() => handleClose());
-    } catch (error) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Warning!",

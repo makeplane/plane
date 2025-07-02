@@ -2,7 +2,6 @@
 
 import React, { FC, useState } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
 import {
   ARCHIVABLE_STATE_GROUPS,
@@ -18,8 +17,8 @@ import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
 // helpers
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import {
-  useEventTracker,
   useIssueDetail,
   useIssues,
   useProject,
@@ -66,8 +65,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { captureIssueEvent } = useEventTracker();
-  const pathname = usePathname();
 
   // derived values
   const issue = getIssueById(issueId);
@@ -105,22 +102,21 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
 
       return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
         router.push(redirectionPath);
-        captureIssueEvent({
+        captureSuccess({
           eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-          payload: { id: issueId, state: "SUCCESS", element: "Work item detail page" },
-          path: pathname,
+          payload: { id: issueId },
         });
       });
-    } catch {
+    } catch (error) {
       setToast({
         title: t("toast.error "),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-        payload: { id: issueId, state: "FAILED", element: "Work item detail page" },
-        path: pathname,
+        payload: { id: issueId },
+        error: error as Error,
       });
     }
   };
@@ -130,16 +126,15 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
       await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
         router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
       });
-      captureIssueEvent({
+      captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId, state: "SUCCESS", element: "Issue details page" },
-        path: pathname,
+        payload: { id: issueId },
       });
-    } catch {
-      captureIssueEvent({
+    } catch (error) {
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-        payload: { id: issueId, state: "FAILED", element: "Issue details page" },
-        path: pathname,
+        payload: { id: issueId },
+        error: error as Error,
       });
     }
   };

@@ -9,7 +9,7 @@ import { EIssuesStoreType, EUserWorkspaceRoles, IIssueFilterOptions } from "@pla
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
-import { useCommandPalette, useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
@@ -23,7 +23,6 @@ export const TeamViewEmptyState: React.FC = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.TEAM_VIEW);
   const { allowPermissions } = useUserPermissions();
   const { getTeamspaceProjectIds } = useTeamspaces();
@@ -92,7 +91,6 @@ export const TeamViewEmptyState: React.FC = observer(() => {
               title={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.title")}
               description={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.description")}
               onClick={() => {
-                setTrackElement("Teamspace view work items empty state");
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds);
               }}
               disabled={!hasWorkspaceMemberLevelPermissions}

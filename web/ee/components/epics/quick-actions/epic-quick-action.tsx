@@ -5,7 +5,7 @@ import pick from "lodash/pick";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EPIC_TRACKER_ELEMENTS, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType, TIssue } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
@@ -15,7 +15,8 @@ import { DeleteIssueModal } from "@/components/issues";
 import { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 // hooks
 import { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
-import { useEventTracker, useIssues, useProject, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useIssues, useProject, useUserPermissions } from "@/hooks/store";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
@@ -49,7 +50,6 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getProjectIdentifierById } = useProject();
   // derived values
@@ -82,14 +82,12 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   );
 
   const customEditAction = () => {
-    setTrackElement(activeLayout);
     setIssueToEdit(issue);
     setCreateUpdateIssueModal(true);
     if (toggleEditEpicModal) toggleEditEpicModal(true);
   };
 
   const customDeleteAction = async () => {
-    setTrackElement(activeLayout);
     setDeleteIssueModal(true);
     if (toggleDeleteEpicModal) toggleDeleteEpicModal(true);
   };
@@ -102,7 +100,6 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     activeLayout,
     isEditingAllowed,
     isDeletingAllowed,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -225,6 +222,12 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      captureClick({
+                        elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
+                        context: {
+                          activeLayout,
+                        },
+                      });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -262,6 +265,12 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({
+                  elementName: EPIC_TRACKER_ELEMENTS.QUICK_ACTIONS,
+                  context: {
+                    activeLayout,
+                  },
+                });
                 item.action();
               }}
               className={cn(

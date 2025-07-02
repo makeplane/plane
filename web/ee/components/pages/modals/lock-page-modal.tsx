@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { EditorRefApi } from "@plane/editor";
 import { ToggleSwitch } from "@plane/ui";
-import { getPageName  } from "@plane/utils";
+import { getPageName } from "@plane/utils";
 import { usePageOperations } from "@/hooks/use-page-operations";
 import { TPageInstance } from "@/store/pages/base-page";
 import { ConfirmationModal } from "./confirmation-modal";
+import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 
 export const LockPageModal = ({
   editorRef,
@@ -50,7 +51,7 @@ export const LockPageModal = ({
       }
       successMessage={`Page ${page.is_locked ? "unlocked" : "locked"} successfully.`}
       errorMessage={`Page could not be ${page.is_locked ? "unlocked" : "locked"}. Please try again.`}
-      eventName={page.is_locked ? "Page unlocked" : "Page locked"}
+      eventName={page.is_locked ? PROJECT_PAGE_TRACKER_EVENTS.unlock : PROJECT_PAGE_TRACKER_EVENTS.lock}
     />
   );
 };

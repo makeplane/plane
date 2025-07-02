@@ -7,7 +7,8 @@ import { TOAST_TYPE, Table, setToast } from "@plane/ui";
 // components
 import { ConfirmProjectMemberRemove } from "@/components/project";
 // hooks
-import { useEventTracker, useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useMember, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
@@ -30,7 +31,6 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const {
     project: { removeMemberFromProject },
   } = useMember();
-  const { captureEvent } = useEventTracker();
   // helper hooks
   const { columns, removeMemberModal, setRemoveMemberModal } = useProjectColumns({
     projectId,
@@ -44,18 +44,27 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
         .then(async () => {
           router.push(`/${workspaceSlug}/projects`);
-          captureEvent(MEMBER_TRACKER_EVENTS.project.leave, {
-            state: "SUCCESS",
-            element: "Project settings members page",
+          captureSuccess({
+            eventName: MEMBER_TRACKER_EVENTS.project.leave,
+            payload: {
+              project: projectId,
+            },
           });
         })
-        .catch((err) =>
+        .catch((err) => {
+          captureError({
+            eventName: MEMBER_TRACKER_EVENTS.project.leave,
+            payload: {
+              project: projectId,
+            },
+            error: err,
+          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "You can’t leave this project yet.",
             message: err?.error || "Something went wrong. Please try again.",
-          })
-        );
+          });
+        });
     } else
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({

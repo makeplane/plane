@@ -3,9 +3,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronRight, LoaderCircle, Plus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// constants
+import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
+// ui
 import { Tooltip } from "@plane/ui";
+// utils
 import { cn } from "@plane/utils";
-import { useEventTracker } from "@/hooks/store";
+// types
 import { SectionHeaderProps } from "../types";
 
 /**
@@ -14,7 +18,6 @@ import { SectionHeaderProps } from "../types";
 export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
   ({ sectionType, sectionDetails, isCollapsed, isCreatingPage, handleCreatePage, buttonRef, onButtonClick }) => {
     const { workspaceSlug } = useParams();
-    const { setTrackElement } = useEventTracker();
     const Icon = sectionDetails.icon;
 
     return (
@@ -41,8 +44,8 @@ export const SectionHeader: React.FC<SectionHeaderProps> = React.memo(
             {sectionType !== "archived" && sectionType !== "shared" && (
               <button
                 className="grid place-items-center hover:bg-custom-background-80 p-0.5 rounded"
+                data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.SIDEBAR}
                 onClick={() => {
-                  setTrackElement("Sidebar");
                   handleCreatePage(sectionType);
                 }}
               >

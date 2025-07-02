@@ -10,8 +10,7 @@ import { EditorRefApi } from "@plane/editor";
 import { AlertModalCore, EmptyPageIcon, Logo, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getPageName } from "@plane/utils";
-// hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
@@ -31,7 +30,6 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(storeType);
-  const { capturePageEvent } = useEventTracker();
 
   if (!pages || pages.length === 0) return null;
 
@@ -50,7 +48,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
 
         return removePage({ pageId: page.id })
           .then(() => {
-            capturePageEvent({
+            captureSuccess({
               eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
               payload: {
                 ...page,
@@ -62,7 +60,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
             successfullyDeletedPageIds.push(page.id as string);
           })
           .catch(() => {
-            capturePageEvent({
+            captureError({
               eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
               payload: {
                 ...page,

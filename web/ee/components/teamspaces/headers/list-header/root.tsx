@@ -10,7 +10,7 @@ import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // hooks
-import { useWorkspace, useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useWorkspace, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header";
 
@@ -18,7 +18,6 @@ export const TeamspaceListItemHeader = observer(() => {
   const { workspaceSlug } = useParams();
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { setTrackElement } = useEventTracker();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
@@ -54,7 +53,6 @@ export const TeamspaceListItemHeader = observer(() => {
             <Button
               size="sm"
               onClick={() => {
-                setTrackElement("Teamspaces page");
                 toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
               }}
               className="items-center gap-1"

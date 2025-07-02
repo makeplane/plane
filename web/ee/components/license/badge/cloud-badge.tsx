@@ -3,12 +3,13 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
+import { LICENSE_TRACKER_EVENTS } from "@plane/constants";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { PlaneIcon } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
-import { useEventTracker } from "@/hooks/store";
+import { captureView } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { SubscriptionButton } from "@/plane-web/components/common";
@@ -20,7 +21,6 @@ export const CloudEditionBadge = observer(() => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   // hooks
-  const { captureEvent } = useEventTracker();
   const {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     getIsInTrialPeriod,
@@ -41,14 +41,18 @@ export const CloudEditionBadge = observer(() => {
     }
   }, [pathname, router, searchParams, currentSubscription, handleSuccessModalToggle]);
 
-  const handleProPlanPurchaseModalOpen = () => {
+  const handlePaidPlanPurchaseModalOpen = () => {
     togglePaidPlanModal(true);
-    captureEvent("pro_plan_modal_opened", {});
+    captureView({
+      elementName: LICENSE_TRACKER_EVENTS.purchase_modal_opened,
+    });
   };
 
   const handlePaidPlanSuccessModalOpen = () => {
     handleSuccessModalToggle(true);
-    captureEvent("pro_plan_details_modal_opened", {});
+    captureView({
+      elementName: LICENSE_TRACKER_EVENTS.success_modal_opened,
+    });
   };
 
   const renderButtonText = () => {
@@ -73,7 +77,7 @@ export const CloudEditionBadge = observer(() => {
         <SubscriptionButton
           className="min-w-24"
           subscriptionType={currentSubscription}
-          handleClick={handleProPlanPurchaseModalOpen}
+          handleClick={handlePaidPlanPurchaseModalOpen}
         >
           {renderButtonText()}
         </SubscriptionButton>

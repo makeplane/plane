@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
 // plane ui
+import { PROJECT_OVERVIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 // plane web hooks
@@ -80,7 +81,12 @@ export const ProjectAttachmentActionButton: FC<Props> = observer((props) => {
         e.stopPropagation();
       }}
     >
-      <button {...getRootProps()} type="button" disabled={disabled}>
+      <button
+        {...getRootProps()}
+        type="button"
+        disabled={disabled}
+        data-ph-element={PROJECT_OVERVIEW_TRACKER_ELEMENTS.ATTACHMENT_DROPZONE}
+      >
         <input {...getInputProps()} />
         {customButton ? customButton : <Plus className="h-4 w-4" />}
       </button>

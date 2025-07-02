@@ -3,8 +3,10 @@
 import { Command } from "cmdk";
 import { ContrastIcon, FileText, Layers } from "lucide-react";
 // hooks
+import { CYCLE_TRACKER_ELEMENTS, MODULE_TRACKER_ELEMENTS, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { DiceIcon } from "@plane/ui";
-import { useCommandPalette, useEventTracker } from "@/hooks/store";
+// hooks
+import { useCommandPalette } from "@/hooks/store";
 // ui
 
 type Props = {
@@ -16,15 +18,14 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
   // store hooks
   const { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal } =
     useCommandPalette();
-  const { setTrackElement } = useEventTracker();
 
   return (
     <>
       <Command.Group heading="Cycle">
         <Command.Item
+          data-ph-element={CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM}
           onSelect={() => {
             closePalette();
-            setTrackElement("Command palette");
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"
@@ -38,9 +39,9 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
       </Command.Group>
       <Command.Group heading="Module">
         <Command.Item
+          data-ph-element={MODULE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM}
           onSelect={() => {
             closePalette();
-            setTrackElement("Command palette");
             toggleCreateModuleModal(true);
           }}
           className="focus:outline-none"
@@ -56,7 +57,6 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
-            setTrackElement("Command palette");
             toggleCreateViewModal(true);
           }}
           className="focus:outline-none"
@@ -70,9 +70,9 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
       </Command.Group>
       <Command.Group heading="Page">
         <Command.Item
+          data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.COMMAND_PALETTE_CREATE_BUTTON}
           onSelect={() => {
             closePalette();
-            setTrackElement("Command palette");
             toggleCreatePageModal({ isOpen: true });
           }}
           className="focus:outline-none"

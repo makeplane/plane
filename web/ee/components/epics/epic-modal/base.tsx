@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
@@ -10,8 +10,9 @@ import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@p
 // components
 import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useEventTracker, useIssueDetail, useUser } from "@/hooks/store";
+import { useIssueDetail, useUser } from "@/hooks/store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";
@@ -38,13 +39,10 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // store hooks
-  const { captureIssueEvent } = useEventTracker();
   const { workspaceSlug, projectId: routerProjectId } = useParams();
   const { projectsWithCreatePermissions } = useUser();
   const { fetchIssue } = useIssueDetail(EIssueServiceType.EPICS);
   const { handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
-  // pathname
-  const pathname = usePathname();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   // derived values
@@ -143,10 +141,11 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
           />
         ),
       });
-      captureIssueEvent({
+      captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { ...response, state: "SUCCESS" },
-        path: pathname,
+        payload: {
+          id: response.id,
+        },
       });
       setDescription("<p></p>");
       return response;
@@ -156,10 +155,8 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         title: "Error!",
         message: "Epic could not be created. Please try again.",
       });
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { ...payload, state: "FAILED" },
-        path: pathname,
       });
       throw error;
     }
@@ -190,10 +187,11 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
         });
       }
 
-      captureIssueEvent({
+      captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { ...payload, issueId: data.id, state: "SUCCESS" },
-        path: pathname,
+        payload: {
+          id: data.id,
+        },
       });
       handleClose();
     } catch (error) {
@@ -205,10 +203,11 @@ export const CreateUpdateEpicModalBase: React.FC<IssuesModalProps> = observer((p
           message: "Epic could not be updated. Please try again.",
         });
       }
-      captureIssueEvent({
+      captureError({
         eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { ...payload, state: "FAILED" },
-        path: pathname,
+        payload: {
+          id: data.id,
+        },
       });
     }
   };

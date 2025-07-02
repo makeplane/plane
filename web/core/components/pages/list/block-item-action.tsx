@@ -3,12 +3,15 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
+// constants
+import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // ui
 import { Avatar, FavoriteStar, Tooltip } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { PageActions } from "@/components/pages";
 // helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 import { usePageOperations } from "@/hooks/use-page-operations";
@@ -64,6 +67,9 @@ export const BlockItemAction: FC<Props> = observer((props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            captureClick({
+              elementName: PROJECT_PAGE_TRACKER_ELEMENTS.FAVORITE_BUTTON,
+            });
             pageOperations.toggleFavorite();
           }}
           selected={is_favorite}

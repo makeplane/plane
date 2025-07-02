@@ -3,16 +3,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/ui";
 // hooks
-import { useCommandPalette, useEventTracker, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 
 export const ProjectCreateButton: FC = observer((props) => {
   const {} = props;
   // hooks
-  const { setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
@@ -25,8 +24,8 @@ export const ProjectCreateButton: FC = observer((props) => {
   return (
     <Button
       size="sm"
+      data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
       onClick={() => {
-        setTrackElement("Projects page");
         toggleCreateProjectModal(true);
       }}
       className="items-center gap-1"

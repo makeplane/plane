@@ -4,12 +4,13 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
-import { NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
+import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { NotificationItemOptionButton } from "@/components/workspace-notifications";
 // hooks
-import { useEventTracker, useWorkspaceNotifications } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useWorkspaceNotifications } from "@/hooks/store";
 // store
 import { INotification } from "@/store/notifications/notification";
 
@@ -23,7 +24,6 @@ type TNotificationItemReadOption = {
 export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
   const { workspaceSlug, notificationList, issueId, unreadCount } = props;
   // hooks
-  const { captureEvent } = useEventTracker();
   const { currentNotificationTab } = useWorkspaceNotifications();
 
   const { markBulkNotificationsAsRead, markBulkNotificationsAsUnread } = useWorkspaceNotifications();
@@ -32,10 +32,12 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
     try {
       const request = unreadCount === 0 ? markBulkNotificationsAsUnread : markBulkNotificationsAsRead;
       await request(notificationList, workspaceSlug);
-      captureEvent(NOTIFICATION_TRACKER_EVENTS.all_marked_read, {
-        issue_id: issueId,
-        tab: currentNotificationTab,
-        state: "SUCCESS",
+      captureSuccess({
+        eventName: unreadCount === 0 ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
+        payload: {
+          id: issueId,
+          tab: currentNotificationTab,
+        },
       });
       setToast({
         title: unreadCount === 0 ? "Notification(s) marked as unread" : "Notification(s) marked as read",
@@ -43,11 +45,19 @@ export const NotificationItemReadOption: FC<TNotificationItemReadOption> = obser
       });
     } catch (e) {
       console.error(e);
+      captureError({
+        eventName: unreadCount === 0 ? NOTIFICATION_TRACKER_EVENTS.mark_unread : NOTIFICATION_TRACKER_EVENTS.mark_read,
+        payload: {
+          id: issueId,
+          tab: currentNotificationTab,
+        },
+      });
     }
   };
 
   return (
     <NotificationItemOptionButton
+      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_READ_UNREAD_BUTTON}
       tooltipContent={unreadCount === 0 ? "Mark as unread" : "Mark as read"}
       callBack={handleNotificationUpdate}
     >

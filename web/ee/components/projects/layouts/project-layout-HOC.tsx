@@ -2,14 +2,15 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { GanttLayoutLoader, KanbanLayoutLoader, ListLayoutLoader, ProjectsLoader } from "@/components/ui";
 // hooks
-import { useCommandPalette, useEventTracker, useUserPermissions, useProject } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useCommandPalette, useUserPermissions, useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
@@ -47,7 +48,6 @@ export const ProjectLayoutHOC = observer((props: Props) => {
   const { loading } = useProjectFilter();
   const { getFilteredProjectsByLayout } = useProjectFilter();
   const { projectStates } = useWorkspaceProjectStates();
-  const { setTrackElement } = useEventTracker();
   const { toggleCreateProjectModal } = useCommandPalette();
   // derived values
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.GALLERY);
@@ -74,7 +74,9 @@ export const ProjectLayoutHOC = observer((props: Props) => {
             title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
             description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
             onClick={() => {
-              setTrackElement("Project empty state");
+              captureClick({
+                elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON,
+              });
               toggleCreateProjectModal(true);
             }}
             disabled={!hasProjectMemberPermissions}

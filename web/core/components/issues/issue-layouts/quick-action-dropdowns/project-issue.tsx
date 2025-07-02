@@ -5,14 +5,20 @@ import omit from "lodash/omit";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  ARCHIVABLE_STATE_GROUPS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  WORK_ITEM_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ContextMenu, CustomMenu } from "@plane/ui";
+import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ArchiveIssueModal, CreateUpdateIssueModal, DeleteIssueModal } from "@/components/issues";
 // hooks
-import { useEventTracker, useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useIssues, useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
 import { useIssueType } from "@/plane-web/hooks/store";
@@ -43,7 +49,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
-  const { setTrackElement } = useEventTracker();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -89,7 +94,6 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
     isInArchivableGroup,
     issueTypeDetail,
     isDraftIssue,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -102,6 +106,14 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
   };
 
   const MENU_ITEMS = useProjectIssueMenuItems(menuItemProps);
+
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: () => {
+      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
+      item.action();
+    },
+  }));
 
   return (
     <>
@@ -141,7 +153,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
         />
       )}
 
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu
         ellipsis
         placement={placements}
@@ -189,6 +201,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                       nestedItem.action();
                     }}
                     className={cn(
@@ -226,6 +239,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = observer((p
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
                 item.action();
               }}
               className={cn(

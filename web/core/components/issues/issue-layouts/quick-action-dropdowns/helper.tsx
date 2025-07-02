@@ -56,7 +56,6 @@ export interface MenuItemFactoryProps {
   issueTypeDetail?: { is_active?: boolean };
   isDraftIssue?: boolean;
   // Action handlers
-  setTrackElement: (element: string) => void;
   setIssueToEdit: (issue: TIssue | undefined) => void;
   setCreateUpdateIssueModal: (open: boolean) => void;
   setDeleteIssueModal: (open: boolean) => void;
@@ -144,7 +143,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     isRestoringAllowed = false,
     isInArchivableGroup = false,
     issueTypeDetail,
-    setTrackElement,
     setIssueToEdit,
     setCreateUpdateIssueModal,
     setDeleteIssueModal,
@@ -160,7 +158,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     action:
       customEditAction ||
       (() => {
-        setTrackElement(activeLayout);
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       }),
@@ -173,7 +170,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       title: t("common.actions.make_a_copy"),
       icon: Copy,
       action: () => {
-        setTrackElement(activeLayout);
         setCreateUpdateIssueModal(true);
       },
       shouldRender: isEditingAllowed && (issueTypeDetail?.is_active ?? true),
@@ -182,7 +178,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     return createCopyMenuWithDuplication({
       baseItem,
       activeLayout,
-      setTrackElement,
       setCreateUpdateIssueModal,
       setDuplicateWorkItemModal,
       workspaceSlug,
@@ -244,7 +239,6 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: t("common.actions.delete"),
     icon: Trash2,
     action: () => {
-      setTrackElement(activeLayout);
       setDeleteIssueModal(true);
     },
     shouldRender: isDeletingAllowed,
@@ -305,7 +299,6 @@ export const useCycleIssueMenuItems = (props: MenuItemFactoryProps): TContextMen
       ...props.issue,
       cycle_id: props.cycleId ?? null,
     });
-    props.setTrackElement(props.activeLayout || "");
     props.setCreateUpdateIssueModal(true);
   };
 
@@ -331,7 +324,6 @@ export const useModuleIssueMenuItems = (props: MenuItemFactoryProps): TContextMe
       ...props.issue,
       module_ids: props.moduleId ? [props.moduleId] : [],
     });
-    props.setTrackElement(props.activeLayout || "");
     props.setCreateUpdateIssueModal(true);
   };
 
