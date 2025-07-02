@@ -1,6 +1,6 @@
 import { computedFn } from "mobx-utils";
+import { EUserProjectRoles } from "@plane/types";
 // plane imports
-import { EUserProjectRoles } from "@plane/constants";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
 // store

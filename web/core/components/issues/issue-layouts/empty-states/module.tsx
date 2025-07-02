@@ -5,15 +5,16 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EIssuesStoreType, EUserPermissionsLevel, EUserProjectRoles } from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { DetailedEmptyState } from "@/components/empty-state";
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
-import { useCommandPalette, useEventTracker, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const ModuleEmptyState: React.FC = observer(() => {
@@ -26,7 +27,6 @@ export const ModuleEmptyState: React.FC = observer(() => {
   // store hooks
   const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const userFilters = issuesFilter?.issueFilters?.filters;
@@ -119,7 +119,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
             primaryButton={{
               text: t("project_module.empty_state.no_issues.primary_button.text"),
               onClick: () => {
-                setTrackElement("Module issue empty state");
+                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.MODULE });
                 toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
               },
               disabled: !canPerformEmptyStateActions,

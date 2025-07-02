@@ -1,17 +1,20 @@
 import { useState, useEffect, useCallback } from "react";
-// plane editor
+// plane imports
 import { EditorRefApi, IMarking } from "@plane/editor";
+import { cn } from "@plane/utils";
 // components
-import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
+import { OutlineHeading1, OutlineHeading2, OutlineHeading3, THeadingComponentProps } from "./heading-components";
 
 type Props = {
+  className?: string;
+  emptyState?: React.ReactNode;
   editorRef: EditorRefApi | null;
   setSidePeekVisible?: (sidePeekState: boolean) => void;
   showOutline?: boolean;
 };
 
 export const PageContentBrowser: React.FC<Props> = (props) => {
-  const { editorRef, setSidePeekVisible, showOutline = false } = props;
+  const { className, editorRef, emptyState, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
 
@@ -20,7 +23,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
     // for initial render of this component to get the editor headings
     setHeadings(editorRef?.getHeadings() ?? []);
     return () => {
-      if (unsubscribe) unsubscribe();
+      unsubscribe?.();
     };
   }, [editorRef]);
 
@@ -33,15 +36,25 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
   );
 
   const HeadingComponent: {
-    [key: number]: React.FC<{ marking: IMarking; onClick: () => void }>;
+    [key: number]: React.FC<THeadingComponentProps>;
   } = {
     1: OutlineHeading1,
     2: OutlineHeading2,
     3: OutlineHeading3,
   };
 
+  if (headings.length === 0) return emptyState ?? null;
+
   return (
-    <div className="h-full flex flex-col items-start gap-y-2 overflow-y-auto mt-2">
+    <div
+      className={cn(
+        "h-full flex flex-col items-start gap-y-1 overflow-y-auto mt-2",
+        {
+          "gap-y-2": showOutline,
+        },
+        className
+      )}
+    >
       {headings.map((marking) => {
         const Component = HeadingComponent[marking.level];
         if (!Component) return null;

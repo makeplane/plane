@@ -9,15 +9,16 @@ import { PanelRight } from "lucide-react";
 import {
   EIssueFilterType,
   EIssueLayoutTypes,
-  EIssuesStoreType,
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import {
+  EIssuesStoreType,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -34,7 +35,6 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import {
   useCommandPalette,
   useCycle,
-  useEventTracker,
   useIssues,
   useLabel,
   useMember,
@@ -68,7 +68,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   } = useIssues(EIssuesStoreType.CYCLE);
   const { currentProjectCycleIds, getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { currentProjectDetails, loader } = useProject();
   const { projectStates } = useProjectState();
   const { projectLabels } = useLabel();
@@ -263,9 +262,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   <Button
                     className="h-full self-start"
                     onClick={() => {
-                      setTrackElement("Cycle work items page");
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
+                    data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
                     size="sm"
                   >
                     {t("issue.add.label")}

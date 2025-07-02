@@ -1,4 +1,5 @@
 import { SetStateAction, useEffect, useState } from "react";
+import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 import { LockedComponent } from "../icons/locked-component";
 
@@ -58,7 +59,13 @@ export const UpdateViewComponent = (props: Props) => {
         !areFiltersEqual &&
         isAuthorizedUser && (
           <>
-            <Button variant="outline-primary" size="md" className="flex-shrink-0" onClick={() => setIsModalOpen(true)}>
+            <Button
+              variant="outline-primary"
+              size="md"
+              className="flex-shrink-0"
+              data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON}
+              onClick={() => setIsModalOpen(true)}
+            >
               Save as
             </Button>
             {isOwner && <>{updateButton}</>}

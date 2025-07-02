@@ -2,11 +2,10 @@
 
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 // plane imports
-import { EInboxIssueSource, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { EditorRefApi } from "@plane/editor";
-import { TIssue, TNameDescriptionLoader } from "@plane/types";
+import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getTextContent } from "@plane/utils";
@@ -22,7 +21,8 @@ import {
 } from "@/components/issues";
 // helpers
 // hooks
-import { useEventTracker, useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
 import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
@@ -45,8 +45,6 @@ type Props = {
 
 export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
-  // navigation
-  const pathname = usePathname();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -57,8 +55,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   const { removeIssue, archiveIssue } = useIssueDetail();
   // reload confirmation
   const { setShowAlert } = useReloadConfirmations(isSubmitting === "submitting");
-  // event tracker
-  const { captureIssueEvent } = useEventTracker();
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -104,10 +100,9 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             type: TOAST_TYPE.SUCCESS,
             message: "Work item deleted successfully",
           });
-          captureIssueEvent({
+          captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId, state: "SUCCESS", element: "Work item detail page" },
-            path: pathname,
+            payload: { id: _issueId },
           });
         } catch (error) {
           console.log("Error in deleting work item:", error);
@@ -116,56 +111,46 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             type: TOAST_TYPE.ERROR,
             message: "Work item delete failed",
           });
-          captureIssueEvent({
+          captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.delete,
-            payload: { id: _issueId, state: "FAILED", element: "Work item detail page" },
-            path: pathname,
+            payload: { id: _issueId },
+            error: error as Error,
           });
         }
       },
       update: async (_workspaceSlug: string, _projectId: string, _issueId: string, data: Partial<TIssue>) => {
         try {
           await inboxIssue.updateIssue(data);
-          captureIssueEvent({
-            eventName: "Inbox work item updated",
-            payload: { ...data, state: "SUCCESS", element: "Inbox" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: pathname,
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
+            payload: { id: _issueId },
           });
-        } catch {
+        } catch (error) {
           setToast({
             title: "Work item update failed",
             type: TOAST_TYPE.ERROR,
             message: "Work item update failed",
           });
-          captureIssueEvent({
-            eventName: "Inbox work item updated",
-            payload: { state: "SUCCESS", element: "Inbox" },
-            updates: {
-              changed_property: Object.keys(data).join(","),
-              change_details: Object.values(data).join(","),
-            },
-            path: pathname,
+          captureError({
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
+            payload: { id: _issueId },
+            error: error as Error,
           });
         }
       },
       archive: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           await archiveIssue(workspaceSlug, projectId, issueId);
-          captureIssueEvent({
+          captureSuccess({
             eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId, state: "SUCCESS", element: "Work item details page" },
-            path: pathname,
+            payload: { id: issueId },
           });
         } catch (error) {
           console.log("Error in archiving issue:", error);
-          captureIssueEvent({
+          captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.archive,
-            payload: { id: issueId, state: "FAILED", element: "Work item details page" },
-            path: pathname,
+            payload: { id: issueId },
+            error: error as Error,
           });
         }
       },

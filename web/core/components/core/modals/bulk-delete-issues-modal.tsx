@@ -7,9 +7,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // plane imports
-import { EIssuesStoreType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse, IUser } from "@plane/types";
+import { EIssuesStoreType, ISearchIssueResponse, IUser } from "@plane/types";
 import { Button, Loader, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";

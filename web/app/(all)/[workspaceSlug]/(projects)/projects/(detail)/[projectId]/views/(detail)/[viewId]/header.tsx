@@ -8,15 +8,16 @@ import { Layers, Lock } from "lucide-react";
 import {
   EIssueLayoutTypes,
   EIssueFilterType,
-  EIssuesStoreType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EViewAccess,
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
+  WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 // types
 import {
+  EIssuesStoreType,
+  EViewAccess,
   ICustomSearchSelectOption,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -30,11 +31,9 @@ import { SwitcherIcon, SwitcherLabel } from "@/components/common";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
 // constants
 import { ViewQuickActions } from "@/components/views";
-// helpers
 // hooks
 import {
   useCommandPalette,
-  useEventTracker,
   useIssues,
   useLabel,
   useMember,
@@ -57,7 +56,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT_VIEW);
-  const { setTrackElement } = useEventTracker();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
@@ -258,9 +256,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         {canUserCreateIssue ? (
           <Button
             onClick={() => {
-              setTrackElement("PROJECT_VIEW_PAGE_HEADER");
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
+            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
             size="sm"
           >
             Add work item

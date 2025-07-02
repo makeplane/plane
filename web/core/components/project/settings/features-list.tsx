@@ -2,12 +2,13 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
 import { SettingsHeading } from "@/components/settings";
-import { useEventTracker, useProject, useUser } from "@/hooks/store";
+import { useProject, useUser } from "@/hooks/store";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
 // plane web constants
@@ -23,7 +24,6 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();
-  const { captureEvent } = useEventTracker();
   const { data: currentUser } = useUser();
   const { getProjectById, updateProject } = useProject();
   // derived values
@@ -31,12 +31,6 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
 
   const handleSubmit = async (featureKey: string, featureProperty: string) => {
     if (!workspaceSlug || !projectId || !currentProjectDetails) return;
-
-    // capturing event
-    captureEvent(`Toggle ${featureKey}`, {
-      enabled: !currentProjectDetails?.[featureProperty as keyof IProject],
-      element: "Project settings feature page",
-    });
 
     // making the request to update the project feature
     const settingsPayload = {
@@ -92,6 +86,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   onChange={() => handleSubmit(featureItemKey, featureItem.property)}
                   disabled={!featureItem.isEnabled || !isAdmin}
                   size="sm"
+                  data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
                 />
               </div>
               <div className="pl-14">

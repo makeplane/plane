@@ -2,9 +2,9 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/constants";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/types";
+// plane imports
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";

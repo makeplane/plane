@@ -1,6 +1,6 @@
 import { getWeekOfMonth, isValid } from "date-fns";
-import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, ChartXAxisProperty, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
-import { TChart, TChartDatum } from "@plane/types";
+import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
+import { ChartXAxisProperty, TChart, TChartDatum } from "@plane/types";
 import { capitalizeFirstLetter, hexToHsl, hslToHex, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
 //
 
