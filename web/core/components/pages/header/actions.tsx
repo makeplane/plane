@@ -28,8 +28,8 @@ export const PageHeaderActions: React.FC<Props> = observer((props) => {
   return (
     <div className="flex items-center gap-1">
       <PageArchivedBadge page={page} />
-      <PageOfflineBadge page={page} />
-      <PageLockControl page={page} />
+      <PageOfflineBadge />
+      <PageLockControl page={page} storeType={storeType} />
       <PageMoveControl page={page} />
       <PageInfoPopover page={page} />
       <PageCopyLinkControl page={page} />

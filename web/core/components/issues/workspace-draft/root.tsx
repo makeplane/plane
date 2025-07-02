@@ -11,10 +11,8 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-import { captureClick } from "@/helpers/event-tracker.helper";
-// constants
-
 // helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
