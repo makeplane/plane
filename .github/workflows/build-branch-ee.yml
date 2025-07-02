@@ -454,7 +454,7 @@ jobs:
           cp deploy/cli-install/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
 
           # required for prime-cli backward compatibility
-          cp proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
+          cp apps/proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
           cp deploy/cli-install/docker-compose-caddy.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
             
           # Process podman quadlets
