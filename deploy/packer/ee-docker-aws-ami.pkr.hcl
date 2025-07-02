@@ -115,7 +115,7 @@ source "amazon-ebs" "plane_aws_ami" {
   ssh_username = "ubuntu"
   
   tags = {
-    Name        = "${var.ami_name_prefix}"
+    Name        = "${var.ami_name_prefix}-${local.timestamp}"
     Environment = "Production"
     Builder     = "Packer"
   }
@@ -211,7 +211,11 @@ build {
       "sudo rm /var/lib/cloud/instance/plane-setup-complete",
       "sudo rm /var/lib/cloud/instance/plane-setup-status",
       "sudo rm /var/log/plane-setup.log",
-      "sudo rm -rf /home/ubuntu/cloud-init"
+      "sudo rm -rf /home/ubuntu/cloud-init",
+      "sudo rm -rf /home/ubuntu/.ssh/authorized_keys",
+      "sudo rm -rf /root/.ssh/authorized_keys",
+      "sudo rm -f /home/ubuntu/.*_history",
+      "sudo rm -f /root/.*_history"
     ]
   }
 

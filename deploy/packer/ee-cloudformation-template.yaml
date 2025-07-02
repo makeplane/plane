@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFormation template to deploy an EC2 instance with dynamic infrastructure options'
 
 Parameters:
+  AMIId:
+    Type: AWS::EC2::Image::Id
+    Description: AMI ID for the EC2 instance
+    Default: ""
   InstanceDomainName:
     Description: Domain name for the Plane instance
     Type: String
@@ -41,8 +45,18 @@ Parameters:
     
   PublicSubnetCidr:
     Type: String
-    Default: "10.50.1.0/16"
+    Default: "10.50.1.0/24"
     Description: CIDR block for the New Public Subnet e.g. 10.50.1.0/24 (required only if creating new infrastructure)
+
+  SshSecurityGroupCidr:
+    Type: String
+    Default: ""
+    Description: Please set CIDR to x.x.x.x/32 to allow one specific IP address access, 0.0.0.0/0 to allow all IP addresses access, or another CIDR range
+
+  ApplicationSecurityGroupCidr:
+    Type: String
+    Default: ""
+    Description: Please set CIDR to x.x.x.x/32 to allow one specific IP address access, 0.0.0.0/0 to allow all IP addresses access, or another CIDR range
 
   # Instance Configuration
   InstanceType:
@@ -53,9 +67,6 @@ Parameters:
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: Select an existing EC2 KeyPair to enable SSH access to the instance
-  
-Mappings:
-  RegionMap:
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -73,6 +84,8 @@ Metadata:
         Parameters:
           - VpcCidr
           - PublicSubnetCidr
+          - SshSecurityGroupCidr
+          - ApplicationSecurityGroupCidr
       - Label:
           default: "Existing Infrastructure Configuration (required only if not creating new infrastructure)"
         Parameters:
@@ -99,6 +112,10 @@ Metadata:
         default: "New VPC CIDR"
       PublicSubnetCidr:
         default: "New Public Subnet CIDR"
+      SshSecurityGroupCidr:
+        default: "SSH Security Group CIDR"
+      ApplicationSecurityGroupCidr:
+        default: "Application Security Group CIDR"
       InstanceType:
         default: "EC2 Instance Type"
       KeyName:
@@ -134,16 +151,15 @@ Metadata:
             AssertDescription: "VPC CIDR is required when creating new infrastructure"
           - Assert: !Not [!Equals [!Ref PublicSubnetCidr, ""]]
             AssertDescription: "Public Subnet CIDR is required when creating new infrastructure"
-      RegionRestriction:
-        Assertions:
-          - Assert: !Equals [ !FindInMap [RegionMap, !Ref "AWS::Region", Allowed], "true" ]
-            AssertDescription: "This template can only be deployed in allowed regions."
+          - Assert: !Not [!Equals [!Ref SshSecurityGroupCidr, ""]]
+            AssertDescription: "SSH Security Group CIDR is required when creating new infrastructure"
+          - Assert: !Not [!Equals [!Ref ApplicationSecurityGroupCidr, ""]]
+            AssertDescription: "Application Security Group CIDR is required when creating new infrastructure"
 
 Conditions:
   CreateInfra: !Equals [!Ref CreateNewInfra, "true"]
   UseExistingInfra: !Equals [!Ref CreateNewInfra, "false"]
   IsExistingVpcProvided: !Not [!Equals [!Ref ExistingVpcId, ""]]
-  IsAllowedRegion: !Equals [ !FindInMap [RegionMap, !Ref "AWS::Region", Allowed], "true" ]
 
 Resources:
   # VPC Resources (if creating new infrastructure)
@@ -222,17 +238,17 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref SshSecurityGroupCidr
           Description: Allow SSH access
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref ApplicationSecurityGroupCidr
           Description: Allow HTTP access
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 0.0.0.0/0
+          CidrIp: !Ref ApplicationSecurityGroupCidr
           Description: Allow HTTPS access
       Tags:
         - Key: Name
@@ -242,7 +258,7 @@ Resources:
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", AMI]
+      ImageId: !Ref AMIId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       SecurityGroupIds: 
