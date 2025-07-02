@@ -4,7 +4,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 import { cn } from "@plane/utils";
 // local imports
 import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
-import { ensurePixelString } from "../utils";
+import { ensurePixelString, getImageBlockId } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 import { ImageToolbarRoot } from "./toolbar";
 import { ImageUploadStatus } from "./upload-status";
@@ -196,6 +196,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
 
   return (
     <div
+      id={getImageBlockId(node.attrs.id ?? "")}
       ref={containerRef}
       className="group/image-component relative inline-block max-w-full"
       onMouseDown={handleImageMouseDown}

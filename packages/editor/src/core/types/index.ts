@@ -1,4 +1,5 @@
 export * from "./ai";
+export * from "./asset";
 export * from "./collaboration";
 export * from "./config";
 export * from "./editor";
