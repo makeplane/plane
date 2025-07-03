@@ -1346,6 +1346,17 @@
       "project_insights": {
         "title": "Chưa có dữ liệu",
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+      },
+      "general": {
+        "title": "Theo dõi tiến độ, khối lượng công việc và phân bổ. Phát hiện xu hướng, loại bỏ rào cản và tăng tốc công việc",
+        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Theo dõi hiệu suất của các thành viên trong nhóm và đội nhóm, đảm bảo dự án của bạn hoạt động đúng tiến độ.",
+        "primary_button": {
+          "text": "Bắt đầu dự án đầu tiên của bạn",
+          "comic": {
+            "title": "Phân tích hoạt động tốt nhất với Chu kỳ + Mô-đun",
+            "description": "Đầu tiên, giới hạn thời gian các vấn đề của bạn trong Chu kỳ và, nếu có thể, nhóm các vấn đề kéo dài hơn một chu kỳ vào Mô-đun. Kiểm tra cả hai trong điều hướng bên trái."
+          }
+        }
       }
     },
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
