@@ -122,12 +122,11 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
         job.workspace_slug,
         job.project_id
       );
+      // Extract the issue types from the plane entities
       const isIssueTypeEnabledForProject = planeProjectDetails.is_issue_type_enabled;
-      if (isIssueTypeEnabledForProject) {
-        // Extract the issue types from the plane entities
-        const { issue_types, issue_properties, issue_property_options } = planeEntities;
+      const { issue_types, issue_properties, issue_property_options } = planeEntities;
+      if (isIssueTypeEnabledForProject && issue_types?.length) {
         // Create a map for quick lookup of existing issue types by external id
-
         // --------------------------- Issue Type Creation Start ---------------------------
         const existingIssueTypes = new Map();
         // Get existing Plane issue types
@@ -144,7 +143,10 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
             }
           });
         } catch (error) {
-          logger.error(`[${job.id}] Error while fetching the issue types from the Plane API`, error);
+          logger.error("Error while fetching the issue types from the Plane API", {
+            jobId: job.id,
+            error: error,
+          });
         }
 
         // Create the issue types that are not present in Plane
@@ -205,7 +207,10 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
             });
           }
         } catch (error) {
-          logger.error(`[${job.id}] Error while fetching the issue properties from the Plane API`, error);
+          logger.error("Error while fetching the issue properties from the Plane API", {
+            jobId: job.id,
+            error: error,
+          });
         }
 
         // Create the issue properties that are not present in Plane
@@ -272,7 +277,10 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
             }
           }
         } catch (error) {
-          logger.error(`[${job.id}] Error while fetching the issue properties from the Plane API`, error);
+          logger.error("Error while fetching the issue property options from the Plane API", {
+            jobId: job.id,
+            error: error,
+          });
         }
 
         // Create the issue properties that are not present in Plane

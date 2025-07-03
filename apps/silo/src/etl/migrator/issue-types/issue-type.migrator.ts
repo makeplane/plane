@@ -38,7 +38,6 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
 
       return createdUpdatedIssueType;
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating or updating the issue type: ${issueType.name}`, error);
       const isAxios = isAxiosError(error);
       // If the error is an axios error, check for the status
       if (isAxios) {
@@ -51,14 +50,19 @@ export const createOrUpdateIssueTypes = async (props: TCreateOrUpdateIssueTypes)
             error.response.data.id
           );
           return fetchedIssueType;
+        } else {
+          logger.error(`Error while creating or updating the issue type: ${issueType.name}`, {
+            jobId: jobId,
+            error: error,
+          });
         }
       }
 
       return undefined;
     }
-  }
+  };
 
-  const createdUpdatedIssueTypes = await processBatchPromises(issueTypes, createOrUpdateIssueType, 5);
+  const createdUpdatedIssueTypes = await processBatchPromises(issueTypes, createOrUpdateIssueType, 2);
 
   return createdUpdatedIssueTypes.filter((issueType) => issueType !== undefined) as ExIssueType[];
 };

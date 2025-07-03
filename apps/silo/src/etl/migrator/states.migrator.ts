@@ -49,7 +49,10 @@ export const createStates = async (
         target_state: newState,
       };
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the state: ${state.target_state.name}`);
+      logger.error(`Error while creating the state: ${state.target_state.name}`, {
+        jobId: jobId,
+        error: error,
+      });
       return undefined;
     }
   };

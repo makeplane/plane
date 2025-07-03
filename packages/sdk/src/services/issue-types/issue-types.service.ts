@@ -26,7 +26,7 @@ export class IssueTypeService extends APIService {
     typeId: string
   ): Promise<ExIssueType> {
     return this.get(
-      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`
+      `/api/v1/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${typeId}/`
     )
       .then((response) => response?.data)
       .catch((error) => {

@@ -41,7 +41,7 @@ export class ClickupAPIService {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        console.error("Error in ClickUp API");
+        console.error("Error in ClickUp API", { status: error?.response?.status });
         if (error.response?.status === 429) {
           const headers = error.response.headers as RawAxiosResponseHeaders;
           if (headers && headers["x-ratelimit-reset"]) {

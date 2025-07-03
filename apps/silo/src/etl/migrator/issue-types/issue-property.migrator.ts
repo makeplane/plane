@@ -31,7 +31,9 @@ export const createOrUpdateIssueProperties = async (
     props;
 
   // Process a single issue property
-  const processIssueProperty = async (issueProperty: Partial<ExIssueProperty>): Promise<ExIssueProperty | undefined> => {
+  const processIssueProperty = async (
+    issueProperty: Partial<ExIssueProperty>
+  ): Promise<ExIssueProperty | undefined> => {
     try {
       const issueType = issueTypesMap.get(issueProperty.type_id || "") || defaultIssueType;
       if (!issueType) {
@@ -64,16 +66,16 @@ export const createOrUpdateIssueProperties = async (
 
       return createdUpdatedIssueProperty;
     } catch (error) {
-      logger.error(
-        `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`,
-        error
-      );
+      logger.error(`Error while ${method === "create" ? "creating" : "updating"} the issue property: ${issueProperty.display_name}`, {
+        jobId: jobId,
+        error: error,
+      });
       return undefined;
     }
   };
 
   // Process all issue properties in batches of 5
-  const createdUpdatedIssueProperties = await processBatchPromises(issueProperties, processIssueProperty, 5);
+  const createdUpdatedIssueProperties = await processBatchPromises(issueProperties, processIssueProperty, 2);
 
   return createdUpdatedIssueProperties.filter((property) => property !== undefined) as ExIssueProperty[];
 };
@@ -117,10 +119,10 @@ export const createOrUpdateIssuePropertiesOptions = async (
 
       return createdUpdatedIssuePropertyOption;
     } catch (error) {
-      logger.error(
-        `[${jobId.slice(0, 7)}] Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`,
-        error
-      );
+      logger.error(`Error while ${method === "create" ? "creating" : "updating"} the issue property option: ${issuePropertyOption.name}`, {
+        jobId: jobId,
+        error: error,
+      });
       return undefined;
     }
   };
@@ -128,7 +130,7 @@ export const createOrUpdateIssuePropertiesOptions = async (
   const createdUpdatedIssuePropertiesOptions = await processBatchPromises(
     issuePropertiesOptions,
     processIssuePropertyOption,
-    5
+    2
   );
 
   return createdUpdatedIssuePropertiesOptions.filter((option) => option !== undefined) as ExIssuePropertyOption[];

@@ -2,6 +2,7 @@
 import random
 
 # Django imports
+from django.db import transaction
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -126,90 +127,92 @@ class IssueTypeAPIEndpoint(BaseAPIView):
     # create issue type
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
-        workspace = Workspace.objects.get(slug=slug)
-        project = Project.objects.get(pk=project_id)
+        with transaction.atomic():
+            workspace = Workspace.objects.get(slug=slug)
+            project = Project.objects.get(pk=project_id)
 
-        # check if issue type with the same external id and external source already exists
-        # return the issue type id if it exists
-        external_id = request.data.get("external_id")
-        external_source = request.data.get("external_source")
-        external_existing_issue_type = (
-            self.get_queryset()
-            .filter(external_id=external_id, external_source=external_source)
-            .first()
-        )
-
-        if external_id and external_source and external_existing_issue_type:
-            return Response(
-                {
-                    "error": "Work item type with the same external id and external source already exists",
-                    "id": str(external_existing_issue_type.id),
-                },
-                status=status.HTTP_409_CONFLICT,
+            # check if issue type with the same external id and external source already exists
+            # return the issue type id if it exists
+            external_id = request.data.get("external_id")
+            external_source = request.data.get("external_source")
+            external_existing_issue_type = (
+                self.get_queryset()
+                .filter(external_id=external_id, external_source=external_source)
+                .first()
             )
 
-        # creating issue type
-        issue_type_serializer = self.serializer_class(data=request.data)
-        issue_type_serializer.is_valid(raise_exception=True)
-        issue_type_serializer.save(
-            workspace=workspace, logo_props=self.generate_logo_prop()
-        )
+            if external_id and external_source and external_existing_issue_type:
+                return Response(
+                    {
+                        "error": "Work item type with the same external id and external source already exists",
+                        "id": str(external_existing_issue_type.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
 
-        # adding the issue type to the project
-        project_issue_type_serializer = ProjectIssueTypeAPISerializer(
-            data={"issue_type": issue_type_serializer.data["id"]}
-        )
-        project_issue_type_serializer.is_valid(raise_exception=True)
-        project_issue_type_serializer.save(project=project, level=0)
+            # creating issue type
+            issue_type_serializer = self.serializer_class(data=request.data)
+            issue_type_serializer.is_valid(raise_exception=True)
+            issue_type_serializer.save(
+                workspace=workspace, logo_props=self.generate_logo_prop()
+            )
 
-        # getting the issue type
-        issue_type = self.get_queryset().get(pk=issue_type_serializer.data["id"])
-        serializer = self.serializer_class(issue_type)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # adding the issue type to the project
+            project_issue_type_serializer = ProjectIssueTypeAPISerializer(
+                data={"issue_type": issue_type_serializer.data["id"]}
+            )
+            project_issue_type_serializer.is_valid(raise_exception=True)
+            project_issue_type_serializer.save(project=project, level=0)
+
+            # getting the issue type
+            issue_type = self.get_queryset().get(pk=issue_type_serializer.data["id"])
+            serializer = self.serializer_class(issue_type)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # update issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id):
-        issue_type = self.get_queryset().get(pk=type_id)
-        data = request.data
+        with transaction.atomic():
+            issue_type = self.get_queryset().get(pk=type_id)
+            data = request.data
 
-        # check if the issue type is the default issue type and if the is_active field is being updated to false
-        if (
-            issue_type.is_default
-            and get_boolean_value(request.data.get("is_active")) is False
-        ):
-            return Response(
-                {"error": "Default work item type's is_active field cannot be false"},
-                status=status.HTTP_400_BAD_REQUEST,
+            # check if the issue type is the default issue type and if the is_active field is being updated to false
+            if (
+                issue_type.is_default
+                and get_boolean_value(request.data.get("is_active")) is False
+            ):
+                return Response(
+                    {"error": "Default work item type's is_active field cannot be false"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            issue_type_serializer = self.serializer_class(
+                issue_type, data=data, partial=True
+            )
+            issue_type_serializer.is_valid(raise_exception=True)
+
+            # check if issue type with the same external id and external source already exists
+            external_id = request.data.get("external_id")
+            external_source = request.data.get("external_source")
+            external_existing_issue_type = (
+                self.get_queryset()
+                .filter(external_id=external_id, external_source=external_source)
+                .first()
             )
 
-        issue_type_serializer = self.serializer_class(
-            issue_type, data=data, partial=True
-        )
-        issue_type_serializer.is_valid(raise_exception=True)
+            # don't allow updating the external id if it already exists in another issue type
+            # checking if the external id is being updated to a different issue type
+            if external_id and external_existing_issue_type.id != issue_type.id:
+                return Response(
+                    {
+                        "error": "Work item type with the same external id and external source already exists",
+                        "id": str(issue_type.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
 
-        # check if issue type with the same external id and external source already exists
-        external_id = request.data.get("external_id")
-        external_source = request.data.get("external_source")
-        external_existing_issue_type = (
-            self.get_queryset()
-            .filter(external_id=external_id, external_source=external_source)
-            .first()
-        )
-
-        # don't allow updating the external id if it already exists in another issue type
-        # checking if the external id is being updated to a different issue type
-        if external_id and external_existing_issue_type.id != issue_type.id:
-            return Response(
-                {
-                    "error": "Work item type with the same external id and external source already exists",
-                    "id": str(issue_type.id),
-                },
-                status=status.HTTP_409_CONFLICT,
-            )
-
-        issue_type_serializer.save()
-        return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
+            issue_type_serializer.save()
+            return Response(issue_type_serializer.data, status=status.HTTP_200_OK)
 
     # delete issue type by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)

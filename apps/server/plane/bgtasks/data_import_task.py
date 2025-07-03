@@ -137,6 +137,10 @@ def process_single_issue(slug, project, user_id, issue_data):
 
             issue = serializer.save()
 
+            # Update the issue with the created_by_id
+            issue.created_by_id = issue_data.get("created_by")
+            issue.save(disable_auto_set_user=True)
+
             # Process links
             process_issue_links(issue, issue_data.get("links", []))
 
@@ -224,16 +228,19 @@ def process_issue_comments(user_id, issue, comments):
         if not external_id:
             continue
 
+        comment_actor = (
+            comment_data.get("actor") if comment_data.get("actor") else user_id
+        )
         if external_id in existing_comments_map:
             # Update case
             existing_comment = existing_comments_map[external_id]
+            existing_comment.actor_id = comment_actor
+            existing_comment.created_by_id = comment_actor
             existing_comment.comment_html = comment_data["comment_html"]
             bulk_update_comments.append(existing_comment)
         else:
             # Create case
-            comment_actor = (
-                comment_data.get("actor") if comment_data.get("actor") else user_id
-            )
+
             comment = IssueComment(
                 issue=issue,
                 project_id=issue.project_id,
@@ -254,7 +261,9 @@ def process_issue_comments(user_id, issue, comments):
     # Bulk update existing comments
     if bulk_update_comments:
         IssueComment.objects.bulk_update(
-            bulk_update_comments, ["comment_html"], batch_size=100
+            bulk_update_comments,
+            ["comment_html", "actor_id", "created_by_id"],
+            batch_size=100,
         )
 
     # Process file assets for each comment

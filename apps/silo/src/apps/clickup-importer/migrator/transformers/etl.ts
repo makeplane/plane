@@ -186,7 +186,7 @@ export class ClickUpBulkTransformer {
       return transformedTask;
     };
 
-    const transformedTasks = await processBatchPromises(this.entity.tasks, transformedTask, 5);
+    const transformedTasks = await processBatchPromises(this.entity.tasks, transformedTask, 2);
 
     return transformedTasks;
   }

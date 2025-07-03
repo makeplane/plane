@@ -25,11 +25,13 @@ export const createLabelsForIssues = async (
 
       return undefined;
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the label: ${label.name}`);
+      logger.error(`Error while creating the label: ${label.name}`, {
+        jobId: jobId,
+      });
       return undefined;
     }
   };
 
-  const createdLabels = await processBatchPromises(labels, createOrUpdateLabel, 5);
+  const createdLabels = await processBatchPromises(labels, createOrUpdateLabel, 2);
   return createdLabels.filter((label) => label !== undefined) as ExIssueLabel[];
 };

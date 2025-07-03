@@ -67,11 +67,14 @@ export const createUsers = async (
 
       return createdUser;
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the user: ${user.display_name}`);
+      logger.error(`Error while creating the user: ${user.display_name}`, {
+        jobId: jobId,
+        error: error,
+      });
       return undefined;
     }
   };
 
-  const createdUsers = await processBatchPromises(users, createOrUpdateUser, 5);
+  const createdUsers = await processBatchPromises(users, createOrUpdateUser, 2);
   return createdUsers?.filter((user) => user !== undefined) ?? [];
 };

@@ -101,19 +101,26 @@ export const createAllModules = async (
       );
       return { id: createdModule.id, issues: module.issues };
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the module: ${module.name}`);
+      logger.warn(`Warning while creating the module: ${module.name}`, {
+        jobId: jobId,
+      });
       if (AssertAPIErrorResponse(error)) {
         if (error.error && error.error.includes("already exists")) {
           logger.info(`[${jobId.slice(0, 7)}] Module "${module.name}" already exists. Skipping...`);
           // Get the id from the module
           return { id: error.id, issues: module.issues };
+        } else {
+          logger.error(`Error while creating the module: ${module.name}`, {
+            jobId: jobId,
+            error: error,
+          });
         }
       }
       return undefined;
     }
   }
 
-  const createdModules = await processBatchPromises(modules, createOrUpdateModule, 5);
+  const createdModules = await processBatchPromises(modules, createOrUpdateModule, 2);
 
   return createdModules.filter((module) => module !== undefined) as { id: string; issues: string[] }[];
 };

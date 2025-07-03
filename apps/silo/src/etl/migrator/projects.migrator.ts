@@ -38,12 +38,15 @@ export const createProjects = async (
 
       return createdProject;
     } catch (error) {
-      logger.error(`[${jobId.slice(0, 7)}] Error while creating the project: ${project.name}`);
+      logger.error(`Error while creating the project: ${project.name}`, {
+        jobId: jobId,
+        error: error,
+      });
       return undefined;
     }
   };
 
-  const createdProjects = await processBatchPromises(projects, createProject, 5);
+  const createdProjects = await processBatchPromises(projects, createProject, 2);
 
   return createdProjects.filter((project) => project !== undefined) as ExProject[];
 };
