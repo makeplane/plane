@@ -2,6 +2,9 @@ FROM node:20-alpine AS base
 # The web Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update this Dockerfile, the Dockerfile in the web workspace and copy that over to Dockerfile in the docs.
 
+# *****************************************************************************
+# STAGE 1: Prune the project
+# *****************************************************************************
 FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk update
@@ -12,6 +15,9 @@ RUN yarn global add turbo
 COPY . .
 RUN turbo prune live --docker
 
+# *****************************************************************************
+# STAGE 2: Install dependencies & build the project
+# *****************************************************************************
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apk update
@@ -28,16 +34,22 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 RUN yarn turbo build --filter=live
+
+# *****************************************************************************
+# STAGE 3: Run the project
+# *****************************************************************************
 
 FROM base AS runner
 WORKDIR /app
 
-COPY --from=installer /app .
-# COPY --from=installer /app/live/node_modules ./node_modules
+COPY --from=installer /app/packages ./packages
+COPY --from=installer /app/apps/live/dist ./live
+COPY --from=installer /app/apps/live/package.json ./package.json
+COPY --from=installer /app/node_modules ./node_modules
 
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
