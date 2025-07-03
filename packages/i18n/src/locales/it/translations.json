@@ -1344,6 +1344,17 @@
       "project_insights": {
         "title": "Nessun dato disponibile",
         "description": "Gli elementi di lavoro assegnati a te, suddivisi per stato, verranno visualizzati qui."
+      },
+      "general": {
+        "title": "Traccia progressi, carichi di lavoro e allocazioni. Individua tendenze, rimuovi blocchi e lavora più velocemente",
+        "description": "Visualizza ambito vs domanda, stime e scope creep. Ottieni prestazioni per membri del team e squadre, assicurandoti che il tuo progetto si svolga nei tempi previsti.",
+        "primary_button": {
+          "text": "Inizia il tuo primo progetto",
+          "comic": {
+            "title": "Analytics funziona meglio con Cicli + Moduli",
+            "description": "Prima, incornicia i tuoi elementi di lavoro in Cicli e, se possibile, raggruppa gli elementi che si estendono oltre un ciclo in Moduli. Controlla entrambi nella navigazione sinistra."
+          }
+        }
       }
     },
     "created_vs_resolved": "Creato vs Risolto",

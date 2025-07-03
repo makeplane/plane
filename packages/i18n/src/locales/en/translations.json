@@ -1213,6 +1213,17 @@
       "customized_insights": {
         "title": "No data yet",
         "description": "Work items assigned to you, broken down by state, will show up here."
+      },
+      "general": {
+        "title": "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+        "description": "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+        "primary_button": {
+          "text": "Start your first project",
+          "comic": {
+            "title": "Analytics works best with Cycles + Modules",
+            "description": "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav."
+          }
+        }
       }
     }
   },

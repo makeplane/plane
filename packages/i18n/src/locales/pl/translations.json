@@ -1347,6 +1347,17 @@
       "project_insights": {
         "title": "Brak danych",
         "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj."
+      },
+      "general": {
+        "title": "Śledź postęp, obciążenie pracą i alokacje. Wykrywaj trendy, usuwaj blokady i pracuj szybciej",
+        "description": "Zobacz zakres vs zapotrzebowanie, oszacowania i rozrost zakresu. Uzyskaj wydajność członków zespołu i zespołów, upewniając się, że projekt jest realizowany na czas.",
+        "primary_button": {
+          "text": "Rozpocznij swój pierwszy projekt",
+          "comic": {
+            "title": "Analityka działa najlepiej z Cyklami + Modułami",
+            "description": "Najpierw umieść swoje elementy pracy w Cyklach, a jeśli można, pogrupuj elementy obejmujące więcej niż jeden cykl w Moduły. Sprawdź oba w lewej nawigacji."
+          }
+        }
       }
     },
     "created_vs_resolved": "Utworzone vs Rozwiązane",

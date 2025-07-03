@@ -1345,6 +1345,17 @@
       "project_insights": {
         "title": "Belum ada data",
         "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini."
+      },
+      "general": {
+        "title": "Lacak kemajuan, beban kerja, dan alokasi. Temukan tren, hapus hambatan, dan percepat pekerjaan",
+        "description": "Lihat lingkup versus permintaan, perkiraan, dan perluasan lingkup. Dapatkan kinerja berdasarkan anggota tim dan tim, dan pastikan proyek Anda berjalan tepat waktu.",
+        "primary_button": {
+          "text": "Mulai proyek pertama Anda",
+          "comic": {
+            "title": "Analitik bekerja paling baik dengan Siklus + Modul",
+            "description": "Pertama, batasi waktu masalah Anda ke dalam Siklus dan, jika Anda bisa, kelompokkan masalah yang lebih dari satu siklus ke dalam Modul. Lihat keduanya di navigasi kiri."
+          }
+        }
       }
     },
     "created_vs_resolved": "Dibuat vs Diselesaikan",
