@@ -4,7 +4,7 @@ import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-rea
 import { Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // helpers
 // hooks
 import { useWorkspace } from "@/hooks/store";
@@ -38,7 +38,8 @@ export const AskPiMenu: React.FC<Props> = (props) => {
         </span>
         {response ? (
           <div>
-            <RichTextReadOnlyEditor
+            <RichTextEditor
+              editable={false}
               displayConfig={{
                 fontSize: "small-font",
               }}

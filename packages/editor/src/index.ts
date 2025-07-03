@@ -15,7 +15,6 @@ export {
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
-  RichTextReadOnlyEditorWithRef,
 } from "@/components/editors";
 export { PiChatEditor } from "./ee/components/editors";
 
