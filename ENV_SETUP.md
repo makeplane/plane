@@ -36,7 +36,7 @@ USE_MINIO=1
 NGINX_PORT=80
 ```
 
-## {PROJECT_FOLDER}/apiserver/.env
+## {PROJECT_FOLDER}/apps/server/.env
 
 ```
 # Backend
@@ -63,8 +63,6 @@ AWS_S3_ENDPOINT_URL="http://plane-minio:9000"
 AWS_S3_BUCKET_NAME="uploads"
 # Maximum file upload limit
 FILE_SIZE_LIMIT=5242880
-# Settings related to Docker
-DOCKERIZED=1 # deprecated
 # set to 1 If using the pre-configured minio setup
 USE_MINIO=1
 # Nginx Configuration
@@ -78,11 +76,15 @@ ADMIN_BASE_URL=
 SPACE_BASE_URL=
 APP_BASE_URL=
 SECRET_KEY="gxoytl7dmnc1y37zahah820z5iq3iozu38cnfjtu3yaau9cd9z"
+# RabbitMQ Settings
+RABBITMQ_HOST="plane-mq"
+RABBITMQ_PORT="5672"
+RABBITMQ_USER="plane"
+RABBITMQ_PASSWORD="plane"
+RABBITMQ_VHOST="plane"
+AMQP_URL=""
+# Authentication Settings
+ENABLE_SIGNUP=1
+ENABLE_EMAIL_PASSWORD=1
+ENABLE_MAGIC_LINK_LOGIN=0
 ```
-
-## Updates​
-
-- The naming convention for containers and images has been updated.
-- The plane-worker image will no longer be maintained, as it has been merged with plane-backend.
-- The Tiptap pro-extension dependency has been removed, eliminating the need for Tiptap API keys.
-- The image name for Plane deployment has been changed to plane-space.
