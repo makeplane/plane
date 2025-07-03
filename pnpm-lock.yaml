@@ -505,9 +505,6 @@ importers:
       mobx-react:
         specifier: ^9.1.1
         version: 9.2.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-react-lite:
-        specifier: ^4.1.0
-        version: 4.1.0(mobx@6.13.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mobx-utils:
         specifier: ^6.0.8
         version: 6.1.0(mobx@6.13.7)
