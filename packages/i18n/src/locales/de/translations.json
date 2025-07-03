@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Projekt konnte nicht aus den Favoriten entfernt werden. Bitte versuchen Sie es erneut.",
   "project_created_successfully": "Projekt erfolgreich erstellt",
   "project_created_successfully_description": "Das Projekt wurde erfolgreich erstellt. Sie können nun Arbeitselemente hinzufügen.",
+  "project_name_already_taken": "Der Projektname ist bereits vergeben.",
+  "project_identifier_already_taken": "Der Projekt-Identifier ist bereits vergeben.",
   "project_cover_image_alt": "Titelbild des Projekts",
   "name_is_required": "Name ist erforderlich",
   "title_should_be_less_than_255_characters": "Der Titel sollte weniger als 255 Zeichen enthalten",
@@ -872,13 +874,15 @@
     "guests": "Gäste",
     "on_track": "Im Plan",
     "off_track": "Außer Plan",
+    "at_risk": "Gefährdet",
     "timeline": "Zeitleiste",
     "completion": "Fertigstellung",
     "upcoming": "Bevorstehend",
     "completed": "Abgeschlossen",
     "in_progress": "In Bearbeitung",
     "planned": "Geplant",
-    "paused": "Pausiert"
+    "paused": "Pausiert",
+    "no_of": "Anzahl {entity}"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -1339,6 +1343,17 @@
       "project_insights": {
         "title": "Noch keine Daten",
         "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
+      },
+      "general": {
+        "title": "Verfolgen Sie Fortschritt, Arbeitsbelastung und Zuweisungen. Erkennen Sie Trends, beseitigen Sie Hindernisse und arbeiten Sie schneller",
+        "description": "Sehen Sie Umfang vs. Nachfrage, Schätzungen und Scope Creep. Messen Sie die Leistung von Teammitgliedern und Teams und stellen Sie sicher, dass Ihr Projekt rechtzeitig abgeschlossen wird.",
+        "primary_button": {
+          "text": "Erstes Projekt starten",
+          "comic": {
+            "title": "Analytics funktioniert am besten mit Zyklen + Modulen",
+            "description": "Begrenzen Sie zunächst Ihre Arbeitselemente zeitlich in Zyklen und gruppieren Sie, wenn möglich, Arbeitselemente, die mehr als einen Zyklus umfassen, in Module. Schauen Sie sich beide in der linken Navigation an."
+          }
+        }
       }
     },
     "created_vs_resolved": "Erstellt vs Gelöst",
@@ -2465,5 +2480,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane ist nicht gestartet. Dies könnte daran liegen, dass einer oder mehrere Plane-Services nicht starten konnten.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wählen Sie View Logs aus setup.sh und Docker-Logs, um sicherzugehen."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Gliederung",
+        "empty_state": {
+          "title": "Fehlende Überschriften",
+          "description": "Fügen Sie einige Überschriften zu dieser Seite hinzu, um sie hier zu sehen."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Wörter",
+          "characters": "Zeichen",
+          "paragraphs": "Absätze",
+          "read_time": "Lesezeit"
+        },
+        "actors_info": {
+          "edited_by": "Bearbeitet von",
+          "created_by": "Erstellt von"
+        },
+        "version_history": {
+          "label": "Versionsverlauf",
+          "current_version": "Aktuelle Version"
+        }
+      },
+      "assets": {
+        "label": "Assets",
+        "download_button": "Herunterladen",
+        "empty_state": {
+          "title": "Fehlende Bilder",
+          "description": "Fügen Sie Bilder hinzu, um sie hier zu sehen."
+        }
+      }
+    },
+    "open_button": "Navigationsbereich öffnen",
+    "close_button": "Navigationsbereich schließen",
+    "outline_floating_button": "Gliederung öffnen"
   }
 }

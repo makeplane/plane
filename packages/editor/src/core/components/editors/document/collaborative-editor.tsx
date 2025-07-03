@@ -13,11 +13,10 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
+import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
-const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
+const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
@@ -27,10 +26,14 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     editorClassName = "",
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
+    onChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -56,10 +59,13 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     embedHandler,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
+    onChange,
     onTransaction,
     placeholder,
     realtimeConfig,
@@ -95,7 +101,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   );
 };
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditor>(
+const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
   (props, ref) => (
     <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
   )

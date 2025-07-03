@@ -117,11 +117,15 @@ export const CustomKeymap = Extension.create({
         const endNodePos = tr.selection.$to.end();
         const isCurrentTextSelectionNotExtendedToNodeBoundaries =
           startSelectionPos > startNodePos || endSelectionPos < endNodePos;
+
         if (isCurrentTextSelectionNotExtendedToNodeBoundaries) {
+          // First press: select text within node boundaries
           editor.chain().selectTextWithinNodeBoundaries().run();
           return true;
+        } else {
+          editor.commands.selectAll();
+          return true;
         }
-        return false;
       },
     };
   },

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Nu s-a putut elimina proiectul din favorite. Încearcă din nou.",
   "project_created_successfully": "Proiect creat cu succes",
   "project_created_successfully_description": "Proiect creat cu succes. Poți începe să adaugi activități în el.",
+  "project_name_already_taken": "Numele proiectului este deja folosit.",
+  "project_identifier_already_taken": "Identificatorul proiectului este deja folosit.",
   "project_cover_image_alt": "Coperta proiectului",
   "name_is_required": "Numele este obligatoriu",
   "title_should_be_less_than_255_characters": "Titlul trebuie să conțină mai puțin de 255 de caractere",
@@ -872,13 +874,15 @@
     "guests": "Invitați",
     "on_track": "Pe drumul cel bun",
     "off_track": "În afara traiectoriei",
+    "at_risk": "În pericol",
     "timeline": "Cronologie",
     "completion": "Finalizare",
     "upcoming": "Viitor",
     "completed": "Finalizat",
     "in_progress": "În desfășurare",
     "planned": "Planificat",
-    "paused": "Pauzat"
+    "paused": "Pauzat",
+    "no_of": "Nr. de {entity}"
   },
   "chart": {
     "x_axis": "axa-X",
@@ -1339,6 +1343,17 @@
       "project_insights": {
         "title": "Nu există date încă",
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
+      },
+      "general": {
+        "title": "Urmărește progresul, sarcinile și alocările. Identifică tendințele, elimină blocajele și accelerează munca",
+        "description": "Vezi domeniul versus cererea, estimările și extinderea domeniului. Obține performanțe pe membrii echipei și echipe, și asigură-te că proiectul tău rulează la timp.",
+        "primary_button": {
+          "text": "Începe primul tău proiect",
+          "comic": {
+            "title": "Analitica funcționează cel mai bine cu Cicluri + Module",
+            "description": "Întâi, limitează-ți problemele în Cicluri și, dacă poți, grupează problemele care durează mai mult de un ciclu în Module. Verifică ambele în navigarea din stânga."
+          }
+        }
       }
     },
     "created_vs_resolved": "Creat vs Rezolvat",
@@ -2460,5 +2475,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nu a pornit. Aceasta ar putea fi din cauza că unul sau mai multe servicii Plane au eșuat să pornească.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Alegeți View Logs din setup.sh și logurile Docker pentru a fi siguri."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Contur",
+        "empty_state": {
+          "title": "Titluri lipsă",
+          "description": "Să punem câteva titluri în această pagină pentru a le vedea aici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Cuvinte",
+          "characters": "Caractere",
+          "paragraphs": "Paragrafe",
+          "read_time": "Timp de citire"
+        },
+        "actors_info": {
+          "edited_by": "Editat de",
+          "created_by": "Creat de"
+        },
+        "version_history": {
+          "label": "Istoricul versiunilor",
+          "current_version": "Versiunea curentă"
+        }
+      },
+      "assets": {
+        "label": "Resurse",
+        "download_button": "Descarcă",
+        "empty_state": {
+          "title": "Imagini lipsă",
+          "description": "Adăugați imagini pentru a le vedea aici."
+        }
+      }
+    },
+    "open_button": "Deschide panoul de navigare",
+    "close_button": "Închide panoul de navigare",
+    "outline_floating_button": "Deschide conturul"
   }
 }

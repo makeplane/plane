@@ -1,6 +1,6 @@
 {
   "name": "@plane/propel",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -33,6 +33,6 @@
     "@plane/typescript-config": "workspace:*",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

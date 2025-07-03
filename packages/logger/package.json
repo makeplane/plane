@@ -1,22 +1,32 @@
 {
   "name": "@plane/logger",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
     "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "lint:errors": "eslint src --ext .ts,.tsx --quiet",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "@types/express": "^4.17.21",
+    "express": "^4.21.2",
+    "winston-daily-rotate-file": "^5.0.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/node": "^22.5.4",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

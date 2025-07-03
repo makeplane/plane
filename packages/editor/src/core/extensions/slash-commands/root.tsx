@@ -7,7 +7,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { CommandListInstance } from "@/helpers/tippy";
 // types
-import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
+import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
@@ -106,9 +106,8 @@ const renderItems = () => {
   };
 };
 
-export type TExtensionProps = {
+export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions"> & {
   additionalOptions?: TSlashCommandAdditionalOption[];
-  disabledExtensions?: TExtensions[];
 };
 
 export const SlashCommands = (props: TExtensionProps) =>

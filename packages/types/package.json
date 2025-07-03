@@ -1,11 +1,34 @@
 {
   "name": "@plane/types",
-  "version": "0.26.1",
+  "version": "0.27.0",
   "license": "AGPL-3.0",
   "private": true,
-  "types": "./src/index.d.ts",
-  "main": "./src/index.d.ts",
-  "dependencies": {
-    "@plane/constants": "workspace:*"
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsc --noEmit && tsup",
+    "check:types": "tsc --noEmit",
+    "check:lint": "eslint src --ext .ts,.tsx",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "fix:lint": "eslint src --ext .ts,.tsx --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "tsup": "8.4.0"
   }
 }

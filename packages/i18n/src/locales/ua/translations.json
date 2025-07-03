@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Не вдалося видалити проєкт із вибраного. Спробуйте ще раз.",
   "project_created_successfully": "Проєкт успішно створено",
   "project_created_successfully_description": "Проєкт успішно створений. Тепер ви можете почати додавати робочі одиниці.",
+  "project_name_already_taken": "Назва проекту вже використовується.",
+  "project_identifier_already_taken": "Ідентифікатор проекту вже використовується.",
   "project_cover_image_alt": "Обкладинка проєкту",
   "name_is_required": "Назва є обов’язковою",
   "title_should_be_less_than_255_characters": "Назва має бути коротшою за 255 символів",
@@ -874,13 +876,15 @@
     "guests": "Гості",
     "on_track": "У межах графіку",
     "off_track": "Поза графіком",
+    "at_risk": "Під загрозою",
     "timeline": "Хронологія",
     "completion": "Завершення",
     "upcoming": "Майбутнє",
     "completed": "Завершено",
     "in_progress": "В процесі",
     "planned": "Заплановано",
-    "paused": "Призупинено"
+    "paused": "Призупинено",
+    "no_of": "Кількість {entity}"
   },
   "chart": {
     "x_axis": "Вісь X",
@@ -1341,6 +1345,17 @@
       "project_insights": {
         "title": "Ще немає даних",
         "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут."
+      },
+      "general": {
+        "title": "Відстежуйте прогрес, робочу навантаженні та розподіл. Виявляйте тенденції, усувайте перешкоди та прискорюйте роботу",
+        "description": "Перегляньте обсяг проти попиту, оцінки та розповсюдження обсягу. Отримайте продуктивність членів команди та команд, щоб переконатися, що ваш проєкт виконується вчасно.",
+        "primary_button": {
+          "text": "Розпочніть свій перший проєкт",
+          "comic": {
+            "title": "Аналітика найкраще працює з циклами + модулями",
+            "description": "Спочатку обмежте свої робочі елементи часом у циклах та, якщо можливо, згрупуйте робочі елементи, які перевищують один цикл, у модулі. Перегляньте обидва в навігації зліва."
+          }
+        }
       }
     },
     "created_vs_resolved": "Створено vs Вирішено",
@@ -2467,5 +2482,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустився. Це може бути через те, що один або декілька сервісів Plane не змогли запуститися.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Виберіть View Logs з setup.sh та логів Docker, щоб переконатися."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Відсутні заголовки",
+          "description": "Давайте додамо кілька заголовків на цю сторінку, щоб побачити їх тут."
+        }
+      },
+      "info": {
+        "label": "Інформація",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символи",
+          "paragraphs": "Абзаци",
+          "read_time": "Час читання"
+        },
+        "actors_info": {
+          "edited_by": "Відредаговано",
+          "created_by": "Створено"
+        },
+        "version_history": {
+          "label": "Історія версій",
+          "current_version": "Поточна версія"
+        }
+      },
+      "assets": {
+        "label": "Ресурси",
+        "download_button": "Завантажити",
+        "empty_state": {
+          "title": "Відсутні зображення",
+          "description": "Додайте зображення, щоб побачити їх тут."
+        }
+      }
+    },
+    "open_button": "Відкрити панель навігації",
+    "close_button": "Закрити панель навігації",
+    "outline_floating_button": "Відкрити структуру"
   }
 }
