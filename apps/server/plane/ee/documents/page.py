@@ -10,7 +10,9 @@ from .base import BaseDocument, JsonKeywordField, KnnVectorField, edge_ngram_ana
 
 @registry.register_document
 class PageDocument(BaseDocument):
-    description = fields.TextField(attr="description_stripped")
+    description = fields.TextField(
+        attr="description_stripped", fields={"keyword": fields.KeywordField()}
+    )
     project_ids = fields.ListField(fields.KeywordField())
     project_identifiers = fields.ListField(fields.KeywordField())
     workspace_id = fields.KeywordField(attr="workspace_id")
@@ -18,7 +20,11 @@ class PageDocument(BaseDocument):
     active_member_user_ids = fields.ListField(fields.KeywordField())
     logo_props = JsonKeywordField(attr="logo_props")
     is_deleted = fields.BooleanField()
-    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+    name = fields.TextField(
+        analyzer=edge_ngram_analyzer,
+        search_analyzer="standard",
+        fields={"keyword": fields.KeywordField()},
+    )
     access = fields.IntegerField(attr="access")
     owned_by_id = fields.KeywordField(attr="owned_by_id")
     archived_at = fields.DateField(attr="archived_at")
@@ -51,10 +57,7 @@ class PageDocument(BaseDocument):
         # Enable KNN for the index
         settings = {
             **BaseDocument.Index.settings,
-            "index": {
-                "knn": True,
-                "default_pipeline": django_settings.OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE,  # noqa: E501
-            },
+            "index": {"knn": True},
         }
         name = (
             f"{django_settings.OPENSEARCH_INDEX_PREFIX}_pages"
@@ -149,3 +152,23 @@ class PageDocument(BaseDocument):
         Data preparation method for is_deleted field
         """
         return bool(instance.deleted_at)
+
+    def prepare(self, instance):
+        """
+        Override prepare method to handle semantic field exclusion during upsert.
+
+        If semantic fields haven't changed, exclude them from the prepared data
+        to preserve existing embeddings in OpenSearch.
+        """
+        data = super().prepare(instance)
+
+        # Check if semantic fields have changed
+        semantic_fields_changed = getattr(instance, "_semantic_fields_changed", False)
+
+        # If semantic fields haven't changed, exclude them to preserve existing embeddings
+        if not semantic_fields_changed:
+            semantic_fields = ["description_semantic", "name_semantic"]
+            for field in semantic_fields:
+                data.pop(field, None)
+
+        return data

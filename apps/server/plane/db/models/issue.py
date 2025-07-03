@@ -178,6 +178,12 @@ class Issue(ProjectBaseModel):
 
     issue_objects = IssueManager()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store original values of semantic fields for change tracking
+        self._original_name = self.name
+        self._original_description_stripped = self.description_stripped
+
     class Meta:
         verbose_name = "Issue"
         verbose_name_plural = "Issues"

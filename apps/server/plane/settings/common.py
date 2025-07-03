@@ -614,7 +614,7 @@ if OPENSEARCH_ENABLED:
     }
     OPENSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
         "OPENSEARCH_DSL_SIGNAL_PROCESSOR",
-        "django_opensearch_dsl.signals.CelerySignalProcessor",
+        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
     )
 
     INSTALLED_APPS += ["django_opensearch_dsl"]

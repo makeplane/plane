@@ -11,6 +11,20 @@ The documents in this folder provide full-text search capabilities across variou
 - Data preparation methods
 - Related model handling for automatic reindexing
 
+## Document Types
+
+| Document | Model | Purpose | Semantic Search |
+|----------|--------|---------|----------------|
+| `IssueDocument` | Issue | Full-text search of issues with semantic search support | ✅ (name, description, content) |
+| `IssueCommentDocument` | IssueComment | Search within issue comments | ❌ |
+| `ProjectDocument` | Project | Project search and discovery | ❌ |
+| `WorkspaceDocument` | Workspace | Workspace search functionality | ❌ |
+| `ModuleDocument` | Module | Module/sprint search | ❌ |
+| `CycleDocument` | Cycle | Cycle search and filtering | ❌ |
+| `PageDocument` | Page | Page content search with semantic capabilities | ✅ (name, description) |
+| `IssueViewDocument` | IssueView | Search saved issue views | ❌ |
+| `TeamspaceDocument` | Teamspace | Teamspace search and discovery | ❌ |
+
 ## Architecture
 
 ### Base Document (`base.py`)
@@ -22,20 +36,78 @@ The `BaseDocument` class provides common functionality for all search documents:
 - **Custom Fields**: 
   - `JsonKeywordField`: For storing JSON data as searchable strings
   - `KnnVectorField`: For semantic search using vector embeddings
+- **Semantic Field Management**: Automatically handles semantic field exclusion during partial updates
+- **Upsert Behavior**: Built-in support for upsert operations that create documents if missing
 
-### Document Types
+### Semantic Field Architecture
 
-| Document | Model | Purpose |
-|----------|--------|---------|
-| `IssueDocument` | Issue | Full-text search of issues with semantic search support |
-| `IssueCommentDocument` | IssueComment | Search within issue comments |
-| `ProjectDocument` | Project | Project search and discovery |
-| `WorkspaceDocument` | Workspace | Workspace search functionality |
-| `ModuleDocument` | Module | Module/sprint search |
-| `CycleDocument` | Cycle | Cycle search and filtering |
-| `PageDocument` | Page | Page content search with semantic capabilities |
-| `IssueViewDocument` | IssueView | Search saved issue views |
-| `TeamspaceDocument` | Teamspace | Teamspace search and discovery |
+The system intelligently handles semantic embeddings to optimize both performance and accuracy:
+
+#### How It Works
+
+1. **Model Initialization**: Issue and Page models track original semantic field values:
+   ```python
+   def __init__(self, *args, **kwargs):
+       super().__init__(*args, **kwargs)
+       self._original_name = self.name
+       self._original_description_stripped = self.description_stripped
+   ```
+
+2. **Change Detection**: Signal handler compares current vs original values:
+   ```python
+   def _check_semantic_fields_changed(self, instance, **kwargs):
+       original_name = getattr(instance, '_original_name', None)
+       current_name = getattr(instance, 'name', None)
+       return original_name != current_name  # (simplified)
+   ```
+
+3. **Intelligent Action Selection**:
+   - **Semantic fields changed** → `action="index"` → Full reindex with new embeddings
+   - **Semantic fields unchanged** → `action="update"` → Partial update, semantic fields excluded
+
+4. **Document Processing**: Documents override `prepare()` to exclude semantic fields when unchanged:
+   ```python
+   def prepare(self, instance):
+       data = super().prepare(instance)
+       if not getattr(instance, '_semantic_fields_changed', False):
+           for field in ['description_semantic', 'name_semantic']:
+               data.pop(field, None)
+       return data
+   ```
+
+5. **Upsert Behavior**: BaseDocument automatically handles missing documents:
+   ```python
+   def _prepare_action(self, object_instance, action):
+       action_dict = super()._prepare_action(object_instance, action)
+       if action == "update":
+           action_dict["doc_as_upsert"] = True
+       return action_dict
+   ```
+
+#### Benefits
+
+- **Performance**: Avoids unnecessary embedding regeneration
+- **Accuracy**: Preserves existing embeddings when content unchanged  
+- **Reliability**: Handles missing documents gracefully
+- **Monitoring**: Comprehensive error handling and logging
+
+### Automatic Indexing System
+
+#### Signal Handling
+
+The `signal_handler.py` module provides automatic index updates with comprehensive error handling:
+
+- **Bulk Operations**: Handles bulk create/update signals efficiently with batch processing
+- **Related Model Updates**: Updates documents when related models change
+- **Celery Integration**: Asynchronous processing for better performance
+- **Semantic Field Detection**: Automatically detects when semantic fields change and triggers appropriate indexing action
+- **Comprehensive Error Handling**: Specific error handling for:
+  - **Serialization Errors**: Field access issues, validation failures, missing related objects
+  - **JSON/Encoding Errors**: Non-serializable objects, character encoding problems
+  - **Network/Connection Errors**: OpenSearch/Celery connectivity issues with retry support
+  - **Model/Registry Errors**: Model lookup failures and document mapping issues
+- **Intelligent Batching**: Processes large datasets in configurable batches with failure isolation
+- **Detailed Logging**: Context-rich logging for debugging and monitoring
 
 ## Key Features
 
@@ -61,25 +133,8 @@ All documents include user permission fields to ensure search results respect ac
 active_project_member_user_ids = fields.ListField(fields.KeywordField())
 ```
 
-### 4. Automatic Reindexing
-The signal handler system automatically updates search indexes when related models change.
-
-### 5. Multi-Document Search
+### 4. Multi-Document Search
 Efficient searching across multiple document types in a single network request with automatic result organization.
-
-## Configuration
-
-### Environment Variables
-- `OPENSEARCH_ENABLED`: Enable/disable search indexing
-- `OPENSEARCH_INDEX_PREFIX`: Prefix for all index names
-- `OPENSEARCH_SHARD_COUNT`: Number of shards per index
-- `OPENSEARCH_REPLICA_COUNT`: Number of replicas per index
-
-### Index Settings
-Each document includes optimized settings:
-- **Refresh Interval**: 30s for better indexing performance
-- **Translog Settings**: Optimized for bulk operations
-- **Slow Log**: Query and indexing performance monitoring
 
 ## Usage Guide
 
@@ -181,6 +236,20 @@ When using multi-search functionality:
 - Consistent serialization across document types
 - Better performance than sequential searches
 
+## Configuration
+
+### Environment Variables
+- `OPENSEARCH_ENABLED`: Enable/disable search indexing
+- `OPENSEARCH_INDEX_PREFIX`: Prefix for all index names
+- `OPENSEARCH_SHARD_COUNT`: Number of shards per index
+- `OPENSEARCH_REPLICA_COUNT`: Number of replicas per index
+
+### Index Settings
+Each document includes optimized settings:
+- **Refresh Interval**: 30s for better indexing performance
+- **Translog Settings**: Optimized for bulk operations
+- **Slow Log**: Query and indexing performance monitoring
+
 ## Development Guide
 
 ### Adding a New Document Type
@@ -262,15 +331,17 @@ Search functionality should be tested with:
 - Integration tests for search queries
 - Performance tests for large datasets
 
-## Performance & Optimization
+## Operations
 
-### Pagination Settings
+### Performance & Optimization
+
+#### Pagination Settings
 Each document defines `queryset_pagination` to optimize bulk indexing:
 - **Issues**: 25,000 (most complex with many relationships)
 - **Projects/Workspaces**: 10,000 (moderate complexity)
 - **Others**: 5,000 (simpler models)
 
-### Prefetch Optimization
+#### Prefetch Optimization
 All documents use `apply_related_to_queryset()` to optimize database queries during indexing:
 ```python
 def apply_related_to_queryset(self, qs):
@@ -280,23 +351,32 @@ def apply_related_to_queryset(self, qs):
     )
 ```
 
-### Signal Handling
+### Troubleshooting
 
-The `signal_handler.py` module provides automatic index updates:
-
-- **Bulk Operations**: Handles bulk create/update signals efficiently
-- **Related Model Updates**: Updates documents when related models change
-- **Celery Integration**: Asynchronous processing for better performance
-
-## Troubleshooting
-
-### Common Issues
+#### Common Issues
 
 1. **Index Not Found**: Ensure OpenSearch is running and indexes are created
-2. **Permission Errors**: Check that user permission fields are correctly populated
+2. **Permission Errors**: Check that user permission fields are correctly populated  
 3. **Performance Issues**: Monitor slow query logs and adjust pagination settings
+4. **Document Missing Errors**: The system now automatically handles missing documents using upsert behavior
+5. **Semantic Field Issues**: Check logs for semantic field change detection and ensure original values are properly tracked
 
-### Debugging
+#### Error Handling & Monitoring
+
+The enhanced signal handler provides detailed error logging for:
+
+- **Serialization Failures**: Object field access or validation errors
+- **Encoding Problems**: JSON serialization and Unicode issues  
+- **Network Issues**: OpenSearch connection and timeout errors
+- **Model Errors**: Django model lookup and registry issues
+
+**Log Levels**:
+- `DEBUG`: Successful operations and detailed progress
+- `INFO`: Batch processing summaries and high-level operations
+- `WARNING`: Recoverable issues (missing objects, unsupported models)
+- `ERROR`: Failed operations requiring attention
+
+#### Debugging
 
 Enable Django logging to see index operations:
 ```python

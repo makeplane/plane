@@ -16,12 +16,16 @@ from .base import BaseDocument, KnnVectorField, edge_ngram_analyzer
 
 @registry.register_document
 class IssueDocument(BaseDocument):
-    description = fields.TextField(attr="description_stripped")
+    description = fields.TextField(
+        attr="description_stripped",
+        fields={"keyword": fields.KeywordField()},
+    )
     project_id = fields.KeywordField(attr="project_id")
     project_identifier = fields.TextField(
         analyzer=edge_ngram_analyzer,
         search_analyzer="standard",
         search_quote_analyzer="standard",
+        fields={"keyword": fields.KeywordField()},
     )
     project_archived_at = fields.DateField()
     project_is_archived = fields.BooleanField()
@@ -30,9 +34,13 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.TextField()
+    pretty_sequence = fields.TextField(fields={"keyword": fields.KeywordField()})
     is_deleted = fields.BooleanField()
-    name = fields.TextField(analyzer=edge_ngram_analyzer, search_analyzer="standard")
+    name = fields.TextField(
+        analyzer=edge_ngram_analyzer,
+        search_analyzer="standard",
+        fields={"keyword": fields.KeywordField()},
+    )
     duplicate_of = fields.ListField(fields.KeywordField())
     not_duplicates_with = fields.ListField(fields.KeywordField())
 
@@ -71,10 +79,7 @@ class IssueDocument(BaseDocument):
         # Enable KNN for the index
         settings = {
             **BaseDocument.Index.settings,
-            "index": {
-                "knn": True,
-                "default_pipeline": django_settings.OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE,  # noqa: E501
-            },
+            "index": {"knn": True},
         }
         name = (
             f"{django_settings.OPENSEARCH_INDEX_PREFIX}_issues"
@@ -89,7 +94,7 @@ class IssueDocument(BaseDocument):
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
         # of the query and the number of records present in that table.
-        queryset_pagination = 25000
+        queryset_pagination = 5000
         related_models = [Project, ProjectMember]
 
     def apply_related_to_queryset(self, qs):
@@ -213,6 +218,30 @@ class IssueDocument(BaseDocument):
             )
 
         return list(set(duplicate_of_ids))  # Remove duplicates using set
+
+    def prepare(self, instance):
+        """
+        Override prepare method to handle semantic field exclusion during upsert.
+
+        If semantic fields haven't changed, exclude them from the prepared data
+        to preserve existing embeddings in OpenSearch.
+        """
+        data = super().prepare(instance)
+
+        # Check if semantic fields have changed
+        semantic_fields_changed = getattr(instance, "_semantic_fields_changed", False)
+
+        # If semantic fields haven't changed, exclude them to preserve existing embeddings
+        if not semantic_fields_changed:
+            semantic_fields = [
+                "description_semantic",
+                "name_semantic",
+                "content_semantic",
+            ]
+            for field in semantic_fields:
+                data.pop(field, None)
+
+        return data
 
 
 @registry.register_document

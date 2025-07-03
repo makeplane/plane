@@ -126,6 +126,12 @@ class Page(BaseModel):
         db_table = "pages"
         ordering = ("-created_at",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Store original values of semantic fields for change tracking
+        self._original_name = self.name
+        self._original_description_stripped = self.description_stripped
+
     def __str__(self):
         """Return owner email and page name"""
         return f"{self.owned_by.email} <{self.name}>"

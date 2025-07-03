@@ -70,6 +70,28 @@ class BaseDocument(Document):
             qs = qs[:count]
         return self.apply_related_to_queryset(qs)
 
+    def _prepare_action(self, object_instance, action):
+        """
+        Override _prepare_action to set semantic field change defaults and handle upsert.
+
+        If action is "update" (upsert equivalent) and _semantic_fields_changed
+        is not already set, default to False to preserve existing embeddings.
+        """
+        # Set default for update actions (upsert equivalent) if not already set
+        if action == "update" and not hasattr(
+            object_instance, "_semantic_fields_changed"
+        ):
+            object_instance._semantic_fields_changed = False
+
+        # Get the base action dictionary
+        action_dict = super()._prepare_action(object_instance, action)
+
+        # Add upsert behavior for update actions
+        if action == "update":
+            action_dict["doc_as_upsert"] = True
+
+        return action_dict
+
 
 class JsonKeywordField(fields.KeywordField):
     """
