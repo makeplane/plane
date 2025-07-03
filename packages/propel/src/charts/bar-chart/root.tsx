@@ -19,7 +19,7 @@ import { TBarChartProps } from "@plane/types";
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
-import { CustomBar } from "./bar";
+import { barShapeVariants } from "./bar";
 
 export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
   const {
@@ -36,6 +36,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
       y: 10,
     },
     showTooltip = true,
+    customTooltipContent,
   } = props;
   // states
   const [activeBar, setActiveBar] = useState<string | null>(null);
@@ -66,20 +67,8 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           stackId={bar.stackId}
           opacity={!!activeLegend && activeLegend !== bar.key ? 0.1 : 1}
           shape={(shapeProps: any) => {
-            const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
-            const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
-
-            return (
-              <CustomBar
-                {...shapeProps}
-                fill={typeof bar.fill === "function" ? bar.fill(shapeProps.payload) : bar.fill}
-                stackKeys={stackKeys}
-                textClassName={bar.textClassName}
-                showPercentage={bar.showPercentage}
-                showTopBorderRadius={!!showTopBorderRadius}
-                showBottomBorderRadius={!!showBottomBorderRadius}
-              />
-            );
+            const shapeVariant = barShapeVariants[bar.shapeVariant ?? "bar"];
+            return shapeVariant(shapeProps, bar, stackKeys);
           }}
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}
@@ -150,17 +139,20 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
               wrapperStyle={{
                 pointerEvents: "auto",
               }}
-              content={({ active, label, payload }) => (
-                <CustomTooltip
-                  active={active}
-                  label={label}
-                  payload={payload}
-                  activeKey={activeBar}
-                  itemKeys={stackKeys}
-                  itemLabels={stackLabels}
-                  itemDotColors={stackDotColors}
-                />
-              )}
+              content={({ active, label, payload }) => {
+                if (customTooltipContent) return customTooltipContent({ active, label, payload });
+                return (
+                  <CustomTooltip
+                    active={active}
+                    label={label}
+                    payload={payload}
+                    activeKey={activeBar}
+                    itemKeys={stackKeys}
+                    itemLabels={stackLabels}
+                    itemDotColors={stackDotColors}
+                  />
+                );
+              }}
             />
           )}
           {renderBars}
