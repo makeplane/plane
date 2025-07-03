@@ -1,0 +1,172 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <app-name>-dockerhub-secret
+  namespace: <app-ns>
+data:
+  .dockerconfigjson: <base64-encoded-docker-credentials>
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: <app-name>-service-account
+  namespace: <app-ns>
+imagePullSecrets:
+  - name: <app-name>-dockerhub-secret
+---
+# Cloudflare API Token secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <app-name>-cloudflare-api-token-secret
+  namespace: <app-ns>
+type: Opaque
+stringData:
+  api-token: "<YOUR-CLOUDFLARE-API-TOKEN>"
+---
+# Namespaced Issuer
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: <app-name>-letsencrypt-prod
+  namespace: <app-ns>
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: <your-email@domain.com>
+    privateKeySecretRef:
+      name: <app-name>-letsencrypt-prod-key
+    solvers:
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: <app-name>-cloudflare-api-token-secret
+            key: api-token
+---
+# Certificate
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: <app-name>-mail-tls-cert
+  namespace: <app-ns>
+spec:
+  secretName: <app-name>-mail-tls-secret
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  dnsNames:
+  - <smtp-domain>
+  issuerRef:
+    name: <app-name>-letsencrypt-prod
+    kind: Issuer
+    group: cert-manager.io
+---
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: <app-name>-config
+  namespace: <app-ns>
+data:
+  SMTP_DOMAIN: "<smtp-domain>"
+  domain-blacklist.txt: |
+    10minutemail.com
+    10minutemail.net
+    10minutemail.org
+  spam.txt: |
+    casino
+    lottery
+    jackpot
+---
+# Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <app-name>-secrets
+  namespace: <app-ns>
+type: Opaque
+stringData:
+  EMAIL_SAVE_ENDPOINT: "<webhook_url>"
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <app-name>-app
+  namespace: <app-ns>
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <app-name>-app
+  template:
+    metadata:
+      labels:
+        app: <app-name>-app
+    spec:
+      containers:
+      - name: app-container
+        image: makeplane/email-enterprise:<tag> 
+        env:
+        - name: SMTP_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: <app-name>-config
+              key: SMTP_DOMAIN
+        - name: EMAIL_SAVE_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: <app-name>-secrets
+              key: EMAIL_SAVE_ENDPOINT
+        volumeMounts:
+        - name: tls-cert
+          mountPath: /opt/email/keys
+        - mountPath: /opt/email/spam.txt
+          name: spam-blacklist
+          subPath: spam.txt
+        - mountPath: /opt/email/domain-blacklist.txt
+          name: spam-blacklist
+          subPath: domain-blacklist.txt
+      volumes:
+      - name: spam-blacklist
+        configMap:
+          name: <app-name>-config
+      - name: tls-cert
+        secret:
+          secretName: <app-name>-mail-tls-secret
+          items:
+          - key: tls.crt
+            path: cert.pem
+          - key: tls.key
+            path: key.pem
+      serviceAccount: <app-name>-service-account
+      serviceAccountName: <app-name>-service-account
+
+---
+# Load Balancer Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: <app-name>-nlb
+  namespace: <app-ns>
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local  # Important for email servers
+  selector:
+    app: <app-name>-app
+  ports:
+  - name: smtp
+    port: 25
+    targetPort: 10025
+    protocol: TCP
+  - name: smtps
+    port: 465
+    targetPort: 10465
+    protocol: TCP
+  - name: submission
+    port: 587
+    targetPort: 10587
+    protocol: TCP
+---

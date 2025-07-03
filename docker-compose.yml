@@ -1,3 +1,18 @@
+x-silo-env: &silo-env
+  environment:
+    - PORT=3000
+    - BATCH_SIZE=${BATCH_SIZE:-60}
+    - MQ_PREFETCH_COUNT=${MQ_PREFETCH_COUNT:-5}
+    - APP_BASE_URL=${APP_BASE_URL:-http://web:3000}
+    - SILO_API_BASE_URL=${SILO_API_BASE_URL:-http://localhost:5050}
+    - DB_URL=${DB_URL:-postgresql://plane:plane@plane-db/silo}
+    - AMQP_URL=${AMQP_URL:-amqp://guest:guest@plane-mq:5672/}
+    - REDIS_URL=${REDIS_URL:-redis://plane-redis:6379/}
+    - JIRA_CLIENT_ID=${JIRA_CLIENT_ID:-""}
+    - JIRA_CLIENT_SECRET=${JIRA_CLIENT_SECRET:-""}
+    - LINEAR_CLIENT_ID=${LINEAR_CLIENT_ID:-""}
+    - LINEAR_CLIENT_SECRET=${LINEAR_CLIENT_SECRET:-""}
+
 services:
   web:
     container_name: web
@@ -37,6 +52,43 @@ services:
       - api
       - web
 
+  live:
+    container_name: live
+    build:
+      context: .
+      dockerfile: ./live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: node live/dist/server.js
+
+  silo:
+    <<: *silo-env
+    container_name: silo
+    build:
+      context: .
+      dockerfile: ./silo/Dockerfile.silo
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: >
+      /bin/sh -c "
+        npm --prefix ./silo run db:migrate
+        node silo/start.js
+      "
+    depends_on:
+      plane-mq:
+        condition: service_healthy
+
+  # monitor:
+  #   container_name: monitor
+  #   build:
+  #     context: .
+  #     dockerfile: ./monitor/Dockerfile
+  #     args:
+  #       DOCKER_BUILDKIT: 1
+  #   restart: always
+
   api:
     container_name: api
     build:
@@ -45,12 +97,21 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: ./bin/docker-entrypoint-api.sh
+    command: ./bin/docker-entrypoint-api-ee.sh
     env_file:
       - ./apps/server/.env
     depends_on:
       - plane-db
       - plane-redis
+
+  mongodb:
+    image: "mongo"
+    restart: unless-stopped
+    volumes:
+      - "mongodb_data:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME:-plane}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD:-plane}
 
   worker:
     container_name: bgworker
@@ -99,21 +160,17 @@ services:
       - plane-db
       - plane-redis
 
-  live:
-    container_name: plane-live
-    build:
-      context: .
-      dockerfile: ./live/Dockerfile.live
-      args:
-        DOCKER_BUILDKIT: 1
-    restart: always
-    command: node live/dist/server.js
-
   plane-db:
     container_name: plane-db
     image: postgres:15.7-alpine
     restart: always
-    command: postgres -c 'max_connections=1000'
+    command: >
+      bash -c "
+        docker-entrypoint.sh postgres &
+        sleep 10
+        psql -U $$POSTGRES_USER -d $$POSTGRES_DB -c 'CREATE DATABASE silo;'
+        wait
+      "
     volumes:
       - pgdata:/var/lib/postgresql/data
     env_file:
@@ -123,6 +180,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   plane-redis:
     container_name: plane-redis
@@ -133,14 +196,21 @@ services:
 
   plane-mq:
     container_name: plane-mq
-    image: rabbitmq:3.13.6-management-alpine
+    image: rabbitmq:management
     restart: always
+    ports:
+      - "15672:15672"
     env_file:
       - .env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 5
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
@@ -178,3 +248,4 @@ volumes:
   redisdata:
   uploads:
   rabbitmq_data:
+  mongodb_data:
