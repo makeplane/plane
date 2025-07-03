@@ -21,8 +21,8 @@ from plane.utils.exception_logger import log_exception
 
 
 def remove_unwanted_characters(input_text):
-    # Keep only alphanumeric characters, spaces, and dashes.
-    processed_text = re.sub(r"[^a-zA-Z0-9 \-]", "", input_text)
+    # Remove only control characters and potentially problematic characters for email subjects
+    processed_text = re.sub(r"[\x00-\x1F\x7F-\x9F]", "", input_text)
     return processed_text
 
 
