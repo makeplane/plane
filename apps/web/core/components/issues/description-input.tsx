@@ -5,7 +5,7 @@ import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TIssue, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -22,7 +22,6 @@ const workspaceService = new WorkspaceService();
 
 export type IssueDescriptionInputProps = {
   containerClassName?: string;
-  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
   editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
@@ -38,7 +37,6 @@ export type IssueDescriptionInputProps = {
 export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((props) => {
   const {
     containerClassName,
-    editorReadOnlyRef,
     editorRef,
     workspaceSlug,
     projectId,

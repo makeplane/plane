@@ -6,9 +6,8 @@ import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// ui
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor";

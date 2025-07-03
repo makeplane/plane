@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TDescriptionVersion } from "@plane/types";
 import {
