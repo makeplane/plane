@@ -47,7 +47,6 @@ WORKDIR /app
 
 COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/live/dist ./live
-COPY --from=installer /app/apps/live/package.json ./package.json
 COPY --from=installer /app/node_modules ./node_modules
 
 ENV TURBO_TELEMETRY_DISABLED=1
