@@ -1,32 +1,29 @@
-import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection, useEditorState } from "@tiptap/react";
-import { FC, useEffect, useState, useRef } from "react";
-// plane utils
+import { isNodeSelection, type Editor } from "@tiptap/core";
+import { useEditorState } from "@tiptap/react";
+import { useState } from "react";
 import { cn } from "@plane/utils";
-// components
+import { COLORS_LIST } from "@/constants/common";
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+import { TEditorCommands } from "@/types";
 import {
+  TextColorItem,
   BackgroundColorItem,
   BoldItem,
-  BubbleMenuColorSelector,
-  BubbleMenuLinkSelector,
-  BubbleMenuNodeSelector,
   CodeItem,
   EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   TextAlignItem,
-  TextColorItem,
   UnderLineItem,
-} from "@/components/menus";
-// constants
-import { COLORS_LIST } from "@/constants/common";
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// extensions
-import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-// local components
+} from "../menu-items";
 import { TextAlignmentSelector } from "./alignment-selector";
-import { TEditorCommands } from "@/types";
+import { BubbleMenu } from "./bubble-menu-renderer";
+import { BubbleMenuColorSelector } from "./color-selector";
+import { BubbleMenuLinkSelector } from "./link-selector";
+import { BubbleMenuNodeSelector } from "./node-selector";
 
-type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
+type EditorBubbleMenuProps = { editor: Editor };
 
 export interface EditorStateType {
   code: boolean;
@@ -39,35 +36,53 @@ export interface EditorStateType {
   center: boolean;
   color: { key: string; label: string; textColor: string; backgroundColor: string } | undefined;
   backgroundColor:
-  | {
-    key: string;
-    label: string;
-    textColor: string;
-    backgroundColor: string;
-  }
-  | undefined;
+    | {
+        key: string;
+        label: string;
+        textColor: string;
+        backgroundColor: string;
+      }
+    | undefined;
 }
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
+export const EditorBubbleMenu = (bubbleMenuProps: EditorBubbleMenuProps) => {
+  const { editor } = bubbleMenuProps;
   const [isNodeSelectorOpen, setIsNodeSelectorOpen] = useState(false);
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
   const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
-  const [isSelecting, setIsSelecting] = useState(false);
+
+  const bubbleMenuPropsInternal = {
+    shouldShow: ({ state, editor }) => {
+      const { selection } = state;
+      const { empty } = selection;
+
+      if (
+        empty ||
+        !editor.isEditable ||
+        editor.isActive(CORE_EXTENSIONS.IMAGE) ||
+        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
+        isNodeSelection(selection) ||
+        isCellSelection(selection)
+      ) {
+        return false;
+      }
+      return true;
+    },
+  };
 
   const formattingItems = {
-    code: CodeItem(props.editor),
-    bold: BoldItem(props.editor),
-    italic: ItalicItem(props.editor),
-    underline: UnderLineItem(props.editor),
-    strikethrough: StrikeThroughItem(props.editor),
-    "text-align": TextAlignItem(props.editor),
+    code: CodeItem(editor),
+    bold: BoldItem(editor),
+    italic: ItalicItem(editor),
+    underline: UnderLineItem(editor),
+    strikethrough: StrikeThroughItem(editor),
+    "text-align": TextAlignItem(editor),
   } satisfies {
     [K in TEditorCommands]?: EditorMenuItem<K>;
   };
 
   const editorState: EditorStateType = useEditorState({
-    editor: props.editor,
+    editor: editor,
     selector: ({ editor }: { editor: Editor }) => ({
       code: formattingItems.code.isActive(),
       bold: formattingItems.bold.isActive(),
@@ -86,137 +101,78 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     ? [formattingItems.code]
     : [formattingItems.bold, formattingItems.italic, formattingItems.underline, formattingItems.strikethrough];
 
-  const bubbleMenuProps: EditorBubbleMenuProps = {
-    ...props,
-    shouldShow: ({ state, editor }) => {
-      const { selection } = state;
-      const { empty } = selection;
-
-      if (
-        empty ||
-        !editor.isEditable ||
-        editor.isActive(CORE_EXTENSIONS.IMAGE) ||
-        editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE) ||
-        isNodeSelection(selection) ||
-        isCellSelection(selection) ||
-        isSelecting
-      ) {
-        return false;
-      }
-      return true;
-    },
-    tippyOptions: {
-      moveTransition: "transform 0.15s ease-out",
-      duration: [300, 0],
-      zIndex: 9,
-      onShow: () => {
-        props.editor.storage.link.isBubbleMenuOpen = true;
-      },
-      onHidden: () => {
-        props.editor.storage.link.isBubbleMenuOpen = false;
-        setIsNodeSelectorOpen(false);
-        setIsLinkSelectorOpen(false);
-        setIsColorSelectorOpen(false);
-      },
-    },
-  };
-
-  useEffect(() => {
-    function handleMouseDown(e: MouseEvent) {
-      if (menuRef.current?.contains(e.target as Node)) return;
-
-      function handleMouseMove() {
-        if (!props.editor.state.selection.empty) {
-          setIsSelecting(true);
-          document.removeEventListener("mousemove", handleMouseMove);
-        }
-      }
-
-      function handleMouseUp() {
-        setIsSelecting(false);
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      }
-
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    }
-
-    document.addEventListener("mousedown", handleMouseDown);
-
-    return () => {
-      document.removeEventListener("mousedown", handleMouseDown);
-    };
-  }, [props.editor]);
-
   return (
-    <BubbleMenu {...bubbleMenuProps}>
-      {!isSelecting && (
-        <div
-          ref={menuRef}
-          className="flex py-2 divide-x divide-custom-border-200 rounded-lg border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
-        >
-          <div className="px-2">
-            <BubbleMenuNodeSelector
-              editor={props.editor!}
-              isOpen={isNodeSelectorOpen}
-              setIsOpen={() => {
-                setIsNodeSelectorOpen((prev) => !prev);
-                setIsLinkSelectorOpen(false);
-                setIsColorSelectorOpen(false);
+    <BubbleMenu
+      editor={editor}
+      options={{
+        placement: "top-start",
+        offset: 2,
+      }}
+      shouldShow={bubbleMenuPropsInternal.shouldShow}
+    >
+      <div
+        className={cn(
+          "flex items-center divide-x divide-custom-border-200 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg"
+        )}
+      >
+        <BubbleMenuNodeSelector
+          editor={editor}
+          isOpen={isNodeSelectorOpen}
+          setIsOpen={() => {
+            setIsNodeSelectorOpen((prev) => !prev);
+            setIsLinkSelectorOpen(false);
+            setIsColorSelectorOpen(false);
+          }}
+        />
+        {!editorState.code && (
+          <BubbleMenuLinkSelector
+            editor={editor}
+            isOpen={isLinkSelectorOpen}
+            setIsOpen={() => {
+              setIsLinkSelectorOpen((prev) => !prev);
+              setIsNodeSelectorOpen(false);
+              setIsColorSelectorOpen(false);
+            }}
+          />
+        )}
+        {!editorState.code && (
+          <BubbleMenuColorSelector
+            editor={editor}
+            isOpen={isColorSelectorOpen}
+            editorState={editorState}
+            setIsOpen={() => {
+              setIsColorSelectorOpen((prev) => !prev);
+              setIsNodeSelectorOpen(false);
+              setIsLinkSelectorOpen(false);
+            }}
+          />
+        )}
+        <div className="flex gap-0.5 px-2">
+          {basicFormattingOptions.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={(e) => {
+                item.command();
+                e.stopPropagation();
               }}
-            />
-          </div>
-          {!editorState.code && (
-            <div className="px-2">
-              <BubbleMenuLinkSelector
-                editor={props.editor}
-                isOpen={isLinkSelectorOpen}
-                setIsOpen={() => {
-                  setIsLinkSelectorOpen((prev) => !prev);
-                  setIsNodeSelectorOpen(false);
-                  setIsColorSelectorOpen(false);
-                }}
+              className={cn(
+                "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-all duration-200 ease-in-out",
+                {
+                  "bg-custom-background-80 text-custom-text-100": editorState[item.key],
+                }
+              )}
+            >
+              <item.icon
+                className={cn("size-4 transition-transform duration-200", {
+                  "text-custom-text-100": editorState[item.key],
+                })}
               />
-            </div>
-          )}
-          {!editorState.code && (
-            <div className="px-2">
-              <BubbleMenuColorSelector
-                editor={props.editor}
-                isOpen={isColorSelectorOpen}
-                editorState={editorState}
-                setIsOpen={() => {
-                  setIsColorSelectorOpen((prev) => !prev);
-                  setIsNodeSelectorOpen(false);
-                  setIsLinkSelectorOpen(false);
-                }}
-              />
-            </div>
-          )}
-          <div className="flex gap-0.5 px-2">
-            {basicFormattingOptions.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                onClick={(e) => {
-                  item.command();
-                  e.stopPropagation();
-                }}
-                className={cn(
-                  "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
-                  {
-                    "bg-custom-background-80 text-custom-text-100": editorState[item.key],
-                  }
-                )}
-              >
-                <item.icon className="size-4" />
-              </button>
-            ))}
-          </div>
-          <TextAlignmentSelector editor={props.editor} editorState={editorState} />
+            </button>
+          ))}
         </div>
-      )}
+        <TextAlignmentSelector editor={editor} editorState={editorState} />
+      </div>
     </BubbleMenu>
   );
 };

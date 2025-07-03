@@ -1,3 +1,4 @@
+import { Popover } from "@headlessui/react";
 import { Editor } from "@tiptap/react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
@@ -7,6 +8,7 @@ import { cn } from "@plane/utils";
 import { COLORS_LIST } from "@/constants/common";
 // helpers
 import { BackgroundColorItem, TextColorItem } from "../menu-items";
+
 import { EditorStateType } from "./root";
 
 type Props = {
@@ -17,93 +19,103 @@ type Props = {
 };
 
 export const BubbleMenuColorSelector: FC<Props> = (props) => {
-  const { editor, isOpen, setIsOpen, editorState } = props;
+  const { editor, editorState, isOpen, setIsOpen } = props;
 
   const activeTextColor = editorState.color;
   const activeBackgroundColor = editorState.backgroundColor;
 
   return (
-    <div className="relative h-full">
-      <button
+    <Popover as="div" className="h-7 px-2">
+      <Popover.Button
+        as="button"
         type="button"
-        onClick={(e) => {
-          setIsOpen(!isOpen);
-          e.stopPropagation();
-        }}
-        className="flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors"
+        className={cn("h-full", {
+          "outline-none": isOpen,
+        })}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
-        <span>Color</span>
         <span
           className={cn(
-            "flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-custom-border-300",
+            "h-full px-2 text-custom-text-300 text-sm flex items-center gap-1.5 rounded hover:bg-custom-background-80",
             {
-              "bg-custom-background-100": !activeBackgroundColor,
+              "text-custom-text-100 bg-custom-background-80": isOpen,
             }
           )}
-          style={{
-            backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
-          }}
         >
-          <ALargeSmall
-            className={cn("size-3.5", {
-              "text-custom-text-100": !activeTextColor,
-            })}
+          Color
+          <span
+            className={cn(
+              "flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-custom-border-300",
+              {
+                "bg-custom-background-100": !activeBackgroundColor,
+              }
+            )}
             style={{
-              color: activeTextColor ? activeTextColor.textColor : "inherit",
+              backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
             }}
-          />
+          >
+            <ALargeSmall
+              className={cn("size-3.5", {
+                "text-custom-text-100": !activeTextColor,
+              })}
+              style={{
+                color: activeTextColor ? activeTextColor.textColor : "inherit",
+              }}
+            />
+          </span>
         </span>
-      </button>
-      {isOpen && (
-        <section className="fixed top-full z-[99999] mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-2 space-y-2 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
-          <div className="space-y-1.5">
-            <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
-            <div className="flex items-center gap-2">
-              {COLORS_LIST.map((color) => (
-                <button
-                  key={color.key}
-                  type="button"
-                  className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
-                  style={{
-                    backgroundColor: color.textColor,
-                  }}
-                  onClick={() => TextColorItem(editor).command({ color: color.key })}
-                />
-              ))}
+      </Popover.Button>
+      <Popover.Panel
+        as="div"
+        className="fixed z-20 mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg p-2 space-y-2"
+      >
+        <div className="space-y-1.5">
+          <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
+          <div className="flex items-center gap-2">
+            {COLORS_LIST.map((color) => (
               <button
+                key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => TextColorItem(editor).command({ color: undefined })}
-              >
-                <Ban className="size-4" />
-              </button>
-            </div>
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                style={{
+                  backgroundColor: color.textColor,
+                }}
+                onClick={() => TextColorItem(editor).command({ color: color.key })}
+              />
+            ))}
+            <button
+              type="button"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              onClick={() => TextColorItem(editor).command({ color: undefined })}
+            >
+              <Ban className="size-4" />
+            </button>
           </div>
-          <div className="space-y-1.5">
-            <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
-            <div className="flex items-center gap-2">
-              {COLORS_LIST.map((color) => (
-                <button
-                  key={color.key}
-                  type="button"
-                  className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
-                  style={{
-                    backgroundColor: color.backgroundColor,
-                  }}
-                  onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
-                />
-              ))}
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
+          <div className="flex items-center gap-2">
+            {COLORS_LIST.map((color) => (
               <button
+                key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
-                onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
-              >
-                <Ban className="size-4" />
-              </button>
-            </div>
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                style={{
+                  backgroundColor: color.backgroundColor,
+                }}
+                onClick={() => BackgroundColorItem(editor).command({ color: color.key })}
+              />
+            ))}
+            <button
+              type="button"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
+            >
+              <Ban className="size-4" />
+            </button>
           </div>
-        </section>
-      )}
-    </div>
+        </div>
+      </Popover.Panel>
+    </Popover>
   );
 };
