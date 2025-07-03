@@ -1,16 +1,18 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Database } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomersIcon, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { getFileURL } from "@plane/utils";
-import { RichTextReadOnlyEditor } from "@/components/editor";
+// components
+import { RichTextEditor } from "@/components/editor";
 // plane web imports
 import { useWorkspace } from "@/hooks/store";
 import { SourceItem, SourceCreateUpdateModal, RequestAttachmentsCollapsible } from "@/plane-web/components/customers";
 import { CustomerRequestQuickActions } from "@/plane-web/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
+// local imports
 import { WorkItemRequestForm } from "./form";
 
 type TProps = {
@@ -124,7 +126,8 @@ export const WorkItemRequestListItem: FC<TProps> = observer((props) => {
           <p className="text-base font-medium">{request.name}</p>
         </div>
         {request.description_html ? (
-          <RichTextReadOnlyEditor
+          <RichTextEditor
+            editable={false}
             id={customerId}
             initialValue={request.description_html ?? ""}
             workspaceId={workspaceDetails?.id ?? ""}

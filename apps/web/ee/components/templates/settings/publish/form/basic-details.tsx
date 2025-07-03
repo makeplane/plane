@@ -133,6 +133,7 @@ export const TemplateBasicDetails = observer(
             }}
             render={({ field: { value, onChange } }) => (
               <RichTextEditor
+                editable
                 id="template-publish-description"
                 initialValue={value ?? "<p></p>"}
                 workspaceSlug={workspaceSlug.toString()}

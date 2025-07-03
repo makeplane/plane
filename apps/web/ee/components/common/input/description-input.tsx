@@ -11,7 +11,7 @@ import { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
-import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // helpers
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
@@ -26,7 +26,6 @@ interface IFormData {
 
 export type DescriptionInputProps = {
   disabledExtensions?: TExtensions[];
-  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
   editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId?: string;
@@ -43,7 +42,6 @@ export type DescriptionInputProps = {
 
 export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
   const {
-    editorReadOnlyRef,
     editorRef,
     workspaceSlug,
     projectId,
@@ -113,65 +111,53 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { onChange } }) =>
-            !disabled ? (
-              <RichTextEditor
-                ref={editorRef}
-                id={itemId}
-                disabledExtensions={disabledExtensions}
-                initialValue={localDescription.description_html ?? "<p></p>"}
-                value={swrDescription ?? null}
-                workspaceSlug={workspaceSlug}
-                workspaceId={workspaceDetails?.id ?? ""}
-                projectId={projectId}
-                dragDropEnabled
-                onChange={(_description: object, description_html: string) => {
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  debouncedFormSave();
-                }}
-                placeholder={
-                  placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+          render={({ field: { onChange } }) => (
+            <RichTextEditor
+              editable={!disabled}
+              ref={editorRef}
+              id={itemId}
+              disabledExtensions={disabledExtensions}
+              initialValue={localDescription.description_html ?? "<p></p>"}
+              value={swrDescription ?? null}
+              workspaceSlug={workspaceSlug}
+              workspaceId={workspaceDetails?.id ?? ""}
+              projectId={projectId}
+              dragDropEnabled
+              onChange={(_description: object, description_html: string) => {
+                setIsSubmitting("submitting");
+                onChange(description_html);
+                debouncedFormSave();
+              }}
+              placeholder={
+                placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+              }
+              searchMentionCallback={async (payload) =>
+                await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                  ...payload,
+                  project_id: projectId?.toString() ?? "",
+                })
+              }
+              containerClassName={containerClassName}
+              uploadFile={async (blockId, file) => {
+                try {
+                  const { asset_id } = await uploadEditorAsset({
+                    blockId,
+                    data: {
+                      entity_identifier: itemId,
+                      entity_type: fileAssetType,
+                    },
+                    file,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in uploading asset:", error);
+                  throw new Error("Asset upload failed. Please try again later.");
                 }
-                searchMentionCallback={async (payload) =>
-                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                    ...payload,
-                    project_id: projectId?.toString() ?? "",
-                  })
-                }
-                containerClassName={containerClassName}
-                uploadFile={async (blockId, file) => {
-                  try {
-                    const { asset_id } = await uploadEditorAsset({
-                      blockId,
-                      data: {
-                        entity_identifier: itemId,
-                        entity_type: fileAssetType,
-                      },
-                      file,
-                      projectId,
-                      workspaceSlug,
-                    });
-                    return asset_id;
-                  } catch (error) {
-                    console.log("Error in uploading asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
-                  }
-                }}
-              />
-            ) : (
-              <RichTextReadOnlyEditor
-                ref={editorReadOnlyRef}
-                id={itemId}
-                disabledExtensions={disabledExtensions}
-                initialValue={localDescription.description_html ?? ""}
-                containerClassName={containerClassName}
-                workspaceId={workspaceDetails?.id ?? ""}
-                workspaceSlug={workspaceSlug}
-                projectId={projectId}
-              />
-            )
-          }
+              }}
+            />
+          )}
         />
       ) : (
         <Loader>

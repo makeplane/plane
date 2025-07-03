@@ -4,19 +4,17 @@ import { FC, useCallback, useEffect } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// types
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
-import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
-// helpers
+import { RichTextEditor } from "@/components/editor";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
-// plane web services
+// plane web imports
 import { WorkspaceService } from "@/plane-web/services/workspace.service";
-// plane web types
 import { TProject } from "@/plane-web/types";
 const workspaceService = new WorkspaceService();
 
@@ -29,7 +27,6 @@ export type ProjectDescriptionInputProps = {
   handleUpdate: (data: Partial<TProject>) => Promise<void>;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   setIsSubmitting: (initialValue: "submitting" | "submitted" | "saved") => void;
-  swrProjectDescription?: string | null | undefined;
 };
 
 export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observer((props) => {
@@ -38,7 +35,6 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
     workspaceSlug,
     project,
     disabled,
-    swrProjectDescription,
     initialValue,
     handleUpdate,
     setIsSubmitting,
@@ -114,61 +110,51 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
           <Controller
             name="description_html"
             control={control}
-            render={({ field: { onChange } }) =>
-              !disabled ? (
-                <RichTextEditor
-                  id={project.id}
-                  initialValue={initialValue ?? ""}
-                  value={project?.description_html ?? null}
-                  workspaceSlug={workspaceSlug}
-                  workspaceId={workspaceId}
-                  projectId={project.id}
-                  searchMentionCallback={async (payload) =>
-                    await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
-                      ...payload,
-                      project_id: project.id,
-                    })
+            render={({ field: { onChange } }) => (
+              <RichTextEditor
+                editable={!disabled}
+                id={project.id}
+                initialValue={initialValue ?? ""}
+                value={project?.description_html ?? null}
+                workspaceSlug={workspaceSlug}
+                workspaceId={workspaceId}
+                projectId={project.id}
+                searchMentionCallback={async (payload) =>
+                  await workspaceService.searchEntity(workspaceSlug?.toString() ?? "", {
+                    ...payload,
+                    project_id: project.id,
+                  })
+                }
+                dragDropEnabled
+                onChange={(_description: object, description_html: string) => {
+                  setIsSubmitting("submitting");
+                  onChange(description_html);
+                  debouncedFormSave();
+                }}
+                placeholder={
+                  placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+                }
+                containerClassName={containerClassName}
+                uploadFile={async (blockId, file) => {
+                  try {
+                    const { asset_id } = await uploadEditorAsset({
+                      blockId,
+                      data: {
+                        entity_identifier: project.id,
+                        entity_type: EFileAssetType.PROJECT_DESCRIPTION,
+                      },
+                      file,
+                      projectId: project.id,
+                      workspaceSlug,
+                    });
+                    return asset_id;
+                  } catch (error) {
+                    console.log("Error in uploading project asset:", error);
+                    throw new Error("Asset upload failed. Please try again later.");
                   }
-                  dragDropEnabled
-                  onChange={(_description: object, description_html: string) => {
-                    setIsSubmitting("submitting");
-                    onChange(description_html);
-                    debouncedFormSave();
-                  }}
-                  placeholder={
-                    placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
-                  }
-                  containerClassName={containerClassName}
-                  uploadFile={async (blockId, file) => {
-                    try {
-                      const { asset_id } = await uploadEditorAsset({
-                        blockId,
-                        data: {
-                          entity_identifier: project.id,
-                          entity_type: EFileAssetType.PROJECT_DESCRIPTION,
-                        },
-                        file,
-                        projectId: project.id,
-                        workspaceSlug,
-                      });
-                      return asset_id;
-                    } catch (error) {
-                      console.log("Error in uploading project asset:", error);
-                      throw new Error("Asset upload failed. Please try again later.");
-                    }
-                  }}
-                />
-              ) : (
-                <RichTextReadOnlyEditor
-                  id={project.id}
-                  initialValue={initialValue ?? ""}
-                  containerClassName={containerClassName}
-                  workspaceId={workspaceId}
-                  workspaceSlug={workspaceSlug}
-                  projectId={project.id}
-                />
-              )
-            }
+                }}
+              />
+            )}
           />
         </>
       )}

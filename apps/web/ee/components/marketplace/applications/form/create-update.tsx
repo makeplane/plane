@@ -234,6 +234,7 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
               rules={{ required: t("workspace_settings.settings.applications.app_description_error") }}
               render={({ field: { onChange } }) => (
                 <RichTextEditor
+                  editable
                   id={workspaceSlug.toString()}
                   tabIndex={3}
                   initialValue={!watch("description_html") ? "<p></p>" : watch("description_html") || "<p></p>"}

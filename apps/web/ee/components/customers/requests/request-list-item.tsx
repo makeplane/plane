@@ -8,7 +8,7 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
-import { RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // plane web imports
 import { useWorkspace } from "@/hooks/store";
 import {
@@ -144,7 +144,8 @@ export const CustomerRequestListItem: FC<TProps> = observer((props) => {
         </div>
         {request.description_html ? (
           <ContentOverflowWrapper maxHeight={200} fallback={<div className="py-1" />}>
-            <RichTextReadOnlyEditor
+            <RichTextEditor
+              editable={false}
               id={customerId}
               initialValue={request.description_html ?? ""}
               workspaceId={workspaceDetails?.id ?? ""}

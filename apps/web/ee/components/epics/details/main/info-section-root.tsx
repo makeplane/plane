@@ -3,7 +3,7 @@
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store";

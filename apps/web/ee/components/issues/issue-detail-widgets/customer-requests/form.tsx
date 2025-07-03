@@ -209,6 +209,7 @@ export const WorkItemRequestForm: FC<TProps> = observer((props) => {
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <RichTextEditor
+                      editable
                       id="customer-modal-editor"
                       initialValue={value ?? ""}
                       workspaceSlug={workspaceSlug}

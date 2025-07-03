@@ -11,7 +11,6 @@ import { DescriptionInput, TitleInput } from "../../../input";
 import { SectionWrapper } from "../common";
 
 type TInfoSectionProps = {
-  editorReadOnlyRef?: React.RefObject<EditorReadOnlyRefApi>;
   editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId?: string;
@@ -31,7 +30,6 @@ type TInfoSectionProps = {
 
 export const InfoSection: FC<TInfoSectionProps> = (props) => {
   const {
-    editorReadOnlyRef,
     editorRef,
     workspaceSlug,
     projectId,
@@ -84,7 +82,6 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
         {indicatorElement && <>{indicatorElement}</>}
       </div>
       <DescriptionInput
-        editorReadOnlyRef={editorReadOnlyRef}
         editorRef={editorRef}
         workspaceSlug={workspaceSlug}
         projectId={projectId}

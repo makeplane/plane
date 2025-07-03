@@ -10,7 +10,7 @@ import { EFileAssetType, TTeamspace, TNameDescriptionLoader } from "@plane/types
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n } from "@plane/utils";
 // components
-import { RichTextEditor, RichTextReadOnlyEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor";
 // hooks
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 // plane web hooks
@@ -97,53 +97,44 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { onChange } }) =>
-            !disabled ? (
-              <RichTextEditor
-                id={teamspaceId}
-                initialValue={localTeamspaceDescription.description_html ?? "<p></p>"}
-                workspaceSlug={workspaceSlug}
-                workspaceId={workspaceId}
-                searchMentionCallback={searchEntity}
-                dragDropEnabled
-                onChange={(description_json: object, description_html: string) => {
-                  setIsSubmitting("submitting");
-                  onChange(description_html);
-                  setValue("description_json", description_json);
-                  debouncedFormSave();
-                }}
-                placeholder={
-                  placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+          render={({ field: { onChange } }) => (
+            <RichTextEditor
+              editable={!disabled}
+              id={teamspaceId}
+              initialValue={localTeamspaceDescription.description_html ?? "<p></p>"}
+              workspaceSlug={workspaceSlug}
+              workspaceId={workspaceId}
+              searchMentionCallback={searchEntity}
+              dragDropEnabled
+              onChange={(description_json: object, description_html: string) => {
+                setIsSubmitting("submitting");
+                onChange(description_html);
+                setValue("description_json", description_json);
+                debouncedFormSave();
+              }}
+              placeholder={
+                placeholder ? placeholder : (isFocused, value) => t(getDescriptionPlaceholderI18n(isFocused, value))
+              }
+              uploadFile={async (blockId, file) => {
+                try {
+                  const { asset_id } = await uploadEditorAsset({
+                    blockId,
+                    data: {
+                      entity_identifier: teamspaceId,
+                      entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
+                    },
+                    file,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in uploading work item asset:", error);
+                  throw new Error("Asset upload failed. Please try again later.");
                 }
-                uploadFile={async (blockId, file) => {
-                  try {
-                    const { asset_id } = await uploadEditorAsset({
-                      blockId,
-                      data: {
-                        entity_identifier: teamspaceId,
-                        entity_type: EFileAssetType.TEAM_SPACE_DESCRIPTION,
-                      },
-                      file,
-                      workspaceSlug,
-                    });
-                    return asset_id;
-                  } catch (error) {
-                    console.log("Error in uploading work item asset:", error);
-                    throw new Error("Asset upload failed. Please try again later.");
-                  }
-                }}
-                containerClassName={containerClassName}
-              />
-            ) : (
-              <RichTextReadOnlyEditor
-                id={teamspaceId}
-                initialValue={localTeamspaceDescription.description_html ?? ""}
-                workspaceId={workspaceId}
-                workspaceSlug={workspaceSlug}
-                containerClassName={containerClassName}
-              />
-            )
-          }
+              }}
+              containerClassName={containerClassName}
+            />
+          )}
         />
       ) : (
         <Loader>

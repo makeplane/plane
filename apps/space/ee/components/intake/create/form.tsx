@@ -159,6 +159,7 @@ const IssueForm = observer((props: TProps) => {
             control={control}
             render={({ field: { onChange } }) => (
               <RichTextEditor
+                editable
                 id="inbox-modal-editor"
                 initialValue="<p></p>"
                 ref={descriptionEditorRef}

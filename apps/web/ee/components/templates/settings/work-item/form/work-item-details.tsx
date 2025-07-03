@@ -102,6 +102,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <RichTextEditor
+              editable
               id="work-item-description"
               initialValue={value ?? "<p></p>"}
               workspaceSlug={workspaceSlug.toString()}

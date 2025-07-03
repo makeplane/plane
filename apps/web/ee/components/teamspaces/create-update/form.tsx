@@ -130,6 +130,7 @@ export const CreateOrUpdateTeamForm: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <RichTextEditor
+          editable
           id="teamspace-modal-editor"
           initialValue={
             !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html

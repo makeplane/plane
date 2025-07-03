@@ -98,6 +98,7 @@ export const CreateUpdateInitiativeForm: FC<Props> = (props) => {
           </div>
         </div>
         <RichTextEditor
+          editable
           id="initiative-modal-editor"
           initialValue={
             !formData?.description_html || formData?.description_html === "" ? "<p></p>" : formData?.description_html
