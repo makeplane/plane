@@ -129,8 +129,14 @@ class Page(BaseModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Store original values of semantic fields for change tracking
-        self._original_name = self.name
-        self._original_description_stripped = self.description_stripped
+        # Only set if fields are not deferred to avoid unnecessary DB queries
+        deferred_fields = self.get_deferred_fields()
+        self._original_name = self.name if "name" not in deferred_fields else None
+        self._original_description_stripped = (
+            self.description_stripped
+            if "description_stripped" not in deferred_fields
+            else None
+        )
 
     def __str__(self):
         """Return owner email and page name"""
