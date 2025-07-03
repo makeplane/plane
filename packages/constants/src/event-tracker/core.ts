@@ -180,6 +180,7 @@ export const PROJECT_PAGE_TRACKER_ELEMENTS = {
   LOCK_BUTTON: "page_lock_button",
   ACCESS_TOGGLE: "page_access_toggle",
   DUPLICATE_BUTTON: "page_duplicate_button",
+  SIDEBAR: "page_sidebar",
 } as const;
 
 export const MEMBER_TRACKER_EVENTS = {
@@ -268,3 +269,5 @@ export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
   CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
 };
+
+export const PAGE_HEADER_NAVBAR_TRACKER_ELEMENT = "navbar";

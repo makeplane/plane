@@ -1,8 +1,11 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
+// plane editor
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
-import { TPageVersion } from "@plane/types";
+// plane types
+import { TPage, TPageVersion } from "@plane/types";
+// plane ui
 import { Loader } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
@@ -11,16 +14,19 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { PageEmbedCardRoot } from "@/plane-web/components/pages";
+import { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
   versionDetails: TPageVersion | undefined;
+  storeType: EPageStoreType;
 };
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
-  const { activeVersion, versionDetails } = props;
+  const { activeVersion, storeType, versionDetails } = props;
   // store hooks
   const { getUserDetails } = useMember();
   // params
@@ -47,7 +53,12 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
     wideLayout: true,
   };
 
-  if (!versionDetails)
+  const subPagesDetails = useMemo(
+    () => (versionDetails?.sub_pages_data ? (versionDetails.sub_pages_data as TPage[]) : []),
+    [versionDetails?.sub_pages_data]
+  );
+
+  if ( !versionDetails)
     return (
       <div className="size-full px-5">
         <Loader className="relative space-y-4">
@@ -94,6 +105,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
 
   return (
     <DocumentReadOnlyEditorWithRef
+      key={activeVersion ?? ""}
       id={activeVersion ?? ""}
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
@@ -113,6 +125,21 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       embedHandler={{
         issue: {
           widgetCallback: issueEmbedProps.widgetCallback,
+        },
+        page: {
+          widgetCallback: ({ pageId: pageIdFromNode }) => {
+            const pageDetails = subPagesDetails.find((page) => page.id === pageIdFromNode);
+            return (
+              <PageEmbedCardRoot
+                embedPageId={pageIdFromNode}
+                previewDisabled
+                storeType={storeType}
+                pageDetails={pageDetails}
+                isDroppable={false}
+              />
+            );
+          },
+          workspaceSlug: workspaceSlug.toString(),
         },
       }}
     />

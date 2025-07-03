@@ -5,9 +5,26 @@ from rest_framework import serializers
 from .base import DynamicBaseSerializer
 from plane.db.models import IssueView
 from plane.utils.issue_filters import issue_filters
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class ViewIssueListSerializer(serializers.Serializer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        slug = self.context.get("slug", None)
+        user_id = self.context.get("user_id", None)
+
+        # Check if the user has access to the customer request count
+        if slug and user_id:
+            if check_workspace_feature_flag(
+                feature_key=FeatureFlag.CUSTOMERS, slug=slug, user_id=user_id
+            ):
+                self.fields["customer_request_ids"] = serializers.ListField(
+                    read_only=True
+                )
+                self.fields["customer_ids"] = serializers.ListField(read_only=True)
 
     def get_assignee_ids(self, instance):
         return [assignee.assignee_id for assignee in instance.issue_assignee.all()]
@@ -17,6 +34,17 @@ class ViewIssueListSerializer(serializers.Serializer):
 
     def get_module_ids(self, instance):
         return [module.module_id for module in instance.issue_module.all()]
+
+    def get_customer_ids(self, instance):
+        return [
+            customer.customer_id for customer in instance.customer_request_issues.all()
+        ]
+
+    def get_customer_request_ids(self, instance):
+        return [
+            customer_request.customer_request_id
+            for customer_request in instance.customer_request_issues.all()
+        ]
 
     def to_representation(self, instance):
         data = {
@@ -43,15 +71,19 @@ class ViewIssueListSerializer(serializers.Serializer):
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
             "state__group": instance.state.group if instance.state else None,
+            "type_id": instance.type_id,
             "assignee_ids": self.get_assignee_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "module_ids": self.get_module_ids(instance),
+            "customer_ids": self.get_customer_ids(instance),
+            "customer_request_ids": self.get_customer_request_ids(instance),
         }
         return data
 
 
 class IssueViewSerializer(DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
+    anchor = serializers.CharField(read_only=True)
 
     class Meta:
         model = IssueView

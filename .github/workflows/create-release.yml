@@ -1,0 +1,70 @@
+name: Manual Release Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release Tag (e.g., v0.16-cannary-1)'
+        required: true
+      prerelease:
+        description: 'Pre-Release'
+        required: true
+        default: true
+        type: boolean
+      draft:
+        description: 'Draft'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Necessary to fetch all history for tags
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Check for the Prerelease
+        run: |
+            echo ${{ github.event.release.prerelease }}
+
+      - name: Generate Release Notes
+        id: generate_notes
+        run: |
+          bash ./generate_release_notes.sh
+          # Directly use the content of RELEASE_NOTES.md for the release body
+          RELEASE_NOTES=$(cat RELEASE_NOTES.md)
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$RELEASE_NOTES" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create Tag
+        run: |
+          git tag ${{ github.event.inputs.release_tag }}
+          git push origin ${{ github.event.inputs.release_tag }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.release_tag }}
+          body_path: RELEASE_NOTES.md
+          draft: ${{ github.event.inputs.draft }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
+
+
