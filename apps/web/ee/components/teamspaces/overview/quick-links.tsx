@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { BriefcaseIcon, ChevronRightIcon, FileText, Layers } from "lucide-react";
+import { ChevronRightIcon, FileText, Layers } from "lucide-react";
 // ui
 import { LayersIcon, ContrastIcon } from "@plane/ui";
 

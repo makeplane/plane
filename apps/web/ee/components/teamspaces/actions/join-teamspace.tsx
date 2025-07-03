@@ -2,16 +2,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { AlertModalCore, Button, setPromiseToast } from "@plane/ui";
 // plane web hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
 type TJoinTeamButtonProps = {
   teamspaceId: string;
+  trackerElement: string;
 };
 
 export const JoinTeamspaceButton = observer((props: TJoinTeamButtonProps) => {
-  const { teamspaceId } = props;
+  const { teamspaceId, trackerElement } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -36,10 +39,27 @@ export const JoinTeamspaceButton = observer((props: TJoinTeamButtonProps) => {
         message: () => "Failed to join teamspace",
       },
     });
-    await joinTeamPromise.finally(() => {
-      setIsJoinTeamLoading(false);
-      setIsJoinTeamspaceModalOpen(false);
-    });
+    await joinTeamPromise
+      .then(() => {
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.JOIN,
+          payload: {
+            id: teamspaceId,
+          },
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.JOIN,
+          payload: {
+            id: teamspaceId,
+          },
+        });
+      })
+      .finally(() => {
+        setIsJoinTeamLoading(false);
+        setIsJoinTeamspaceModalOpen(false);
+      });
   };
 
   if (!teamspace) return null;
@@ -65,7 +85,12 @@ export const JoinTeamspaceButton = observer((props: TJoinTeamButtonProps) => {
         handleSubmit={handleJoinTeam}
         isSubmitting={isJoinTeamLoading}
       />
-      <Button variant="accent-primary" size="sm" onClick={() => setIsJoinTeamspaceModalOpen(true)}>
+      <Button
+        variant="accent-primary"
+        size="sm"
+        onClick={() => setIsJoinTeamspaceModalOpen(true)}
+        data-ph-element={trackerElement}
+      >
         Join teamspace
       </Button>
     </>

@@ -3,6 +3,7 @@ import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronDown, Plus, X } from "lucide-react";
+import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import {
@@ -16,8 +17,9 @@ import {
   TOAST_TYPE,
 } from "@plane/ui";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember } from "@/hooks/store";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -92,12 +94,24 @@ export const AddTeamspaceMembersModal: FC<Props> = observer((props) => {
           title: "Success!",
           message: `Team members added successfully.`,
         });
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.MEMBER_ADDED,
+          payload: {
+            id: teamspaceId,
+          },
+        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? `Failed to add team members. Please try again!`,
+        });
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.MEMBER_ADDED,
+          payload: {
+            id: teamspaceId,
+          },
         });
       })
       .finally(() => {

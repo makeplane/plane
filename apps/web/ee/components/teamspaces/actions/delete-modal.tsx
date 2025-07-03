@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 // ui
+import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Button, EModalWidth, EModalPosition, Input, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -58,12 +60,24 @@ export const DeleteTeamspaceModal: React.FC<DeleteTeamspaceModal> = (props) => {
           title: "Success!",
           message: "Teamspace deleted successfully.",
         });
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.DELETE,
+          payload: {
+            id: teamspaceId,
+          },
+        });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again later.",
+        });
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.DELETE,
+          payload: {
+            id: teamspaceId,
+          },
         });
       })
       .finally(() => {

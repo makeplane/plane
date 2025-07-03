@@ -1,7 +1,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store";
 // plane web imports
@@ -28,7 +31,12 @@ export const TeamspaceViewsListHeaderActions = observer((props: TeamspaceViewsLi
         <Button
           variant="primary"
           size="sm"
-          onClick={() => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId })}
+          onClick={() => {
+            captureClick({
+              elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_CREATE_VIEW_BUTTON,
+            });
+            toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId });
+          }}
         >
           Add view
         </Button>

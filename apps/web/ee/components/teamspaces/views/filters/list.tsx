@@ -6,11 +6,11 @@ import { ListFilter, Search, X } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
 import { TViewFilters } from "@plane/types";
+import { cn  } from "@plane/utils";
 import { FiltersDropdown } from "@/components/issues";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // helpers
-import { cn  } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks

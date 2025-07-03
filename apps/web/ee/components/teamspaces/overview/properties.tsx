@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { AvatarGroup, Avatar, LeadIcon, Logo, TeamsIcon, Tooltip, CustomEmojiIconPicker } from "@plane/ui";
 // plane utils
 import { getFileURL, convertHexEmojiToDecimal } from "@plane/utils";
@@ -121,9 +122,18 @@ export const TeamsOverviewProperties = observer((props: TTeamsOverviewProperties
         </div>
         <div className="flex items-center gap-x-2">
           {isTeamspaceMember && areProjectsLinked && (
-            <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId?.toString()} isEditingAllowed={isEditingAllowed} />
+            <UpdateTeamspaceProjectsButton
+              teamspaceId={teamspaceId?.toString()}
+              isEditingAllowed={isEditingAllowed}
+              trackerElement={TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_UPDATE_PROJECT_BUTTON}
+            />
           )}
-          {!isTeamspaceMember && <JoinTeamspaceButton teamspaceId={teamspaceId?.toString()} />}
+          {!isTeamspaceMember && (
+            <JoinTeamspaceButton
+              teamspaceId={teamspaceId?.toString()}
+              trackerElement={TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_JOIN_BUTTON}
+            />
+          )}
         </div>
       </div>
     </div>

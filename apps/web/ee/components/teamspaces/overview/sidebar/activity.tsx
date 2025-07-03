@@ -4,12 +4,14 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
+import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS } from "@plane/constants";
 import { TTeamspaceActivity } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { ActivityBlockComponent } from "@/components/common/activity/activity-block";
 import { ActivitySortRoot } from "@/components/issues";
 // plane web constants
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { TEAM_UPDATES_HELPER_MAP } from "@/plane-web/constants/teamspace";
 // plane web helpers
 import { getTeamspaceActivityKey } from "@/plane-web/helpers/teamspace-helper";
@@ -68,7 +70,12 @@ export const TeamsOverviewSidebarActivity: FC<TTeamspaceActivityProps> = observe
             {teamActivitiesLoader === "mutation" ? <Spinner size={12} className="animate-spin" /> : null}
             <ActivitySortRoot
               sortOrder={teamspaceActivitySortOrder}
-              toggleSort={() => toggleTeamspaceActivitySortOrder()}
+              toggleSort={() => {
+                captureClick({
+                  elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_ACTIVITY_SORT_BUTTON,
+                });
+                toggleTeamspaceActivitySortOrder();
+              }}
               className="py-1"
               iconClassName="size-3"
             />

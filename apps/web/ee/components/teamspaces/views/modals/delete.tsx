@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
+import { TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TTeamspaceView } from "@plane/types";
 // ui
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // plan web hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -45,14 +47,22 @@ export const DeleteTeamspaceViewModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "View deleted successfully.",
         });
+        captureSuccess({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_DELETE,
+          payload: { id: data.id },
+        });
       })
-      .catch(() =>
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "View could not be deleted. Please try again.",
-        })
-      )
+        });
+        captureError({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_DELETE,
+          payload: { id: data.id },
+        });
+      })
       .finally(() => {
         setIsDeleteLoading(false);
       });

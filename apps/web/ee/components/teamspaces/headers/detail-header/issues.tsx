@@ -1,5 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // plane constants
 // components
@@ -34,6 +35,7 @@ export const TeamspaceWorkItemListHeaderActions = observer((props: TeamspaceWork
       </div>
       {isEditingAllowed ? (
         <Button
+          data-ph-element={TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_WORK_ITEM_BUTTON}
           onClick={() => {
             toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
           }}

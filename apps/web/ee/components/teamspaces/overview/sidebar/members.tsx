@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Trash2 } from "lucide-react";
 // ui
+import { TEAMSPACE_TRACKER_ELEMENTS, TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Avatar, CustomMenu, LeadIcon, setPromiseToast } from "@plane/ui";
 // helpers
 import { cn, getFileURL } from "@plane/utils";
 // hooks
+import { captureClick, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
@@ -55,7 +57,15 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
       },
     });
     await removeTeamspaceMemberPromise.then(() => {
-      if (currentUser?.id === memberId) router.push(`/${workspaceSlug}/teamspaces`);
+      const isCurrentUser = currentUser?.id === memberId;
+      if (isCurrentUser) router.push(`/${workspaceSlug}/teamspaces`);
+      captureSuccess({
+        eventName: isCurrentUser ? TEAMSPACE_TRACKER_EVENTS.LEAVE : TEAMSPACE_TRACKER_EVENTS.MEMBER_REMOVED,
+        payload: {
+          id: teamspace.id,
+          memberId,
+        },
+      });
     });
   };
 
@@ -96,6 +106,9 @@ export const TeamsOverviewSidebarMembers = observer((props: TTeamsOverviewSideba
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
+                          captureClick({
+                            elementName: TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_REMOVE_MEMBER_BUTTON,
+                          });
                           handleMemberLeaveOrRemove(member.id);
                         }}
                         className={cn("flex items-center gap-2 text-red-500")}

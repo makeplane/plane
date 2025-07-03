@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-// plane imports
+import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS, TEAMSPACE_UPDATES_TRACKER_EVENTS } from "@plane/constants";
 import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
-// hooks
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useEditorAsset, useMember, useUser } from "@/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store";
 
@@ -26,6 +26,24 @@ export const useCommentOperations = (
   const { uploadEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
 
+  // Helper function to capture events with consistent element
+  const captureTeamspaceCommentEvent = (
+    eventName: string,
+    state: "SUCCESS" | "ERROR",
+    payload?: Record<string, any>
+  ) => {
+    captureElementAndEvent({
+      element: {
+        elementName: TEAMSPACE_UPDATES_TRACKER_ELEMENTS.SIDEBAR_COMMENT_SECTION,
+      },
+      event: {
+        eventName,
+        payload,
+        state,
+      },
+    });
+  };
+
   const operations = useMemo(() => {
     // Define operations object with all methods
     const ops = {
@@ -38,6 +56,7 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment created successfully.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_CREATED, "SUCCESS", { id: comment.id });
           return comment;
         } catch {
           setToast({
@@ -45,6 +64,7 @@ export const useCommentOperations = (
             type: TOAST_TYPE.ERROR,
             message: "Comment creation failed. Please try again later.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_CREATED, "ERROR");
         }
       },
       updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
@@ -56,12 +76,14 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment updated successfully.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_UPDATED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment update failed. Please try again later.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_UPDATED, "ERROR", { id: commentId });
         }
       },
       removeComment: async (commentId: string) => {
@@ -73,12 +95,14 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Comment removed successfully.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_DELETED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Comment remove failed. Please try again later.",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_DELETED, "ERROR", { id: commentId });
         }
       },
       uploadCommentAsset: async (blockId: string, file: File, commentId?: string): Promise<TFileSignedURLResponse> => {
@@ -93,10 +117,12 @@ export const useCommentOperations = (
             file,
             workspaceSlug,
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "SUCCESS", { id: commentId });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
-          throw new Error("Asset upload failed. Please try again later.");
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "ERROR", { id: commentId });
+          throw error;
         }
       },
       addCommentReaction: async (commentId: string, reactionEmoji: string) => {
@@ -108,12 +134,14 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction creation failed",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "ERROR", { id: commentId });
         }
       },
       deleteCommentReaction: async (commentId: string, reactionEmoji: string) => {
@@ -125,17 +153,22 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "SUCCESS", { id: commentId });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction remove failed",
           });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "ERROR", { id: commentId });
         }
       },
       react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {
-        if (userReactions.includes(reactionEmoji)) await ops.deleteCommentReaction(commentId, reactionEmoji);
-        else await ops.addCommentReaction(commentId, reactionEmoji);
+        if (userReactions.includes(reactionEmoji)) {
+          await ops.deleteCommentReaction(commentId, reactionEmoji);
+        } else {
+          await ops.addCommentReaction(commentId, reactionEmoji);
+        }
       },
       reactionIds: (commentId: string) => getCommentReactionsByCommentId(commentId),
       userReactions: (commentId: string) =>

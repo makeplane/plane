@@ -2,7 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // helpers
-import { cn  } from "@plane/utils";
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
+import { cn } from "@plane/utils";
 // components
 import { AddTeamspaceMembersModal } from "./modal";
 
@@ -56,7 +57,15 @@ const AddTeamspaceMembersButton = observer((props: TAddTeamspaceMembersButtonPro
         isModalOpen={isAddMembersModalOpen}
         handleModalClose={() => setIsAddMembersModalOpen(false)}
       />
-      <div className="flex-shrink-0 cursor-pointer" onClick={() => setIsAddMembersModalOpen(true)}>
+      <div
+        className="flex-shrink-0 cursor-pointer"
+        onClick={() => setIsAddMembersModalOpen(true)}
+        data-ph-element={
+          variant === "icon"
+            ? TEAMSPACE_TRACKER_ELEMENTS.OVERVIEW_ADD_MEMBER_BUTTON
+            : TEAMSPACE_TRACKER_ELEMENTS.RIGHT_SIDEBAR_ADD_MEMBER_BUTTON
+        }
+      >
         {variant === "icon" && <AddMembersIcon containerSize={24} iconSize={16} />}
         {variant === "sidebar" && (
           <div className="group flex items-center gap-x-2">

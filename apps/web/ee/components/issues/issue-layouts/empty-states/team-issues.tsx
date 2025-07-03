@@ -2,13 +2,19 @@ import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssueFilterType,
+  EUserPermissionsLevel,
+  TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
+  TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
+} from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles, IIssueFilterOptions } from "@plane/types";
 // components
 import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 // hooks
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useIssues, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web imports
@@ -54,9 +60,26 @@ export const TeamEmptyState: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = [];
     });
-    issuesFilter.updateFilters(workspaceSlug.toString(), teamspaceId.toString(), EIssueFilterType.FILTERS, {
-      ...newFilters,
-    });
+    issuesFilter
+      .updateFilters(workspaceSlug.toString(), teamspaceId.toString(), EIssueFilterType.FILTERS, {
+        ...newFilters,
+      })
+      .then(() => {
+        captureSuccess({
+          eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
+          payload: {
+            teamspace_id: teamspaceId.toString(),
+          },
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: TEAMSPACE_WORK_ITEM_TRACKER_EVENTS.EMPTY_STATE_CLEAR_FILTERS,
+          payload: {
+            teamspace_id: teamspaceId.toString(),
+          },
+        });
+      });
   };
 
   if (!workspaceSlug || !teamspaceId) return null;
@@ -70,7 +93,12 @@ export const TeamEmptyState: React.FC = observer(() => {
           assetPath={emptyFilterResolvedPath}
           secondaryButton={{
             text: t("teamspace_work_items.empty_state.work_items_empty_filter.secondary_button.text"),
-            onClick: handleClearAllFilters,
+            onClick: () => {
+              captureClick({
+                elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_FILTERS_BUTTON,
+              });
+              handleClearAllFilters();
+            },
             disabled: !hasWorkspaceMemberLevelPermissions,
           }}
         />
@@ -85,6 +113,9 @@ export const TeamEmptyState: React.FC = observer(() => {
               title={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.title")}
               description={t("teamspace_work_items.empty_state.no_work_items.primary_button.comic.description")}
               onClick={() => {
+                captureClick({
+                  elementName: TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WORK_ITEM_BUTTON,
+                });
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
               }}
               disabled={!hasWorkspaceMemberLevelPermissions}

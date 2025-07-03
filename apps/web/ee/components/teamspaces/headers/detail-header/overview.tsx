@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link2, Sidebar } from "lucide-react";
 // plane imports
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // components
@@ -66,6 +67,7 @@ export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActi
         isEditingAllowed={isEditingAllowed && isTeamspaceMember}
         buttonClassName={commonButtonClassName}
         hideEdit
+        trackerElement={TEAMSPACE_TRACKER_ELEMENTS.HEADER_QUICK_ACTIONS}
       />
     </div>
   );

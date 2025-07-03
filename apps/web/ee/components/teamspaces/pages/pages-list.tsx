@@ -1,7 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
+import {
+  EUserPermissionsLevel,
+  EPageAccess,
+  TEAMSPACE_PAGE_TRACKER_EVENTS,
+  TEAMSPACE_PAGE_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
@@ -10,6 +15,7 @@ import { ListLayout } from "@/components/core/list";
 import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
 import { PageListBlockRoot, PageLoader } from "@/components/pages";
 // hooks
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
@@ -64,6 +70,9 @@ export const TeamspacePagesList = observer((props: Props) => {
   });
   // handlers
   const handleCreatePage = async () => {
+    captureClick({
+      elementName: TEAMSPACE_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PAGE_BUTTON,
+    });
     // Create page
     await createPage({
       access: EPageAccess.PUBLIC,
@@ -71,14 +80,27 @@ export const TeamspacePagesList = observer((props: Props) => {
       .then((res) => {
         const pageId = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageId);
+        captureSuccess({
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+          payload: {
+            id: res?.id,
+            teamspaceId,
+          },
+        });
       })
-      .catch((err) =>
+      .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        })
-      );
+        });
+        captureError({
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+          payload: {
+            teamspaceId,
+          },
+        });
+      });
   };
 
   if (teamspacePagesLoader === "init-loader" || !teamspacePageIds || !filteredTeamspacePageIds) return <PageLoader />;

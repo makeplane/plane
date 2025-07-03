@@ -2,12 +2,14 @@ import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS, TEAMSPACE_ANALYTICS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TreeMapChart } from "@plane/propel/charts/tree-map";
 import { TreeMapItem } from "@plane/types";
 import { Avatar, Button, Loader, Logo, TreeMapIcon } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember, useProject } from "@/hooks/store";
 // plane web imports
 import { SectionEmptyState } from "@/plane-web/components/common";
@@ -156,6 +158,29 @@ export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = ob
     }));
   }, [teamspaceStatistics, getDataIcon, getDataName, getFillDetail]);
 
+  const handleClearStatisticsFilter = () => {
+    captureClick({
+      elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.EMPTY_STATE_CLEAR_STATISTICS_FILTERS_BUTTON,
+    });
+    clearTeamspaceStatisticsFilter(workspaceSlug?.toString(), teamspaceId)
+      .then(() => {
+        captureSuccess({
+          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_CLEARED,
+          payload: {
+            id: teamspaceId,
+          },
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: TEAMSPACE_ANALYTICS_TRACKER_EVENTS.STATISTICS_FILTER_CLEARED,
+          payload: {
+            id: teamspaceId,
+          },
+        });
+      });
+  };
+
   return (
     <>
       {isUpdating ? (
@@ -173,7 +198,7 @@ export const TeamspaceStatisticsMap: React.FC<TTeamspaceStatisticsMapProps> = ob
               size="md"
               className="bg-transparent"
               disabled={isUpdating}
-              onClick={() => clearTeamspaceStatisticsFilter(workspaceSlug?.toString(), teamspaceId)}
+              onClick={handleClearStatisticsFilter}
             >
               Clear filters
             </Button>

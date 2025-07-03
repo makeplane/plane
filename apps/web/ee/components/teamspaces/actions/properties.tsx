@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 // ui
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Avatar, AvatarGroup, LeadIcon, Tooltip } from "@plane/ui";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components
@@ -54,7 +55,11 @@ export const TeamProperties = observer((props: TTeamPropertiesProps) => {
           })}
         </AvatarGroup>
       </div>
-      <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
+      <UpdateTeamspaceProjectsButton
+        teamspaceId={teamspaceId}
+        isEditingAllowed={isEditingAllowed}
+        trackerElement={TEAMSPACE_TRACKER_ELEMENTS.LIST_ITEM_UPDATE_PROJECT_BUTTON}
+      />
     </div>
   );
 });

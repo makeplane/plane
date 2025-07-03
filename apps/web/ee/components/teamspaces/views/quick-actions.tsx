@@ -4,11 +4,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EUserWorkspaceRoles, TTeamspaceView } from "@plane/types";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useUser, useUserPermissions } from "@/hooks/store";
 // plane web components
 import { CreateUpdateTeamspaceViewModal } from "@/plane-web/components/teamspaces/views/modals/create-update";
@@ -85,6 +86,16 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
 
   if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
 
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    action: () => {
+      captureClick({
+        elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.CONTEXT_MENU,
+      });
+      item.action();
+    },
+  }));
+
   return (
     <>
       <CreateUpdateTeamspaceViewModal
@@ -106,7 +117,7 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
         view={view}
         teamspaceId={teamspaceId}
       />
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -117,6 +128,9 @@ export const TeamspaceViewQuickActions: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({
+                  elementName: TEAMSPACE_VIEW_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS,
+                });
                 item.action();
               }}
               className={cn(

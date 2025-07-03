@@ -3,13 +3,14 @@ import uniq from "lodash/uniq";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ERelationType } from "@plane/constants";
+import { ERelationType, TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS } from "@plane/constants";
 import { TTeamspaceDependencyWorkItem } from "@plane/types";
 import { Avatar, AvatarGroup, PriorityIcon, StateGroupIcon } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useMember, useProject } from "@/hooks/store";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues";
@@ -66,6 +67,13 @@ export const TeamspaceRelationIssueListItem = observer((props: TTeamspaceRelatio
       onClick={(e) => {
         e.stopPropagation();
         e.preventDefault();
+        captureClick({
+          elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.WORK_ITEM_RELATION_LIST_ITEM,
+          context: {
+            id: issue.id,
+            type: type,
+          },
+        });
         handleIssuePeekOverview();
       }}
       className="w-full cursor-pointer"

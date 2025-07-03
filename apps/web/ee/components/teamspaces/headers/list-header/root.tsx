@@ -4,13 +4,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Button, TeamsIcon } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace, useCommandPalette, useUserPermissions } from "@/hooks/store";
+// helpers
 // plane web components
 import { TeamspacesListSearch } from "@/plane-web/components/teamspaces/headers/list-header";
 
@@ -53,6 +55,9 @@ export const TeamspaceListItemHeader = observer(() => {
             <Button
               size="sm"
               onClick={() => {
+                captureClick({
+                  elementName: TEAMSPACE_TRACKER_ELEMENTS.LIST_HEADER_ADD_BUTTON,
+                });
                 toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
               }}
               className="items-center gap-1"

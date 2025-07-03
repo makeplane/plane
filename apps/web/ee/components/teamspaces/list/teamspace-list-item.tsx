@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Logo, TeamsIcon } from "@plane/ui";
 // components
 import { ListItem } from "@/components/core/list/list-item";
@@ -55,10 +56,14 @@ export const TeamspaceListItem = observer((props: TeamspaceListItemProps) => {
                 teamspaceId={teamspaceId}
                 workspaceSlug={workspaceSlug.toString()}
                 isEditingAllowed={isEditingAllowed && isTeamspaceMember}
+                trackerElement={TEAMSPACE_TRACKER_ELEMENTS.LIST_ITEM_QUICK_ACTIONS}
               />
             </>
           ) : (
-            <JoinTeamspaceButton teamspaceId={teamspaceId} />
+            <JoinTeamspaceButton
+              teamspaceId={teamspaceId}
+              trackerElement={TEAMSPACE_TRACKER_ELEMENTS.LIST_ITEM_JOIN_BUTTON}
+            />
           )}
         </>
       }

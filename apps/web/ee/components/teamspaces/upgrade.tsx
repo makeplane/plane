@@ -6,11 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
-import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
+import { TEAMSPACE_UPGRADE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Button, getButtonStyling } from "@plane/ui";
-// helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // assets
@@ -27,14 +27,23 @@ export const TeamspaceUpgrade: FC = observer(() => {
   const getUpgradeButton = () => {
     if (isPlaneOneInstance) {
       return (
-        <a href="https://prime.plane.so/" target="_blank" className={getButtonStyling("primary", "md")}>
+        <a
+          data-ph-element={TEAMSPACE_UPGRADE_TRACKER_ELEMENTS.HIGHER_SUBSCRIPTION_BUTTON}
+          href="https://prime.plane.so/"
+          target="_blank"
+          className={getButtonStyling("primary", "md")}
+        >
           Upgrade to higher subscription
         </a>
       );
     }
 
     return (
-      <Button variant="primary" onClick={() => togglePaidPlanModal(true)}>
+      <Button
+        data-ph-element={TEAMSPACE_UPGRADE_TRACKER_ELEMENTS.UPGRADE_BUTTON}
+        variant="primary"
+        onClick={() => togglePaidPlanModal(true)}
+      >
         <Crown className="h-3.5 w-3.5" />
         Upgrade
       </Button>

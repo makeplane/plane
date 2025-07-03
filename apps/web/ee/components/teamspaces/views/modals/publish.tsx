@@ -7,11 +7,12 @@ import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 import { ExternalLink, Globe2 } from "lucide-react";
 // plane imports
-import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { SPACE_BASE_PATH, SPACE_BASE_URL, TEAMSPACE_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TPublishViewSettings, TTeamspaceView } from "@plane/types";
 import { Button, EModalWidth, Loader, ModalCore, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // plane web hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
@@ -60,22 +61,47 @@ export const PublishTeamspaceViewModal: React.FC<Props> = observer((props) => {
 
   const handlePublishView = async (payload: TPublishViewSettings) => {
     if (!workspaceSlug || !view) return;
-    await publishView(workspaceSlug.toString(), teamspaceId, view.id, payload);
+    await publishView(workspaceSlug.toString(), teamspaceId, view.id, payload)
+      .then(() => {
+        captureSuccess({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH,
+          payload: { id: view?.id },
+        });
+      })
+      .catch((err) => {
+        captureError({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH,
+          error: err,
+          payload: { id: view?.id },
+        });
+      });
   };
 
   const handleUpdatePublishSettings = async (payload: Partial<TPublishViewSettings>) => {
     if (!workspaceSlug || !view) return;
 
-    await updatePublishedView(workspaceSlug.toString(), teamspaceId, view.id, payload).then((res) => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Success!",
-        message: "Publish settings updated successfully!",
-      });
+    await updatePublishedView(workspaceSlug.toString(), teamspaceId, view.id, payload)
+      .then((res) => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Publish settings updated successfully!",
+        });
+        captureSuccess({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH_SETTINGS_UPDATE,
+          payload: { id: view?.id },
+        });
 
-      handleClose();
-      return res;
-    });
+        handleClose();
+        return res;
+      })
+      .catch((err) => {
+        captureError({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_PUBLISH_SETTINGS_UPDATE,
+          error: err,
+          payload: { id: view?.id },
+        });
+      });
   };
 
   const handleUnPublishView = async () => {
@@ -84,13 +110,23 @@ export const PublishTeamspaceViewModal: React.FC<Props> = observer((props) => {
     setIsUnPublishing(true);
 
     await unPublishView(workspaceSlug.toString(), teamspaceId, view.id)
-      .catch(() =>
+      .then(() => {
+        captureSuccess({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNPUBLISH,
+          payload: { id: view?.id },
+        });
+      })
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong while unpublishing the View.",
-        })
-      )
+        });
+        captureError({
+          eventName: TEAMSPACE_VIEW_TRACKER_EVENTS.VIEW_UNPUBLISH,
+          payload: { id: view?.id },
+        });
+      })
       .finally(() => setIsUnPublishing(false));
   };
 

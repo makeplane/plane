@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // plane web components
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import UpdateTeamspaceProjectsButton from "@/plane-web/components/teamspaces/actions/projects/button";
 
 type TAddProjectsToTeamProps = {
@@ -33,6 +34,7 @@ export const AddProjectsToTeam = observer((props: TAddProjectsToTeamProps) => {
           variant="empty-state"
           teamspaceId={teamspaceId?.toString()}
           isEditingAllowed={isEditingAllowed}
+          trackerElement={TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_UPDATE_PROJECT_BUTTON}
         />
       </div>
     </div>

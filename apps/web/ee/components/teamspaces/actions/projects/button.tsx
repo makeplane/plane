@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon } from "lucide-react";
 // components
+import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { Button, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
@@ -17,12 +19,13 @@ type UpdateTeamspaceProjectsButtonProps = {
   variant?: "default" | "empty-state";
   teamspaceId: string;
   isEditingAllowed: boolean;
+  trackerElement: string;
 };
 
 const TOOLTIP_CONTENT = "Contact teamspace admin";
 
 const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsButtonProps) => {
-  const { variant = "default", teamspaceId, isEditingAllowed } = props;
+  const { variant = "default", teamspaceId, isEditingAllowed, trackerElement } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -44,12 +47,24 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
           title: "Success!",
           message: `Teamspace projects updated successfully.`,
         });
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.PROJECTS_UPDATED,
+          payload: {
+            id: teamspaceId,
+          },
+        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? `Failed to update teamspace projects. Please try again!`,
+        });
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.PROJECTS_UPDATED,
+          payload: {
+            id: teamspaceId,
+          },
         });
       });
   };
@@ -76,6 +91,7 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
               if (!isEditingAllowed) return;
               setIsModalOpen(true);
             }}
+            data-ph-element={trackerElement}
           >
             <BriefcaseIcon className="size-3.5 text-custom-text-300" />
             {!areProjectsPresent && "Link a project"}
@@ -102,6 +118,7 @@ const UpdateTeamspaceProjectsButton = observer((props: UpdateTeamspaceProjectsBu
                 setIsModalOpen(true);
               }}
               disabled={!isEditingAllowed}
+              data-ph-element={trackerElement}
             >
               Link a project
             </Button>

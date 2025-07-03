@@ -2,11 +2,18 @@ import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Loader as Spinner } from "lucide-react";
 // plane imports
-import { EProgressDataKeys, EProgressXAxisKeys, ETeamspaceAnalyticsValueKeys } from "@plane/constants";
+import {
+  EProgressDataKeys,
+  EProgressXAxisKeys,
+  ETeamspaceAnalyticsValueKeys,
+  TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { TBarItem, TChartData } from "@plane/types";
 import { Dropdown, Loader } from "@plane/ui";
 import { cn, renderFormattedDateWithoutYear } from "@plane/utils";
+// helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // plane web imports
 import { TEAM_WORKLOAD_X_AXIS_LABEL_MAP, TEAM_WORKLOAD_Y_AXIS_LABEL_MAP } from "@/plane-web/constants/teamspace";
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -77,7 +84,12 @@ export const TeamspaceProgressChart: React.FC<TTeamspaceProgressChartProps> = ob
         <Dropdown
           value={xAxisKey}
           options={progressXAxisOptions}
-          onChange={(value) => handleXAxisKeyChange(value as EProgressXAxisKeys)}
+          onChange={(value) => {
+            captureClick({
+              elementName: TEAMSPACE_ANALYTICS_TRACKER_ELEMENTS.PROGRESS_FILTER_DROPDOWN,
+            });
+            handleXAxisKeyChange(value as EProgressXAxisKeys);
+          }}
           keyExtractor={(option) => option.data}
           buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
           buttonContent={(isOpen, value) => (

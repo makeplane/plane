@@ -1,13 +1,14 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list/list-root";
 import { DetailedEmptyState } from "@/components/empty-state";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
@@ -51,6 +52,9 @@ export const TeamspacesList = observer((props: TTeamspacesListProps) => {
         primaryButton={{
           text: t("teamspaces.empty_state.general.primary_button.text"),
           onClick: () => {
+            captureClick({
+              elementName: TEAMSPACE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
+            });
             toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
           },
           disabled: !hasWorkspaceAdminLevelPermissions,

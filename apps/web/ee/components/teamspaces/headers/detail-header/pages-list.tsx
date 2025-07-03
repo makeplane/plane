@@ -3,15 +3,15 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, TEAMSPACE_PAGE_TRACKER_ELEMENTS, TEAMSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPageFilters } from "@plane/types";
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
-// helpers
-import { calculateTotalFilters  } from "@plane/utils";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { EPageStoreType, usePageStore, useTeamspaces } from "@/plane-web/hooks/store";
@@ -57,14 +57,27 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
       .then((res) => {
         const pageRedirectionLink = `/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${res?.id}`;
         router.push(pageRedirectionLink);
+        captureSuccess({
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+          payload: {
+            id: res?.id,
+            teamspaceId,
+          },
+        });
       })
-      .catch((err) =>
+      .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        })
-      )
+        });
+        captureError({
+          eventName: TEAMSPACE_PAGE_TRACKER_EVENTS.PAGE_CREATE,
+          payload: {
+            teamspaceId,
+          },
+        });
+      })
       .finally(() => setIsCreatingPage(false));
   };
 
@@ -97,7 +110,13 @@ export const TeamspacePagesListHeaderActions = observer((props: TeamspacePagesLi
         />
       </FiltersDropdown>
       {isEditingAllowed && (
-        <Button variant="primary" size="sm" onClick={handleCreatePage} loading={isCreatingPage}>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={handleCreatePage}
+          loading={isCreatingPage}
+          data-ph-element={TEAMSPACE_PAGE_TRACKER_ELEMENTS.HEADER_CREATE_PAGE_BUTTON}
+        >
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>
       )}

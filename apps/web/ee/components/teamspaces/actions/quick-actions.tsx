@@ -4,9 +4,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link2, Pencil, Trash2 } from "lucide-react";
 // plane imports
+import { TEAMSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store";
 // plane web constants
 import { DeleteTeamspaceModal } from "@/plane-web/components/teamspaces/actions";
@@ -18,10 +20,11 @@ type Props = {
   isEditingAllowed: boolean;
   hideEdit?: boolean;
   buttonClassName?: string;
+  trackerElement: string;
 };
 
 export const TeamQuickActions: React.FC<Props> = observer((props) => {
-  const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName } = props;
+  const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName, trackerElement } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
@@ -79,6 +82,16 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    action: () => {
+      item.action();
+      captureClick({
+        elementName: TEAMSPACE_TRACKER_ELEMENTS.CONTEXT_MENU,
+      });
+    },
+  }));
+
   return (
     <>
       <DeleteTeamspaceModal
@@ -86,7 +99,7 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
         isModalOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
       />
-      {parentRef && <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />}
+      {parentRef && <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />}
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={buttonClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -96,6 +109,9 @@ export const TeamQuickActions: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({
+                  elementName: trackerElement,
+                });
                 item.action();
               }}
               className={cn(

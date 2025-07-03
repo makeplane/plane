@@ -2,14 +2,17 @@ import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
+import { TEAMSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { TTeamspace } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { getRandomEmoji  } from "@plane/utils";
 // plane web components
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 import { CreateOrUpdateTeamForm } from "@/plane-web/components/teamspaces/create-update";
 // plane web
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// helpers
 
 type TCreateOrUpdateTeamspaceModalProps = {
   teamspaceId: string | undefined;
@@ -84,7 +87,11 @@ export const CreateOrUpdateTeamspaceModal: FC<TCreateOrUpdateTeamspaceModalProps
     if (!teamFormData) return;
     setIsSubmitting(true);
     await createTeamspace(workspaceSlug?.toString(), teamFormData)
-      .then(() => {
+      .then((teamspace) => {
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.CREATE,
+          payload: { id: teamspace.id },
+        });
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -93,6 +100,10 @@ export const CreateOrUpdateTeamspaceModal: FC<TCreateOrUpdateTeamspaceModalProps
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.CREATE,
+          error: error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
@@ -109,7 +120,11 @@ export const CreateOrUpdateTeamspaceModal: FC<TCreateOrUpdateTeamspaceModalProps
 
     setIsSubmitting(true);
     await updateTeamspace(workspaceSlug?.toString(), teamspaceId, teamFormData)
-      .then(() => {
+      .then((teamspace) => {
+        captureSuccess({
+          eventName: TEAMSPACE_TRACKER_EVENTS.UPDATE,
+          payload: { id: teamspace.id },
+        });
         handleModalClearAndClose();
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -118,6 +133,11 @@ export const CreateOrUpdateTeamspaceModal: FC<TCreateOrUpdateTeamspaceModalProps
         });
       })
       .catch((error) => {
+        captureError({
+          eventName: TEAMSPACE_TRACKER_EVENTS.UPDATE,
+          error: error,
+          payload: { id: teamspaceId },
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
