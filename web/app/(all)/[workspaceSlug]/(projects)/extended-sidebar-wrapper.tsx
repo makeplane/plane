@@ -3,7 +3,7 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { SIDEBAR_WIDTH } from "@plane/constants";
+import { EXTENDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "@plane/utils";
 // hooks
@@ -29,7 +29,7 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        `absolute h-full z-[19] flex flex-col w-[300px] py-2 transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
+        `absolute h-full z-[19] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
         {
           "translate-x-0 opacity-100": isExtendedSidebarOpened,
           "-translate-x-[600px] opacity-0 w-0": !isExtendedSidebarOpened,
@@ -37,6 +37,7 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
       )}
       style={{
         left: `${storedValue ?? SIDEBAR_WIDTH}px`,
+        width: `${EXTENDED_SIDEBAR_WIDTH}px`,
       }}
     >
       {children}
