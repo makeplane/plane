@@ -6,13 +6,9 @@ import { Control, Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-// editor
-import { EditorRefApi } from "@plane/editor";
-// i18n
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-// types
 import { EFileAssetType, TIssue } from "@plane/types";
-// ui
 import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
@@ -177,6 +173,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
             control={control}
             render={({ field: { value, onChange } }) => (
               <RichTextEditor
+                editable
                 id="issue-modal-editor"
                 initialValue={value ?? ""}
                 value={descriptionHtmlData}

@@ -13,26 +13,31 @@ import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-interface RichTextEditorWrapperProps
-  extends MakeOptional<
-    Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
-    "disabledExtensions" | "flaggedExtensions"
-  > {
-  searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+type RichTextEditorWrapperProps = MakeOptional<
+  Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "editable" | "flaggedExtensions"
+> & {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
-  uploadFile: TFileHandler["upload"];
-}
+} & (
+    | {
+        editable: false;
+      }
+    | {
+        editable: true;
+        searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
+        uploadFile: TFileHandler["upload"];
+      }
+  );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
   const {
     containerClassName,
+    editable,
     workspaceSlug,
     workspaceId,
     projectId,
-    searchMentionCallback,
-    uploadFile,
     disabledExtensions: additionalDisabledExtensions,
     ...rest
   } = props;
@@ -42,7 +47,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { richText: richTextEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
   // use editor mention
   const { fetchMentions } = useEditorMention({
-    searchEntity: async (payload) => await searchMentionCallback(payload),
+    searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
@@ -51,10 +56,11 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     <RichTextEditorWithRef
       ref={ref}
       disabledExtensions={[...richTextEditorExtensions.disabled, ...(additionalDisabledExtensions ?? [])]}
+      editable={editable}
       flaggedExtensions={richTextEditorExtensions.flagged}
       fileHandler={getEditorFileHandlers({
         projectId,
-        uploadFile,
+        uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}
