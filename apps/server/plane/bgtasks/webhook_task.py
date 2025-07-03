@@ -106,7 +106,12 @@ def get_model_data(
         if serializer is None:
             raise ValueError(f"Serializer not found for event: {event}")
 
-        return serializer(queryset, many=many).data
+        if event == "issue":
+            return serializer(
+                queryset, many=many, expand=["labels", "assignees"]
+            ).data
+        else:
+            return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist(f"No {event} found with id: {event_id}")
 

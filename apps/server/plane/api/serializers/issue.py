@@ -464,3 +464,42 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if "assignees" in self.fields:
+            if "assignees" in self.expand:
+                data["assignees"] = UserLiteSerializer(
+                    User.objects.filter(
+                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list(
+                            "assignee_id", flat=True
+                        )
+                    ),
+                    many=True,
+                ).data
+            else:
+                data["assignees"] = [
+                    str(assignee)
+                    for assignee in IssueAssignee.objects.filter(
+                        issue=instance
+                    ).values_list("assignee_id", flat=True)
+                ]
+        if "labels" in self.fields:
+            if "labels" in self.expand:
+                data["labels"] = LabelLiteSerializer(
+                    Label.objects.filter(
+                        pk__in=IssueLabel.objects.filter(issue=instance).values_list(
+                            "label_id", flat=True
+                        )
+                    ),
+                    many=True,
+                ).data
+            else:
+                data["labels"] = [
+                    str(label)
+                    for label in IssueLabel.objects.filter(issue=instance).values_list(
+                        "label_id", flat=True
+                    )
+                ]
+
+        return data
