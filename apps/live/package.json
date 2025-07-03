@@ -39,6 +39,7 @@
     "ioredis": "^5.4.1",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
+    "pino": "^9.7.0",
     "pino-http": "^10.3.0",
     "pino-pretty": "^11.2.2",
     "uuid": "^10.0.0",
@@ -47,8 +48,8 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.0",
@@ -56,6 +57,7 @@
     "@types/express-ws": "^3.0.4",
     "@types/node": "^20.14.9",
     "@types/pino-http": "^5.8.4",
+    "@types/uuid": "^9.0.1",
     "concurrently": "^9.0.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",

@@ -75,7 +75,6 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/dompurify": "^3.0.5",
     "@types/lodash": "^4.14.202",
     "@types/node": "18.16.1",
     "@types/nprogress": "^0.2.0",

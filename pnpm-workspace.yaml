@@ -1,8 +1,5 @@
 packages:
-  - web
-  - space
-  - admin
-  - live
+  - apps/*
   - packages/*
 
 onlyBuiltDependencies:

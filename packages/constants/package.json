@@ -31,8 +31,9 @@
     "@plane/types": "workspace:*"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/node": "^22.5.4",
     "tsup": "8.4.0"
   }
 }
