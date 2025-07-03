@@ -1343,6 +1343,17 @@
       "project_insights": {
         "title": "Noch keine Daten",
         "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
+      },
+      "general": {
+        "title": "Verfolgen Sie Fortschritt, Arbeitsbelastung und Zuweisungen. Erkennen Sie Trends, beseitigen Sie Hindernisse und arbeiten Sie schneller",
+        "description": "Sehen Sie Umfang vs. Nachfrage, Schätzungen und Scope Creep. Messen Sie die Leistung von Teammitgliedern und Teams und stellen Sie sicher, dass Ihr Projekt rechtzeitig abgeschlossen wird.",
+        "primary_button": {
+          "text": "Erstes Projekt starten",
+          "comic": {
+            "title": "Analytics funktioniert am besten mit Zyklen + Modulen",
+            "description": "Begrenzen Sie zunächst Ihre Arbeitselemente zeitlich in Zyklen und gruppieren Sie, wenn möglich, Arbeitselemente, die mehr als einen Zyklus umfassen, in Module. Schauen Sie sich beide in der linken Navigation an."
+          }
+        }
       }
     },
     "created_vs_resolved": "Erstellt vs Gelöst",
