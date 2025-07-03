@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PenSquare } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { TIssue } from "@plane/types";
@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
 // hooks
-import { useCommandPalette, useEventTracker, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { AppSearch } from "@/plane-web/components/workspace";
@@ -30,7 +30,6 @@ export const SidebarQuickActions = observer(() => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { setTrackElement } = useEventTracker();
   const { joinedProjectIds } = useProject();
   const { allowPermissions } = useUserPermissions();
   // local storage
@@ -82,8 +81,8 @@ export const SidebarQuickActions = observer(() => {
               "cursor-not-allowed opacity-50 ": disabled,
             }
           )}
+          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
           onClick={() => {
-            setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
             toggleCreateIssueModal(true);
           }}
           onMouseEnter={handleMouseEnter}
