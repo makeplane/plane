@@ -73,7 +73,7 @@ const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) =>
           <div className={buttonClass}>{titleElement}</div>
         ) : (
           <Link
-            href={joinUrlPath("/", workspaceSlug, setting.href)}
+            href={joinUrlPath(workspaceSlug, setting.href)}
             className={buttonClass}
             onClick={() => toggleSidebar(true)}
           >
