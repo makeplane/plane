@@ -13,10 +13,7 @@ class TestWorkspaceModel:
         """Test creating a workspace"""
         # Create a workspace
         workspace = Workspace.objects.create(
-            name="Test Workspace",
-            slug="test-workspace",
-            id=uuid4(),
-            owner=create_user
+            name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
         )
 
         # Verify it was created
@@ -30,17 +27,14 @@ class TestWorkspaceModel:
         """Test creating a workspace member"""
         # Create a workspace
         workspace = Workspace.objects.create(
-            name="Test Workspace",
-            slug="test-workspace",
-            id=uuid4(),
-            owner=create_user
+            name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
         )
 
         # Create a workspace member
         workspace_member = WorkspaceMember.objects.create(
             workspace=workspace,
             member=create_user,
-            role=20  # Admin role
+            role=20,  # Admin role
         )
 
         # Verify it was created

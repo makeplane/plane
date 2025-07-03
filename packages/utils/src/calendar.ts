@@ -1,7 +1,7 @@
 // plane imports
 import { EStartOfTheWeek, ICalendarDate, ICalendarPayload } from "@plane/types";
 // local imports
-import { getWeekNumberOfDate, renderFormattedPayloadDate  } from "./datetime";
+import { getWeekNumberOfDate, renderFormattedPayloadDate } from "./datetime";
 
 /**
  * @returns {ICalendarPayload} calendar payload to render the calendar
@@ -66,8 +66,9 @@ export const getOrderedDays = <T>(
   items: T[],
   getDayIndex: (item: T) => number,
   startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
-): T[] => [...items].sort((a, b) => {
+): T[] =>
+  [...items].sort((a, b) => {
     const dayA = (7 + getDayIndex(a) - startOfWeek) % 7;
     const dayB = (7 + getDayIndex(b) - startOfWeek) % 7;
     return dayA - dayB;
-  })
+  });

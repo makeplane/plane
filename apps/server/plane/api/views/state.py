@@ -81,6 +81,20 @@ class StateAPIEndpoint(BaseAPIView):
             )
 
     def get(self, request, slug, project_id, state_id=None):
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            state = State.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                StateSerializer(state, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
         if state_id:
             serializer = StateSerializer(
                 self.get_queryset().get(pk=state_id),
