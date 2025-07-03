@@ -1,5 +1,5 @@
 import { PlaneWebhookPayload } from "@plane/sdk";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./event-handlers/issue-comment.handler";
@@ -27,6 +27,7 @@ export class PlaneGithubWebhookWorker extends TaskHandler {
       }
     } catch (error) {
       logger.error("[GITHUB] Error processing plane webhook:", error);
+      captureException(error as Error);
     } finally {
       return true;
     }

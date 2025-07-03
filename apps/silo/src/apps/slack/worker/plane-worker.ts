@@ -1,8 +1,8 @@
-import { MQ, Store } from "@/worker/base";
-import { TaskHandler, TaskHeaders } from "@/types";
 import { PlaneWebhookPayload, WebhookIssueCommentPayload } from "@plane/sdk";
+import { captureException, logger } from "@/logger";
+import { TaskHandler, TaskHeaders } from "@/types";
+import { MQ, Store } from "@/worker/base";
 import { handleIssueCommentWebhook } from "./plane-webhook-handlers/handle-comment-webhook";
-import { logger } from "@/logger";
 import { handleIssueWebhook } from "./plane-webhook-handlers/handle-issue-webhook";
 import { handleProjectUpdateWebhook } from "./plane-webhook-handlers/handle-project-updates";
 
@@ -16,7 +16,6 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
     this.store = store;
   }
   async handleTask(headers: TaskHeaders, data: any): Promise<boolean> {
-
     logger.info(`[SLACK] [PLANE_WORKER] Received payload`, {
       payload: {
         headers,
@@ -40,6 +39,7 @@ export class PlaneSlackWebhookWorker extends TaskHandler {
       }
     } catch (error) {
       logger.error(error);
+      captureException(error as Error);
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
       return true;

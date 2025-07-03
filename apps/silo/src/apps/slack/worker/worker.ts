@@ -1,5 +1,5 @@
 import { TSlackPayload } from "@plane/etl/slack";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleBlockActions } from "./handlers/block-actions";
@@ -51,6 +51,7 @@ export class SlackInteractionHandler extends TaskHandler {
       }
     } catch (error) {
       logger.error(`[SLACK] Error processing slack webhook: ${error}`);
+      captureException(error as Error);
     } finally {
       logger.info("[SLACK] Event Processed Successfully");
       return true;

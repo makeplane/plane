@@ -1,5 +1,5 @@
 import { MQ, Store } from "@/worker/base";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { GitlabMergeRequestEvent, GitlabWebhookEvent } from "@plane/etl/gitlab";
 import { handleMergeRequest } from "./handlers/merge-request.handler";
@@ -24,6 +24,7 @@ export class GitlabWebhookWorker extends TaskHandler {
       }
     } catch (error) {
       logger.error("[GITLAB] Error processing gitlab webhook", error);
+      captureException(error as Error);
     } finally {
       logger.info("[GITLAB] Event Processed Successfully");
       return true;

@@ -1,7 +1,7 @@
 import amqp from "amqplib";
 import { env } from "@/env";
+import { captureException, logger } from "@/logger";
 import { TMQEntityOptions } from "./types";
-import { logger } from "@/logger";
 
 export class MQActorBase {
   private connection!: amqp.Connection;
@@ -68,6 +68,7 @@ export class MQActorBase {
       } catch {
         if (attemptCount % 10 === 0) {
           logger.info(`[MQ] RabbitMQ reconnection attempt ${attemptCount} failed`);
+          captureException(new Error(`[MQ] RabbitMQ reconnection attempt ${attemptCount} failed`));
         }
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         logger.info(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);
@@ -95,6 +96,7 @@ export class MQActorBase {
       } catch {
         if (attemptCount % 10 === 0) {
           logger.info(`[MQ] RabbitMQ initial connection attempt ${attemptCount} failed`);
+          captureException(new Error(`[MQ] RabbitMQ initial connection attempt ${attemptCount} failed`));
         }
         await new Promise((resolve) => setTimeout(resolve, this.RECONNECT_INTERVAL));
         logger.info(`Attempting to reconnect to RabbitMQ [${attemptCount}]...`);

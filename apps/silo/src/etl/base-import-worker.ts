@@ -2,7 +2,7 @@ import { TJobStatus, PlaneEntities } from "@plane/etl/core";
 import { TImportJob } from "@plane/types";
 import { wait } from "@/helpers/delay";
 import { updateJobWithReport } from "@/helpers/job";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
@@ -141,6 +141,8 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
         }
       } catch (error) {
         logger.error(`Got error while iterating the task ${headers.jobId} ${headers.type}`, { error });
+        captureException(error as Error);
+
         await this.update(headers.jobId, "ERROR", {
           error: `Something went wrong while pushing data to plane, ERROR: ${headers.type} ${error instanceof Error ? error.message : JSON.stringify(error)}`,
         });

@@ -7,7 +7,11 @@ export const logger = createLogger({
     format.timestamp({
       format: "DD/MMM/YYYY HH:mm:ss",
     }),
-    format.json(),
+    format.json()
   ),
   transports: [new transports.Console()],
 });
+
+export const captureException = (exception: Error) => {
+  logger.error(exception);
+};

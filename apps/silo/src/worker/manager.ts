@@ -19,7 +19,7 @@ import { LinearDataMigrator } from "@/apps/linear-importer/migrator/linear.migra
 import { NotionDataMigrator } from "@/apps/notion-importer/worker";
 import { PlaneSlackWebhookWorker } from "@/apps/slack/worker/plane-worker";
 import { SlackInteractionHandler } from "@/apps/slack/worker/worker";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
@@ -95,14 +95,14 @@ interface JobWorkerConfig {
  */
 type TaskProps =
   | {
-    type: "mq";
-    headers: TaskHeaders;
-    data: any;
-  }
+      type: "mq";
+      headers: TaskHeaders;
+      data: any;
+    }
   | {
-    type: "store";
-    event: string;
-  };
+      type: "store";
+      event: string;
+    };
 
 /**
  * Main task management class that handles worker lifecycle and task distribution
@@ -264,6 +264,7 @@ export class TaskManager {
       }
     } catch (error) {
       logger.error(`Something went wrong while initiating job worker 🧨, ${error}`);
+      captureException(error as Error);
     }
   };
 
@@ -279,6 +280,7 @@ export class TaskManager {
       await this.mq.sendMessage(data, { headers });
     } catch (error) {
       logger.error("Error pushing to job worker queue:", error);
+      captureException(error as Error);
     }
   };
 
@@ -297,6 +299,7 @@ export class TaskManager {
       await this.store.set(key, "1", ttl, false);
     } catch (error) {
       logger.error("Error pushing to job worker queue:", error);
+      captureException(error as Error);
     }
   };
 }

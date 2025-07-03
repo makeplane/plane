@@ -1,6 +1,6 @@
 import { GithubWebhookPayload } from "@plane/etl/github";
 import { CONSTANTS } from "@/helpers/constants";
-import { logger } from "@/logger";
+import { captureException, logger } from "@/logger";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
 import { handleInstallationEvents } from "./event-handlers/installation.handler";
@@ -41,6 +41,7 @@ export class GithubWebhookWorker extends TaskHandler {
         logger.info(`[GITHUB] No permission to process event: ${error.detail} ${data}`);
         return false;
       }
+      captureException(error);
     } finally {
       logger.info("[GITHUB] Event Processed Successfully");
       return true;
