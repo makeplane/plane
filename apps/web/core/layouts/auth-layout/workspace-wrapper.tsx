@@ -21,7 +21,6 @@ import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-// constants
 // images
 import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
 import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
@@ -136,7 +135,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // if list of workspaces are not there then we have to render the spinner
   if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
     return (
-      <div className="grid h-screen place-items-center bg-custom-background-100 p-4">
+      <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>
@@ -147,7 +146,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
   if (currentWorkspace === undefined && !currentWorkspaceInfo) {
     return (
-      <div className="relative flex h-screen w-full flex-col items-center justify-center bg-custom-background-90 ">
+      <div className="relative flex h-full w-full flex-col items-center justify-center bg-custom-background-90 ">
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">

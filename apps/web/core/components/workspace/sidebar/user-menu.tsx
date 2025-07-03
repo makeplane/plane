@@ -8,15 +8,12 @@ import { EUserWorkspaceRoles } from "@plane/types";
 // plane imports
 import { UserActivityIcon } from "@plane/ui";
 // components
-import { cn } from "@plane/utils";
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
-// helpers
 // hooks
-import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
+import { useUserPermissions, useUser } from "@/hooks/store";
 
 export const SidebarUserMenu = observer(() => {
   const { workspaceSlug } = useParams();
-  const { sidebarCollapsed } = useAppTheme();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
 
@@ -54,11 +51,7 @@ export const SidebarUserMenu = observer(() => {
   const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
 
   return (
-    <div
-      className={cn("flex flex-col gap-0.5", {
-        "space-y-0": sidebarCollapsed,
-      })}
-    >
+    <div className="flex flex-col gap-0.5">
       {SIDEBAR_USER_MENU_ITEMS.map((item) => (
         <SidebarUserMenuItem key={item.key} item={item} draftIssueCount={draftIssueCount} />
       ))}
