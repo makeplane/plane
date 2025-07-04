@@ -1343,6 +1343,17 @@
       "project_insights": {
         "title": "Nu există date încă",
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
+      },
+      "general": {
+        "title": "Urmărește progresul, sarcinile și alocările. Identifică tendințele, elimină blocajele și accelerează munca",
+        "description": "Vezi domeniul versus cererea, estimările și extinderea domeniului. Obține performanțe pe membrii echipei și echipe, și asigură-te că proiectul tău rulează la timp.",
+        "primary_button": {
+          "text": "Începe primul tău proiect",
+          "comic": {
+            "title": "Analitica funcționează cel mai bine cu Cicluri + Module",
+            "description": "Întâi, limitează-ți problemele în Cicluri și, dacă poți, grupează problemele care durează mai mult de un ciclu în Module. Verifică ambele în navigarea din stânga."
+          }
+        }
       }
     },
     "created_vs_resolved": "Creat vs Rezolvat",

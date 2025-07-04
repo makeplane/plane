@@ -6,7 +6,7 @@ import { Disclosure } from "@headlessui/react";
 // plane imports
 import { EUserWorkspaceRoles } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+import { cn, joinUrlPath } from "@plane/utils";
 // hooks
 import { useUserSettings } from "@/hooks/store";
 
@@ -72,7 +72,11 @@ const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) =>
         {renderChildren ? (
           <div className={buttonClass}>{titleElement}</div>
         ) : (
-          <Link href={`/${workspaceSlug}/${setting.href}`} className={buttonClass} onClick={() => toggleSidebar(true)}>
+          <Link
+            href={joinUrlPath(workspaceSlug, setting.href)}
+            className={buttonClass}
+            onClick={() => toggleSidebar(true)}
+          >
             {titleElement}
           </Link>
         )}

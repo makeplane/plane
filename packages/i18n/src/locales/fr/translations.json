@@ -1344,6 +1344,17 @@
       "project_insights": {
         "title": "Pas encore de données",
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici."
+      },
+      "general": {
+        "title": "Suivez les progrès, les charges de travail et les allocations. Identifiez les tendances, supprimez les blocages et travaillez plus rapidement",
+        "description": "Voyez la portée par rapport à la demande, les estimations et l'évolution du périmètre. Obtenez les performances par les membres de l'équipe et les équipes, et assurez-vous que votre projet se déroule dans les temps.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "L'analytics fonctionne mieux avec les Cycles + Modules",
+            "description": "D'abord, encadrez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
+          }
+        }
       }
     },
     "created_vs_resolved": "Créé vs Résolu",
