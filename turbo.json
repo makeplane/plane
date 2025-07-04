@@ -24,15 +24,9 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**"]
     },
-    "develop": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
-    },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
+      "persistent": true
     },
     "check:types": {
       "dependsOn": ["^build"],
