@@ -49,4 +49,4 @@ RUN chmod -R 777 /code
 # Expose container port and run entry point script
 EXPOSE 8000
 
-
+CMD ["./bin/docker-entrypoint-api.sh"]
