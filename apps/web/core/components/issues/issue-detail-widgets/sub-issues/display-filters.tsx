@@ -6,7 +6,6 @@ import { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplay
 import { cn } from "@plane/utils";
 import { FilterDisplayProperties, FilterGroupBy, FilterOrderBy, FiltersDropdown } from "@/components/issues";
 import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
-
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;

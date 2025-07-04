@@ -21,7 +21,12 @@ export const getEditorRefHelpers = (args: TArgs): EditorReadOnlyRefApi => {
 
   return {
     clearEditor: (emitUpdate = false) => {
-      editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .clearContent(emitUpdate)
+        .run();
     },
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
@@ -48,8 +53,13 @@ export const getEditorRefHelpers = (args: TArgs): EditorReadOnlyRefApi => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
-    setEditorValue: (content, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
+    setEditorValue: (content: string, emitUpdate = false) => {
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .setContent(content, emitUpdate, { preserveWhitespace: true })
+        .run();
     },
   };
 };
