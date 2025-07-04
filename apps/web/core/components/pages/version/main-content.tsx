@@ -6,10 +6,11 @@ import { EyeIcon, TriangleAlert } from "lucide-react";
 import { TPageVersion } from "@plane/types";
 // plane ui
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
-// components
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+// components
 import { TVersionEditorProps } from "@/components/pages";
 // helpers
+import { EPageStoreType } from "@/plane-web/hooks/store";
 
 type Props = {
   activeVersion: string | null;
@@ -19,10 +20,11 @@ type Props = {
   handleRestore: (descriptionHTML: string) => Promise<void>;
   pageId: string;
   restoreEnabled: boolean;
+  storeType: EPageStoreType;
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, restoreEnabled } =
+  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, storeType, restoreEnabled } =
     props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
@@ -42,10 +44,6 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
     setIsRestoring(true);
     await handleRestore(versionDetails?.description_html ?? "<p></p>")
       .then(() => {
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Page version restored.",
-        });
         handleClose();
       })
       .catch(() =>
@@ -109,7 +107,11 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <VersionEditor activeVersion={activeVersion} versionDetails={versionDetails} />
+            <VersionEditor
+              activeVersion={activeVersion}
+              storeType={storeType}
+              versionDetails={versionDetails}
+            />
           </div>
         </>
       )}

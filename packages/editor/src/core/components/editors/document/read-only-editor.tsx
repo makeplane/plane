@@ -12,6 +12,9 @@ import { WorkItemEmbedExtension } from "@/extensions";
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+// plane editor extensions
+import { PageEmbedReadOnlyExtension } from "@/plane-editor/extensions";
+import { CustomAttachmentExtension } from "@/plane-editor/extensions/attachments/extension";
 // types
 import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
@@ -30,11 +33,25 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     initialValue,
     mentionHandler,
   } = props;
-  const extensions: Extensions = [];
+  const extensions: Extensions = [
+    CustomAttachmentExtension({
+      fileHandler,
+      isFlagged: flaggedExtensions.includes("attachments"),
+      isEditable: false,
+    }),
+  ];
   if (embedHandler?.issue) {
     extensions.push(
       WorkItemEmbedExtension({
         widgetCallback: embedHandler.issue.widgetCallback,
+      })
+    );
+  }
+
+  if (embedHandler?.page) {
+    extensions.push(
+      PageEmbedReadOnlyExtension({
+        widgetCallback: embedHandler.page.widgetCallback,
       })
     );
   }
