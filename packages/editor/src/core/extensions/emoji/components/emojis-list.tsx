@@ -60,6 +60,11 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): boolean => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        return true;
+      }
+
       if (event.key === "ArrowUp") {
         event.preventDefault();
         setSelectedIndex((prev) => (prev + items.length - 1) % items.length);

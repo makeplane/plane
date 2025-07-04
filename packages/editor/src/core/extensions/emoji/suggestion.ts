@@ -73,6 +73,9 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
 
       onKeyDown: (props: SuggestionKeyDownProps): boolean => {
         if (props.event.key === "Escape") {
+          if (component) {
+            component.destroy();
+          }
           return true;
         }
 
