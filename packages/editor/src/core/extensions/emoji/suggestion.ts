@@ -6,8 +6,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import { EmojiItem } from "./components/emojis-list";
-import { FloatingEmojiList, FloatingEmojiListProps, FloatingEmojiListRef } from "./components/floating-emoji-list";
+import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
@@ -36,85 +35,62 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
   allowSpaces: false,
 
   render: () => {
-    let component: ReactRenderer<FloatingEmojiListRef, FloatingEmojiListProps>;
-    let isOpen = false;
+    let component: ReactRenderer<EmojiListRef>;
+    let editor: Editor;
 
     return {
       onStart: (props: SuggestionProps): void => {
         if (!props.clientRect) return;
 
-        isOpen = true;
+        editor = props.editor;
 
-        const floatingEmojiListProps: FloatingEmojiListProps = {
-          items: props.items,
-          command: props.command,
-          editor: props.editor,
-          isOpen,
-          onOpenChange: (open: boolean) => {
-            isOpen = open;
-            if (!open) {
-              // Handle close from floating UI
-              const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-              const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
-              if (index > -1) {
-                utilityStorage.activeDropbarExtensions.splice(index, 1);
-              }
-            }
+        // Track active dropdown
+        getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
+
+        component = new ReactRenderer(EmojiList, {
+          props: {
+            items: props.items,
+            command: props.command,
+            editor: props.editor,
           },
-        };
-
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
-
-        component = new ReactRenderer(FloatingEmojiList, {
-          props: floatingEmojiListProps,
           editor: props.editor,
         });
 
-        // Append to the active editor or editor container
+        // Append to editor container
         const targetElement = (props.editor.options.element || document.body) as HTMLElement;
-
         targetElement.appendChild(component.element);
       },
 
       onUpdate: (props: SuggestionProps): void => {
-        if (!component || !component.element) return;
+        if (!component) return;
 
         component.updateProps({
           items: props.items,
           command: props.command,
           editor: props.editor,
-          isOpen,
-          onOpenChange: (open: boolean) => {
-            isOpen = open;
-          },
         });
       },
 
       onKeyDown: (props: SuggestionKeyDownProps): boolean => {
         if (props.event.key === "Escape") {
-          isOpen = false;
-          if (component) {
-            component.destroy();
-          }
           return true;
         }
 
-        // Delegate keyboard events to the FloatingEmojiList component
-        if (component && component.ref) {
-          return component.ref.onKeyDown(props) || false;
-        }
-
-        return false;
+        // Delegate to EmojiList
+        return component?.ref?.onKeyDown(props) || false;
       },
 
-      onExit: (props: SuggestionProps): void => {
-        const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
-        if (index > -1) {
-          utilityStorage.activeDropbarExtensions.splice(index, 1);
+      onExit: (): void => {
+        // Remove from active dropdowns
+        if (editor) {
+          const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+          const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+          if (index > -1) {
+            utilityStorage.activeDropbarExtensions.splice(index, 1);
+          }
         }
 
-        isOpen = false;
+        // Cleanup
         if (component) {
           component.destroy();
         }
