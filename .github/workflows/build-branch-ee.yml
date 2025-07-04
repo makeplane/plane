@@ -287,7 +287,7 @@ jobs:
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
-  branch_build_push_apiserver:
+  branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -307,8 +307,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
-          build-context: ./apps/server
-          dockerfile-path: ./apps/server/Dockerfile.api
+          build-context: ./apps/api
+          dockerfile-path: ./apps/api/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -548,7 +548,7 @@ jobs:
         branch_build_push_web,
         branch_build_push_space,
         branch_build_push_live,
-        branch_build_push_apiserver,
+        branch_build_push_api,
         branch_build_push_proxy,
         branch_build_push_monitor,
         branch_build_push_email,
@@ -615,7 +615,7 @@ jobs:
         branch_build_push_web,
         branch_build_push_space,
         branch_build_push_live,
-        branch_build_push_apiserver,
+        branch_build_push_api,
         branch_build_push_proxy,
         branch_build_push_monitor,
         branch_build_push_email,
