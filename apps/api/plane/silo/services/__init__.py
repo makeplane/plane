@@ -1,0 +1,1 @@
+from .generate_application import create_applications

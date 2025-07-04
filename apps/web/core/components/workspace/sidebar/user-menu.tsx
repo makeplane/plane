@@ -3,19 +3,20 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Home, Inbox, PenSquare } from "lucide-react";
-import { EUserWorkspaceRoles } from "@plane/types";
+import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
 // plane imports
-import { UserActivityIcon } from "@plane/ui";
-// components
+import { EUserWorkspaceRoles } from "@plane/types";
+import { PiChatLogo, UserActivityIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
+// components
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
-// helpers
 // hooks
 import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
 
 export const SidebarUserMenu = observer(() => {
+  // navigation
   const { workspaceSlug } = useParams();
+  // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
@@ -27,6 +28,13 @@ export const SidebarUserMenu = observer(() => {
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
       Icon: Home,
+    },
+    {
+      key: "dashboards",
+      labelTranslationKey: "workspace_dashboards",
+      href: `/${workspaceSlug.toString()}/dashboards/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+      Icon: LayoutGrid,
     },
     {
       key: "your-work",
@@ -48,6 +56,13 @@ export const SidebarUserMenu = observer(() => {
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
       Icon: PenSquare,
+    },
+    {
+      key: "pi-chat",
+      labelTranslationKey: "sidebar.pi_chat",
+      href: `/${workspaceSlug.toString()}/pi-chat/`,
+      access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
+      Icon: PiChatLogo,
     },
   ];
 
