@@ -11,8 +11,8 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "tsup --minify",
+    "dev": "tsup --watch",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
