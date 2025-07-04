@@ -77,20 +77,23 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
     () => ({
       onKeyDown: ({ event }: { event: KeyboardEvent }): boolean => {
         if (event.key === "ArrowUp") {
+          event.preventDefault();
+          event.stopPropagation();
           upHandler();
           return true;
         }
 
         if (event.key === "ArrowDown") {
+          event.preventDefault();
+          event.stopPropagation();
           downHandler();
           return true;
         }
 
         if (event.key === "Enter") {
-          enterHandler();
           event.preventDefault();
           event.stopPropagation();
-
+          enterHandler();
           return true;
         }
 

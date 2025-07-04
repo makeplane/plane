@@ -1,13 +1,13 @@
 import type { EmojiOptions } from "@tiptap/extension-emoji";
 import { ReactRenderer, Editor } from "@tiptap/react";
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
-import tippy, { Instance as TippyInstance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./components/emojis-list";
+import { EmojiItem } from "./components/emojis-list";
+import { FloatingEmojiList, FloatingEmojiListProps, FloatingEmojiListRef } from "./components/floating-emoji-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
@@ -36,73 +36,75 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
   allowSpaces: false,
 
   render: () => {
-    let component: ReactRenderer<EmojiListRef, EmojiListProps>;
-    let popup: TippyInstance[] | null = null;
+    let component: ReactRenderer<FloatingEmojiListRef, FloatingEmojiListProps>;
+    let isOpen = false;
 
     return {
       onStart: (props: SuggestionProps): void => {
-        const emojiListProps: EmojiListProps = {
+        if (!props.clientRect) return;
+
+        isOpen = true;
+
+        const floatingEmojiListProps: FloatingEmojiListProps = {
           items: props.items,
           command: props.command,
           editor: props.editor,
+          isOpen,
+          onOpenChange: (open: boolean) => {
+            isOpen = open;
+            if (!open) {
+              // Handle close from floating UI
+              const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+              const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+              if (index > -1) {
+                utilityStorage.activeDropbarExtensions.splice(index, 1);
+              }
+            }
+          },
         };
 
         getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
 
-        component = new ReactRenderer(EmojiList, {
-          props: emojiListProps,
+        component = new ReactRenderer(FloatingEmojiList, {
+          props: floatingEmojiListProps,
           editor: props.editor,
         });
 
-        if (!props.clientRect) return;
+        // Append to the active editor or editor container
+        const targetElement = (props.editor.options.element || document.body) as HTMLElement;
 
-        popup = tippy("body", {
-          getReferenceClientRect: props.clientRect as () => DOMRect,
-          appendTo: () =>
-            document.querySelector(".active-editor") ??
-            document.querySelector('[id^="editor-container"]') ??
-            document.body,
-          content: component.element,
-          showOnCreate: true,
-          interactive: true,
-          trigger: "manual",
-          placement: "bottom-start",
-          hideOnClick: false,
-          sticky: "reference",
-          animation: false,
-          duration: 0,
-          offset: [0, 8],
-        });
+        targetElement.appendChild(component.element);
       },
 
       onUpdate: (props: SuggestionProps): void => {
-        const emojiListProps: EmojiListProps = {
+        if (!component || !component.element) return;
+
+        component.updateProps({
           items: props.items,
           command: props.command,
           editor: props.editor,
-        };
-
-        component.updateProps(emojiListProps);
-
-        if (popup && props.clientRect) {
-          popup[0]?.setProps({
-            getReferenceClientRect: props.clientRect as () => DOMRect,
-          });
-        }
+          isOpen,
+          onOpenChange: (open: boolean) => {
+            isOpen = open;
+          },
+        });
       },
 
       onKeyDown: (props: SuggestionKeyDownProps): boolean => {
         if (props.event.key === "Escape") {
-          if (popup) {
-            popup[0]?.hide();
-          }
+          isOpen = false;
           if (component) {
             component.destroy();
           }
           return true;
         }
 
-        return component.ref?.onKeyDown(props) || false;
+        // Delegate keyboard events to the FloatingEmojiList component
+        if (component && component.ref) {
+          return component.ref.onKeyDown(props) || false;
+        }
+
+        return false;
       },
 
       onExit: (props: SuggestionProps): void => {
@@ -112,9 +114,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
           utilityStorage.activeDropbarExtensions.splice(index, 1);
         }
 
-        if (popup) {
-          popup[0]?.destroy();
-        }
+        isOpen = false;
         if (component) {
           component.destroy();
         }
