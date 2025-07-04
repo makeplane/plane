@@ -3,11 +3,10 @@ services:
     container_name: web
     build:
       context: .
-      dockerfile: ./web/Dockerfile.web
+      dockerfile: ./apps/web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node web/server.js web
     depends_on:
       - api
 
@@ -15,11 +14,10 @@ services:
     container_name: admin
     build:
       context: .
-      dockerfile: ./admin/Dockerfile.admin
+      dockerfile: ./apps/admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node admin/server.js admin
     depends_on:
       - api
       - web
@@ -28,11 +26,10 @@ services:
     container_name: space
     build:
       context: .
-      dockerfile: ./space/Dockerfile.space
+      dockerfile: ./apps/space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node space/server.js space
     depends_on:
       - api
       - web
@@ -40,14 +37,14 @@ services:
   api:
     container_name: api
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-api.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -55,14 +52,14 @@ services:
   worker:
     container_name: bgworker
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -71,14 +68,14 @@ services:
   beat-worker:
     container_name: beatworker
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: always
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -87,14 +84,14 @@ services:
   migrator:
     container_name: plane-migrator
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.api
       args:
         DOCKER_BUILDKIT: 1
     restart: no
     command: ./bin/docker-entrypoint-migrator.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -103,11 +100,10 @@ services:
     container_name: plane-live
     build:
       context: .
-      dockerfile: ./live/Dockerfile.live
+      dockerfile: ./apps/live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-    command: node live/dist/server.js
 
   plane-db:
     container_name: plane-db
