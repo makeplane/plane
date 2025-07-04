@@ -11,9 +11,14 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "build": "tsc --noEmit && tsup --minify",
+    "dev": "tsup --watch",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@plane/constants": "*",
