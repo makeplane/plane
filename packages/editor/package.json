@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
@@ -24,10 +24,12 @@
   "scripts": {
     "build": "tsup --minify",
     "dev": "tsup --watch",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
     "nanoid": "^3.3.8",

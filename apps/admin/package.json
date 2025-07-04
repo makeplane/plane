@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -10,9 +10,12 @@
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",
-    "format": "prettier --write .",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet"
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
