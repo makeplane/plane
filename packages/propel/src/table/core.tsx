@@ -66,11 +66,16 @@ const TableCell = React.forwardRef<HTMLElement, React.TdHTMLAttributes<HTMLEleme
 ));
 TableCell.displayName = "TableCell";
 
-const TableCaption = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-  ({ className, ...props }, ref) => (
-    <caption ref={ref as any} className={cn("mt-4 text-sm text-custom-text-300", className)} {...props} />
-  )
-);
-TableCaption.displayName = "TableCaption";
+const TableCaption = React.forwardRef<
+    React.ComponentRef<"caption">,
+    React.ComponentPropsWithoutRef<"caption">
+>(({ className, ...props }, ref) => (
+    <caption
+        ref={ref}
+        className={cn("mt-4 text-sm text-custom-text-300", className)}
+        {...props}
+    />
+))
+TableCaption.displayName = "TableCaption"
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };

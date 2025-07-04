@@ -75,8 +75,7 @@ package-lock.json
 
 # lock files
 package-lock.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
+yarn.lock
 
 .npmrc
 .secrets
