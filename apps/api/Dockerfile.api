@@ -14,7 +14,6 @@ WORKDIR /code
 RUN apk add --no-cache --upgrade \
     "libpq" \
     "libxslt" \
-    "nodejs-current" \
     "xmlsec" \
     "ca-certificates" \
     "openssl"
