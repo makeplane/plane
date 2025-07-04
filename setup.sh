@@ -44,7 +44,7 @@ export LC_CTYPE=C
 echo -e "${YELLOW}Setting up environment files...${NC}"
 
 # Copy all environment example files
-services=("" "web" "server" "space" "admin" "live")
+services=("" "web" "server" "space" "admin" "live" "silo" "email")
 success=true
 
 for service in "${services[@]}"; do
@@ -57,6 +57,8 @@ for service in "${services[@]}"; do
     fi
 
     copy_env_file "${prefix}.env.example" "${prefix}.env" || success=false
+    
+    # Special handling for silo service
 done
 
 # Generate SECRET_KEY for Django
@@ -81,6 +83,46 @@ fi
 corepack enable yarn || success=false
 # Install Node dependencies
 yarn install || success=false
+
+# Silo service env variables setup warning
+if [ "$service" == "silo" ] && [ -f "./silo/.env" ]; then        
+    # Add a note about integration setup
+    echo -e "\n${YELLOW}Note: Remember to configure integration credentials in silo/.env:${NC}"
+    echo -e "- JIRA_CLIENT_ID and JIRA_CLIENT_SECRET"
+    echo -e "- LINEAR_CLIENT_ID and LINEAR_CLIENT_SECRET"
+    echo -e "- GITHUB_APP_ID and GITHUB_PRIVATE_KEY"
+    echo -e "- GITLAB_CLIENT_ID and GITLAB_CLIENT_SECRET"
+    echo -e "- ASANA_CLIENT_ID and ASANA_CLIENT_SECRET"
+    echo -e "- SLACK_CLIENT_ID and SLACK_CLIENT_SECRET"
+fi
+
+# Special handling for email service
+# if [ "$service" == "email" ] && [ -f "./email/.env" ]; then
+#     echo -e "\n${YELLOW}Setting up Email service configurations...${NC}"
+    
+#     # Create keys directory if it doesn't exist
+#     mkdir -p ./email/keys
+    
+#     # Generate self-signed certificate if not present
+#     if [ ! -f "./email/keys/cert.pem" ] || [ ! -f "./email/keys/key.pem" ]; then
+#         echo -e "${YELLOW}Generating self-signed certificate for email service...${NC}"
+#         openssl req -x509 -newkey rsa:4096 -keyout ./email/keys/key.pem -out ./email/keys/cert.pem -days 365 -nodes -subj "/CN=plane.email"
+#         echo -e "${GREEN}✓${NC} Generated self-signed certificate"
+#     fi
+    
+#     # Update email service configuration
+#     sed -i.bak "s|TLS_CERT_PATH=keys/cert.pem|TLS_CERT_PATH=./keys/cert.pem|" ./email/.env
+#     sed -i.bak "s|TLS_PRIV_KEY_PATH=keys/key.pem|TLS_PRIV_KEY_PATH=./keys/key.pem|" ./email/.env
+    
+#     echo -e "${GREEN}✓${NC} Updated Email service configuration"
+# fi
+
+# Special handling for monitor service
+# if [ "$service" == "monitor" ] && [ -f "./monitor/.env" ]; then
+#     echo -e "\n${YELLOW}Setting up Monitor service configurations...${NC}"
+#     echo -e "${GREEN}✓${NC} Monitor service environment file created"
+#     echo -e "${YELLOW}Note: Configure monitoring endpoints and thresholds in monitor/.env${NC}"
+# fi
 
 # Summary
 echo -e "\n${YELLOW}Setup status:${NC}"

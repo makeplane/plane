@@ -1,5 +1,7 @@
 # Python imports
 from functools import wraps
+import json
+import hashlib
 
 # Django imports
 from django.conf import settings
@@ -94,5 +96,43 @@ def invalidate_cache(path=None, url_params=False, user=True, multiple=False):
             return view_func(instance, request, *args, **kwargs)
 
         return _wrapped_view
+
+    return decorator
+
+
+def cache_function_result(timeout=300, key_prefix="cached_func"):
+    """
+    Caches the result of a function in Django's cache backend.
+
+    :param timeout: Time in seconds to cache the result (default 5 minutes).
+    :param key_prefix: Optional prefix to namespace the cache keys.
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                # Build a consistent, hashable cache key from arguments
+                key_data = json.dumps(
+                    {"args": args, "kwargs": kwargs}, sort_keys=True, default=str
+                )
+            except TypeError:
+                raise ValueError("Arguments must be serializable to JSON")
+
+            key_hash = hashlib.md5(key_data.encode()).hexdigest()
+            cache_key = f"{key_prefix}:{func.__name__}:{key_hash}"
+            # Check cache
+            cached_value = cache.get(cache_key)
+
+            # return cached value
+            if cached_value is not None:
+                return cached_value
+            
+            # Compute, cache and return
+            result = func(*args, **kwargs)
+            cache.set(cache_key, result, timeout=timeout)
+            return result
+
+        return wrapper
 
     return decorator

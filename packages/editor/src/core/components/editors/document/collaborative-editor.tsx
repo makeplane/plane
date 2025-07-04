@@ -1,19 +1,21 @@
+// tiptap
 import { Extensions } from "@tiptap/core";
-import React from "react";
-// plane imports
-import { cn } from "@plane/utils";
+import { useEditorState } from "@tiptap/react";
+import React, { useEffect, useMemo } from "react";
 // components
-import { DocumentContentLoader, PageRenderer } from "@/components/editors";
+import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
 import { WorkItemEmbedExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
+import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
+import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
@@ -31,6 +33,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     handleEditorReady,
     id,
     mentionHandler,
+    pageRestorationInProgress,
     onAssetChange,
     onChange,
     onTransaction,
@@ -38,41 +41,50 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     realtimeConfig,
     serverHandler,
     tabIndex,
+    titleRef,
     user,
+    updatePageProperties,
+    isSmoothCursorEnabled = false,
   } = props;
 
-  const extensions: Extensions = [];
-
-  if (embedHandler?.issue) {
-    extensions.push(
-      WorkItemEmbedExtension({
-        widgetCallback: embedHandler.issue.widgetCallback,
-      })
-    );
-  }
+  const extensions: Extensions = useMemo(() => {
+    const ext: Extensions = [];
+    if (embedHandler?.issue) {
+      ext.push(
+        WorkItemEmbedExtension({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        })
+      );
+    }
+    return ext;
+  }, [embedHandler]);
 
   // use document editor
-  const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
-    disabledExtensions,
-    editable,
-    editorClassName,
-    embedHandler,
-    extensions,
-    fileHandler,
-    flaggedExtensions,
-    forwardedRef,
-    handleEditorReady,
-    id,
-    mentionHandler,
-    onAssetChange,
-    onChange,
-    onTransaction,
-    placeholder,
-    realtimeConfig,
-    serverHandler,
-    tabIndex,
-    user,
-  });
+  const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
+    useCollaborativeEditor({
+      disabledExtensions,
+      editable,
+      editorClassName,
+      embedHandler,
+      extensions,
+      fileHandler,
+      flaggedExtensions,
+      forwardedRef,
+      handleEditorReady,
+      id,
+      isSmoothCursorEnabled,
+      mentionHandler,
+      onAssetChange,
+      onChange,
+      onTransaction,
+      placeholder,
+      realtimeConfig,
+      serverHandler,
+      tabIndex,
+      titleRef,
+      updatePageProperties,
+      user,
+    });
 
   const editorContainerClassNames = getEditorClassNames({
     noBorder: true,
@@ -80,24 +92,29 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     containerClassName,
   });
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
 
-  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
-    "max-w-[1152px]": displayConfig.wideLayout,
-  });
-
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader className={blockWidthClassName} />;
+  if (!isIndexedDbSynced) {
+    return null;
+  }
 
   return (
-    <PageRenderer
-      aiHandler={aiHandler}
-      bubbleMenuEnabled={bubbleMenuEnabled}
-      displayConfig={displayConfig}
-      editor={editor}
-      editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-      id={id}
-      tabIndex={tabIndex}
-    />
+    <>
+      <RealtimeEventsHandler editor={editor} id={id} updatePageProperties={updatePageProperties} />
+      <PageRenderer
+        aiHandler={aiHandler}
+        bubbleMenuEnabled={bubbleMenuEnabled}
+        displayConfig={displayConfig}
+        editor={editor}
+        titleEditor={titleEditor}
+        editorContainerClassName={editorContainerClassNames}
+        id={id}
+        isLoading={
+          (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
+        }
+        tabIndex={tabIndex}
+      />
+    </>
   );
 };
 
@@ -110,3 +127,27 @@ const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, IColla
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 
 export { CollaborativeDocumentEditorWithRef };
+
+const RealtimeEventsHandler = ({ editor, id, updatePageProperties }) => {
+  const { users } = useEditorState({
+    editor,
+    selector: (ctx) => ({
+      users: getExtensionStorage(ctx.editor, ADDITIONAL_EXTENSIONS.COLLABORATION_CURSOR)?.users || [],
+    }),
+  });
+
+  // Update page properties when collaborators change
+  useEffect(() => {
+    if (!users || !updatePageProperties) return;
+
+    const currentUsers = users;
+
+    const collaboratorPayload: EventToPayloadMap["collaborators-updated"] = {
+      users: currentUsers,
+    };
+
+    updatePageProperties(id, "collaborators-updated", collaboratorPayload, false);
+  }, [users, updatePageProperties, id, editor]);
+
+  return null;
+};
