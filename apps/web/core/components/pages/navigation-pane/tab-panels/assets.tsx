@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
@@ -29,37 +30,37 @@ const AssetItem = observer((props: AssetItemProps) => {
   // translation
   const { t } = useTranslation();
 
-  const getAssetSrc = (path: string) => {
-    if (!path || !workspaceSlug) return "";
-    if (path.startsWith("http")) {
-      return path;
+  const assetSrc: string = useMemo(() => {
+    if (!asset.src || !workspaceSlug) return "";
+    if (asset.src.startsWith("http")) {
+      return asset.src;
     } else {
       return (
         getEditorAssetSrc({
-          assetId: path,
+          assetId: asset.src,
           projectId: project_ids?.[0],
           workspaceSlug: workspaceSlug.toString(),
         }) ?? ""
       );
     }
-  };
+  }, [asset.src, project_ids, workspaceSlug]);
 
-  const getAssetDownloadSrc = (path: string) => {
-    if (!path || !workspaceSlug) return "";
-    if (path.startsWith("http")) {
-      return path;
+  const assetDownloadSrc: string = useMemo(() => {
+    if (!asset.src || !workspaceSlug) return "";
+    if (asset.src.startsWith("http")) {
+      return asset.src;
     } else {
       return (
         getEditorAssetDownloadSrc({
-          assetId: path,
+          assetId: asset.src,
           projectId: project_ids?.[0],
           workspaceSlug: workspaceSlug.toString(),
         }) ?? ""
       );
     }
-  };
+  }, [asset.src, project_ids, workspaceSlug]);
 
-  if ([CORE_EXTENSIONS.IMAGE, CORE_EXTENSIONS.CUSTOM_IMAGE].includes(asset.type))
+  if ([CORE_EXTENSIONS.IMAGE, CORE_EXTENSIONS.CUSTOM_IMAGE].includes(asset.type as CORE_EXTENSIONS))
     return (
       <a
         href={asset.href}
@@ -68,7 +69,7 @@ const AssetItem = observer((props: AssetItemProps) => {
         <div
           className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
           style={{
-            backgroundImage: `url('${getAssetSrc(asset.src)}')`,
+            backgroundImage: `url('${assetSrc}')`,
           }}
         />
         <div className="flex-1 space-y-0.5 truncate">
@@ -76,7 +77,7 @@ const AssetItem = observer((props: AssetItemProps) => {
           <div className="flex items-end justify-between gap-2">
             <p className="shrink-0 text-xs text-custom-text-200" />
             <a
-              href={getAssetDownloadSrc(asset.src)}
+              href={assetDownloadSrc}
               target="_blank"
               rel="noreferrer noopener"
               className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-custom-text-200 hover:text-custom-text-100 opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
@@ -89,7 +90,14 @@ const AssetItem = observer((props: AssetItemProps) => {
       </a>
     );
 
-  return <AdditionalPageNavigationPaneAssetItem asset={asset} page={page} />;
+  return (
+    <AdditionalPageNavigationPaneAssetItem
+      asset={asset}
+      assetSrc={assetSrc}
+      assetDownloadSrc={assetDownloadSrc}
+      page={page}
+    />
+  );
 });
 
 export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props) => {
@@ -103,7 +111,9 @@ export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props
 
   return (
     <div className="mt-5 space-y-4">
-      {assetsList?.map((asset) => <AssetItem key={asset.id} asset={asset} page={page} />)}
+      {assetsList?.map((asset) => (
+        <AssetItem key={asset.id} asset={asset} page={page} />
+      ))}
     </div>
   );
 });
