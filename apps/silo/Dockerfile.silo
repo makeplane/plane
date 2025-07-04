@@ -28,7 +28,7 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 RUN yarn turbo build --filter=silo
 
@@ -40,6 +40,8 @@ COPY --from=installer /app/apps/silo/dist ./silo
 COPY --from=installer /app/apps/silo/package.json ./silo/package.json
 COPY --from=installer /app/node_modules ./node_modules
 
-ENV TURBO_TELEMETRY_DISABLED 1
+ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
+
+CMD ["node", "silo/start.cjs"]
