@@ -118,4 +118,7 @@ export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
   lowlight,
   defaultLanguage: "plaintext",
   exitOnTripleEnter: false,
+  HTMLAttributes: {
+    class: "",
+  },
 });
