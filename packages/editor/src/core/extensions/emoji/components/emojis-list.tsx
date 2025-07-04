@@ -1,7 +1,7 @@
-import { Editor, posToDOMRect } from "@tiptap/react";
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { computePosition, flip, shift } from "@floating-ui/dom";
+import { Editor, posToDOMRect } from "@tiptap/react";
 import { SuggestionKeyDownProps } from "@tiptap/suggestion";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -23,7 +23,7 @@ export interface EmojiListRef {
   onKeyDown: (props: SuggestionKeyDownProps) => boolean;
 }
 
-const updatePosition = (editor: any, element: HTMLElement) => {
+const updatePosition = (editor: Editor, element: HTMLElement) => {
   const virtualElement = {
     getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
   };

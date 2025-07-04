@@ -57,7 +57,8 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
         });
 
         // Append to editor container
-        const targetElement = (props.editor.options.element || document.body) as HTMLElement;
+        const targetElement =
+          (props.editor.options.element as HTMLElement) || props.editor.view.dom.parentElement || document.body;
         targetElement.appendChild(component.element);
       },
 
