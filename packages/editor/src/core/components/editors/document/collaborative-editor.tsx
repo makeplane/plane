@@ -2,6 +2,8 @@
 import { Extensions } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import React, { useEffect, useMemo } from "react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -107,7 +109,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         displayConfig={displayConfig}
         editor={editor}
         titleEditor={titleEditor}
-        editorContainerClassName={editorContainerClassNames}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
         id={id}
         isLoading={
           (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
