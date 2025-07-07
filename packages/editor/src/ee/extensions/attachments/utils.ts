@@ -19,3 +19,5 @@ export const getAttachmentExtensionFileMap = (editor: Editor) =>
 
 export const getAttachmentExtensionErrorMap = (editor: Editor) =>
   getExtensionStorage(editor, ADDITIONAL_EXTENSIONS.ATTACHMENT)?.errorMap;
+
+export const getAttachmentBlockId = (id: string) => `editor-attachment-block-${id}`;

@@ -1,6 +1,6 @@
 import { Node } from "@tiptap/core";
 // extensions
-import { InsertImageComponentProps, UploadEntity } from "@/extensions/custom-image/custom-image";
+import { InsertImageComponentProps, UploadEntity } from "@/extensions/custom-image/types";
 // helpers
 import { EFileError } from "@/helpers/file";
 // types

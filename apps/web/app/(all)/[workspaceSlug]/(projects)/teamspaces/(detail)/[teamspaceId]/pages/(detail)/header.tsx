@@ -102,7 +102,7 @@ export const TeamspacePageDetailHeader: React.FC = observer(() => {
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/pages/${value}`);
                   }}
-                  title={page?.name}
+                  title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
                       <FileText className="size-4 flex-shrink-0 text-custom-text-300" />
