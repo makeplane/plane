@@ -191,10 +191,6 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
       return ["span", attributes, `:${node.attrs.name}:`];
     }
 
-    // const isSupported = this.storage.isSupported(emojiItem);
-    // const hasEmoji = !!emojiItem?.emoji;
-    // const hasFallbackImage = !!emojiItem?.fallbackImage;
-
     const renderFallbackImage = false;
 
     return [
