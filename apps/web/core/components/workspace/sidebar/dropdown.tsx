@@ -14,8 +14,8 @@ export const SidebarDropdown = observer(() => {
 
   return (
     <div className="flex items-center justify-center gap-1.5 w-full">
-      {isAppRailEnabled && !shouldRenderAppRail && <WorkspaceAppSwitcher />}
       <WorkspaceMenuRoot />
+      {isAppRailEnabled && !shouldRenderAppRail && <WorkspaceAppSwitcher />}
       <UserMenuRoot />
     </div>
   );
