@@ -20,8 +20,8 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
       const renderFallbackImage =
         (emoji.forceFallbackImages && !hasEmoji) ||
         (emoji.forceFallbackImages && hasFallbackImage) ||
-        (emoji.forceFallbackImages && !isSupported && hasFallbackImage) ||
-        ((!isSupported || !hasEmoji) && hasFallbackImage);
+        (emoji.forceFallbackImages && !isSupported(emoji) && hasFallbackImage) ||
+        ((!isSupported(emoji) || !hasEmoji) && hasFallbackImage);
       return !renderFallbackImage;
     });
 
