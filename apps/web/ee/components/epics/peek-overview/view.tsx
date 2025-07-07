@@ -49,6 +49,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [deleteEpicModal, setDeleteEpicModal] = useState(false);
   const [editEpicModal, setEditEpicModal] = useState(false);
+  const [duplicateEpicModal, setDuplicateEpicModal] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
@@ -85,7 +86,8 @@ export const EpicView: FC<IEpicView> = observer((props) => {
           !editEpicModal &&
           !deleteModalId &&
           !isAnyCustomerModalOpen &&
-          !isInitiativeModalOpen
+          !isInitiativeModalOpen &&
+          !duplicateEpicModal
         ) {
           removeRoutePeekId();
         }
@@ -126,7 +128,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
 
   const toggleEditEpicModal = (value: boolean) => setEditEpicModal(value);
   const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
-
+  const toggleDuplicateEpicModal = (value: boolean) => setDuplicateEpicModal(value);
   return (
     <>
       {issueId && (
@@ -154,6 +156,7 @@ export const EpicView: FC<IEpicView> = observer((props) => {
                 removeRoutePeekId={removeRoutePeekId}
                 toggleEditEpicModal={toggleEditEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
+                toggleDuplicateEpicModal={toggleDuplicateEpicModal}
                 handleRestoreIssue={handleRestore}
                 isArchived={is_archived}
                 issueId={issueId}

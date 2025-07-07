@@ -26,6 +26,7 @@ import { useEpicMenuItems } from "./helper";
 type TProjectEpicQuickActionProps = IQuickActionProps & {
   toggleEditEpicModal?: (value: boolean) => void;
   toggleDeleteEpicModal?: (value: boolean) => void;
+  toggleDuplicateEpicModal?: (value: boolean) => void;
   isPeekMode?: boolean;
 };
 
@@ -38,6 +39,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     parentRef,
     toggleEditEpicModal,
     toggleDeleteEpicModal,
+    toggleDuplicateEpicModal,
     isPeekMode = false,
     portalElement,
   } = props;
@@ -82,7 +84,6 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   );
 
   const customEditAction = () => {
-    setIssueToEdit(issue);
     setCreateUpdateIssueModal(true);
     if (toggleEditEpicModal) toggleEditEpicModal(true);
   };
@@ -90,6 +91,11 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   const customDeleteAction = async () => {
     setDeleteIssueModal(true);
     if (toggleDeleteEpicModal) toggleDeleteEpicModal(true);
+  };
+
+  const customDuplicateAction = () => {
+    setDuplicateWorkItemModal(true);
+    if (toggleDuplicateEpicModal) toggleDuplicateEpicModal(true);
   };
 
   // Menu items using helper
@@ -101,9 +107,9 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     isEditingAllowed,
     isDeletingAllowed,
     setIssueToEdit,
-    setCreateUpdateIssueModal,
+    setCreateUpdateIssueModal : customEditAction,
     setDeleteIssueModal,
-    setDuplicateWorkItemModal,
+    setDuplicateWorkItemModal: customDuplicateAction,
     handleDelete: customDeleteAction,
     handleUpdate,
     storeType: EIssuesStoreType.PROJECT,
@@ -118,7 +124,6 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
       if (item.key === "edit") {
         return {
           ...item,
-          action: customEditAction,
           shouldRender: isEditingAllowed && !isPeekMode,
         };
       }
@@ -126,7 +131,6 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
       if (item.key === "delete") {
         return {
           ...item,
-          action: customDeleteAction,
         };
       }
       // Hide copy link in peek mode

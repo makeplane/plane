@@ -61,6 +61,7 @@ export type PeekOverviewHeaderProps = {
   embedIssue: boolean;
   toggleEditEpicModal: (value: boolean) => void;
   toggleDeleteEpicModal: (value: boolean) => void;
+  toggleDuplicateEpicModal: (value: boolean) => void;
   handleRestoreIssue: () => void;
   isSubmitting: "submitting" | "submitted" | "saved";
 };
@@ -75,6 +76,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
     isArchived,
     toggleEditEpicModal,
     toggleDeleteEpicModal,
+    toggleDuplicateEpicModal,
     disabled,
     embedIssue = false,
     removeRoutePeekId,
@@ -219,6 +221,7 @@ export const EpicPeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pro
                 readOnly={!isEditingAllowed}
                 toggleEditEpicModal={toggleEditEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
+                toggleDuplicateEpicModal={toggleDuplicateEpicModal}
                 isPeekMode
               />
               <Sidebar
