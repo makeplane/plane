@@ -8,8 +8,8 @@ def contains_url(value: str) -> bool:
     """
     Check if the value contains a URL.
     """
-    url_pattern = re.compile(r"https?://|www\\.")
-    return bool(url_pattern.search(value))
+    url_pattern = r"(?i)(https?://|www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,}|(?:[0-9]{1,3}\.){3}[0-9]{1,3})"
+    return bool(re.search(url_pattern, value))
 
 
 def is_valid_url(url: str) -> bool:
