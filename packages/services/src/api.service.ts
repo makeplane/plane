@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
-import { IndexedDBService } from "./indexedDB.service";
 
 /**
  * Abstract base class for making HTTP requests using axios
@@ -20,38 +18,6 @@ export abstract class APIService {
       baseURL,
       withCredentials: true,
     });
-
-    this.setupInterceptors();
-  }
-
-  /**
-   * Sets up axios interceptors for handling responses
-   * Currently handles 401 unauthorized responses by redirecting to login
-   * @private
-   */
-  private setupInterceptors() {
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        if (error.response && error.response.status === 401) {
-          const currentPath = window.location.pathname;
-          let prefix = "/";
-          let updatedPath = currentPath;
-
-          // Check for special path prefixes
-          if (currentPath.startsWith("/god-mode")) {
-            prefix = "/god-mode";
-            updatedPath = currentPath.replace("/god-mode", "");
-          } else if (currentPath.startsWith("/spaces")) {
-            prefix = "/spaces";
-            updatedPath = currentPath.replace("/spaces", "");
-          }
-
-          window.location.replace(`${prefix}${updatedPath ? `?next_path=${updatedPath}` : ""}`);
-        }
-        return Promise.reject(error);
-      }
-    );
   }
 
   /**

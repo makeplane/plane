@@ -1345,6 +1345,17 @@
       "project_insights": {
         "title": "Zatiaľ žiadne údaje",
         "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
+      },
+      "general": {
+        "title": "Sledujte pokrok, pracovné zaťaženie a alokácie. Identifikujte trendy, odstráňte prekážky a urýchlite prácu",
+        "description": "Porovnávajte rozsah s dopytom, odhady a rozširovanie rozsahu. Získajte výkonnosť podľa členov tímu a tímov, a uistite sa, že váš projekt beží načas.",
+        "primary_button": {
+          "text": "Začnite svoj prvý projekt",
+          "comic": {
+            "title": "Analytika funguje najlepšie s Cyklami + Modulmi",
+            "description": "Najprv časovo ohraničte svoje problémy do Cyklov a, ak môžete, zoskupte problémy, ktoré trvajú viac ako jeden cyklus, do Modulov. Pozrite si oboje v ľavej navigácii."
+          }
+        }
       }
     },
     "created_vs_resolved": "Vytvorené vs Vyriešené",

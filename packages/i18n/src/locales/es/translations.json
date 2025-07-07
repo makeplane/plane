@@ -1346,6 +1346,17 @@
       "project_insights": {
         "title": "Aún no hay datos",
         "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
+      },
+      "general": {
+        "title": "Rastrea el progreso, las cargas de trabajo y las asignaciones. Identifica tendencias, elimina bloqueos y trabaja más rápido",
+        "description": "Ve alcance versus demanda, estimaciones y crecimiento del alcance. Obtén rendimiento por miembros del equipo y equipos, y asegúrate de que tu proyecto se ejecute a tiempo.",
+        "primary_button": {
+          "text": "Inicia tu primer proyecto",
+          "comic": {
+            "title": "Analytics funciona mejor con Ciclos + Módulos",
+            "description": "Primero, encuadra tus elementos de trabajo en Ciclos y, si puedes, agrupa elementos que abarcan más de un ciclo en Módulos. Revisa ambos en la navegación izquierda."
+          }
+        }
       }
     },
     "created_vs_resolved": "Creado vs Resuelto",

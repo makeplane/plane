@@ -1345,6 +1345,17 @@
       "project_insights": {
         "title": "Ainda não há dados",
         "description": "Os itens de trabalho atribuídos a você, divididos por estado, aparecerão aqui."
+      },
+      "general": {
+        "title": "Acompanhe progresso, cargas de trabalho e alocações. Identifique tendências, remova bloqueios e trabalhe mais rápido",
+        "description": "Veja escopo versus demanda, estimativas e expansão de escopo. Obtenha desempenho por membros da equipe e equipes, garantindo que seu projeto seja executado no prazo.",
+        "primary_button": {
+          "text": "Comece seu primeiro projeto",
+          "comic": {
+            "title": "Analytics funciona melhor com Ciclos + Módulos",
+            "description": "Primeiro, defina um tempo limite para seus itens de trabalho em Ciclos e, se possível, agrupe itens que abrangem mais de um ciclo em Módulos. Confira ambos na navegação esquerda."
+          }
+        }
       }
     },
     "created_vs_resolved": "Criado vs Resolvido",
