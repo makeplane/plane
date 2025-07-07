@@ -26,7 +26,7 @@ export class UserService extends APIService {
     return this.get("/api/users/me/")
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response;
+        throw error;
       });
   }
 
