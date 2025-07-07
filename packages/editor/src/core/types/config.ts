@@ -3,6 +3,7 @@ import { TWebhookConnectionQueryParams } from "@plane/types";
 
 export type TReadOnlyFileHandler = {
   checkIfAssetExists: (assetId: string) => Promise<boolean>;
+  getAssetDownloadSrc: (path: string) => Promise<string>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
 };
