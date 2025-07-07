@@ -160,9 +160,7 @@ class WorkspacePageViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            current_instance = json.dumps(
-                WorkspacePageDetailSerializer(page).data, cls=DjangoJSONEncoder
-            )
+            current_instance = WorkspacePageDetailSerializer(page).data
             serializer = WorkspacePageDetailSerializer(
                 page, data=request.data, partial=True
             )
