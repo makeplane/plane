@@ -80,7 +80,7 @@ export const PageDetailsHeader = observer(() => {
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);
                   }}
-                  title={page?.name}
+                  title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
                       <SwitcherIcon logo_props={page.logo_props} LabelIcon={FileText} size={16} />

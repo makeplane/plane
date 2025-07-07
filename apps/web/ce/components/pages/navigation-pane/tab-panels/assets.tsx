@@ -5,6 +5,8 @@ import { TPageInstance } from "@/store/pages/base-page";
 
 export type TAdditionalPageNavigationPaneAssetItemProps = {
   asset: TEditorAsset;
+  assetSrc: string;
+  assetDownloadSrc: string;
   page: TPageInstance;
 };
 
