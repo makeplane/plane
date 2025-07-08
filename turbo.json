@@ -25,8 +25,14 @@
       "outputs": [".next/**", "dist/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "develop": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": false
     },
     "check:types": {
       "dependsOn": ["^build"],
