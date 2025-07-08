@@ -1,1 +1,1 @@
-export * from "../../ce/lib/fetch-document.js"
+export * from "../../ce/lib/fetch-document.js";

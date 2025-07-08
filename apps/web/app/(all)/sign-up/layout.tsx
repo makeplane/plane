@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: false,
-  }
+  },
 };
 
 export default function SignUpLayout({ children }: { children: React.ReactNode }) {

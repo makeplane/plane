@@ -76,8 +76,8 @@ export const KanbanGroup = observer((props: IKanbanGroup) => {
   const isSubGroup = !!subGroupId && subGroupId !== "null";
 
   const issueIds = isSubGroup
-    ? (groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId] ?? []
-    : (groupedIssueIds as TGroupedIssues)?.[groupId] ?? [];
+    ? ((groupedIssueIds as TSubGroupedIssues)?.[groupId]?.[subGroupId] ?? [])
+    : ((groupedIssueIds as TGroupedIssues)?.[groupId] ?? []);
 
   const groupIssueCount = getGroupIssueCount(groupId, subGroupId, false) ?? 0;
   const nextPageResults = getPaginationData(groupId, subGroupId)?.nextPageResults;

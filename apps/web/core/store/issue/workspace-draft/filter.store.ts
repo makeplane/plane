@@ -1,5 +1,4 @@
-import
-isEmpty from "lodash/isEmpty";
+import isEmpty from "lodash/isEmpty";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // base class

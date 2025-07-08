@@ -137,7 +137,12 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
             />
           </span>
         ) : (
-          <div className={cn("h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80", buttonClassName)}>
+          <div
+            className={cn(
+              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
+              buttonClassName
+            )}
+          >
             <Tag className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>
