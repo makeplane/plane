@@ -92,10 +92,9 @@ export const handleMessageEvent = async (data: SlackEventPayload) => {
     const richTextElements = extractRichTextElements(data.event.text, data.event.blocks);
     const richText = richTextBlockToMrkdwn({
       type: "rich_text",
-      elements: richTextElements
-    })
-    const parsedDescription = await parser.toPlaneHtml(richText);
-
+      elements: richTextElements,
+    });
+    const parsedDescription = await parser.toPlaneHtml(richText ?? "<p></p>");
     await planeClient.issueComment.create(
       workspaceConnection.workspace_slug,
       eConnection.project_id ?? "",
