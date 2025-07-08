@@ -117,6 +117,44 @@ jobs:
         name: Checkout Files
         uses: actions/checkout@v4
 
+      - name: Get changed files
+        id: changed_files
+        uses: tj-actions/changed-files@v42
+        with:
+          files_yaml: |
+            apiserver:
+              - apiserver/**
+            proxy:
+              - caddy/**
+            admin:
+              - admin/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+            space:
+              - space/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+            web:
+              - web/**
+              - packages/**
+              - "package.json"
+              - "yarn.lock"
+              - "tsconfig.json"
+              - "turbo.json"
+            live:
+              - live/**
+              - packages/**
+              - 'package.json'
+              - 'yarn.lock'
+              - 'tsconfig.json'
+              - 'turbo.json'
+
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
     runs-on: ubuntu-22.04
@@ -242,8 +280,8 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
-          build-context: ./nginx
-          dockerfile-path: ./nginx/Dockerfile
+          build-context: ./caddy
+          dockerfile-path: ./caddy/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
