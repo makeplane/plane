@@ -93,7 +93,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(project) => !!projectsWithCreatePermissions?.[project.id]}
+                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>

@@ -2,7 +2,6 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
@@ -16,14 +15,14 @@ import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks
-import { useLabel } from "@/hooks/store";
+
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 // types
 type Props = {
-  isOpen: boolean;
-  projectId: string;
+  createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
   handleClose: () => void;
+  isOpen: boolean;
   onSuccess?: (response: IIssueLabel) => void;
 };
 
@@ -33,11 +32,8 @@ const defaultValues: Partial<IState> = {
 };
 
 export const CreateLabelModal: React.FC<Props> = observer((props) => {
-  const { isOpen, projectId, handleClose, onSuccess } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { createLabel, handleClose, isOpen, onSuccess } = props;
   // store hooks
-  const { createLabel } = useLabel();
   const { isMobile } = usePlatformOS();
   // form info
   const {
@@ -71,9 +67,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
   };
 
   const onSubmit = async (formData: IIssueLabel) => {
-    if (!workspaceSlug) return;
-
-    await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+    await createLabel(formData)
       .then((res) => {
         onClose();
         if (onSuccess) onSuccess(res);

@@ -1,77 +1,76 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-// components
+// plane imports
+import { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
+// components
 import { IssueLabelsList } from "@/components/ui";
-// helpers
 // hooks
-import { useLabel } from "@/hooks/store";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
-type Props = {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  value: string[];
-  onChange: (value: string[]) => void;
-  projectId: string | undefined;
-  label?: JSX.Element;
-  disabled?: boolean;
-  tabIndex?: number;
-  createLabelEnabled?: boolean;
-  buttonContainerClassName?: string;
+export type TWorkItemLabelSelectBaseProps = {
   buttonClassName?: string;
+  buttonContainerClassName?: string;
+  createLabelEnabled?: boolean;
+  disabled?: boolean;
+  getLabelById: (labelId: string) => IIssueLabel | null;
+  label?: JSX.Element;
+  labelIds: string[];
+  onChange: (value: string[]) => void;
+  onDropdownOpen?: () => void;
   placement?: Placement;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  tabIndex?: number;
+  value: string[];
 };
 
-export const IssueLabelSelect: React.FC<Props> = observer((props) => {
+export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = observer((props) => {
   const {
-    setIsOpen,
-    value,
-    onChange,
-    projectId,
-    label,
-    disabled = false,
-    tabIndex,
-    createLabelEnabled = false,
-    buttonContainerClassName,
     buttonClassName,
+    buttonContainerClassName,
+    createLabelEnabled = false,
+    disabled = false,
+    getLabelById,
+    label,
+    labelIds,
+    onChange,
+    onDropdownOpen,
     placement,
+    setIsOpen,
+    tabIndex,
+    value,
   } = props;
-  const { t } = useTranslation();
-  // router
-  const { workspaceSlug } = useParams();
-  // store hooks
-  const { getProjectLabels, fetchProjectLabels } = useLabel();
-  const { isMobile } = usePlatformOS();
+  // refs
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // refs
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  // popper
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { isMobile } = usePlatformOS();
+  // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
   });
-
-  const projectLabels = getProjectLabels(projectId);
-
   // derived values
+  const labelsList = labelIds.map((labelId) => getLabelById(labelId)).filter((label) => !!label);
   const filteredOptions =
-    query === "" ? projectLabels : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? labelsList : labelsList?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   const onOpen = () => {
-    if (!projectLabels && workspaceSlug && projectId) fetchProjectLabels(workspaceSlug.toString(), projectId);
     if (referenceElement) referenceElement.focus();
+    onDropdownOpen?.();
   };
 
   const handleClose = () => {
@@ -131,13 +130,18 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
         ) : value && value.length > 0 ? (
           <span className={cn("flex items-center justify-center gap-2 text-xs h-full", buttonClassName)}>
             <IssueLabelsList
-              labels={value.map((v) => projectLabels?.find((l) => l.id === v)) ?? []}
+              labels={value.map((v) => labelsList?.find((l) => l.id === v)) ?? []}
               length={3}
               showLength
             />
           </span>
         ) : (
-          <div className={cn("h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80", buttonClassName)}>
+          <div
+            className={cn(
+              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
+              buttonClassName
+            )}
+          >
             <Tag className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>
@@ -164,10 +168,10 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
               />
             </div>
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
-              {projectLabels && filteredOptions ? (
+              {labelsList && filteredOptions ? (
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((label) => {
-                    const children = projectLabels?.filter((l) => l.parent === label.id);
+                    const children = labelsList?.filter((l) => l.parent === label.id);
 
                     if (children.length === 0) {
                       if (!label.parent)

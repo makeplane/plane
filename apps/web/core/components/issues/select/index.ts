@@ -1,1 +1,1 @@
-export * from "./label";
+export * from "./dropdown";

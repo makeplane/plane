@@ -3,33 +3,31 @@ import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { ComboDropDown } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common";
-// helpers
-// hooks
-import { useProject } from "@/hooks/store";
-import { useDropdown } from "@/hooks/use-dropdown";
-// plane web types
-import { TProject } from "@/plane-web/types";
 // components
-import { DropdownButton } from "./buttons";
-// constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-// types
-import { TDropdownProps } from "./types";
+import { Logo } from "@/components/common";
+// hooks
+import { useDropdown } from "@/hooks/use-dropdown";
+// plane web imports
+import { TProject } from "@/plane-web/types";
+// local imports
+import { DropdownButton } from "../buttons";
+import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
+import { TDropdownProps } from "../types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
+  currentProjectId?: string;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
+  getProjectById: (projectId: string | null | undefined) => Partial<TProject> | undefined;
   onClose?: () => void;
-  renderCondition?: (project: TProject) => boolean;
+  projectIds: string[];
   renderByDefault?: boolean;
-  currentProjectId?: string;
+  renderCondition?: (projectId: string) => boolean;
 } & (
     | {
         multiple: false;
@@ -43,38 +41,42 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdown: React.FC<Props> = observer((props) => {
+export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
   const {
     button,
     buttonClassName,
     buttonContainerClassName,
     buttonVariant,
     className = "",
+    currentProjectId,
     disabled = false,
     dropdownArrow = false,
     dropdownArrowClassName = "",
+    getProjectById,
     hideIcon = false,
     multiple,
     onChange,
     onClose,
     placeholder = "Project",
     placement,
+    projectIds,
+    renderByDefault = true,
     renderCondition,
     showTooltip = false,
     tabIndex,
     value,
-    renderByDefault = true,
-    currentProjectId,
   } = props;
-  // states
-  const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // states
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  // plane hooks
+  const { t } = useTranslation();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -88,17 +90,15 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
     ],
   });
   // store hooks
-  const { joinedProjectIds, getProjectById } = useProject();
-  const { t } = useTranslation();
-  const options = joinedProjectIds?.map((projectId) => {
+  const options = projectIds?.map((projectId) => {
     const projectDetails = getProjectById(projectId);
-    if (renderCondition && projectDetails && !renderCondition(projectDetails)) return;
+    if (renderCondition && !renderCondition(projectId)) return;
     return {
       value: projectId,
       query: `${projectDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          {projectDetails && (
+          {projectDetails?.logo_props && (
             <span className="grid place-items-center flex-shrink-0 h-4 w-4">
               <Logo logo={projectDetails?.logo_props} size={12} />
             </span>
@@ -139,9 +139,9 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
   };
 
   const getProjectIcon = (value: string | string[] | null) => {
-    const renderIcon = (projectDetails: TProject) => (
+    const renderIcon = (logoProps: TProject["logo_props"]) => (
       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-        <Logo logo={projectDetails.logo_props} size={14} />
+        <Logo logo={logoProps} size={14} />
       </span>
     );
 
@@ -151,7 +151,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
           {value.length > 0 ? (
             value.map((projectId) => {
               const projectDetails = getProjectById(projectId);
-              return projectDetails ? renderIcon(projectDetails) : null;
+              return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
             <Briefcase className="size-3 text-custom-text-300" />
@@ -160,7 +160,7 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       );
     } else {
       const projectDetails = getProjectById(value);
-      return projectDetails ? renderIcon(projectDetails) : null;
+      return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
     }
   };
 

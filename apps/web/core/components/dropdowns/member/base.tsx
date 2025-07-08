@@ -1,33 +1,32 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, LucideIcon } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
+import { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
 import { useDropdown } from "@/hooks/use-dropdown";
-// components
+// local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
-// constants
 import { MemberOptions } from "./member-options";
-// types
 import { MemberDropdownProps } from "./types";
 
-type Props = {
-  projectId?: string;
+type TMemberDropdownBaseProps = {
+  getUserDetails: (userId: string) => IUserLite | undefined;
   icon?: LucideIcon;
-  onClose?: () => void;
-  renderByDefault?: boolean;
-  optionsClassName?: string;
   memberIds?: string[];
+  onClose?: () => void;
+  onDropdownOpen?: () => void;
+  optionsClassName?: string;
+  renderByDefault?: boolean;
 } & MemberDropdownProps;
 
-export const MemberDropdown: React.FC<Props> = observer((props) => {
+export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((props) => {
   const { t } = useTranslation();
   const {
     button,
@@ -38,39 +37,37 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     disabled = false,
     dropdownArrow = false,
     dropdownArrowClassName = "",
-    optionsClassName = "",
+    getUserDetails,
     hideIcon = false,
+    icon,
+    memberIds,
     multiple,
     onChange,
     onClose,
+    onDropdownOpen,
+    optionsClassName = "",
     placeholder = t("members"),
-    tooltipContent,
     placement,
-    projectId,
+    renderByDefault = true,
     showTooltip = false,
     showUserDetails = false,
     tabIndex,
+    tooltipContent,
     value,
-    icon,
-    renderByDefault = true,
-    memberIds,
   } = props;
-  // states
-  const [isOpen, setIsOpen] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  // states
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { getUserDetails } = useMember();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const comboboxProps: any = {
+  const comboboxProps = {
     value,
     onChange,
     disabled,
+    multiple,
   };
-  if (multiple) comboboxProps.multiple = true;
 
   const { handleClose, handleKeyDown, handleOnClick } = useDropdown({
     dropdownRef,
@@ -163,19 +160,20 @@ export const MemberDropdown: React.FC<Props> = observer((props) => {
     <ComboDropDown
       as="div"
       ref={dropdownRef}
+      {...comboboxProps}
       className={cn("h-full", className)}
       onChange={dropdownOnChange}
       onKeyDown={handleKeyDown}
       button={comboButton}
       renderByDefault={renderByDefault}
-      {...comboboxProps}
     >
       {isOpen && (
         <MemberOptions
-          memberIds={memberIds}
-          optionsClassName={optionsClassName}
+          getUserDetails={getUserDetails}
           isOpen={isOpen}
-          projectId={projectId}
+          memberIds={memberIds}
+          onDropdownOpen={onDropdownOpen}
+          optionsClassName={optionsClassName}
           placement={placement}
           referenceElement={referenceElement}
         />

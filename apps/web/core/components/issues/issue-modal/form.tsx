@@ -12,7 +12,14 @@ import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Button, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
-import { convertWorkItemDataToSearchResponse, getUpdateFormDataForReset, cn, getTextContent, getChangedIssuefields, getTabIndex } from "@plane/utils";
+import {
+  convertWorkItemDataToSearchResponse,
+  getUpdateFormDataForReset,
+  cn,
+  getTextContent,
+  getChangedIssuefields,
+  getTabIndex,
+} from "@plane/utils";
 // components
 import {
   IssueDefaultProperties,
@@ -25,7 +32,7 @@ import { CreateLabelModal } from "@/components/labels";
 // helpers
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useIssueDetail, useLabel, useProject, useProjectState, useWorkspaceDraftIssues } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web imports
@@ -117,6 +124,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = useIssueModal();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
+  const { createLabel } = useLabel();
 
   const {
     issue: { getIssueById },
@@ -355,9 +363,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     <FormProvider {...methods}>
       {projectId && (
         <CreateLabelModal
+          createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId)}
           isOpen={labelModal}
           handleClose={() => setLabelModal(false)}
-          projectId={projectId}
           onSuccess={(response) => {
             setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
             handleFormChange();
