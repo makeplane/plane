@@ -72,12 +72,14 @@ export const CloudEditionBadge = observer(() => {
 
   if (!subscriptionDetail || !currentSubscription) return null;
   return (
-    <>
+    <div className="flex items-center gap-2 truncate flex-grow">
       {showPaymentButton && (
         <SubscriptionButton
           className="min-w-24"
           subscriptionType={currentSubscription}
           handleClick={handlePaidPlanPurchaseModalOpen}
+          tooltipContent={renderButtonText()}
+          showTooltip
         >
           {renderButtonText()}
         </SubscriptionButton>
@@ -96,6 +98,6 @@ export const CloudEditionBadge = observer(() => {
           )}
         </SubscriptionButton>
       )}
-    </>
+    </div>
   );
 });

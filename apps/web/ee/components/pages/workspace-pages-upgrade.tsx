@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Button, getButtonStyling } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 
@@ -20,7 +20,7 @@ export const WorkspacePagesUpgrade: FC = observer(() => {
   return (
     <>
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
-      <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
+      <div className="relative flex h-screen w-full items-center justify-center overflow-hidden rounded-lg border border-custom-border-200">
         <div className="text-center px-4">
           <h3 className="text-2xl font-medium mb-4">Workspace Pages are on our Pro plan.</h3>
           <p className="text-lg">Unlock public pages, version history, shared pages, real-time collaboration,</p>

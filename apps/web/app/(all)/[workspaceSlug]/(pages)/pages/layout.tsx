@@ -17,7 +17,7 @@ import { PiChatFloatingBot } from "@/plane-web/components/pi-chat";
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 // local components
 import { FloatingActionsRoot } from "../../(projects)/floating-action-bar";
-import { PagesAppSidebar } from "./sidebar";
+import { PagesAppSidebar } from "./_sidebar";
 
 export default function WorkspacePagesLayout({ children }: { children: React.ReactNode }) {
   // router
@@ -36,7 +36,7 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
             allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}
           >
             <PagesAppCommandPalette />
-            <div className="relative flex h-full w-full overflow-hidden">
+            <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
               <PagesAppSidebar />
               <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
                 {children}

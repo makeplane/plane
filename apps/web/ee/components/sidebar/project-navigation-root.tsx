@@ -19,11 +19,10 @@ import { WithFeatureFlagHOC } from "../feature-flags";
 type TProjectItemsRootProps = {
   workspaceSlug: string;
   projectId: string;
-  isSidebarCollapsed: boolean;
 };
 
 export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props) => {
-  const { workspaceSlug, projectId, isSidebarCollapsed } = props;
+  const { workspaceSlug, projectId } = props;
   // store hooks
   const { getPartialProjectById } = useProject();
   const isProjectOverviewEnabled = useFlag(workspaceSlug, "PROJECT_OVERVIEW");
@@ -64,19 +63,12 @@ export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = observer((props
       <WithFeatureFlagHOC
         workspaceSlug={workspaceSlug?.toString()}
         flag="EPICS"
-        fallback={
-          <ProjectNavigation
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            isSidebarCollapsed={isSidebarCollapsed}
-          />
-        }
+        fallback={<ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />}
       >
         <ProjectNavigation
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           additionalNavigationItems={additionalNavigationItems}
-          isSidebarCollapsed={isSidebarCollapsed}
         />
       </WithFeatureFlagHOC>
     </>

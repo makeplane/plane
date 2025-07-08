@@ -7,7 +7,7 @@ import { AppSearch as BaseAppSearch } from "@/ce/components/workspace/sidebar/ap
 // helpers
 import { cn  } from "@plane/utils";
 // hooks
-import { useAppTheme, useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
@@ -15,8 +15,6 @@ export const AppSearch = observer(() => {
   // router
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
-  // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   // derived values
   const isOnSearchPage = pathname.includes(`${workspaceSlug}/search`);
   const { config } = useInstance();
@@ -27,9 +25,8 @@ export const AppSearch = observer(() => {
       <Link
         href={`/${workspaceSlug}/search`}
         className={cn(
-          "flex-shrink-0 size-8 aspect-square grid place-items-center rounded hover:bg-custom-sidebar-background-90 outline-none",
+          "flex-shrink-0 size-8 aspect-square grid place-items-center rounded hover:bg-custom-sidebar-background-90 outline-none border-[0.5px] border-custom-sidebar-border-300",
           {
-            "border-[0.5px] border-custom-sidebar-border-300": !sidebarCollapsed,
             "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 border-custom-primary-200": isOnSearchPage,
           }
         )}

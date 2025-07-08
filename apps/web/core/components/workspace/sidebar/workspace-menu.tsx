@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { BarChart2, Briefcase, Layers } from "lucide-react";
@@ -12,22 +12,15 @@ import { cn } from "@plane/utils";
 // components
 import { SidebarWorkspaceMenuHeader, SidebarWorkspaceMenuItem } from "@/components/workspace/sidebar";
 // hooks
-import { useAppTheme } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 export const SidebarWorkspaceMenu = observer(() => {
   // router params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   // local storage
   const { setValue: toggleWorkspaceMenu, storedValue } = useLocalStorage<boolean>("is_workspace_menu_open", true);
   // derived values
   const isWorkspaceMenuOpen = !!storedValue;
-
-  useEffect(() => {
-    if (sidebarCollapsed) toggleWorkspaceMenu(true);
-  }, [sidebarCollapsed, toggleWorkspaceMenu]);
 
   const SIDEBAR_WORKSPACE_MENU_ITEMS = [
     {
@@ -87,13 +80,7 @@ export const SidebarWorkspaceMenu = observer(() => {
         leaveTo="transform scale-95 opacity-0"
       >
         {isWorkspaceMenuOpen && (
-          <Disclosure.Panel
-            as="div"
-            className={cn("flex flex-col mt-0.5 gap-0.5", {
-              "space-y-0 mt-0 ml-0": sidebarCollapsed,
-            })}
-            static
-          >
+          <Disclosure.Panel as="div" className="flex flex-col mt-0.5 gap-0.5" static>
             {SIDEBAR_WORKSPACE_MENU_ITEMS.map((item) => (
               <SidebarWorkspaceMenuItem key={item.key} item={item} />
             ))}

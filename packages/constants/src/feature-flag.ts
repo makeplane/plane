@@ -97,6 +97,8 @@ export enum E_FEATURE_FLAGS {
   EDITOR_ATTACHMENTS = "EDITOR_ATTACHMENTS",
   // analytics
   ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED",
+  // app rail
+  APP_RAIL = "APP_RAIL",
 }
 
 /**

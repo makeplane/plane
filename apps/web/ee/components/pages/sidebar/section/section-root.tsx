@@ -75,7 +75,6 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
 
   // Memoize derived values
   const pageIds = useMemo(() => getStorePageIds(), [getStorePageIds]);
-  const isCollapsed = useMemo(() => !!sidebarCollapsed, [sidebarCollapsed]);
   const sectionDetails = useMemo(() => SECTION_DETAILS[sectionType], [sectionType]);
 
   // Add this ref to track the previous section of the active page
@@ -212,28 +211,6 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
     }
   }, [shouldSectionBeOpen]);
 
-  // Handle sidebar expansion - ensure section is open when sidebar is expanded
-  useEffect(() => {
-    // Only run when sidebar transitions from collapsed to expanded
-    if (isCollapsed === false && disclosureButtonRef.current && shouldSectionBeOpen) {
-      // Short delay to allow the sidebar transition to complete
-      const timer = setTimeout(() => {
-        const button = disclosureButtonRef.current;
-        if (!button) return;
-
-        // Check the current open state
-        const isCurrentlyOpen = button.getAttribute("aria-expanded") === "true";
-
-        // Only click if not already open
-        if (!isCurrentlyOpen) {
-          button.click();
-        }
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isCollapsed, shouldSectionBeOpen]);
-
   // Memoize handleCreatePage
   const handleCreatePage = useCallback(
     async (pageType: TPageNavigationTabs) => {
@@ -321,7 +298,6 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
               <SectionHeader
                 sectionType={sectionType}
                 sectionDetails={sectionDetails}
-                isCollapsed={isCollapsed}
                 isCreatingPage={isCreatingPage}
                 handleCreatePage={handleCreatePage}
                 buttonRef={disclosureButtonRef}
@@ -344,7 +320,6 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
                   </div>
                 ) : (
                   <SectionContent
-                    isCollapsed={isCollapsed}
                     pageIds={pageIds}
                     sectionType={sectionType}
                     expandedPageIds={expandedPageIds}

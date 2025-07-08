@@ -7,3 +7,5 @@ export * from "./sidebar";
 export * from "./sidebar";
 export * from "./search";
 export * from "./upgrade-empty-state-button";
+export * from "./content-wrapper";
+export * from "./app-switcher";

@@ -5,14 +5,12 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
-import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
 // hooks
-import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -35,9 +33,6 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const pathname = usePathname();
   // router
   const router = useAppRouter();
-  // store hooks
-  const { sidebarCollapsed: isCollapsed } = useAppTheme();
-  const { isMobile } = usePlatformOS();
   // derived values
   const page = usePage({
     pageId,
@@ -186,13 +181,12 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
       cn(
         "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90",
         {
-          "justify-center": isCollapsed,
           "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 text-custom-primary-100 font-medium": isPageActive,
           "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
           "cursor-default": !pageContent?.status.hasAccess || isPageActive,
         }
       ),
-    [isCollapsed, isPageActive, pageContent?.status.hasAccess]
+    [isPageActive, pageContent?.status.hasAccess]
   );
 
   const contentContainerClassName = useMemo(
@@ -217,48 +211,46 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   if (!page) return null;
 
   return (
-    <Tooltip tooltipContent={pageContent?.tooltipText} position="right" disabled={!isCollapsed} isMobile={isMobile}>
-      <div
-        role="button"
-        tabIndex={0}
-        className={linkClassName}
-        onClick={handleNavigate}
-        onKeyDown={handleKeyDown}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        aria-label={pageContent?.displayName}
-        aria-expanded={shouldShowSubPagesButton ? isExpanded : undefined}
-        aria-disabled={pageContent?.status.hasAccess ?? true}
-        aria-current={isPageActive ? "page" : undefined}
-      >
-        <div className={contentContainerClassName} style={contentStyle}>
-          <div className="size-4 flex-shrink-0 grid place-items-center">
-            {shouldShowSubPagesButton && isHovering ? (
-              <button
-                type="button"
-                onClick={handleSubPagesToggle}
-                className="rounded hover:bg-custom-background-80 grid place-items-center"
-                data-prevent-NProgress
-              >
-                {isFetchingSubPages ? (
-                  <Loader className="size-3.5 animate-spin" />
-                ) : (
-                  <ChevronRight className={chevronClassName} strokeWidth={2.5} />
-                )}
-              </button>
-            ) : (
-              <span className="grid place-items-center">{pageContent?.logo}</span>
-            )}
-          </div>
-          <p className="truncate text-sm flex-grow min-w-0">{pageContent?.displayName}</p>
+    <div
+      role="button"
+      tabIndex={0}
+      className={linkClassName}
+      onClick={handleNavigate}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      aria-label={pageContent?.displayName}
+      aria-expanded={shouldShowSubPagesButton ? isExpanded : undefined}
+      aria-disabled={pageContent?.status.hasAccess ?? true}
+      aria-current={isPageActive ? "page" : undefined}
+    >
+      <div className={contentContainerClassName} style={contentStyle}>
+        <div className="size-4 flex-shrink-0 grid place-items-center">
+          {shouldShowSubPagesButton && isHovering ? (
+            <button
+              type="button"
+              onClick={handleSubPagesToggle}
+              className="rounded hover:bg-custom-background-80 grid place-items-center"
+              data-prevent-NProgress
+            >
+              {isFetchingSubPages ? (
+                <Loader className="size-3.5 animate-spin" />
+              ) : (
+                <ChevronRight className={chevronClassName} strokeWidth={2.5} />
+              )}
+            </button>
+          ) : (
+            <span className="grid place-items-center">{pageContent?.logo}</span>
+          )}
         </div>
-        {archived_at && (
-          <div className="flex-shrink-0 size-4 grid place-items-center">
-            <ArchiveIcon className="size-3.5 text-custom-text-300" />
-          </div>
-        )}
+        <p className="truncate text-sm flex-grow min-w-0">{pageContent?.displayName}</p>
       </div>
-    </Tooltip>
+      {archived_at && (
+        <div className="flex-shrink-0 size-4 grid place-items-center">
+          <ArchiveIcon className="size-3.5 text-custom-text-300" />
+        </div>
+      )}
+    </div>
   );
 });
 

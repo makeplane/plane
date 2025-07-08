@@ -5,9 +5,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { TPageNavigationTabs } from "@plane/types";
-import { cn } from "@plane/utils";
-// hooks
-import { useAppTheme } from "@/hooks/store";
 // local imports
 import { WikiSidebarListSectionRoot } from "./section/section-root";
 
@@ -20,21 +17,14 @@ export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
   const { expandedPageIds = [], setExpandedPageIds } = props;
   // params
   const { pageId } = useParams();
-  // store hooks
-  const { sidebarCollapsed } = useAppTheme();
 
   // derived values
-  const isCollapsed = !!sidebarCollapsed;
   const sectionsList: TPageNavigationTabs[] = ["public", "private", "shared", "archived"];
   // Current page ID (without UUID validation to keep it simple)
   const currentPageId = pageId ? pageId.toString() : undefined;
 
   return (
-    <div
-      className={cn("space-y-4 -ml-4 pl-4", {
-        "space-y-0": isCollapsed,
-      })}
-    >
+    <div className="vertical-scrollbar h-full space-y-4 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4">
       {Object.values(sectionsList).map((section) => (
         <WikiSidebarListSectionRoot
           key={section}

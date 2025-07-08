@@ -5,9 +5,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
-import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
@@ -34,14 +32,13 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
   const { data } = useUser();
 
   // store hooks
-  const { toggleSidebar, sidebarCollapsed, extendedSidebarCollapsed, toggleExtendedSidebar } = useAppTheme();
-  const { isMobile } = usePlatformOS();
+  const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
       toggleSidebar();
     }
-    if (!extendedSidebarCollapsed) toggleExtendedSidebar();
+    if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
   };
 
   const staticItems = ["home", "inbox", "pi_chat", "projects"];
@@ -66,36 +63,20 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
   const icon = getSidebarNavigationItemIcon(item.key);
 
   return (
-    <Tooltip
-      tooltipContent={t(item.labelTranslationKey)}
-      position="right"
-      className="ml-2"
-      disabled={!sidebarCollapsed}
-      isMobile={isMobile}
-    >
-      <Link href={itemHref} onClick={() => handleLinkClick()}>
-        <SidebarNavItem
-          className={`${sidebarCollapsed ? "p-0 size-8 aspect-square justify-center mx-auto" : ""}`}
-          isActive={isActive}
-        >
-          {/* <icon className="size-4" /> */}
-          <div className="flex items-center gap-1.5 py-[1px]">
-            {icon}
-            {!sidebarCollapsed && <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>}
+    <Link href={itemHref} onClick={() => handleLinkClick()}>
+      <SidebarNavItem isActive={isActive}>
+        <div className="flex items-center gap-1.5 py-[1px]">
+          {icon}
+          <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+        </div>
+
+        {item.key === "active_cycles" && (
+          <div className="flex-shrink-0">
+            <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
           </div>
-          {!sidebarCollapsed && item.key === "active_cycles" && (
-            <div className="flex-shrink-0">
-              <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
-            </div>
-          )}
-          {item.key === "inbox" && (
-            <NotificationAppSidebarOption
-              workspaceSlug={workspaceSlug?.toString()}
-              isSidebarCollapsed={sidebarCollapsed ?? false}
-            />
-          )}
-        </SidebarNavItem>
-      </Link>
-    </Tooltip>
+        )}
+        {item.key === "inbox" && <NotificationAppSidebarOption workspaceSlug={workspaceSlug?.toString()} />}
+      </SidebarNavItem>
+    </Link>
   );
 });

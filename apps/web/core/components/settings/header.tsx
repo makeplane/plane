@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { ChevronLeftIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/ui/src/button";
@@ -15,16 +16,15 @@ export const SettingsHeader = observer(() => {
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const { isScrolled } = useUserSettings();
+  const { resolvedTheme } = useTheme();
   // redirect url for normal mode
 
   return (
     <div
-      className={cn(
-        "bg-custom-background-90 px-4 py-4 gap-2 md:px-12 md:py-6 transition-all duration-300 ease-in-out relative",
-        {
-          "!pt-4 flex md:flex-col": isScrolled,
-        }
-      )}
+      className={cn("bg-custom-background-90 p-page-x transition-all duration-300 ease-in-out relative", {
+        "!pt-4 flex md:flex-col": isScrolled,
+        "bg-custom-background-90/50": resolvedTheme === "dark",
+      })}
     >
       <Link
         href={`/${currentWorkspace?.slug}`}

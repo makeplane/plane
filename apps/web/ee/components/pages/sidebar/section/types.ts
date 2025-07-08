@@ -19,7 +19,6 @@ export type SectionDetailsMap = {
 export interface SectionHeaderProps {
   sectionType: TPageNavigationTabs;
   sectionDetails: SectionDetails;
-  isCollapsed: boolean;
   isCreatingPage: TPageNavigationTabs | null;
   handleCreatePage: (pageType: TPageNavigationTabs) => void;
   buttonRef?: RefObject<HTMLButtonElement>;
@@ -28,7 +27,6 @@ export interface SectionHeaderProps {
 
 // Props for section content
 export interface SectionContentProps {
-  isCollapsed: boolean;
   pageIds: string[];
   sectionType: TPageNavigationTabs;
   expandedPageIds?: string[];

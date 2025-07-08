@@ -74,3 +74,6 @@ export * from "./empty-page-icon";
 export * from "./moved-icon";
 export * from "./project-states-icon";
 export * from "./display-properties";
+export * from "./ai-icon";
+export * from "./plane-icon";
+export * from "./wiki-icon";

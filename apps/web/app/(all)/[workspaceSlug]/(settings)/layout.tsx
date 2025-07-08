@@ -12,15 +12,17 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
     <AuthenticationWrapper>
       <WorkspaceAuthWrapper>
         <CommandPalette />
-        <main className="relative flex h-screen w-full flex-col overflow-hidden bg-custom-background-100">
-          <LicenseSeatsBanner />
-          {/* Header */}
-          <SettingsHeader />
-          {/* Content */}
-          <ContentWrapper className="px-4 md:pl-12 md:flex w-full">
-            <div className="w-full h-full overflow-hidden">{children}</div>
-          </ContentWrapper>
-        </main>
+        <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+            <LicenseSeatsBanner />
+            {/* Header */}
+            <SettingsHeader />
+            {/* Content */}
+            <ContentWrapper className="p-page-x md:flex w-full">
+              <div className="w-full h-full overflow-hidden">{children}</div>
+            </ContentWrapper>
+          </main>
+        </div>
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>
   );

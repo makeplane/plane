@@ -12,7 +12,6 @@ import { SectionContentProps } from "../types";
  * Only renders items that are visible in the viewport (with buffer)
  */
 const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = ({
-  isCollapsed,
   pageIds,
   sectionType,
   expandedPageIds,
@@ -48,12 +47,7 @@ const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = ({
   };
 
   return (
-    <Disclosure.Panel
-      as="div"
-      className={cn("ml-1 mt-2", {
-        hidden: isCollapsed,
-      })}
-    >
+    <Disclosure.Panel as="div" className="ml-1 mt-2">
       {pageIds.length > 0 ? (
         <div>
           {pageIds.map((pageId) => {

@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, PanelRight, SquarePen } from "lucide-react";
+import { PanelLeft, SquarePen } from "lucide-react";
 import { BetaBadge, Button, PiChatLogo } from "@plane/ui";
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
+import { SidebarHamburgerToggle } from "@/components/core";
+import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TAiModels } from "@/plane-web/types";
-import { ModelsDropdown } from "./models-dropdown";
 
 type THeaderProps = {
   isSidePanelOpen: boolean;
@@ -20,6 +20,7 @@ export const Header = observer((props: THeaderProps) => {
   const router = useAppRouter();
   const { initPiChat, isSidePanelOpen, toggleSidePanel, isFullScreen, isNewChat } = props;
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { sidebarCollapsed } = useAppTheme();
 
   const handleNewConversation = async () => {
     const newChatId = initPiChat();
@@ -31,6 +32,7 @@ export const Header = observer((props: THeaderProps) => {
       {/* Breadcrumb */}
 
       <div className="flex rounded gap-1">
+        {sidebarCollapsed && <SidebarHamburgerToggle />}
         <PiChatLogo className="size-5 text-custom-text-300 fill-current m-auto align-center" />
         <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4.1)</span>
         <BetaBadge />
@@ -62,7 +64,7 @@ export const Header = observer((props: THeaderProps) => {
               className="flex items-center justify-center size-8 rounded-lg shadow-sm bg-custom-background-100 text-custom-text-400 hover:text-custom-text-200 border border-custom-border-100"
               onClick={() => toggleSidePanel(true)}
             >
-              <PanelRight className="size-4" />
+              <PanelLeft className="size-4" />
             </button>
           )}
         </div>

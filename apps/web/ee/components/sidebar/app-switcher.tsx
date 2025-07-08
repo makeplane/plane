@@ -2,12 +2,8 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Files, FolderOpen } from "lucide-react";
-// ui
-import { Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
-// hooks
-import { useAppTheme } from "@/hooks/store";
+import { cn } from "@plane/utils";
 // plane web hooks
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 
@@ -33,7 +29,6 @@ export const SidebarAppSwitcher = observer(() => {
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   const isWorkspacePagesEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_PAGES");
 
   const isPagesApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
@@ -41,42 +36,30 @@ export const SidebarAppSwitcher = observer(() => {
   if (!isWorkspacePagesEnabled) return null;
 
   return (
-    <div
-      className={cn("flex items-center gap-0.5 rounded-md p-0.5 bg-custom-sidebar-background-80/50 mb-4", {
-        "flex-col w-[34px] mx-auto": sidebarCollapsed,
-      })}
-    >
+    <div className="flex items-center gap-0.5 rounded-md p-0.5 bg-custom-sidebar-background-80/50 mb-4">
       {APPS_LIST.map((app) => {
         const isSelected = (app.key === "pages" && isPagesApp) || (app.key === "projects" && !isPagesApp);
 
         return (
-          <Tooltip
+          <Link
             key={app.key}
-            tooltipHeading={app.label}
-            tooltipContent=""
-            position="right"
-            disabled={!sidebarCollapsed}
+            href={`/${workspaceSlug}${app.href}`}
+            className={cn(
+              "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
+              {
+                "bg-custom-sidebar-background-100 border-[0.5px] border-custom-border-300": isSelected,
+                "hover:bg-custom-sidebar-background-80": !isSelected,
+              }
+            )}
           >
-            <Link
-              href={`/${workspaceSlug}${app.href}`}
-              className={cn(
-                "w-1/2 rounded flex items-center justify-center gap-2 text-sm font-medium text-center py-2 px-6",
-                {
-                  "p-0 size-8 aspect-square": sidebarCollapsed,
-                  "bg-custom-sidebar-background-100 border-[0.5px] border-custom-border-300": isSelected,
-                  "hover:bg-custom-sidebar-background-80": !isSelected,
-                }
-              )}
-            >
-              <app.icon
-                className="flex-shrink-0 size-4"
-                style={{
-                  color: app.color,
-                }}
-              />
-              {!sidebarCollapsed && <span>{app.label}</span>}
-            </Link>
-          </Tooltip>
+            <app.icon
+              className="flex-shrink-0 size-4"
+              style={{
+                color: app.color,
+              }}
+            />
+            <span>{app.label}</span>
+          </Link>
         );
       })}
     </div>

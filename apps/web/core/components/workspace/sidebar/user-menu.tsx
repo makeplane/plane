@@ -7,17 +7,15 @@ import { Home, Inbox, LayoutGrid, PenSquare } from "lucide-react";
 // plane imports
 import { EUserWorkspaceRoles } from "@plane/types";
 import { PiChatLogo, UserActivityIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { SidebarUserMenuItem } from "@/components/workspace/sidebar";
 // hooks
-import { useAppTheme, useUserPermissions, useUser } from "@/hooks/store";
+import { useUserPermissions, useUser } from "@/hooks/store";
 
 export const SidebarUserMenu = observer(() => {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
-  const { sidebarCollapsed } = useAppTheme();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
 
@@ -69,11 +67,7 @@ export const SidebarUserMenu = observer(() => {
   const draftIssueCount = workspaceUserInfo[workspaceSlug.toString()]?.draft_issue_count;
 
   return (
-    <div
-      className={cn("flex flex-col gap-0.5", {
-        "space-y-0": sidebarCollapsed,
-      })}
-    >
+    <div className="flex flex-col gap-0.5">
       {SIDEBAR_USER_MENU_ITEMS.map((item) => (
         <SidebarUserMenuItem key={item.key} item={item} draftIssueCount={draftIssueCount} />
       ))}
