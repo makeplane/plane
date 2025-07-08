@@ -55,7 +55,8 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
 
       // Check if its last node and add new node
       if (lastNode) {
-        const isLastNodeEmptyParagraph = lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
+        const isLastNodeEmptyParagraph =
+          lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
         // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
         if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
           const endPosition = editor?.state.doc.content.size;

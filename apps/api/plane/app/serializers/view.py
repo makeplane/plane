@@ -10,7 +10,6 @@ from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 class ViewIssueListSerializer(serializers.Serializer):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         slug = self.context.get("slug", None)

@@ -15,7 +15,7 @@ export type TIssueAttachment = {
 };
 
 export type TIssueAttachmentUploadResponse = TFileSignedURLResponse & {
-  attachment: TIssueAttachment
+  attachment: TIssueAttachment;
 };
 
 export type TIssueAttachmentMap = {

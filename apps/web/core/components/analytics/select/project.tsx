@@ -47,11 +47,11 @@ export const ProjectSelect: React.FC<Props> = observer((props) => {
           {value && value.length > 3
             ? `3+ projects`
             : value && value.length > 0
-            ? projectIds
-                ?.filter((p) => value.includes(p))
-                .map((p) => getProjectById(p)?.name)
-                .join(", ")
-            : "All projects"}
+              ? projectIds
+                  ?.filter((p) => value.includes(p))
+                  .map((p) => getProjectById(p)?.name)
+                  .join(", ")
+              : "All projects"}
         </div>
       }
       multiple
