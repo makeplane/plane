@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
 import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
@@ -11,6 +11,7 @@ import { cn, getPageName } from "@plane/utils";
 import { Logo } from "@/components/common";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
@@ -33,7 +34,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // router
-  const router = useRouter();
+  const router = useAppRouter();
   // store hooks
   const { sidebarCollapsed: isCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
@@ -131,7 +132,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         setIsFetchingSubPages(true);
         try {
           await fetchSubPages?.();
-        } catch (error) {
+        } catch {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",

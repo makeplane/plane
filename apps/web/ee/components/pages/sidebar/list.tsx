@@ -31,7 +31,7 @@ export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
 
   return (
     <div
-      className={cn("vertical-scrollbar h-full space-y-4 !overflow-y-scroll scrollbar-sm -mr-3 -ml-4 pl-4", {
+      className={cn("space-y-4 -ml-4 pl-4", {
         "space-y-0": isCollapsed,
       })}
     >

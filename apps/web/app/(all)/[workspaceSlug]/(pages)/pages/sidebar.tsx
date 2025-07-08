@@ -111,7 +111,7 @@ export const PagesAppSidebar = observer(() => {
           })}
         />
         <div
-          className={cn("overflow-x-hidden scrollbar-sm flex-1 w-full overflow-y-auto px-2 py-0.5", {
+          className={cn("overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto px-2 py-0.5", {
             "vertical-scrollbar px-4": !sidebarCollapsed,
           })}
         >
