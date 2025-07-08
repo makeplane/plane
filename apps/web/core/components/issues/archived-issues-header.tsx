@@ -6,7 +6,12 @@ import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constant
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+} from "@plane/types";
 // components
 import { isIssueFilterActive } from "@plane/utils";
 import { ArchiveTabsList } from "@/components/archives";
@@ -74,7 +79,11 @@ export const ArchivedIssuesHeader: FC = observer(() => {
       </div>
       {/* filter options */}
       <div className="flex items-center gap-2 px-8">
-        <FiltersDropdown title={t("common.filters")} placement="bottom-end" isFiltersApplied={isIssueFilterActive(issueFilters)}>
+        <FiltersDropdown
+          title={t("common.filters")}
+          placement="bottom-end"
+          isFiltersApplied={isIssueFilterActive(issueFilters)}
+        >
           <FilterSelection
             filters={issueFilters?.filters || {}}
             handleFiltersUpdate={handleFiltersUpdate}

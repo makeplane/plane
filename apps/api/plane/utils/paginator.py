@@ -35,7 +35,7 @@ class Cursor:
 
     # Return the representation of the cursor
     def __repr__(self):
-        return f"{type(self).__name__,}: value={self.value} offset={self.offset}, is_prev={int(self.is_prev)}"
+        return f"{(type(self).__name__,)}: value={self.value} offset={self.offset}, is_prev={int(self.is_prev)}"  # noqa: E501
 
     # Return if the cursor is true
     def __bool__(self):

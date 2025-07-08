@@ -15,7 +15,5 @@ export const viewport: Viewport = {
 };
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>{children}</>
-  );
+  return <>{children}</>;
 }

@@ -6,7 +6,14 @@ import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
-import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate, truncateText } from "@plane/utils";
+import {
+  convertBytesToSize,
+  getFileExtension,
+  getFileName,
+  getFileURL,
+  renderFormattedDate,
+  truncateText,
+} from "@plane/utils";
 // icons
 //
 import { getFileIcon } from "@/components/icons";

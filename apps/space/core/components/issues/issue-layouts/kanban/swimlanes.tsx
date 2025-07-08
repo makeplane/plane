@@ -133,12 +133,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           if (subGroupByVisibilityToggle === false) return <></>;
           return (
             <div key={`${subGroupBy}_${group.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-              <HeaderGroupByCard
-                groupBy={groupBy}
-                icon={group.icon}
-                title={group.name}
-                count={groupCount}
-              />
+              <HeaderGroupByCard groupBy={groupBy} icon={group.icon} title={group.name} count={groupCount} />
             </div>
           );
         })}

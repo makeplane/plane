@@ -3,10 +3,7 @@ import { useParams } from "next/navigation";
 // PLane
 import { IBlockUpdateData, IBlockUpdateDependencyData, IModule } from "@plane/types";
 // components
-import {
-  GanttChartRoot,
-  ModuleGanttSidebar,
-} from "@/components/gantt-chart";
+import { GanttChartRoot, ModuleGanttSidebar } from "@/components/gantt-chart";
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { ModuleGanttBlock } from "@/components/modules";
 // hooks

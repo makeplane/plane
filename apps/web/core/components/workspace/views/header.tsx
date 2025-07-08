@@ -112,7 +112,9 @@ export const GlobalViewsHeader: React.FC = observer(() => {
           <DefaultViewTab key={`${tab.key}-${index}`} tab={tab} />
         ))}
 
-        {currentWorkspaceViews?.map((viewId) => <ViewTab key={viewId} viewId={viewId} />)}
+        {currentWorkspaceViews?.map((viewId) => (
+          <ViewTab key={viewId} viewId={viewId} />
+        ))}
       </div>
 
       {isAuthorizedUser ? (
