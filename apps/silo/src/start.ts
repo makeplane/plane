@@ -50,17 +50,21 @@ import { initializeS3Client, Store } from "./worker/base";
 // Handle process signals
 process.on("SIGTERM", async () => {
   logger.info("Received SIGTERM signal. Initiating graceful shutdown...");
+  process.exit(0);
 });
 
 process.on("SIGINT", async () => {
-  logger.info("Received SIGINT signal. Initiating graceful shutdown...");
+  logger.info("Received SIGINT signal. Killing node process...");
+  process.exit(1);
 });
 
 // Handle uncaught errors
 process.on("uncaughtException", async (error) => {
   logger.error("Uncaught Exception:", error);
+  process.exit(1);
 });
 
 process.on("unhandledRejection", async (error) => {
   logger.error("Unhandled Rejection:", error);
+  process.exit(1);
 });

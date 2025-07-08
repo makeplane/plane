@@ -25,6 +25,9 @@ import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
 
+// It's 30 mins, but we want to be safe and set it to 25 minutes
+const MQ_CONSUMER_TIMEOUT = 25 * 60 * 1000; // 25 minutes
+
 /**
  * Factory class for creating different types of task workers
  * @class WorkerFactory
@@ -126,6 +129,13 @@ export class TaskManager {
     process.on("exit", this.cleanup.bind(this));
   }
 
+  async healthCheck() {
+    if (!this.mq) {
+      throw new Error("Message Queue not initialized");
+    }
+    return this.mq.healthCheck();
+  }
+
   /**
    * Initializes the message queue connection
    * @private
@@ -172,23 +182,50 @@ export class TaskManager {
     });
 
     await this.mq.startConsuming(async (msg: any) => {
+      const startTime = Date.now();
       try {
-        const data = JSON.parse(msg.content.toString());
-        const headers = msg.properties.headers;
-        // logger.info("Received message:", headers);
-        const props: TaskProps = {
-          type: "mq",
-          headers: headers.headers,
-          data: data,
-        };
-        await this.handleTask(props);
+        await this.handleTaskWithTimeout(msg);
       } catch (error) {
         logger.error("Error processing message:", error);
+        return;
       } finally {
+        const processingTime = Date.now() - startTime;
+        logger.info(`Message processed in ${processingTime}ms`);
         await this.mq?.ackMessage(msg);
       }
     });
   };
+
+  /**
+   * Wrap the task execution in a timeout to ensure the message is acknowledged within the consumer timeout
+   * @param msg - The message to handle
+   * @returns void
+   */
+  private async handleTaskWithTimeout(msg: any) {
+    if (!this.mq) return;
+
+    // Create a promise that resolves when the task completes
+    const data = JSON.parse(msg.content.toString());
+    const headers = msg.properties.headers;
+    // logger.info("Received message:", headers);
+    const props: TaskProps = {
+      type: "mq",
+      headers: headers.headers,
+      data: data,
+    };
+    const taskPromise = this.handleTask(props);
+
+    // Create a timeout promise that resolves after 15 minutes
+    const timeoutPromise = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        logger.warn("Task execution timed out after the consumer timeout");
+        resolve();
+      }, MQ_CONSUMER_TIMEOUT);
+    });
+
+    // Race between task completion and timeout
+    await Promise.race([taskPromise, timeoutPromise]);
+  }
 
   /**
    * Handles incoming tasks from both MQ and store events
