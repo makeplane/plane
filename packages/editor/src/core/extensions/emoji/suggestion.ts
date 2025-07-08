@@ -1,29 +1,40 @@
 import type { EmojiOptions } from "@tiptap/extension-emoji";
 import { ReactRenderer, Editor } from "@tiptap/react";
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
-import tippy, { Instance as TippyInstance } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import { EmojiItem, EmojiList, EmojiListRef, EmojiListProps } from "./components/emojis-list";
+import { EmojiItem, EmojiList, EmojiListRef } from "./components/emojis-list";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
 const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
+    const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
+    const { isSupported } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
+    const filteredEmojis = emojis.filter((emoji) => {
+      const hasEmoji = !!emoji?.emoji;
+      const hasFallbackImage = !!emoji?.fallbackImage;
+      const renderFallbackImage =
+        (emoji.forceFallbackImages && !hasEmoji) ||
+        (emoji.forceFallbackImages && hasFallbackImage) ||
+        (emoji.forceFallbackImages && !isSupported(emoji) && hasFallbackImage) ||
+        ((!isSupported(emoji) || !hasEmoji) && hasFallbackImage);
+      return !renderFallbackImage;
+    });
+
     if (query.trim() === "") {
-      const { emojis } = getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI);
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        emojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
+        filteredEmojis.find((emoji: EmojiItem) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);
       return defaultEmojis as EmojiItem[];
     }
-    return getExtensionStorage(editor, CORE_EXTENSIONS.EMOJI)
-      .emojis.filter(({ shortcodes, tags }) => {
+    return filteredEmojis
+      .filter(({ shortcodes, tags }) => {
         const lowerQuery = query.toLowerCase();
         return (
           shortcodes.find((shortcode: string) => shortcode.startsWith(lowerQuery)) ||
@@ -36,85 +47,66 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
   allowSpaces: false,
 
   render: () => {
-    let component: ReactRenderer<EmojiListRef, EmojiListProps>;
-    let popup: TippyInstance[] | null = null;
+    let component: ReactRenderer<EmojiListRef>;
+    let editor: Editor;
 
     return {
       onStart: (props: SuggestionProps): void => {
-        const emojiListProps: EmojiListProps = {
-          items: props.items,
-          command: props.command,
-          editor: props.editor,
-        };
-
-        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
-
-        component = new ReactRenderer(EmojiList, {
-          props: emojiListProps,
-          editor: props.editor,
-        });
-
         if (!props.clientRect) return;
 
-        popup = tippy("body", {
-          getReferenceClientRect: props.clientRect as () => DOMRect,
-          appendTo: () =>
-            document.querySelector(".active-editor") ??
-            document.querySelector('[id^="editor-container"]') ??
-            document.body,
-          content: component.element,
-          showOnCreate: true,
-          interactive: true,
-          trigger: "manual",
-          placement: "bottom-start",
-          hideOnClick: false,
-          sticky: "reference",
-          animation: false,
-          duration: 0,
-          offset: [0, 8],
+        editor = props.editor;
+
+        // Track active dropdown
+        getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(CORE_EXTENSIONS.EMOJI);
+
+        component = new ReactRenderer(EmojiList, {
+          props: {
+            items: props.items,
+            command: props.command,
+            editor: props.editor,
+          },
+          editor: props.editor,
         });
+
+        // Append to editor container
+        const targetElement =
+          (props.editor.options.element as HTMLElement) || props.editor.view.dom.parentElement || document.body;
+        targetElement.appendChild(component.element);
       },
 
       onUpdate: (props: SuggestionProps): void => {
-        const emojiListProps: EmojiListProps = {
+        if (!component) return;
+
+        component.updateProps({
           items: props.items,
           command: props.command,
           editor: props.editor,
-        };
-
-        component.updateProps(emojiListProps);
-
-        if (popup && props.clientRect) {
-          popup[0]?.setProps({
-            getReferenceClientRect: props.clientRect as () => DOMRect,
-          });
-        }
+        });
       },
 
       onKeyDown: (props: SuggestionKeyDownProps): boolean => {
         if (props.event.key === "Escape") {
-          if (popup) {
-            popup[0]?.hide();
-          }
           if (component) {
             component.destroy();
           }
           return true;
         }
 
-        return component.ref?.onKeyDown(props) || false;
+        // Delegate to EmojiList
+        return component?.ref?.onKeyDown(props) || false;
       },
 
-      onExit: (props: SuggestionProps): void => {
-        const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
-        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
-        if (index > -1) {
-          utilityStorage.activeDropbarExtensions.splice(index, 1);
+      onExit: (): void => {
+        // Remove from active dropdowns
+        if (editor) {
+          const utilityStorage = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY);
+          const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.EMOJI);
+          if (index > -1) {
+            utilityStorage.activeDropbarExtensions.splice(index, 1);
+          }
         }
 
-        if (popup) {
-          popup[0]?.destroy();
-        }
+        // Cleanup
         if (component) {
           component.destroy();
         }

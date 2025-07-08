@@ -4,6 +4,7 @@ export * from "./cycle";
 export * from "./dashboard";
 export * from "./de-dupe";
 export * from "./description_version";
+export * from "./enums";
 export * from "./project";
 export * from "./state";
 export * from "./issues";

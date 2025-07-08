@@ -20,7 +20,7 @@ services:
   api:
     image: ${DOCKERHUB_USER:-local}/plane-backend:${APP_RELEASE:-latest}
     build:
-      context: ./apiserver
+      context: ./apps/server
       dockerfile: ./Dockerfile.api
 
   proxy:

@@ -33,6 +33,7 @@ import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extension
 import type { IReadOnlyEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
+import { EmojiExtension } from "./emoji/extension";
 
 type Props = Pick<IReadOnlyEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler">;
 
@@ -73,6 +74,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       dropcursor: false,
       gapcursor: false,
     }),
+    EmojiExtension,
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {
