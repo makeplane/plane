@@ -185,7 +185,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
-          dockerfile-path: ./admin/Dockerfile.admin
+          dockerfile-path: ./apps/admin/Dockerfile.admin
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -213,7 +213,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
-          dockerfile-path: ./web/Dockerfile.web
+          dockerfile-path: ./apps/web/Dockerfile.web
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -241,7 +241,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
-          dockerfile-path: ./space/Dockerfile.space
+          dockerfile-path: ./apps/space/Dockerfile.space
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -264,7 +264,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
-          dockerfile-path: ./live/Dockerfile.live
+          dockerfile-path: ./apps/live/Dockerfile.live
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -286,9 +286,9 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
           build-context: .
-          dockerfile-path: ./silo/Dockerfile.silo
+          dockerfile-path: ./apps/silo/Dockerfile.silo
 
-  branch_build_push_apiserver:
+  branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -303,8 +303,8 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
-          build-context: ./apiserver
-          dockerfile-path: ./apiserver/Dockerfile.api
+          build-context: ./apps/api
+          dockerfile-path: ./apps/api/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -329,8 +329,8 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_email }}
-          build-context: ./email
-          dockerfile-path: ./email/Dockerfile
+          build-context: ./apps/email
+          dockerfile-path: ./apps/email/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -348,7 +348,7 @@ jobs:
         branch_build_push_space,
         branch_build_push_live,
         branch_build_push_silo,
-        branch_build_push_apiserver,
+        branch_build_push_api,
         branch_build_push_email,
       ]
     env:

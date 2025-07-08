@@ -1,6 +1,6 @@
 // plane imports
-import { API_BASE_URL, ETemplateType } from "@plane/constants";
-import { PartialDeep, TBaseTemplateWithData } from "@plane/types";
+import { API_BASE_URL } from "@plane/constants";
+import { ETemplateType, PartialDeep, TBaseTemplateWithData } from "@plane/types";
 // local imports
 import { APIService } from "../api.service";
 import { buildProjectLevelTemplateApiUrl } from "./utils";

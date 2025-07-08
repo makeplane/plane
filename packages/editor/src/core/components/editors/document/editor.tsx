@@ -1,5 +1,7 @@
 import { Extensions } from "@tiptap/core";
 import { forwardRef, MutableRefObject, useMemo } from "react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -89,7 +91,7 @@ const DocumentEditor = (props: IDocumentEditor) => {
       bubbleMenuEnabled={bubbleMenuEnabled}
       displayConfig={displayConfig}
       editor={editor}
-      editorContainerClassName={editorContainerClassName}
+      editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
     />
   );

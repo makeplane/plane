@@ -40,9 +40,10 @@ export type GithubAuthorizeState = {
   workspace_slug: string;
   workspace_id: string;
   user_id: string;
-  plane_api_token: string;
+  plane_api_token?: string;
   target_host: string;
   plane_app_installation_id?: string;
+  config_key?: string;
 };
 
 export type GithubUserAuthState = Omit<GithubAuthorizeState, "plane_api_token"> & {
@@ -67,12 +68,17 @@ export type GithubAuthConfig = {
   callbackUrl: string;
 };
 
+export type GithubEnterpriseAuthConfig = GithubAuthConfig & {
+  baseGithubUrl: string;
+};
+
 export type BaseDedupPayload = {
   accountId: string;
   owner: string;
   repositoryId: string;
   installationId: string;
   repositoryName: string;
+  isEnterprise: boolean;
 };
 
 export type GithubIssueDedupPayload = BaseDedupPayload & {
@@ -87,10 +93,12 @@ export type AppAuthParams = {
   appId: string;
   privateKey: string;
   installationId: string;
+  baseGithubUrl?: string;
   forUser?: false;
 };
 
 export type UserAuthParams = {
+  baseGithubUrl?: string;
   forUser: true;
   accessToken: string;
 };

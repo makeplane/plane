@@ -40,6 +40,7 @@ import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
 import type { IEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
+import { EmojiExtension } from "./emoji/extension";
 
 type TArguments = Pick<
   IEditorProps,
@@ -100,6 +101,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
       ...(enableHistory ? {} : { history: false }),
     }),
+    EmojiExtension,
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {

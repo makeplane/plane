@@ -1,10 +1,10 @@
 /* eslint-disable no-useless-catch */
 
+import { EProductSubscriptionEnum } from "@plane/types";
 import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane web services
-import { EProductSubscriptionEnum } from "@plane/constants";
 import { PaymentService } from "@/plane-web/services/payment.service";
 import selfHostedSubscriptionService from "@/plane-web/services/self-hosted-subscription.service";
 // plane web store

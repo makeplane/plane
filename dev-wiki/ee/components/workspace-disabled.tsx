@@ -1,5 +1,6 @@
 "use client";
 
+import { EUserWorkspaceRoles } from "@plane/types";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
@@ -7,7 +8,7 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { CircleAlert } from "lucide-react";
 // hooks
-import { EUserWorkspaceRoles, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { AlertModalCore, Button } from "@plane/ui";
 import { useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";

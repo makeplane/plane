@@ -2,6 +2,8 @@
 import { Extensions } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import React, { useEffect, useMemo } from "react";
+// plane imports
+import { cn } from "@plane/utils";
 // components
 import { PageRenderer } from "@/components/editors";
 // constants
@@ -19,8 +21,6 @@ import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } fr
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
-    onChange,
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
@@ -36,6 +36,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     id,
     mentionHandler,
     pageRestorationInProgress,
+    onAssetChange,
+    onChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -73,6 +76,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       id,
       isSmoothCursorEnabled,
       mentionHandler,
+      onAssetChange,
       onChange,
       onTransaction,
       placeholder,
@@ -105,7 +109,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         displayConfig={displayConfig}
         editor={editor}
         titleEditor={titleEditor}
-        editorContainerClassName={editorContainerClassNames}
+        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
         id={id}
         isLoading={
           (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress

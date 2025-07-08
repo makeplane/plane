@@ -1,3 +1,4 @@
+import { EStartOfTheWeek } from "@plane/types";
 import { EXTENDED_PREFERENCE_OPTIONS, EXTENDED_PROFILE_ACTION_LINKS } from "./profile-extended";
 
 export const PROFILE_SETTINGS = {
@@ -108,20 +109,6 @@ export const PREFERENCE_OPTIONS: {
   },
   ...EXTENDED_PREFERENCE_OPTIONS,
 ];
-
-/**
- * @description The start of the week for the user
- * @enum {number}
- */
-export enum EStartOfTheWeek {
-  SUNDAY = 0,
-  MONDAY = 1,
-  TUESDAY = 2,
-  WEDNESDAY = 3,
-  THURSDAY = 4,
-  FRIDAY = 5,
-  SATURDAY = 6,
-}
 
 /**
  * @description The options for the start of the week

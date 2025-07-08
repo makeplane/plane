@@ -1347,6 +1347,17 @@
       "project_insights": {
         "title": "Brak danych",
         "description": "Przypisane do Ciebie elementy pracy, podzielone według stanu, pojawią się tutaj."
+      },
+      "general": {
+        "title": "Śledź postęp, obciążenie pracą i alokacje. Wykrywaj trendy, usuwaj blokady i pracuj szybciej",
+        "description": "Zobacz zakres vs zapotrzebowanie, oszacowania i rozrost zakresu. Uzyskaj wydajność członków zespołu i zespołów, upewniając się, że projekt jest realizowany na czas.",
+        "primary_button": {
+          "text": "Rozpocznij swój pierwszy projekt",
+          "comic": {
+            "title": "Analityka działa najlepiej z Cyklami + Modułami",
+            "description": "Najpierw umieść swoje elementy pracy w Cyklach, a jeśli można, pogrupuj elementy obejmujące więcej niż jeden cykl w Moduły. Sprawdź oba w lewej nawigacji."
+          }
+        }
       }
     },
     "created_vs_resolved": "Utworzone vs Rozwiązane",
@@ -2473,5 +2484,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane nie uruchomił się. Może to być spowodowane tym, że jedna lub więcej usług Plane nie mogła się uruchomić.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Wybierz View Logs z setup.sh i logów Docker, aby mieć pewność."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Konspekt",
+        "empty_state": {
+          "title": "Brakuje nagłówków",
+          "description": "Dodajmy kilka nagłówków na tej stronie, aby je tutaj zobaczyć."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Słowa",
+          "characters": "Znaki",
+          "paragraphs": "Akapity",
+          "read_time": "Czas czytania"
+        },
+        "actors_info": {
+          "edited_by": "Edytowane przez",
+          "created_by": "Utworzone przez"
+        },
+        "version_history": {
+          "label": "Historia wersji",
+          "current_version": "Bieżąca wersja"
+        }
+      },
+      "assets": {
+        "label": "Zasoby",
+        "download_button": "Pobierz",
+        "empty_state": {
+          "title": "Brakuje obrazów",
+          "description": "Dodaj obrazy, aby je tutaj zobaczyć."
+        }
+      }
+    },
+    "open_button": "Otwórz panel nawigacji",
+    "close_button": "Zamknij panel nawigacji",
+    "outline_floating_button": "Otwórz konspekt"
   }
 }

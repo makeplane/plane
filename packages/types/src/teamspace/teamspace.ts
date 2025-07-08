@@ -1,4 +1,8 @@
-import { TIssue, TLogoProps, TStateGroups, TWorkspaceBaseActivity, TBaseActivityVerbs, IUserLite } from "@plane/types";
+import { TIssue } from "../issues/issue";
+import { TLogoProps } from "../common";
+import { TStateGroups } from "../state";
+import { TWorkspaceBaseActivity, TBaseActivityVerbs } from "../activity";
+import { IUserLite } from "../users";
 
 export type TTeamspace = {
   id: string;
@@ -90,7 +94,7 @@ export type TTeamspaceProgressSummary = {
 
 // --------------- Teamspace Dependencies ---------------
 
-type TIssueLite = Pick<
+export type TIssueLite = Pick<
   TIssue,
   "id" | "name" | "type_id" | "sequence_id" | "project_id" | "priority" | "archived_at"
 > & { state__group: TStateGroups };

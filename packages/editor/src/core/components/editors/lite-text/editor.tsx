@@ -7,7 +7,7 @@ import { EnterKeyExtension } from "@/extensions";
 import { EditorRefApi, ILiteTextEditorProps } from "@/types";
 
 const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
-  const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [], isSmoothCursorEnabled } = props;
+  const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [] } = props;
 
   const extensions = useMemo(() => {
     const resolvedExtensions = [...externalExtensions];
@@ -19,7 +19,7 @@ const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
     return resolvedExtensions;
   }, [externalExtensions, disabledExtensions, onEnterKeyPress]);
 
-  return <EditorWrapper {...props} extensions={extensions} isSmoothCursorEnabled={isSmoothCursorEnabled} />;
+  return <EditorWrapper {...props} editable extensions={extensions} />;
 };
 
 const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditorProps>((props, ref) => (

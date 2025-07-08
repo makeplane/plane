@@ -1,16 +1,30 @@
-import { GithubAuthConfig, GithubAuthorizeState, GithubUserAuthPayload, GithubUserAuthState } from "@/github/types";
 import axios from "axios";
+import { GithubAuthConfig, GithubAuthorizeState, GithubEnterpriseAuthConfig, GithubUserAuthPayload, GithubUserAuthState } from "@/github/types";
 
 export type GithubTokenResponse = {
   access_token: string;
   scope: string;
 };
 
-export class GithubAuthService {
+export interface GithubAuthServiceBase {
+  config: GithubAuthConfig | GithubEnterpriseAuthConfig;
+  baseGithubUrl: string;
+
+  getAuthUrl(state: GithubAuthorizeState): string;
+  getUserAuthUrl(state: GithubUserAuthState): string;
+  getUserAccessToken(payload: GithubUserAuthPayload): Promise<{
+    response: string;
+    state: GithubUserAuthState;
+  }>;
+}
+
+export class GithubAuthService implements GithubAuthServiceBase {
   config: GithubAuthConfig;
+  baseGithubUrl: string;
 
   constructor(config: GithubAuthConfig) {
     this.config = config;
+    this.baseGithubUrl = "https://github.com";
   }
 
   /**
@@ -21,13 +35,13 @@ export class GithubAuthService {
   getAuthUrl(state: GithubAuthorizeState): string {
     const stateString = JSON.stringify(state);
     const encodedState = Buffer.from(stateString).toString("base64");
-    return `https://github.com/apps/${this.config.appName}/installations/select_target?state=${encodedState}`;
+    return `${this.baseGithubUrl}/apps/${this.config.appName}/installations/select_target?state=${encodedState}`;
   }
 
   getUserAuthUrl(state: GithubUserAuthState): string {
     const stateString = JSON.stringify(state);
     const encodedState = Buffer.from(stateString).toString("base64");
-    return `https://github.com/login/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.callbackUrl}&state=${encodedState}`;
+    return `${this.baseGithubUrl}/login/oauth/authorize?client_id=${this.config.clientId}&redirect_uri=${this.config.callbackUrl}&state=${encodedState}`;
   }
 
   /**
@@ -41,11 +55,24 @@ export class GithubAuthService {
   }> {
     const { code, state } = payload;
 
-    const { data: response } = await axios.post("https://github.com/login/oauth/access_token", {
+    const { data: response } = await axios.post(`${this.baseGithubUrl}/login/oauth/access_token`, {
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
       code,
     });
     return { response, state };
+  }
+}
+
+export class GithubEnterpriseAuthService extends GithubAuthService {
+  constructor(config: GithubEnterpriseAuthConfig) {
+    super(config);
+    this.baseGithubUrl = config.baseGithubUrl;
+  }
+
+  getAuthUrl(state: GithubAuthorizeState): string {
+    const stateString = JSON.stringify(state);
+    const encodedState = Buffer.from(stateString).toString("base64");
+    return `${this.baseGithubUrl}/github-apps/${this.config.appName}/installations/select_target?state=${encodedState}`;
   }
 }

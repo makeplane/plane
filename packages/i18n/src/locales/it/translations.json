@@ -1344,6 +1344,17 @@
       "project_insights": {
         "title": "Nessun dato disponibile",
         "description": "Gli elementi di lavoro assegnati a te, suddivisi per stato, verranno visualizzati qui."
+      },
+      "general": {
+        "title": "Traccia progressi, carichi di lavoro e allocazioni. Individua tendenze, rimuovi blocchi e lavora più velocemente",
+        "description": "Visualizza ambito vs domanda, stime e scope creep. Ottieni prestazioni per membri del team e squadre, assicurandoti che il tuo progetto si svolga nei tempi previsti.",
+        "primary_button": {
+          "text": "Inizia il tuo primo progetto",
+          "comic": {
+            "title": "Analytics funziona meglio con Cicli + Moduli",
+            "description": "Prima, incornicia i tuoi elementi di lavoro in Cicli e, se possibile, raggruppa gli elementi che si estendono oltre un ciclo in Moduli. Controlla entrambi nella navigazione sinistra."
+          }
+        }
       }
     },
     "created_vs_resolved": "Creato vs Risolto",
@@ -2471,5 +2482,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane non si è avviato. Questo potrebbe essere dovuto al fatto che uno o più servizi Plane non sono riusciti ad avviarsi.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Scegli View Logs da setup.sh e dai log Docker per essere sicuro."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Schema",
+        "empty_state": {
+          "title": "Intestazioni mancanti",
+          "description": "Aggiungiamo alcune intestazioni a questa pagina per vederle qui."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Parole",
+          "characters": "Caratteri",
+          "paragraphs": "Paragrafi",
+          "read_time": "Tempo di lettura"
+        },
+        "actors_info": {
+          "edited_by": "Modificato da",
+          "created_by": "Creato da"
+        },
+        "version_history": {
+          "label": "Cronologia versioni",
+          "current_version": "Versione corrente"
+        }
+      },
+      "assets": {
+        "label": "Risorse",
+        "download_button": "Scarica",
+        "empty_state": {
+          "title": "Immagini mancanti",
+          "description": "Aggiungi immagini per vederle qui."
+        }
+      }
+    },
+    "open_button": "Apri pannello di navigazione",
+    "close_button": "Chiudi pannello di navigazione",
+    "outline_floating_button": "Apri schema"
   }
 }

@@ -1,21 +1,21 @@
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { EIssuePropertyType } from "@plane/constants";
 import {
-  TCreateIssueTypePayload,
-  TIssueType,
-  TUpdateIssueTypePayload,
-  TCreateIssuePropertyPayload,
-  TDeleteIssuePropertyPayload,
-  TIssuePropertyResponse,
-  TUpdateIssuePropertyPayload,
-  TCreateIssuePropertyOptionPayload,
-  TDeleteIssuePropertyOptionPayload,
-  TIssuePropertyOption,
-  IIssueType,
+  EIssuePropertyType,
   IIssueProperty,
   IIssuePropertyOption,
+  IIssueType,
   IWorkItemTypeStoreInstanceServices,
+  TCreateIssuePropertyOptionPayload,
+  TCreateIssuePropertyPayload,
+  TCreateIssueTypePayload,
+  TDeleteIssuePropertyOptionPayload,
+  TDeleteIssuePropertyPayload,
+  TIssuePropertyOption,
+  TIssuePropertyResponse,
+  TIssueType,
+  TUpdateIssuePropertyPayload,
+  TUpdateIssueTypePayload,
 } from "@plane/types";
 
 /**

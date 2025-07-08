@@ -1,5 +1,5 @@
+import { ETemplateType } from "@plane/types";
 // plane imports
-import { ETemplateType } from "@plane/constants";
 
 export type TCopyTemplateResponse = {
   template_id: string;

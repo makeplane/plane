@@ -1,5 +1,4 @@
-import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
-import { EUserWorkspaceRoles } from "./user";
+import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
 import {
   EXTENDED_WORKSPACE_RESULT_ENTITIES,
   EXTENDED_WORKSPACE_SETTINGS,

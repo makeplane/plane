@@ -1,4 +1,4 @@
-import { EProductSubscriptionEnum } from "./payment";
+import { EProductSubscriptionEnum } from "@plane/types";
 
 export enum E_FEATURE_FLAGS {
   BULK_OPS_ONE = "BULK_OPS_ONE",
@@ -63,7 +63,7 @@ export enum E_FEATURE_FLAGS {
   // ====== silo integrations ======
   SILO_INTEGRATIONS = "SILO_INTEGRATIONS",
   GITHUB_INTEGRATION = "GITHUB_INTEGRATION",
-
+  GITHUB_ENTERPRISE_INTEGRATION = "GITHUB_ENTERPRISE_INTEGRATION",
   GITLAB_INTEGRATION = "GITLAB_INTEGRATION",
   SLACK_INTEGRATION = "SLACK_INTEGRATION",
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { convertBytesToSize } from "@plane/utils";
 // local imports
 import { EAttachmentBlockAttributeNames } from "../types";
+import { getAttachmentBlockId } from "../utils";
 import { CustomAttachmentNodeViewProps } from "./node-view";
 
 type Props = CustomAttachmentNodeViewProps & {
@@ -36,6 +37,7 @@ export const CustomAttachmentBlock: React.FC<Props> = (props) => {
 
   return (
     <a
+      id={getAttachmentBlockId(node.attrs.id ?? "")}
       href={resolvedSource}
       className="py-3 px-2 rounded-lg bg-custom-background-90 hover:bg-custom-background-80 border border-custom-border-300 flex items-start gap-2 transition-colors"
       contentEditable={false}

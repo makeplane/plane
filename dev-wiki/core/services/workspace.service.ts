@@ -1,4 +1,3 @@
-// services
 import {
   IWorkspace,
   IWorkspaceMemberMe,
@@ -17,11 +16,11 @@ import {
   TSearchEntityRequestPayload,
   TWidgetEntityData,
   TActivityEntityData,
+  IWorkspaceSidebarNavigationItem,
+  IWorkspaceSidebarNavigation,
 } from "@plane/types";
-import { IWorkspaceSidebarNavigationItem, IWorkspaceSidebarNavigation } from "@plane/types/src/workspace";
+// services
 import { APIService } from "@/services/api.service";
-// helpers
-// types
 
 export class WorkspaceService extends APIService {
   constructor(baseUrl: string) {

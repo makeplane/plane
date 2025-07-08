@@ -1,27 +1,13 @@
 // plane web types
 import {
+  EIssuePropertyRelationType,
+  EIssuePropertyType,
   TDropdownAttributeOptions,
   TIssuePropertySettingsConfigurationsDetails,
   TIssuePropertySettingsMap,
   TIssuePropertyTypeDetails,
   TIssuePropertyTypeKeys,
 } from "@plane/types";
-
-// Issue property types
-export enum EIssuePropertyType {
-  TEXT = "TEXT",
-  DECIMAL = "DECIMAL",
-  OPTION = "OPTION",
-  BOOLEAN = "BOOLEAN",
-  DATETIME = "DATETIME",
-  RELATION = "RELATION",
-}
-
-// Issue property relation
-export enum EIssuePropertyRelationType {
-  ISSUE = "ISSUE",
-  USER = "USER",
-}
 
 export const ISSUE_PROPERTY_TYPE_DETAILS: Partial<
   Record<TIssuePropertyTypeKeys, TIssuePropertyTypeDetails<EIssuePropertyType>>

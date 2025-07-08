@@ -75,7 +75,7 @@ export const transformTask = async (
     external_id: CLICKUP_TASK_EXTERNAL_ID(task.id),
     external_source: E_IMPORTER_KEYS.CLICKUP,
     created_by: task.creator.username,
-    name: task.name ?? "Untitled",
+    name: task.name?.slice(0, 255) ?? "Untitled",
     description_html: description,
     target_date: task.due_date ? getFormattedDateFromTimestamp(Number(task.due_date)) : null,
     start_date: task.start_date ? getFormattedDateFromTimestamp(Number(task.start_date)) : null,

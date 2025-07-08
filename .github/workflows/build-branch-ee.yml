@@ -109,7 +109,7 @@ jobs:
           RELVERSION="latest"
           HARBOR_PUSH=false
 
-          echo "AIRGAPPED_BUILD=${{ env.AIRGAPPED_BUILD }}" >> $GITHUB_OUTPUT
+          BUILD_AIRGAPPED=${{ env.AIRGAPPED_BUILD }}
 
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
@@ -139,16 +139,18 @@ jobs:
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=${{ env.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+            BUILD_AIRGAPPED=true
           elif [ "${{ env.TARGET_BRANCH }}" == "master" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
-            echo "artifact_s3_suffix=latest" >> $GITHUB_OUTPUT
+            echo "artifact_s3_suffix=${{ env.AIRGAPPED_BUILD }}" >> $GITHUB_OUTPUT
           elif [ "${{ env.TARGET_BRANCH }}" == "preview" ] || [ "${{ env.TARGET_BRANCH }}" == "develop" ] || [ "${{ env.TARGET_BRANCH }}" == "uat" ]; then
             echo "artifact_upload_to_s3=true" >> $GITHUB_OUTPUT
-            echo "artifact_s3_suffix=${{ env.TARGET_BRANCH }}" >> $GITHUB_OUTPUT
+            echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT
           else
             echo "artifact_upload_to_s3=false" >> $GITHUB_OUTPUT
             echo "artifact_s3_suffix=$BR_NAME" >> $GITHUB_OUTPUT
           fi
+          echo "AIRGAPPED_BUILD=${BUILD_AIRGAPPED}" >> $GITHUB_OUTPUT
 
   branch_build_push_admin:
     name: Build-Push Admin Docker Image
@@ -171,7 +173,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_admin }}
           build-context: .
-          dockerfile-path: ./admin/Dockerfile.admin
+          dockerfile-path: ./apps/admin/Dockerfile.admin
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -198,7 +200,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_web }}
           build-context: .
-          dockerfile-path: ./web/Dockerfile.web
+          dockerfile-path: ./apps/web/Dockerfile.web
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -225,7 +227,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_space }}
           build-context: .
-          dockerfile-path: ./space/Dockerfile.space
+          dockerfile-path: ./apps/space/Dockerfile.space
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -252,7 +254,7 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_live }}
           build-context: .
-          dockerfile-path: ./live/Dockerfile.live
+          dockerfile-path: ./apps/live/Dockerfile.live
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -279,13 +281,13 @@ jobs:
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_silo }}
           build-context: .
-          dockerfile-path: ./silo/Dockerfile.silo
+          dockerfile-path: ./apps/silo/Dockerfile.silo
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
 
-  branch_build_push_apiserver:
+  branch_build_push_api:
     name: Build-Push API Server Docker Image
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
@@ -305,8 +307,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_backend }}
-          build-context: ./apiserver
-          dockerfile-path: ./apiserver/Dockerfile.api
+          build-context: ./apps/api
+          dockerfile-path: ./apps/api/Dockerfile.api
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -332,8 +334,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
-          build-context: ./proxy
-          dockerfile-path: ./proxy/Dockerfile.ee
+          build-context: ./apps/proxy
+          dockerfile-path: ./apps/proxy/Dockerfile.ee
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -373,8 +375,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_monitor }}
-          build-context: ./monitor
-          dockerfile-path: ./monitor/Dockerfile
+          build-context: ./apps/monitor
+          dockerfile-path: ./apps/monitor/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -406,8 +408,8 @@ jobs:
           private-registry-project: ${{ vars.HARBOR_PROJECT }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_email }}
-          build-context: ./email
-          dockerfile-path: ./email/Dockerfile
+          build-context: ./apps/email
+          dockerfile-path: ./apps/email/Dockerfile
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
@@ -452,10 +454,88 @@ jobs:
           cp deploy/cli-install/portainer-compose.yml ~/${{ env.ARTIFACT_SUFFIX }}/portainer-compose.yml
 
           # required for prime-cli backward compatibility
-          cp proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
+          cp apps/proxy/Caddyfile.ee ~/${{ env.ARTIFACT_SUFFIX }}/Caddyfile
           cp deploy/cli-install/docker-compose-caddy.yml ~/${{ env.ARTIFACT_SUFFIX }}/docker-compose.yml
+            
+          # Process podman quadlets
+          cd deploy/cli-install/podman-quadlets
+          rm -rf plane-podman
+          mkdir -p plane-podman/plane/
+          mkdir -p plane-podman/config/
+
+          # Create a new file with initial content
+          cp ./install.sh ./plane-podman/install.sh
+          cp ../variables.env ./plane-podman/plane/plane.env
+          echo "" >> ./plane-podman/plane/plane.env
+
+          # Process quadlets.env
+          while IFS= read -r line; do
+            # Replace APP_VERSION with ARTIFACT_SUFFIX
+            if echo "$line" | grep -q "^APP_VERSION="; then
+              echo "APP_VERSION=${{ env.ARTIFACT_SUFFIX }}" >> ./plane-podman/plane/plane.env
+              continue
+            fi
+
+            # If line starts with #, write it and a single empty line
+            if echo "$line" | grep -q '^[[:space:]]*#'; then
+              echo "" >> ./plane-podman/plane/plane.env
+              echo "$line" >> ./plane-podman/plane/plane.env
+              continue
+            fi
+            
+            # Skip empty lines
+            if [ -z "$line" ]; then
+              continue
+            fi
+            
+            # Process key-value pairs
+            key=$(echo "$line" | cut -d'=' -f1)
+            value=$(echo "$line" | cut -d'=' -f2)
+            if ! grep -q "^${key}=" ./plane-podman/plane/plane.env; then
+              echo "${key}=${value}" >> ./plane-podman/plane/plane.env
+            elif [[ "$OSTYPE" == "darwin"* ]]; then
+              sed -i '' "s|${key}=.*|${key}=${value}|" ./plane-podman/plane/plane.env
+            else
+              sed -i "s|${key}=.*|${key}=${value}|" ./plane-podman/plane/plane.env
+            fi
+          done < quadlets.env
+
+          # Verify files exist before copying
+          if [ ! -f Caddyfile ]; then
+            echo "Error: Caddyfile not found"
+            exit 1
+          fi
+          cp Caddyfile ./plane-podman/plane/Caddyfile
+
+          # Verify podman-quadlets.ini exists
+          if [ ! -f podman-quadlets.ini ]; then
+            echo "Error: podman-quadlets.ini not found"
+            exit 1
+          fi
+
+          # check APP_RELEASE_VERSION in podman-quadlets.ini and change it to ${ARTIFACT_SUFFIX}
+          sed -i 's@${APP_RELEASE_VERSION}.*@'${{ env.ARTIFACT_SUFFIX }}'@' podman-quadlets.ini
+
+          # Split podman-quadlets.ini into separate files in plane-podman folder
+          cat podman-quadlets.ini | awk '/^# [a-z_-]+\.(container|network)$/ {filename="plane-podman/config/" substr($2,1); next} /^---$/ {next} filename && !/^#/ {print > filename}'
+           
+          # Create tar of podman quadlets with proper directory structure
+          cd plane-podman
+          tar -czf ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz .
+          cd ..
+
+          # Verify the tar was created successfully
+          if [ ! -f ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz ]; then
+            echo "Error: Failed to create podman-quadlets.tar.gz"
+            exit 1
+          fi
 
           aws s3 cp ~/${{ env.ARTIFACT_SUFFIX }} s3://${{ vars.SELF_HOST_BUCKET_NAME }}/plane-enterprise/${{ env.ARTIFACT_SUFFIX }} --recursive
+      - name: Upload tar artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: podman-quadlets.tar.gz
+          path: ~/${{ env.ARTIFACT_SUFFIX }}/podman-quadlets.tar.gz
 
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
@@ -468,7 +548,7 @@ jobs:
         branch_build_push_web,
         branch_build_push_space,
         branch_build_push_live,
-        branch_build_push_apiserver,
+        branch_build_push_api,
         branch_build_push_proxy,
         branch_build_push_monitor,
         branch_build_push_email,
@@ -488,7 +568,13 @@ jobs:
         with:
           path: /tmp/airgapped
           merge-multiple: true
-          
+
+      - name: Download podman quadlets
+        uses: actions/download-artifact@v4
+        with:
+          name: podman-quadlets.tar.gz
+          path: deploy/cli-install/
+
       - name: Update docker-compose
         run: |
           sed -i 's@APP_RELEASE_VERSION=.*@APP_RELEASE_VERSION='${{ env.ARTIFACT_SUFFIX }}'@' deploy/cli-install/variables.env
@@ -516,24 +602,26 @@ jobs:
             ${{ github.workspace }}/deploy/cli-install/coolify-compose.yml
             ${{ github.workspace }}/deploy/cli-install/portainer-compose.yml
             ${{ github.workspace }}/deploy/cli-install/swarm-compose.yml
+            ${{ github.workspace }}/deploy/cli-install/podman-quadlets.tar.gz
 
   package_airgapped_artifacts:
     if: ${{ needs.branch_build_setup.outputs.airgapped_build == 'true' || needs.branch_build_setup.outputs.build_type == 'Release' }}
     name: Package Airgapped Artifacts
     runs-on: ubuntu-22.04
-    needs: [
-      branch_build_setup,
-      branch_build_push_admin,
-      branch_build_push_web,
-      branch_build_push_space,
-      branch_build_push_live,
-      branch_build_push_apiserver,
-      branch_build_push_proxy,
-      branch_build_push_monitor,
-      branch_build_push_email,
-      branch_build_push_silo,
-      upload_artifacts_s3,
-    ]
+    needs:
+      [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_api,
+        branch_build_push_proxy,
+        branch_build_push_monitor,
+        branch_build_push_email,
+        branch_build_push_silo,
+        upload_artifacts_s3,
+      ]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.SELF_HOST_BUCKET_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SELF_HOST_BUCKET_SECRET_KEY }}
@@ -603,6 +691,12 @@ jobs:
 
           echo "GPG_PRIVATE_KEY_PASSPHRASE=${passphrase}" >> $GITHUB_OUTPUT
 
+      - name: Download podman quadlets
+        uses: actions/download-artifact@v4
+        with:
+          name: podman-quadlets.tar.gz
+          path: /tmp/podman-quadlets
+
       - id: package_airgapped_artifacts
         name: Package Airgapped Artifacts
         env:
@@ -634,7 +728,7 @@ jobs:
 
           echo "Exporting GPG public key..."
           gpg --export -a $GPG_PUBLIC_KEY_ID > "/tmp/plane_public_key.asc"
-         
+
           AIRGAPPED_RELEASE_VERSION=${{ env.AIRGAPPED_RELEASE_VERSION }}
           if [ "${{ needs.branch_build_setup.outputs.build_type}}" == "Build" ]; then
             AIRGAPPED_RELEASE_VERSION=${{ needs.branch_build_setup.outputs.gh_branch_name }}
@@ -650,6 +744,7 @@ jobs:
             local asc_file="${sha_file}.asc"
 
             mkdir -p "/tmp/airgapped-${platform_suffix}"
+            cp /tmp/podman-quadlets/podman-quadlets.tar.gz .
             
             echo "Copying platform specific files to /tmp/airgapped-${platform_suffix}..."
             cp docker-compose.yml "/tmp/airgapped-${platform_suffix}/airgapped-docker-compose-${platform_suffix}.yml"
@@ -708,7 +803,7 @@ jobs:
             cd dist
             package_and_sign "arm64"
           fi
-          
+
           echo "COMMIT_HASH=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
       - name: Upload Public Key
@@ -875,4 +970,3 @@ jobs:
           gpg --verify airgapped-[amd64|arm64].tar.gz.sha256.asc
           ```
           EOF
-

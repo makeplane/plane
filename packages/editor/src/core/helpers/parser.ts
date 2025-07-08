@@ -1,6 +1,5 @@
 // plane imports
-import { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
-import { TEditorAssetType } from "@plane/types/src/enums";
+import { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse, TEditorAssetType } from "@plane/types";
 // plane web imports
 import {
   extractAdditionalAssetsFromHTMLContent,

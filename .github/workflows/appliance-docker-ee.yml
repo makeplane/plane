@@ -34,7 +34,6 @@ env:
   # Constants
   CURRENT_MANIFEST_FILE: 'ee-docker-aws-ami-manifest.json'
   LATEST_MANIFEST_FILE: 'ee-docker-aws-ami-latest-manifest.json'
-  PREVIOUS_MANIFEST_FILE: 'ee-docker-aws-ami-previous-manifest.json'
   EE_PACKER_FILE: 'ee-docker-aws-ami.pkr.hcl'
   CF_TEMPLATE_FILE: deploy/packer/ee-cloudformation-template.yaml
   CF_OUTPUT_FILE: deploy/packer/plane-commercial-cloudformation.yaml
@@ -53,11 +52,6 @@ jobs:
           aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
           aws-region: ${{ env.AWS_VPC_REGION }}
-
-      - name: Download Previous Manifest
-        run: |
-          # Download the previous manifest from S3 if it exists
-          aws s3 cp s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/${{ env.LATEST_MANIFEST_FILE }} ./${{ env.PREVIOUS_MANIFEST_FILE }} || true
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
@@ -105,35 +99,6 @@ jobs:
             -var-file=variables.pkrvars.hcl \
             ./deploy/packer/${{ env.EE_PACKER_FILE }}
 
-      - name: Cleanup Old AMIs
-        if: hashFiles('ee-docker-aws-ami-previous-manifest.json') != ''
-        run: |
-          # Validate the JSON file
-          if ! jq empty ee-docker-aws-ami-previous-manifest.json > /dev/null 2>&1; then
-            echo "Invalid or corrupted JSON file: ee-docker-aws-ami-previous-manifest.json"
-            exit 0
-          fi
-          
-          # Extract all AMI IDs from the artifact_id field
-          OLD_AMI_STRING=$(jq -r '.builds[-1].artifact_id' ee-docker-aws-ami-previous-manifest.json)
-          
-          # Split the AMI string into individual AMI IDs
-          IFS=',' read -ra AMI_ARRAY <<< "$OLD_AMI_STRING"
-          
-          for ami in "${AMI_ARRAY[@]}"; do
-            # Extract just the AMI ID part after the region prefix
-            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
-            if [ ! -z "$AMI_ID" ]; then
-              echo "Found previous AMI: $AMI_ID"
-              # Get the region from the AMI string
-              REGION=$(echo "$ami" | cut -d ":" -f1)
-              echo "Deregistering AMI in region: $REGION"
-              # Deregister the AMI in the specific region
-              aws ec2 deregister-image --region "$REGION" --image-id "$AMI_ID" || true
-              echo "Deregistered previous AMI: $AMI_ID in region $REGION"
-            fi
-          done
-
       - name: Extract AMI Information and Create Summary
         id: ami_info
         run: |
@@ -158,35 +123,14 @@ jobs:
              '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
              ${{env.CURRENT_MANIFEST_FILE}} > temp-manifest.json
           mv temp-manifest.json ${{env.CURRENT_MANIFEST_FILE}}
-          
-          # Create build summary with all AMIs
-          {
-            echo "### 🌎 Regional AMI Distribution"
-            echo "| Region | AMI ID |"
-            echo "| --- | --- |"
-            for ami_info in "${AMI_INFO[@]}"; do
-              region=${ami_info%:*}
-              ami_id=${ami_info#*:}
-              echo "| \`${region}\` | \`${ami_id}\` |"
-            done
-          } >> $GITHUB_STEP_SUMMARY
-          
-          # Console output for logs
-          echo "✅ AMI built successfully!"
-          echo "🔹 AMI Information:"
-          for ami_info in "${AMI_INFO[@]}"; do
-            region=${ami_info%:*}
-            ami_id=${ami_info#*:}
-            echo "   • Region: ${region}, AMI ID: ${ami_id}"
-          done
 
       - name: Store Manifest in S3
         run: |
           # Store the current manifest as latest
-          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/ee-docker-aws-ami-latest-manifest.json
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json
           
           # Also store a versioned copy
-          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/ee-docker-aws-ami-manifest-${{ github.sha }}.json"
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json"
 
       - name: Upload Build Manifest as Artifact
         uses: actions/upload-artifact@v4
@@ -281,13 +225,20 @@ jobs:
               ami_id="${AMIS[$i]}"
               echo "  Updating $region with AMI: $ami_id"
               REGIONS_STRING+="${region}, "
-              yq eval ".Mappings.RegionMap.\"${region}\".AMI = \"${ami_id}\"" -i "${{ env.CF_OUTPUT_FILE }}"
-              yq eval ".Mappings.RegionMap.\"${region}\".Allowed = \"true\"" -i "${{ env.CF_OUTPUT_FILE }}"
+              yq eval ".Parameters.AMIId.Default = \"${ami_id}\"" -i "${{ env.CF_OUTPUT_FILE }}"
           done
 
           cat "${{ env.CF_OUTPUT_FILE }}"
 
           echo "Updated template saved as: ${{ env.CF_OUTPUT_FILE }}"  
+
+      - name: Store CloudFormation Template in S3
+        run: |
+          # Store the current manifest as latest
+          aws s3 cp ${{env.CF_OUTPUT_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-latest.yaml
+
+          date_string=$(date +%d%b%Y)
+          aws s3 cp ${{env.CF_OUTPUT_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-${date_string}.yaml
 
       - name: Upload Updated CloudFormation Template
         uses: actions/upload-artifact@v4
@@ -295,3 +246,52 @@ jobs:
           name: cloudformation-template
           path: ${{ env.CF_OUTPUT_FILE }}
           retention-days: 30
+
+      - name: Print Build Summary
+        id: print_build_summary
+        run: |
+          # Extract AMI details from manifest
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ${{env.CURRENT_MANIFEST_FILE}})
+          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Create array of AMI information
+          declare -a AMI_INFO
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            AMI_INFO+=("$REGION:$AMI_ID")
+          done
+          
+          # Create build summary with all AMIs
+          {
+            echo "### 🌎 Regional AMI Distribution"
+            echo "| Region | AMI ID |"
+            echo "| --- | --- |"
+            for ami_info in "${AMI_INFO[@]}"; do
+              region=${ami_info%:*}
+              ami_id=${ami_info#*:}
+              echo "| \`${region}\` | \`${ami_id}\` |"
+            done
+          } >> $GITHUB_STEP_SUMMARY
+
+          date_string=$(date +%d%b%Y)
+          {
+            echo "### 📁 S3 Files"
+            echo "| File | Path | "
+            echo "| --- | --- |"
+            echo "| Latest CF Template | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-latest.yaml\` |"
+            echo "| CF Template | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-${date_string}.yaml\` |"
+            echo "| Current Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json\` |"
+            echo "| Latest Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json\` |"
+          } >> $GITHUB_STEP_SUMMARY
+          
+          # Console output for logs
+          echo "✅ AMI built successfully!"
+          echo "🔹 AMI Information:"
+          for ami_info in "${AMI_INFO[@]}"; do
+            region=${ami_info%:*}
+            ami_id=${ami_info#*:}
+            echo "   • Region: ${region}, AMI ID: ${ami_id}"
+          done
