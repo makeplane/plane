@@ -112,10 +112,14 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       debouncedFormSave.cancel();
 
       if (hasUnsavedChanges.current) {
-        handleSubmit(handleDescriptionFormSubmit)().finally(() => {
-          setIsSubmitting("submitted");
-          hasUnsavedChanges.current = false;
-        });
+        handleSubmit(handleDescriptionFormSubmit)()
+          .catch((error) => {
+            console.error("Failed to save description on unmount:", error);
+          })
+          .finally(() => {
+            setIsSubmitting("submitted");
+            hasUnsavedChanges.current = false;
+          });
       }
     },
     // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
