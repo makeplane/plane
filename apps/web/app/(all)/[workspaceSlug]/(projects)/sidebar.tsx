@@ -57,8 +57,11 @@ export const AppSidebar: FC = observer(() => {
         {!shouldRenderAppRail && <SidebarDropdown />}
 
         {isAppRailEnabled && (
-          <div className="flex items-center justify-between gap-2 pl-1">
+          <div className="flex items-center justify-between gap-2">
             <span className="text-md text-custom-text-200 font-medium pt-1">Projects</span>
+            <div className="flex items-center gap-2">
+              <AppSidebarToggleButton />
+            </div>
           </div>
         )}
         {/* Quick actions */}
@@ -76,9 +79,9 @@ export const AppSidebar: FC = observer(() => {
       {/* Help Section */}
       <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
         <WorkspaceEditionBadge />
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2">
           {!shouldRenderAppRail && <HelpMenu />}
-          <AppSidebarToggleButton />
+          {!isAppRailEnabled && <AppSidebarToggleButton />}
         </div>
       </div>
     </>
