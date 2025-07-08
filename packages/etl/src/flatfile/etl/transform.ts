@@ -145,7 +145,7 @@ export const extractFlatfileEntity = (records: TExtractedRecord[]): TFlatfileEnt
       record.labels.forEach((label) => {
         label
           .split(";")
-          .map((part) => part.trim().toLowerCase())
+          .map((part) => part.trim())
           .filter((part) => part.length > 0)
           .forEach((part) => labels.add(part));
       });
