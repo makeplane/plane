@@ -1,35 +1,38 @@
-# Strawberry imports
-import strawberry
-from strawberry.types import Info
-from strawberry.scalars import JSON
-from strawberry.permission import PermissionExtension
-from strawberry.exceptions import GraphQLError
-
-# Third-party imports
-from asgiref.sync import sync_to_async
+# Python imports
 from typing import Optional
 
+# Third-party imports
+import strawberry
+from asgiref.sync import sync_to_async
+
+# Strawberry imports
+from strawberry.exceptions import GraphQLError
+from strawberry.permission import PermissionExtension
+from strawberry.scalars import JSON
+from strawberry.types import Info
+
 # Module imports
+from plane.db.models import (
+    IssueUserProperty,
+    Project,
+    ProjectMember,
+    State,
+    UserFavorite,
+    Workspace,
+    WorkspaceMember,
+)
+from plane.ee.models import ProjectFeature
+from plane.graphql.permissions.project import (
+    ProjectAdminPermission,
+    ProjectBasePermission,
+    ProjectMemberPermission,
+)
 from plane.graphql.permissions.workspace import (
     WorkspaceBasePermission,
     WorkspacePermission,
 )
-from plane.graphql.permissions.project import (
-    ProjectMemberPermission,
-    ProjectBasePermission,
-    ProjectAdminPermission,
-)
 from plane.graphql.types.project import ProjectType
 from plane.graphql.utils.roles import Roles
-from plane.db.models import (
-    Workspace,
-    WorkspaceMember,
-    Project,
-    ProjectMember,
-    UserFavorite,
-    IssueUserProperty,
-    State,
-)
 
 
 @strawberry.type
@@ -52,9 +55,13 @@ class ProjectMutation:
         cover_image: Optional[str] = None,
         project_lead: Optional[strawberry.ID] = None,
         logo_props: Optional[JSON] = {},
-        page_view: Optional[bool] = False,
+        page_view: Optional[bool] = True,
+        module_view: Optional[bool] = True,
+        cycle_view: Optional[bool] = True,
+        issue_views_view: Optional[bool] = True,
     ) -> ProjectType:
         workspace = await sync_to_async(Workspace.objects.get)(slug=slug)
+
         try:
             project = await sync_to_async(Project.objects.create)(
                 name=name,
@@ -64,6 +71,9 @@ class ProjectMutation:
                 logo_props=logo_props,
                 cover_image=cover_image,
                 page_view=page_view,
+                module_view=module_view,
+                cycle_view=cycle_view,
+                issue_views_view=issue_views_view,
                 workspace=workspace,
             )
         except Exception:
@@ -143,6 +153,11 @@ class ProjectMutation:
             ]
         )
 
+        # Project feature
+        _ = await sync_to_async(ProjectFeature.objects.create)(
+            workspace_id=workspace.id, project_id=project.id
+        )
+
         return project
 
     @strawberry.mutation(
@@ -158,6 +173,9 @@ class ProjectMutation:
         network: Optional[int] = None,
         logo_props: Optional[JSON] = None,
         page_view: Optional[bool] = None,
+        module_view: Optional[bool] = None,
+        cycle_view: Optional[bool] = None,
+        issue_views_view: Optional[bool] = None,
         cover_image: Optional[str] = None,
     ) -> ProjectType:
         project = await sync_to_async(Project.objects.get)(id=id)
@@ -173,8 +191,12 @@ class ProjectMutation:
             project.logo_props = logo_props
         if page_view is not None:
             project.page_view = page_view
-        if page_view is not None:
-            project.page_view = page_view
+        if module_view is not None:
+            project.module_view = module_view
+        if cycle_view is not None:
+            project.cycle_view = cycle_view
+        if issue_views_view is not None:
+            project.issue_views_view = issue_views_view
         if cover_image is not None:
             project.cover_image = cover_image
         await sync_to_async(project.save)()
