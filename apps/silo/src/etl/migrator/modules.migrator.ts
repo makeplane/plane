@@ -118,7 +118,7 @@ export const createAllModules = async (
       }
       return undefined;
     }
-  }
+  };
 
   const createdModules = await processBatchPromises(modules, createOrUpdateModule, 2);
 

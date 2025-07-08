@@ -9,38 +9,36 @@ import { WorkspaceEntityConnectionAPIService } from "@/services/workspace/entity
 import { ClientOptions } from "@/types";
 import { PageAPIService } from "./page/page.service";
 
-
 export class APIClient {
-    options: ClientOptions;
-    importJob: ImportJobAPIService;
-    importReport: ImportReportAPIService;
-    workspaceConnection: WorkspaceConnectionAPIService;
-    workspaceCredential: WorkspaceCredentialAPIService;
-    workspaceEntityConnection: WorkspaceEntityConnectionAPIService;
-    // App level services
-    page: PageAPIService;
+  options: ClientOptions;
+  importJob: ImportJobAPIService;
+  importReport: ImportReportAPIService;
+  workspaceConnection: WorkspaceConnectionAPIService;
+  workspaceCredential: WorkspaceCredentialAPIService;
+  workspaceEntityConnection: WorkspaceEntityConnectionAPIService;
+  // App level services
+  page: PageAPIService;
 
-    constructor(options: ClientOptions) {
-        this.options = options;
-        this.workspaceConnection = new WorkspaceConnectionAPIService(options);
-        this.workspaceCredential = new WorkspaceCredentialAPIService(options);
-        this.workspaceEntityConnection = new WorkspaceEntityConnectionAPIService(options);
-        this.importJob = new ImportJobAPIService(options);
-        this.importReport = new ImportReportAPIService(options);
-        this.page = new PageAPIService(options);
-    }
+  constructor(options: ClientOptions) {
+    this.options = options;
+    this.workspaceConnection = new WorkspaceConnectionAPIService(options);
+    this.workspaceCredential = new WorkspaceCredentialAPIService(options);
+    this.workspaceEntityConnection = new WorkspaceEntityConnectionAPIService(options);
+    this.importJob = new ImportJobAPIService(options);
+    this.importReport = new ImportReportAPIService(options);
+    this.page = new PageAPIService(options);
+  }
 }
-
 
 let apiClient: APIClient | null = null;
 
 export const getAPIClient = (baseUrl?: string): APIClient => {
-    if (!apiClient) {
-        apiClient = new APIClient({
-            baseURL: baseUrl || env.API_BASE_URL,
-            hmacPrivateKey: env.SILO_HMAC_SECRET_KEY,
-            serviceName: "SILO",
-        });
-    }
-    return apiClient;
+  if (!apiClient) {
+    apiClient = new APIClient({
+      baseURL: baseUrl || env.API_BASE_URL,
+      hmacPrivateKey: env.SILO_HMAC_SECRET_KEY,
+      serviceName: "SILO",
+    });
+  }
+  return apiClient;
 };

@@ -8,7 +8,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { renderFormattedDate  } from "@plane/utils";
+import { renderFormattedDate } from "@plane/utils";
 // plane web imports
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing";

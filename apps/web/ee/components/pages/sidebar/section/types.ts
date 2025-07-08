@@ -45,4 +45,3 @@ export interface SectionRootProps {
 export interface DragAndDropHookReturn {
   isDropping: boolean;
 }
-

@@ -128,10 +128,7 @@ export class SiloAssetsService {
    * @returns { Promise<ISiloConfirmUploadResponse> }
    */
 
-  async confirmUpload(
-    workspaceSlug: string,
-    assetId: string
-  ): Promise<ISiloConfirmUploadResponse> {
+  async confirmUpload(workspaceSlug: string, assetId: string): Promise<ISiloConfirmUploadResponse> {
     return this.axiosInstance
       .patch(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`)
       .then((response) => response?.data)

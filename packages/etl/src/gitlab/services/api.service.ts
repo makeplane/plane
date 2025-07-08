@@ -103,10 +103,15 @@ export class GitLabService {
 
   async addWebhookToProject(projectId: string, url: string, token: string) {
     try {
-      const response = await this.client.post(
-        `/projects/${projectId}/hooks`,
-        { url, token, push_events: true, merge_requests_events: true, pipeline_events: true, tag_push_events: true, issues_events: true },
-      );
+      const response = await this.client.post(`/projects/${projectId}/hooks`, {
+        url,
+        token,
+        push_events: true,
+        merge_requests_events: true,
+        pipeline_events: true,
+        tag_push_events: true,
+        issues_events: true,
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -121,9 +126,7 @@ export class GitLabService {
    */
   async removeWebhookFromProject(projectId: string, hookId: string) {
     try {
-      const response = await this.client.delete(
-        `/projects/${projectId}/hooks/${hookId}`
-      );
+      const response = await this.client.delete(`/projects/${projectId}/hooks/${hookId}`);
       return response.data;
     } catch (error) {
       console.error("Error removing webhook from gitlab project", error);
@@ -132,10 +135,15 @@ export class GitLabService {
 
   async addWebhookToGroup(groupId: string, url: string, token: string) {
     try {
-      const response = await this.client.post(
-        `/groups/${groupId}/hooks`,
-        { url, token, push_events: true, merge_requests_events: true, pipeline_events: true, tag_push_events: true, issues_events: true },
-      );
+      const response = await this.client.post(`/groups/${groupId}/hooks`, {
+        url,
+        token,
+        push_events: true,
+        merge_requests_events: true,
+        pipeline_events: true,
+        tag_push_events: true,
+        issues_events: true,
+      });
       return response.data;
     } catch (error) {
       throw error;
@@ -150,9 +158,7 @@ export class GitLabService {
    */
   async removeWebhookFromGroup(groupId: string, hookId: string) {
     try {
-      const response = await this.client.delete(
-        `/groups/${groupId}/hooks/${hookId}`
-      );
+      const response = await this.client.delete(`/groups/${groupId}/hooks/${hookId}`);
       return response.data;
     } catch (error) {
       throw error;

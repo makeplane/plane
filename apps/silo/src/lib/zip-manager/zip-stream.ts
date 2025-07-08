@@ -1,4 +1,4 @@
-import { StorageProvider } from './storage-provider';
+import { StorageProvider } from "./storage-provider";
 
 export class ZipStream {
   private storageProvider: StorageProvider;
@@ -13,11 +13,14 @@ export class ZipStream {
   }
 
   async seek(offset: number, whence: number = 0): Promise<number> {
-    if (whence === 0) { // SEEK_SET
+    if (whence === 0) {
+      // SEEK_SET
       this.position = offset;
-    } else if (whence === 1) { // SEEK_CUR
+    } else if (whence === 1) {
+      // SEEK_CUR
       this.position += offset;
-    } else if (whence === 2) { // SEEK_END
+    } else if (whence === 2) {
+      // SEEK_END
       this.position = this.contentLength + offset;
     } else {
       throw new Error(`Invalid whence value: ${whence}`);

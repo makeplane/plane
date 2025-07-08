@@ -12,11 +12,8 @@ import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 export const BillingActionsButton = observer((props: TBillingActionsButtonProps) => {
   const { canPerformWorkspaceAdminActions } = props;
   // store hooks
-  const {
-    isSeatManagementEnabled,
-    toggleAddWorkspaceSeatsModal,
-    toggleRemoveUnusedSeatsConfirmationModal,
-  } = useWorkspaceSubscription();
+  const { isSeatManagementEnabled, toggleAddWorkspaceSeatsModal, toggleRemoveUnusedSeatsConfirmationModal } =
+    useWorkspaceSubscription();
 
   return (
     <>

@@ -6,7 +6,7 @@ import { isDesktopApp } from "@todesktop/client-core/platform/todesktop";
 // mobx
 import { observer } from "mobx-react";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 // desktop app components

@@ -17,6 +17,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.widget_graph_plot import build_widget_chart
 from plane.ee.utils.chart_validations import validate_chart_config
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -161,7 +162,6 @@ class WidgetListEndpoint(BaseAPIView):
             )
             .accessible_to(request.user.id, slug)
         )
-
 
         if (
             x_axis_property == Widget.PropertyEnum.EPICS

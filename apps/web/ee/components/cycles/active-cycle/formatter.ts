@@ -1,7 +1,7 @@
 import { format, startOfToday } from "date-fns";
 import { isEmpty, orderBy, uniqBy } from "lodash";
 import { ICycle } from "@plane/types";
-import { findTotalDaysInRange, generateDateArray  } from "@plane/utils";
+import { findTotalDaysInRange, generateDateArray } from "@plane/utils";
 
 const scope = (p: any, isTypeIssue: boolean) => (isTypeIssue ? p.total_issues : p.total_estimate_points);
 const ideal = (date: string, scope: number, cycle: ICycle) => {

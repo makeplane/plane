@@ -87,7 +87,9 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-2">
-        <div className="text-sm text-custom-text-200">{t("importers.select_service_project", { "serviceName": "Plane" })}</div>
+        <div className="text-sm text-custom-text-200">
+          {t("importers.select_service_project", { serviceName: "Plane" })}
+        </div>
         {isLoading && (!projects || projects.length === 0) ? (
           <Loader>
             <Loader.Item height="28px" width="100%" />
@@ -101,7 +103,7 @@ export const SelectPlaneProjectRoot: FC = observer(() => {
               data: project,
             }))}
             value={formData.projectId}
-            placeHolder={t("importers.select_service_project", { "serviceName": "Plane" })}
+            placeHolder={t("importers.select_service_project", { serviceName: "Plane" })}
             onChange={(value: string | undefined) => handleFormData(value)}
             iconExtractor={(option) => (
               <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">

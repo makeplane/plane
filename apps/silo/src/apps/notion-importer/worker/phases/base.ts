@@ -108,7 +108,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    */
   async handleTask(headers: TaskHeaders, data: TNotionMigratorData): Promise<boolean> {
     const { jobId } = headers;
-    const { type } = data
+    const { type } = data;
 
     try {
       // Get job data
@@ -180,7 +180,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
         status: E_JOB_STATUS.ERROR,
       });
 
-      return false
+      return false;
     }
   }
 
@@ -311,7 +311,12 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param types - The types of objects to remove
    */
   async cleanup(fileId: string, jobId: string) {
-    const types = [ENotionImporterKeyType.PAGE, ENotionImporterKeyType.ASSET, ENotionImporterKeyType.LEAF_NODE_COUNTER, ENotionImporterKeyType.JOB];
+    const types = [
+      ENotionImporterKeyType.PAGE,
+      ENotionImporterKeyType.ASSET,
+      ENotionImporterKeyType.LEAF_NODE_COUNTER,
+      ENotionImporterKeyType.JOB,
+    ];
     for (const type of types) {
       if (type === ENotionImporterKeyType.JOB || type === ENotionImporterKeyType.JOB_CREDENTIALS) {
         const key = getKey(jobId, type);

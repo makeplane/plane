@@ -3,14 +3,14 @@ import { IParserExtension } from "../../types";
 
 export type PlaneMentionResult =
   | {
-    type: "text";
-    text: string;
-  }
+      type: "text";
+      text: string;
+    }
   | {
-    type: "link";
-    link: string;
-    label: string;
-  };
+      type: "link";
+      link: string;
+      label: string;
+    };
 
 export type PlaneMentionCallback = (mentionData: {
   id?: string;
@@ -23,7 +23,7 @@ export type PlaneMentionParserConfig = {
 };
 
 export class PlaneMentionParserExtension implements IParserExtension {
-  constructor(private readonly config: PlaneMentionParserConfig) { }
+  constructor(private readonly config: PlaneMentionParserConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     // Check if the node contains mention-component elements
@@ -39,7 +39,7 @@ export class PlaneMentionParserExtension implements IParserExtension {
     }
 
     // If the node itself is a mention component, process it directly
-    if (node.tagName?.toLowerCase() === 'mention-component') {
+    if (node.tagName?.toLowerCase() === "mention-component") {
       return this.processMentionComponent(node);
     }
 
@@ -51,7 +51,7 @@ export class PlaneMentionParserExtension implements IParserExtension {
     const components: HTMLElement[] = [];
 
     // Check if the current node is a mention component
-    if (node.tagName?.toLowerCase() === 'mention-component') {
+    if (node.tagName?.toLowerCase() === "mention-component") {
       components.push(node);
     }
 
@@ -88,7 +88,7 @@ export class PlaneMentionParserExtension implements IParserExtension {
     }
 
     // Get the HTML content
-    let html = node.innerHTML || node.textContent || '';
+    let html = node.innerHTML || node.textContent || "";
 
     // Process each mention component
     for (const mentionComponent of mentionComponents) {
@@ -111,16 +111,16 @@ export class PlaneMentionParserExtension implements IParserExtension {
     const data: any = {};
 
     // Extract common attributes
-    const id = mentionComponent.getAttribute('id');
-    const entityIdentifier = mentionComponent.getAttribute('entity_identifier');
-    const entityName = mentionComponent.getAttribute('entity_name');
+    const id = mentionComponent.getAttribute("id");
+    const entityIdentifier = mentionComponent.getAttribute("entity_identifier");
+    const entityName = mentionComponent.getAttribute("entity_name");
 
     if (id) data.id = id;
     if (entityIdentifier) data.entityIdentifier = entityIdentifier;
     if (entityName) data.entityName = entityName;
     // Extract any additional attributes
     for (const [key, value] of Object.entries(mentionComponent.attributes)) {
-      if (!['id', 'entity_identifier', 'entity_name'].includes(key)) {
+      if (!["id", "entity_identifier", "entity_name"].includes(key)) {
         data[key] = value;
       }
     }

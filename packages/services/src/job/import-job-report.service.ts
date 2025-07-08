@@ -26,7 +26,10 @@ export class ImportReportService extends APIService {
       });
   }
 
-  async listImportReports(workspaceSlug: string, params?: Partial<Record<keyof TImportReport, string | boolean | number>>): Promise<TImportReport[]> {
+  async listImportReports(
+    workspaceSlug: string,
+    params?: Partial<Record<keyof TImportReport, string | boolean | number>>
+  ): Promise<TImportReport[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/import-reports/`, { params })
       .then((response) => response.data)
       .catch((error) => {

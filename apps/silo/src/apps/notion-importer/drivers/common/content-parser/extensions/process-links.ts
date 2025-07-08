@@ -21,7 +21,10 @@ import { IParserExtension } from "@plane/etl/parser";
 */
 export class ProcessLinksExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
-    return (node.tagName === "A" || node.rawTagName === "a") && (node.getAttribute("class")?.includes("bookmark source") ?? false);
+    return (
+      (node.tagName === "A" || node.rawTagName === "a") &&
+      (node.getAttribute("class")?.includes("bookmark source") ?? false)
+    );
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {

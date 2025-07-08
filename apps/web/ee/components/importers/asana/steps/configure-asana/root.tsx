@@ -21,7 +21,7 @@ const currentStepKey = E_IMPORTER_STEPS.CONFIGURE_ASANA;
 export const ConfigureAsanaRoot: FC = observer(() => {
   // hooks
   const { importerData, handleImporterData, currentStep, handleStepper } = useAsanaImporter();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   // states
   const [formData, setFormData] = useState<TFormData>({
     workspaceGid: undefined,
@@ -74,7 +74,7 @@ export const ConfigureAsanaRoot: FC = observer(() => {
       <div className="flex-shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" size="sm" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>
-            {t('common.next')}
+            {t("common.next")}
           </Button>
         </StepperNavigation>
       </div>

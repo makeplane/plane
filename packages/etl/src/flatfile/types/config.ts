@@ -1,6 +1,13 @@
 /* ----------- Importer Utility ----------- */
 
-import { TExtractedCycle, TExtractedIssue, TExtractedIssueType, TExtractedLabel, TExtractedModule, TExtractedUser } from "./extract";
+import {
+  TExtractedCycle,
+  TExtractedIssue,
+  TExtractedIssueType,
+  TExtractedLabel,
+  TExtractedModule,
+  TExtractedUser,
+} from "./extract";
 
 // Configuration model for flatfile
 export type FlatfileConfig = {
@@ -11,17 +18,17 @@ export type FlatfileConfig = {
   accountId: string;
   workbookId: string;
   environmentId: string;
-}
+};
 
 export type FlatfileServiceConfig = {
   apiKey: string;
-}
+};
 
 export type TFlatfileEntity = {
-  users: TExtractedUser[]
-  labels: TExtractedLabel[]
-  cycles: TExtractedCycle[]
-  modules: TExtractedModule[]
-  issues: TExtractedIssue[]
-  issue_types: TExtractedIssueType[]
-}
+  users: TExtractedUser[];
+  labels: TExtractedLabel[];
+  cycles: TExtractedCycle[];
+  modules: TExtractedModule[];
+  issues: TExtractedIssue[];
+  issue_types: TExtractedIssueType[];
+};

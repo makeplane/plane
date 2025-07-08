@@ -88,7 +88,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("appId", { required: t("github_enterprise_integration.app_id_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.app_id_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.app_id_description")}
+            </div>
             {errors.appId && <p className="text-red-500 text-xs">{errors.appId.message}</p>}
           </div>
           <div>
@@ -102,7 +104,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("appName", { required: t("github_enterprise_integration.app_name_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.app_name_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.app_name_description")}
+            </div>
             {errors.appName && <p className="text-red-500 text-xs">{errors.appName.message}</p>}
           </div>
           <div>
@@ -122,7 +126,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
                 },
               })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.base_url_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.base_url_description")}
+            </div>
             {errors.baseUrl && <p className="text-red-500 text-xs">{errors.baseUrl.message}</p>}
           </div>
           <div>
@@ -136,7 +142,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("clientId", { required: t("github_enterprise_integration.client_id_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.client_id_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.client_id_description")}
+            </div>
             {errors.clientId && <p className="text-red-500 text-xs">{errors.clientId.message}</p>}
           </div>
           <div>
@@ -150,7 +158,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("clientSecret", { required: t("github_enterprise_integration.client_secret_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.client_secret_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.client_secret_description")}
+            </div>
             {errors.clientSecret && <p className="text-red-500 text-xs">{errors.clientSecret.message}</p>}
           </div>
 
@@ -167,7 +177,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("webhookSecret", { required: t("github_enterprise_integration.webhook_secret_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.webhook_secret_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.webhook_secret_description")}
+            </div>
             {errors.webhookSecret && <p className="text-red-500 text-xs">{errors.webhookSecret.message}</p>}
           </div>
           <div>
@@ -183,7 +195,9 @@ export const GithubEnterpriseServerAppForm: FC<IGEAppFormProps> = observer(
               tabIndex={1}
               {...register("privateKey", { required: t("github_enterprise_integration.private_key_error") })}
             />
-            <div className="text-xs text-custom-text-300 mt-1">{t("github_enterprise_integration.private_key_description")}</div>
+            <div className="text-xs text-custom-text-300 mt-1">
+              {t("github_enterprise_integration.private_key_description")}
+            </div>
             {errors.privateKey && <p className="text-red-500 text-xs">{errors.privateKey.message}</p>}
           </div>
           <div className="flex justify-start gap-2 mt-10">

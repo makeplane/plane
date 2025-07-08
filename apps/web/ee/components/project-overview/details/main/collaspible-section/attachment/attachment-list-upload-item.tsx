@@ -6,7 +6,7 @@ import { CircularProgressIndicator, Tooltip } from "@plane/ui";
 // components
 import { getFileIcon } from "@/components/icons";
 // helpers
-import { getFileExtension  } from "@plane/utils";
+import { getFileExtension } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types

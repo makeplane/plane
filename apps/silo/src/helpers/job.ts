@@ -1,23 +1,28 @@
 import { TImportJob, TImportReport, TWorkspaceCredential } from "@plane/types";
 import { getAPIClient } from "@/services/client";
 
-export const updateJobWithReport = async (jobId: string, reportId: string, jobData: Partial<TImportJob>, reportData: Partial<TImportReport>) => {
-  const client = getAPIClient()
+export const updateJobWithReport = async (
+  jobId: string,
+  reportId: string,
+  jobData: Partial<TImportJob>,
+  reportData: Partial<TImportReport>
+) => {
+  const client = getAPIClient();
   return await Promise.all([
     client.importJob.updateImportJob(jobId, jobData),
     client.importReport.updateImportReport(reportId, reportData),
   ]);
-}
+};
 
 export const getJobData = async <TJobConfig>(jobId: string): Promise<TImportJob<TJobConfig>> => {
-  const client = getAPIClient()
+  const client = getAPIClient();
   const job = await client.importJob.getImportJob(jobId);
   if (!job) {
     throw new Error(`[${jobId.slice(0, 7)}] No job data or metadata found. Exiting...`);
   }
   validateJobData(job, jobId);
   return job as unknown as TImportJob<TJobConfig>;
-}
+};
 
 export function validateJobData(jobData: TImportJob, jobId: string): void {
   if (!jobData.workspace_id || !jobData.source) {

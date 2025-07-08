@@ -1,1 +1,1 @@
-export * from "./gh-plane.worker"
+export * from "./gh-plane.worker";

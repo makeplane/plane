@@ -31,6 +31,7 @@ from django.utils import timezone
 from plane.utils.order_queryset import order_issue_queryset
 from collections import defaultdict
 
+
 class InitiativeEpicViewSet(BaseViewSet):
     serializer_class = InitiativeEpicSerializer
     model = InitiativeEpic
@@ -56,7 +57,7 @@ class InitiativeEpicViewSet(BaseViewSet):
             largest_sort_order = 10000
         else:
             largest_sort_order += 1000
-            
+
         #  Current initiative epics
         current_initiative_epics = InitiativeEpic.objects.filter(
             workspace=workspace,
@@ -66,7 +67,7 @@ class InitiativeEpicViewSet(BaseViewSet):
         # Get epics to delete and create using symmetric difference (XOR)
         epics_to_delete = set(current_initiative_epics) - set(epic_ids)
         epics_to_create = set(epic_ids) - set(current_initiative_epics)
-        
+
         # Create the initiative_epics
         initiative_epics = []
         for epic_id in epics_to_create:

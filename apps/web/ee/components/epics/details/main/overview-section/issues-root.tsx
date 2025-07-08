@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EIssueServiceType, EIssuesStoreType, TIssue, TSubIssueOperations } from "@plane/types";
 import { getButtonStyling, LayersIcon } from "@plane/ui";
 // components
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import { SubIssuesActionButton } from "@/components/issues";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";

@@ -59,17 +59,17 @@ class TestGenerateApplication:
         user_id = str(create_user.id)
         app_key = "github"
         app_data = APPLICATIONS[app_key]
-        
+
         # Mock client secret generation
         mock_generate_client_secret.return_value = "test-client-secret"
-        
+
         # Mock encryption
         mock_encrypt.return_value = {
             "iv": "test-iv",
             "ciphertext": "test-ciphertext",
             "tag": "test-tag",
         }
-        
+
         # Act
         result = generate_application(
             user_id,
@@ -78,10 +78,10 @@ class TestGenerateApplication:
             ApplicationSecret,
             User,
         )
-        
+
         # Assert
         assert result is not None
-        
+
         # Verify application was created
         application = Application.objects.get(id=result)
         assert application.name == app_data["name"]
@@ -94,10 +94,10 @@ class TestGenerateApplication:
         assert application.client_type == "confidential"
         assert application.authorization_grant_type == "authorization-code"
         assert application.user_id == create_user.id
-        
+
         # Verify encryption was called
         mock_encrypt.assert_called_once_with("test-client-secret")
-        
+
         # Verify application secrets were created
         secrets = ApplicationSecret.objects.filter(
             key__in=[
@@ -107,16 +107,16 @@ class TestGenerateApplication:
             ]
         )
         assert secrets.count() == 3
-        
+
         # Check each secret
         id_secret = secrets.get(key=f"x-{app_key}-id")
         assert id_secret.value == str(application.id)
         assert id_secret.is_secured is False
-        
+
         client_id_secret = secrets.get(key=f"x-{app_key}-client_id")
         assert client_id_secret.value == application.client_id
         assert client_id_secret.is_secured is False
-        
+
         client_secret_secret = secrets.get(key=f"x-{app_key}-client_secret")
         assert client_secret_secret.value == "test-iv:test-ciphertext:test-tag"
         assert client_secret_secret.is_secured is True
@@ -135,7 +135,7 @@ class TestGenerateApplication:
         user_id = str(create_user.id)
         app_key = "github"
         app_data = APPLICATIONS[app_key]
-        
+
         # Create an existing application
         existing_app = Application.objects.create(
             name=app_data["name"],
@@ -150,17 +150,17 @@ class TestGenerateApplication:
             user=create_user,
             client_secret="old-client-secret",
         )
-        
+
         # Mock client secret generation
         mock_generate_client_secret.return_value = "new-client-secret"
-        
+
         # Mock encryption
         mock_encrypt.return_value = {
             "iv": "new-iv",
             "ciphertext": "new-ciphertext",
             "tag": "new-tag",
         }
-        
+
         # Act
         result = generate_application(
             user_id,
@@ -169,10 +169,10 @@ class TestGenerateApplication:
             ApplicationSecret,
             User,
         )
-        
+
         # Assert
         assert result == existing_app.id
-        
+
         # Verify existing application was updated
         existing_app.refresh_from_db()
         assert existing_app.redirect_uris == app_data["redirect_uris"]
@@ -186,14 +186,14 @@ class TestGenerateApplication:
         # Arrange
         user_id = str(create_user.id)
         app_key = "github"
-        
+
         # Create an existing application secret
         ApplicationSecret.objects.create(
             key=f"x-{app_key}-id",
             value="existing-app-id",
             is_secured=False,
         )
-        
+
         # Act
         result = generate_application(
             user_id,
@@ -202,10 +202,10 @@ class TestGenerateApplication:
             ApplicationSecret,
             User,
         )
-        
+
         # Assert
         assert result is None
-        
+
         # Verify no application was created
         assert Application.objects.count() == 0
 
@@ -217,7 +217,7 @@ class TestGenerateApplication:
         # Arrange
         user_id = "00000000-0000-0000-0000-000000000000"
         app_key = "github"
-        
+
         # Act & Assert
         with pytest.raises(ObjectDoesNotExist):
             generate_application(
@@ -237,7 +237,7 @@ class TestGenerateApplication:
         # Arrange
         user_id = str(create_user.id)
         app_key = "invalid-app-key"
-        
+
         # Act & Assert
         with pytest.raises(KeyError):
             generate_application(
@@ -261,13 +261,13 @@ class TestGenerateApplication:
         # Arrange
         user_id = str(create_user.id)
         app_key = "github"
-        
+
         # Mock client secret generation
         mock_generate_client_secret.return_value = "test-client-secret"
-        
+
         # Mock encryption to raise an exception
         mock_encrypt.side_effect = Exception("Encryption error")
-        
+
         # Act & Assert
         with pytest.raises(Exception, match="Encryption error"):
             generate_application(
@@ -277,7 +277,7 @@ class TestGenerateApplication:
                 ApplicationSecret,
                 User,
             )
-        
+
         # Verify no application was created due to rollback
         assert Application.objects.count() == 0
         assert ApplicationSecret.objects.count() == 0
@@ -294,17 +294,17 @@ class TestGenerateApplication:
         """Test application generation for all app types in APPLICATIONS"""
         # Arrange
         user_id = str(create_user.id)
-        
+
         # Mock client secret generation
         mock_generate_client_secret.return_value = "test-client-secret"
-        
+
         # Mock encryption
         mock_encrypt.return_value = {
             "iv": "test-iv",
             "ciphertext": "test-ciphertext",
             "tag": "test-tag",
         }
-        
+
         # Act & Assert for each app type
         for app_key in APPLICATIONS.keys():
             result = generate_application(
@@ -314,9 +314,9 @@ class TestGenerateApplication:
                 ApplicationSecret,
                 User,
             )
-            
+
             assert result is not None
-            
+
             # Verify the correct app data was used
             app_data = APPLICATIONS[app_key]
             application = Application.objects.get(id=result)

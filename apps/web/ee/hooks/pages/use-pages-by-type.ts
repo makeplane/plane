@@ -13,10 +13,7 @@ interface UsePagesByTypeReturn {
   mutate: () => void;
 }
 
-export const usePagesByType = (
-  pageType: TPageNavigationTabs,
-  searchQuery?: string
-): UsePagesByTypeReturn => {
+export const usePagesByType = (pageType: TPageNavigationTabs, searchQuery?: string): UsePagesByTypeReturn => {
   const { workspaceSlug } = useParams();
   const workspacePageStore = usePageStore(EPageStoreType.WORKSPACE);
 
@@ -29,17 +26,18 @@ export const usePagesByType = (
   // Use SWR to fetch the data
   const { data, error, isLoading, mutate } = useSWR(
     workspaceSlug ? `WORKSPACE_PAGES_${workspaceSlug}_${pageType}_${searchQuery || ""}` : null,
-    workspaceSlug ? 
-      async () => {
-        // Get all workspace pages with filters
-        const url = buildUrl();
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch pages");
-        return await response.json();
-      } : null,
-    { 
+    workspaceSlug
+      ? async () => {
+          // Get all workspace pages with filters
+          const url = buildUrl();
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Failed to fetch pages");
+          return await response.json();
+        }
+      : null,
+    {
       revalidateOnFocus: false,
-      revalidateIfStale: false
+      revalidateIfStale: false,
     }
   );
 
@@ -55,6 +53,6 @@ export const usePagesByType = (
     pages: data,
     isLoading,
     error,
-    mutate
+    mutate,
   };
-}; 
+};

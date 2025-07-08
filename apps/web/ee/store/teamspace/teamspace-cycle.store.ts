@@ -94,7 +94,9 @@ export class TeamspaceCycleStore implements ITeamspaceCycleStore {
    */
   getTeamspaceFilteredActiveCycleIds = computedFn((teamspaceId: string): string[] => {
     const teamspaceCycleIds = this.getTeamspaceFilteredCycleIds(teamspaceId);
-    return teamspaceCycleIds.filter((cycleId) => this.cycleStore.getCycleById(cycleId)?.status?.toLowerCase() === "current");
+    return teamspaceCycleIds.filter(
+      (cycleId) => this.cycleStore.getCycleById(cycleId)?.status?.toLowerCase() === "current"
+    );
   });
 
   /**

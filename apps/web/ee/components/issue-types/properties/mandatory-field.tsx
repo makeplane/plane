@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { AlertModalCore, Checkbox, Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TPropertyMandatoryFieldCheckboxProps = {
   value: boolean;

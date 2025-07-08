@@ -69,7 +69,6 @@ export const ISSUE_MULTIPLE_DATA: { [key in keyof IIssueFilterOptions]: boolean 
   target_date: false,
 };
 
-
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "state",
   "priority",

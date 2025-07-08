@@ -16,7 +16,7 @@ export const IMPORTER_CLICKUP_STEPS_V1: TClickUpImporterStep[] = [
     key: E_CLICKUP_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
     icon: () => <Layers3 size={14} />,
     i18n_title: "clickup_importer.steps.title_configure_plane",
-    i18n_description:"clickup_importer.steps.description_configure_plane",
+    i18n_description: "clickup_importer.steps.description_configure_plane",
     component: () => <SelectPlaneProjectRoot />,
     prevStep: undefined,
     nextStep: E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP,
@@ -34,8 +34,7 @@ export const IMPORTER_CLICKUP_STEPS_V1: TClickUpImporterStep[] = [
     key: E_CLICKUP_IMPORTER_STEPS.MAP_STATES,
     icon: () => <Layers3 size={14} />,
     i18n_title: "clickup_importer.steps.title_map_states",
-    i18n_description:
-      "clickup_importer.steps.description_map_states",
+    i18n_description: "clickup_importer.steps.description_map_states",
     component: () => <MapStatesRoot />,
     prevStep: E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP,
     nextStep: E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES,
@@ -44,8 +43,7 @@ export const IMPORTER_CLICKUP_STEPS_V1: TClickUpImporterStep[] = [
     key: E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES,
     icon: () => <Layers3 size={14} />,
     i18n_title: "clickup_importer.steps.title_map_priorities",
-    i18n_description:
-      "clickup_importer.steps.description_map_priorities",
+    i18n_description: "clickup_importer.steps.description_map_priorities",
     component: () => <MapPriorityRoot />,
     prevStep: E_CLICKUP_IMPORTER_STEPS.MAP_STATES,
     nextStep: E_CLICKUP_IMPORTER_STEPS.SUMMARY,
@@ -75,8 +73,7 @@ export const IMPORTER_CLICKUP_STEPS: TClickUpImporterStep[] = [
     key: E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES,
     icon: () => <Layers3 size={14} />,
     i18n_title: "clickup_importer.steps.title_map_priorities",
-    i18n_description:
-      "clickup_importer.steps.description_map_priorities",
+    i18n_description: "clickup_importer.steps.description_map_priorities",
     component: () => <MapPriorityRoot />,
     prevStep: E_CLICKUP_IMPORTER_STEPS.CONFIGURE_CLICKUP,
     nextStep: E_CLICKUP_IMPORTER_STEPS.SUMMARY,

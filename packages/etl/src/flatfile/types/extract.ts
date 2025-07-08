@@ -2,11 +2,11 @@
 // Issues that are extracted out of the workbook
 export type TExtractedRecord = {
   // Properties of an issue
-  id?: string
+  id?: string;
   title?: string;
   state?: string;
   priority?: string;
-  issue_type?: string
+  issue_type?: string;
   description?: string;
   assignees?: string[];
 
@@ -22,34 +22,34 @@ export type TExtractedRecord = {
   labels?: string[];
   cycle?: string;
   module?: string;
-}
+};
 
 // Extracted Issue
 export type TExtractedIssue = Omit<TExtractedRecord, "cycle" | "title"> & {
-  title: string
-}
+  title: string;
+};
 
 // Extracted Issue Type
-export type TExtractedIssueType = string
+export type TExtractedIssueType = string;
 
 // Extracted User
 export type TExtractedUser = {
-  id: string,
-  email: string
-}
+  id: string;
+  email: string;
+};
 
 // Labels that are extracted out of the workbook
-export type TExtractedLabel = string
+export type TExtractedLabel = string;
 
 // Cycles that are extracted out of the workbook
 export type TExtractedCycle = {
-  id: string
-  name: string,
-  issues: string[]
-}
+  id: string;
+  name: string;
+  issues: string[];
+};
 
 export type TExtractedModule = {
-  id: string,
-  name: string,
-  issues: string[]
-}
+  id: string;
+  name: string;
+  issues: string[];
+};

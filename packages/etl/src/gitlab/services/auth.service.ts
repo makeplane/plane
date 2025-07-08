@@ -1,5 +1,5 @@
 import axios from "axios";
-import crypto from 'crypto';
+import crypto from "crypto";
 import { GitLabAuthConfig, GitLabAuthorizeState, GitLabAuthPayload, GitLabTokenResponse } from "../types/auth";
 
 const DEFAULT_SCOPES = ["api", "read_api", "read_user", "read_repository", "profile", "email"];
@@ -53,10 +53,9 @@ export class GitLabAuthService {
     return { response, state: decodedState };
   }
 
-
   /**
-   * 
-   * @param workspaceId 
+   *
+   * @param workspaceId
    * @returns workspace webhook secret
    */
 
@@ -75,7 +74,7 @@ export class GitLabAuthService {
       const combined = `${workspaceId}:${GITLAB_CLIENT_SECRET}`;
 
       // Hash the combined string using SHA-256
-      const hash = crypto.createHash('sha256').update(combined).digest('hex');
+      const hash = crypto.createHash("sha256").update(combined).digest("hex");
 
       // Return the first 32 characters of the hash
       return hash.slice(0, 32);
@@ -85,11 +84,10 @@ export class GitLabAuthService {
     }
   }
 
-
   /**
-   * 
-   * @param workspaceId 
-   * @param webhookSecret 
+   *
+   * @param workspaceId
+   * @param webhookSecret
    * @returns boolean
    */
   verifyGitlabWebhookSecret(workspaceId: string, webhookSecret: string) {
@@ -99,8 +97,7 @@ export class GitLabAuthService {
       return webhookHash === webhookSecret;
     } catch (error) {
       console.error("error verifyGitlabWebhookSecret", error);
-      return false
+      return false;
     }
   }
-
 }

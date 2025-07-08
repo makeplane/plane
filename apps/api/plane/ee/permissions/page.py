@@ -24,7 +24,6 @@ class WorkspacePagePermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-
         user_id = request.user.id
         slug = view.kwargs.get("slug")
         page_id = view.kwargs.get("page_id")

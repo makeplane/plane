@@ -2,16 +2,16 @@ import { TZipFileNode } from "@/lib/zip-manager";
 import { EZipDriverType } from "../drivers";
 
 export enum ENotionImporterKeyType {
-  PAGE = 'PAGE',
-  ASSET = 'ASSET',
-  JOB = 'JOB',
-  JOB_CREDENTIALS = 'JOB_CREDENTIALS',
-  LEAF_NODE_COUNTER = 'LEAF_NODE_COUNTER',
+  PAGE = "PAGE",
+  ASSET = "ASSET",
+  JOB = "JOB",
+  JOB_CREDENTIALS = "JOB_CREDENTIALS",
+  LEAF_NODE_COUNTER = "LEAF_NODE_COUNTER",
 }
 
 export type TNotionImportConfig = {
   fileId: string;
-}
+};
 
 export type TNotionMigratorData = {
   // Type of the driver that we are going to use
@@ -25,7 +25,7 @@ export type TNotionMigratorData = {
 
   // Parent page id
   parentPageId?: string;
-}
+};
 
 export enum ENotionMigrationType {
   // The job runner is generic for all the importers hence, when the import will be triggered
@@ -33,7 +33,6 @@ export enum ENotionMigrationType {
   PHASE_ONE = "initiate",
   PHASE_TWO = "phase-two",
 }
-
 
 export type TDocContentParserConfig = {
   fileId: string;
@@ -43,4 +42,3 @@ export type TDocContentParserConfig = {
   apiBaseUrl: string;
   context?: Map<string, string>;
 };
-

@@ -125,7 +125,10 @@ export const transformCycle = (cycle: LinearCycle): Partial<ExCycle> => ({
   issues: cycle.issues.map((issue) => issue.id),
 });
 
-export const transformDocument = async (document: Document, options: LinearContentParserConfig): Promise<Partial<ExPage>> => {
+export const transformDocument = async (
+  document: Document,
+  options: LinearContentParserConfig
+): Promise<Partial<ExPage>> => {
   const content = document.content ?? "<p></p>";
   const linearContentParser = getContentParser(options);
   const contentHtml = await linearContentParser.toPlaneHtml(content);

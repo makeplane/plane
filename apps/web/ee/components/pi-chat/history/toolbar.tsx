@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Search, SquarePen, X } from "lucide-react";
 // helpers
 import { Button } from "@plane/ui";
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {

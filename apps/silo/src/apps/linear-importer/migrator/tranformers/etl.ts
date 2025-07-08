@@ -9,9 +9,18 @@ import {
   LinearDocument,
   transformDocument,
   LinearContentParserConfig,
-  LinearService
+  LinearService,
 } from "@plane/etl/linear";
-import { Client, ExCycle, ExIssueComment, ExIssueLabel, ExModule, ExPage, ExIssue as PlaneIssue, PlaneUser } from "@plane/sdk";
+import {
+  Client,
+  ExCycle,
+  ExIssueComment,
+  ExIssueLabel,
+  ExModule,
+  ExPage,
+  ExIssue as PlaneIssue,
+  PlaneUser,
+} from "@plane/sdk";
 import { TImportJob } from "@plane/types";
 import { env } from "@/env";
 import { getRandomColor } from "@/helpers/generic-helpers";
@@ -46,10 +55,7 @@ export const getTransformedIssues = async (
   return Promise.all(issuePromises);
 };
 
-export const getTransformedLabels = (
-  _job: TImportJob<LinearConfig>,
-  entities: LinearEntity
-): Partial<ExIssueLabel>[] =>
+export const getTransformedLabels = (_job: TImportJob<LinearConfig>, entities: LinearEntity): Partial<ExIssueLabel>[] =>
   // TODO: fix types
   entities.labels.map(
     (label: any): Partial<ExIssueLabel> => ({
@@ -69,10 +75,7 @@ export const getTransformedComments = (
 export const getTransformedUsers = (_job: TImportJob<LinearConfig>, entities: LinearEntity): Partial<PlaneUser>[] =>
   entities.users.map(transformUser);
 
-export const getTransformedCycles = (
-  _job: TImportJob<LinearConfig>,
-  entities: LinearEntity
-): Partial<ExCycle>[] => {
+export const getTransformedCycles = (_job: TImportJob<LinearConfig>, entities: LinearEntity): Partial<ExCycle>[] => {
   const cyclePromises = entities.cycles.map(transformCycle);
   return cyclePromises;
 };
@@ -82,38 +85,37 @@ export const getTransformedDocuments = async (
   client: LinearService,
   documents: LinearDocument[]
 ): Promise<Partial<ExPage>[]> => {
-
-  let planeClient: Client | null = null
-  let imageDownloadHeaders: Record<string, string> | undefined = undefined
+  let planeClient: Client | null = null;
+  let imageDownloadHeaders: Record<string, string> | undefined = undefined;
 
   try {
-    const credential = await getJobCredentials(job)
+    const credential = await getJobCredentials(job);
 
     if (credential) {
       planeClient = new Client({
         apiToken: credential.target_access_token as string,
-        baseURL: env.API_BASE_URL
-      })
+        baseURL: env.API_BASE_URL,
+      });
       imageDownloadHeaders = {
-        "Authorization": `${credential.source_access_token}`
-      }
+        Authorization: `${credential.source_access_token}`,
+      };
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 
   // Create user map for parsing mentions
   const teamUsers = await client.getTeamMembers(job.config.teamId);
-  const planeProjectMembers = await planeClient?.users.listAllUsers(job.workspace_slug)
+  const planeProjectMembers = await planeClient?.users.listAllUsers(job.workspace_slug);
 
-  const userMap = new Map<string, string>()
+  const userMap = new Map<string, string>();
   // Map linear users to plane users
   teamUsers.nodes.forEach((user) => {
-    const planeUser = planeProjectMembers?.find((planeUser) => planeUser.email === user.email)
+    const planeUser = planeProjectMembers?.find((planeUser) => planeUser.email === user.email);
     if (planeUser) {
-      userMap.set(user.displayName, planeUser.id)
+      userMap.set(user.displayName, planeUser.id);
     }
-  })
+  });
 
   const options: LinearContentParserConfig = {
     // Identifiers
@@ -126,8 +128,8 @@ export const getTransformedDocuments = async (
     fileDownloadHeaders: imageDownloadHeaders as Record<string, string>,
     apiBaseUrl: env.API_BASE_URL,
     appBaseUrl: env.APP_BASE_URL,
-    userMap: userMap
-  }
+    userMap: userMap,
+  };
 
   const pages = await Promise.all(documents.map((document) => transformDocument(document as LinearDocument, options)));
   return pages;
@@ -152,10 +154,7 @@ export const getTransformedDocuments = async (
 // }
 
 // Transform Projects to Modules
-export const getTransformedProjects = (
-  job: TImportJob<LinearConfig>,
-  entities: LinearEntity
-): Partial<ExModule>[] => {
+export const getTransformedProjects = (job: TImportJob<LinearConfig>, entities: LinearEntity): Partial<ExModule>[] => {
   const modules = entities.projects.map((project): Partial<ExModule> => {
     const issues = project.issues;
     const transformedIssues = issues.map((issue: any) => issue.id); // TODO: fix types

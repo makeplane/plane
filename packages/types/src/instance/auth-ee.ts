@@ -1,6 +1,4 @@
-export type TInstanceEnterpriseAuthenticationMethodKeys =
-  | "IS_OIDC_ENABLED"
-  | "IS_SAML_ENABLED";
+export type TInstanceEnterpriseAuthenticationMethodKeys = "IS_OIDC_ENABLED" | "IS_SAML_ENABLED";
 
 export type TInstanceOIDCAuthenticationConfigurationKeys =
   | "OIDC_CLIENT_ID"

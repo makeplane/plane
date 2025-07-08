@@ -1,12 +1,12 @@
-import "reflect-metadata"
+import "reflect-metadata";
 
 export function throws(errors: string[]) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value
+    const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
-      const stack = new Error().stack
-      const callerLine = stack?.split("\n")[2]
+      const stack = new Error().stack;
+      const callerLine = stack?.split("\n")[2];
       // console.log(stack)
 
       // if (!callerLine?.includes("try")) {
@@ -15,10 +15,9 @@ export function throws(errors: string[]) {
       //   )
       // }
 
-      return originalMethod.apply(this, args)
-    }
+      return originalMethod.apply(this, args);
+    };
 
-    return descriptor
-  }
+    return descriptor;
+  };
 }
-

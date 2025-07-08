@@ -19,7 +19,7 @@ type TMapPrioritiesSelection = {
 
 export const MapPrioritiesSelection: FC<TMapPrioritiesSelection> = observer((props) => {
   const { value, handleValue, asanaPriorityOption, planePriorities } = props;
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="relative grid grid-cols-2 items-center p-3 text-sm">

@@ -173,7 +173,6 @@ export interface IGitlabEntity {
   type: GitlabEntityType;
 }
 
-
 export enum EConnectionType {
   ENTITY = "ENTITY",
   PLANE_PROJECT = "PLANE_PROJECT",

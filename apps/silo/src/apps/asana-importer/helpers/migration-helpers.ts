@@ -18,15 +18,15 @@ export const createAsanaClient = (job: TImportJob<AsanaConfig>, credentials: TWo
   }) => {
     await createOrUpdateCredentials(job.workspace_id, job.initiator_id, E_IMPORTER_KEYS.ASANA, {
       source_access_token: access_token,
-      source_refresh_token: refresh_token
+      source_refresh_token: refresh_token,
     });
   };
 
   const refreshTokenRejectCallback = async () => {
     // Deactivate the credentials
     await createOrUpdateCredentials(job.workspace_id, job.initiator_id, E_IMPORTER_KEYS.ASANA, {
-      is_active: false
-    })
+      is_active: false,
+    });
   };
 
   return createAsanaService({

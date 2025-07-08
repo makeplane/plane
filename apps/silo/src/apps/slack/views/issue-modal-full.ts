@@ -184,30 +184,30 @@ export const createIssueModalViewFull = (
     },
     ...(showThreadSync
       ? [
-        {
-          type: "input" as const,
-          optional: true,
-          element: {
-            type: "checkboxes" as const,
-            options: [
-              {
-                text: {
-                  type: "plain_text",
-                  text: "Sync slack comments with plane comments and vice versa",
-                  emoji: true,
-                } as PlainTextElement,
-                value: "true",
-              },
-            ],
-            action_id: "enable_thread_sync",
+          {
+            type: "input" as const,
+            optional: true,
+            element: {
+              type: "checkboxes" as const,
+              options: [
+                {
+                  text: {
+                    type: "plain_text",
+                    text: "Sync slack comments with plane comments and vice versa",
+                    emoji: true,
+                  } as PlainTextElement,
+                  value: "true",
+                },
+              ],
+              action_id: "enable_thread_sync",
+            },
+            label: {
+              type: "plain_text" as const,
+              text: "Thread Sync",
+              emoji: true,
+            },
           },
-          label: {
-            type: "plain_text" as const,
-            text: "Thread Sync",
-            emoji: true,
-          },
-        },
-      ]
+        ]
       : []),
   ],
 });

@@ -27,7 +27,7 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
     handleSyncJobConfig,
     data: { jiraResourceIds, getJiraResourceById, fetchJiraResources },
   } = useJiraImporter();
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   // derived values
   const workspaceId = workspace?.id || undefined;
@@ -55,7 +55,9 @@ export const ConfigureJiraSelectResource: FC<TConfigureJiraSelectResource> = obs
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">{t("importers.select_service_workspace", {"serviceName": "Jira"})}</div>
+      <div className="text-sm text-custom-text-200">
+        {t("importers.select_service_workspace", { serviceName: "Jira" })}
+      </div>
       {isLoading && (!jiraResources || jiraResources.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />

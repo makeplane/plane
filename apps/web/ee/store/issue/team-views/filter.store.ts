@@ -5,9 +5,18 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane constants
 import { EIssueFilterType } from "@plane/constants";
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IIssueFilters, IssuePaginationOptions, TIssueKanbanFilters, TIssueParams } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IIssueFilters,
+  IssuePaginationOptions,
+  TIssueKanbanFilters,
+  TIssueParams,
+} from "@plane/types";
 // helpers
-import { handleIssueQueryParamsByLayout  } from "@plane/utils";
+import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // plane web services
 import { TeamspaceViewService } from "@/plane-web/services/teamspace/teamspace-views.service";
 // store

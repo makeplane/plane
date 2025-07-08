@@ -16,7 +16,7 @@ export class ConfluencePageParserExtension extends NotionPageParserExtension imp
     } else {
       // In this case we are expecting a src like aaaa_id.html
       const id = src.split("_").pop()?.replace(".html", "");
-      return id
+      return id;
     }
   }
 }

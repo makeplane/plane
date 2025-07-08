@@ -11,7 +11,6 @@ const apiClient = getAPIClient();
 
 @Controller("/api/zip-importer")
 export class NotionController {
-
   @Post("/:provider/credentials/save")
   async saveCredentials(req: Request, res: Response) {
     try {
@@ -69,11 +68,11 @@ export class NotionController {
         config: {
           fileId: fileKey,
           fileName: fileName,
-        }
+        },
       });
 
       await apiClient.importReport.updateImportReport(job.report_id, {
-        total_batch_count: 2
+        total_batch_count: 2,
       });
 
       await importTaskManger.registerTask(
@@ -83,13 +82,13 @@ export class NotionController {
           type: "initiate",
         },
         {
-          type: provider.toUpperCase() as EZipDriverType
+          type: provider.toUpperCase() as EZipDriverType,
         }
       );
 
       return res.status(200).json({
         success: true,
-        message: "Upload confirmed. Import process will begin shortly."
+        message: "Upload confirmed. Import process will begin shortly.",
       });
     } catch (error) {
       return responseHandler(res, 500, error);

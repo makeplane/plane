@@ -23,7 +23,7 @@ export const isInDocumentButNotInBackend: ActionCondition = {
   name: "isInDocumentButNotInBackend",
   check: (page: TPage, isInDocument: boolean, context: any) => {
     if (!context.embeddedIDs || !context.backendPageIds) return false;
-    
+
     // This condition doesn't apply to regular processing of backend pages
     // It will be used in a special pass after all backend pages are processed
     return false;

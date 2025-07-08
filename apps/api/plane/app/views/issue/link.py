@@ -38,7 +38,6 @@ class IssueLinkViewSet(BaseViewSet):
             .distinct()
         )
 
-
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():

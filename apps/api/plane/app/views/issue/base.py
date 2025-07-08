@@ -1018,7 +1018,6 @@ class DeletedIssuesListViewSet(BaseAPIView):
 
 
 class IssuePaginatedViewSet(BaseViewSet):
-
     def get_queryset(self):
         workspace_slug = self.kwargs.get("slug")
         project_id = self.kwargs.get("project_id")
@@ -1223,7 +1222,6 @@ class IssuePaginatedViewSet(BaseViewSet):
 
 
 class IssueDetailEndpoint(BaseAPIView):
-
     def _validate_order_by_field(self, order_by_param):
         """
         Validate if the order_by parameter is a valid sortable field.

@@ -9,7 +9,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import useDebounce from "@/hooks/use-debounce";
 import { useCustomers } from "@/plane-web/hooks/store";
 

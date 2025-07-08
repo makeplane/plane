@@ -13,9 +13,8 @@ export type PlainTextOption = {
  * @param maxLength Maximum length of name
  * @returns The truncated name
  */
-export const truncateName = (name: string, maxLength: number = 75): string => name.length > maxLength
-  ? name.substring(0, maxLength - 3) + '...'
-  : name;
+export const truncateName = (name: string, maxLength: number = 75): string =>
+  name.length > maxLength ? name.substring(0, maxLength - 3) + "..." : name;
 
 /**
  * Creates a formatted option for Slack with name truncation

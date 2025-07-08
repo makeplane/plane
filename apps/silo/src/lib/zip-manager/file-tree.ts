@@ -55,7 +55,7 @@ export function buildFileTree(filePaths: string[]): TZipFileNode {
   /*
    * For each directory, we need a corresponding html page, else we'll break the constraint
    * and won't be able to parse, as for anything to exist we need a page for it.
-  */
+   */
   addMissingHtmlPages(root);
 
   return root;
@@ -80,18 +80,17 @@ function addMissingHtmlPages(node: TZipFileNode): void {
   }
 
   // Now check for missing HTML pages for directories at this level
-  const directories = node.children.filter(child => child.type === EZipNodeType.DIRECTORY);
+  const directories = node.children.filter((child) => child.type === EZipNodeType.DIRECTORY);
   const htmlFiles = new Set(
     node.children
-      .filter(child => child.type === EZipNodeType.FILE && child.name.endsWith('.html'))
-      .map(child => child.name.replace(/\.html$/, ''))
+      .filter((child) => child.type === EZipNodeType.FILE && child.name.endsWith(".html"))
+      .map((child) => child.name.replace(/\.html$/, ""))
   );
 
   // For each directory, check if there's a corresponding HTML file at the same level
   for (const directory of directories) {
     const hasCorrespondingHtmlPage = htmlFiles.has(directory.name);
     if (!hasCorrespondingHtmlPage) {
-
       // Create dummy HTML page as a sibling to this directory
       const dummyPage: TZipFileNode = {
         id: crypto.randomUUID(),

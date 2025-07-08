@@ -247,7 +247,12 @@ export class GitlabEntityStore implements IGitlabEntityConnectionStore {
         config: entity.config,
       };
 
-      const response = await this.service.updateEntityConnection(workspaceId, workspaceConnectionId, connectionId, payload);
+      const response = await this.service.updateEntityConnection(
+        workspaceId,
+        workspaceConnectionId,
+        connectionId,
+        payload
+      );
 
       if (response) {
         runInAction(() => {

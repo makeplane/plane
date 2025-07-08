@@ -14,6 +14,7 @@ from plane.db.models import Workspace
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
+
 class CycleUpdatesViewSet(BaseViewSet):
     serializer_class = UpdatesSerializer
     model = EntityUpdates

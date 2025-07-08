@@ -345,12 +345,16 @@ class WorkspaceUserActivityEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
         projects = request.query_params.getlist("project", [])
 
-        queryset = IssueActivity.objects.filter(
-            ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-            workspace__slug=slug,
-            project__archived_at__isnull=True,
-            actor=user_id,
-        ).select_related("actor", "workspace", "issue", "project").accessible_to(request.user.id, slug)
+        queryset = (
+            IssueActivity.objects.filter(
+                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                workspace__slug=slug,
+                project__archived_at__isnull=True,
+                actor=user_id,
+            )
+            .select_related("actor", "workspace", "issue", "project")
+            .accessible_to(request.user.id, slug)
+        )
 
         if projects:
             queryset = queryset.filter(project__in=projects)

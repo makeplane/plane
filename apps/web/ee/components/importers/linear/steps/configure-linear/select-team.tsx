@@ -79,7 +79,7 @@ export const ConfigureLinearSelectTeam: FC<TConfigureLinearSelectTeam> = observe
     <div className="space-y-2">
       <div className="text-sm text-custom-text-200">Select Linear team</div>
       {(isLinearTeamLoading && (!linearTeams || linearTeams.length === 0)) ||
-        (isLinearOrganizationLoading && !linearOrganization) ? (
+      (isLinearOrganizationLoading && !linearOrganization) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
         </Loader>
@@ -92,7 +92,7 @@ export const ConfigureLinearSelectTeam: FC<TConfigureLinearSelectTeam> = observe
             data: project,
           }))}
           value={value}
-          placeHolder={t("importers.select_service_team", { "serviceName": "Linear" })}
+          placeHolder={t("importers.select_service_team", { serviceName: "Linear" })}
           onChange={(value: string | undefined) => handelData(value)}
           // iconExtractor={(option) => (
           //   <div className="!w-4 !h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center rounded-sm">

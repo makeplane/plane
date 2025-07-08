@@ -25,4 +25,3 @@ export const ModalHeader = ({ pageTitle, copied, onCopyLink }: TModalHeaderProps
 );
 
 ModalHeader.displayName = "ModalHeader";
-

@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 // ui
 import { Spinner, Tooltip, setToast, TOAST_TYPE, Logo, Row } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme, useProject, useWorkspace } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";

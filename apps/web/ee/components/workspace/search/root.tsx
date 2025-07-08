@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react";
 import { TSearchResultItem } from "@plane/constants";
 import { Input } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web imports
 import { SearchResults } from "@/plane-web/components/workspace/search";
 

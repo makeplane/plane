@@ -10,7 +10,7 @@ import { EpicIcon } from "@plane/ui";
 import { DateDropdown, MemberDropdown } from "@/components/dropdowns";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // helpers
-import { getDate, renderFormattedPayloadDate  } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web components
@@ -29,7 +29,11 @@ export const InitiativeSidebarPropertiesRoot: FC<Props> = observer((props) => {
   const { workspaceSlug, initiativeId, disabled, toggleEpicModal, toggleProjectModal } = props;
 
   const {
-    initiative: { getInitiativeById, updateInitiative, epics: {getInitiativeEpicsById} },
+    initiative: {
+      getInitiativeById,
+      updateInitiative,
+      epics: { getInitiativeEpicsById },
+    },
   } = useInitiatives();
   const { getUserDetails } = useMember();
 

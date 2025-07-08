@@ -17,7 +17,11 @@ export class GitlabIntegrationService implements IPullRequestService {
     this.projectId = projectId;
   }
 
-  async getPullRequest(owner: string, repositoryName: string, pullRequestIdentifier: string): Promise<IPullRequestDetails> {
+  async getPullRequest(
+    owner: string,
+    repositoryName: string,
+    pullRequestIdentifier: string
+  ): Promise<IPullRequestDetails> {
     try {
       const response = await this.apiService.client.get(
         `/projects/${encodeURIComponent(this.projectId)}/merge_requests/${pullRequestIdentifier}`
@@ -45,7 +49,12 @@ export class GitlabIntegrationService implements IPullRequestService {
     }
   }
 
-  async createPullRequestComment(owner: string, repo: string, pullRequestIdentifier: string, body: string): Promise<IGitComment> {
+  async createPullRequestComment(
+    owner: string,
+    repo: string,
+    pullRequestIdentifier: string,
+    body: string
+  ): Promise<IGitComment> {
     try {
       const comment = await this.apiService.createMergeRequestComment(
         Number(this.projectId),
@@ -60,7 +69,12 @@ export class GitlabIntegrationService implements IPullRequestService {
     }
   }
 
-  async updatePullRequestComment(owner: string, repo: string, commentId: number | string, body: string): Promise<IGitComment> {
+  async updatePullRequestComment(
+    owner: string,
+    repo: string,
+    commentId: number | string,
+    body: string
+  ): Promise<IGitComment> {
     try {
       const mergeRequestIid = await this.getMergeRequestIidForComment(commentId);
 
@@ -80,9 +94,7 @@ export class GitlabIntegrationService implements IPullRequestService {
 
   private async getMergeRequestIidForComment(commentId: number | string): Promise<number> {
     try {
-      const response = await this.apiService.client.get(
-        `/projects/${this.projectId}/notes/${commentId}`
-      );
+      const response = await this.apiService.client.get(`/projects/${this.projectId}/notes/${commentId}`);
       return response.data.noteable_iid;
     } catch (error) {
       logger.error(`Error getting merge request IID for comment: ${error}`);
@@ -99,13 +111,13 @@ export class GitlabIntegrationService implements IPullRequestService {
       repository: {
         owner,
         name: repositoryName,
-        id: mergeRequest.project_id
+        id: mergeRequest.project_id,
       },
       state: mergeRequest.state === "opened" ? "open" : "closed",
       merged: mergeRequest.state === "merged",
       draft: mergeRequest.work_in_progress || false,
       mergeable: mergeRequest.mergeable || null,
-      mergeable_state: mergeRequest.merge_status || null
+      mergeable_state: mergeRequest.merge_status || null,
     };
   }
 
@@ -118,8 +130,8 @@ export class GitlabIntegrationService implements IPullRequestService {
       user: {
         id: comment.author.id,
         username: comment.author.username,
-        name: comment.author.name
-      }
+        name: comment.author.name,
+      },
     };
   }
 }

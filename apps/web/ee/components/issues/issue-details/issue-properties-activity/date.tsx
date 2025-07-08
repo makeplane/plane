@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { renderFormattedDate  } from "@plane/utils";
+import { renderFormattedDate } from "@plane/utils";
 // plane web components
 import { TIssueAdditionalPropertiesActivityItem } from "@/plane-web/components/issues";
 // plane web hooks
@@ -30,7 +30,9 @@ export const IssueDatePropertyActivity: FC<TIssueAdditionalPropertiesActivityIte
         <>
           changed <span className="font-medium text-custom-text-100">{propertyName}</span> to{" "}
           <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.new_value)}</span> from{" "}
-          <span className="font-medium text-custom-text-100">{renderFormattedDate(activityDetail.old_value)}.</span>{" "}
+          <span className="font-medium text-custom-text-100">
+            {renderFormattedDate(activityDetail.old_value)}.
+          </span>{" "}
         </>
       )}
       {activityDetail.action === "deleted" && (

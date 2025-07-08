@@ -127,7 +127,7 @@ def cache_function_result(timeout=300, key_prefix="cached_func"):
             # return cached value
             if cached_value is not None:
                 return cached_value
-            
+
             # Compute, cache and return
             result = func(*args, **kwargs)
             cache.set(cache_key, result, timeout=timeout)

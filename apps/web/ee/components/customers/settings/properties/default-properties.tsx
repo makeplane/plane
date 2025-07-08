@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // plane ui
 import { Collapsible } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 const DEFAULT_PROPERTIES_LIST = [
   {

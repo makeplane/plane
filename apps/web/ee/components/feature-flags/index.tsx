@@ -1,1 +1,1 @@
-export * from './with-feature-flag-hoc';
+export * from "./with-feature-flag-hoc";

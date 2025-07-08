@@ -32,10 +32,13 @@ export type TGitlabWorkspaceConnectionData = {
   state: "active" | "blocked";
   avatar_url: string;
   web_url: string;
-}
+};
 
 // gitlab workspace connection
-export type TGitlabWorkspaceConnection = TWorkspaceConnection<TGitlabWorkspaceConnectionConfig, TGitlabWorkspaceConnectionData>;
+export type TGitlabWorkspaceConnection = TWorkspaceConnection<
+  TGitlabWorkspaceConnectionConfig,
+  TGitlabWorkspaceConnectionData
+>;
 
 // gitlab entity connection
 export type TGitlabEntityConnection = TWorkspaceEntityConnection<TGitlabEntityConnectionConfig>;

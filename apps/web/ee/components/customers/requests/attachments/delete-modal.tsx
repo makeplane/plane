@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
-import { getFileName  } from "@plane/utils";
+import { getFileName } from "@plane/utils";
 // types
 import { useCustomers } from "@/plane-web/hooks/store";
 // helpers

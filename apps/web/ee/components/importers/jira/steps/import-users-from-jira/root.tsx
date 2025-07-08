@@ -91,7 +91,9 @@ export const ImportUsersFromJira: FC = observer(() => {
   );
 
   const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
-  const isNextButtonDisabled = Boolean(extraSeatRequired > 0 && !formData.userSkipToggle) || Boolean(!formData.userSkipToggle && !formData.userData);
+  const isNextButtonDisabled =
+    Boolean(extraSeatRequired > 0 && !formData.userSkipToggle) ||
+    Boolean(!formData.userSkipToggle && !formData.userData);
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
@@ -124,7 +126,7 @@ export const ImportUsersFromJira: FC = observer(() => {
                 href="https://support.atlassian.com/organization-administration/docs/export-users-from-a-site/"
                 className="text-custom-primary-100 underline font-medium"
               >
-                {t("common.from", { "name": "Jira" })}
+                {t("common.from", { name: "Jira" })}
               </a>
             </div>
             <ImportUsersFromJiraUploader

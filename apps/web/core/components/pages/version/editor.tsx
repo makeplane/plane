@@ -58,7 +58,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
     [versionDetails?.sub_pages_data]
   );
 
-  if ( !versionDetails)
+  if (!versionDetails)
     return (
       <div className="size-full px-5">
         <Loader className="relative space-y-4">

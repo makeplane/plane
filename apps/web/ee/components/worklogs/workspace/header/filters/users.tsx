@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store";
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";

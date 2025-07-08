@@ -23,8 +23,12 @@ export const TeamOverviewHeaderActions = observer((props: TeamOverviewHeaderActi
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { isTeamSidebarCollapsed, isCurrentUserMemberOfTeamspace, toggleTeamsSidebar, getTeamspaceNameDescriptionLoaderById } =
-    useTeamspaces();
+  const {
+    isTeamSidebarCollapsed,
+    isCurrentUserMemberOfTeamspace,
+    toggleTeamsSidebar,
+    getTeamspaceNameDescriptionLoaderById,
+  } = useTeamspaces();
   // derived values
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
   const isSubmitting = getTeamspaceNameDescriptionLoaderById(teamspaceId);

@@ -41,7 +41,7 @@ export const SkipUserImport: React.FC<SkipUserImportProps> = ({
 
       {userSkipToggle && (
         <div className="text-sm text-red-500">
-          {t("importers.skip_user_import_description", { "serviceName": importSourceName })}
+          {t("importers.skip_user_import_description", { serviceName: importSourceName })}
         </div>
       )}
     </div>

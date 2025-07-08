@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import {
   WorklogDownloadLoader,

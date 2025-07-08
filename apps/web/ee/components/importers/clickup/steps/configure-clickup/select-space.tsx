@@ -59,8 +59,10 @@ export const ConfigureClickUpSelectSpace: FC<TConfigureClickUpSelectSpace> = obs
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">{t("clickup_importer.select_service_space", { serviceName: "ClickUp" })}</div>
-      {(isClickUpSpaceLoading && (!clickUpSpaces || clickUpSpaces.length === 0)) ? (
+      <div className="text-sm text-custom-text-200">
+        {t("clickup_importer.select_service_space", { serviceName: "ClickUp" })}
+      </div>
+      {isClickUpSpaceLoading && (!clickUpSpaces || clickUpSpaces.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
         </Loader>

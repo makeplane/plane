@@ -4,7 +4,6 @@
   "in_app": "In-app",
   "forms": "Forms",
 
-
   "common": {
     "worklogs": "Worklogs",
     "live": "Live",
@@ -49,29 +48,29 @@
         }
       }
     },
-    "pages":{
+    "pages": {
       "link_pages": "Link pages",
       "show_wiki_pages": "Show Wiki pages",
       "link_pages_to": "Link pages to",
       "linked_pages": "Linked pages",
       "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
       "toasts": {
-        "link":{
+        "link": {
           "success": {
             "title": "Pages updated",
             "message": "Pages updated successfully"
           },
-          "error":{
+          "error": {
             "title": "Pages update failed",
             "message": "Pages update failed"
           }
-        },  
-        "remove":{
+        },
+        "remove": {
           "success": {
             "title": "Page removed",
             "message": "Page removed successfully"
           },
-          "error":{
+          "error": {
             "title": "Page removal failed",
             "message": "Page removal failed"
           }

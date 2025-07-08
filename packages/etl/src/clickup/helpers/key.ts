@@ -36,8 +36,7 @@ export const CLICKUP_ATTACHMENT_EXTERNAL_ID = (spaceId: string, folderId: string
 export const CLICKUP_USER_EXTERNAL_ID = (spaceId: string, folderId: string, userId: string) =>
   `${spaceId}-${folderId}-${userId}`;
 
-export const CLICKUP_PROJECT_EXTERNAL_ID = (spaceId: string, folderId: string) =>
-  `${spaceId}-${folderId}`;
+export const CLICKUP_PROJECT_EXTERNAL_ID = (spaceId: string, folderId: string) => `${spaceId}-${folderId}`;
 
 export const CLICKUP_STATE_EXTERNAL_ID = (spaceId: string, folderId: string, stateId: string) =>
   `${spaceId}-${folderId}-${stateId}`;

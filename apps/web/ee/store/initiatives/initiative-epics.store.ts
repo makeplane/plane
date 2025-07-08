@@ -236,7 +236,7 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
       this.rootStore.issue.issues.addIssue(transformedResponse);
 
       runInAction(() => {
-        set(this.initiativeEpicsMap, [initiativeId],  responseIds);
+        set(this.initiativeEpicsMap, [initiativeId], responseIds);
       });
 
       try {

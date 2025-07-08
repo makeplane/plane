@@ -15,7 +15,6 @@ import { useInstance, useTheme } from "@/hooks/store";
 // eslint-disable-next-line import/order
 import packageJson from "package.json";
 
-
 const helpOptions = [
   {
     name: "Documentation",

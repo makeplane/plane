@@ -4,7 +4,7 @@ import {
   SlackMessageResponse,
   SlackTokenRefreshResponse,
   SlackUserResponse,
-  UnfurlMap
+  UnfurlMap,
 } from "../types";
 import { SlackAuthService } from "./auth.service";
 
@@ -24,7 +24,6 @@ export class SlackService {
         "content-type": "application/json",
       },
     });
-
 
     this.client.interceptors.response.use(async (request) => {
       if (
@@ -322,11 +321,11 @@ export class SlackService {
 
       do {
         // Prepare parameters for pagination
-        const params: any= {
+        const params: any = {
           types,
           exclude_archived: true,
           limit: 999,
-          ...(cursor ? { cursor } : {})
+          ...(cursor ? { cursor } : {}),
         };
 
         // Make the API request with cursor if available

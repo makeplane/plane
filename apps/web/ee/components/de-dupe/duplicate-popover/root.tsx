@@ -14,7 +14,7 @@ import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 import { MultipleSelectGroup } from "@/components/core";
 import { TIssueOperations } from "@/components/issues";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail, useMultipleSelectStore } from "@/hooks/store";
 // plane-web

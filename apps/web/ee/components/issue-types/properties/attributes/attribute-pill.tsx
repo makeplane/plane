@@ -1,4 +1,4 @@
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TAttributePillProps = {
   data: string;

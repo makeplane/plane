@@ -57,9 +57,7 @@ export class SlackAuthService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        throw new Error(
-          `HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`,
-        );
+        throw new Error(`HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`);
       }
       throw error;
     }
@@ -90,17 +88,13 @@ export class SlackAuthService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        throw new Error(
-          `HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`,
-        );
+        throw new Error(`HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`);
       }
       throw error;
     }
   }
 
-  async refreshToken(
-    refreshToken: string,
-  ): Promise<SlackTokenRefreshResponse> {
+  async refreshToken(refreshToken: string): Promise<SlackTokenRefreshResponse> {
     const url = "https://slack.com/api/oauth.v2.access";
 
     const formData = new FormData();
@@ -120,9 +114,7 @@ export class SlackAuthService {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        throw new Error(
-          `HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`,
-        );
+        throw new Error(`HTTP error! status: ${axiosError.response?.status}, message: ${axiosError.message}`);
       }
       throw error;
     }

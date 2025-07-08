@@ -1,4 +1,10 @@
-import { AppAuthParams, createGithubService, GithubApiProps, GithubService as GithubAPIService, GithubIssueComment } from "@plane/etl/github";
+import {
+  AppAuthParams,
+  createGithubService,
+  GithubApiProps,
+  GithubService as GithubAPIService,
+  GithubIssueComment,
+} from "@plane/etl/github";
 import { IGitComment, IPullRequestDetails, IPullRequestService } from "@/types/behaviours/git";
 
 /**
@@ -44,7 +50,7 @@ export class GithubIntegrationService implements IPullRequestService {
         name: repo,
         id: pullRequest.data.number,
       },
-    }
+    };
   }
 
   /**
@@ -55,7 +61,12 @@ export class GithubIntegrationService implements IPullRequestService {
    * @param body - The body of the comment
    * @returns The comment
    */
-  async createPullRequestComment(owner: string, repo: string, pullRequestIdentifier: string, body: string): Promise<IGitComment> {
+  async createPullRequestComment(
+    owner: string,
+    repo: string,
+    pullRequestIdentifier: string,
+    body: string
+  ): Promise<IGitComment> {
     const comment = await this.apiService.client.issues.createComment({
       owner,
       repo,

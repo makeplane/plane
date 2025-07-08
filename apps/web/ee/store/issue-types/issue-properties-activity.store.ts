@@ -4,9 +4,14 @@ import set from "lodash/set";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TLoader, TIssuePropertiesActivity, IIssuePropertiesActivity, IIssuePropertiesActivityStore } from "@plane/types";
+import {
+  TLoader,
+  TIssuePropertiesActivity,
+  IIssuePropertiesActivity,
+  IIssuePropertiesActivityStore,
+} from "@plane/types";
 // helpers
-import { convertToEpoch  } from "@plane/utils";
+import { convertToEpoch } from "@plane/utils";
 // plane web services
 import { IssuePropertiesActivityService } from "@/plane-web/services/issue-types";
 // plane web store

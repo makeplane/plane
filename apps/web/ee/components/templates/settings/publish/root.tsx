@@ -5,7 +5,12 @@ import { ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { ensureUrlHasProtocol, getAssetIdFromUrl, getTemplateSettingsBasePath, getTemplateTypeI18nName } from "@plane/utils";
+import {
+  ensureUrlHasProtocol,
+  getAssetIdFromUrl,
+  getTemplateSettingsBasePath,
+  getTemplateTypeI18nName,
+} from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

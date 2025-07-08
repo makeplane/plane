@@ -1,9 +1,7 @@
 /**
  * A type representing either a success (right) or failure (left) value
  */
-export type Either<L, R> =
-  | { success: true, data: R }
-  | { success: false, error: L };
+export type Either<L, R> = { success: true; data: R } | { success: false; error: L };
 
 /**
  * Creates a Right (success) Either value

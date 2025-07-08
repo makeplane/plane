@@ -9,7 +9,11 @@ import { env } from "@/env";
  * @param isEnterprise - Whether the workspace is an enterprise workspace
  * @returns The Github service
  */
-export const getGithubService = (workspaceConnection: TGithubWorkspaceConnection, installationId: string, isEnterprise: boolean) => {
+export const getGithubService = (
+  workspaceConnection: TGithubWorkspaceConnection,
+  installationId: string,
+  isEnterprise: boolean
+) => {
   if (isEnterprise) {
     const appConfig = workspaceConnection.connection_data?.appConfig;
     if (!appConfig) {
@@ -27,7 +31,11 @@ export const getGithubService = (workspaceConnection: TGithubWorkspaceConnection
  * @param isEnterprise - Whether the workspace is an enterprise workspace
  * @returns The Github user service
  */
-export const getGithubUserService = (workspaceConnection: TGithubWorkspaceConnection, installationId: string, isEnterprise: boolean) => {
+export const getGithubUserService = (
+  workspaceConnection: TGithubWorkspaceConnection,
+  installationId: string,
+  isEnterprise: boolean
+) => {
   if (isEnterprise) {
     const appConfig = workspaceConnection.connection_data?.appConfig;
     if (!appConfig) {

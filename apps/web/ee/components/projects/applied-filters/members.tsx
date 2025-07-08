@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // types
 import { useMember } from "@/hooks/store";
 

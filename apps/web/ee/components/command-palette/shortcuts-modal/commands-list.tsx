@@ -1,6 +1,6 @@
 import { Command } from "lucide-react";
 // helpers
-import { substringMatch  } from "@plane/utils";
+import { substringMatch } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

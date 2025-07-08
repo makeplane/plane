@@ -11,7 +11,7 @@ const teamspacePageService = new TeamspacePageService();
 
 export class TeamspacePageHandler extends BasePageHandler<TeamspacePageService, TeamspacePageConfig> {
   protected documentType = "teamspace_page";
-  
+
   constructor() {
     super(teamspacePageService);
   }

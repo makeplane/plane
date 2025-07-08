@@ -1,4 +1,9 @@
-import { TWorkspaceCredential, E_INTEGRATION_KEYS, TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
+import {
+  TWorkspaceCredential,
+  E_INTEGRATION_KEYS,
+  TWorkspaceConnection,
+  TWorkspaceEntityConnection,
+} from "@plane/types";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { logger } from "@/logger";
 
@@ -22,37 +27,35 @@ export async function getConnectionDetails<T extends TWorkspaceConnection, Z ext
   entityConnection?: Z;
   credential: TWorkspaceCredential;
 }> {
-
   let workspaceConnection: T | null = null;
   let entityConnection: Z | null = null;
   let credential: TWorkspaceCredential | null = null;
 
   // fetch the workspace connection
-  workspaceConnection = await integrationConnectionHelper.getWorkspaceConnection({
+  workspaceConnection = (await integrationConnectionHelper.getWorkspaceConnection({
     connection_type,
-    connection_id
-  }) as T | null;
+    connection_id,
+  })) as T | null;
 
   if (!workspaceConnection) {
     logger.error(`[CONNECTION_DETAILS] Workspace connection not found for`, {
       connection_type,
-      connection_id
+      connection_id,
     });
   }
 
-
   // fetch the entity connection
   if (workspaceConnection && entity_id) {
-    entityConnection = await integrationConnectionHelper.getWorkspaceEntityConnection({
+    entityConnection = (await integrationConnectionHelper.getWorkspaceEntityConnection({
       workspace_connection_id: workspaceConnection.id,
-      entity_id
-    }) as Z | null;
+      entity_id,
+    })) as Z | null;
 
     if (!entityConnection) {
       logger.error(`[CONNECTION_DETAILS] Entity connection not found for`, {
         connection_type,
         connection_id,
-        entity_id
+        entity_id,
       });
     }
   }
@@ -69,10 +72,9 @@ export async function getConnectionDetails<T extends TWorkspaceConnection, Z ext
     });
   }
 
-
   return {
     workspaceConnection: workspaceConnection as T,
     entityConnection: entityConnection as Z,
     credential: credential as TWorkspaceCredential,
-  }
+  };
 }

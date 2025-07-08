@@ -16,7 +16,7 @@ import {
   BUTTON_VARIANTS_WITHOUT_TEXT,
 } from "@/components/dropdowns/constants";
 import { TDropdownProps } from "@/components/dropdowns/types";
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 import { usePlatformOS } from "@/hooks/use-platform-os";

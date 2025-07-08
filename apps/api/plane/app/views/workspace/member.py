@@ -86,7 +86,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             TeamspaceMember.objects.filter(
                 workspace__slug=slug, member_id=workspace_member.member_id
             ).delete()
-            
+
         if "role" in request.data:
             allowed, _, _ = workspace_member_check(
                 slug=slug,

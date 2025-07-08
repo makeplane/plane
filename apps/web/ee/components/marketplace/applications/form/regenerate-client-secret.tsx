@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { copyTextToClipboard  } from "@plane/utils";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { RegenerateConfirmModal } from "@/plane-web/components/marketplace";
@@ -46,11 +46,12 @@ export const RegenerateClientSecret: React.FC<Props> = observer((props) => {
     handleRegenerateSuccess(data);
   };
 
-
   return (
     <div className={`mt-4 space-y-2 flex flex-col rounded-md p-4 bg-custom-background-100`}>
       <div className="font-medium">{t("workspace_settings.settings.applications.client_id_and_secret")}</div>
-      <div className="text-sm text-custom-text-400">{t("workspace_settings.settings.applications.regenerate_client_secret_description")}</div>
+      <div className="text-sm text-custom-text-400">
+        {t("workspace_settings.settings.applications.regenerate_client_secret_description")}
+      </div>
       <div className="space-y-1">
         <p className={`text-sm text-custom-text-100`}>{t("workspace_settings.settings.applications.application_id")}</p>
         <button
@@ -79,14 +80,12 @@ export const RegenerateClientSecret: React.FC<Props> = observer((props) => {
       </div>
       <div className="space-y-1">
         <p className={`text-sm text-custom-text-100`}>{t("workspace_settings.settings.applications.client_secret")}</p>
-        <div className={`flex items-center justify-between mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100 text-custom-text-100`}>
+        <div
+          className={`flex items-center justify-between mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100 text-custom-text-100`}
+        >
           <span className={`truncate pr-2 text-custom-text-100`}>{"******************"}</span>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setIsRegenerateModalOpen(true)}
-            >
+            <Button variant="primary" size="sm" onClick={() => setIsRegenerateModalOpen(true)}>
               {t("workspace_settings.settings.applications.regenerate_client_secret")}
             </Button>
           </div>

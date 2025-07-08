@@ -45,6 +45,7 @@ from plane.ee.models import (
     Teamspace,
 )
 
+
 class GlobalSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the workspace and
     also show related workspace if found
@@ -315,7 +316,9 @@ class SearchEndpoint(BaseAPIView):
 
         response_data = {}
 
-        bot_filter = Q(member__is_bot=False) | Q(member__bot_type=BotTypeEnum.APP_BOT.value) # noqa: E501
+        bot_filter = Q(member__is_bot=False) | Q(
+            member__bot_type=BotTypeEnum.APP_BOT.value
+        )  # noqa: E501
 
         if team_id:
             team_projects = TeamspaceProject.objects.filter(
@@ -701,7 +704,6 @@ class SearchEndpoint(BaseAPIView):
                         .distinct()
                         .accessible_to(self.request.user.id, slug)
                     )
-
 
                     cycles = cycles.values(
                         "name",

@@ -14,7 +14,10 @@ export enum E_INTEGRATION_KEYS {
   SLACK = "SLACK",
 }
 
-export type TUserConnection = E_INTEGRATION_KEYS.GITHUB | E_INTEGRATION_KEYS.SLACK | E_INTEGRATION_KEYS.GITHUB_ENTERPRISE;
+export type TUserConnection =
+  | E_INTEGRATION_KEYS.GITHUB
+  | E_INTEGRATION_KEYS.SLACK
+  | E_INTEGRATION_KEYS.GITHUB_ENTERPRISE;
 
 export type TPersonalAccountProvider = {
   key: TUserConnection;

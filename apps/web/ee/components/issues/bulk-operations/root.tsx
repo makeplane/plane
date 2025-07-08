@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // ui
 import { Button, Checkbox, Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useMultipleSelectStore } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

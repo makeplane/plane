@@ -9,7 +9,7 @@ import { GroupByColumnTypes } from "@plane/types";
 import { Button, EpicIcon, getButtonStyling } from "@plane/ui";
 // helpers
 import { getGroupByColumns } from "@/components/issues/issue-layouts/utils";
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane-web
 import { SectionEmptyState } from "@/plane-web/components/common";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";

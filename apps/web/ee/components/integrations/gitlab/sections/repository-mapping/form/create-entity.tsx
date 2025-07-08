@@ -68,9 +68,7 @@ export const EntityFormCreate: FC<TEntityFormCreate> = observer((props) => {
           <div className="border border-custom-border-200 divide-y divide-custom-border-200 rounded">
             <div className="relative space-y-1 p-3">
               <div className="text-base">{t("gitlab_integration.pull_request_automation")}</div>
-              <div className="text-xs text-custom-text-200">
-                {t("gitlab_integration.integration_enabled_text")}
-              </div>
+              <div className="text-xs text-custom-text-200">{t("gitlab_integration.integration_enabled_text")}</div>
             </div>
           </div>
 

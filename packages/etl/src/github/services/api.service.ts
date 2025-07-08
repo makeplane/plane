@@ -33,7 +33,9 @@ export class GithubService {
     return user.data;
   }
 
-  async getAccessTokens(installationId: number): Promise<RestEndpointMethodTypes["apps"]["createInstallationAccessToken"]["response"]> {
+  async getAccessTokens(
+    installationId: number
+  ): Promise<RestEndpointMethodTypes["apps"]["createInstallationAccessToken"]["response"]> {
     const token = await this.client.apps.createInstallationAccessToken({
       installation_id: installationId,
     });
@@ -63,7 +65,12 @@ export class GithubService {
     });
   }
 
-  async createIssueComment(owner: string, repo: string, issue_number: number, body: string): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
+  async createIssueComment(
+    owner: string,
+    repo: string,
+    issue_number: number,
+    body: string
+  ): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
     return this.client.issues.createComment({
       owner,
       repo,
@@ -87,7 +94,12 @@ export class GithubService {
     return undefined;
   }
 
-  async updateIssueComment(owner: string, repo: string, comment_id: number, body: string): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
+  async updateIssueComment(
+    owner: string,
+    repo: string,
+    comment_id: number,
+    body: string
+  ): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
     return this.client.issues.updateComment({
       owner,
       repo,
@@ -144,7 +156,11 @@ export class GithubService {
     return issues;
   }
 
-  async getPullRequestComments(owner: string, repo: string, pull_number: number): Promise<RestEndpointMethodTypes["issues"]["listComments"]["response"]> {
+  async getPullRequestComments(
+    owner: string,
+    repo: string,
+    pull_number: number
+  ): Promise<RestEndpointMethodTypes["issues"]["listComments"]["response"]> {
     return this.client.issues.listComments({
       owner,
       repo,
@@ -152,7 +168,12 @@ export class GithubService {
     });
   }
 
-  async updatePullRequestComment(owner: string, repo: string, comment_id: number, body: string): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
+  async updatePullRequestComment(
+    owner: string,
+    repo: string,
+    comment_id: number,
+    body: string
+  ): Promise<RestEndpointMethodTypes["issues"]["updateComment"]["response"]> {
     return this.client.issues.updateComment({
       owner,
       repo,
@@ -161,7 +182,12 @@ export class GithubService {
     });
   }
 
-  async createPullRequestComment(owner: string, repo: string, pull_number: number, body: string): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
+  async createPullRequestComment(
+    owner: string,
+    repo: string,
+    pull_number: number,
+    body: string
+  ): Promise<RestEndpointMethodTypes["issues"]["createComment"]["response"]> {
     return this.client.issues.createComment({
       owner,
       repo,
@@ -183,7 +209,11 @@ export class GithubService {
     });
   }
 
-  async getIssue(owner: string, repo: string, issue_number: number): Promise<RestEndpointMethodTypes["issues"]["get"]["response"]> {
+  async getIssue(
+    owner: string,
+    repo: string,
+    issue_number: number
+  ): Promise<RestEndpointMethodTypes["issues"]["get"]["response"]> {
     return this.client.issues.get({
       owner,
       repo,
@@ -231,14 +261,20 @@ export class GithubService {
     return response.data.body_html || null;
   }
 
-  async getLabels(owner: string, repo: string): Promise<RestEndpointMethodTypes["issues"]["listLabelsForRepo"]["response"]> {
+  async getLabels(
+    owner: string,
+    repo: string
+  ): Promise<RestEndpointMethodTypes["issues"]["listLabelsForRepo"]["response"]> {
     return this.client.issues.listLabelsForRepo({
       owner,
       repo,
     });
   }
 
-  async getProjects(owner: string, repo: string): Promise<RestEndpointMethodTypes["projects"]["listForRepo"]["response"]> {
+  async getProjects(
+    owner: string,
+    repo: string
+  ): Promise<RestEndpointMethodTypes["projects"]["listForRepo"]["response"]> {
     return this.client.projects.listForRepo({
       owner,
       repo,
@@ -257,20 +293,27 @@ export class GithubService {
     });
   }
 
-  async getUsersForRepo(owner: string, repo: string): Promise<RestEndpointMethodTypes["repos"]["listCollaborators"]["response"]> {
+  async getUsersForRepo(
+    owner: string,
+    repo: string
+  ): Promise<RestEndpointMethodTypes["repos"]["listCollaborators"]["response"]> {
     return this.client.repos.listCollaborators({
       owner,
       repo,
     });
   }
 
-  async getInstallation(installationId: number): Promise<RestEndpointMethodTypes["apps"]["getInstallation"]["response"]> {
+  async getInstallation(
+    installationId: number
+  ): Promise<RestEndpointMethodTypes["apps"]["getInstallation"]["response"]> {
     return this.client.apps.getInstallation({
       installation_id: installationId,
     });
   }
 
-  async deleteInstallation(installationId: number): Promise<RestEndpointMethodTypes["apps"]["deleteInstallation"]["response"]> {
+  async deleteInstallation(
+    installationId: number
+  ): Promise<RestEndpointMethodTypes["apps"]["deleteInstallation"]["response"]> {
     return this.client.apps.deleteInstallation({
       installation_id: installationId,
     });

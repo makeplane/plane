@@ -3,7 +3,14 @@ import isEqual from "lodash/isEqual";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { EIssueFilterType } from "@plane/constants";
-import { EIssuesStoreType, IActiveCycle, ICycle, IIssueFilterOptions, TCycleEstimateType, TCyclePlotType } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IActiveCycle,
+  ICycle,
+  IIssueFilterOptions,
+  TCycleEstimateType,
+  TCyclePlotType,
+} from "@plane/types";
 import { useCycle, useIssues } from "@/hooks/store";
 import { formatActiveCycle } from "./formatter";
 

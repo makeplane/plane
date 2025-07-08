@@ -19,7 +19,7 @@ import {
   TIssueComment,
 } from "@plane/types";
 // plane web imports
-import { groupReactions  } from "@plane/utils";
+import { groupReactions } from "@plane/utils";
 import { TeamspaceUpdatesService } from "@/plane-web/services/teamspace/teamspace-updates.service";
 import { RootStore } from "@/plane-web/store/root.store";
 

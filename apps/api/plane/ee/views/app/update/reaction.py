@@ -14,6 +14,7 @@ from plane.ee.models import (
     UpdateReaction,
 )
 
+
 class UpdatesReactionViewSet(BaseViewSet):
     serializer_class = UpdateReactionSerializer
     model = UpdateReaction

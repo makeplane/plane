@@ -4,7 +4,7 @@ import { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 // helpers
-import { API_BASE_URL  } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 // images
 import githubLightModeImage from "/public/logos/github-black.png";
 import githubDarkModeImage from "/public/logos/github-dark.svg";

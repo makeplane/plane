@@ -89,23 +89,23 @@ export class PublishPageStore implements IPublishPageStore {
 
     // Check if page exists in project pages store
     if (projectId && this.rootStore.projectPages.data?.[pageID]) {
-      return { type: 'project' as const, projectId };
+      return { type: "project" as const, projectId };
     }
 
     // Check if page exists in workspace pages store
     if (this.rootStore.workspacePages.data?.[pageID]) {
-      return { type: 'workspace' as const };
+      return { type: "workspace" as const };
     }
 
     // Check if page exists in teamspace pages store
     if (teamspaceId && this.rootStore.teamspaceRoot?.teamspacePage?.pageMap?.[teamspaceId]?.[pageID]) {
-      return { type: 'teamspace' as const, teamspaceId };
+      return { type: "teamspace" as const, teamspaceId };
     }
 
     // Fallback: if we can't determine from stores, use router context
-    if (projectId) return { type: 'project' as const, projectId };
-    if (teamspaceId) return { type: 'teamspace' as const, teamspaceId };
-    return { type: 'workspace' as const };
+    if (projectId) return { type: "project" as const, projectId };
+    if (teamspaceId) return { type: "teamspace" as const, teamspaceId };
+    return { type: "workspace" as const };
   };
 
   /**
@@ -116,11 +116,11 @@ export class PublishPageStore implements IPublishPageStore {
     const context = this.getPageContext(pageID);
 
     switch (context.type) {
-      case 'project':
+      case "project":
         return await this.fetchProjectPagePublishSettings(context.projectId, pageID);
-      case 'workspace':
+      case "workspace":
         return await this.fetchWorkspacePagePublishSettings(pageID);
-      case 'teamspace':
+      case "teamspace":
         // TODO: Implement teamspace publish functionality when available
         throw new Error("Teamspace page publishing is not yet implemented");
       default:
@@ -137,11 +137,11 @@ export class PublishPageStore implements IPublishPageStore {
     const context = this.getPageContext(pageID);
 
     switch (context.type) {
-      case 'project':
+      case "project":
         return await this.publishProjectPage(context.projectId, pageID, data);
-      case 'workspace':
+      case "workspace":
         return await this.publishWorkspacePage(pageID, data);
-      case 'teamspace':
+      case "teamspace":
         // TODO: Implement teamspace publish functionality when available
         throw new Error("Teamspace page publishing is not yet implemented");
       default:
@@ -158,11 +158,11 @@ export class PublishPageStore implements IPublishPageStore {
     const context = this.getPageContext(pageID);
 
     switch (context.type) {
-      case 'project':
+      case "project":
         return await this.updateProjectPagePublishSettings(context.projectId, pageID, data);
-      case 'workspace':
+      case "workspace":
         return await this.updateWorkspacePagePublishSettings(pageID, data);
-      case 'teamspace':
+      case "teamspace":
         // TODO: Implement teamspace publish functionality when available
         throw new Error("Teamspace page publishing is not yet implemented");
       default:
@@ -178,11 +178,11 @@ export class PublishPageStore implements IPublishPageStore {
     const context = this.getPageContext(pageID);
 
     switch (context.type) {
-      case 'project':
+      case "project":
         return await this.unpublishProjectPage(context.projectId, pageID);
-      case 'workspace':
+      case "workspace":
         return await this.unpublishWorkspacePage(pageID);
-      case 'teamspace':
+      case "teamspace":
         // TODO: Implement teamspace publish functionality when available
         throw new Error("Teamspace page publishing is not yet implemented");
       default:

@@ -28,7 +28,7 @@ def check_if_current_user_is_teamspace_member(
         teamspace_ids = TeamspaceProject.objects.filter(
             project_id=project_id
         ).values_list("team_space_id", flat=True)
-        
+
         # Check if the user is a member of the teamspace
         return TeamspaceMember.objects.filter(
             member_id=user_id,

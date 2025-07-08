@@ -132,7 +132,9 @@ export const SummaryRoot: FC = observer(() => {
         <div className="divide-y divide-custom-border-200">
           <StatsTile label={t("projects")} value={importingFolders.length} />
           <StatsTile label={t("work_items")} value={importingTasksCount} />
-          {!userSkipToggle && <StatsTile label={t("clickup_importer.users")} value={configData?.team?.members?.length || 0} />}
+          {!userSkipToggle && (
+            <StatsTile label={t("clickup_importer.users")} value={configData?.team?.members?.length || 0} />
+          )}
           <StatsTile label={t("common.priorities")} value={clickUpPrioritiesIds?.length || 0} />
         </div>
       </div>

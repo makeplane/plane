@@ -54,10 +54,7 @@ def is_trial_allowed(workspace_license):
     The free trial is only allowed if the workspace has not activated
     the free trial and the workspace does not have a subscription
     """
-    if (
-        settings.IS_MULTI_TENANT
-        and not workspace_license.has_activated_free_trial
-    ):
+    if settings.IS_MULTI_TENANT and not workspace_license.has_activated_free_trial:
         return True
     return False
 

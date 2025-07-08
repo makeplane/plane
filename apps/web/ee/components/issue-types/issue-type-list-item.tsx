@@ -6,7 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { TLoader, IIssueType } from "@plane/types";
 import { Collapsible, setToast, TOAST_TYPE, setPromiseToast } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import { IssueTypeQuickActions, IssuePropertiesRoot, IssueTypeLogo } from "@/plane-web/components/issue-types";
 

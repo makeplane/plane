@@ -7,7 +7,7 @@ import useSWR from "swr";
 // ui
 import { Spinner } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web services

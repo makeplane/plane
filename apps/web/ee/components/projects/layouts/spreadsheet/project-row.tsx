@@ -10,7 +10,7 @@ import { Tooltip } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // constants
 // helper
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";

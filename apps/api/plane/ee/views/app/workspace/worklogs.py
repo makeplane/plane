@@ -35,7 +35,6 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
             .accessible_to(request.user.id, slug)
         )
 
-
         # after getting the dataset, filter it based on the filters
         issue_worklogs = issue_worklogs.filter(**filters)
 

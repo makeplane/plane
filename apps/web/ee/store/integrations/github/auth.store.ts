@@ -53,7 +53,10 @@ export class GithubAuthStore implements IGithubAuthStore {
   private service: GithubAuthService;
   private applicationService: ApplicationService;
   private isEnterprise: boolean;
-  constructor(protected store: IGithubStore, isEnterprise: boolean = false) {
+  constructor(
+    protected store: IGithubStore,
+    isEnterprise: boolean = false
+  ) {
     makeObservable(this, {
       // observables
       workspaceConnectionMap: observable,
@@ -160,7 +163,9 @@ export class GithubAuthStore implements IGithubAuthStore {
 
       const response = await this.service.fetchOrganizationConnection(workspaceId);
       if (response) {
-        await this.store.fetchWebhookConnection(`${SILO_BASE_PATH}/api/${this.isEnterprise ? "github-enterprise" : "github"}/plane-webhook`);
+        await this.store.fetchWebhookConnection(
+          `${SILO_BASE_PATH}/api/${this.isEnterprise ? "github-enterprise" : "github"}/plane-webhook`
+        );
         runInAction(() => {
           response.forEach((data) => {
             if (data.id) set(this.workspaceConnectionMap, [workspaceId, data.id], data);

@@ -1,2 +1,2 @@
-export * from "./migrator"
-export * from "./helpers"
+export * from "./migrator";
+export * from "./helpers";

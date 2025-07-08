@@ -21,7 +21,13 @@ export const createProjectLinkback = (project: ExProject, members: PlaneUser[]) 
   });
 
   // Project header with emoji and name
-  const emoji = project.logo_props && project.logo_props?.in_use === "emoji" && project.logo_props?.emoji && project.logo_props?.emoji?.value ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value) : "📋";
+  const emoji =
+    project.logo_props &&
+    project.logo_props?.in_use === "emoji" &&
+    project.logo_props?.emoji &&
+    project.logo_props?.emoji?.value
+      ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value)
+      : "📋";
   blocks.push({
     type: "section",
     text: {

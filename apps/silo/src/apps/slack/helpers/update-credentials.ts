@@ -5,7 +5,8 @@ import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 const apiClient = getAPIClient();
 
 export const getRefreshCredentialHandler =
-  (workspaceId: string, userId: string, targetAccessToken: string, isUser: boolean = false) => async (response: SlackTokenRefreshResponse) => {
+  (workspaceId: string, userId: string, targetAccessToken: string, isUser: boolean = false) =>
+  async (response: SlackTokenRefreshResponse) => {
     const sourceAccessToken = response.access_token;
     const sourceRefreshToken = response.refresh_token;
     const source = isUser ? `${E_INTEGRATION_KEYS.SLACK}-USER` : E_INTEGRATION_KEYS.SLACK;

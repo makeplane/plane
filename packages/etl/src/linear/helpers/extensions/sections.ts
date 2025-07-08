@@ -5,7 +5,7 @@ import { IParserExtension } from "@/parser";
   This extension converts Linear Docs Sections into Plane Callouts
 */
 export class LinearSectionParserExtension implements IParserExtension {
-  constructor() { }
+  constructor() {}
 
   shouldParse(node: HTMLElement): boolean {
     // Only process paragraph tags that start with "+++"
@@ -17,7 +17,7 @@ export class LinearSectionParserExtension implements IParserExtension {
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
-    const startText = node.textContent
+    const startText = node.textContent;
 
     // If this is an end marker, just return it unchanged
     if (startText === "+++") {
@@ -57,7 +57,10 @@ export class LinearSectionParserExtension implements IParserExtension {
     callout.setAttribute("data-icon-color", "#6d7b8a");
     callout.setAttribute("data-icon-name", "AlignRight");
     callout.setAttribute("data-emoji-unicode", "128161"); // Lightbulb emoji
-    callout.setAttribute("data-emoji-url", "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png");
+    callout.setAttribute(
+      "data-emoji-url",
+      "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png"
+    );
     callout.setAttribute("data-logo-in-use", "icon");
     callout.setAttribute("data-background", "");
     callout.setAttribute("data-block-type", "callout-component");

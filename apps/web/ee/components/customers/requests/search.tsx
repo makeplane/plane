@@ -8,7 +8,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {

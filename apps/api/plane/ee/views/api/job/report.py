@@ -9,7 +9,6 @@ from plane.ee.serializers import ImportReportAPISerializer
 from django.db import transaction
 
 
-
 class ImportReportAPIView(BaseServiceAPIView):
     def get(self, request, pk=None):
         if not pk:
@@ -41,7 +40,9 @@ class ImportReportAPIView(BaseServiceAPIView):
 class ImportReportCountIncrementAPIView(BaseServiceAPIView):
     def post(self, request, pk):
         with transaction.atomic():
-            import_report = ImportReport.objects.select_for_update().filter(pk=pk).first()
+            import_report = (
+                ImportReport.objects.select_for_update().filter(pk=pk).first()
+            )
             if import_report:
                 import_report.total_batch_count = import_report.total_batch_count + int(
                     request.data.get("total_batch_count", 0)

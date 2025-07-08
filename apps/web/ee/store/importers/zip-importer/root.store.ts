@@ -113,7 +113,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   // Noop object for auth, required to use the base dashboard component
   auth = {
     currentAuth: { isAuthenticated: true, sourceTokenInvalid: false },
-    deactivateAuth: async () => { },
+    deactivateAuth: async () => {},
     apiTokenVerification: async () => ({
       message: "Token is valid",
     }),
@@ -123,7 +123,10 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   private zipImporterService: ZipImporterService;
   private siloAssetsService: SiloAssetsService;
 
-  constructor(public store: RootStore, provider: EZipDriverType) {
+  constructor(
+    public store: RootStore,
+    provider: EZipDriverType
+  ) {
     super(store);
     makeObservable(this, {
       // observables
@@ -153,7 +156,9 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
 
     // store instances
     this.zipImporterService = new ZipImporterService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH), provider);
-    this.job = new ImporterJobStore(provider === EZipDriverType.NOTION ? E_IMPORTER_KEYS.NOTION : E_IMPORTER_KEYS.CONFLUENCE);
+    this.job = new ImporterJobStore(
+      provider === EZipDriverType.NOTION ? E_IMPORTER_KEYS.NOTION : E_IMPORTER_KEYS.CONFLUENCE
+    );
     this.siloAssetsService = new SiloAssetsService(API_BASE_URL);
   }
 

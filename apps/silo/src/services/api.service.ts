@@ -4,7 +4,6 @@ import HMACSigner from "@/helpers/hmac-sign";
 import { ClientOptions } from "@/types";
 import { logger } from "@/logger";
 
-
 export abstract class APIService {
   private axiosInstance: AxiosInstance;
   private hmacPrivateKey: string;
@@ -22,13 +21,15 @@ export abstract class APIService {
   }
 
   private setupInterceptors() {
-
     // Request interceptor to add HMAC headers
     this.axiosInstance.interceptors.request.use(
       async (config) => {
         // Create the HMAC signature
         const hmacHeaders = HMACSigner.generateHeaders(
-          this.hmacPrivateKey, this.serviceName, config.method as string, config.url as string
+          this.hmacPrivateKey,
+          this.serviceName,
+          config.method as string,
+          config.url as string
         );
 
         // Add the HMAC headers

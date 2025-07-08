@@ -16,7 +16,6 @@ import { SUPPORTED_CUSTOM_FIELD_ATTRIBUTES } from "./custom-field-etl";
 import { getFormattedDate } from "./date";
 
 export const getTargetState = (stateMap: IStateConfig[], sourceState: JiraState): ExState | undefined => {
-
   if (!sourceState || !sourceState.id) {
     return undefined;
   }
@@ -63,7 +62,6 @@ export const getTargetAttachments = (
 };
 
 export const getTargetPriority = (priorityMap: IPriorityConfig[], sourcePriority: JiraPriority): string | undefined => {
-
   if (!sourcePriority || !sourcePriority.name) {
     return undefined;
   }

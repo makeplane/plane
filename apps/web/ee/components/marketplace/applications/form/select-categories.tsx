@@ -35,9 +35,7 @@ export const SelectCategories: React.FC<TSelectCategoriesProps> = observer((prop
       buttonContainerClassName={COMMON_DROPDOWN_CONTAINER_CLASSNAME}
       buttonContent={(isOpen, val) => (
         <span className="flex items-center justify-between gap-1 text-sm text-custom-text-300 w-36">
-          {val && val.length > 0
-            ? `${val.length} ${t("workspace_settings.settings.applications.categories")}`
-            : ""}
+          {val && val.length > 0 ? `${val.length} ${t("workspace_settings.settings.applications.categories")}` : ""}
           <ChevronDown size={16} className={cn(isOpen ? "rotate-180 ml-auto" : "rotate-0 ml-auto")} />
         </span>
       )}

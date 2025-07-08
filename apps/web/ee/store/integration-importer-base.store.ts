@@ -175,12 +175,12 @@ export abstract class IntegrationImporterBaseStore implements IIntegrationImport
    * @param { string } workspaceSlug
    * @returns { Promise<IApiToken | undefined> }
    */
-   /**
+  /**
    * @description handle external api token
    * @param { string } workspaceSlug
    * @returns { Promise<IApiToken | undefined> }
    */
-   fetchExternalApiToken = async (workspaceSlug: string): Promise<IApiToken | undefined> => {
+  fetchExternalApiToken = async (workspaceSlug: string): Promise<IApiToken | undefined> => {
     if (!workspaceSlug) return;
 
     this.loader = "fetch-projects";

@@ -113,4 +113,3 @@ export function replaceNode(parent: Y.XmlFragment | Y.XmlElement, targetIndex: n
 export function deleteNode(parent: Y.XmlFragment | Y.XmlElement, targetIndex: number): void {
   parent.delete(targetIndex, 1);
 }
-

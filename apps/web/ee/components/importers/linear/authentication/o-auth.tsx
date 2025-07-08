@@ -38,12 +38,12 @@ export const OAuth: FC = observer(() => {
         <div>
           <h3 className="text-xl font-medium">Linear to Plane {t("importers.migration_assistant")}</h3>
           <p className="text-custom-text-300 text-sm">
-            {t("importers.migration_assistant_description", { "serviceName": "Linear" })}
+            {t("importers.migration_assistant_description", { serviceName: "Linear" })}
           </p>
         </div>
         <div>
           <Button onClick={handleOAuthAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Linear" })}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Linear" })}
           </Button>
         </div>
       </div>

@@ -1,4 +1,12 @@
-import { InputBlock, StaticSelect, PlainTextInput, MultiExternalSelect, Checkboxes, ExternalSelect, RichTextInput } from "@slack/types";
+import {
+  InputBlock,
+  StaticSelect,
+  PlainTextInput,
+  MultiExternalSelect,
+  Checkboxes,
+  ExternalSelect,
+  RichTextInput,
+} from "@slack/types";
 
 export interface StaticSelectInputBlock extends InputBlock {
   element: StaticSelect;

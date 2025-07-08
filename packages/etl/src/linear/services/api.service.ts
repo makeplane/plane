@@ -12,13 +12,13 @@ import { LinearComment } from "..";
 
 export type LinearProps =
   | {
-    isPAT: false;
-    accessToken: string;
-  }
+      isPAT: false;
+      accessToken: string;
+    }
   | {
-    isPAT: true;
-    apiKey: string;
-  };
+      isPAT: true;
+      apiKey: string;
+    };
 
 // Utility function for sleep
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -235,7 +235,7 @@ export class LinearService {
   }
 
   async getIssueByIdentifier(identifier: string) {
-    const parts = identifier.split('-');
+    const parts = identifier.split("-");
     if (parts.length !== 2) {
       throw new Error(`Invalid issue identifier format: ${identifier}. Expected format: PRJ-123`);
     }
@@ -245,7 +245,7 @@ export class LinearService {
     const issues = await this.linearClient.issues({
       filter: {
         team: { key: { eq: projectIdentifier } },
-        number: { eq: parseInt(sequenceNumber, 10) }
+        number: { eq: parseInt(sequenceNumber, 10) },
       },
     });
 
@@ -365,17 +365,17 @@ export class LinearService {
 
     // Define entity paths and their corresponding names in the result
     const entityMappings = [
-      { path: 'issueCount', name: 'issues' },
-      { path: 'states.nodes', name: 'states' },
-      { path: 'cycles.nodes', name: 'cycles' },
-      { path: 'labels.nodes', name: 'labels' },
-      { path: 'projects.nodes', name: 'projects' }
+      { path: "issueCount", name: "issues" },
+      { path: "states.nodes", name: "states" },
+      { path: "cycles.nodes", name: "cycles" },
+      { path: "labels.nodes", name: "labels" },
+      { path: "projects.nodes", name: "projects" },
     ];
 
     // Process each entity mapping
-    entityMappings.forEach(mapping => {
+    entityMappings.forEach((mapping) => {
       // Get the value at the path
-      const pathParts = mapping.path.split('.');
+      const pathParts = mapping.path.split(".");
       let value: any = response.team;
 
       for (const part of pathParts) {
@@ -388,7 +388,7 @@ export class LinearService {
       }
 
       // Count based on the type of value
-      if (typeof value === 'number') {
+      if (typeof value === "number") {
         counts[mapping.name] = value;
       } else if (Array.isArray(value)) {
         counts[mapping.name] = value.length;
@@ -400,7 +400,7 @@ export class LinearService {
     // Special handling for documents (nested count across projects)
     counts.documents = 0;
     if (response.team?.projects?.nodes) {
-      response.team.projects.nodes.forEach(project => {
+      response.team.projects.nodes.forEach((project) => {
         if (project.documents?.nodes) {
           counts.documents += project.documents.nodes.length;
         }

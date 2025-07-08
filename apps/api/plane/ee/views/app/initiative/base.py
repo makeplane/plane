@@ -40,11 +40,13 @@ class InitiativeEndpoint(BaseAPIView):
     serializer_class = InitiativeSerializer
 
     def get_queryset(self):
-        project_ids = Project.objects.filter(
-            workspace__slug=self.kwargs.get("slug"),
-            project_projectfeature__is_epic_enabled=True,
-        ).accessible_to(self.request.user.id, self.kwargs.get("slug")).values_list(
-            "id", flat=True
+        project_ids = (
+            Project.objects.filter(
+                workspace__slug=self.kwargs.get("slug"),
+                project_projectfeature__is_epic_enabled=True,
+            )
+            .accessible_to(self.request.user.id, self.kwargs.get("slug"))
+            .values_list("id", flat=True)
         )
 
         return (

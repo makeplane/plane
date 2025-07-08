@@ -7,7 +7,10 @@ export class WorkspaceCredentialService extends APIService {
     super(BASE_URL || API_BASE_URL);
   }
 
-  async createWorkspaceCredential(workspaceSlug: string, data: Partial<TWorkspaceCredential>): Promise<TWorkspaceCredential> {
+  async createWorkspaceCredential(
+    workspaceSlug: string,
+    data: Partial<TWorkspaceCredential>
+  ): Promise<TWorkspaceCredential> {
     return this.post(`/api/workspaces/${workspaceSlug}/credentials/`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -16,7 +19,11 @@ export class WorkspaceCredentialService extends APIService {
       });
   }
 
-  async updateWorkspaceCredential(workspaceSlug: string, credentialId: string, data: Partial<TWorkspaceCredential>): Promise<TWorkspaceCredential> {
+  async updateWorkspaceCredential(
+    workspaceSlug: string,
+    credentialId: string,
+    data: Partial<TWorkspaceCredential>
+  ): Promise<TWorkspaceCredential> {
     return this.patch(`/api/workspaces/${workspaceSlug}/credentials/${credentialId}`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -34,7 +41,10 @@ export class WorkspaceCredentialService extends APIService {
       });
   }
 
-  async listWorkspaceCredentials(workspaceSlug: string, params?: Partial<Record<keyof TWorkspaceCredential, string>>): Promise<TWorkspaceCredential[]> {
+  async listWorkspaceCredentials(
+    workspaceSlug: string,
+    params?: Partial<Record<keyof TWorkspaceCredential, string>>
+  ): Promise<TWorkspaceCredential[]> {
     return this.get(`/api/v1/workspaces/${workspaceSlug}/credentials/`, { params: params })
       .then((response) => response.data)
       .catch((error) => {
@@ -43,8 +53,14 @@ export class WorkspaceCredentialService extends APIService {
       });
   }
 
-  async verifyWorkspaceCredentials(workspaceSlug: string, source: string, userId: string): Promise<TWorkspaceCredentialVerification> {
-    return this.get(`/api/v1/workspaces/${workspaceSlug}/credentials/token-verify/`, { params: { source, "user_id": userId } })
+  async verifyWorkspaceCredentials(
+    workspaceSlug: string,
+    source: string,
+    userId: string
+  ): Promise<TWorkspaceCredentialVerification> {
+    return this.get(`/api/v1/workspaces/${workspaceSlug}/credentials/token-verify/`, {
+      params: { source, user_id: userId },
+    })
       .then((response) => response.data)
       .catch((error) => {
         console.log(error);
@@ -69,5 +85,4 @@ export class WorkspaceCredentialService extends APIService {
         throw error?.response?.data;
       });
   }
-
 }

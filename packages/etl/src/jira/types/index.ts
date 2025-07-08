@@ -135,7 +135,7 @@ export type JiraConfig = {
   label: string[];
   state: IStateConfig[];
   priority: IPriorityConfig[];
-  skipUserImport: boolean
+  skipUserImport: boolean;
 };
 
 export type JiraAuthState = {

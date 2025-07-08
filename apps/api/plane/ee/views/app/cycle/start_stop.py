@@ -44,11 +44,17 @@ class CycleStartStopEndpoint(BaseAPIView):
                 # fetch all the active cycles and check if the current cycle is in the 
                 # active cycles
                 """
-                active_cycles = Cycle.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    project__archived_at__isnull=True,
-                ).filter(start_date__lte=timezone.now(), end_date__gte=timezone.now()).accessible_to(request.user.id, slug)
+                active_cycles = (
+                    Cycle.objects.filter(
+                        workspace__slug=slug,
+                        project_id=project_id,
+                        project__archived_at__isnull=True,
+                    )
+                    .filter(
+                        start_date__lte=timezone.now(), end_date__gte=timezone.now()
+                    )
+                    .accessible_to(request.user.id, slug)
+                )
 
                 if cycle not in active_cycles:
                     return Response(

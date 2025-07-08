@@ -91,7 +91,9 @@ export const InitiativeAttachmentRoot: FC<Props> = observer((props) => {
 
   return (
     <>
-      {uploadStatus?.map((uploadStatus) => <AttachmentsUploadItem key={uploadStatus.id} uploadStatus={uploadStatus} />)}
+      {uploadStatus?.map((uploadStatus) => (
+        <AttachmentsUploadItem key={uploadStatus.id} uploadStatus={uploadStatus} />
+      ))}
       {initiativeAttachments && (
         <>
           {attachmentDeleteModalId && (

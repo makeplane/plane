@@ -5,8 +5,7 @@ import { TStepperBlock } from "@/plane-web/types/importers";
 export enum E_IMPORTER_STEPS {
   UPLOAD_ZIP = "upload-zip",
 }
-export type TImporterStepKeys =
-  | E_IMPORTER_STEPS.UPLOAD_ZIP
+export type TImporterStepKeys = E_IMPORTER_STEPS.UPLOAD_ZIP;
 
 export type TImporterStep = TStepperBlock<TImporterStepKeys>;
 

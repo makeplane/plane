@@ -19,7 +19,7 @@ export type WebhookGitHubIssue = components["schemas"]["webhooks_issue"];
 export type WebhookGitHubLabel = components["schemas"]["webhooks_label"];
 export type WebhookGitHubComment = components["schemas"]["webhooks_comment"];
 export type WebhookGitHubMilestone = components["schemas"]["webhooks_milestone"];
-export type WebhookGitHubUser = components["schemas"]["webhooks_user"]
+export type WebhookGitHubUser = components["schemas"]["webhooks_user"];
 export type GithubSimpleUser = components["schemas"]["simple-user"];
 
 export type GithubWebhookPayload = components["schemas"];

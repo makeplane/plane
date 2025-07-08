@@ -15,7 +15,7 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     key: E_LINEAR_IMPORTER_STEPS.SELECT_PLANE_PROJECT,
     icon: () => <Layers3 size={14} />,
     i18n_title: "linear_importer.steps.title_configure_plane",
-    i18n_description:"linear_importer.steps.description_configure_plane",
+    i18n_description: "linear_importer.steps.description_configure_plane",
     component: () => <SelectPlaneProjectRoot />,
     prevStep: undefined,
     nextStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
@@ -33,8 +33,7 @@ export const IMPORTER_LINEAR_STEPS: TLinearImporterStep[] = [
     key: E_LINEAR_IMPORTER_STEPS.MAP_STATES,
     icon: () => <Layers3 size={14} />,
     i18n_title: "linear_importer.steps.title_map_states",
-    i18n_description:
-      "linear_importer.steps.description_map_states",
+    i18n_description: "linear_importer.steps.description_map_states",
     component: () => <MapStatesRoot />,
     prevStep: E_LINEAR_IMPORTER_STEPS.CONFIGURE_LINEAR,
     nextStep: E_LINEAR_IMPORTER_STEPS.SUMMARY,

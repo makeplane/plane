@@ -4,9 +4,7 @@ type QueryParams<T extends string> = {
   [key in T]: string;
 };
 
-export function useQueryParams<T extends string>(
-  paramNames: Array<T>,
-): QueryParams<T> {
+export function useQueryParams<T extends string>(paramNames: Array<T>): QueryParams<T> {
   return useMemo(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

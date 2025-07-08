@@ -310,7 +310,7 @@ class ProjectAPIEndpoint(BaseAPIView):
             )
 
             if serializer.is_valid():
-                # don't allow external id and external source to be changed 
+                # don't allow external id and external source to be changed
                 # if they are already set for an existing project
                 if (
                     request.data.get("external_id")

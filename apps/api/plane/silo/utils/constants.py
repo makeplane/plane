@@ -40,5 +40,5 @@ APPLICATIONS = {
         "short_description": "Importer",
         "description_html": "<p>Importer</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/importer/plane-oauth/callback",
-    }
+    },
 }

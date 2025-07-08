@@ -109,13 +109,13 @@ export type ActivityForSlack = {
   field: string;
   actor: string;
 } & (
-    | {
+  | {
       isArrayField: true;
       removed: string[];
       added: string[];
     }
-    | {
+  | {
       isArrayField: false;
       newValue: string;
     }
-  );
+);

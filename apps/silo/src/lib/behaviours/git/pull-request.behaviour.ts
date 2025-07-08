@@ -9,8 +9,14 @@ import { CONSTANTS, E_STATE_MAP_KEYS } from "@/helpers/constants";
 import { getReferredIssues, IssueReference, IssueWithReference } from "@/helpers/parser";
 import { logger } from "@/logger";
 import { verifyEntityConnections } from "@/types";
-import { IPullRequestService, IPullRequestDetails, TPullRequestError, IPullRequestEventData, IGitComment } from "@/types/behaviours/git";
-import { Either, left, right } from '@/types/either';
+import {
+  IPullRequestService,
+  IPullRequestDetails,
+  TPullRequestError,
+  IPullRequestEventData,
+  IGitComment,
+} from "@/types/behaviours/git";
+import { Either, left, right } from "@/types/either";
 
 /**
  * Pull Request Behaviour
@@ -30,8 +36,7 @@ export class PullRequestBehaviour {
     private readonly planeClient: Client,
 
     // entity connections
-    private readonly entityConnections: ReturnType<typeof verifyEntityConnections>,
-
+    private readonly entityConnections: ReturnType<typeof verifyEntityConnections>
   ) {
     this.projectIdToPRStateMap = this.getProjectIdToPRStateMap();
   }
@@ -52,36 +57,30 @@ export class PullRequestBehaviour {
       const pullRequestText = `${pullRequestDetails.title}\n${pullRequestDetails.description}`;
       const references = getReferredIssues(pullRequestText);
       if (references.closingReferences.length === 0 && references.nonClosingReferences.length === 0) {
-        logger.info('No issue references found, skipping...');
+        logger.info("No issue references found, skipping...");
         return;
       }
 
       const event = this.classifyPullRequestEvent(pullRequestDetails);
       if (!event) {
-        logger.info('No event found, skipping...');
+        logger.info("No event found, skipping...");
         return;
       }
 
       // Determine which references to process
-      const isClosingEvent = [E_STATE_MAP_KEYS.MR_CLOSED, E_STATE_MAP_KEYS.MR_MERGED].includes(event as E_STATE_MAP_KEYS);
+      const isClosingEvent = [E_STATE_MAP_KEYS.MR_CLOSED, E_STATE_MAP_KEYS.MR_MERGED].includes(
+        event as E_STATE_MAP_KEYS
+      );
       const referredIssues = isClosingEvent
         ? references.closingReferences
         : [...references.closingReferences, ...references.nonClosingReferences];
 
-      const updateResults = await this.updateReferencedIssues(
-        referredIssues,
-        pullRequestDetails,
-        event
-      );
+      const updateResults = await this.updateReferencedIssues(referredIssues, pullRequestDetails, event);
 
       const validIssues = updateResults.filter((result): result is IssueWithReference => result !== null);
 
       if (validIssues.length > 0) {
-        await this.manageCommentOnPullRequest(
-          pullRequestDetails,
-          validIssues,
-          references.nonClosingReferences
-        );
+        await this.manageCommentOnPullRequest(pullRequestDetails, validIssues, references.nonClosingReferences);
       }
     } catch (error) {
       logger.error(`Error handling pull request: ${(error as Error)?.stack}`);
@@ -93,9 +92,7 @@ export class PullRequestBehaviour {
    * @param data - The event data
    * @returns The pull request details
    */
-  private async fetchPullRequest(
-    data: IPullRequestEventData
-  ): Promise<Either<TPullRequestError, IPullRequestDetails>> {
+  private async fetchPullRequest(data: IPullRequestEventData): Promise<Either<TPullRequestError, IPullRequestDetails>> {
     try {
       const pullRequest = await this.service.getPullRequest(
         data.owner,
@@ -106,7 +103,7 @@ export class PullRequestBehaviour {
     } catch (error) {
       return left({
         message: `Failed to fetch pull request details for ${data.owner}/${data.repositoryName}#${data.pullRequestIdentifier}`,
-        details: error
+        details: error,
       });
     }
   }
@@ -136,7 +133,6 @@ export class PullRequestBehaviour {
     return undefined;
   }
 
-
   /**
    * Update the referenced issues
    * @param references - The references
@@ -149,21 +145,22 @@ export class PullRequestBehaviour {
     prDetails: IPullRequestDetails,
     event: string
   ): Promise<(IssueWithReference | null)[]> {
-    return Promise.all(
-      references.map(reference => this.updateSingleIssue(reference, prDetails, event))
-    );
+    return Promise.all(references.map((reference) => this.updateSingleIssue(reference, prDetails, event)));
   }
 
   private getProjectIdToPRStateMap() {
     if (!this.entityConnections) {
       return {};
     }
-    return this.entityConnections.reduce((acc, entityConnection) => {
-      if (entityConnection.project_id) {
-        acc[entityConnection.project_id.toString()] = entityConnection.config?.states?.mergeRequestEventMapping;
-      }
-      return acc;
-    }, {} as Record<string, Record<string, { id: string; name: string }>>);
+    return this.entityConnections.reduce(
+      (acc, entityConnection) => {
+        if (entityConnection.project_id) {
+          acc[entityConnection.project_id.toString()] = entityConnection.config?.states?.mergeRequestEventMapping;
+        }
+        return acc;
+      },
+      {} as Record<string, Record<string, { id: string; name: string }>>
+    );
   }
 
   /**
@@ -191,24 +188,15 @@ export class PullRequestBehaviour {
       // for gitlab we get the state from config directly
       const targetState = this.projectIdToPRStateMap[issue.project]?.[event];
       if (targetState) {
-        await this.planeClient.issue.update(
-          this.workspaceSlug,
-          issue.project,
-          issue.id,
-          { state: targetState.id }
+        await this.planeClient.issue.update(this.workspaceSlug, issue.project, issue.id, { state: targetState.id });
+        logger.info(
+          `[${this.providerName.toUpperCase()}] Issue ${reference.identifier}-${reference.sequence} updated to state ${targetState.name}`
         );
-        logger.info(`[${this.providerName.toUpperCase()}] Issue ${reference.identifier}-${reference.sequence} updated to state ${targetState.name}`);
       }
 
       // Create link to pull request
       const linkTitle = `[${prDetails.number}] ${prDetails.title}`;
-      await this.planeClient.issue.createLink(
-        this.workspaceSlug,
-        issue.project,
-        issue.id,
-        linkTitle,
-        prDetails.url
-      );
+      await this.planeClient.issue.createLink(this.workspaceSlug, issue.project, issue.id, linkTitle, prDetails.url);
 
       return { reference, issue };
     } catch (error: any) {
@@ -235,7 +223,10 @@ export class PullRequestBehaviour {
       }
 
       // Generic error handling
-      logger.error(`[${this.providerName.toUpperCase()}] Error updating issue ${reference.identifier}-${reference.sequence}`, error);
+      logger.error(
+        `[${this.providerName.toUpperCase()}] Error updating issue ${reference.identifier}-${reference.sequence}`,
+        error
+      );
 
       // If we managed to get the issue before the error, still return it
       if (issue) {
@@ -318,7 +309,9 @@ export class PullRequestBehaviour {
       commentId.toString(),
       body
     );
-    logger.info(`Updated comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`);
+    logger.info(
+      `Updated comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`
+    );
   }
 
   /**
@@ -333,13 +326,12 @@ export class PullRequestBehaviour {
       prDetails.number.toString(),
       body
     );
-    logger.info(`Created new comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`);
+    logger.info(
+      `Created new comment for pull request ${prDetails.number} in repo ${prDetails.repository.owner}/${prDetails.repository.name}`
+    );
   }
 
-  private generateCommentBody(
-    issues: IssueWithReference[],
-    nonClosingReferences: IssueReference[]
-  ): string {
+  private generateCommentBody(issues: IssueWithReference[], nonClosingReferences: IssueReference[]): string {
     const commentPrefix = `Pull Request Linked with Plane Work Items`;
     let body = `${commentPrefix}\n\n`;
 
@@ -364,13 +356,13 @@ export class PullRequestBehaviour {
   private categorizeIssues(
     issues: IssueWithReference[],
     nonClosingReferences: IssueReference[]
-  ): { closingIssues: IssueWithReference[], nonClosingIssues: IssueWithReference[] } {
+  ): { closingIssues: IssueWithReference[]; nonClosingIssues: IssueWithReference[] } {
     const closingIssues = issues.filter(
       ({ reference }) => !this.isNonClosingReference(reference, nonClosingReferences)
     );
 
-    const nonClosingIssues = issues.filter(
-      ({ reference }) => this.isNonClosingReference(reference, nonClosingReferences)
+    const nonClosingIssues = issues.filter(({ reference }) =>
+      this.isNonClosingReference(reference, nonClosingReferences)
     );
 
     return { closingIssues, nonClosingIssues };
@@ -382,10 +374,7 @@ export class PullRequestBehaviour {
    * @param nonClosingReferences - The non-closing references
    * @returns Whether the issue is a non-closing reference
    */
-  private isNonClosingReference(
-    reference: IssueReference,
-    nonClosingReferences: IssueReference[]
-  ): boolean {
+  private isNonClosingReference(reference: IssueReference, nonClosingReferences: IssueReference[]): boolean {
     return nonClosingReferences.some(
       (ref) => ref.identifier === reference.identifier && ref.sequence === reference.sequence
     );
@@ -397,8 +386,11 @@ export class PullRequestBehaviour {
    * @returns The formatted issue section
    */
   private formatIssueSection(issues: IssueWithReference[]): string {
-    return issues.map(({ reference, issue }) =>
-      `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${this.workspaceSlug}/projects/${issue.project}/issues/${issue.id})\n`
-    ).join('');
+    return issues
+      .map(
+        ({ reference, issue }) =>
+          `- [${reference.identifier}-${reference.sequence}] [${issue.name}](${env.APP_BASE_URL}/${this.workspaceSlug}/projects/${issue.project}/issues/${issue.id})\n`
+      )
+      .join("");
   }
 }

@@ -20,7 +20,7 @@ export class ConfluenceFileParserExtension extends NotionFileParserExtension {
       /*
        * If the node was modified, we need to ensure that it has some text to
        * display, otherwise we will not be able to click on the link
-      */
+       */
       const fileTitle = node.getAttribute("data-linked-resource-default-alias");
       if (fileTitle) {
         node.set_content(fileTitle);
@@ -63,7 +63,7 @@ export class ConfluenceFileParserExtension extends NotionFileParserExtension {
       return lastTwoComponents.join("/");
     }
 
-    return withoutQueryParams
+    return withoutQueryParams;
   }
 
   private getContainerId(node: HTMLElement): string | undefined {

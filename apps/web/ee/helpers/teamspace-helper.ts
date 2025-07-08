@@ -15,5 +15,7 @@ export const getTeamspaceEntityScopeLabel = (entity: ETeamspaceEntityScope) => {
 };
 
 // Get the key for the issue property type based on the property type and relation type
-export const getTeamspaceActivityKey = (activityField: TTeamspaceActivityFields | undefined, activityVerb: TTeamspaceActivityVerbs) =>
-  `${activityField ? `${activityField}_` : ""}${activityVerb}` as TTeamspaceActivityKeys;
+export const getTeamspaceActivityKey = (
+  activityField: TTeamspaceActivityFields | undefined,
+  activityVerb: TTeamspaceActivityVerbs
+) => `${activityField ? `${activityField}_` : ""}${activityVerb}` as TTeamspaceActivityKeys;

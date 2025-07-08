@@ -14,7 +14,6 @@ export const filterCyclesForIssues = (issues: LinearIssue[], cycles: LinearCycle
     }));
 };
 
-
 export const createLinearClient = (credentials: TWorkspaceCredential): LinearService => {
   if (env.LINEAR_OAUTH_ENABLED === "1") {
     return new LinearService({

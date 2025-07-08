@@ -3,7 +3,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // components
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 import type { TPopoverMenuOptions } from "@/plane-web/components/marketplace";
 // helpers
 
@@ -21,9 +21,7 @@ export const ApplicationTileMenuItem: FC<TPopoverMenuOptions> = observer((props)
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}
-        <div className={cn("whitespace-nowrap text-sm text-custom-text-200")}>
-          {label}
-        </div>
+        <div className={cn("whitespace-nowrap text-sm text-custom-text-200")}>{label}</div>
         {appendIcon && <div className="ml-auto">{appendIcon}</div>}
       </div>
     );

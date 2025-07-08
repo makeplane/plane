@@ -10,7 +10,7 @@ export interface ProjectPageConfig {
 const projectPageService = new ProjectPageService();
 export class ProjectPageHandler extends BasePageHandler<ProjectPageService, ProjectPageConfig> {
   protected documentType = "project_page";
-  
+
   constructor() {
     super(projectPageService);
   }

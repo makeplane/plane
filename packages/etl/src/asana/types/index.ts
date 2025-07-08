@@ -57,7 +57,7 @@ export type AsanaConfig = {
   project: AsanaProject;
   state: StateConfig[];
   priority?: PriorityConfigSettings | undefined;
-  skipUserImport: boolean | false
+  skipUserImport: boolean | false;
 };
 
 export type TokenRefreshResponse = {

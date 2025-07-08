@@ -32,13 +32,12 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
 
   const downloadSecretKey = () => {
     const csvData = {
-      "ClientId": clientId ?? "",
-      "ClientSecret": clientSecret ?? "",
+      ClientId: clientId ?? "",
+      ClientSecret: clientSecret ?? "",
     };
 
     csvDownload(csvData, `secret-key-${Date.now()}`);
   };
-
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose}>
@@ -48,14 +47,19 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
             <CheckCircle className="h-4 w-4 text-white flex-shrink-0" />
           </div>
           <div className="space-y-1 text-wrap">
-            <h3 className="text-lg font-medium leading-6 text-custom-text-100">{t("workspace_settings.settings.applications.app_available")}</h3>
-            <p className="text-sm text-custom-text-400">{t("workspace_settings.settings.applications.app_available_description")}</p>
+            <h3 className="text-lg font-medium leading-6 text-custom-text-100">
+              {t("workspace_settings.settings.applications.app_available")}
+            </h3>
+            <p className="text-sm text-custom-text-400">
+              {t("workspace_settings.settings.applications.app_available_description")}
+            </p>
           </div>
         </div>
 
         <div className={`mt-4 space-y-2 flex flex-col rounded-md p-4 bg-custom-background-100`}>
           <div className="font-medium">{t("workspace_settings.settings.applications.client_id_and_secret")}</div>
-          <div className="text-sm text-custom-text-400">{t("workspace_settings.settings.applications.client_id_and_secret_description")}
+          <div className="text-sm text-custom-text-400">
+            {t("workspace_settings.settings.applications.client_id_and_secret_description")}
             <br />
             {t("workspace_settings.settings.applications.client_id_and_secret_download")}
           </div>
@@ -73,14 +77,15 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
             </button>
           </div>
           <div className="space-y-1">
-            <p className={`text-sm text-custom-text-100`}>{t("workspace_settings.settings.applications.client_secret")}</p>
-            <div className={`flex items-center justify-between mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100`}>
+            <p className={`text-sm text-custom-text-100`}>
+              {t("workspace_settings.settings.applications.client_secret")}
+            </p>
+            <div
+              className={`flex items-center justify-between mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none bg-custom-background-100`}
+            >
               <span className={`truncate pr-2 text-custom-text-100`}>{clientSecret}</span>
               <div className="flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => copyContent(clientSecret, "clientSecret")}
-                >
+                <button type="button" onClick={() => copyContent(clientSecret, "clientSecret")}>
                   <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
                     <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
                   </Tooltip>
@@ -102,6 +107,6 @@ export const GeneratedCredentialsModal: React.FC<Props> = (props) => {
           </Button>
         </div>
       </div>
-    </ModalCore >
+    </ModalCore>
   );
 };

@@ -4,7 +4,6 @@
 
 import { IGitComment, IPullRequestDetails } from "./base";
 
-
 // ----------------------------------------
 // Event Data Types
 // ----------------------------------------
@@ -27,7 +26,6 @@ export interface IPullRequestConfig {
   };
 }
 
-
 // ----------------------------------------
 // Error Types
 // ----------------------------------------
@@ -44,23 +42,13 @@ export type TPullRequestError = {
 // Service Interfaces
 // ----------------------------------------
 
-
-
 /**
  * Service interface for pull request operations
  */
 export interface IPullRequestService {
-  getPullRequest(
-    owner: string,
-    repositoryName: string,
-    pullRequestIdentifier: string
-  ): Promise<IPullRequestDetails>;
+  getPullRequest(owner: string, repositoryName: string, pullRequestIdentifier: string): Promise<IPullRequestDetails>;
 
-  getPullRequestComments(
-    owner: string,
-    repo: string,
-    pullRequestIdentifier: string
-  ): Promise<IGitComment[]>;
+  getPullRequestComments(owner: string, repo: string, pullRequestIdentifier: string): Promise<IGitComment[]>;
 
   createPullRequestComment(
     owner: string,
@@ -69,10 +57,5 @@ export interface IPullRequestService {
     body: string
   ): Promise<IGitComment>;
 
-  updatePullRequestComment(
-    owner: string,
-    repo: string,
-    commentId: string,
-    body: string
-  ): Promise<IGitComment>;
+  updatePullRequestComment(owner: string, repo: string, commentId: string, body: string): Promise<IGitComment>;
 }

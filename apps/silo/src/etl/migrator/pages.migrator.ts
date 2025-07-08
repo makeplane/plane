@@ -11,7 +11,7 @@ export class PagesMigrator {
 
     await celeryProducer.registerTask(
       {
-        pages
+        pages,
       },
       job.workspace_slug,
       job.project_id,

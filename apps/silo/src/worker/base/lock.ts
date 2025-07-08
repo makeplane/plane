@@ -1,13 +1,16 @@
 import { Store } from ".";
 
-export type LockConfig = ({
-  type: "default"
-  workspaceId: undefined | string;
-  jobId: undefined | string;
-} | {
-  type: "custom",
-  lockKey: string;
-}) & {
+export type LockConfig = (
+  | {
+      type: "default";
+      workspaceId: undefined | string;
+      jobId: undefined | string;
+    }
+  | {
+      type: "custom";
+      lockKey: string;
+    }
+) & {
   ttl?: number;
 };
 

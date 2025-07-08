@@ -8,7 +8,7 @@ export interface NotionImageParserConfig {
 }
 
 export class NotionImageParserExtension implements IParserExtension {
-  constructor(protected config: NotionImageParserConfig) { }
+  constructor(protected config: NotionImageParserConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     // Only process img tags
@@ -42,7 +42,6 @@ export class NotionImageParserExtension implements IParserExtension {
 
     return node;
   }
-
 
   protected normalizeImagePath(src: string): string {
     // Remove URL encoding and construct the full path

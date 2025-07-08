@@ -13,7 +13,13 @@ import { EIssuesStoreType, IActiveCycle } from "@plane/types";
 // ui
 import { Avatar, Loader, PriorityIcon, Tooltip } from "@plane/ui";
 // components
-import { cn, generateWorkItemLink, getFileURL, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
+import {
+  cn,
+  generateWorkItemLink,
+  getFileURL,
+  renderFormattedDate,
+  renderFormattedDateWithoutYear,
+} from "@plane/utils";
 import { SingleProgressStats } from "@/components/core";
 import { StateDropdown } from "@/components/dropdowns";
 import { SimpleEmptyState } from "@/components/empty-state";

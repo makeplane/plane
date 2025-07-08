@@ -35,7 +35,7 @@ export const IMPORTER_STEPS: TImporterStep[] = [
     key: E_IMPORTER_STEPS.MAP_STATES,
     icon: () => <Layers3 size={14} />,
     i18n_title: "jira_server_importer.steps.title_map_states",
-    i18n_description:"jira_server_importer.steps.description_map_states",
+    i18n_description: "jira_server_importer.steps.description_map_states",
     component: () => <MapStatesRoot />,
     prevStep: E_IMPORTER_STEPS.CONFIGURE_JIRA,
     nextStep: E_IMPORTER_STEPS.MAP_PRIORITY,

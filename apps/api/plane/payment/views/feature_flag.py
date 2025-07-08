@@ -19,7 +19,6 @@ from plane.space.rate_limit import AnchorBasedRateThrottle, SpaceRateThrottle
 
 
 class FeatureFlagProxyEndpoint(BaseAPIView):
-
     def get(self, request, slug):
         try:
             url = f"{settings.FEATURE_FLAG_SERVER_BASE_URL}/api/feature-flags/"

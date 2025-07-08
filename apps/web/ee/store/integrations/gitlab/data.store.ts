@@ -132,12 +132,12 @@ export class GitlabDataStore implements IGitlabDataStore {
     return gitlabUsers[gitlabUserId] || undefined;
   });
 
-   /**
+  /**
    * @description get gitlab entity by id
    * @param { string } gitlabEntityId
    * @returns { IGitlabEntity | undefined }
    */
-   gitlabEntityById = computedFn((gitlabEntityId: string): IGitlabEntity | undefined => {
+  gitlabEntityById = computedFn((gitlabEntityId: string): IGitlabEntity | undefined => {
     const organizationId = this.store.auth.workspaceConnectionIds[0];
     if (!organizationId) return;
 
@@ -146,7 +146,6 @@ export class GitlabDataStore implements IGitlabDataStore {
 
     return gitlabEntities[gitlabEntityId] || undefined;
   });
-
 
   // actions
   /**

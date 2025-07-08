@@ -32,6 +32,5 @@ class WorkspaceStatesEndpoint(BaseAPIView):
             for index, state in enumerate(group_states, start=1):
                 state.order = index / count
 
-
         serializer = StateSerializer(states, many=True).data
         return Response(serializer, status=status.HTTP_200_OK)

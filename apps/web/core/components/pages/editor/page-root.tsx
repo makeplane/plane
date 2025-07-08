@@ -125,7 +125,6 @@ export const PageRoot = observer((props: TPageRootProps) => {
     }
   };
 
-
   // reset editor ref on unmount
   useEffect(
     () => () => {

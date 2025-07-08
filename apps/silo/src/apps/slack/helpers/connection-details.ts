@@ -44,7 +44,7 @@ export const getConnectionDetails = async (
   const refreshHandler = getRefreshCredentialHandler(
     workspaceConnection.workspace_id,
     adminCredentials.user_id as string,
-    adminCredentials.target_access_token as string,
+    adminCredentials.target_access_token as string
   );
 
   const slackService = createSlackService(
@@ -57,9 +57,9 @@ export const getConnectionDetails = async (
   // Try to get user credentials
   const userCredentials = slackUser
     ? await getCredentialsWithFallback(
-      workspaceConnection as unknown as TWorkspaceConnection<TSlackWorkspaceConnectionConfig>,
-      slackUser
-    )
+        workspaceConnection as unknown as TWorkspaceConnection<TSlackWorkspaceConnectionConfig>,
+        slackUser
+      )
     : null;
 
   // Use user credentials if available, otherwise use admin credentials
@@ -246,8 +246,15 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
     isUser = false;
   }
 
-  if (!credentials || !credentials.source_access_token || !credentials.source_refresh_token || !credentials.target_access_token) {
-    logger.info(`[SLACK] [GET_CONNECTION_DETAILS_FOR_ISSUE] Credentials not found for entity connection ${entityConnection.id}`);
+  if (
+    !credentials ||
+    !credentials.source_access_token ||
+    !credentials.source_refresh_token ||
+    !credentials.target_access_token
+  ) {
+    logger.info(
+      `[SLACK] [GET_CONNECTION_DETAILS_FOR_ISSUE] Credentials not found for entity connection ${entityConnection.id}`
+    );
     return;
   }
 

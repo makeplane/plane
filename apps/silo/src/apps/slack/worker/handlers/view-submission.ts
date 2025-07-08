@@ -10,7 +10,12 @@ import { getConnectionDetails } from "../../helpers/connection-details";
 import { ENTITIES } from "../../helpers/constants";
 import { getSlackContentParser } from "../../helpers/content-parser";
 import { parseIssueFormData, parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
-import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails, TSlackWorkspaceConnectionConfig } from "../../types/types";
+import {
+  E_MESSAGE_ACTION_TYPES,
+  SlackPrivateMetadata,
+  TSlackConnectionDetails,
+  TSlackWorkspaceConnectionConfig,
+} from "../../types/types";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
 
@@ -299,21 +304,21 @@ export const handleCreateNewWorkItemViewSubmission = async (
       logger.info(`[SLACK] Unsupported payload type: ${metadata.entityType}`);
       return;
     }
-    const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig
+    const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
 
     const slackUser = await slackService.getUserInfo(data.user.id);
     const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
     const member = members.find((m: any) => m.email === slackUser?.user.profile.email);
 
-    const userMap = new Map<string, string>()
+    const userMap = new Map<string, string>();
     config.userMap?.forEach((user) => {
-      userMap.set(user.slackUser, user.planeUserId)
-    })
+      userMap.set(user.slackUser, user.planeUserId);
+    });
 
     const parser = getSlackContentParser({
       userMap,
-      teamDomain: data.team.domain
-    })
+      teamDomain: data.team.domain,
+    });
 
     let parsedDescription: string;
 

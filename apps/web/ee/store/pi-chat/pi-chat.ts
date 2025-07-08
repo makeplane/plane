@@ -5,7 +5,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { PI_BASE_URL  } from "@plane/constants";
+import { PI_BASE_URL } from "@plane/constants";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 import { PiChatService } from "@/plane-web/services/pi-chat.service";

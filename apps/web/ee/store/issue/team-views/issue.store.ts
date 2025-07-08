@@ -40,7 +40,12 @@ export interface ITeamViewIssues extends IBaseIssuesStore {
     subGroupId?: string
   ) => Promise<TIssuesResponse | undefined>;
 
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<TIssue>, teamspaceId: string) => Promise<TIssue>;
+  createIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TIssue>,
+    teamspaceId: string
+  ) => Promise<TIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeBulkIssues: (workspaceSlug: string, projectId: string, issueIds: string[]) => Promise<void>;
@@ -75,8 +80,8 @@ export class TeamViewIssues extends BaseIssuesStore implements ITeamViewIssues {
     this.teamspaceWorkItemsService = new TeamspaceWorkItemsService();
   }
 
-  fetchParentStats = async () => { };
-  updateParentStats = () => { };
+  fetchParentStats = async () => {};
+  updateParentStats = () => {};
 
   /**
    * This method is called to fetch the first issues of pagination
@@ -190,8 +195,14 @@ export class TeamViewIssues extends BaseIssuesStore implements ITeamViewIssues {
    * @param teamspaceId
    * @returns
    */
-  override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>, teamspaceId: string) => {
-    const teamspaceProjectIds = this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceProjectIds(teamspaceId);
+  override createIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TIssue>,
+    teamspaceId: string
+  ) => {
+    const teamspaceProjectIds =
+      this.rootIssueStore.rootStore.teamspaceRoot.teamspaces.getTeamspaceProjectIds(teamspaceId);
     return await super.createIssue(workspaceSlug, projectId, data, undefined, teamspaceProjectIds?.includes(projectId));
   };
 

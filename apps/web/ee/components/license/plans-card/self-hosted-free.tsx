@@ -5,7 +5,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { Button } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import { PlanCard, SelfManagedLicenseActions } from "@/plane-web/components/license";
 // plane web hooks

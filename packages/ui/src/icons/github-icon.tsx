@@ -52,12 +52,7 @@ export const GithubDarkIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24
       <path fill="url(#pattern0_18217_187055)" d="M2 7h36v36H2z"></path>
     </g>
     <defs>
-      <pattern
-        id="pattern0_18217_187055"
-        width="1"
-        height="1"
-        patternContentUnits="objectBoundingBox"
-      >
+      <pattern id="pattern0_18217_187055" width="1" height="1" patternContentUnits="objectBoundingBox">
         <use xlinkHref="#image0_18217_187055" transform="scale(.00195)"></use>
       </pattern>
       <image

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web types
 import { TWorklogDownloadStatus } from "@/plane-web/types";
 

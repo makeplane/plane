@@ -59,10 +59,7 @@ export const getTargetAttachments = (
   return attachmentArray;
 };
 
-export const getTargetPriority = (
-  job: TImportJob<JiraConfig>,
-  sourcePriority: JiraPriority
-): string | undefined => {
+export const getTargetPriority = (job: TImportJob<JiraConfig>, sourcePriority: JiraPriority): string | undefined => {
   if (!job.config) {
     return undefined;
   }

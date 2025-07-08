@@ -4,7 +4,7 @@ import { FC, FormEvent, useEffect, useState } from "react";
 import { Timer } from "lucide-react";
 import { Button, Input, TextArea } from "@plane/ui";
 // plane web helpers
-import { convertHoursMinutesToMinutes  } from "@plane/utils";
+import { convertHoursMinutesToMinutes } from "@plane/utils";
 // plane web types
 import { TWorklog } from "@/plane-web/types";
 

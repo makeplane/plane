@@ -8,7 +8,11 @@ export class WorkspaceConnectionService extends APIService {
     super(BASE_URL || API_BASE_URL);
   }
 
-  async updateWorkspaceConnection(workspaceSlug: string, connectionId: string, data: Partial<TWorkspaceConnection>): Promise<TWorkspaceConnection> {
+  async updateWorkspaceConnection(
+    workspaceSlug: string,
+    connectionId: string,
+    data: Partial<TWorkspaceConnection>
+  ): Promise<TWorkspaceConnection> {
     return this.patch(`/api/workspaces/${workspaceSlug}/connections/${connectionId}`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -35,7 +39,10 @@ export class WorkspaceConnectionService extends APIService {
       });
   }
 
-  async listWorkspaceConnections(workspaceSlug: string, params?: Partial<Record<keyof TWorkspaceConnection, string | boolean | number>>): Promise<TWorkspaceConnection[]> {
+  async listWorkspaceConnections(
+    workspaceSlug: string,
+    params?: Partial<Record<keyof TWorkspaceConnection, string | boolean | number>>
+  ): Promise<TWorkspaceConnection[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/connections/`, { params: params })
       .then((response) => response.data)
       .catch((error) => {
@@ -52,6 +59,4 @@ export class WorkspaceConnectionService extends APIService {
         throw error?.response?.data;
       });
   }
-
-
 }

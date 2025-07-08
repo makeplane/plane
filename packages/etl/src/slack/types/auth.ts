@@ -83,7 +83,6 @@ export function isSlackBotTokenResponse(
 export function isSlackUserTokenResponse(
   response: SlackUserTokenResponse | SlackBotTokenResponse
 ): response is SlackUserTokenResponse {
-
   if (!response.authed_user) {
     return false;
   }

@@ -10,7 +10,7 @@ const workspacePageService = new WorkspacePageService();
 
 export class WorkspacePageHandler extends BasePageHandler<WorkspacePageService, WorkspacePageConfig> {
   protected documentType = "workspace_page";
-  
+
   constructor() {
     super(workspacePageService);
   }

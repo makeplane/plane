@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { observer } from "mobx-react";
 
@@ -16,37 +16,37 @@ import { useUserPermissions, useWorkspace } from "@/hooks/store";
 import { ApplicationInstallationDetails } from "@/plane-web/components/marketplace/applications";
 import { useApplications } from "@/plane-web/hooks/store";
 
-
 const ApplicationInstallPage: React.FC = observer(() => {
-    // store hooks
-    const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-    const { currentWorkspace } = useWorkspace();
-    const { applicationId } = useParams()
-    const { getApplicationById, fetchApplication } = useApplications()
+  // store hooks
+  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { currentWorkspace } = useWorkspace();
+  const { applicationId } = useParams();
+  const { getApplicationById, fetchApplication } = useApplications();
 
-    // derived values
-    const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-    const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Install Application` : undefined;
+  // derived values
+  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Install Application` : undefined;
 
-    const application = getApplicationById(applicationId?.toString() || "");
-    const { data, isLoading } = useSWR(applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null, applicationId ? async () =>
-        fetchApplication(applicationId.toString()) : null
-    );
+  const application = getApplicationById(applicationId?.toString() || "");
+  const { data, isLoading } = useSWR(
+    applicationId ? APPLICATION_DETAILS(applicationId.toString()) : null,
+    applicationId ? async () => fetchApplication(applicationId.toString()) : null
+  );
 
-    if (!data || !application || isLoading) {
-        return <EmailSettingsLoader />;
-    }
+  if (!data || !application || isLoading) {
+    return <EmailSettingsLoader />;
+  }
 
-    if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-        return <NotAuthorizedView section="settings" />;
-    }
+  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
+    return <NotAuthorizedView section="settings" />;
+  }
 
-    return (
-        <>
-          <PageHead title={pageTitle} />
-          <ApplicationInstallationDetails app={application} />
-        </>
-      );
-})
+  return (
+    <>
+      <PageHead title={pageTitle} />
+      <ApplicationInstallationDetails app={application} />
+    </>
+  );
+});
 
 export default ApplicationInstallPage;

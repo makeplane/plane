@@ -55,7 +55,9 @@ export const createSlackLinkback = (
     type: "section",
     text: {
       type: "mrkdwn",
-      text: asHeader ? `*${issue.project.identifier}-${issue.sequence_id} ${issue.name}*` : `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project.id}/issues/${issue.id}| ${issue.project.identifier}-${issue.sequence_id} ${issue.name}>`,
+      text: asHeader
+        ? `*${issue.project.identifier}-${issue.sequence_id} ${issue.name}*`
+        : `<${env.APP_BASE_URL}/${workspaceSlug}/projects/${issue.project.id}/issues/${issue.id}| ${issue.project.identifier}-${issue.sequence_id} ${issue.name}>`,
     },
   });
 
@@ -63,7 +65,13 @@ export const createSlackLinkback = (
   const contextElements: any[] = [];
 
   if (issue.project.name) {
-    const emoji = issue.project.logo_props && issue.project.logo_props?.in_use === "emoji" && issue.project.logo_props?.emoji && issue.project.logo_props?.emoji?.value ? convertUnicodeToSlackEmoji(issue.project.logo_props?.emoji?.value) : "📋";
+    const emoji =
+      issue.project.logo_props &&
+      issue.project.logo_props?.in_use === "emoji" &&
+      issue.project.logo_props?.emoji &&
+      issue.project.logo_props?.emoji?.value
+        ? convertUnicodeToSlackEmoji(issue.project.logo_props?.emoji?.value)
+        : "📋";
 
     contextElements.push({
       type: "mrkdwn",

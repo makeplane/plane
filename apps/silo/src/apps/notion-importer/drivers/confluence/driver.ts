@@ -14,11 +14,15 @@ import { ProcessLinksExtension } from "../common/content-parser/extensions/proce
 import { IZipImportDriver } from "../types";
 import {
   ConfluenceBackgroundColorParserExtension,
-  ConfluenceCalloutParserExtension, ConfluenceColorIdParserExtension, ConfluenceExtractBodyExtension,
+  ConfluenceCalloutParserExtension,
+  ConfluenceColorIdParserExtension,
+  ConfluenceExtractBodyExtension,
   ConfluenceFileParserExtension,
-  ConfluenceIconParserExtension, ConfluencePageParserExtension, ConfluenceStatusMacroParserExtension,
+  ConfluenceIconParserExtension,
+  ConfluencePageParserExtension,
+  ConfluenceStatusMacroParserExtension,
   ConfluenceTaskListParserExtension,
-  PTagCustomComponentExtension
+  PTagCustomComponentExtension,
 } from "./content-parser";
 
 /*
@@ -28,7 +32,7 @@ import {
  * logic, it makes an effort to build a file tree from the flat directory structure.
  */
 export class ConfluenceImportDriver implements IZipImportDriver {
-  constructor(private readonly zipManager: ZipManager) { }
+  constructor(private readonly zipManager: ZipManager) {}
 
   getContentParser(config: TDocContentParserConfig): ContentParser {
     const context = new Map<string, any>();

@@ -6,7 +6,7 @@ import { TNameDescriptionLoader } from "@plane/types";
 // ui
 import { TextArea } from "@plane/ui";
 // types
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 // plane web hooks

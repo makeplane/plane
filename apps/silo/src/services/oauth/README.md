@@ -109,19 +109,16 @@ Where `:provider` can be any registered OAuth provider (github, gitlab, slack, e
 ## Best Practices
 
 1. **Error Handling**: Always implement proper error handling in your strategy:
-
    - Validate all incoming data
    - Handle API errors gracefully
    - Provide meaningful error messages
 
 2. **Type Safety**: Use TypeScript interfaces for all provider-specific types:
-
    - Define interfaces for API responses
    - Use proper type guards
    - Avoid using `any` type where possible
 
 3. **Security**: Follow OAuth security best practices:
-
    - Always validate webhook signatures
    - Use state parameter to prevent CSRF
    - Never expose sensitive credentials

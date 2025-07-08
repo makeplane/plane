@@ -16,6 +16,7 @@ from plane.app.permissions import WorkSpaceAdminPermission
 from plane.ee.models.issue import Issue
 from plane.ee.models.customer import CustomerRequestIssue, CustomerRequest
 
+
 class CustomerIssueSearchEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]
 

@@ -3,9 +3,9 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
-import {  useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import { useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 
 type TProjectStateMarksAsDefault = { workspaceSlug: string; stateId: string; isDefault: boolean };
 

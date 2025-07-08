@@ -8,8 +8,8 @@ import { PullRequestBehaviour } from "../pull-request.behaviour";
 jest.mock("@/logger");
 jest.mock("@/env", () => ({
   env: {
-    APP_BASE_URL: "https://app.plane.so"
-  }
+    APP_BASE_URL: "https://app.plane.so",
+  },
 }));
 
 // Mock types and data
@@ -44,13 +44,13 @@ describe("PullRequestBehaviour", () => {
   const mockConfig = {
     states: {
       mergeRequestEventMapping: {
-        "MR_MERGED": { id: "merged-state", name: "Merged" },
-        "MR_CLOSED": { id: "closed-state", name: "Closed" },
-        "MR_OPENED": { id: "open-state", name: "Open" },
-        "DRAFT_MR_OPENED": { id: "draft-state", name: "Draft" },
-        "MR_READY_FOR_MERGE": { id: "ready-state", name: "Ready" }
-      }
-    }
+        MR_MERGED: { id: "merged-state", name: "Merged" },
+        MR_CLOSED: { id: "closed-state", name: "Closed" },
+        MR_OPENED: { id: "open-state", name: "Open" },
+        DRAFT_MR_OPENED: { id: "draft-state", name: "Draft" },
+        MR_READY_FOR_MERGE: { id: "ready-state", name: "Ready" },
+      },
+    },
   };
 
   const mockEntityConnections = [
@@ -66,8 +66,8 @@ describe("PullRequestBehaviour", () => {
         project_id: "project-id",
         project_name: "test-project",
         project_slug: "test-project",
-      }
-    }
+      },
+    },
   ];
   beforeEach(() => {
     service = createMockPullRequestService();
@@ -88,7 +88,7 @@ describe("PullRequestBehaviour", () => {
     const mockPullRequestData: MockPullRequestData = {
       owner: "test-owner",
       repositoryName: "test-repo",
-      pullRequestIdentifier: "123"
+      pullRequestIdentifier: "123",
     };
 
     const mockPullRequest: IPullRequestDetails = {
@@ -99,13 +99,13 @@ describe("PullRequestBehaviour", () => {
       repository: {
         owner: "test-owner",
         name: "test-repo",
-        id: "repo-id"
+        id: "repo-id",
       },
       state: "open",
       merged: false,
       draft: false,
       mergeable: true,
-      mergeable_state: "clean"
+      mergeable_state: "clean",
     };
 
     const mockIssue = {
@@ -154,7 +154,7 @@ describe("PullRequestBehaviour", () => {
       const prWithoutRefs = {
         ...mockPullRequest,
         title: "Update readme",
-        description: "Documentation update"
+        description: "Documentation update",
       };
       service.getPullRequest.mockImplementation(() => Promise.resolve(prWithoutRefs));
 
@@ -198,13 +198,13 @@ describe("PullRequestBehaviour", () => {
       repository: {
         owner: "test-owner",
         name: "test-repo",
-        id: "1"
+        id: "1",
       },
       state: "open",
       merged: false,
       draft: false,
       mergeable: true,
-      mergeable_state: "clean"
+      mergeable_state: "clean",
     };
 
     it("should create a new comment when none exists", async () => {
@@ -226,7 +226,7 @@ describe("PullRequestBehaviour", () => {
         id: "comment-1",
         body: "Pull Request Linked with Plane\nOld content",
         created_at: "2023-01-01",
-        user: { id: "user-1" }
+        user: { id: "user-1" },
       };
 
       service.getPullRequestComments.mockImplementation(() => Promise.resolve([existingComment]));
@@ -252,13 +252,13 @@ describe("PullRequestBehaviour", () => {
       repository: {
         owner: "test-owner",
         name: "test-repo",
-        id: "1"
+        id: "1",
       },
       state: "open",
       merged: false,
       draft: false,
       mergeable: true,
-      mergeable_state: "clean"
+      mergeable_state: "clean",
     };
 
     it("should handle permission errors gracefully", async () => {
@@ -266,11 +266,7 @@ describe("PullRequestBehaviour", () => {
       (mockError as any).detail = CONSTANTS.NO_PERMISSION_ERROR;
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"](
-        { identifier: "PL", sequence: 123 },
-        mockPR,
-        "MR_OPENED"
-      );
+      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
 
       expect(result).toBeNull();
       expect(logger.info).toHaveBeenCalledWith(
@@ -283,61 +279,40 @@ describe("PullRequestBehaviour", () => {
       (mockError as any).status = 404;
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"](
-        { identifier: "PL", sequence: 123 },
-        mockPR,
-        "MR_OPENED"
-      );
+      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
 
       expect(result).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith(
-        "[TEST-PROVIDER] Issue not found: PL-123"
-      );
+      expect(logger.info).toHaveBeenCalledWith("[TEST-PROVIDER] Issue not found: PL-123");
     });
 
     it("should handle generic errors gracefully", async () => {
       const mockError = new Error("Generic error");
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.reject(mockError));
 
-      const result = await behaviour["updateSingleIssue"](
-        { identifier: "PL", sequence: 123 },
-        mockPR,
-        "MR_OPENED"
-      );
+      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
 
       expect(result).toBeNull();
-      expect(logger.error).toHaveBeenCalledWith(
-        "[TEST-PROVIDER] Error updating issue PL-123",
-        mockError
-      );
+      expect(logger.error).toHaveBeenCalledWith("[TEST-PROVIDER] Error updating issue PL-123", mockError);
     });
 
     it("should update issue state and create link successfully", async () => {
       const mockIssue = {
         id: "issue-id",
         project: "project-id",
-        name: "Test Issue"
+        name: "Test Issue",
       };
 
       planeClient.issue.getIssueByIdentifier.mockImplementation(() => Promise.resolve(mockIssue));
       planeClient.issue.update.mockImplementation(() => Promise.resolve({} as any));
       planeClient.issue.createLink.mockImplementation(() => Promise.resolve({} as any));
 
-      const result = await behaviour["updateSingleIssue"](
-        { identifier: "PL", sequence: 123 },
-        mockPR,
-        "MR_OPENED"
-      );
+      const result = await behaviour["updateSingleIssue"]({ identifier: "PL", sequence: 123 }, mockPR, "MR_OPENED");
 
       expect(result).toEqual({
         reference: { identifier: "PL", sequence: 123 },
-        issue: mockIssue
+        issue: mockIssue,
       });
-      expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith(
-        "test-workspace",
-        "PL",
-        123
-      );
+      expect(planeClient.issue.getIssueByIdentifier).toHaveBeenCalledWith("test-workspace", "PL", 123);
       expect(planeClient.issue.update).toHaveBeenCalled();
       expect(planeClient.issue.createLink).toHaveBeenCalled();
     });

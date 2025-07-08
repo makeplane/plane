@@ -1,7 +1,7 @@
-import zlib from 'zlib';
-import { logger } from '@/logger';
-import { TZipFileNode, EZipNodeType } from './types';
-import { ZipStream } from './zip-stream';
+import zlib from "zlib";
+import { logger } from "@/logger";
+import { TZipFileNode, EZipNodeType } from "./types";
+import { ZipStream } from "./zip-stream";
 
 // ======================= PUBLIC API FUNCTIONS ======================= //
 
@@ -25,7 +25,10 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
     const endOfCentralDirData = await findEndOfCentralDirectory(zipStream, fileSize);
 
     // Extract central directory information
-    const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(endOfCentralDirData.chunk, endOfCentralDirData.offset);
+    const { centralDirOffset, centralDirSize, entriesCount } = readCentralDirectoryInfo(
+      endOfCentralDirData.chunk,
+      endOfCentralDirData.offset
+    );
 
     logger.info(`Central directory: offset=${centralDirOffset}, size=${centralDirSize}, entries=${entriesCount}`);
 
@@ -39,7 +42,7 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
     logger.info(`Found ${entries.length} entries in ZIP`);
     return entries;
   } catch (error) {
-    logger.error('Failed to extract ZIP table of contents:', error);
+    logger.error("Failed to extract ZIP table of contents:", error);
     throw error;
   }
 }
@@ -54,10 +57,7 @@ export async function extractZipTableOfContents(zipStream: ZipStream): Promise<s
  * @param targetFileName - Name of the file to extract from the ZIP
  * @returns Promise resolving to a Buffer containing the file contents
  */
-export async function extractFileFromZip(
-  zipStream: ZipStream,
-  targetFileName: string
-): Promise<Buffer> {
+export async function extractFileFromZip(zipStream: ZipStream, targetFileName: string): Promise<Buffer> {
   try {
     const fileSize = zipStream.size;
 
@@ -86,7 +86,7 @@ export async function extractFileFromZip(
 
     return fileData;
   } catch (error) {
-    logger.error('Failed to extract file from ZIP:', error);
+    logger.error("Failed to extract file from ZIP:", error);
     throw error;
   }
 }
@@ -233,7 +233,10 @@ export async function extractDirectoryFromZip(
  * @param fileSize - Total size of the ZIP file in bytes
  * @returns Object containing the chunk of data with the EOCD and its offset within that chunk
  */
-async function findEndOfCentralDirectory(zipStream: ZipStream, fileSize: number): Promise<{ chunk: Buffer, offset: number }> {
+async function findEndOfCentralDirectory(
+  zipStream: ZipStream,
+  fileSize: number
+): Promise<{ chunk: Buffer; offset: number }> {
   // The "end of central directory record" is at the end of the file
   // We need to find it by reading backwards from the end
   const maxCommentLength = 65535; // Maximum length of ZIP file comment
@@ -247,8 +250,7 @@ async function findEndOfCentralDirectory(zipStream: ZipStream, fileSize: number)
   // Note: In little-endian format, this appears as 50 4B 05 06 in the file
   let endOfCentralDirOffset = -1;
   for (let i = endChunk.length - 22; i >= 0; i--) {
-    if (endChunk[i] === 0x50 && endChunk[i + 1] === 0x4b &&
-      endChunk[i + 2] === 0x05 && endChunk[i + 3] === 0x06) {
+    if (endChunk[i] === 0x50 && endChunk[i + 1] === 0x4b && endChunk[i + 2] === 0x05 && endChunk[i + 3] === 0x06) {
       endOfCentralDirOffset = i;
       break;
     }
@@ -268,7 +270,10 @@ async function findEndOfCentralDirectory(zipStream: ZipStream, fileSize: number)
  * @param offset - Offset within the buffer where the EOCD record starts
  * @returns Object containing central directory offset, size, and number of entries
  */
-function readCentralDirectoryInfo(chunk: Buffer, offset: number): { centralDirOffset: number, centralDirSize: number, entriesCount: number } {
+function readCentralDirectoryInfo(
+  chunk: Buffer,
+  offset: number
+): { centralDirOffset: number; centralDirSize: number; entriesCount: number } {
   // Extract information about the central directory from the EOCD record
   const centralDirOffset = chunk.readUInt32LE(offset + 16);
   const centralDirSize = chunk.readUInt32LE(offset + 12);
@@ -292,8 +297,12 @@ function parseCentralDirectoryEntries(centralDirData: Buffer, entriesCount: numb
   // First pass: extract all original entries
   for (let i = 0; i < entriesCount; i++) {
     // Check central directory header signature (0x02014b50)
-    if (centralDirData[pos] !== 0x50 || centralDirData[pos + 1] !== 0x4b ||
-      centralDirData[pos + 2] !== 0x01 || centralDirData[pos + 3] !== 0x02) {
+    if (
+      centralDirData[pos] !== 0x50 ||
+      centralDirData[pos + 1] !== 0x4b ||
+      centralDirData[pos + 2] !== 0x01 ||
+      centralDirData[pos + 3] !== 0x02
+    ) {
       throw new Error(`Invalid central directory header signature at ${pos}`);
     }
 
@@ -307,7 +316,7 @@ function parseCentralDirectoryEntries(centralDirData: Buffer, entriesCount: numb
     const fileCommentLength = centralDirData.readUInt16LE(pos + 32);
 
     // Read file name
-    const fileName = centralDirData.toString('utf8', pos + 46, pos + 46 + fileNameLength);
+    const fileName = centralDirData.toString("utf8", pos + 46, pos + 46 + fileNameLength);
     entries.push(fileName);
 
     // Move to next entry
@@ -319,7 +328,7 @@ function parseCentralDirectoryEntries(centralDirData: Buffer, entriesCount: numb
    * and that will be used as an extractor path from toc, in reality that a/ doesn't exist
    * as directory but it's still a path accessor, for resolution of that case we will need to
    * add the root wrapper directory entry to the entries
-  */
+   */
   const enhancedEntries = addMissingRootWrapperDirectories(entries);
   return enhancedEntries;
 }
@@ -329,8 +338,8 @@ function parseCentralDirectoryEntries(centralDirData: Buffer, entriesCount: numb
  */
 function addMissingRootWrapperDirectories(entries: string[]): string[] {
   // Separate files and directories
-  const fileEntries = entries.filter(entry => !entry.endsWith('/'));
-  const dirEntries = new Set(entries.filter(entry => entry.endsWith('/')));
+  const fileEntries = entries.filter((entry) => !entry.endsWith("/"));
+  const dirEntries = new Set(entries.filter((entry) => entry.endsWith("/")));
 
   if (fileEntries.length === 0) {
     return entries; // No files, nothing to analyze
@@ -341,7 +350,7 @@ function addMissingRootWrapperDirectories(entries: string[]): string[] {
   const rootLevelFiles = new Set<string>();
 
   for (const filePath of fileEntries) {
-    const firstSlashIndex = filePath.indexOf('/');
+    const firstSlashIndex = filePath.indexOf("/");
     if (firstSlashIndex === -1) {
       // File is at root level
       rootLevelFiles.add(filePath);
@@ -400,8 +409,12 @@ function findFileEntryInCentralDirectory(
 
   for (let i = 0; i < entriesCount; i++) {
     // Check signature (0x02014b50)
-    if (centralDirData[pos] !== 0x50 || centralDirData[pos + 1] !== 0x4b ||
-      centralDirData[pos + 2] !== 0x01 || centralDirData[pos + 3] !== 0x02) {
+    if (
+      centralDirData[pos] !== 0x50 ||
+      centralDirData[pos + 1] !== 0x4b ||
+      centralDirData[pos + 2] !== 0x01 ||
+      centralDirData[pos + 3] !== 0x02
+    ) {
       throw new Error(`Invalid central directory header signature at ${pos}`);
     }
 
@@ -414,14 +427,14 @@ function findFileEntryInCentralDirectory(
     const localHeaderOffset = centralDirData.readUInt32LE(pos + 42);
 
     // Read the file name
-    const fileName = centralDirData.toString('utf8', pos + 46, pos + 46 + fileNameLength);
+    const fileName = centralDirData.toString("utf8", pos + 46, pos + 46 + fileNameLength);
 
     // Check if this is the file we're looking for
     if (fileName === targetFileName) {
       return {
         localHeaderOffset,
         compressedSize,
-        compressionMethod
+        compressionMethod,
       };
     }
 
@@ -446,8 +459,7 @@ async function extractFileData(zipStream: ZipStream, fileEntry: ZipFileEntry): P
   const headerData = await zipStream.read(30); // Local file header is at least 30 bytes
 
   // Verify signature (0x04034b50)
-  if (headerData[0] !== 0x50 || headerData[1] !== 0x4b ||
-    headerData[2] !== 0x03 || headerData[3] !== 0x04) {
+  if (headerData[0] !== 0x50 || headerData[1] !== 0x4b || headerData[2] !== 0x03 || headerData[3] !== 0x04) {
     throw new Error("Invalid local file header signature");
   }
 

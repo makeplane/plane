@@ -73,15 +73,20 @@ export class RedisManager {
 
     this.client.on("error", (error: RedisError) => {
       const fatalErrorCodes = [
-        "ENOTFOUND", "ECONNREFUSED", "ECONNRESET", "ETIMEDOUT", "EHOSTUNREACH", "EPIPE", "WRONGPASS", "NOAUTH"
+        "ENOTFOUND",
+        "ECONNREFUSED",
+        "ECONNRESET",
+        "ETIMEDOUT",
+        "EHOSTUNREACH",
+        "EPIPE",
+        "WRONGPASS",
+        "NOAUTH",
       ];
-      const fatalMessages = [
-        "WRONGPASS", "NOAUTH", "READONLY", "LOADING", "CLUSTERDOWN", "CONNECTION_BROKEN"
-      ];
+      const fatalMessages = ["WRONGPASS", "NOAUTH", "READONLY", "LOADING", "CLUSTERDOWN", "CONNECTION_BROKEN"];
 
       if (
         (error?.code && fatalErrorCodes.includes(error.code)) ||
-        fatalMessages.some(msg => error.message.includes(msg))
+        fatalMessages.some((msg) => error.message.includes(msg))
       ) {
         if (this.client) this.client.disconnect();
         shutdownManager.shutdown("Redis connection failed and could not be recovered", 1);

@@ -9,7 +9,7 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { CommentFillIcon, InfoFillIcon, Tabs } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store";
 // plane web hooks

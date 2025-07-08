@@ -18,7 +18,6 @@ export interface IGitComment {
   };
 }
 
-
 /**
  * Common properties of a pull request
  */
@@ -30,7 +29,7 @@ export interface IPullRequestDetails {
   repository: {
     owner: string;
     name: string;
-    id: string | number
+    id: string | number;
   };
   state: "open" | "closed";
   merged: boolean;

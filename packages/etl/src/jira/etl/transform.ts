@@ -135,7 +135,11 @@ export const transformComponent = (
   issues: component.issues.map((issue) => issue.id),
 });
 
-export const transformIssueType = (resourceId: string, projectId: string, issueType: JiraIssueTypeDetails): Partial<ExIssueType> => ({
+export const transformIssueType = (
+  resourceId: string,
+  projectId: string,
+  issueType: JiraIssueTypeDetails
+): Partial<ExIssueType> => ({
   name: issueType.name,
   description: issueType.description,
   is_active: true,
@@ -143,7 +147,11 @@ export const transformIssueType = (resourceId: string, projectId: string, issueT
   external_source: E_IMPORTER_KEYS.JIRA,
 });
 
-export const transformIssueFields = (resourceId: string, projectId: string, issueField: JiraIssueField): Partial<ExIssueProperty> | undefined => {
+export const transformIssueFields = (
+  resourceId: string,
+  projectId: string,
+  issueField: JiraIssueField
+): Partial<ExIssueProperty> | undefined => {
   if (
     !issueField.schema ||
     !issueField.schema.custom ||

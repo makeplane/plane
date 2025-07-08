@@ -7,7 +7,7 @@ import { PanelLeft, PanelRight } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 

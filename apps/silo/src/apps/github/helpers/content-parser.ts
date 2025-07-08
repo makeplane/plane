@@ -11,7 +11,7 @@ export class ContentParser {
   private static readonly IMAGE_COMPONENT_REGEX = /<image-component[^>]*assetId=["']([^"']+)["'][^>]*>/g;
   private static readonly turndownService = new TurndownService({
     headingStyle: "atx",
-    codeBlockStyle: "fenced"
+    codeBlockStyle: "fenced",
   });
 
   /**
@@ -47,19 +47,19 @@ export class ContentParser {
     const turndown = new TurndownService();
 
     // Add custom rule for image tags
-    turndown.addRule('imageComponent', {
-      filter: 'img',
+    turndown.addRule("imageComponent", {
+      filter: "img",
       replacement: function (content, node) {
         // Need to cast node to HTMLElement since Turndown uses DOM nodes
         const element = node as HTMLElement;
-        const src = element.getAttribute('src');
-        if (!src) return '';
+        const src = element.getAttribute("src");
+        if (!src) return "";
 
         // Here you would implement the logic to get or create an asset ID
         // For now, using a placeholder
-        const assetId = 'placeholder-asset-id';
+        const assetId = "placeholder-asset-id";
         return `<image-component assetId="${assetId}" />`;
-      }
+      },
     });
 
     return turndown.turndown(html);
@@ -79,7 +79,7 @@ export class ContentParser {
     while ((match = this.IMAGE_COMPONENT_REGEX.exec(html)) !== null) {
       components.push({
         assetId: match[1],
-        url: this.getAssetUrl(match[1])
+        url: this.getAssetUrl(match[1]),
       });
     }
 

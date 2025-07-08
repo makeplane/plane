@@ -27,18 +27,27 @@ export const RegenerateConfirmModal: React.FC<Props> = observer((props) => {
     }
   };
 
-  return (<ModalCore isOpen={isOpen} handleClose={handleClose}>
-    <div className="flex flex-col gap-4 p-4">
-      <div className="flex items-center gap-2">
-        <AlertCircle className="h-6 w-6 text-custom-text-400" />
-        <div className="text-lg font-medium">{t("workspace_settings.settings.applications.regenerate_client_secret_confirm_title")}</div>
+  return (
+    <ModalCore isOpen={isOpen} handleClose={handleClose}>
+      <div className="flex flex-col gap-4 p-4">
+        <div className="flex items-center gap-2">
+          <AlertCircle className="h-6 w-6 text-custom-text-400" />
+          <div className="text-lg font-medium">
+            {t("workspace_settings.settings.applications.regenerate_client_secret_confirm_title")}
+          </div>
+        </div>
+        <div className="text-sm text-custom-text-400">
+          {t("workspace_settings.settings.applications.regenerate_client_secret_confirm_description")}
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="link-neutral" onClick={handleClose}>
+            {t("workspace_settings.settings.applications.regenerate_client_secret_confirm_cancel")}
+          </Button>
+          <Button variant="danger" onClick={handleRegenerate}>
+            {t("workspace_settings.settings.applications.regenerate_client_secret_confirm_regenerate")}
+          </Button>
+        </div>
       </div>
-      <div className="text-sm text-custom-text-400">{t("workspace_settings.settings.applications.regenerate_client_secret_confirm_description")}</div>
-      <div className="flex justify-end gap-2">
-        <Button variant="link-neutral" onClick={handleClose}>{t("workspace_settings.settings.applications.regenerate_client_secret_confirm_cancel")}</Button>
-        <Button variant="danger" onClick={handleRegenerate}>{t("workspace_settings.settings.applications.regenerate_client_secret_confirm_regenerate")}</Button>
-      </div>
-    </div>
-  </ModalCore>
+    </ModalCore>
   );
 });

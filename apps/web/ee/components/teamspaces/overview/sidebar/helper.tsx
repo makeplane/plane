@@ -117,11 +117,15 @@ export const useCommentOperations = (
             file,
             workspaceSlug,
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "SUCCESS", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "SUCCESS", {
+            id: commentId,
+          });
           return res;
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "ERROR", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_ASSET_UPLOADED, "ERROR", {
+            id: commentId,
+          });
           throw error;
         }
       },
@@ -134,14 +138,18 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "SUCCESS", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "SUCCESS", {
+            id: commentId,
+          });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction creation failed",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "ERROR", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_ADDED, "ERROR", {
+            id: commentId,
+          });
         }
       },
       deleteCommentReaction: async (commentId: string, reactionEmoji: string) => {
@@ -153,14 +161,18 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "SUCCESS", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "SUCCESS", {
+            id: commentId,
+          });
         } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
             message: "Reaction remove failed",
           });
-          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "ERROR", { id: commentId });
+          captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_REACTION_REMOVED, "ERROR", {
+            id: commentId,
+          });
         }
       },
       react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {

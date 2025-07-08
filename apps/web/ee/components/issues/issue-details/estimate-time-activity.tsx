@@ -6,7 +6,7 @@ import {
   IssueActivityBlockComponent,
   IssueLink,
 } from "@/components/issues/issue-detail/issue-activity/activity/actions";
-import { convertMinutesToHoursMinutesString  } from "@plane/utils";
+import { convertMinutesToHoursMinutesString } from "@plane/utils";
 import { useIssueDetail } from "@/hooks/store";
 // components
 

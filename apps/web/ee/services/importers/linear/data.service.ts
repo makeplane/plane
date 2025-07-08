@@ -75,7 +75,11 @@ export class LinearService {
    * @property teamId: string
    * @returns { Promise<{ issueCount: number; documentCount: number } | undefined> }
    */
-  async getDataSummary(workspaceId: string, userId: string, teamId: string): Promise<{ issueCount: number; documentCount: number } | undefined> {
+  async getDataSummary(
+    workspaceId: string,
+    userId: string,
+    teamId: string
+  ): Promise<{ issueCount: number; documentCount: number } | undefined> {
     return this.axiosInstance
       .post(`/api/linear/data-summary`, { workspaceId, userId, teamId })
       .then((res) => res.data)

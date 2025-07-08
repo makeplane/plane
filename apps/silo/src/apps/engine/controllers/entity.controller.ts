@@ -104,7 +104,6 @@ export class EntityConnectionController {
         });
       }
 
-
       const reqBody = req.body as TWorkspaceEntityConnection;
 
       const payload = {

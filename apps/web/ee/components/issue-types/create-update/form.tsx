@@ -8,7 +8,7 @@ import { useTranslation } from "@plane/i18n";
 import { TIssueType } from "@plane/types";
 import { Button, Input, TextArea, Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web components
 import { IssueTypeIconPicker } from "@/plane-web/components/issue-types";
 

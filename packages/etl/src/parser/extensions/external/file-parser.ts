@@ -13,8 +13,7 @@ export type ExternalFileParserConfig = FileHelperConfig & {
     if the file should be downloaded.
   */
   downloadableUrlPrefix: string;
-}
-
+};
 
 /*
   This extension is used to parse files from external sources and upload them to Plane.
@@ -27,11 +26,11 @@ export class ExternalFileParserExtension implements IParserExtension {
   }
 
   shouldParse(node: HTMLElement): boolean {
-    return (node.tagName === 'A' && node.getAttribute('href')?.startsWith(this.config.downloadableUrlPrefix)) ?? false;
+    return (node.tagName === "A" && node.getAttribute("href")?.startsWith(this.config.downloadableUrlPrefix)) ?? false;
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
-    const href = node.getAttribute('href');
+    const href = node.getAttribute("href");
     if (!href) {
       return node;
     }
@@ -42,7 +41,7 @@ export class ExternalFileParserExtension implements IParserExtension {
     }
 
     const link = this.fileHelper.createLinkFromAssetId(this.config.apiBaseUrl, assetId);
-    node.setAttribute('href', link);
-    return node
+    node.setAttribute("href", link);
+    return node;
   }
 }

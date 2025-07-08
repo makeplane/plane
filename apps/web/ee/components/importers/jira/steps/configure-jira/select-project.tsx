@@ -28,7 +28,7 @@ export const ConfigureJiraSelectProject: FC<TConfigureJiraSelectProject> = obser
     handleSyncJobConfig,
     data: { fetchJiraProjects, jiraProjectIdsByResourceId, getJiraProjectById },
   } = useJiraImporter();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   // derived values
   const workspaceId = workspace?.id || undefined;
@@ -56,7 +56,9 @@ export const ConfigureJiraSelectProject: FC<TConfigureJiraSelectProject> = obser
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">{t("importers.select_service_project", {"serviceName": "Jira"})}</div>
+      <div className="text-sm text-custom-text-200">
+        {t("importers.select_service_project", { serviceName: "Jira" })}
+      </div>
       {isLoading && (!jiraProjects || jiraProjects.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -70,7 +72,7 @@ export const ConfigureJiraSelectProject: FC<TConfigureJiraSelectProject> = obser
             data: project,
           }))}
           value={value}
-          placeHolder={t("importers.select_service_project", {"serviceName": "Jira"})}
+          placeHolder={t("importers.select_service_project", { serviceName: "Jira" })}
           onChange={(value: string | undefined) => handelData(value)}
           iconExtractor={(option) => (
             <div className="!w-4 !h-4 flex-shrink-0 overflow-hidden relative flex justify-center items-center rounded-sm">

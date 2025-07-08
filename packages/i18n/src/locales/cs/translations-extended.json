@@ -106,13 +106,13 @@
   },
 
   "pages": {
-    "link_pages": "Propojit stránky", 
+    "link_pages": "Propojit stránky",
     "show_wiki_pages": "Zobrazit wikipedií",
     "link_pages_to": "Propojit stránky k",
     "linked_pages": "Propojené stránky",
     "no_description": "Tato stránka je prázdná. Napište něco do ní a uvidíte to zde jako tento placeholder",
     "toasts": {
-      "link":  {
+      "link": {
         "success": {
           "title": "Stránky aktualizovány",
           "message": "Stránky byly úspěšně aktualizovány"
@@ -123,7 +123,7 @@
         }
       },
       "remove": {
-        "success": {  
+        "success": {
           "title": "Stránka odstraněna",
           "message": "Stránka byla úspěšně odstraněna"
         },
@@ -134,7 +134,7 @@
       }
     }
   },
-  
+
   "profile": {
     "actions": {
       "connections": "Spojení"

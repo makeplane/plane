@@ -6,12 +6,10 @@ export const createSlackAuth = (
   clientId: string = "",
   clientSecret: string = "",
   userRedirectUri: string = "",
-  teamRedirectUri: string = "",
+  teamRedirectUri: string = ""
 ): SlackAuthService => {
   if (!clientId || !clientSecret || !userRedirectUri || !teamRedirectUri) {
-    console.error(
-      "[SLACK] Client Id, Client Secret, User Redirect URI and Team Redirect URI are required",
-    );
+    console.error("[SLACK] Client Id, Client Secret, User Redirect URI and Team Redirect URI are required");
   }
   return new SlackAuthService({
     clientId,
@@ -25,12 +23,10 @@ export const createSlackService = (
   accessToken: string | undefined,
   refreshToken: string | undefined,
   authService: SlackAuthService | undefined,
-  authCallback: (tokenResponse: SlackTokenRefreshResponse) => Promise<void>,
+  authCallback: (tokenResponse: SlackTokenRefreshResponse) => Promise<void>
 ): SlackService => {
   if (!accessToken || !refreshToken || !authService || !authCallback) {
-    throw new Error(
-      "Access token, refreshToken, authService and authCallback are required",
-    );
+    throw new Error("Access token, refreshToken, authService and authCallback are required");
   }
   return new SlackService(accessToken, refreshToken, authService, authCallback);
 };

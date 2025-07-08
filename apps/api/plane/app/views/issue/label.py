@@ -39,7 +39,6 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
-
     @invalidate_cache(
         path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True
     )

@@ -3,7 +3,7 @@ import { ReactElement } from "react";
 import { ISearchIssueResponse, IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // PLane-web
 import { rootStore } from "@/lib/store-context";
 import { TInitiativeGroupByOptions } from "@/plane-web/types/initiative";

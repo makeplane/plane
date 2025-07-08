@@ -35,7 +35,6 @@ class IssueReactionViewSet(BaseViewSet):
             .distinct()
         )
 
-
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueReactionSerializer(data=request.data)

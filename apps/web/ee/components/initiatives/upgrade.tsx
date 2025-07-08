@@ -10,7 +10,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { Button, getButtonStyling, setPromiseToast } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useFlag, useWorkspaceFeatures, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // types

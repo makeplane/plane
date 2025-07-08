@@ -45,13 +45,17 @@ export const createLinkIssueModalView = (
     emoji: true,
   },
   blocks: [
-    ...(error ? [{
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: error,
-      },
-    }] : []),
+    ...(error
+      ? [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: error,
+            },
+          },
+        ]
+      : []),
     {
       type: "input",
       block_id: "work_item_select",
@@ -90,7 +94,6 @@ export const alreadyLinkedModalView = (
   states: ExState[],
   privateMetadata: any = {}
 ) => {
-
   const linkbackBlocks = createSlackLinkback(workspaceSlug, issue, states, false, false, true, true);
 
   return {

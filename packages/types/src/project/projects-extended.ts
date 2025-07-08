@@ -27,7 +27,6 @@ export enum EProjectStateLoader {
   MUTATION_LOADER = "project-state-mutation-loader",
 }
 
-
 export type TProjectPriority = EProjectPriority;
 
 export type TProjectStateLoader = EProjectStateLoader | undefined;
@@ -79,13 +78,12 @@ export type TProjectAttributesResponse = TProjectAttributes & {
   project_id: string;
 };
 
-export type TProjectExtended =
-  TProjectAttributes & {
-    description_html?: string | undefined;
-    project_name?: string;
-    update_status?: EUpdateStatus | undefined;
-    initiative_ids?: string[];
-  };
+export type TProjectExtended = TProjectAttributes & {
+  description_html?: string | undefined;
+  project_name?: string;
+  update_status?: EUpdateStatus | undefined;
+  initiative_ids?: string[];
+};
 
 export type TProjectFeaturesList = {
   is_project_updates_enabled: boolean;

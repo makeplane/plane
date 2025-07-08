@@ -38,9 +38,7 @@ const FlatfileImporter: FC = observer(() => {
 
   // Save Credentials
   const { isLoading: verifyCredentialsLoading } = useSWR(
-    workspaceId && userId && externalApiToken
-      ? `CHECKING_AND_SAVING_CREDENTIALS_${workspaceSlug}`
-      : null,
+    workspaceId && userId && externalApiToken ? `CHECKING_AND_SAVING_CREDENTIALS_${workspaceSlug}` : null,
     workspaceId && userId && externalApiToken
       ? async () => verifyAndAddCredentials(workspaceId, userId, externalApiToken)
       : null,

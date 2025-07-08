@@ -69,7 +69,6 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
 )
 
 
-
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieveByIssueId` on workspace level

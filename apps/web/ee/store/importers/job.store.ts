@@ -162,7 +162,10 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
    * @param { Partial<TImportJob> } jobPayload
    * @returns { Promise<TImportJob<T> | undefined> }
    */
-  createJob = async (projectId: string | undefined, jobPayload: Partial<TImportJob<T>>): Promise<TImportJob<T> | undefined> => {
+  createJob = async (
+    projectId: string | undefined,
+    jobPayload: Partial<TImportJob<T>>
+  ): Promise<TImportJob<T> | undefined> => {
     if (!this.workspaceId || !this.service) return undefined;
 
     try {
@@ -218,7 +221,10 @@ export class ImporterJobStore<T extends object> implements IImporterJobStore<T> 
 
       this.loader = "start";
       await this.service.cancel(jobId, this.source);
-      set(this.jobs, [this.workspaceId, jobId], { ...this.jobs[this.workspaceId][jobId], status: E_JOB_STATUS.CANCELLED });
+      set(this.jobs, [this.workspaceId, jobId], {
+        ...this.jobs[this.workspaceId][jobId],
+        status: E_JOB_STATUS.CANCELLED,
+      });
       this.loader = undefined;
     } catch (error) {
       runInAction(() => {

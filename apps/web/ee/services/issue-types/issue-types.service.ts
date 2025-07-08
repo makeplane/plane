@@ -9,7 +9,7 @@ import {
   TEnableIssueTypePayload,
   TFetchIssueTypesProjectLevelPayload,
 } from "@plane/types";
-import { API_BASE_URL  } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
 

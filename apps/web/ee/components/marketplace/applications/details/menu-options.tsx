@@ -14,74 +14,77 @@ import { ApplicationPublishModal, ApplicationTileMenuItem } from "@/plane-web/co
 // hooks
 
 export type TPopoverMenuOptions = {
-    key: string;
-    type: string;
-    label?: string | undefined;
-    isActive?: boolean | undefined;
-    prependIcon?: ReactNode | undefined;
-    appendIcon?: ReactNode | undefined;
-    onClick?: (() => void) | undefined;
+  key: string;
+  type: string;
+  label?: string | undefined;
+  isActive?: boolean | undefined;
+  prependIcon?: ReactNode | undefined;
+  appendIcon?: ReactNode | undefined;
+  onClick?: (() => void) | undefined;
 };
 
 type ApplicationTileMenuOptionsProps = {
-    app: TUserApplication;
-}
+  app: TUserApplication;
+};
 
 export const ApplicationTileMenuOptions: FC<ApplicationTileMenuOptionsProps> = observer((props) => {
-    // hooks
-    const { app } = props;
-    const { t } = useTranslation();
-    const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
-    const router = useRouter();
-    const { currentWorkspace } = useWorkspace();
-    const { slug: workspaceSlug } = currentWorkspace || {};
+  // hooks
+  const { app } = props;
+  const { t } = useTranslation();
+  const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
+  const router = useRouter();
+  const { currentWorkspace } = useWorkspace();
+  const { slug: workspaceSlug } = currentWorkspace || {};
 
-    const togglePublishModal = (flag: boolean) => {
-        setIsPublishModalOpen(flag);
-    };
+  const togglePublishModal = (flag: boolean) => {
+    setIsPublishModalOpen(flag);
+  };
 
-    const handleEdit = () => {
-        router.push(`/${workspaceSlug}/settings/applications/${app.id}/edit`);
-    }
+  const handleEdit = () => {
+    router.push(`/${workspaceSlug}/settings/applications/${app.id}/edit`);
+  };
 
+  const popoverMenuOptions: TPopoverMenuOptions[] = [
+    {
+      key: "menu-edit",
+      type: "menu-item",
+      label: "Edit",
+      isActive: true,
+      prependIcon: <Edit className="flex-shrink-0 h-3 w-3" />,
+      onClick: () => {
+        handleEdit();
+      },
+    },
+    {
+      key: "menu-publish",
+      type: "menu-item",
+      label: "Publish to marketplace",
+      isActive: false,
+      prependIcon: <Share className="flex-shrink-0 h-3 w-3" />,
+      onClick: () => {
+        togglePublishModal(true);
+      },
+    },
+    {
+      key: "menu-delete",
+      type: "menu-item",
+      label: "Delete",
+      isActive: false,
+      prependIcon: <Delete className="flex-shrink-0 h-3 w-3" />,
+      onClick: () => {},
+    },
+  ];
 
-    const popoverMenuOptions: TPopoverMenuOptions[] = [
-        {
-            key: "menu-edit",
-            type: "menu-item",
-            label: "Edit",
-            isActive: true,
-            prependIcon: <Edit className="flex-shrink-0 h-3 w-3" />,
-            onClick: () => { handleEdit() },
-        },
-        {
-            key: "menu-publish",
-            type: "menu-item",
-            label: "Publish to marketplace",
-            isActive: false,
-            prependIcon: <Share className="flex-shrink-0 h-3 w-3" />,
-            onClick: () => { togglePublishModal(true) },
-        },
-        {
-            key: "menu-delete",
-            type: "menu-item",
-            label: "Delete",
-            isActive: false,
-            prependIcon: <Delete className="flex-shrink-0 h-3 w-3" />,
-            onClick: () => { },
-        },
-    ];
-
-    return (
-        <>
-            <PopoverMenu
-                data={popoverMenuOptions}
-                buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 bg-custom-background-100 rounded-sm outline-none"
-                keyExtractor={(item: TPopoverMenuOptions) => item.key}
-                panelClassName="p-0 py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1"
-                render={(item: TPopoverMenuOptions) => <ApplicationTileMenuItem {...item} />}
-            />
-            <ApplicationPublishModal isOpen={isPublishModalOpen} handleClose={() => togglePublishModal(false)} app={app} />
-        </>
-    );
+  return (
+    <>
+      <PopoverMenu
+        data={popoverMenuOptions}
+        buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 bg-custom-background-100 rounded-sm outline-none"
+        keyExtractor={(item: TPopoverMenuOptions) => item.key}
+        panelClassName="p-0 py-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1"
+        render={(item: TPopoverMenuOptions) => <ApplicationTileMenuItem {...item} />}
+      />
+      <ApplicationPublishModal isOpen={isPublishModalOpen} handleClose={() => togglePublishModal(false)} app={app} />
+    </>
+  );
 });

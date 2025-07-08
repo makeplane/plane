@@ -1,2 +1,2 @@
 export * from "./steps";
-export * from "./dashboard"
+export * from "./dashboard";

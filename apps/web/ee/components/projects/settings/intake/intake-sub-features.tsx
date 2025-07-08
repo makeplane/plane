@@ -6,7 +6,7 @@ import { Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { E_FEATURE_FLAGS, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { EUserProjectRoles, TInboxForm } from "@plane/types";
 import { Button, Loader, setPromiseToast, setToast, TOAST_TYPE, ToggleSwitch, Tooltip } from "@plane/ui";
-import { cn, copyTextToClipboard, } from "@plane/utils";
+import { cn, copyTextToClipboard } from "@plane/utils";
 import { TProperties } from "@/ce/constants";
 import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";

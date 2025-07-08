@@ -3,7 +3,10 @@ import { EZipNodeType, TZipFileNode } from "@/lib/zip-manager/types";
 import { ZipManager } from "@/lib/zip-manager/zip-manager";
 import { TDocContentParserConfig } from "../../types";
 import { ExtractBodyExtension } from "../common/content-parser/extensions/extract-body";
-import { NotionBlockColorParserExtension, NotionHighlightParserExtension } from "../common/content-parser/extensions/process-colors";
+import {
+  NotionBlockColorParserExtension,
+  NotionHighlightParserExtension,
+} from "../common/content-parser/extensions/process-colors";
 import { NotionFileParserExtension } from "../common/content-parser/extensions/process-files";
 import { NotionImageParserExtension } from "../common/content-parser/extensions/process-images";
 import { ProcessLinksExtension } from "../common/content-parser/extensions/process-links";
@@ -11,7 +14,7 @@ import { NotionPageParserExtension } from "../common/content-parser/extensions/p
 import { IZipImportDriver } from "../types";
 
 export class NotionImportDriver implements IZipImportDriver {
-  constructor(private readonly zipManager: ZipManager) { }
+  constructor(private readonly zipManager: ZipManager) {}
 
   getContentParser(config: TDocContentParserConfig): ContentParser {
     const context = new Map<string, string>();
@@ -90,7 +93,7 @@ export class NotionImportDriver implements IZipImportDriver {
     /*
      * For each directory, we need a corresponding html page, else we'll break the constraint
      * and won't be able to parse, as for anything to exist we need a page for it.
-    */
+     */
     this.addMissingHtmlPages(root);
     return root;
   }
@@ -98,7 +101,7 @@ export class NotionImportDriver implements IZipImportDriver {
   /*
    * Adds missing HTML pages to the file tree
    * @param node - The node to add missing HTML pages to
-  */
+   */
   private addMissingHtmlPages(node: TZipFileNode): void {
     if (!node.children || node.children.length === 0) {
       return; // No children, nothing to process
@@ -110,18 +113,17 @@ export class NotionImportDriver implements IZipImportDriver {
     }
 
     // Now check for missing HTML pages for directories at this level
-    const directories = node.children.filter(child => child.type === EZipNodeType.DIRECTORY);
+    const directories = node.children.filter((child) => child.type === EZipNodeType.DIRECTORY);
     const htmlFiles = new Set(
       node.children
-        .filter(child => child.type === EZipNodeType.FILE && child.name.endsWith('.html'))
-        .map(child => child.name.replace(/\.html$/, ''))
+        .filter((child) => child.type === EZipNodeType.FILE && child.name.endsWith(".html"))
+        .map((child) => child.name.replace(/\.html$/, ""))
     );
 
     // For each directory, check if there's a corresponding HTML file at the same level
     for (const directory of directories) {
       const hasCorrespondingHtmlPage = htmlFiles.has(directory.name);
       if (!hasCorrespondingHtmlPage) {
-
         // Create dummy HTML page as a sibling to this directory
         const dummyPage: TZipFileNode = {
           id: crypto.randomUUID(),
@@ -134,6 +136,5 @@ export class NotionImportDriver implements IZipImportDriver {
         node.children.push(dummyPage);
       }
     }
-
   }
 }

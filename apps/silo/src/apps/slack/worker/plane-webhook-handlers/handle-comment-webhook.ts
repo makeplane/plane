@@ -21,14 +21,17 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     payload: data,
   });
 
-  const details = await getConnectionDetailsForIssue({
-    id: data.data.issue,
-    workspace: data.data.workspace,
-    project: data.data.project,
-    issue: data.data.issue,
-    event: payload.event,
-    isEnterprise: false,
-  }, data.data.created_by);
+  const details = await getConnectionDetailsForIssue(
+    {
+      id: data.data.issue,
+      workspace: data.data.workspace,
+      project: data.data.project,
+      issue: data.data.issue,
+      event: payload.event,
+      isEnterprise: false,
+    },
+    data.data.created_by
+  );
 
   if (!details) {
     logger.error("No details found for issue comment webhook", {
@@ -43,18 +46,18 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
 
   const channel = slackData.channel;
 
-  const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig
+  const config = workspaceConnection.config as TSlackWorkspaceConnectionConfig;
 
-  const userMap = new Map<string, string>()
+  const userMap = new Map<string, string>();
   for (const user of config.userMap ?? []) {
-    userMap.set(user.planeUserId, user.slackUser)
+    userMap.set(user.planeUserId, user.slackUser);
   }
 
   const parser = getPlaneContentParser({
     appBaseUrl: env.APP_BASE_URL,
     workspaceSlug: workspaceConnection.workspace_slug,
     userMap,
-  })
+  });
   const comment = await parser.toPlaneHtml(data.data.comment_html);
   const turndown = new TurndownService({
     headingStyle: "atx",
@@ -63,14 +66,14 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     emDelimiter: "_",
     strongDelimiter: "**",
     linkStyle: "inlined",
-  })
+  });
 
   turndown.addRule("link", {
     filter: (node) => node.tagName === "A",
-    replacement: (content, node) => `<${(node as Element).getAttribute("href")}|${content}>`
-  })
+    replacement: (content, node) => `<${(node as Element).getAttribute("href")}|${content}>`,
+  });
 
-  let markdown = turndown.turndown(comment)
+  let markdown = turndown.turndown(comment);
 
   // If we don't have the credentials of the user, in that case we'll add the user's information to the comment
   if (!isUser && payload.activity.actor) {

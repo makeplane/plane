@@ -601,7 +601,6 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     });
   };
 
-
   /**
    * @description set the version to be restored data
    * @param versionId

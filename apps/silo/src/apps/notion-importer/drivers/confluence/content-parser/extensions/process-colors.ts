@@ -12,12 +12,12 @@ const CONFLUENCE_STATUS_COLOR_MAP = new Map([
 
 // Map RGB background colors to Plane color names
 const CONFLUENCE_BACKGROUND_COLOR_MAP = new Map([
-  ["rgb(220,223,228)", "gray"],      // Light gray
+  ["rgb(220,223,228)", "gray"], // Light gray
   ["rgb(198,237,251)", "light-blue"], // Light blue
-  ["rgb(211,241,167)", "green"],      // Light green
-  ["rgb(254,222,200)", "peach"],      // Light peach
-  ["rgb(253,208,236)", "pink"],       // Light pink
-  ["rgb(223,216,253)", "purple"],     // Light purple
+  ["rgb(211,241,167)", "green"], // Light green
+  ["rgb(254,222,200)", "peach"], // Light peach
+  ["rgb(253,208,236)", "pink"], // Light pink
+  ["rgb(223,216,253)", "purple"], // Light purple
 ]);
 
 export class ConfluenceStatusMacroParserExtension implements IParserExtension {
@@ -27,9 +27,10 @@ export class ConfluenceStatusMacroParserExtension implements IParserExtension {
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
     const classValue = node.getAttribute("class")?.split(" ");
-    const status = classValue?.find(
-      (className) => className !== "aui-lozenge-visual-refresh" && className.startsWith("aui-lozenge-")
-    ) ?? "none";
+    const status =
+      classValue?.find(
+        (className) => className !== "aui-lozenge-visual-refresh" && className.startsWith("aui-lozenge-")
+      ) ?? "none";
     const color = status.split("-").pop();
     if (!color) return node;
 
@@ -47,7 +48,7 @@ export class ConfluenceStatusMacroParserExtension implements IParserExtension {
 export class ConfluenceColorIdParserExtension implements IParserExtension {
   private colorMap: Map<string, string> = new Map();
 
-  constructor(private context?: Map<string, any>) { }
+  constructor(private context?: Map<string, any>) {}
 
   shouldParse(node: HTMLElement): boolean {
     // Check if the node has a data-colorid attribute

@@ -4,12 +4,11 @@ import { Store } from "@/worker/base";
 import { getPlaneAppDetailsCacheKey } from "./cache-keys";
 import { TAppKeys } from "@plane/etl/core";
 
-
 type PlaneAppDetails = {
   planeAppId: string;
   planeAppClientId: string;
   planeAppClientSecret: string;
-}
+};
 
 /**
  * Get plane app details from db
@@ -30,11 +29,10 @@ const getPlaneAppDetailsFromDB = async (appName: string): Promise<PlaneAppDetail
   const app = {
     planeAppId: appId,
     planeAppClientId: appClientId,
-    planeAppClientSecret: appClientSecret
-  }
+    planeAppClientSecret: appClientSecret,
+  };
   return app;
-}
-
+};
 
 /**
  * Get plane app details from cache or db
@@ -62,4 +60,4 @@ export const getPlaneAppDetails = async (appName: TAppKeys): Promise<PlaneAppDet
     logger.error(`Error getting plane app details for ${appName}`, { error });
     throw error;
   }
-}
+};

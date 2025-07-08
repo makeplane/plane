@@ -8,7 +8,7 @@ import { EIssueServiceType } from "@plane/types";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // helpers
-import { getProgress  } from "@plane/utils";
+import { getProgress } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
 import { useEpicAnalytics } from "@/plane-web/hooks/store";

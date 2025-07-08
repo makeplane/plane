@@ -1,9 +1,5 @@
 import { E_INTEGRATION_KEYS, TServiceCredentials } from "@plane/etl/core";
-import {
-  GithubWebhookPayload,
-  transformGitHubComment,
-  WebhookGitHubComment,
-} from "@plane/etl/github";
+import { GithubWebhookPayload, transformGitHubComment, WebhookGitHubComment } from "@plane/etl/github";
 import { ExIssueComment, Client as PlaneClient } from "@plane/sdk";
 import { TGithubWorkspaceConnection } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
@@ -21,7 +17,9 @@ const apiClient = getAPIClient();
 
 export type GithubCommentAction = "created" | "edited" | "deleted";
 
-export type GithubCommentWebhookPayload = GithubWebhookPayload["webhook-issue-comment-created" | "webhook-issue-comment-edited"] & {
+export type GithubCommentWebhookPayload = GithubWebhookPayload[
+  | "webhook-issue-comment-created"
+  | "webhook-issue-comment-edited"] & {
   isEnterprise: boolean;
 };
 
@@ -39,11 +37,7 @@ export const handleIssueComment = async (store: Store, action: GithubCommentActi
     }
   }
 
-  await syncCommentWithPlane(
-    store,
-    action,
-    data as GithubCommentWebhookPayload
-  );
+  await syncCommentWithPlane(store, action, data as GithubCommentWebhookPayload);
 
   return true;
 };
@@ -79,7 +73,11 @@ export const syncCommentWithPlane = async (
 
   const planeClient = await getPlaneAPIClient(planeCredentials, ghIntegrationKey);
 
-  const ghService = getGithubService(workspaceConnection as TGithubWorkspaceConnection, data.installation.id.toString(), data.isEnterprise);
+  const ghService = getGithubService(
+    workspaceConnection as TGithubWorkspaceConnection,
+    data.installation.id.toString(),
+    data.isEnterprise
+  );
   const commentHtml = await ghService.getCommentHtml(
     data.repository.owner.login,
     data.repository.name,
@@ -108,7 +106,7 @@ export const syncCommentWithPlane = async (
       data.comment.id.toString(),
       ghIntegrationKey
     );
-  } catch (error) { }
+  } catch (error) {}
 
   const planeComment = await transformGitHubComment(
     data.comment as unknown as WebhookGitHubComment,
@@ -145,7 +143,12 @@ export const syncCommentWithPlane = async (
   }
 };
 
-const getPlaneIssue = async (planeClient: PlaneClient, entityConnection: GithubEntityConnection, issueId: string, ghIntegrationKey: string) => {
+const getPlaneIssue = async (
+  planeClient: PlaneClient,
+  entityConnection: GithubEntityConnection,
+  issueId: string,
+  ghIntegrationKey: string
+) => {
   try {
     return await planeClient.issue.getIssueWithExternalId(
       entityConnection.workspace_slug,

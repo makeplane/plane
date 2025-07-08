@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 // ui
 import { PlaneAIIcon } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TDeDupeIssueButtonLabelProps = {
   isOpen: boolean;

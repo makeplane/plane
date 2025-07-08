@@ -50,90 +50,91 @@ export const parseIssueFormData = (values: any): ParsedIssueData => {
 
   return parsed;
 };
-export const quoteMrkdwn = (text: string): string => ('> ' + text).split('\n').join('\n> ')
+export const quoteMrkdwn = (text: string): string => ("> " + text).split("\n").join("\n> ");
 
-const applyMrkdwnStyle = (text: string, style: RichTextElement['style']): string => {
-  if (!style || text.startsWith(' ') || text.endsWith(' ')) return text
+const applyMrkdwnStyle = (text: string, style: RichTextElement["style"]): string => {
+  if (!style || text.startsWith(" ") || text.endsWith(" ")) return text;
 
-  if (style.code) text = `\`${text}\``
-  if (style.strike) text = `~${text}~`
-  if (style.italic) text = `_${text}_`
-  if (style.bold) text = `*${text}*`
+  if (style.code) text = `\`${text}\``;
+  if (style.strike) text = `~${text}~`;
+  if (style.italic) text = `_${text}_`;
+  if (style.bold) text = `*${text}*`;
 
-  return text
-}
+  return text;
+};
 
 // Conversion from these docs: https://api.slack.com/reference/surfaces/formatting#advanced
 const richTextElementToMrkdwn = (element: RichTextElement): string => {
   switch (element.type) {
-    case 'broadcast':
-      return applyMrkdwnStyle(`!${element.range}`, element.style)
-    case 'channel':
-      return applyMrkdwnStyle(`#${element.channel_id}`, element.style)
-    case 'color':
-      return applyMrkdwnStyle(element.value, element.style)
-    case 'date':
+    case "broadcast":
+      return applyMrkdwnStyle(`!${element.range}`, element.style);
+    case "channel":
+      return applyMrkdwnStyle(`#${element.channel_id}`, element.style);
+    case "color":
+      return applyMrkdwnStyle(element.value, element.style);
+    case "date":
       if (element.url) {
-        return applyMrkdwnStyle(`<!date^${element.timestamp}^${element.format}|${element.url}>`, element.style)
+        return applyMrkdwnStyle(`<!date^${element.timestamp}^${element.format}|${element.url}>`, element.style);
       }
-      return applyMrkdwnStyle(`<!date^${element.timestamp}^${element.format}>`, element.style)
-    case 'emoji':
+      return applyMrkdwnStyle(`<!date^${element.timestamp}^${element.format}>`, element.style);
+    case "emoji":
       // emoji has unicode property, let's use that to get the emoji
-      return String.fromCodePoint(parseInt(element.unicode!, 16))
-    case 'link':
+      return String.fromCodePoint(parseInt(element.unicode!, 16));
+    case "link":
       if (element.text) {
-        return applyMrkdwnStyle(`[${element.text}](${element.url})`, element.style)
+        return applyMrkdwnStyle(`[${element.text}](${element.url})`, element.style);
       }
-      return applyMrkdwnStyle(element.url, element.style)
-    case 'team': // There is no documented way to display this nicely in mrkdwn
-      return applyMrkdwnStyle(element.team_id, element.style)
-    case 'text':
-      return applyMrkdwnStyle(element.text, element.style)
-    case 'user':
-      return applyMrkdwnStyle(`@${element.user_id}`, element.style)
-    case 'usergroup':
-      return applyMrkdwnStyle(element.usergroup_id, element.style)
+      return applyMrkdwnStyle(element.url, element.style);
+    case "team": // There is no documented way to display this nicely in mrkdwn
+      return applyMrkdwnStyle(element.team_id, element.style);
+    case "text":
+      return applyMrkdwnStyle(element.text, element.style);
+    case "user":
+      return applyMrkdwnStyle(`@${element.user_id}`, element.style);
+    case "usergroup":
+      return applyMrkdwnStyle(element.usergroup_id, element.style);
     default:
-      return ''
+      return "";
   }
-}
+};
 
-const richTextSectionToMrkdwn = (section: RichTextSection): string => section.elements.map(richTextElementToMrkdwn).join('')
+const richTextSectionToMrkdwn = (section: RichTextSection): string =>
+  section.elements.map(richTextElementToMrkdwn).join("");
 
 const richTextListToMrkdwn = (element: RichTextList): string => {
-  let mrkdwn = ''
+  let mrkdwn = "";
   for (const section of element.elements) {
-    mrkdwn += `${'    '.repeat(element.indent ?? 0)} • ${richTextSectionToMrkdwn(section)}\n`
+    mrkdwn += `${"    ".repeat(element.indent ?? 0)} • ${richTextSectionToMrkdwn(section)}\n`;
   }
 
-  return mrkdwn
-}
+  return mrkdwn;
+};
 
 const richTextBlockElementToMrkdwn = (element: RichTextBlockElement): string => {
   switch (element.type) {
-    case 'rich_text_list':
-      return richTextListToMrkdwn(element)
-    case 'rich_text_preformatted':
-      return '```\n' + element.elements.map(richTextElementToMrkdwn).join('') + '\n```'
-    case 'rich_text_quote':
-      return quoteMrkdwn(element.elements.map(richTextElementToMrkdwn).join(''))
-    case 'rich_text_section':
-      return element.elements.map(richTextElementToMrkdwn).join('')
+    case "rich_text_list":
+      return richTextListToMrkdwn(element);
+    case "rich_text_preformatted":
+      return "```\n" + element.elements.map(richTextElementToMrkdwn).join("") + "\n```";
+    case "rich_text_quote":
+      return quoteMrkdwn(element.elements.map(richTextElementToMrkdwn).join(""));
+    case "rich_text_section":
+      return element.elements.map(richTextElementToMrkdwn).join("");
     default:
-      return ''
+      return "";
   }
-}
+};
 
 export const richTextBlockToMrkdwn = (richTextBlock: RichTextBlock | undefined) => {
-  if (!richTextBlock?.elements) return
+  if (!richTextBlock?.elements) return;
 
-  const mrkdwn = richTextBlock.elements.map(richTextBlockElementToMrkdwn).join('')
+  const mrkdwn = richTextBlock.elements.map(richTextBlockElementToMrkdwn).join("");
 
-  return mrkdwn
-}
+  return mrkdwn;
+};
 
 export const parseLinkWorkItemFormData = (values: any): ParsedLinkWorkItemData | undefined => {
-  let parsed: ParsedLinkWorkItemData | undefined = undefined
+  let parsed: ParsedLinkWorkItemData | undefined = undefined;
 
   Object.entries(values).forEach(([_, blockData]: [string, any]) => {
     if (blockData.link_work_item?.type === "external_select") {
@@ -232,8 +233,10 @@ export const parseSlackLinksToRichText = (text: string) => {
     });
   }
 
-  return [{
-    type: "rich_text_section",
-    elements: elements,
-  }];
-}
+  return [
+    {
+      type: "rich_text_section",
+      elements: elements,
+    },
+  ];
+};

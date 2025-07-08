@@ -17,7 +17,7 @@ from .issue import (
     EntityIssueStateActivity,
     EpicUserProperties,
     EntityTypeEnum,
-    WorkItemPage
+    WorkItemPage,
 )
 
 from .project import (

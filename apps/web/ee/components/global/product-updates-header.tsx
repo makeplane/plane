@@ -6,7 +6,7 @@ import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { Button, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 // plane web hooks

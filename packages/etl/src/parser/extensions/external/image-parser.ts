@@ -14,7 +14,7 @@ export type ExternalImageParserConfig = FileHelperConfig & {
     which maps the alt text to the presigned URL.
   */
   altUrlMap?: Map<string, string>;
-}
+};
 
 /*
   This extension is used to parse images from external sources and upload them to Plane.
@@ -29,11 +29,11 @@ export class ExternalImageParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
     // We only want to handle single IMG tags directly
     // Parent replacement will be handled by a special parent-handling extension
-    return node.tagName === 'IMG';
+    return node.tagName === "IMG";
   }
 
   async mutate(node: HTMLElement): Promise<HTMLElement> {
-    if (node.tagName === 'IMG') {
+    if (node.tagName === "IMG") {
       return await this.processImgTag(node);
     }
     return node;
@@ -84,8 +84,7 @@ export class ExternalImageParserExtension implements IParserExtension {
 export class PTagCustomComponentExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
     // Only handle P or SPAN nodes that have exactly one child
-    if ((node.tagName === 'P' || node.tagName === 'SPAN')) {
-
+    if (node.tagName === "P" || node.tagName === "SPAN") {
       // Check for the child nodes, and remove empty text nodes
       const childNodes = node.childNodes.filter((child) => {
         if (child instanceof TextNode) {
@@ -98,11 +97,7 @@ export class PTagCustomComponentExtension implements IParserExtension {
         const child = node.childNodes[0];
         // Check if the child is an element (not text) and is a media element
         if (child instanceof HTMLElement) {
-          return [
-            'IMAGE-COMPONENT',
-            'MENTION-COMPONENT',
-            'ISSUE-EMBED-COMPONENT',
-          ].includes(child.tagName);
+          return ["IMAGE-COMPONENT", "MENTION-COMPONENT", "ISSUE-EMBED-COMPONENT"].includes(child.tagName);
         }
       }
     }

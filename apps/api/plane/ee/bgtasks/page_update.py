@@ -536,7 +536,6 @@ def nested_page_update(
             data = {"users_and_access": values}
 
         elif action == PageAction.UNSHARED:
-
             values = []
             user_ids = None
 

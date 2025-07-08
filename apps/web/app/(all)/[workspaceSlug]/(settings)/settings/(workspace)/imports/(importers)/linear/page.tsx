@@ -39,9 +39,7 @@ const LinearImporter: FC = observer(() => {
     workspaceSlug && userId && externalApiToken && !currentAuth
       ? `IMPORTER_AUTHENTICATION_LINEAR_${workspaceSlug}_${user?.id}`
       : null,
-    workspaceSlug && userId && externalApiToken && !currentAuth
-      ? async () => authVerification()
-      : null,
+    workspaceSlug && userId && externalApiToken && !currentAuth ? async () => authVerification() : null,
     { errorRetryCount: 0 }
   );
 

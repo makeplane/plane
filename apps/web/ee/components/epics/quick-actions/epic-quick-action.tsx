@@ -107,7 +107,7 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
     isEditingAllowed,
     isDeletingAllowed,
     setIssueToEdit,
-    setCreateUpdateIssueModal : customEditAction,
+    setCreateUpdateIssueModal: customEditAction,
     setDeleteIssueModal,
     setDuplicateWorkItemModal: customDuplicateAction,
     handleDelete: customDeleteAction,

@@ -26,7 +26,7 @@ export const ConfigureAsanaSelectWorkspace: FC<TConfigureAsanaSelectWorkspace> =
     handleSyncJobConfig,
     data: { asanaWorkspaceIds, getAsanaWorkspaceById, fetchAsanaWorkspaces },
   } = useAsanaImporter();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   // derived values
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
@@ -52,7 +52,9 @@ export const ConfigureAsanaSelectWorkspace: FC<TConfigureAsanaSelectWorkspace> =
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">{t("importers.select_service_workspace", { "serviceName": "Asana" })}</div>
+      <div className="text-sm text-custom-text-200">
+        {t("importers.select_service_workspace", { serviceName: "Asana" })}
+      </div>
       {isLoading && (!asanaWorkspaces || asanaWorkspaces.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -66,9 +68,11 @@ export const ConfigureAsanaSelectWorkspace: FC<TConfigureAsanaSelectWorkspace> =
             data: workspace,
           }))}
           value={value}
-          placeHolder={isLoading
-            ? t("importers.loading_service_workspaces", { "serviceName": "Asana" })
-            : t("importers.select_service_workspace", { "serviceName": "Asana" })}
+          placeHolder={
+            isLoading
+              ? t("importers.loading_service_workspaces", { serviceName: "Asana" })
+              : t("importers.select_service_workspace", { serviceName: "Asana" })
+          }
           onChange={(value: string | undefined) => handelData(value)}
           queryExtractor={(option) => option.name}
           disabled={isLoading}

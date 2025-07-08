@@ -1,9 +1,9 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 class HMACSigner {
   /**
    * Generate the HMAC signature and headers.
-   * 
+   *
    * @param {string} secretKey - The shared secret key for HMAC signing.
    * @param {string} service - The service identifier.
    * @param {string} method - HTTP method (e.g., "GET", "POST").
@@ -17,15 +17,15 @@ class HMACSigner {
     const payload = `${method.toUpperCase()}:${path}:${timestamp}`;
 
     // Generate the HMAC signature using SHA-256.
-    const hmac = crypto.createHmac('sha256', secretKey);
+    const hmac = crypto.createHmac("sha256", secretKey);
     hmac.update(payload);
-    const signature = hmac.digest('hex');
+    const signature = hmac.digest("hex");
 
     // Return the headers.
     return {
-      'X-HMAC-Signature': signature,
-      'X-HMAC-Timestamp': timestamp.toString(),
-      'X-Service': service
+      "X-HMAC-Signature": signature,
+      "X-HMAC-Timestamp": timestamp.toString(),
+      "X-Service": service,
     };
   }
 }

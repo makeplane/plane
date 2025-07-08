@@ -18,7 +18,10 @@ from plane.db.models import IssueComment, ProjectMember, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.ee.utils.check_user_teamspace_member import check_if_current_user_is_teamspace_member
+from plane.ee.utils.check_user_teamspace_member import (
+    check_if_current_user_is_teamspace_member,
+)
+
 
 class EpicCommentViewSet(BaseViewSet):
     serializer_class = EpicCommentSerializer
@@ -70,7 +73,9 @@ class EpicCommentViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
             and not epic.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
+            )
         ):
             return Response(
                 {"error": "You are not allowed to comment on the epic"},

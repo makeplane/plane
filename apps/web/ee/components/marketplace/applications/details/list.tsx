@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { TUserApplication } from "@plane/types";
 import { AppTile } from "@/plane-web/components/marketplace";
@@ -8,19 +8,19 @@ import { AppTile } from "@/plane-web/components/marketplace";
 // have search bar to search by name
 
 type AppListProps = {
-    apps: TUserApplication[];
-}
+  apps: TUserApplication[];
+};
 
 export const AppList: React.FC<AppListProps> = (props) => {
-    const { apps } = props;
+  const { apps } = props;
 
-    return (
-        <div className="pb-20">
-            {apps.map((app) => (
-                <div key={app.id}>
-                    <AppTile app={app} />
-                </div>
-            ))}
+  return (
+    <div className="pb-20">
+      {apps.map((app) => (
+        <div key={app.id}>
+          <AppTile app={app} />
         </div>
-    )
-}
+      ))}
+    </div>
+  );
+};

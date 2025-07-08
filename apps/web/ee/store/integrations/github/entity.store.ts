@@ -38,7 +38,10 @@ export class GithubEntityStore implements IGithubEntityStore {
   private service: GithubEntityService;
   private isEnterprise: boolean;
 
-  constructor(protected store: IGithubStore, isEnterprise: boolean = false) {
+  constructor(
+    protected store: IGithubStore,
+    isEnterprise: boolean = false
+  ) {
     makeObservable(this, {
       // observables
       entityMap: observable,

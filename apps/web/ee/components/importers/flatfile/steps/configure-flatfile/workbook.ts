@@ -11,15 +11,17 @@ export const getWorkbookConfig = (
   states: (IState | undefined)[]
 ): Pick<Flatfile.CreateWorkbookConfig, "name" | "labels" | "sheets" | "actions"> => {
   // Convert states to Flatfile enum options format
-  const stateOptions: StateOption[] = states.map((state) => {
-    if (state) {
-      return {
-        label: state.name,
-        value: state.id,
-        color: state.color,
-      };
-    }
-  }).filter((state): state is StateOption => state !== undefined);
+  const stateOptions: StateOption[] = states
+    .map((state) => {
+      if (state) {
+        return {
+          label: state.name,
+          value: state.id,
+          color: state.color,
+        };
+      }
+    })
+    .filter((state): state is StateOption => state !== undefined);
 
   return {
     name: "All Data",

@@ -7,7 +7,13 @@ import { Layers } from "lucide-react";
 // plane imports
 import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // types
-import { EViewAccess, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TTeamspaceView } from "@plane/types";
+import {
+  EViewAccess,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TTeamspaceView,
+} from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components

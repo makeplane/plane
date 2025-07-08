@@ -8,8 +8,8 @@ interface FieldValue<T> {
 }
 
 // Helper Types
-type StringFieldValue = FieldValue<string>
-type ArrayFieldValue<T> = FieldValue<T[]>
+type StringFieldValue = FieldValue<string>;
+type ArrayFieldValue<T> = FieldValue<T[]>;
 
 // Values object type
 type TFlatfileRecordValue = {
@@ -26,7 +26,7 @@ type TFlatfileRecordValue = {
   parent: FieldValue<unknown>;
   labels: ArrayFieldValue<string>;
   cycle: FieldValue<unknown>;
-}
+};
 
 // Flatfile Record
 export type TFlatfileRecord = {
@@ -35,10 +35,10 @@ export type TFlatfileRecord = {
   metadata: Record<string, unknown>;
   config: Record<string, unknown>;
   valid: boolean;
-}
+};
 
 // Flatfile Sheet Payload
 export type TFlatfileSheetPayload = {
-  data: TFlatfileRecord[]
+  data: TFlatfileRecord[];
   success: boolean;
-}
+};

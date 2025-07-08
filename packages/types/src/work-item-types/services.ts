@@ -1,5 +1,10 @@
 import { TEpicAnalytics, TEpicStats } from "../epics";
-import { EIssuePropertyType, TIssueProperty, TIssuePropertyPayload, TIssuePropertyResponse } from "./work-item-properties";
+import {
+  EIssuePropertyType,
+  TIssueProperty,
+  TIssuePropertyPayload,
+  TIssuePropertyResponse,
+} from "./work-item-properties";
 import { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
 import { TIssueType } from "./work-item-types";
 

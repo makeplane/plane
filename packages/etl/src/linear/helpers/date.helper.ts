@@ -1,6 +1,4 @@
-export const getFormattedDate = (
-  date: string | undefined
-): string | undefined => {
+export const getFormattedDate = (date: string | undefined): string | undefined => {
   if (date) {
     const dateObj = new Date(date);
 

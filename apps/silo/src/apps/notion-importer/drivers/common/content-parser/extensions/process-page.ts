@@ -10,7 +10,7 @@ export interface NotionPageParserConfig {
 }
 
 export class NotionPageParserExtension implements IParserExtension {
-  constructor(private readonly config: NotionPageParserConfig) { }
+  constructor(private readonly config: NotionPageParserConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     // Only process img tags
@@ -44,7 +44,7 @@ export class NotionPageParserExtension implements IParserExtension {
   protected normalizeFilePath(src: string): string | undefined {
     // Remove URL encoding and construct the full path
     // This should match how paths were stored in phase one
-    const decodedSrc = decodeURIComponent(src)
+    const decodedSrc = decodeURIComponent(src);
     // Remove the trailing slash
     const withoutTrailingSlash = decodedSrc.replace(/\/$/, "");
     // Strip the page and get the last part of the path

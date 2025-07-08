@@ -13,13 +13,10 @@ import { alreadyLinkedModalView, createLinkIssueModalView } from "../../views/li
 const apiClient = getAPIClient();
 
 export const handleMessageAction = async (data: TMessageActionPayload) => {
-
-
   if (!data.callback_id) {
     logger.info(`[SLACK] No callback id found for message action ${data.type}`);
     return;
   }
-
 
   switch (data.callback_id) {
     case E_MESSAGE_ACTION_TYPES.LINK_WORK_ITEM:

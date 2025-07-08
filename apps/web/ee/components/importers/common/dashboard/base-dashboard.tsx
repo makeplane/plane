@@ -10,7 +10,7 @@ import { useTranslation } from "@plane/i18n";
 import { TImportJob, TLogoProps } from "@plane/types";
 import { Button, ModalCore, Tooltip } from "@plane/ui";
 import { Logo } from "@/components/common";
-import { renderFormattedDate, renderFormattedTime  } from "@plane/utils";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 import ImporterHeader from "../../header";
 import { RerunModal, CancelModal } from "./modals";
 import { DashboardLoaderTable, IconFieldRender, SyncJobStatus } from "./";

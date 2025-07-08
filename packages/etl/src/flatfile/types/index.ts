@@ -1,3 +1,3 @@
-export * from "./api"
-export * from "./config"
-export * from "./extract"
+export * from "./api";
+export * from "./config";
+export * from "./extract";

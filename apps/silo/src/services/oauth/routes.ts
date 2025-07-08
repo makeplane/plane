@@ -59,7 +59,8 @@ export class OAuthRoutes {
   async getAuthURL(req: Request, res: Response) {
     try {
       const { integrationKey } = req.params;
-      const { workspace_id, workspace_slug, user_id, plane_api_token, plane_app_installation_id, config_key } = req.body;
+      const { workspace_id, workspace_slug, user_id, plane_api_token, plane_app_installation_id, config_key } =
+        req.body;
 
       if (!workspace_id || !workspace_slug || !user_id) {
         return res.status(400).json({ message: "Missing required fields" });

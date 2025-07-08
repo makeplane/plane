@@ -90,23 +90,25 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
 
     try {
       // Transform all pages to ExPage format
-      const pages = (await Promise.all(
-        pageNodes.map(async (pageNode) => {
-          const pagePath = pageNode.path.split("/").pop()
-          const pagePathWithoutExt = pagePath?.replace(/\.html$/, "");
+      const pages = (
+        await Promise.all(
+          pageNodes.map(async (pageNode) => {
+            const pagePath = pageNode.path.split("/").pop();
+            const pagePathWithoutExt = pagePath?.replace(/\.html$/, "");
 
-          const pageId = pageMap.get(pagePathWithoutExt!);
-          if (!pageId) {
-            logger.error(`Page id not found for page node ${pageNode.name}`, {
-              jobId,
-              pageNode,
-            });
-            return;
-          }
+            const pageId = pageMap.get(pagePathWithoutExt!);
+            if (!pageId) {
+              logger.error(`Page id not found for page node ${pageNode.name}`, {
+                jobId,
+                pageNode,
+              });
+              return;
+            }
 
-          return this.getPageUpdatePayload(pageId, pageNode, parser, contentMap);
-        })
-      )).filter(Boolean) as Partial<TPage>[];
+            return this.getPageUpdatePayload(pageId, pageNode, parser, contentMap);
+          })
+        )
+      ).filter(Boolean) as Partial<TPage>[];
 
       // // Use bulk create API if we have valid pages
       if (pages.length > 0) {
@@ -218,9 +220,9 @@ export class NotionPhaseTwoMigrator extends NotionMigratorBase {
       description_html: parsedContent,
       logo_props: emojiPayload
         ? {
-          emoji: emojiPayload.emoji,
-          in_use: "emoji",
-        }
+            emoji: emojiPayload.emoji,
+            in_use: "emoji",
+          }
         : undefined,
     };
   }

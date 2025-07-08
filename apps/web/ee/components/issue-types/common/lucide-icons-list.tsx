@@ -4,7 +4,7 @@ import { Check, Search } from "lucide-react";
 import { DEFAULT_BACKGROUND_COLORS } from "@plane/constants";
 import { TLogoProps } from "@plane/types";
 import { ColorPicker, Input, LUCIDE_ICONS_LIST } from "@plane/ui";
-import { generateIconColors  } from "@plane/utils";
+import { generateIconColors } from "@plane/utils";
 
 export type TIconsListProps = {
   defaultBackgroundColor?: string;

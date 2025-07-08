@@ -43,7 +43,11 @@ export class ClickUpPullService {
     return tasks;
   }
 
-  async pullTasksForFolderPaginated(teamId: string, folderId: string, page: number = 0): Promise<{ tasks: TClickUpTask[]; last_page: boolean }> {
+  async pullTasksForFolderPaginated(
+    teamId: string,
+    folderId: string,
+    page: number = 0
+  ): Promise<{ tasks: TClickUpTask[]; last_page: boolean }> {
     return this.apiService.getTeamTasks(teamId, [folderId], page);
   }
 

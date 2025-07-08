@@ -35,7 +35,7 @@ def generate_application(
     if application_secret_model.objects.filter(key=f"x-{app_key}-id").exists():
         logger.info(f"Application for {app_key} already exists, skipping...")
         return None
-    
+
     # check if app_key is in APPLICATIONS
     if app_key not in APPLICATIONS:
         raise KeyError(f"Application {app_key} not found")

@@ -7,7 +7,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TLogoProps } from "@plane/types";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // local components
 import { IssueTypeLogo, TIssueTypeLogoSize } from "./issue-type-logo";
 import { LucideIconsList } from "./lucide-icons-list";

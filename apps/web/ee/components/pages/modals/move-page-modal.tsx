@@ -12,7 +12,7 @@ import { TMovePageModalProps } from "@/ce/components/pages";
 import { Logo } from "@/components/common";
 import { SimpleEmptyState } from "@/components/empty-state";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

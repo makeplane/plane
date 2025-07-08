@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 export const DesktopAppNavigation = observer(() => {
   // states

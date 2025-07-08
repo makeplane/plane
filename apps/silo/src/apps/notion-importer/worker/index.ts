@@ -1,1 +1,1 @@
-export * from "./notion.migrator"
+export * from "./notion.migrator";

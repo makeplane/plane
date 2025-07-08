@@ -199,7 +199,6 @@ class UserEndpoint(BaseViewSet):
 
 
 class UserSessionEndpoint(BaseAPIView):
-
     # Authentication classes
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 

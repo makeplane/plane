@@ -21,7 +21,11 @@ export class ContentParser {
    */
   private readonly postprocessExtensions: IParserExtension[] = [];
 
-  constructor(extensions: IParserExtension[], preprocessExtensions: IParserExtension[] = [], postprocessExtensions: IParserExtension[] = []) {
+  constructor(
+    extensions: IParserExtension[],
+    preprocessExtensions: IParserExtension[] = [],
+    postprocessExtensions: IParserExtension[] = []
+  ) {
     this.preprocessExtensions = preprocessExtensions;
     this.extensions = extensions;
     this.postprocessExtensions = postprocessExtensions;
@@ -35,9 +39,7 @@ export class ContentParser {
   /**
    * Converts GitHub's content (HTML/Markdown/Mixed) to Plane's HTML format
    */
-  async toPlaneHtml(
-    content: string,
-  ): Promise<string> {
+  async toPlaneHtml(content: string): Promise<string> {
     try {
       // First try to parse as HTML to check if it's valid HTML
       const root = parse(content);
@@ -109,4 +111,3 @@ export class ContentParser {
     return currentNode;
   }
 }
-

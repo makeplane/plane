@@ -7,8 +7,8 @@ import { CheckCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TUserApplication } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
-import { API_BASE_URL  } from "@plane/constants";
-import { getFileURL  } from "@plane/utils";
+import { API_BASE_URL } from "@plane/constants";
+import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store";
 import { OAuthService } from "@/plane-web/services/marketplace";
 

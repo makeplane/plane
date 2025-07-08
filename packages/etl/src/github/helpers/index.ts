@@ -1,2 +1,2 @@
 export * from "./helpers";
-export * from "./content-parser"
+export * from "./content-parser";

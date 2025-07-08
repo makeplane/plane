@@ -1,1 +1,1 @@
-export * from "./github.worker"
+export * from "./github.worker";

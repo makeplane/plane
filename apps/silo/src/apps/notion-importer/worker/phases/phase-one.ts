@@ -107,16 +107,18 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
          * hence, we are setting page map with the path rather than the name, which
          * used to be there, and have not changed the name of the page, which is the
          * name of the page in the html file
-        */
-        const pageMap = new Map(createdPages.map((page) => {
-          let identifier = page.name;
-          if (page.external_id) {
-            const path = page.external_id.split("/").pop()!;
-            const pathWithoutExtension = path.replace(/\.html$/, "");
-            identifier = pathWithoutExtension;
-          }
-          return [identifier, page.id];
-        }));
+         */
+        const pageMap = new Map(
+          createdPages.map((page) => {
+            let identifier = page.name;
+            if (page.external_id) {
+              const path = page.external_id.split("/").pop()!;
+              const pathWithoutExtension = path.replace(/\.html$/, "");
+              identifier = pathWithoutExtension;
+            }
+            return [identifier, page.id];
+          })
+        );
 
         if (pageMap.size > 0) await this.setCacheObjects(fileId, ENotionImporterKeyType.PAGE, pageMap);
         return pageMap;
@@ -128,7 +130,7 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
         jobId: job.id,
         error,
       }); // How should we handle this error, in case we fail to process the page nodes?
-      throw error
+      throw error;
     }
   }
 
@@ -187,7 +189,6 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
           );
 
           result.set(`${parentPath}/${node.name}`, assetId);
-
         } catch (error) {
           logger.error(`Error uploading asset for job ${job.id} and node ${node.name}`, {
             jobId: job.id,
@@ -288,7 +289,12 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
    * @param contentMap - Map of file paths to content buffers
    * @returns Plane page object or undefined if content not found
    */
-  createPageFromNode(job: TImportJob, node: TZipFileNode, parentPageId: string | undefined, userId: string): Partial<ExPage> | undefined {
+  createPageFromNode(
+    job: TImportJob,
+    node: TZipFileNode,
+    parentPageId: string | undefined,
+    userId: string
+  ): Partial<ExPage> | undefined {
     // Basic transformation logic - extract name from filename and convert content
     const pageName = node.name.replace(/\.html$/, "");
     const strippedPath = node.path.split("/").pop();

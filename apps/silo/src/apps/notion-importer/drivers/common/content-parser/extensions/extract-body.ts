@@ -5,10 +5,10 @@ import { logger } from "@/logger";
 export type ExtractBodyExtensionConfig = {
   selector: string;
   context: Map<string, any>;
-}
+};
 
 export class ExtractBodyExtension implements IParserExtension {
-  constructor(protected readonly config: ExtractBodyExtensionConfig) { }
+  constructor(protected readonly config: ExtractBodyExtensionConfig) {}
 
   shouldParse(node: HTMLElement): boolean {
     // This extension should only run on the root html element

@@ -202,7 +202,12 @@ async function handleSwitchPriorityAction(data: TBlockActionPayload, details: TS
       priority: value[2],
     });
 
-    const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, ["state", "project", "assignees", "labels"]);
+    const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, [
+      "state",
+      "project",
+      "assignees",
+      "labels",
+    ]);
     const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
 
     const updatedLinkback = createSlackLinkback(
@@ -238,7 +243,9 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   const selectedProject = await planeClient.project.getProject(workspaceConnection.workspace_slug, selection.value);
   const projectAssets = await fetchPlaneAssets(workspaceConnection.workspace_slug, selection.value, planeClient);
-  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>;
+  const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata<
+    typeof ENTITIES.SHORTCUT_PROJECT_SELECTION
+  >;
 
   if (
     metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ||
@@ -251,9 +258,7 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
         priorityOptions: convertToSlackOptions(PLANE_PRIORITIES),
         stateOptions: convertToSlackOptions(projectAssets.states.results),
       },
-      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION
-        ? metadata.entityPayload.message?.text
-        : "",
+      metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ? metadata.entityPayload.message?.text : "",
       JSON.stringify({ entityType: metadata.entityType, entityPayload: metadata.entityPayload }),
       metadata.entityPayload.type !== ENTITIES.COMMAND_PROJECT_SELECTION
     );
@@ -283,7 +288,12 @@ async function handleLinkbackStateChange(data: TBlockActionPayload, details: TSl
         state: stateId,
       });
 
-      const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, ["state", "project", "assignees", "labels"]);
+      const issue = await planeClient.issue.getIssueWithFields(workspaceConnection.workspace_slug, projectId, issueId, [
+        "state",
+        "project",
+        "assignees",
+        "labels",
+      ]);
       const states = await planeClient.state.list(workspaceConnection.workspace_slug, projectId);
 
       const updatedLinkback = createSlackLinkback(

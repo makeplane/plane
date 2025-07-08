@@ -321,7 +321,7 @@ export const WIDGET_X_AXIS_PROPERTIES_LIST: Record<
   },
   [EWidgetXAxisProperty.EPICS]: {
     i18n_label: "common.epics",
-  }
+  },
 };
 
 export const WIDGET_X_AXIS_DATE_PROPERTIES: EWidgetXAxisProperty[] = [

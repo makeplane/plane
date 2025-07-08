@@ -13,7 +13,7 @@ import {
 // ui
 import { ContrastIcon, DiceIcon, EpicIcon, LayersIcon, Logo, TeamsIcon } from "@plane/ui";
 // plane web components
-import { generateWorkItemLink  } from "@plane/utils";
+import { generateWorkItemLink } from "@plane/utils";
 import { IdentifierText, IssueIdentifier } from "@/plane-web/components/issues";
 
 export const SearchItems: {

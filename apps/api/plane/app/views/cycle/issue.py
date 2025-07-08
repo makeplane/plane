@@ -65,7 +65,6 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
-
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def list(self, request, slug, project_id, cycle_id):

@@ -9,7 +9,7 @@ export type FileHelperConfig = {
   fileDownloadHeaders?: Record<string, string>;
   externalSource?: string;
   externalId?: string;
-}
+};
 
 export class FileHelper {
   protected config: FileHelperConfig;
@@ -62,7 +62,7 @@ export class FileHelper {
         url,
         method: "GET",
         responseType: "arraybuffer",
-        headers: headers
+        headers: headers,
       });
 
       const buffer = Buffer.from(response.data);

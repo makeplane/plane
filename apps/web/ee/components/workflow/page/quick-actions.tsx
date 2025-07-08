@@ -9,7 +9,7 @@ import { EUserProjectRoles } from "@plane/types";
 // ui
 import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useProjectState, useUserPermissions } from "@/hooks/store";
 import { WorkflowChangeHistory } from "./change-history";

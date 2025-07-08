@@ -12,6 +12,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
 
+
 class ProjectPagePublishEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     @allow_permission(

@@ -10,11 +10,14 @@
     "develop": "nodemon --config \"./nodemon.json\"/",
     "build": "rm -rf dist && tsc --noEmit && tsup --minify",
     "start": "node dist/start.cjs",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "eslint . --ext .ts",
     "test": "jest",
     "check-types": "tsc --noEmit",
-    "check-format": "prettier --check \"**/*.{ts,tsx,md}\""
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",

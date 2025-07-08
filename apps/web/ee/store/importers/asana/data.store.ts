@@ -53,7 +53,7 @@ export interface IAsanaDataStore {
     workspaceId: string,
     userId: string,
     workspaceSlug: string,
-    workspaceGid: string,
+    workspaceGid: string
   ) => Promise<IAdditionalUsersResponse | undefined>;
 }
 
@@ -68,7 +68,7 @@ export class AsanaDataStore implements IAsanaDataStore {
   asanaTaskCount: Record<string, number> = {}; // projectGid -> issueCount
   additionalUsersData: IAdditionalUsersResponse = {
     additionalUserCount: 0,
-    occupiedUserCount: 0
+    occupiedUserCount: 0,
   };
   // service
   service: AsanaService;
@@ -91,7 +91,7 @@ export class AsanaDataStore implements IAsanaDataStore {
       fetchAsanaSections: action,
       fetchAsanaPriorities: action,
       fetchAsanaTaskCount: action,
-      fetchAdditionalUsers: action
+      fetchAdditionalUsers: action,
     });
     this.service = new AsanaService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
   }
@@ -358,29 +358,34 @@ export class AsanaDataStore implements IAsanaDataStore {
     }
   };
 
-    /**
+  /**
    * @description Fetches additional users on import
    * @param { string } workspaceId
    * @param { string } userId
    * @param { string } workspaceSlug
    * @returns { Promise<IAdditionalUsersResponse | undefined> }
    */
-    fetchAdditionalUsers = async (
-      workspaceId: string,
-      userId: string,
-      workspaceSlug: string,
-      workspaceGid: string
-    ): Promise<IAdditionalUsersResponse | undefined> => {
-      try {
-        const additionalUserResponse = (await this.service.getAdditionalUsers(workspaceId, userId, workspaceSlug, workspaceGid)) as IAdditionalUsersResponse;
-        if (additionalUserResponse?.additionalUserCount) {
-          runInAction(() => {
-            this.additionalUsersData = additionalUserResponse
-          });
-        }
-        return additionalUserResponse;
-      } catch (error) {
-        this.error = error as unknown as object;
+  fetchAdditionalUsers = async (
+    workspaceId: string,
+    userId: string,
+    workspaceSlug: string,
+    workspaceGid: string
+  ): Promise<IAdditionalUsersResponse | undefined> => {
+    try {
+      const additionalUserResponse = (await this.service.getAdditionalUsers(
+        workspaceId,
+        userId,
+        workspaceSlug,
+        workspaceGid
+      )) as IAdditionalUsersResponse;
+      if (additionalUserResponse?.additionalUserCount) {
+        runInAction(() => {
+          this.additionalUsersData = additionalUserResponse;
+        });
       }
-    };
+      return additionalUserResponse;
+    } catch (error) {
+      this.error = error as unknown as object;
+    }
+  };
 }

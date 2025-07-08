@@ -168,7 +168,6 @@ class WorkspaceSharedPagePermission(IsAuthenticated):
             Page.objects.filter(
                 workspace__slug=workspace_slug,
                 id=page_id,
-                
             ).first,
             thread_sensitive=True,
         )()

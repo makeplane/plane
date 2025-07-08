@@ -22,6 +22,7 @@ from plane.payment.flags.flag_decorator import (
 )
 from plane.payment.flags.flag import FeatureFlag
 
+
 class SiloAssetsEndpoint(BaseAPIView):
     """
     This endpoint is used for unlimited file uploads without size restrictions.
@@ -33,7 +34,7 @@ class SiloAssetsEndpoint(BaseAPIView):
     def post(self, request, slug):
         """Create a new unlimited asset upload"""
 
-        unlimited_size_limit = 5 * 1024 * 1024 * 1024 # 5GB
+        unlimited_size_limit = 5 * 1024 * 1024 * 1024  # 5GB
 
         name = request.data.get("name")
         type = request.data.get("type", "application/octet-stream")
@@ -74,9 +75,7 @@ class SiloAssetsEndpoint(BaseAPIView):
         # Generate a presigned URL with very large size limit (effectively unlimited)
         # Setting to 10GB limit as "unlimited"
         presigned_url = storage.generate_presigned_post(
-            object_name=asset_key,
-            file_type=type,
-            file_size=unlimited_size_limit
+            object_name=asset_key, file_type=type, file_size=unlimited_size_limit
         )
 
         # Return the presigned URL and asset info

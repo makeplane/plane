@@ -1,5 +1,5 @@
 import { IApiToken } from "@plane/types";
-import { API_BASE_URL  } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "@/services/api.service";
 
 export class ServiceAPITokenService extends APIService {

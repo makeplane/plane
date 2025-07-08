@@ -4,7 +4,7 @@ import { StorageProvider } from "./storage-provider";
 import { TZipFileNode } from "./types";
 import { ZipStream } from "./zip-stream";
 
-const TOC_KEY = 'toc';
+const TOC_KEY = "toc";
 
 export const getKey = (fileId: string, key: string) => `SILO_ZIP_MANAGER_${fileId}_${key}`;
 
@@ -73,7 +73,6 @@ export class ZipManager {
     await this.store.del(getKey(fileId, TOC_KEY));
   }
 
-
   /**
    * Gets content of all files directly within a directory, excluding subdirectories
    *
@@ -81,7 +80,11 @@ export class ZipManager {
    * @param directoryNode - Directory node to extract content from
    * @returns Map of file paths to their content buffers
    */
-  async getDirectoryContent(directoryNode: TZipFileNode, ignoredFileTypes: string[] = [], acceptedFileTypes?: string[]): Promise<Map<string, Buffer>> {
+  async getDirectoryContent(
+    directoryNode: TZipFileNode,
+    ignoredFileTypes: string[] = [],
+    acceptedFileTypes?: string[]
+  ): Promise<Map<string, Buffer>> {
     if (directoryNode.type !== "directory") {
       throw new Error("Node is not a directory");
     }

@@ -131,7 +131,12 @@ export default class GithubEnterpriseController {
         });
       }
 
-      const service = createGithubService(appConfig.appId, appConfig.privateKey, credential.source_access_token, appConfig.baseUrl);
+      const service = createGithubService(
+        appConfig.appId,
+        appConfig.privateKey,
+        credential.source_access_token,
+        appConfig.baseUrl
+      );
 
       const repositories: GithubRepository[] = [];
 

@@ -11,7 +11,8 @@ export const useWorkFlowFDragNDrop = (groupBy: TIssueGroupByOptions | undefined,
   // states
   const [workflowDisabledSource, setWorkflowDisabledSource] = useState<string | undefined>(undefined);
   // store hooks
-  const { getIsWorkflowEnabled, getAvailableProjectStateIdMap, getIsWorkItemCreationAllowedForState } = useProjectState();
+  const { getIsWorkflowEnabled, getAvailableProjectStateIdMap, getIsWorkItemCreationAllowedForState } =
+    useProjectState();
   // derived values
   const isWorkflowEnabled = getIsWorkflowEnabled(workspaceSlug.toString(), projectId?.toString());
 

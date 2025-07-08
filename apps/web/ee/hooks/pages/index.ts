@@ -1,1 +1,1 @@
-export * from "./use-pages-by-type"; 
+export * from "./use-pages-by-type";

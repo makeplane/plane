@@ -17,7 +17,9 @@ const exStateSchema = z.object({
 export const gitlabWorkspaceConnectionSchema = z.object({});
 
 export const gitlabEntityConnectionSchema = z.object({
-  states: z.object({
-    mergeRequestEventMapping: z.record(z.custom<MergeRequestEvent>(), exStateSchema),
-  }).optional(),
+  states: z
+    .object({
+      mergeRequestEventMapping: z.record(z.custom<MergeRequestEvent>(), exStateSchema),
+    })
+    .optional(),
 });

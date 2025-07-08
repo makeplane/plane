@@ -60,7 +60,6 @@ class StateViewSet(BaseViewSet):
             .accessible_to(self.request.user.id, self.kwargs["slug"])
             .distinct()
         )
-        
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])

@@ -57,8 +57,7 @@ export interface IExportServiceResponse {
   total_pages: number;
 }
 
-
 export type IAdditionalUsersResponse = {
-  additionalUserCount: number,
-  occupiedUserCount: number
-}
+  additionalUserCount: number;
+  occupiedUserCount: number;
+};

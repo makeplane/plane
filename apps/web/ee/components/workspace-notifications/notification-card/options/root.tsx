@@ -4,7 +4,7 @@ import { FC, Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // components
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import {
   NotificationItemReadOption,

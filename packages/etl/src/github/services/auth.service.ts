@@ -1,5 +1,11 @@
 import axios from "axios";
-import { GithubAuthConfig, GithubAuthorizeState, GithubEnterpriseAuthConfig, GithubUserAuthPayload, GithubUserAuthState } from "@/github/types";
+import {
+  GithubAuthConfig,
+  GithubAuthorizeState,
+  GithubEnterpriseAuthConfig,
+  GithubUserAuthPayload,
+  GithubUserAuthState,
+} from "@/github/types";
 
 export type GithubTokenResponse = {
   access_token: string;

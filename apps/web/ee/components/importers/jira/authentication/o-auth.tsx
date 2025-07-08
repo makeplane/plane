@@ -39,12 +39,12 @@ export const OAuth: FC = observer(() => {
         <div>
           <h3 className="text-xl font-medium">Jira to Plane {t("importers.migration_assistant")}</h3>
           <p className="text-custom-text-300 text-sm">
-            {t("importers.migration_assistant_description", { "serviceName": "Jira" })}
+            {t("importers.migration_assistant_description", { serviceName: "Jira" })}
           </p>
         </div>
         <div>
           <Button onClick={handleOAuthAuthentication} loading={isLoading} disabled={isLoading}>
-            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { "serviceName": "Jira" })}
+            {isLoading ? t("common.authorizing") : t("importers.connect_importer", { serviceName: "Jira" })}
           </Button>
         </div>
       </div>

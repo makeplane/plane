@@ -3,7 +3,6 @@ import { IParserExtension } from "@plane/etl/parser";
 import { ExtractBodyExtension } from "../../../common/content-parser";
 
 export class ConfluenceExtractBodyExtension extends ExtractBodyExtension {
-
   private hexToRgb(hex: string): [number, number, number] {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -43,7 +42,6 @@ export class ConfluenceExtractBodyExtension extends ExtractBodyExtension {
   }
 
   private classifyColorByHsv(h: number, s: number, v: number): string {
-
     // Special case for purple detection - purple can have low saturation but specific hue ranges
     if (h >= 240 && h < 300) {
       // For purple, we allow lower saturation (0.1 instead of 0.15)
@@ -136,8 +134,7 @@ export class ConfluenceExtractBodyExtension extends ExtractBodyExtension {
 export class PTagCustomComponentExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
     // Only handle P or SPAN nodes that have exactly one child
-    if ((node.tagName === 'P' || node.tagName === 'SPAN')) {
-
+    if (node.tagName === "P" || node.tagName === "SPAN") {
       // Check for the child nodes, and remove empty text nodes
       const childNodes = node.childNodes.filter((child) => {
         if (child instanceof TextNode) {
@@ -150,12 +147,9 @@ export class PTagCustomComponentExtension implements IParserExtension {
         const child = node.childNodes[0];
         // Check if the child is an element (not text) and is a media element
         if (child instanceof HTMLElement) {
-          return [
-            'IMAGE-COMPONENT',
-            'MENTION-COMPONENT',
-            'ISSUE-EMBED-COMPONENT',
-            'PAGE-EMBED-COMPONENT',
-          ].includes(child.tagName);
+          return ["IMAGE-COMPONENT", "MENTION-COMPONENT", "ISSUE-EMBED-COMPONENT", "PAGE-EMBED-COMPONENT"].includes(
+            child.tagName
+          );
         }
       }
     }

@@ -115,11 +115,7 @@ export const transformUser = (user: ImportedJiraUser): Partial<PlaneUser> => {
   };
 };
 
-export const transformSprint = (
-  resourceId: string,
-  projectId: string,
-  sprint: JiraSprint
-): Partial<ExCycle> => ({
+export const transformSprint = (resourceId: string, projectId: string, sprint: JiraSprint): Partial<ExCycle> => ({
   external_id: `${projectId}_${resourceId}_${sprint.sprint.id.toString()}`,
   external_source: E_IMPORTER_KEYS.JIRA_SERVER,
   name: sprint.sprint.name,

@@ -28,9 +28,7 @@ const JiraServerImporter: FC = observer(() => {
 
   // fetching external api token
   const { isLoading: externalApiTokenIsLoading } = useSWR(
-    workspaceSlug && !externalApiToken
-      ? `IMPORTER_JIRA_SERVER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}`
-      : null,
+    workspaceSlug && !externalApiToken ? `IMPORTER_JIRA_SERVER_EXTERNAL_SERVICE_TOKEN_${workspaceSlug}` : null,
     workspaceSlug && !externalApiToken ? async () => fetchExternalApiToken(workspaceSlug) : null,
     { errorRetryCount: 0 }
   );
@@ -40,9 +38,7 @@ const JiraServerImporter: FC = observer(() => {
     workspaceSlug && userId && externalApiToken && !currentAuth
       ? `IMPORTER_AUTHENTICATION_JIRA_SERVER_${workspaceSlug}_${user?.id}`
       : null,
-    workspaceSlug && userId && externalApiToken && !currentAuth
-      ? async () => authVerification()
-      : null,
+    workspaceSlug && userId && externalApiToken && !currentAuth ? async () => authVerification() : null,
     { errorRetryCount: 0 }
   );
 

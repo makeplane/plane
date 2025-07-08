@@ -3,7 +3,7 @@
 import { FC } from "react";
 import useSWR from "swr";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useProjectAttachments } from "@/plane-web/hooks/store/projects/use-project-attachments";

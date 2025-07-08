@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // components
 import { TextArea } from "@plane/ui";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 

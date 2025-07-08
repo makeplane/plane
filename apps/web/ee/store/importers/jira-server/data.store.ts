@@ -62,7 +62,7 @@ export interface IJiraServerDataStore {
   fetchAdditionalUsers: (
     workspaceId: string,
     userId: string,
-    workspaceSlug: string,
+    workspaceSlug: string
   ) => Promise<IAdditionalUsersResponse | undefined>;
 }
 
@@ -78,7 +78,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
   jiraIssueCount: Record<string, number> = {}; // projectId -> issueCount
   additionalUsersData: IAdditionalUsersResponse = {
     additionalUserCount: 0,
-    occupiedUserCount: 0
+    occupiedUserCount: 0,
   };
   // service
   service: JiraServerDataService;
@@ -104,7 +104,7 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       fetchJiraLabels: action,
       fetchJiraPriorities: action,
       fetchJiraIssueCount: action,
-      fetchAdditionalUsers: action
+      fetchAdditionalUsers: action,
     });
 
     this.service = new JiraServerDataService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
@@ -414,13 +414,17 @@ export class JiraServerDataStore implements IJiraServerDataStore {
   fetchAdditionalUsers = async (
     workspaceId: string,
     userId: string,
-    workspaceSlug: string,
+    workspaceSlug: string
   ): Promise<IAdditionalUsersResponse | undefined> => {
     try {
-      const additionalUserResponse = (await this.service.getAdditionalUsers(workspaceId, userId, workspaceSlug)) as IAdditionalUsersResponse;
+      const additionalUserResponse = (await this.service.getAdditionalUsers(
+        workspaceId,
+        userId,
+        workspaceSlug
+      )) as IAdditionalUsersResponse;
       if (additionalUserResponse?.additionalUserCount) {
         runInAction(() => {
-          this.additionalUsersData = additionalUserResponse
+          this.additionalUsersData = additionalUserResponse;
         });
       }
       return additionalUserResponse;
@@ -428,5 +432,4 @@ export class JiraServerDataStore implements IJiraServerDataStore {
       this.error = error as unknown as object;
     }
   };
-
 }

@@ -21,7 +21,9 @@ export const handleProjectUpdateWebhook = async (payload: PlaneWebhookPayload) =
 
   // Get the channel id and project id from the entity connection
   const channelId = entityConnection.entity_id;
-  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(entityConnection.workspace_connection_id);
+  const workspaceConnection = await apiClient.workspaceConnection.getWorkspaceConnection(
+    entityConnection.workspace_connection_id
+  );
 
   if (!workspaceConnection) {
     logger.info("No workspace connection found for project update webhook");

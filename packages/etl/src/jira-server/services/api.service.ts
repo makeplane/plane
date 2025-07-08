@@ -199,8 +199,8 @@ export class JiraV2Service {
       );
       return labels;
     } catch (error) {
-      console.error("error getAllProjectLabels", error)
-      return []
+      console.error("error getAllProjectLabels", error);
+      return [];
     }
   }
 

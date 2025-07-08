@@ -123,7 +123,7 @@ class CycleArchiveUnarchiveEndpoint(BaseAPIView):
             )
             .values("total_estimate_points")[:1]
         )
-        return(
+        return (
             Cycle.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(archived_at__isnull=False)

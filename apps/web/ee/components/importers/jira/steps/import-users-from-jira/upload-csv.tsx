@@ -6,7 +6,7 @@ import Dropzone, { Accept } from "react-dropzone";
 import { TriangleAlert, CircleCheck, X, Loader } from "lucide-react";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 
 type TImportUsersFromJiraUploader = {
   handleValue: (value: string) => void;
@@ -121,8 +121,9 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
           {({ getRootProps, getInputProps }) => (
             <div
               {...getRootProps()}
-              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-sm outline-none focus:outline-none shadow-none ${file ? "bg-custom-background-90 cursor-not-allowed" : "cursor-pointer"
-                }`}
+              className={`relative flex flex-col justify-center items-center w-full min-h-28 h-full rounded-sm text-sm outline-none focus:outline-none shadow-none ${
+                file ? "bg-custom-background-90 cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
               <input
                 multiple={false}
@@ -130,7 +131,9 @@ export const ImportUsersFromJiraUploader: FC<TImportUsersFromJiraUploader> = (pr
                 className="outline-none focus:outline-none shadow-none border-none"
               />
               <div className="text-custom-text-200">{t("file_upload.upload_text")}</div>
-              <div className="pt-1 font-medium">{t("common.or")} {t("file_upload.drag_drop_text")}</div>
+              <div className="pt-1 font-medium">
+                {t("common.or")} {t("file_upload.drag_drop_text")}
+              </div>
             </div>
           )}
         </Dropzone>

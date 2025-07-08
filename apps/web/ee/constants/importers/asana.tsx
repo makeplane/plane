@@ -42,7 +42,7 @@ export const IMPORTER_STEPS: TImporterStep[] = [
     key: E_IMPORTER_STEPS.MAP_PRIORITY,
     icon: () => <SignalHigh size={14} />,
     i18n_title: "asana_importer.steps.title_map_priorities",
-    i18n_description:"asana_importer.steps.description_map_priorities",
+    i18n_description: "asana_importer.steps.description_map_priorities",
     component: () => <MapPriorityRoot />,
     prevStep: E_IMPORTER_STEPS.MAP_STATES,
     nextStep: E_IMPORTER_STEPS.SUMMARY,

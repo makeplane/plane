@@ -156,7 +156,9 @@ class IssueCreateSerializer(BaseSerializer):
                 )
 
                 # Then get all the teamspace members for the project with project member
-                attrs["assignee_ids"] = list(set(teamspace_member_ids + project_member_ids))
+                attrs["assignee_ids"] = list(
+                    set(teamspace_member_ids + project_member_ids)
+                )
 
             else:
                 attrs["assignee_ids"] = ProjectMember.objects.filter(
@@ -180,10 +182,10 @@ class IssueCreateSerializer(BaseSerializer):
             role__gte=15,
             is_active=True,
         ).exists()
-        
+
         if is_project_member:
             return True
-        
+
         # Check teamspace membership if feature is enabled
         if check_workspace_feature_flag(
             feature_key=FeatureFlag.TEAMSPACES,
@@ -193,12 +195,12 @@ class IssueCreateSerializer(BaseSerializer):
             teamspace_ids = TeamspaceProject.objects.filter(
                 project_id=project_id,
             ).values_list("team_space_id", flat=True)
-            
+
             return TeamspaceMember.objects.filter(
                 member_id=assignee_id,
                 team_space_id__in=teamspace_ids,
             ).exists()
-        
+
         return False
 
     def create(self, validated_data):

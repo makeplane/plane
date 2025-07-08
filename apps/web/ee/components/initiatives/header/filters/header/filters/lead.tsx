@@ -8,7 +8,7 @@ import { Avatar, Loader } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
 // helpers
-import { getFileURL  } from "@plane/utils";
+import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
 

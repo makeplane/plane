@@ -78,5 +78,5 @@ export class ZipImporterService {
    * @description Register webhook
    * @returns { Promise<void> }
    */
-  async registerWebhook(): Promise<void> { }
+  async registerWebhook(): Promise<void> {}
 }

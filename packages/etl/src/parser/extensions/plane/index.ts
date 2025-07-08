@@ -1,2 +1,2 @@
-export * from "./image-proxy-extension"
-export * from "./plane-mentions-parser"
+export * from "./image-proxy-extension";
+export * from "./plane-mentions-parser";

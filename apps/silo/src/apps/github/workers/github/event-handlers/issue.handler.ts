@@ -1,9 +1,5 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
-import {
-  GithubIssueDedupPayload,
-  transformGitHubIssue,
-  WebhookGitHubIssue,
-} from "@plane/etl/github";
+import { GithubIssueDedupPayload, transformGitHubIssue, WebhookGitHubIssue } from "@plane/etl/github";
 import { ExIssue } from "@plane/sdk";
 import { TGithubWorkspaceConnection, TWorkspaceCredential } from "@plane/types";
 import { getGithubService } from "@/apps/github/helpers";
@@ -94,7 +90,11 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
 
     let issue: ExIssue | null = null;
 
-    const ghService = getGithubService(workspaceConnection as TGithubWorkspaceConnection, data.installationId.toString(), data.isEnterprise);
+    const ghService = getGithubService(
+      workspaceConnection as TGithubWorkspaceConnection,
+      data.installationId.toString(),
+      data.isEnterprise
+    );
     const ghIssue = await ghService.getIssue(data.owner, data.repositoryName, Number(data.issueNumber));
     const bodyHtml = await ghService.getBodyHtml(data.owner, data.repositoryName, Number(data.issueNumber));
     // replace the issue body with the html body
@@ -108,7 +108,7 @@ export const syncIssueWithPlane = async (store: Store, data: GithubIssueDedupPay
         data.issueNumber.toString(),
         ghIntegrationKey
       );
-    } catch (error) { }
+    } catch (error) {}
 
     const planeUsers = await planeClient.users.list(entityConnection.workspace_slug, entityConnection.project_id ?? "");
 

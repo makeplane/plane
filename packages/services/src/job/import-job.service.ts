@@ -17,8 +17,11 @@ export class ImportJobService<TJobConfig = object> extends APIService {
       });
   }
 
-
-  async updateImportJob(workspaceSlug: string, id: string, data: Partial<TImportJob<TJobConfig>>): Promise<TImportJob<TJobConfig>> {
+  async updateImportJob(
+    workspaceSlug: string,
+    id: string,
+    data: Partial<TImportJob<TJobConfig>>
+  ): Promise<TImportJob<TJobConfig>> {
     return this.patch(`/api/workspaces/${workspaceSlug}/import-jobs/${id}`, data)
       .then((response) => response.data)
       .catch((error) => {
@@ -36,7 +39,10 @@ export class ImportJobService<TJobConfig = object> extends APIService {
       });
   }
 
-  async listImportJobs(workspaceSlug: string, params?: { [K in keyof TImportJob<TJobConfig>]?: string | boolean | number }): Promise<TImportJob<TJobConfig>[]> {
+  async listImportJobs(
+    workspaceSlug: string,
+    params?: { [K in keyof TImportJob<TJobConfig>]?: string | boolean | number }
+  ): Promise<TImportJob<TJobConfig>[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/import-jobs/`, { params })
       .then((response) => response.data)
       .catch((error) => {

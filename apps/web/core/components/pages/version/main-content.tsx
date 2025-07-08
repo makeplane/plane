@@ -24,8 +24,16 @@ type Props = {
 };
 
 export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
-  const { activeVersion, editorComponent, fetchVersionDetails, handleClose, handleRestore, pageId, storeType, restoreEnabled } =
-    props;
+  const {
+    activeVersion,
+    editorComponent,
+    fetchVersionDetails,
+    handleClose,
+    handleRestore,
+    pageId,
+    storeType,
+    restoreEnabled,
+  } = props;
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
@@ -107,11 +115,7 @@ export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
             )}
           </div>
           <div className="pt-8 h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
-            <VersionEditor
-              activeVersion={activeVersion}
-              storeType={storeType}
-              versionDetails={versionDetails}
-            />
+            <VersionEditor activeVersion={activeVersion} storeType={storeType} versionDetails={versionDetails} />
           </div>
         </>
       )}

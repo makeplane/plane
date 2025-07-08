@@ -30,7 +30,7 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
     workspace,
     projectIdsByWorkspaceSlug,
     getProjectById,
-    entityConnection: { entityConnectionIds, entityConnectionById }
+    entityConnection: { entityConnectionIds, entityConnectionById },
   } = useGitlabIntegration();
   const { t } = useTranslation();
 
@@ -47,7 +47,6 @@ export const ProjectForm: FC<TProjectForm> = observer((props) => {
   });
 
   const connectedProjects = entityConnections.map((entityConnection) => entityConnection?.project_id);
-
 
   const planeProjectIds = (workspaceSlug && projectIdsByWorkspaceSlug(workspaceSlug)) || [];
   const planeProjects = planeProjectIds

@@ -29,7 +29,9 @@ export class ImportReportAPIService extends APIService {
       });
   }
 
-  async listImportReports(params?: Partial<Record<keyof TImportReport, string | boolean | number>>): Promise<TImportReport[]> {
+  async listImportReports(
+    params?: Partial<Record<keyof TImportReport, string | boolean | number>>
+  ): Promise<TImportReport[]> {
     params = removeUndefinedFromObject(params);
     return this.get(`/api/v1/import-reports/`, { params: params })
       .then((response) => response.data)

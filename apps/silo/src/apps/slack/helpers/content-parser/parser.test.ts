@@ -41,27 +41,27 @@ Some **bold text** and *italic text* and \`inline code\`.
 
     // Test channel mentions
     expect(result).toContain('href="https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC1234567890"');
-    expect(result).toContain('Slack Channel: C1234567890');
+    expect(result).toContain("Slack Channel: C1234567890");
 
     // Test broadcast mentions
     expect(result).toContain('href="https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fchannel"');
-    expect(result).toContain('Slack Broadcast: channel');
+    expect(result).toContain("Slack Broadcast: channel");
 
     // Test regular links
     expect(result).toContain('href="https://example.com"');
     expect(result).toContain('href="https://plane.so"');
 
     // Test text formatting
-    expect(result).toContain('<strong>bold text</strong>');
-    expect(result).toContain('<em>italic text</em>');
-    expect(result).toContain('<code>inline code</code>');
+    expect(result).toContain("<strong>bold text</strong>");
+    expect(result).toContain("<em>italic text</em>");
+    expect(result).toContain("<code>inline code</code>");
 
     // Test list structure
-    expect(result).toContain('<ul>');
-    expect(result).toContain('<li>First item</li>');
-    expect(result).toContain('<li>Second item</li>');
-    expect(result).toContain('<li>Third item</li>');
-    expect(result).toContain('</ul>');
+    expect(result).toContain("<ul>");
+    expect(result).toContain("<li>First item</li>");
+    expect(result).toContain("<li>Second item</li>");
+    expect(result).toContain("<li>Third item</li>");
+    expect(result).toContain("</ul>");
   });
 
   it("should handle user mentions with fallback for unmapped users", async () => {
@@ -74,7 +74,7 @@ Some **bold text** and *italic text* and \`inline code\`.
     expect(result).toMatch(
       /<mention-component id="[a-f0-9-]{36}" entity_identifier="plane-user-id-1" entity_name="user_mention"><\/mention-component>/
     );
-    expect(result).toContain('https%3A%2F%2Fmyteam.slack.com%2Fteam%2FU111111111');
+    expect(result).toContain("https%3A%2F%2Fmyteam.slack.com%2Fteam%2FU111111111");
   });
 
   it("should handle channel mentions with fallback links", async () => {
@@ -84,8 +84,8 @@ Some **bold text** and *italic text* and \`inline code\`.
     const result = await parser.toPlaneHtml(slackRichText);
 
     // Should create links for channels since entityMap is empty
-    expect(result).toContain('https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC1234567890');
-    expect(result).toContain('https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC0987654321');
+    expect(result).toContain("https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC1234567890");
+    expect(result).toContain("https%3A%2F%2Fmyteam.slack.com%2Farchives%2FC0987654321");
   });
 
   it("should handle broadcast mentions", async () => {
@@ -95,8 +95,8 @@ Some **bold text** and *italic text* and \`inline code\`.
     const result = await parser.toPlaneHtml(slackRichText);
 
     // Should create links for broadcasts
-    expect(result).toContain('https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fhere');
-    expect(result).toContain('https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fchannel');
+    expect(result).toContain("https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fhere");
+    expect(result).toContain("https%3A%2F%2Fmyteam.slack.com%2Fteam%2Fchannel");
   });
 
   it("should handle mixed content with multiple mention types", async () => {
@@ -137,12 +137,12 @@ Some **bold text** and *italic text* and \`inline code\`.
     const result = await parser.toPlaneHtml(slackRichText);
 
     // Should preserve markdown formatting
-    expect(result).toContain('<strong>Bold text</strong>');
-    expect(result).toContain('<em>italic text</em>');
-    expect(result).toContain('<code>Code snippet</code>');
-    expect(result).toContain('<blockquote>\n<p>Quote block</p>\n</blockquote>');
-    expect(result).toContain('<li>List item 1</li>');
-    expect(result).toContain('<li>List item 2</li>');
+    expect(result).toContain("<strong>Bold text</strong>");
+    expect(result).toContain("<em>italic text</em>");
+    expect(result).toContain("<code>Code snippet</code>");
+    expect(result).toContain("<blockquote>\n<p>Quote block</p>\n</blockquote>");
+    expect(result).toContain("<li>List item 1</li>");
+    expect(result).toContain("<li>List item 2</li>");
   });
 
   it("should handle complex Slack message with rich text elements", async () => {

@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 // Plane
 import { Tag } from "@plane/ui";
 // helpers
-import { replaceUnderscoreIfSnakeCase  } from "@plane/utils";
+import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // plane web components
 import { TInitiativeFilters } from "@/plane-web/types/initiative";
 //

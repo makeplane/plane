@@ -6,9 +6,18 @@ import { computedFn } from "mobx-utils";
 // plane constants
 import { EIssueFilterType } from "@plane/constants";
 // types
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IIssueFilters, IssuePaginationOptions, TIssueKanbanFilters, TIssueParams } from "@plane/types";
+import {
+  EIssuesStoreType,
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  IIssueFilters,
+  IssuePaginationOptions,
+  TIssueKanbanFilters,
+  TIssueParams,
+} from "@plane/types";
 // helpers
-import { handleIssueQueryParamsByLayout  } from "@plane/utils";
+import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { TeamspaceWorkItemsService } from "@/plane-web/services/teamspace/teamspace-work-items.service";
 // store

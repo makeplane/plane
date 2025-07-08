@@ -1,4 +1,4 @@
-import { ActionRule } from "@/plane-live/types/common"
+import { ActionRule } from "@/plane-live/types/common";
 
 /**
  * Registry of rules that determine which actions to apply based on conditions

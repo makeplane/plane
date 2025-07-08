@@ -43,7 +43,7 @@ export class AssetsController {
       const workspaceConnection = workspaceConnections[0];
 
       // Create Plane Client, with the help of the recieved token
-      const planeClient = await getPlaneAPIClient(credential, source.toUpperCase() as E_INTEGRATION_KEYS)
+      const planeClient = await getPlaneAPIClient(credential, source.toUpperCase() as E_INTEGRATION_KEYS);
 
       // Get the presigned url for the asset
       const asset = await planeClient.assets.getAssetInfo(workspaceConnection.workspace_slug, id);

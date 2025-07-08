@@ -72,7 +72,6 @@ export class Store extends EventEmitter {
   }
 
   public async connect() {
-
     const attempts = this.MAX_INITIAL_CONNECT_ATTEMPTS;
     let attemptCount = 0;
     while (attemptCount < attempts) {
@@ -148,13 +147,12 @@ export class Store extends EventEmitter {
     return result;
   }
 
-
   /**
- * Atomically increments a counter by the specified amount
- * @param key The counter key
- * @param increment Amount to increment (default: 1)
- * @returns The new counter value
- */
+   * Atomically increments a counter by the specified amount
+   * @param key The counter key
+   * @param increment Amount to increment (default: 1)
+   * @returns The new counter value
+   */
   public async incrementCounter(key: string, increment: number = 1): Promise<number> {
     return await this.client.incrBy(key, increment);
   }
@@ -187,11 +185,7 @@ export class Store extends EventEmitter {
    * @returns True if counter was set, false if it already exists
    */
   public async initCounter(key: string, value: number, ttl?: number): Promise<boolean> {
-    const result = await this.client.set(
-      key,
-      value.toString(),
-      ttl ? { NX: true, EX: ttl } : { NX: true }
-    );
+    const result = await this.client.set(key, value.toString(), ttl ? { NX: true, EX: ttl } : { NX: true });
     return result === "OK";
   }
 
@@ -209,7 +203,7 @@ export class Store extends EventEmitter {
 
   public async setMap(key: string, map: Map<string, string>, ttl?: number, NX = false): Promise<boolean> {
     try {
-      const exists = await this.client.exists(key) > 0;
+      const exists = (await this.client.exists(key)) > 0;
       if (NX && exists) return false;
 
       const hashData = Object.fromEntries(map);
@@ -231,7 +225,7 @@ export class Store extends EventEmitter {
 
   public async setList(key: string, value: string | string[], ttl?: number, NX = true): Promise<boolean> {
     try {
-      const exists = await this.client.exists(key) > 0;
+      const exists = (await this.client.exists(key)) > 0;
       if (NX && exists) return false;
 
       // Atomic operation: delete if exists, then push new items

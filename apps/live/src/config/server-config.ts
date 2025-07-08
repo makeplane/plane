@@ -63,4 +63,4 @@ export const serverConfig = {
   port: env.PORT,
   basePath: env.LIVE_BASE_PATH,
   terminationTimeout: env.SHUTDOWN_TIMEOUT,
-}; 
+};

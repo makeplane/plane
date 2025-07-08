@@ -1,1 +1,1 @@
-export * from "./mentions"
+export * from "./mentions";

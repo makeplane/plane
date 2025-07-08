@@ -33,7 +33,11 @@ export interface ILinearDataStore {
   fetchLinearTeams: (workspaceId: string, userId: string) => Promise<LinearTeam[] | undefined>;
   fetchLinearTeamStates: (workspaceId: string, userId: string, teamId: string) => Promise<LinearState[] | undefined>;
   fetchLinearTeamIssueCount: (workspaceId: string, userId: string, teamId: string) => Promise<number | undefined>;
-  fetchLinearTeamDataSummary: (workspaceId: string, userId: string, teamId: string) => Promise<Record<string, number> | undefined>;
+  fetchLinearTeamDataSummary: (
+    workspaceId: string,
+    userId: string,
+    teamId: string
+  ) => Promise<Record<string, number> | undefined>;
   fetchAdditionalUsers: (
     workspaceId: string,
     userId: string,
@@ -152,7 +156,9 @@ export class LinearDataStore implements ILinearDataStore {
    * @param { string } teamId
    * @returns { Record<string, number> }
    */
-  getLinearDataSummaryByTeamId = computedFn((teamId: string): Record<string, number> => this.linearDataSummary[teamId] || {});
+  getLinearDataSummaryByTeamId = computedFn(
+    (teamId: string): Record<string, number> => this.linearDataSummary[teamId] || {}
+  );
 
   // actions
   /**

@@ -26,7 +26,10 @@ export const EntityForm: FC<TEntityForm> = observer((props) => {
   // props
   const { value, handleChange } = props;
   // hooks
-  const { data: { gitlabEntityIds, gitlabEntityById }, entityConnection: { entityConnectionIds, entityConnectionById } } = useGitlabIntegration();
+  const {
+    data: { gitlabEntityIds, gitlabEntityById },
+    entityConnection: { entityConnectionIds, entityConnectionById },
+  } = useGitlabIntegration();
   const { t } = useTranslation();
 
   // existing connections

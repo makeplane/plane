@@ -53,7 +53,9 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
 
   return (
     <div className="space-y-2">
-      <div className="text-sm text-custom-text-200">{t("importers.select_service_project", { "serviceName": "Asana" })}</div>
+      <div className="text-sm text-custom-text-200">
+        {t("importers.select_service_project", { serviceName: "Asana" })}
+      </div>
       {isLoading && (!asanaProjects || asanaProjects.length === 0) ? (
         <Loader>
           <Loader.Item height="28px" width="100%" />
@@ -67,7 +69,11 @@ export const ConfigureAsanaSelectProject: FC<TConfigureAsanaSelectProject> = obs
             data: project,
           }))}
           value={value}
-          placeHolder={isLoading ? t("importers.loading_service_projects", { "serviceName": "Asana" }) : t("importers.select_service_project", { "serviceName": "Asana" })}
+          placeHolder={
+            isLoading
+              ? t("importers.loading_service_projects", { serviceName: "Asana" })
+              : t("importers.select_service_project", { serviceName: "Asana" })
+          }
           onChange={(value: string | undefined) => handelData(value)}
           queryExtractor={(option) => option.name}
           disabled={!workspaceGid || isLoading}

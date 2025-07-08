@@ -26,15 +26,17 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
   shouldParse(node: HTMLElement): boolean {
     return !!(
       // Collapsible containers
-      (node.tagName === "DIV" && node.getAttribute("class")?.includes("expand-container")) ||
-      // Decision lists
-      (node.tagName === "UL" && node.getAttribute("class")?.includes("decision-list")) ||
-      // Panels (excluding code panels)
-      (node.tagName === "DIV" &&
-        node.getAttribute("class")?.includes("panel") &&
-        !node.getAttribute("class")?.includes("code")) ||
-      // Information macros
-      (node.tagName === "DIV" && node.getAttribute("class")?.includes("confluence-information-macro"))
+      (
+        (node.tagName === "DIV" && node.getAttribute("class")?.includes("expand-container")) ||
+        // Decision lists
+        (node.tagName === "UL" && node.getAttribute("class")?.includes("decision-list")) ||
+        // Panels (excluding code panels)
+        (node.tagName === "DIV" &&
+          node.getAttribute("class")?.includes("panel") &&
+          !node.getAttribute("class")?.includes("code")) ||
+        // Information macros
+        (node.tagName === "DIV" && node.getAttribute("class")?.includes("confluence-information-macro"))
+      )
     );
   }
 
@@ -62,9 +64,11 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
     if (node.tagName === "UL" && node.getAttribute("class")?.includes("decision-list")) {
       return EConfluenceCalloutType.DECISION_LIST;
     }
-    if (node.tagName === "DIV" &&
+    if (
+      node.tagName === "DIV" &&
       node.getAttribute("class")?.includes("panel") &&
-      !node.getAttribute("class")?.includes("code")) {
+      !node.getAttribute("class")?.includes("code")
+    ) {
       return EConfluenceCalloutType.PANEL;
     }
     if (node.tagName === "DIV" && node.getAttribute("class")?.includes("confluence-information-macro")) {
@@ -79,7 +83,7 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
 
     const config: CalloutConfig = {
       icon: "ChevronDown",
-      color: "#6d7b8a"
+      color: "#6d7b8a",
     };
 
     return this.createPlaneCallout(content, config);
@@ -91,7 +95,7 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
 
     const config: CalloutConfig = {
       icon: "CornerUpRight",
-      color: "#6d7b8a"
+      color: "#6d7b8a",
     };
 
     return this.createPlaneCallout(decisionList, config);
@@ -104,7 +108,7 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
     const config: CalloutConfig = {
       icon: "Info",
       color: "#6d7b8a",
-      background: "purple"
+      background: "purple",
     };
 
     return this.createPlaneCallout(panel, config);
@@ -156,4 +160,3 @@ export class ConfluenceCalloutParserExtension implements IParserExtension {
     }
   }
 }
-

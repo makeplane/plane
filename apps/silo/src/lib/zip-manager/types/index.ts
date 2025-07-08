@@ -6,16 +6,16 @@ export type TZipFileNode = {
   type: EZipNodeType;
   path: string;
   children?: TZipFileNode[];
-}
+};
 
 export type TZipManagerOptions = {
-  type: 'local' | 's3';
+  type: "local" | "s3";
   path?: string;
   bucket?: string;
   s3Client?: S3Client;
-}
+};
 
 export enum EZipNodeType {
-  FILE = 'file',
-  DIRECTORY = 'directory',
+  FILE = "file",
+  DIRECTORY = "directory",
 }

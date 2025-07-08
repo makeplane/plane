@@ -182,7 +182,9 @@ class IssueTypeAPIEndpoint(BaseAPIView):
                 and get_boolean_value(request.data.get("is_active")) is False
             ):
                 return Response(
-                    {"error": "Default work item type's is_active field cannot be false"},
+                    {
+                        "error": "Default work item type's is_active field cannot be false"
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

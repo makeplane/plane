@@ -17,7 +17,6 @@ export function smoothCursorPlugin({ isEditable = true } = {}): Plugin {
   let lastFewTypingSpeeds: number[] = [];
   let lastTypeTime = 0;
 
-
   // Initialize cursor
   if (smoothCursor) {
     smoothCursor.className = PROSEMIRROR_SMOOTH_CURSOR_CLASS;

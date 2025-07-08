@@ -6,5 +6,5 @@ export const replaceMentionedGlUsers = (
   text: string,
   workspaceSlug: string,
   userMap: Record<string, string>,
-  planeUsers: PlaneUser[],
+  planeUsers: PlaneUser[]
 ) => text;

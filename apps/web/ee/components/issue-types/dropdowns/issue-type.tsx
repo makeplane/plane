@@ -4,7 +4,7 @@ import { CustomSearchSelect, LayersIcon, Loader } from "@plane/ui";
 // ce imports
 import { TIssueTypeDropdownVariant } from "@/ce/components/issues";
 // helpers
-import { cn  } from "@plane/utils";
+import { cn } from "@plane/utils";
 // plane web types
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
 // plane web hooks

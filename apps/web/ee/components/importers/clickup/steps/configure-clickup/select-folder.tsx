@@ -30,7 +30,12 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
     workspace,
     user,
     handleSyncJobConfig,
-    data: { fetchClickUpFolders, getClickUpFolderById, getClickUpFolderIdsBySpaceId, clickUpFolders: clickUpFoldersData },
+    data: {
+      fetchClickUpFolders,
+      getClickUpFolderById,
+      getClickUpFolderIdsBySpaceId,
+      clickUpFolders: clickUpFoldersData,
+    },
   } = useClickUpImporter();
   const { t } = useTranslation();
 
@@ -38,9 +43,10 @@ export const ConfigureClickUpSelectFolder: FC<TConfigureClickUpSelectFolder> = o
   const workspaceId = workspace?.id || undefined;
   const userId = user?.id || undefined;
   const clickUpFolderIds = spaceId ? getClickUpFolderIdsBySpaceId(spaceId) : [];
-  const clickUpFolders = spaceId ? getClickUpFolderIdsBySpaceId(spaceId)
-    .map((id) => (id ? getClickUpFolderById(spaceId, id) : undefined))
-    .filter((project) => project != undefined && project != null) as TClickUpFolder[]
+  const clickUpFolders = spaceId
+    ? (getClickUpFolderIdsBySpaceId(spaceId)
+        .map((id) => (id ? getClickUpFolderById(spaceId, id) : undefined))
+        .filter((project) => project != undefined && project != null) as TClickUpFolder[])
     : [];
 
   // Add useEffect to handle prefilling
