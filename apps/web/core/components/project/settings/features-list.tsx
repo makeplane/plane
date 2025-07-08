@@ -2,12 +2,13 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
 // hooks
 import { SettingsHeading } from "@/components/settings";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject, useUser } from "@/hooks/store";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace";
@@ -37,6 +38,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
+
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {
@@ -47,6 +49,14 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         title: "Error!",
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
+    });
+    updateProjectPromise.then(() => {
+      captureSuccess({
+        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
+        payload: {
+          feature_key: featureKey,
+        },
+      });
     });
   };
 
