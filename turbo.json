@@ -26,6 +26,7 @@
       "outputs": [".next/**", "dist/**", "out/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
