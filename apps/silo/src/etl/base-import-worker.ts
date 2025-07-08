@@ -6,7 +6,7 @@ import { captureException, logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, Store } from "@/worker/base";
-import { TBatch, UpdateEventType } from "@/worker/types";
+import { TBatch, TPaginationContext, UpdateEventType } from "@/worker/types";
 import { migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
@@ -18,7 +18,11 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
     this.store = store;
   }
 
-  abstract batches(job: TImportJob<TJobConfig>): Promise<TBatch<TSourceEntity>[]>;
+  abstract batches(
+    job: TImportJob<TJobConfig>,
+    paginationContext?: TPaginationContext,
+    headers?: TaskHeaders
+  ): Promise<TBatch<TSourceEntity>[]>;
   abstract transform(job: TImportJob<TJobConfig>, data: TSourceEntity[], meta: any): Promise<PlaneEntities[]>;
   abstract getJobData(jobId: string): Promise<TImportJob<TJobConfig>>;
 
@@ -74,6 +78,24 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             logger.info(
               `[${headers.route.toUpperCase()}][${headers.type.toUpperCase()}] Initiating job 🐼------------------- [${job.id.slice(0, 7)}]`
             );
+
+            // For ClickUp, we dispatch pull task instead of this
+            if (headers.route.toLowerCase() === "clickup" && job.source.toLowerCase() === "clickup") {
+              logger.info(`Dispatching pull task for ClickUp job 🐼 --->`, {
+                jobId: job.id,
+              });
+              headers.type = "pull";
+              await this.pushToQueue(headers, {
+                paginationContext: {
+                  page: 0,
+                  isLastPage: false,
+                },
+                meta: {},
+              });
+              return true;
+            }
+
+            // For other sources, we use the old way of pulling the data
             await this.update(headers.jobId, "PULLING", {});
             // eslint-disable-next-line no-case-declarations
             const batches = await this.batches(job);
@@ -97,6 +119,23 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               this.pushToQueue(headers, batch);
             }
 
+            return true;
+          case "pull":
+            logger.info(`[${headers.route.toUpperCase()}] Initiating pull task 🐼-------------------`, {
+              jobId: headers?.jobId,
+              page: data?.paginationContext?.page,
+              isLastPage: data?.paginationContext?.isLastPage,
+            });
+            if (data?.paginationContext?.page === 0) {
+              await this.update(headers.jobId, "PULLING", {});
+            }
+            // eslint-disable-next-line no-case-declarations
+            const paginatedBatches = await this.batches(job, data.paginationContext, headers);
+            // Push the paginated batches to the queue
+            for (const batch of paginatedBatches) {
+              headers.type = "transform";
+              await this.pushToQueue(headers, batch);
+            }
             return true;
           case "transform":
             logger.info(

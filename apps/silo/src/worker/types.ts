@@ -59,3 +59,13 @@ export interface MigrationController {
   push: (jobId: string, data: any[], meta: any) => Promise<void>;
   update: (jobId: string, stage: UpdateEventType, data: any) => Promise<void>;
 }
+
+export type TBatchPullResult<TSource> = {
+  sourceData: TSource;
+  paginationContext: TPaginationContext;
+};
+
+export type TPaginationContext = {
+  page: number;
+  isLastPage: boolean;
+};

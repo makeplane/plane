@@ -17,11 +17,14 @@ import { integrationConnectionHelper } from "@/helpers/integration-connection-he
 import { getJobCredentials, getJobData, resetJobIfStarted } from "@/helpers/job";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { logger } from "@/logger";
+import { TaskHeaders } from "@/types";
 import { importTaskManger } from "@/worker";
 import { MQ, Store } from "@/worker/base";
-import { TBatch } from "@/worker/types";
+import { TBatch, TPaginationContext, TBatchPullResult } from "@/worker/types";
 import { getClickUpClient } from "../helpers";
 import { ClickUpBulkTransformer } from "./transformers/etl";
+
+const CLICKUP_BATCH_SIZE = 100;
 
 export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClickUpEntity> {
   constructor(mq: MQ, store: Store) {
@@ -30,70 +33,6 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
 
   async getJobData(jobId: string): Promise<TImportJob<TClickUpConfig>> {
     return getJobData<TClickUpConfig>(jobId);
-  }
-
-  async pull(job: TImportJob<TClickUpConfig>): Promise<TClickUpEntity[]> {
-    await resetJobIfStarted(job);
-
-    const credential = await getJobCredentials(job);
-    const clickUpClient = getClickUpClient(credential);
-    const clickUpPullService = new ClickUpPullService(clickUpClient);
-
-    if (!job.config) {
-      return [];
-    }
-
-    const users = job.config.skipUserImport ? [] : await clickUpPullService.pullSpaceMembers(job.config.team.id);
-    const lists = await clickUpPullService.pullLists(job.config.folder.id);
-    const tasks = await clickUpPullService.pullTasks(job.config.team.id, job.config.folder.id);
-    const listsWithTasks = clickUpPullService.pullListsWithTasks(lists, tasks);
-    const uniqueTasks = getUniqueTasks(tasks);
-    // const taskIds = uniqueTasks.map((task) => task.id);
-    // const taskComments = await clickUpPullService.pullTasksComments(taskIds);
-    const taskComments: TClickUpTaskWithComments[] = [];
-    const tags = await clickUpPullService.pullTags(job.config.space.id);
-    const statuses = job.config?.statuses || [];
-    const priorities = job.config?.space?.features?.priorities?.enabled
-      ? job.config?.space?.features?.priorities?.priorities
-      : [];
-    const customTaskTypes = await clickUpPullService.pullCustomTaskTypes(job.config.team.id);
-    const customFieldsForTaskTypes = await clickUpPullService.pullCustomFieldsForTaskTypes(
-      job.config.folder.id,
-      customTaskTypes
-    );
-
-    // pull task relations
-    const tasksRelations = clickUpPullService.fetchTaskRelations(tasks);
-
-    // update the import job and report
-    await integrationConnectionHelper.updateImportJob({ job_id: job.id, relation_map: { issue: tasksRelations } });
-    await integrationConnectionHelper.updateImportReport({
-      report_id: job.report_id,
-      start_time: new Date().toISOString(),
-    });
-
-    const entities = {
-      users,
-      listsWithTasks,
-      tasks: uniqueTasks,
-      taskComments,
-      tags,
-      statuses,
-      priorities,
-      customTaskTypes,
-      customFieldsForTaskTypes,
-    };
-    const planeClient = await getPlaneAPIClient(credential, E_IMPORTER_KEYS.IMPORTER);
-    const clickUpBulkTransformer = new ClickUpBulkTransformer(job, entities, planeClient, clickUpClient, credential);
-
-    // verify availablity of states and plane project update the job config if required
-    const isStatesAndProjectAvailable = await clickUpBulkTransformer.verifyStatesAndProject();
-    if (!isStatesAndProjectAvailable) {
-      logger.info(`States and project not available, skipping transformation`, { jobId: job.id });
-      return [];
-    }
-
-    return [entities];
   }
 
   async transform(job: TImportJob<TClickUpConfig>, data: TClickUpEntity[]): Promise<PlaneEntities[]> {
@@ -132,12 +71,21 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     ];
   }
 
-  async batches(job: TImportJob<TClickUpConfig>): Promise<TBatch<TClickUpEntity>[]> {
-    const sourceData = await this.pull(job);
-    const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
+  async batches(
+    job: TImportJob<TClickUpConfig>,
+    paginationContext: TPaginationContext,
+    headers: TaskHeaders
+  ): Promise<TBatch<TClickUpEntity>[]> {
+    const batchSize = CLICKUP_BATCH_SIZE;
 
-    const data = sourceData[0];
+    // pull the data for the current page and page context for the next page
+    const { sourceData, paginationContext: currentPageData } = await this.pullInBatches(
+      job,
+      paginationContext,
+      headers
+    );
 
+    const data = sourceData;
     // Batch root level issues and flatten each batch
     const batchIssues = (issues: TClickUpTask[], batchSize: number): TClickUpTask[][] => {
       // Batch the issues
@@ -193,6 +141,7 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
             customFieldsForTaskTypes: data.customFieldsForTaskTypes.length,
           },
           phase: E_CLICKUP_IMPORT_PHASE.ISSUES,
+          isLastBatch: i === batches.length - 1 && currentPageData.isLastPage,
         },
         data: [
           {
@@ -209,6 +158,12 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
         ],
       });
     }
+
+    // Update the job with the batches count
+    await integrationConnectionHelper.incrementImportReportCount({
+      report_id: job.report_id,
+      total_batch_count: batches.length,
+    });
 
     return finalBatches;
   }
@@ -232,7 +187,7 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     });
     if (phase === E_CLICKUP_IMPORT_PHASE.ISSUES) {
       // check if the job is completed
-      if (isJobCompleted) {
+      if (isJobCompleted && isLastBatch) {
         // Dispatch clickup additional data importer job
         await importTaskManger.registerTask(
           {
@@ -260,5 +215,104 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
         await importTaskManger.registerTask({ route: "clickup", jobId, type: "finished" }, data);
       }
     }
+  }
+
+  private async pullInBatches(
+    job: TImportJob<TClickUpConfig>,
+    paginationContext: TPaginationContext,
+    headers: TaskHeaders
+  ): Promise<TBatchPullResult<TClickUpEntity>> {
+    const credential = await getJobCredentials(job);
+    const clickUpClient = getClickUpClient(credential);
+    const clickUpPullService = new ClickUpPullService(clickUpClient);
+
+    if (!job.config) {
+      logger.error(`Job config not found`, { jobId: job.id });
+      return {} as TBatchPullResult<TClickUpEntity>;
+    }
+
+    const users = job.config.skipUserImport ? [] : await clickUpPullService.pullSpaceMembers(job.config.team.id);
+    const lists = await clickUpPullService.pullLists(job.config.folder.id);
+    const page = paginationContext.page;
+    logger.info(`[CLICKUP] Pulling tasks for page ${page}`, { jobId: job.id });
+    const { last_page, tasks } = await clickUpPullService.pullTasksForFolderPaginated(
+      job.config.team.id,
+      job.config.folder.id,
+      page
+    );
+    const listsWithTasks = clickUpPullService.pullListsWithTasks(lists, tasks);
+    const uniqueTasks = getUniqueTasks(tasks);
+    // const taskIds = uniqueTasks.map((task) => task.id);
+    // const taskComments = await clickUpPullService.pullTasksComments(taskIds);
+    const taskComments: TClickUpTaskWithComments[] = [];
+    const tags = await clickUpPullService.pullTags(job.config.space.id);
+    const statuses = job.config?.statuses || [];
+    const priorities = job.config?.space?.features?.priorities?.enabled
+      ? job.config?.space?.features?.priorities?.priorities
+      : [];
+    const customTaskTypes = await clickUpPullService.pullCustomTaskTypes(job.config.team.id);
+    const customFieldsForTaskTypes = await clickUpPullService.pullCustomFieldsForTaskTypes(
+      job.config.folder.id,
+      customTaskTypes
+    );
+
+    // pull task relations
+    const tasksRelations = clickUpPullService.fetchTaskRelations(tasks);
+
+    // update the import job and report
+    await integrationConnectionHelper.updateImportJob({ job_id: job.id, relation_map: { issue: tasksRelations } });
+    await integrationConnectionHelper.updateImportReport({
+      report_id: job.report_id,
+      start_time: new Date().toISOString(),
+    });
+
+    const sourceData = {
+      users,
+      listsWithTasks,
+      tasks: uniqueTasks,
+      taskComments,
+      tags,
+      statuses,
+      priorities,
+      customTaskTypes,
+      customFieldsForTaskTypes,
+    };
+
+    // Verify states and project only for the first page
+    if (paginationContext.page === 0) {
+      const planeClient = await getPlaneAPIClient(credential, E_IMPORTER_KEYS.IMPORTER);
+      const clickUpBulkTransformer = new ClickUpBulkTransformer(
+        job,
+        sourceData,
+        planeClient,
+        clickUpClient,
+        credential
+      );
+
+      // verify availablity of states and plane project update the job config if required
+      const isStatesAndProjectAvailable = await clickUpBulkTransformer.verifyStatesAndProject();
+      if (!isStatesAndProjectAvailable) {
+        logger.error(`States and project not available, skipping transformation`, { jobId: job.id });
+        return {} as TBatchPullResult<TClickUpEntity>;
+      }
+    }
+
+    if (!last_page) {
+      headers.type = "pull";
+      await this.pushToQueue(headers, {
+        paginationContext: {
+          page: page + 1,
+          isLastPage: last_page,
+        },
+      });
+    }
+
+    return {
+      sourceData,
+      paginationContext: {
+        page: page + 1,
+        isLastPage: last_page,
+      },
+    };
   }
 }

@@ -368,6 +368,18 @@ class IntegrationConnectionHelper {
     return this.apiClient.importReport.getImportReport(report_id);
   }
 
+  async incrementImportReportCount({
+    report_id,
+    total_batch_count,
+  }: {
+    report_id: string;
+    total_batch_count: number;
+  }): Promise<TImportReport> {
+    return this.apiClient.importReport.incrementImportReportCount(report_id, {
+      total_batch_count,
+    });
+  }
+
   // import job
   async updateImportJob({
     job_id,

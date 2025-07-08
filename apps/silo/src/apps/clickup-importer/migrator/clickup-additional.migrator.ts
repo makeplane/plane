@@ -49,6 +49,8 @@ type TClickUpAdditionalPullData = {
   last_page: boolean;
 };
 
+const CLICKUP_ADDITIONAL_DATA_BATCH_SIZE = 100;
+
 export class ClickUpAdditionalDataMigrator extends TaskHandler {
   constructor(
     private readonly mq: MQ,
@@ -191,7 +193,7 @@ export class ClickUpAdditionalDataMigrator extends TaskHandler {
       page,
       isLastPage,
     });
-    const batchSize = env.BATCH_SIZE ? parseInt(env.BATCH_SIZE) : 40;
+    const batchSize = CLICKUP_ADDITIONAL_DATA_BATCH_SIZE;
     const batchIssues = (issues: TClickUpTask[], batchSize: number): TClickUpTask[][] => {
       if (batchSize <= 0) throw new Error("Batch size must be greater than 0");
 
