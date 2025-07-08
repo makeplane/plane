@@ -1,13 +1,14 @@
 # Python imports
-import boto3
-from django.conf import settings
 from django.utils import timezone
 import json
+from typing import Dict, Any, List
+import uuid
 
 # Django imports
 from django.db import IntegrityError
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
+
 
 # Third Party imports
 from rest_framework.response import Response
@@ -34,18 +35,108 @@ from plane.db.models import (
     State,
     Workspace,
     WorkspaceMember,
+    APIToken,
 )
 from plane.utils.cache import cache_response
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
+
+# EE imports
+from plane.ee.models import (
+    ProjectState,
+    ProjectAttribute,
+    ProjectFeature,
+    TeamspaceMember,
+    TeamspaceProject,
+)
+from plane.ee.utils.workspace_feature import (
+    WorkspaceFeatureContext,
+    check_workspace_feature,
+)
+from plane.ee.serializers.app.project import ProjectAttributeSerializer
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.ee.bgtasks.project_activites_task import project_activity
 
 
 class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
+
+    def get_teamspace_project_ids(self, request, slug):
+        # Check if user is part of any teamspace and that teamspace has projects
+        teamspace_project_ids = set()
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            user_id=request.user.id,
+            slug=slug,
+        ):
+            # Get all teamspace IDs where the user is a member
+            teamspace_ids = TeamspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug
+            ).values_list("team_space_id", flat=True)
+
+            # Get all project IDs that belong to those teamspaces
+            teamspace_project_ids = TeamspaceProject.objects.filter(
+                team_space_id__in=teamspace_ids
+            ).values_list("project_id", flat=True)
+        return teamspace_project_ids
+
+    def update_project_role(
+        self, project: Dict[str, Any], teamspace_project_ids: List[uuid.UUID]
+    ) -> Dict[str, Any]:
+        """
+        Update the role of a project based on the teamspace_project_ids.
+
+        Args:
+            project (Dict[str, Any]): The project to update.
+            teamspace_project_ids (List[uuid.UUID]): The list of teamspace project ids.
+
+        Returns:
+            Dict[str, Any]: The updated project.
+        """
+        if project["id"] in teamspace_project_ids:
+            project_member_role = project["member_role"]
+            if project_member_role:
+                project["member_role"] = max(project_member_role, ROLE.MEMBER.value)
+            else:
+                project["member_role"] = ROLE.MEMBER.value
+
+        return project
+
+    def update_project_member_role(
+        self, payload: List[Dict[str, Any]] | Dict[str, Any]
+    ) -> List[Dict[str, Any]] | Dict[str, Any]:
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.TEAMSPACES,
+            user_id=self.request.user.id,
+            slug=self.kwargs.get("slug"),
+        ):
+            ## Get all team ids where the user is a member
+            teamspace_ids = TeamspaceMember.objects.filter(
+                member=self.request.user, workspace__slug=self.kwargs.get("slug")
+            ).values_list("team_space_id", flat=True)
+
+            # Get all the projects in the respective teamspaces
+            teamspace_project_ids = TeamspaceProject.objects.filter(
+                team_space_id__in=teamspace_ids
+            ).values_list("project_id", flat=True)
+
+            if isinstance(payload, list):
+                for project in payload:
+                    if project["id"] in teamspace_project_ids:
+                        self.update_project_role(
+                            project=project, teamspace_project_ids=teamspace_project_ids
+                        )
+
+            else:
+                if payload["id"] in teamspace_project_ids:
+                    self.update_project_role(
+                        project=payload, teamspace_project_ids=teamspace_project_ids
+                    )
+        return payload
 
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
@@ -54,6 +145,13 @@ class ProjectViewSet(BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
             is_active=True,
         ).values("sort_order")
+
+        # EE: project_grouping starts
+        state_id = ProjectAttribute.objects.filter(
+            workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
+        ).values("state_id")[:1]
+        # EE: project_grouping ends
+
         return self.filter_queryset(
             super()
             .get_queryset()
@@ -72,20 +170,34 @@ class ProjectViewSet(BaseViewSet):
                 )
             )
             .annotate(
-                member_role=ProjectMember.objects.filter(
-                    project_id=OuterRef("pk"),
-                    member_id=self.request.user.id,
-                    is_active=True,
-                ).values("role")
-            )
-            .annotate(
                 anchor=DeployBoard.objects.filter(
                     entity_name="project",
                     entity_identifier=OuterRef("pk"),
                     workspace__slug=self.kwargs.get("slug"),
-                ).values("anchor")
+                ).values("anchor")[:1]
             )
             .annotate(sort_order=Subquery(sort_order))
+            # EE: project_grouping starts
+            .annotate(state_id=Subquery(state_id))
+            .annotate(
+                priority=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
+                ).values("priority")[:1]
+            )
+            .annotate(
+                start_date=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
+                ).values("start_date")[:1]
+            )
+            .annotate(
+                target_date=ProjectAttribute.objects.filter(
+                    workspace__slug=self.kwargs.get("slug"), project_id=OuterRef("pk")
+                ).values("target_date")[:1]
+            )
+            .prefetch_related(
+                "initiatives",
+            )
+            # EE: project_grouping ends
             .prefetch_related(
                 Prefetch(
                     "project_projectmember",
@@ -95,7 +207,6 @@ class ProjectViewSet(BaseViewSet):
                     to_attr="members_list",
                 )
             )
-            .distinct()
         )
 
     @allow_permission(
@@ -103,25 +214,48 @@ class ProjectViewSet(BaseViewSet):
     )
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        projects = self.get_queryset().order_by("sort_order", "name")
+        base_queryset = self.get_queryset().order_by("sort_order", "name")
+
+        # Get the projects in which the user is part of
         if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.GUEST.value,
         ).exists():
-            projects = projects.filter(
+            # For GUEST role: direct memberships + teamspace memberships
+            direct_projects = base_queryset.filter(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
             )
 
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(teamspace_projects)
+
+        # Get the projects in which the user is part of or the public projects
+        elif WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.MEMBER.value,
         ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
+            # For MEMBER role: direct memberships + public projects + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
             )
+
+            public_projects = base_queryset.filter(network=2)
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(public_projects, teamspace_projects)
+        else:
+            # For other roles, show all projects
+            projects = base_queryset
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
@@ -129,14 +263,19 @@ class ProjectViewSet(BaseViewSet):
                 request=request,
                 queryset=(projects),
                 on_results=lambda projects: ProjectListSerializer(
-                    projects, many=True
+                    projects, many=True, context={"request": request, "slug": slug}
                 ).data,
             )
 
         projects = ProjectListSerializer(
-            projects, many=True, fields=fields if fields else None
+            projects,
+            many=True,
+            fields=fields if fields else None,
+            context={"request": request, "slug": slug},
         ).data
-        return Response(projects, status=status.HTTP_200_OK)
+
+        payload = self.update_project_member_role(projects)
+        return Response(payload, status=status.HTTP_200_OK)
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
@@ -149,7 +288,7 @@ class ProjectViewSet(BaseViewSet):
             is_active=True,
         ).values("sort_order")
 
-        projects = (
+        base_queryset = (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .select_related(
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
@@ -163,8 +302,42 @@ class ProjectViewSet(BaseViewSet):
             )
             .annotate(inbox_view=F("intake_view"))
             .annotate(sort_order=Subquery(sort_order))
-            .distinct()
-        ).values(
+        )
+
+        if WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=5
+        ).exists():
+            # For role 5 (MEMBER): direct memberships + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(teamspace_projects)
+
+        elif WorkspaceMember.objects.filter(
+            member=request.user, workspace__slug=slug, is_active=True, role=15
+        ).exists():
+            # For role 15 (GUEST): direct memberships + public projects + teamspace memberships
+            direct_projects = base_queryset.filter(
+                project_projectmember__member=self.request.user,
+                project_projectmember__is_active=True,
+            )
+
+            public_projects = base_queryset.filter(network=2)
+
+            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
+            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+
+            projects = direct_projects.union(public_projects, teamspace_projects)
+        else:
+            # For other roles, show all projects
+            projects = base_queryset
+
+        projects = projects.values(
             "id",
             "name",
             "identifier",
@@ -187,39 +360,26 @@ class ProjectViewSet(BaseViewSet):
             "updated_by",
         )
 
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=5
-        ).exists():
-            projects = projects.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-
-        if WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=slug, is_active=True, role=15
-        ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
-            )
-        return Response(projects, status=status.HTTP_200_OK)
+        payload = self.update_project_member_role(list(projects))
+        return Response(payload, status=status.HTTP_200_OK)
 
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
     def retrieve(self, request, slug, pk):
-        project = (
-            self.get_queryset()
-            .filter(
+        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk)
+
+        # filter projects
+        project = project.filter(
+            Q(pk__in=self.get_teamspace_project_ids(request, slug))
+            | Q(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
             )
-            .filter(archived_at__isnull=True)
-            .filter(pk=pk)
-        ).first()
+        )
+
+        # projects
+        project = project.first()
 
         if project is None:
             return Response(
@@ -234,8 +394,11 @@ class ProjectViewSet(BaseViewSet):
             user_id=request.user.id,
         )
 
-        serializer = ProjectListSerializer(project)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = ProjectListSerializer(
+            project, context={"request": request, "slug": slug}
+        )
+        payload = self.update_project_member_role(serializer.data)
+        return Response(payload, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
@@ -322,7 +485,47 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
+                # validating the PROJECT_GROUPING feature flag is enabled
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.PROJECT_GROUPING,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                    default_value=False,
+                ):
+                    # validating the is_project_grouping_enabled workspace feature is enabled
+                    if check_workspace_feature(
+                        slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
+                    ):
+                        state_id = request.data.get("state_id", None)
+                        priority = request.data.get("priority", "none")
+                        start_date = request.data.get("start_date", None)
+                        target_date = request.data.get("target_date", None)
+
+                        if state_id is None:
+                            state_id = (
+                                ProjectState.objects.filter(
+                                    workspace=workspace, default=True
+                                )
+                                .values_list("id", flat=True)
+                                .first()
+                            )
+
+                        # also create project attributes
+                        _ = ProjectAttribute.objects.create(
+                            project_id=serializer.data.get("id"),
+                            state_id=state_id,
+                            priority=priority,
+                            start_date=start_date,
+                            target_date=target_date,
+                            workspace_id=workspace.id,
+                        )
+
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+
+                # Create the project feature
+                _ = ProjectFeature.objects.create(
+                    workspace_id=workspace.id, project_id=project.id
+                )
 
                 # Create the model activity
                 model_activity.delay(
@@ -335,8 +538,22 @@ class ProjectViewSet(BaseViewSet):
                     origin=base_host(request=request, is_app=True),
                 )
 
-                serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                project_activity.delay(
+                    type="project.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(project.id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
+                serializer = ProjectListSerializer(
+                    project, context={"request": request, "slug": slug}
+                )
+                payload = self.update_project_member_role(serializer.data)
+                return Response(payload, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
@@ -376,10 +593,14 @@ class ProjectViewSet(BaseViewSet):
 
             workspace = Workspace.objects.get(slug=slug)
 
-            project = Project.objects.get(pk=pk)
+            project = self.get_queryset().get(pk=pk)
+
             intake_view = request.data.get("inbox_view", project.intake_view)
             current_instance = json.dumps(
-                ProjectSerializer(project).data, cls=DjangoJSONEncoder
+                ProjectListSerializer(
+                    project, context={"request": request, "slug": slug}
+                ).data,
+                cls=DjangoJSONEncoder,
             )
             if project.archived_at:
                 return Response(
@@ -390,7 +611,7 @@ class ProjectViewSet(BaseViewSet):
             serializer = ProjectSerializer(
                 project,
                 data={**request.data, "intake_view": intake_view},
-                context={"workspace_id": workspace.id},
+                context={"workspace_id": workspace.id, "user_id": request.user.id},
                 partial=True,
             )
 
@@ -406,7 +627,45 @@ class ProjectViewSet(BaseViewSet):
                             project=project,
                             is_default=True,
                         )
+                    # Get the intake bot if it exists in the workspace
+                    api_token = APIToken.objects.filter(
+                        workspace__slug=slug,
+                        user__is_bot=True,
+                        user__bot_type="INTAKE_BOT",
+                    ).first()
 
+                    if api_token:
+                        ProjectMember.objects.get_or_create(
+                            project_id=pk,
+                            workspace_id=workspace.id,
+                            member_id=api_token.user_id,
+                            role=20,
+                        )
+
+                # EE: project_grouping starts
+                # validating the PROJECT_GROUPING feature flag is enabled
+                if check_workspace_feature_flag(
+                    feature_key=FeatureFlag.PROJECT_GROUPING,
+                    slug=slug,
+                    user_id=str(request.user.id),
+                    default_value=False,
+                ):
+                    # validating the is_project_grouping_enabled workspace feature is enabled
+                    if check_workspace_feature(
+                        slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
+                    ):
+                        project_attribute = (
+                            ProjectAttribute.objects.filter(project_id=project.id)
+                            .order_by("-created_at")
+                            .first()
+                        )
+                        if project_attribute is not None:
+                            project_attribute_serializer = ProjectAttributeSerializer(
+                                project_attribute, data=request.data, partial=True
+                            )
+                            if project_attribute_serializer.is_valid():
+                                project_attribute_serializer.save()
+                # EE: project_grouping ends
                 project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
                 model_activity.delay(
@@ -418,8 +677,22 @@ class ProjectViewSet(BaseViewSet):
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
-                serializer = ProjectListSerializer(project)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                project_activity.delay(
+                    type="project.activity.updated",
+                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    project_id=str(pk),
+                    current_instance=current_instance,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=request.META.get("HTTP_ORIGIN"),
+                )
+
+                serializer = ProjectListSerializer(
+                    project, context={"request": request}
+                )
+                payload = self.update_project_member_role(serializer.data)
+                return Response(payload, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         except IntegrityError as e:
@@ -484,9 +757,25 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = timezone.now()
         project.save()
-        UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"archived_at": str(timezone.now().date())}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        UserFavorite.objects.filter(
+            project_id=project_id, workspace__slug=slug
+        ).delete()
         return Response(
             {"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK
         )
@@ -494,8 +783,22 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        current_instance = json.dumps(
+            ProjectSerializer(project).data, cls=DjangoJSONEncoder
+        )
         project.archived_at = None
         project.save()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"archived_at": None}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -608,41 +911,29 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
     # Cache the below api for 24 hours
     @cache_response(60 * 60 * 24, user=False)
     def get(self, request):
-        files = []
-        if settings.USE_MINIO:
-            s3 = boto3.client(
-                "s3",
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        else:
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        params = {
-            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-            "Prefix": "static/project-cover/",
-        }
-
-        try:
-            response = s3.list_objects_v2(**params)
-            # Extracting file keys from the response
-            if "Contents" in response:
-                for content in response["Contents"]:
-                    if not content["Key"].endswith(
-                        "/"
-                    ):  # This line ensures we're only getting files, not "sub-folders"
-                        files.append(
-                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
-
-            return Response(files, status=status.HTTP_200_OK)
-        except Exception as e:
-            log_exception(e)
-            return Response([], status=status.HTTP_200_OK)
+        files = [
+            "https://cover-images.plane.so/project-covers/f2ea49f1-1a23-46c3-99e4-1f6185bff8fc.webp",
+            "https://cover-images.plane.so/project-covers/0fec1f5e-3a54-4260-beb1-25eb5de8fd87.webp",
+            "https://cover-images.plane.so/project-covers/05a7e2d0-c846-44df-abc2-99e14043dfb9.webp",
+            "https://cover-images.plane.so/project-covers/8c561535-6be5-4fb8-8ec1-0cba19507938.webp",
+            "https://cover-images.plane.so/project-covers/11cde8b7-f051-4a9d-a35e-45b475d757a2.webp",
+            "https://cover-images.plane.so/project-covers/27b12e3a-5e24-4ea9-b5ac-32caaf81a1c3.webp",
+            "https://cover-images.plane.so/project-covers/32d808af-650a-4228-9386-253d1a7c2a13.webp",
+            "https://cover-images.plane.so/project-covers/71dbaf8f-fd3c-4f9a-b342-309cf4f22741.webp",
+            "https://cover-images.plane.so/project-covers/322a58cb-e019-4477-b3eb-e2679d4a2b47.webp",
+            "https://cover-images.plane.so/project-covers/061042d0-cf7b-42eb-8fb5-e967b07e9e57.webp",
+            "https://cover-images.plane.so/project-covers/683b5357-b5f1-42c7-9a87-e7ff6be0eea1.webp",
+            "https://cover-images.plane.so/project-covers/51495ec3-266f-41e8-9360-589903fd4f56.webp",
+            "https://cover-images.plane.so/project-covers/1031078f-28d7-496f-b92b-dec3ea83519d.webp",
+            "https://cover-images.plane.so/project-covers/a65e3aed-4a88-4ecf-a9f7-b74d0e4a1f03.webp",
+            "https://cover-images.plane.so/project-covers/ab31a6ba-51e2-44ad-a00d-e431b4cf865f.webp",
+            "https://cover-images.plane.so/project-covers/adb8a78f-da02-4b68-82ca-fa34ce40768b.webp",
+            "https://cover-images.plane.so/project-covers/c29d7097-12dc-4ae0-a785-582e2ceadc29.webp",
+            "https://cover-images.plane.so/project-covers/d7a7e86d-fe5b-4256-8625-d1c6a39cdde9.webp",
+            "https://cover-images.plane.so/project-covers/d27444ac-b76e-4c8f-b272-6a6b00865869.webp",
+            "https://cover-images.plane.so/project-covers/e7fb2595-987e-4f0c-b251-62d071f501fa.webp",
+        ]
+        return Response(files, status=status.HTTP_200_OK)
 
 
 class DeployBoardViewSet(BaseViewSet):
@@ -685,5 +976,36 @@ class DeployBoardViewSet(BaseViewSet):
 
         project_deploy_board.save()
 
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"deploy_board": True}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps({"deploy_board": False}),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, slug, project_id, pk):
+        project_deploy_board = DeployBoard.objects.get(
+            entity_name="project",
+            entity_identifier=project_id,
+            project_id=project_id,
+            pk=pk,
+        )
+        project_deploy_board.delete()
+        project_activity.delay(
+            type="project.activity.updated",
+            requested_data=json.dumps({"deploy_board": False}),
+            actor_id=str(request.user.id),
+            project_id=str(project_id),
+            current_instance=json.dumps({"deploy_board": True}),
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

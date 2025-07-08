@@ -6,6 +6,7 @@ import type { TTextAlign } from "@/extensions";
 import type { IMarking } from "@/helpers/scroll-to-node";
 // types
 import type {
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -37,6 +38,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -47,6 +49,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment"
   | "emoji";
 
@@ -98,10 +101,26 @@ export type EditorReadOnlyRefApi = {
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
 };
 
+// title ref api
+export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
+  setEditorValue: EditorReadOnlyRefApi["setEditorValue"];
+}
+
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
+  editorHasSynced: () => boolean;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
   getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
@@ -135,6 +154,7 @@ export interface IEditorProps {
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
+  isSmoothCursorEnabled: boolean;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -156,6 +176,20 @@ export interface ICollaborativeDocumentEditorProps
   embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
+  user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
+}
+
+export interface IDocumentEditor extends Omit<IEditorProps, "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  embedHandler: TEmbedConfig;
   user: TUserDetails;
 }
 

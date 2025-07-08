@@ -16,7 +16,6 @@ export const SettingsHeader = observer(() => {
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
   const { isScrolled } = useUserSettings();
-  // resolved theme
   const { resolvedTheme } = useTheme();
   // redirect url for normal mode
 
