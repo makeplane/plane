@@ -60,9 +60,106 @@ class TestContainsURL:
     def test_contains_url_edge_cases(self):
         """Test contains_url with edge cases"""
         assert contains_url("example.c") is False  # TLD too short
-        assert contains_url("999.999.999.999") is True
+        assert contains_url("999.999.999.999") is False  # Invalid IP (octets > 255)
         assert contains_url("just-a-hyphen") is False  # No domain
-        assert contains_url("www.") is True  # Incomplete www
+        assert (
+            contains_url("www.") is False
+        )  # Incomplete www - needs at least one char after dot
+
+    def test_contains_url_length_limit_under_1000(self):
+        """Test contains_url with input under 1000 characters containing URLs"""
+        # Create a string under 1000 characters with a URL
+        text_with_url = "a" * 970 + " https://example.com"  # 970 + 1 + 19 = 990 chars
+        assert len(text_with_url) < 1000
+        assert contains_url(text_with_url) is True
+
+        # Test with exactly 1000 characters
+        text_exact_1000 = "a" * 981 + "https://example.com"  # 981 + 19 = 1000 chars
+        assert len(text_exact_1000) == 1000
+        assert contains_url(text_exact_1000) is True
+
+    def test_contains_url_length_limit_over_1000(self):
+        """Test contains_url with input over 1000 characters returns False"""
+        # Create a string over 1000 characters with a URL
+        text_with_url = "a" * 982 + "https://example.com"  # 982 + 19 = 1001 chars
+        assert len(text_with_url) > 1000
+        assert contains_url(text_with_url) is False
+
+        # Test with much longer input
+        long_text_with_url = "a" * 5000 + " https://example.com"
+        assert contains_url(long_text_with_url) is False
+
+    def test_contains_url_length_limit_exactly_1000(self):
+        """Test contains_url with input exactly 1000 characters"""
+        # Test with exactly 1000 characters without URL
+        text_no_url = "a" * 1000
+        assert len(text_no_url) == 1000
+        assert contains_url(text_no_url) is False
+
+        # Test with exactly 1000 characters with URL at the end
+        text_with_url = "a" * 981 + "https://example.com"  # 981 + 19 = 1000 chars
+        assert len(text_with_url) == 1000
+        assert contains_url(text_with_url) is True
+
+    def test_contains_url_line_length_scenarios(self):
+        """Test contains_url with realistic line length scenarios"""
+        # Test with multiline input where total is under 1000 but we test line processing
+        # Short lines with URL
+        multiline_short = "Line 1\nLine 2 with https://example.com\nLine 3"
+        assert contains_url(multiline_short) is True
+
+        # Multiple lines under total limit
+        multiline_text = (
+            "a" * 200 + "\n" + "b" * 200 + "https://example.com\n" + "c" * 200
+        )
+        assert len(multiline_text) < 1000
+        assert contains_url(multiline_text) is True
+
+    def test_contains_url_total_length_vs_line_length(self):
+        """Test the interaction between total length limit and line processing"""
+        # Test that total length limit takes precedence
+        # Even if individual lines would be processed, total > 1000 means immediate False
+        over_limit_text = "a" * 1001  # No URL, but over total limit
+        assert contains_url(over_limit_text) is False
+
+        # Test that under total limit, line processing works normally
+        under_limit_with_url = "a" * 900 + "https://example.com"  # 919 chars total
+        assert len(under_limit_with_url) < 1000
+        assert contains_url(under_limit_with_url) is True
+
+    def test_contains_url_multiline_mixed_lengths(self):
+        """Test contains_url with multiple lines of different lengths"""
+        # Test realistic multiline scenario under 1000 chars total
+        multiline_text = (
+            "Short line\n"
+            + "a" * 400
+            + "https://example.com\n"  # Line with URL
+            + "b" * 300  # Another line
+        )
+        assert len(multiline_text) < 1000
+        assert contains_url(multiline_text) is True
+
+        # Test multiline without URLs
+        multiline_no_url = "Short line\n" + "a" * 400 + "\n" + "b" * 300
+        assert len(multiline_no_url) < 1000
+        assert contains_url(multiline_no_url) is False
+
+    def test_contains_url_edge_cases_with_length_limits(self):
+        """Test contains_url edge cases related to length limits"""
+        # Empty string
+        assert contains_url("") is False
+
+        # Very short string with URL
+        assert contains_url("http://a.co") is True
+
+        # String with newlines and mixed content
+        mixed_content = "Line 1\nLine 2 with https://example.com\nLine 3"
+        assert contains_url(mixed_content) is True
+
+        # String with many newlines under total limit
+        many_newlines = "\n" * 500 + "https://example.com"
+        assert len(many_newlines) < 1000
+        assert contains_url(many_newlines) is True
 
 
 @pytest.mark.unit
