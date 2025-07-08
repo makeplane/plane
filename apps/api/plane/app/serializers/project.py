@@ -47,12 +47,11 @@ class ProjectSerializer(BaseSerializer):
         return project
 
     def update(self, instance, validated_data):
-        initiative_ids = validated_data.pop("initiative_ids", [])
-
+        initiative_ids = validated_data.pop("initiative_ids", None)
         identifier = validated_data.get("identifier", "").strip().upper()
         workspace_id = self.context["workspace_id"]
 
-        if initiative_ids:
+        if initiative_ids is not None:
             InitiativeProject.objects.filter(project_id=instance.id).delete()
 
             InitiativeProject.objects.bulk_create(
@@ -182,7 +181,6 @@ class ProjectDetailSerializer(BaseSerializer):
 
 
 class ProjectMemberSerializer(BaseSerializer):
-
     class Meta:
         model = ProjectMember
         fields = "__all__"
