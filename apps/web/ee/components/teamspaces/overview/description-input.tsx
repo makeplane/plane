@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -50,6 +50,8 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
     id: teamspaceId,
     description_html: initialValue,
   });
+  // ref to track if there are unsaved changes
+  const hasUnsavedChanges = useRef(false);
 
   const setIsSubmitting = (loaderType: TNameDescriptionLoader) => {
     updateTeamspaceNameDescriptionLoader(teamspaceId, loaderType);
@@ -80,15 +82,40 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
       id: teamspaceId,
       description_html: initialValue === "" ? "<p></p>" : initialValue,
     });
+    hasUnsavedChanges.current = false;
   }, [initialValue, teamspaceId, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => {
+        setIsSubmitting("submitted");
+        hasUnsavedChanges.current = false;
+      });
     }, 1500),
     [handleSubmit, teamspaceId]
+  );
+
+  // Save on unmount if there are unsaved changes
+  useEffect(
+    () => () => {
+      debouncedFormSave.cancel();
+
+      if (hasUnsavedChanges.current) {
+        handleSubmit(handleDescriptionFormSubmit)()
+          .catch((error) => {
+            console.error("Failed to save description on unmount:", error);
+          })
+          .finally(() => {
+            setIsSubmitting("submitted");
+            hasUnsavedChanges.current = false;
+          });
+      }
+    },
+    // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   return (
@@ -109,6 +136,7 @@ export const TeamspaceDescriptionInput: FC<TeamspaceDescriptionInputProps> = obs
               onChange={(description_json: object, description_html: string) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
+                hasUnsavedChanges.current = true;
                 setValue("description_json", description_json);
                 debouncedFormSave();
               }}

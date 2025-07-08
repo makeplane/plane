@@ -1,11 +1,11 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState, useRef } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import type { EditorReadOnlyRefApi, EditorRefApi, TExtensions } from "@plane/editor";
+import type { EditorRefApi, TExtensions } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -61,6 +61,8 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
     id: itemId,
     description_html: initialValue,
   });
+  // ref to track if there are unsaved changes
+  const hasUnsavedChanges = useRef(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const { uploadEditorAsset } = useEditorAsset();
@@ -93,6 +95,8 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
       id: itemId,
       description_html: initialValue === "" ? "<p></p>" : initialValue,
     });
+    // Reset unsaved changes flag when form is reset
+    hasUnsavedChanges.current = false;
   }, [initialValue, itemId, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
@@ -100,9 +104,33 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => {
+        setIsSubmitting("submitted");
+        hasUnsavedChanges.current = false;
+      });
     }, 1500),
     [handleSubmit, itemId]
+  );
+
+  // Save on unmount if there are unsaved changes
+  useEffect(
+    () => () => {
+      debouncedFormSave.cancel();
+
+      if (hasUnsavedChanges.current) {
+        handleSubmit(handleDescriptionFormSubmit)()
+          .catch((error) => {
+            console.error("Failed to save description on unmount:", error);
+          })
+          .finally(() => {
+            setIsSubmitting("submitted");
+            hasUnsavedChanges.current = false;
+          });
+      }
+    },
+    // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   return (
@@ -126,6 +154,7 @@ export const DescriptionInput: FC<DescriptionInputProps> = observer((props) => {
               onChange={(_description: object, description_html: string) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
+                hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}
               placeholder={

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -44,6 +44,8 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
   const { uploadEditorAsset } = useEditorAsset();
   // plane hooks
   const { t } = useTranslation();
+  // ref to track if there are unsaved changes
+  const hasUnsavedChanges = useRef(false);
 
   const { handleSubmit, reset, control } = useForm<TProject>({
     defaultValues: {
@@ -71,6 +73,8 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
       id: project.id,
       description_html: initialValue === "" ? "<p></p>" : initialValue,
     });
+    // Reset unsaved changes flag when form is reset
+    hasUnsavedChanges.current = false;
   }, [initialValue, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
@@ -78,9 +82,33 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => {
+        setIsSubmitting("submitted");
+        hasUnsavedChanges.current = false;
+      });
     }, 1500),
     [handleSubmit, project.id]
+  );
+
+  // Save on unmount if there are unsaved changes
+  useEffect(
+    () => () => {
+      debouncedFormSave.cancel();
+
+      if (hasUnsavedChanges.current) {
+        handleSubmit(handleDescriptionFormSubmit)()
+          .catch((error) => {
+            console.error("Failed to save description on unmount:", error);
+          })
+          .finally(() => {
+            setIsSubmitting("submitted");
+            hasUnsavedChanges.current = false;
+          });
+      }
+    },
+    // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   return (
@@ -129,6 +157,7 @@ export const ProjectDescriptionInput: FC<ProjectDescriptionInputProps> = observe
                 onChange={(_description: object, description_html: string) => {
                   setIsSubmitting("submitting");
                   onChange(description_html);
+                  hasUnsavedChanges.current = true;
                   debouncedFormSave();
                 }}
                 placeholder={
