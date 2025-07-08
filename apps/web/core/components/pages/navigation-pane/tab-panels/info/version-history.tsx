@@ -34,7 +34,7 @@ const VersionHistoryItem = observer((props: VersionHistoryItemProps) => {
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
-  const versionCreator = getUserDetails(version.created_by);
+  const versionCreator = getUserDetails(version.owned_by);
   // translation
   const { t } = useTranslation();
 

@@ -18,6 +18,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueComment, ProjectMember, CommentReaction, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
+from plane.bgtasks.webhook_task import model_activity
 
 
 class IssueCommentViewSet(BaseViewSet):
@@ -90,6 +91,16 @@ class IssueCommentViewSet(BaseViewSet):
                 notification=True,
                 origin=base_host(request=request, is_app=True),
             )
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue_comment",
+                model_id=str(serializer.data["id"]),
+                requested_data=request.data,
+                current_instance=None,
+                actor_id=request.user.id,
+                slug=slug,
+                origin=base_host(request=request, is_app=True),
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -122,6 +133,16 @@ class IssueCommentViewSet(BaseViewSet):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
                 notification=True,
+                origin=base_host(request=request, is_app=True),
+            )
+            # Send the model activity
+            model_activity.delay(
+                model_name="issue_comment",
+                model_id=str(pk),
+                requested_data=request.data,
+                current_instance=current_instance,
+                actor_id=request.user.id,
+                slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)

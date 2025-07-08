@@ -1,6 +1,6 @@
 {
   "name": "@plane/types",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
@@ -20,11 +20,12 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsc --noEmit && tsup",
+    "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
-    "check:lint": "eslint src --ext .ts,.tsx",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md}\"",
-    "fix:lint": "eslint src --ext .ts,.tsx --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",

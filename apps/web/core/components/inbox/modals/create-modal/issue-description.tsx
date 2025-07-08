@@ -62,6 +62,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
 
   return (
     <RichTextEditor
+      editable
       id="inbox-modal-editor"
       initialValue={!data?.description_html || data?.description_html === "" ? "<p></p>" : data?.description_html}
       ref={editorRef}

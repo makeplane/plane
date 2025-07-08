@@ -206,7 +206,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
   return (
     <>
-      <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
+      <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
       <Disclosure key={`${project.id}_${URLProjectId}`} defaultOpen={isProjectListOpen} as="div">
         <div

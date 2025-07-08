@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
@@ -112,6 +113,9 @@ export class UserStore implements IUserStore {
           status: "user-fetch-error",
           message: "Failed to fetch current user",
         };
+        if (error instanceof AxiosError && error.status === 401) {
+          this.data = undefined;
+        }
       });
       throw error;
     }

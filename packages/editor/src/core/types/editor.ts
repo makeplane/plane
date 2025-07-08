@@ -143,9 +143,11 @@ export interface IEditorProps {
 }
 
 export type ILiteTextEditorProps = IEditorProps;
-export interface IRichTextEditorProps extends IEditorProps {
+
+export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
-}
+  editable: boolean;
+};
 
 export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
@@ -177,8 +179,6 @@ export interface IReadOnlyEditorProps
 }
 
 export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
-
-export type IRichTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
   embedHandler: TEmbedConfig;
