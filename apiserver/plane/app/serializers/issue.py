@@ -667,7 +667,7 @@ class IssueInboxSerializer(DynamicBaseSerializer):
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property", "id"]
+        fields = ["key", "value", "data_type", "int_value", "bool_value", "date_value", "issue_type_custom_property", "id"]
         read_only_fields = [
             "id",
             "issue",
@@ -718,6 +718,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "vendor_code",
             "worker_code",
             "worker_name",
+            "business_type",
             "source",
             "priority",
             "start_date",

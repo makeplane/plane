@@ -70,6 +70,8 @@ export type TIssueOrderByOptions =
   | "-worker_code"
   | "worker_name"
   | "-worker_name"
+  | "business_type"
+  | "-business_type"
   | string;
 
 export type TIssueGroupingFilters = "active" | "backlog" | null;
@@ -111,7 +113,8 @@ export type TIssueParams =
   | "vendor_name"
   | "custom_properties"
   | "hub_code"
-  | "hub_name";
+  | "hub_name"
+  | "business_type"
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -140,6 +143,7 @@ export interface IIssueFilterOptions {
   reference_number?: string[] | null;
   vendor_code?: string[] | null;
   vendor_name?: string[] | null;
+  business_type?: string[] | null;
   custom_properties?: string[] | null;
 }
 
@@ -183,6 +187,7 @@ export interface IIssueDisplayProperties {
   vendor_code?: boolean;
   worker_code?: boolean;
   worker_name?: boolean;
+  business_type?: boolean;
   custom_properties?: Record<string, boolean>;
   [key: string]: boolean;
 }

@@ -185,13 +185,14 @@ export class IssueStore implements IIssueStore {
       hub_code: issue?.hub_code, 
       hub_name: issue?.hub_name,
       customer_code: issue?.customer_code, 
-      customer_name: issue?.customer_name,
+      customer_name: issue?.customer_name, 
       reference_number: issue?.reference_number, 
       trip_reference_number: issue?.trip_reference_number, 
       vendor_code: issue?.vendor_code, 
-      vendor_name: issue?.vendor_name,
+      vendor_name: issue?.vendor_name, 
       worker_code: issue?.worker_code,
-      worker_name: issue?.worker_name
+      worker_name: issue?.worker_name,
+      business_type: issue?.business_type,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

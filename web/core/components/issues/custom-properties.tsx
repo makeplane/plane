@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
+import { Input } from "@plane/ui";
 
 export type CustomProperty = {
   key: string;
@@ -9,6 +10,8 @@ export type CustomProperty = {
   is_required: boolean;
   name: string;
   id: string;
+  data_type: string;
+  is_active: boolean;
 };
 
 type CustomPropertiesProps = {
@@ -58,20 +61,22 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     }
   }, [customProperties]);
 
-  const mergedCustomProperties = issueTypeCustomProperties.map((customProp) => {
-    const customProperty = localCustomProperties?.find(
-      (prop) => prop.key === customProp.name
-    );
+  const mergedCustomProperties = issueTypeCustomProperties
+    .filter((customProp) => customProp.is_active)
+    .map((customProp) => {
+      const customProperty = localCustomProperties?.find((prop) => prop.key === customProp.name);
 
-    return {
-      key: customProp.name,
-      value: customProperty ? customProperty.value : "",
-      issue_type_custom_property: customProp.id,
-      is_required: customProp.is_required,
-      id: customProperty ? customProperty.id : "",
-      name: customProp.name,
-    };
-  });
+      return {
+        key: customProp.name,
+        value: customProperty ? customProperty.value : "",
+        issue_type_custom_property: customProp.id,
+        is_required: customProp.is_required,
+        id: customProperty ? customProperty.id : "",
+        name: customProp.name,
+        data_type: customProp.data_type,
+        is_active: customProp.is_active,
+      };
+    });
 
   if (error) {
     return <div className="text-red-500 text-sm mt-1">{error}</div>;
@@ -127,14 +132,49 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setLocalError(null);
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       setValue(e.target.value);
       setLocalError(null);
     };
 
-    return (
-      <div>
-        <input
+    const inputComponents: Record<string, React.JSX.Element> = {
+      date: (
+        <Input
+          type="date"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          placeholder={`Add ${property.key}`}
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        />
+      ),
+      boolean: (
+        <select
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        >
+          <option value="">Select {property.key}</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      ),
+      number: (
+        <Input
+          type="number"
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          autoFocus
+          placeholder={`Add ${property.key}`}
+          className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+        />
+      ),
+      text: (
+        <Input
           type="text"
           value={value}
           onChange={handleChange}
@@ -143,6 +183,12 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           placeholder={`Add ${property.key}`}
           className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
         />
+      ),
+    };
+    
+    return (
+      <div>
+        {inputComponents[property?.data_type as keyof typeof inputComponents] || inputComponents.text}
         {localError && (
           <div className="text-red-500 text-sm mt-1">{localError}</div>
         )}

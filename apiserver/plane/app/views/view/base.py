@@ -49,7 +49,7 @@ from plane.utils.grouper import (
     issue_on_results,
     issue_queryset_grouper,
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from plane.utils.constants import ALLOWED_CUSTOM_PROPERTY_WORKSPACE_MAP
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import (
@@ -65,7 +65,7 @@ from plane.db.models import (
 class IssueCustomPropertySerializer(BaseSerializer):
     class Meta:
         model = IssueCustomProperty
-        fields = ["key", "value", "issue_type_custom_property"]
+        fields = ["key", "value", "issue_type_custom_property", "data_type"]
         read_only_fields = [
             "id",
             "issue",
@@ -210,6 +210,7 @@ class WorkspaceViewViewSet(BaseViewSet):
 class WorkspaceViewIssuesViewSet(BaseViewSet):
     def get_queryset(self, filters):
         custom_properties = filters.get("custom_properties", {})
+        custom_filters = build_custom_property_q_objects(custom_properties)
         return (
             Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
@@ -308,16 +309,7 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 )
             )
             .filter(
-                *[
-                    Q(
-                        id__in=IssueCustomProperty.objects.filter(
-                            issue_id=OuterRef("id"),
-                            key=group_key,
-                            value__in=values
-                        ).values("issue_id")
-                    )
-                    for group_key, values in custom_properties.items()
-                ]
+                *custom_filters
             )
         )
 
@@ -344,12 +336,32 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         for item in serializer.data:
             key = item.get("key")
             value = item.get("value")
+            data_type = item.get("data_type")
+
             if not value or key not in customPropertyAllowedKeys:
                 continue
-            groupedCustomProperties.setdefault(key, set()).add(value)
 
-        groupedUniqueCustomProperties = {key: list(values) for key, values in groupedCustomProperties.items()}
-        unique_values_list = [{"key": k, "values": v} for k, v in groupedUniqueCustomProperties.items()]
+            bucket = groupedCustomProperties.setdefault(
+                key, {"values": set(), "data_type": data_type}
+            )
+            bucket["values"].add(value)
+
+        groupedUniqueCustomProperties = {
+            key: {
+                "values": list(info["values"]),
+                "data_type": info["data_type"],
+            }
+            for key, info in groupedCustomProperties.items()
+        }
+
+        unique_values_list = [
+            {
+                "key": key,
+                "data_type": info["data_type"],
+                "values": info["values"],
+            }
+            for key, info in groupedUniqueCustomProperties.items()
+]
 
         response_data = {}
         if (not unique_values_list and field):
@@ -358,12 +370,14 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 "total_results": 0,
                 "limit": 10,
                 "total_pages": 1,
-                "page": 1
+                "page": 1,
+                "data_type": None
             }
         
         for item in unique_values_list:
             key = item["key"]
             values = item["values"]
+            data_type = item["data_type"]
             
             paginator = PageNumberPagination()
             paginator.page_size = int(request.GET.get("limit", 10))
@@ -374,7 +388,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
                 "page": paginator.page.number if hasattr(paginator, 'page') else 1,
                 "limit": paginator.page.paginator.per_page if hasattr(paginator, 'page') else len(values),
                 "total_pages": paginator.page.paginator.num_pages if hasattr(paginator, 'page') else 1,
-                "data": paginated_values
+                "data": paginated_values,
+                "data_type": data_type
             }
         
         return Response(response_data, status=status.HTTP_200_OK)

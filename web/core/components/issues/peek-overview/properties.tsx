@@ -92,6 +92,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               key: property.key,
               value: property.value,
               issue_type_custom_property: property.issue_type_custom_property,
+              data_type: property.data_type,
             },
             {
               headers: {

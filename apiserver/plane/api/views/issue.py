@@ -61,8 +61,9 @@ from plane.db.models import (
     Workspace,
     User
 )
-from plane.utils.issue_filters import issue_filters
+from plane.utils.issue_filters import issue_filters, build_custom_property_q_objects
 from .base import BaseAPIView
+from datetime import datetime
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -143,6 +144,8 @@ class IssueAPIEndpoint(BaseAPIView):
     def get_queryset(self):
         filters = issue_filters(self.request.query_params, "GET")
         base_filter = filters.pop('base', None)
+        custom_properties = filters.pop('custom_properties', None)
+        
         query = (Issue.issue_objects.annotate(
                 sub_issues_count=Issue.issue_objects.filter(
                     parent=OuterRef("id")
@@ -152,10 +155,16 @@ class IssueAPIEndpoint(BaseAPIView):
                 .values("count")
             ).filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug")))
+            
         if base_filter:
             query = query.filter(base_filter)
 
-        print(query)
+        # Apply custom property filters if they exist
+        if custom_properties:
+            custom_filters = build_custom_property_q_objects(custom_properties)
+            if custom_filters:
+                query = query.filter(*custom_filters)
+
         return (query
             .filter(**filters)
             .select_related("project")
@@ -324,6 +333,33 @@ class IssueAPIEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
+        data = request.data.get("custom_properties", [])
+        if data:
+            for item in data :
+                if item.get("data_type") == "number":
+                    int_value = int(item.get("value"))
+                    item["int_value"] = int_value
+                elif item.get("data_type") == "boolean":
+                    raw_value = item.get("value")
+                    if raw_value is None:
+                        bool_value = None
+                    elif isinstance(raw_value, bool):
+                        bool_value = raw_value
+                    else:
+                        value = str(raw_value).strip().lower()
+                        bool_value = value in ["true", "1", "yes"]
+                    item["bool_value"] = bool_value
+                elif item.get("data_type") == "date":
+                    raw_date = item.get("value")
+                    try:
+                        # Try to parse date in standard ISO format
+                        date_value = datetime.strptime(raw_date, "%Y-%m-%d").date()
+                    except (ValueError, TypeError):
+                        date_value = None  # Invalid or missing date
+                    item["date_value"] = date_value
+
+        request.data["custom_properties"]= data
+        
         serializer = IssueSerializer(
             data=request.data,
             context={

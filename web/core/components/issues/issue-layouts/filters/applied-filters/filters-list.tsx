@@ -37,7 +37,7 @@ type Props = {
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
-const additionalFilters = ["hub_code", "customer_code", "reference_number", "trip_reference_number", "vendor_code", "worker_code", "hub_name", "customer_name", "vendor_name", "worker_name"];
+const additionalFilters = ["hub_code", "customer_code", "reference_number", "trip_reference_number", "vendor_code", "worker_code", "hub_name", "customer_name", "vendor_name", "worker_name", "business_type"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
   const {

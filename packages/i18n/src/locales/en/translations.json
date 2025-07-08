@@ -347,6 +347,7 @@
   "vendor_code": "Vendor Code",
   "worker_code": "Worker Code",
   "worker_name": "Worker Name",
+  "business_type": "Business Type",
   "filters": "Filters",
   "key": "ID",
   "issue_type": "Issue Type",
