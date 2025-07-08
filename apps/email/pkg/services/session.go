@@ -8,8 +8,11 @@ import (
 	"plane/email/pkg/utils/parser"
 	"strings"
 
+	"plane/email/pkg/utils"
+
 	"github.com/emersion/go-message/mail"
 	"github.com/emersion/go-smtp"
+	// Import charset support
 )
 
 type Session struct {
@@ -63,8 +66,8 @@ func (s *Session) Data(r io.Reader) error {
 		return errors.New("message rejected")
 	}
 
-	// Parse the email
-	mr, err := mail.CreateReader(bytes.NewReader(data))
+	// Parse the email with charset support
+	mr, err := utils.CreateCharsetAwareReader(data)
 	if err != nil {
 		logger.Log.Errorf("failed to parse email: %v", err)
 		return err
