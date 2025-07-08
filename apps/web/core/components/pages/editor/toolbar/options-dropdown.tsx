@@ -85,7 +85,7 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
       {
         key: "version-history",
         action: () => {
-          // add query param, version=current to the route
+          // update query param to show info tab in navigation pane
           const updatedRoute = updateQueryParams({
             paramsToAdd: {
               [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "info" satisfies TPageNavigationPaneTab,
