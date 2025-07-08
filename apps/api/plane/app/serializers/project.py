@@ -148,8 +148,8 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer): 
-    original_role = serializers.IntegerField(source='role', read_only=True)
+class ProjectMemberRoleSerializer(DynamicBaseSerializer):
+    original_role = serializers.IntegerField(source="role", read_only=True)
 
     class Meta:
         model = ProjectMember

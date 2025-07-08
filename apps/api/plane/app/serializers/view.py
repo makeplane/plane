@@ -8,7 +8,6 @@ from plane.utils.issue_filters import issue_filters
 
 
 class ViewIssueListSerializer(serializers.Serializer):
-
     def get_assignee_ids(self, instance):
         return [assignee.assignee_id for assignee in instance.issue_assignee.all()]
 

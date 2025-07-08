@@ -726,7 +726,6 @@ class IssueSerializer(DynamicBaseSerializer):
 
 
 class IssueListDetailSerializer(serializers.Serializer):
-
     def __init__(self, *args, **kwargs):
         # Extract expand parameter and store it as instance variable
         self.expand = kwargs.pop("expand", []) or []
