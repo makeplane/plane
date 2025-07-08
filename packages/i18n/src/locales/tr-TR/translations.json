@@ -1346,6 +1346,17 @@
       "project_insights": {
         "title": "Henüz veri yok",
         "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
+      },
+      "general": {
+        "title": "İlerlemeyi, iş yüklerini ve tahsisleri takip edin. Eğilimleri tespit edin, engelleri kaldırın ve işi hızlandırın",
+        "description": "Kapsam ile talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve takımlar bazında performans alın ve projenizin zamanında çalıştığından emin olun.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Analitik en iyi Döngüler + Modüller ile çalışır",
+            "description": "İlk olarak, sorunlarınızı Döngülere sınırlandırın ve eğer mümkünse, bir döngüden fazla süren sorunları Modüllere gruplandırın. Sol navigasyonda ikisini de kontrol edin."
+          }
+        }
       }
     },
     "created_vs_resolved": "Oluşturulan vs Çözülen",
