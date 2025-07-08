@@ -11,7 +11,7 @@ import { CustomMenu, ToggleSwitch } from "@plane/ui";
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar";
 // hooks
-import { useAppTheme, useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
+import { useCommandPalette, useInstance, useTransient, useUserSettings } from "@/hooks/store";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 
@@ -19,7 +19,6 @@ export const HelpMenuRoot = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { t } = useTranslation();
-  const {} = useAppTheme();
   const { toggleShortcutModal } = useCommandPalette();
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
