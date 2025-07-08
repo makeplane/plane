@@ -25,13 +25,18 @@ from plane.graphql.types.page import PageType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.feature_flag import validate_feature_flag
 from plane.graphql.utils.paginator import paginate
+from plane.graphql.utils.roles import Roles
 
 
 # workspace level queries
 @strawberry.type
 class WorkspacePageQuery:
     @strawberry.field(
-        extensions=[PermissionExtension(permissions=[WorkspacePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def workspacePages(
         self,
@@ -61,16 +66,15 @@ class WorkspacePageQuery:
             .filter(moved_to_page__isnull=True)
         )
 
-        # Get shared page ids
-        if type in ["private", "shared"]:
-            shared_pages = await sync_to_async(list)(
-                PageUser.objects.filter(
-                    workspace__slug=slug,
-                ).values_list("page_id", flat=True)
-            )
-            shared_page_ids = list(shared_pages)
-        else:
-            shared_page_ids = []
+        shared_pages_data = await sync_to_async(list)(
+            PageUser.objects.filter(workspace__slug=slug).values("page_id", "user_id")
+        )
+        shared_page_ids = list(set(str(item["page_id"]) for item in shared_pages_data))
+        pages_shared_with_user = [
+            str(item["page_id"])
+            for item in shared_pages_data
+            if str(item["user_id"]) == user_id
+        ]
 
         # Filter archived pages
         if type != "archived":
@@ -87,11 +91,15 @@ class WorkspacePageQuery:
             page_base_query = page_base_query.filter(access=0)
         elif type == "private":
             page_base_query = page_base_query.filter(
-                Q(access=1) & ~Q(id__in=shared_page_ids)
-            ).filter(owned_by_id=user_id)
+                access=1, owned_by_id=user_id
+            ).exclude(id__in=shared_page_ids)
         elif type == "shared":
             page_base_query = page_base_query.filter(
-                Q(access=1) & Q(id__in=shared_page_ids)
+                Q(access=1)
+                & (
+                    Q(id__in=pages_shared_with_user)
+                    | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids))
+                )
             )
 
         # Build subquery for UserFavorite
@@ -103,9 +111,10 @@ class WorkspacePageQuery:
         )
 
         pages = await sync_to_async(list)(
-            page_base_query.select_related("workspace", "owned_by")
+            page_base_query.distinct()
+            .select_related("workspace", "owned_by")
+            .prefetch_related("projects")
             .annotate(is_favorite=Exists(subquery))
-            .order_by("-created_at")
         )
 
         return paginate(results_object=pages, cursor=cursor)
@@ -113,7 +122,10 @@ class WorkspacePageQuery:
     @strawberry.field(
         extensions=[
             PermissionExtension(
-                permissions=[WorkspacePermission(), WorkspaceSharedPagePermission()]
+                permissions=[
+                    WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER]),
+                    WorkspaceSharedPagePermission(),
+                ]
             )
         ]
     )

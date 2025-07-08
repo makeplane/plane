@@ -64,16 +64,17 @@ class PageQuery:
         )
 
         # Get shared page ids for private and shared pages
-        if type in ["private", "shared"]:
-            shared_pages = await sync_to_async(list)(
-                PageUser.objects.filter(
-                    workspace__slug=slug,
-                    project__id=project,
-                ).values_list("page_id", flat=True)
+        shared_pages_data = await sync_to_async(list)(
+            PageUser.objects.filter(workspace__slug=slug, project__id=project).values(
+                "page_id", "user_id"
             )
-            shared_page_ids = list(shared_pages)
-        else:
-            shared_page_ids = []
+        )
+        shared_page_ids = list(set(str(item["page_id"]) for item in shared_pages_data))
+        pages_shared_with_user = [
+            str(item["page_id"])
+            for item in shared_pages_data
+            if str(item["user_id"]) == user_id
+        ]
 
         # Filter archived pages for all, public and shared pages
         if type != "archived":
@@ -90,11 +91,15 @@ class PageQuery:
             page_base_query = page_base_query.filter(access=0)
         elif type == "private":
             page_base_query = page_base_query.filter(
-                Q(access=1) & ~Q(id__in=shared_page_ids)
-            ).filter(owned_by_id=user_id)
+                access=1, owned_by_id=user_id
+            ).exclude(id__in=shared_page_ids)
         elif type == "shared":
             page_base_query = page_base_query.filter(
-                Q(access=1) & Q(id__in=shared_page_ids)
+                Q(access=1)
+                & (
+                    Q(id__in=pages_shared_with_user)
+                    | (Q(owned_by_id=user_id) & Q(id__in=shared_page_ids))
+                )
             )
 
         # Subquery for UserFavorite
