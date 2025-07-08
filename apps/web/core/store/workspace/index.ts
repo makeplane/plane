@@ -17,8 +17,6 @@ export interface IWorkspaceRootStore {
   loader: boolean;
   // observables
   workspaces: Record<string, IWorkspace>;
-  // record of app rail visibility for each workspace
-  appRailVisibilityMap: Record<string, boolean>;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
@@ -41,8 +39,6 @@ export interface IWorkspaceRootStore {
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => Promise<IWorkspaceSidebarNavigationItem | undefined>;
   getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
-  getAppRailVisibility: (workspaceSlug: string) => boolean;
-  toggleAppRailVisibility: (workspaceSlug: string) => void;
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -53,7 +49,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   loader: boolean = false;
   // observables
   workspaces: Record<string, IWorkspace> = {};
-  appRailVisibilityMap: Record<string, boolean> = {};
   navigationPreferencesMap: Record<string, IWorkspaceSidebarNavigation> = {};
   // services
   workspaceService;
@@ -85,8 +80,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       deleteWorkspace: action,
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
-      getAppRailVisibility: action,
-      toggleAppRailVisibility: action,
     });
 
     // services
@@ -117,12 +110,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
     if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
     return redirectionRoute;
-  };
-
-  getAppRailVisibility = (workspaceSlug: string) => this.appRailVisibilityMap[workspaceSlug] || false;
-
-  toggleAppRailVisibility = (workspaceSlug: string) => {
-    this.appRailVisibilityMap[workspaceSlug] = !this.appRailVisibilityMap[workspaceSlug];
   };
 
   /**

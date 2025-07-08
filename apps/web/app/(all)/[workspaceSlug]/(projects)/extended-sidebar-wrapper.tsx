@@ -32,12 +32,12 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
         `absolute h-full z-[19] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
         {
           "translate-x-0 opacity-100": isExtendedSidebarOpened,
-          [`-translate-x-[${EXTENDED_SIDEBAR_WIDTH}px] opacity-0 w-0`]: !isExtendedSidebarOpened,
+          [`-translate-x-[${EXTENDED_SIDEBAR_WIDTH}px] opacity-0 hidden`]: !isExtendedSidebarOpened,
         }
       )}
       style={{
         left: `${storedValue ?? SIDEBAR_WIDTH}px`,
-        width: `${EXTENDED_SIDEBAR_WIDTH}px`,
+        width: `${isExtendedSidebarOpened ? EXTENDED_SIDEBAR_WIDTH : 0}px`,
       }}
     >
       {children}
