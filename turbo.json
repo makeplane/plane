@@ -32,7 +32,7 @@
     "develop": {
       "dependsOn": ["^build"],
       "cache": false,
-      "persistent": false
+      "persistent": true
     },
     "check:types": {
       "dependsOn": ["^build"],
