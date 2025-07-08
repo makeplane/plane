@@ -29,11 +29,6 @@
       "cache": false,
       "persistent": true
     },
-    "develop": {
-      "dependsOn": ["^build"],
-      "cache": false,
-      "persistent": true
-    },
     "check:types": {
       "dependsOn": ["^build"],
       "cache": false
