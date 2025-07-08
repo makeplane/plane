@@ -25,7 +25,6 @@ import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } fr
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useAppTheme } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
@@ -44,7 +43,6 @@ type Props = {
 export const FavoriteFolder: React.FC<Props> = (props) => {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { getGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
@@ -159,7 +157,6 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
                 {
                   "bg-custom-sidebar-background-90": isMenuActive,
-                  "p-0 size-8 aspect-square justify-center mx-auto": isSidebarCollapsed,
                 }
               )}
             >
@@ -169,117 +166,95 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 <GripVertical className="w-3 h-3" />
               </div>
 
-              {isSidebarCollapsed ? (
-                <div
-                  className={cn("flex-grow flex items-center gap-1.5 truncate text-left select-none", {
-                    "justify-center": isSidebarCollapsed,
-                  })}
-                >
-                  <Tooltip tooltipContent={favorite.name} position="right" isMobile={isMobile}>
+              <>
+                <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
+                  <div className="flex-grow flex truncate">
                     <Disclosure.Button
                       as="button"
-                      className="size-8 aspect-square flex-shrink-0 grid place-items-center"
+                      type="button"
+                      className="flex-grow flex items-center gap-1.5 text-left select-none w-full"
                     >
-                      <div className="size-4 grid place-items-center flex-shrink-0">
+                      <Tooltip
+                        isMobile={isMobile}
+                        tooltipContent={
+                          favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
+                        }
+                        position="top-right"
+                        disabled={isDragging}
+                      >
+                        <button
+                          type="button"
+                          className={cn(
+                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                            {
+                              "cursor-not-allowed opacity-60": favorite.sort_order === null,
+                              "cursor-grabbing": isDragging,
+                            }
+                          )}
+                        >
+                          <DragHandle className="bg-transparent" />
+                        </button>
+                      </Tooltip>
+                      <div className="size-5 grid place-items-center flex-shrink-0">
                         <FavoriteFolderIcon />
                       </div>
+                      <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
                     </Disclosure.Button>
-                  </Tooltip>
-                </div>
-              ) : (
-                <>
-                  <Tooltip tooltipContent={`${favorite.name}`} position="right" className="ml-8" isMobile={isMobile}>
-                    <div className="flex-grow flex truncate">
-                      <Disclosure.Button
-                        as="button"
-                        type="button"
-                        className={cn("flex-grow flex items-center gap-1.5 text-left select-none w-full", {
-                          "justify-center": isSidebarCollapsed,
-                        })}
-                      >
-                        <Tooltip
-                          isMobile={isMobile}
-                          tooltipContent={
-                            favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
-                          }
-                          position="top-right"
-                          disabled={isDragging}
-                        >
-                          <button
-                            type="button"
-                            className={cn(
-                              "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
-                              {
-                                "cursor-not-allowed opacity-60": favorite.sort_order === null,
-                                "cursor-grabbing": isDragging,
-                                "!hidden": isSidebarCollapsed,
-                              }
-                            )}
-                          >
-                            <DragHandle className="bg-transparent" />
-                          </button>
-                        </Tooltip>
-                        <div className="size-5 grid place-items-center flex-shrink-0">
-                          <FavoriteFolderIcon />
-                        </div>
-                        <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
-                      </Disclosure.Button>
-                    </div>
-                  </Tooltip>
-                  <CustomMenu
-                    customButton={
-                      <span
-                        ref={actionSectionRef}
-                        className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
-                      >
-                        <MoreHorizontal className="size-3" />
-                      </span>
+                  </div>
+                </Tooltip>
+                <CustomMenu
+                  customButton={
+                    <span
+                      ref={actionSectionRef}
+                      className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                    >
+                      <MoreHorizontal className="size-3" />
+                    </span>
+                  }
+                  menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
+                  className={cn(
+                    "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
+                    {
+                      "opacity-100 pointer-events-auto": isMenuActive,
                     }
-                    menuButtonOnClick={() => setIsMenuActive(!isMenuActive)}
-                    className={cn(
-                      "opacity-0 pointer-events-none flex-shrink-0 group-hover/project-item:opacity-100 group-hover/project-item:pointer-events-auto",
-                      {
-                        "opacity-100 pointer-events-auto": isMenuActive,
-                      }
-                    )}
-                    customButtonClassName="grid place-items-center"
-                    placement="bottom-start"
-                    ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
-                  >
-                    <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
-                      <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
-                        <span>Remove from favorites</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
-                      <div className="flex items-center justify-start gap-2">
-                        <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                        <span>Rename Folder</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                  <Disclosure.Button
-                    as="button"
-                    type="button"
-                    className={cn(
-                      "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                      {
-                        "inline-block": isMenuActive,
-                      }
-                    )}
-                    aria-label={t(
-                      open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
-                    )}
-                  >
-                    <ChevronRight
-                      className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
-                        "rotate-90": open,
-                      })}
-                    />
-                  </Disclosure.Button>
-                </>
-              )}
+                  )}
+                  customButtonClassName="grid place-items-center"
+                  placement="bottom-start"
+                  ariaLabel={t("aria_labels.projects_sidebar.toggle_quick_actions_menu")}
+                >
+                  <CustomMenu.MenuItem onClick={() => handleRemoveFromFavorites(favorite)}>
+                    <span className="flex items-center justify-start gap-2">
+                      <Star className="h-3.5 w-3.5 fill-yellow-500 stroke-yellow-500" />
+                      <span>Remove from favorites</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
+                    <div className="flex items-center justify-start gap-2">
+                      <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                      <span>Rename Folder</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
+                <Disclosure.Button
+                  as="button"
+                  type="button"
+                  className={cn(
+                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
+                    {
+                      "inline-block": isMenuActive,
+                    }
+                  )}
+                  aria-label={t(
+                    open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
+                  )}
+                >
+                  <ChevronRight
+                    className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                      "rotate-90": open,
+                    })}
+                  />
+                </Disclosure.Button>
+              </>
             </div>
             {favorite.children && favorite.children.length > 0 && (
               <Transition
@@ -290,12 +265,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 leaveFrom="transform scale-100 opacity-100"
                 leaveTo="transform scale-95 opacity-0"
               >
-                <Disclosure.Panel
-                  as="div"
-                  className={cn("flex flex-col gap-0.5 mt-1", {
-                    "px-2": !isSidebarCollapsed,
-                  })}
-                >
+                <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
                   {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
                     <FavoriteRoot
                       key={child.id}
