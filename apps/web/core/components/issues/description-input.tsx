@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash/debounce";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -53,6 +53,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
     id: issueId,
     description_html: initialValue,
   });
+  // ref to track if there are unsaved changes
+  const hasUnsavedChanges = useRef(false);
   // store hooks
   const { uploadEditorAsset } = useEditorAsset();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -87,6 +89,8 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
       id: issueId,
       description_html: initialValue === "" ? "<p></p>" : initialValue,
     });
+    // Reset unsaved changes flag when form is reset
+    hasUnsavedChanges.current = false;
   }, [initialValue, issueId, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
@@ -94,9 +98,29 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
-      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => {
+        setIsSubmitting("submitted");
+        hasUnsavedChanges.current = false;
+      });
     }, 1500),
     [handleSubmit, issueId]
+  );
+
+  // Save on unmount if there are unsaved changes
+  useEffect(
+    () => () => {
+      debouncedFormSave.cancel();
+
+      if (hasUnsavedChanges.current) {
+        handleSubmit(handleDescriptionFormSubmit)().finally(() => {
+          setIsSubmitting("submitted");
+          hasUnsavedChanges.current = false;
+        });
+      }
+    },
+    // since we don't want to save on unmount if there are no unsaved changes, no deps are needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   if (!workspaceId) return null;
@@ -120,6 +144,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
               onChange={(_description: object, description_html: string) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
+                hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}
               placeholder={
