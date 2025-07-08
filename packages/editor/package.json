@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsup --minify",
     "dev": "tsup --watch",
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint .",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",

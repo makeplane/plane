@@ -15,7 +15,8 @@
     "start": "turbo run start",
     "clean": "turbo run clean",
     "fix": "turbo run fix",
-    "check": "turbo run check"
+    "check": "turbo run check",
+    "check:lint": "turbo run check:lint"
   },
   "devDependencies": {
     "prettier": "latest",
