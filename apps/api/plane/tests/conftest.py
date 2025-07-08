@@ -3,9 +3,11 @@ from django.conf import settings
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
+from uuid import uuid4
 
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.db.models import User, Workspace, FileAsset
 from plane.db.models.api import APIToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @pytest.fixture(scope="session")
@@ -45,6 +47,48 @@ def create_user(db, user_data):
 
 
 @pytest.fixture
+def workspace(db, create_user):
+    """Create and return a workspace instance"""
+    workspace = Workspace.objects.create(
+        name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
+    )
+    return workspace
+
+
+@pytest.fixture
+def file_asset(db, workspace):
+    """Create and return a basic FileAsset instance for testing"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="test_file.txt",
+        attributes={
+            "name": "test_file.txt",
+            "size": 1024,
+            "mime_type": "text/plain",
+        },
+        size=1024,
+    )
+    return file_asset
+
+
+@pytest.fixture
+def cover_image_asset(db, workspace):
+    """Create and return a FileAsset instance specifically for cover images"""
+    file_asset = FileAsset.objects.create(
+        workspace=workspace,
+        asset="cover_image.jpg",
+        attributes={
+            "name": "cover_image.jpg",
+            "size": 2048,
+            "mime_type": "image/jpeg",
+        },
+        size=2048,
+        entity_type=FileAsset.EntityTypeContext.PROJECT_COVER,
+    )
+    return file_asset
+
+
+@pytest.fixture
 def api_token(db, create_user):
     """Create and return an API token for testing the external API"""
     token = APIToken.objects.create(
@@ -66,6 +110,19 @@ def api_key_client(api_client, api_token):
 def session_client(api_client, create_user):
     """Return a session authenticated API client for app API testing, which is what plane.app uses"""
     api_client.force_authenticate(user=create_user)
+    return api_client
+
+
+@pytest.fixture
+def jwt_client(api_client, create_user):
+    """Return a JWT authenticated API client for app API testing, which is what plane.graphql uses"""
+
+    # Get JWT tokens for the user
+    refresh = RefreshToken.for_user(create_user)
+    access_token = str(refresh.access_token)
+
+    # Set the Authorization header with the JWT token
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
     return api_client
 
 
@@ -134,7 +191,7 @@ def workspace(create_user):
     )
 
     WorkspaceMember.objects.create(
-            workspace=created_workspace, member=create_user, role=20
-        )
-    
+        workspace=created_workspace, member=create_user, role=20
+    )
+
     return created_workspace

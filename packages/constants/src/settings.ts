@@ -1,4 +1,4 @@
-import { PROFILE_SETTINGS } from ".";
+import { PROFILE_SETTINGS } from "./profile";
 import { WORKSPACE_SETTINGS } from "./workspace";
 
 export enum WORKSPACE_SETTINGS_CATEGORY {
@@ -34,9 +34,19 @@ export const GROUPED_WORKSPACE_SETTINGS = {
     WORKSPACE_SETTINGS["general"],
     WORKSPACE_SETTINGS["members"],
     WORKSPACE_SETTINGS["billing-and-plans"],
+    WORKSPACE_SETTINGS["import"],
     WORKSPACE_SETTINGS["export"],
+    WORKSPACE_SETTINGS["worklogs"],
   ],
-  [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [],
+  [WORKSPACE_SETTINGS_CATEGORY.FEATURES]: [
+    WORKSPACE_SETTINGS["project_states"],
+    WORKSPACE_SETTINGS["integrations"],
+    WORKSPACE_SETTINGS["applications"],
+    WORKSPACE_SETTINGS["teamspaces"],
+    WORKSPACE_SETTINGS["initiatives"],
+    WORKSPACE_SETTINGS["customers"],
+    WORKSPACE_SETTINGS["templates"],
+  ],
   [WORKSPACE_SETTINGS_CATEGORY.DEVELOPER]: [WORKSPACE_SETTINGS["webhooks"]],
 };
 
@@ -47,6 +57,7 @@ export const GROUPED_PROFILE_SETTINGS = {
     PROFILE_SETTINGS["notifications"],
     PROFILE_SETTINGS["security"],
     PROFILE_SETTINGS["activity"],
+    PROFILE_SETTINGS["connections"],
   ],
   [PROFILE_SETTINGS_CATEGORY.DEVELOPER]: [PROFILE_SETTINGS["api-tokens"]],
 };

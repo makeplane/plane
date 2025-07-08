@@ -3,8 +3,11 @@
 import React, { createContext, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
+import { EProductSubscriptionEnum } from "@plane/types";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
+import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export interface AppRailContextType {
   isEnabled: boolean;
@@ -12,9 +15,7 @@ export interface AppRailContextType {
   toggleAppRail: (value?: boolean) => void;
 }
 
-const AppRailContext = createContext<AppRailContextType | undefined>(undefined);
-
-export { AppRailContext };
+export const AppRailContext = createContext<AppRailContextType | undefined>(undefined);
 
 interface AppRailProviderProps {
   children: ReactNode;
@@ -26,8 +27,12 @@ export const AppRailProvider = observer(({ children }: AppRailProviderProps) => 
     `APP_RAIL_${workspaceSlug}`,
     false
   );
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+  const isFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "APP_RAIL");
 
-  const isEnabled = false;
+  const isSelfManaged = !!subscriptionDetail?.is_self_managed;
+  const currentSubscription = subscriptionDetail?.product;
+  const isEnabled = isFeatureFlagEnabled && (!isSelfManaged || currentSubscription !== EProductSubscriptionEnum.FREE);
 
   const toggleAppRail = (value?: boolean) => {
     if (value === undefined) {
