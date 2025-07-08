@@ -289,7 +289,7 @@ export const handleCreateNewWorkItemViewSubmission = async (
   const { workspaceConnection, slackService, planeClient, botCredentials } = details;
 
   try {
-    const parsedData = await parseIssueFormData(data.view.state.values);
+    const parsedData = parseIssueFormData(data.view.state.values);
     const metadata = JSON.parse(data.view.private_metadata) as SlackPrivateMetadata;
 
     if (

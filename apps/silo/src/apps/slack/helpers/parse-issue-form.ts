@@ -1,10 +1,11 @@
 import { RichTextElement, RichTextSection, RichTextList, RichTextBlockElement, RichTextBlock } from "@slack/types";
 import { ParsedIssueData, ParsedLinkWorkItemData } from "../types/types";
 
-export const parseIssueFormData = async (values: any): Promise<ParsedIssueData> => {
+export const parseIssueFormData = (values: any): ParsedIssueData => {
   const parsed: ParsedIssueData = {
     title: "",
     project: "",
+    description: "<p></p>",
   };
 
   // Loop through all blocks
@@ -123,7 +124,9 @@ const richTextBlockElementToMrkdwn = (element: RichTextBlockElement): string => 
   }
 }
 
-export const richTextBlockToMrkdwn = (richTextBlock: RichTextBlock) => {
+export const richTextBlockToMrkdwn = (richTextBlock: RichTextBlock | undefined) => {
+  if (!richTextBlock?.elements) return
+
   const mrkdwn = richTextBlock.elements.map(richTextBlockElementToMrkdwn).join('')
 
   return mrkdwn
