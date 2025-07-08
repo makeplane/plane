@@ -12,8 +12,9 @@ from strawberry.types import Info
 
 # Module imports
 from plane.db.models import Page, ProjectMember, WorkspaceMember
-from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.permissions.workspace import WorkspacePermission
 from plane.graphql.types.page import PageType
+from plane.graphql.utils.roles import Roles
 
 
 @sync_to_async
@@ -39,7 +40,11 @@ def get_project_member(slug: str, project: str, user_id: str):
 @strawberry.type
 class WorkspacePageMutation:
     @strawberry.mutation(
-        extensions=[PermissionExtension(permissions=[WorkspaceBasePermission()])]
+        extensions=[
+            PermissionExtension(
+                permissions=[WorkspacePermission(roles=[Roles.ADMIN, Roles.MEMBER])]
+            )
+        ]
     )
     async def updateWorkspacePage(
         self,

@@ -5,16 +5,36 @@ from typing import Optional
 # Third-party library imports
 import strawberry
 import strawberry_django
+from asgiref.sync import sync_to_async
 
 # Strawberry imports
-from asgiref.sync import sync_to_async
 from strawberry.scalars import JSON
+from strawberry.types import Info
 
 # Module imports
 from plane.db.models import Page
 from plane.ee.models import PageUser
 from plane.graphql.types.project import ProjectLiteType
 from plane.graphql.utils.timezone import user_timezone_converter
+
+
+@sync_to_async
+def shared_page_access(user_id: str, workspace_slug: str, page_id: str, owner_id: str):
+    shared_pages_data = PageUser.objects.filter(
+        workspace__slug=workspace_slug, page_id=page_id
+    ).values("user_id", "access")
+    shared_pages_data = list(shared_pages_data)
+
+    page_access = 0
+    if owner_id == user_id:
+        page_access = 2
+    else:
+        for item in shared_pages_data:
+            if str(item["user_id"]) == user_id:
+                page_access = item["access"]
+                break
+
+    return (len(shared_pages_data) > 0, page_access)
 
 
 @strawberry_django.type(Page)
@@ -79,38 +99,46 @@ class PageType:
         return converted_date
 
     @strawberry.field
-    async def is_shared(self) -> bool:
+    async def is_shared(self, info: Info) -> bool:
         if self.access == 0:
             return False
 
+        user = info.context.user
+        user_id = str(user.id)
+
         workspace_slug = self.workspace.slug
-        page_id = self.id
-        shared_page = await sync_to_async(
-            lambda: PageUser.objects.filter(
-                workspace__slug=workspace_slug,
-                page_id=page_id,
-            ).first()
-        )()
-        if shared_page:
+        page_id = str(self.id)
+
+        shared_page_count, _ = await shared_page_access(
+            workspace_slug=workspace_slug,
+            page_id=page_id,
+            user_id=user_id,
+            owner_id=str(self.owned_by_id),
+        )
+        if shared_page_count > 0:
             return True
         return False
 
     @strawberry.field
-    async def is_shared_access(self) -> int:
+    async def is_shared_access(self, info: Info) -> int:
         if self.access == 0:
             return 0
 
+        user = info.context.user
+        user_id = str(user.id)
+
         workspace_slug = self.workspace.slug
-        page_id = self.id
-        shared_page = await sync_to_async(
-            lambda: PageUser.objects.filter(
-                workspace__slug=workspace_slug,
-                page_id=page_id,
-            ).first()
-        )()
-        if shared_page:
-            shared_page_access = shared_page.access
-            return shared_page_access
+        page_id = str(self.id)
+
+        shared_page_count, page_access = await shared_page_access(
+            workspace_slug=workspace_slug,
+            page_id=page_id,
+            user_id=user_id,
+            owner_id=str(self.owned_by_id),
+        )
+
+        if shared_page_count > 0:
+            return page_access
         return 0
 
     # @strawberry.field
