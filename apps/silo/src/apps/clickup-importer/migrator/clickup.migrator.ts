@@ -141,7 +141,7 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
             customFieldsForTaskTypes: data.customFieldsForTaskTypes.length,
           },
           phase: E_CLICKUP_IMPORT_PHASE.ISSUES,
-          isLastBatch: i === batches.length - 1 && currentPageData.isLastPage,
+          isLastBatch: currentPageData.isLastPage,
         },
         data: [
           {
@@ -175,19 +175,17 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     // we don't know which batch is the last one, so we check by job completion
     const job = await this.getJobData(jobId);
     const report = await integrationConnectionHelper.getImportReport({ report_id: job.report_id });
-    const isJobCompleted = report.completed_batch_count >= report.total_batch_count;
     logger.info(`Marking job as finished for ${jobId}`, {
       data,
       jobId,
       phase,
       isLastBatch,
-      isJobCompleted,
       completed_batch_count: report.completed_batch_count,
       total_batch_count: report.total_batch_count,
     });
     if (phase === E_CLICKUP_IMPORT_PHASE.ISSUES) {
       // check if the job is completed
-      if (isJobCompleted && isLastBatch) {
+      if (isLastBatch) {
         // Dispatch clickup additional data importer job
         await importTaskManger.registerTask(
           {
@@ -203,7 +201,7 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
         // retry logic
         for (let i = 0; i < 5; i++) {
           // retry for ~5 seconds
-          logger.info(`Retrying to mark job as finished for ${jobId}`, { jobId, phase, isLastBatch, isJobCompleted });
+          logger.info(`Retrying to mark job as finished for ${jobId}`, { jobId, phase, isLastBatch });
           const report = await integrationConnectionHelper.getImportReport({ report_id: job.report_id });
           if (report.completed_batch_count >= report.total_batch_count) {
             await super.markJobAsFinished(jobId, data);
@@ -234,12 +232,17 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     const users = job.config.skipUserImport ? [] : await clickUpPullService.pullSpaceMembers(job.config.team.id);
     const lists = await clickUpPullService.pullLists(job.config.folder.id);
     const page = paginationContext.page;
-    logger.info(`[CLICKUP] Pulling tasks for page ${page}`, { jobId: job.id });
     const { last_page, tasks } = await clickUpPullService.pullTasksForFolderPaginated(
       job.config.team.id,
       job.config.folder.id,
       page
     );
+    logger.info(`[CLICKUP] Pulling tasks for page ${page}`, {
+      jobId: job.id,
+      page,
+      last_page,
+      taskCount: tasks.length,
+    });
     const listsWithTasks = clickUpPullService.pullListsWithTasks(lists, tasks);
     const uniqueTasks = getUniqueTasks(tasks);
     // const taskIds = uniqueTasks.map((task) => task.id);

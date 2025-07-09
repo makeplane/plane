@@ -218,7 +218,7 @@ export class TaskManager {
     // Create a timeout promise that resolves after 15 minutes
     const timeoutPromise = new Promise<void>((resolve) => {
       setTimeout(() => {
-        logger.warn("Task execution timed out after the consumer timeout");
+        logger.warn("Task execution timed out after the consumer timeout", { headers: headers?.headers });
         resolve();
       }, MQ_CONSUMER_TIMEOUT);
     });
