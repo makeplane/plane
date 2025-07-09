@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 import { PanelRight } from "lucide-react";
 // plane imports
 import {
-  EIssueLayoutTypes,
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
@@ -21,6 +20,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, DiceIcon, Header, BreadcrumbNavigationSearchDropdown, Tooltip } from "@plane/ui";
 import { cn, isIssueFilterActive } from "@plane/utils";
