@@ -1346,6 +1346,17 @@
       "project_insights": {
         "title": "Henüz veri yok",
         "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
+      },
+      "general": {
+        "title": "İlerlemeyi, iş yüklerini ve tahsisleri takip edin. Eğilimleri tespit edin, engelleri kaldırın ve işi hızlandırın",
+        "description": "Kapsam ile talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve takımlar bazında performans alın ve projenizin zamanında çalıştığından emin olun.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Analitik en iyi Döngüler + Modüller ile çalışır",
+            "description": "İlk olarak, sorunlarınızı Döngülere sınırlandırın ve eğer mümkünse, bir döngüden fazla süren sorunları Modüllere gruplandırın. Sol navigasyonda ikisini de kontrol edin."
+          }
+        }
       }
     },
     "created_vs_resolved": "Oluşturulan vs Çözülen",
@@ -2450,5 +2461,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Ana Hat",
+        "empty_state": {
+          "title": "Eksik başlıklar",
+          "description": "Bu sayfaya bazı başlıklar ekleyelim ki burada görebilelim."
+        }
+      },
+      "info": {
+        "label": "Bilgi",
+        "document_info": {
+          "words": "Kelimeler",
+          "characters": "Karakterler",
+          "paragraphs": "Paragraflar",
+          "read_time": "Okuma süresi"
+        },
+        "actors_info": {
+          "edited_by": "Düzenleyen",
+          "created_by": "Oluşturan"
+        },
+        "version_history": {
+          "label": "Sürüm geçmişi",
+          "current_version": "Mevcut sürüm"
+        }
+      },
+      "assets": {
+        "label": "Varlıklar",
+        "download_button": "İndir",
+        "empty_state": {
+          "title": "Eksik görseller",
+          "description": "Burada görmek için görseller ekleyin."
+        }
+      }
+    },
+    "open_button": "Navigasyon panelini aç",
+    "close_button": "Navigasyon panelini kapat",
+    "outline_floating_button": "Ana hatları aç"
   }
 }

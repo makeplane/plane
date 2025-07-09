@@ -70,18 +70,18 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
 
-COPY apiserver/requirements.txt ./api/
-COPY apiserver/requirements ./api/requirements
+COPY apps/api/requirements.txt ./api/
+COPY apps/api/requirements ./api/requirements
 
 RUN pip install -r ./api/requirements.txt --compile --no-cache-dir
 
 # Add in Django deps and generate Django's static files
-COPY apiserver/manage.py ./api/manage.py
-COPY apiserver/plane ./api/plane/
-COPY apiserver/templates ./api/templates/
+COPY apps/api/manage.py ./api/manage.py
+COPY apps/api/plane ./api/plane/
+COPY apps/api/templates ./api/templates/
 COPY package.json ./api/package.json
 
-COPY apiserver/bin ./api/bin/
+COPY apps/api/bin ./api/bin/
 
 RUN chmod +x ./api/bin/*
 RUN chmod -R 777 ./api/

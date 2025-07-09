@@ -33,7 +33,6 @@ export const convertWorkItemDataToSearchResponse = (
   workspace__slug: workspaceSlug,
 });
 
-
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
   const changedFields = {};
 
