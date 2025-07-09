@@ -23,11 +23,14 @@ interface AppRailProviderProps {
 
 export const AppRailProvider = observer(({ children }: AppRailProviderProps) => {
   const { workspaceSlug } = useParams();
+  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
+
+  const defaultAppRailVisibility = subscriptionDetail?.product !== EProductSubscriptionEnum.FREE;
+
   const { storedValue: isAppRailVisible, setValue: setIsAppRailVisible } = useLocalStorage<boolean>(
     `APP_RAIL_${workspaceSlug}`,
-    false
+    defaultAppRailVisibility
   );
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   const isFeatureFlagEnabled = useFlag(workspaceSlug?.toString(), "APP_RAIL");
 
   const isSelfManaged = !!subscriptionDetail?.is_self_managed;
