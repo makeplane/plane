@@ -64,6 +64,8 @@ class Application(AbstractApplication, UserAuditModel, SoftDeleteModel):
     support_url = models.URLField(max_length=800, null=True, blank=True)
     setup_url = models.CharField(max_length=800, null=True, blank=True)
     video_url = models.URLField(max_length=800, null=True, blank=True)
+    configuration_url = models.URLField(max_length=800, null=True, blank=True)
+    is_internal = models.BooleanField(default=False)
     website = models.URLField(max_length=800, null=True, blank=True)
 
     is_mentionable = models.BooleanField(default=False)
