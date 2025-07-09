@@ -1,12 +1,12 @@
 import { createContext } from "react";
 // ce imports
 // react-hook-form
+import { TIssueFields } from "ce/components/issues";
 import { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 import { TIssuePropertyValues, TIssuePropertyValueErrors } from "@/plane-web/types/issue-types";
-import { TIssueFields } from "ce/components/issues";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;
@@ -26,6 +26,12 @@ export type TCreateUpdatePropertyValuesProps = {
   workspaceSlug: string;
   issueTypeId: string | null | undefined;
   isDraft?: boolean;
+};
+
+export type TCreateSubWorkItemProps = {
+  workspaceSlug: string;
+  projectId: string;
+  parentId: string;
 };
 
 export type THandleTemplateChangeProps = {
@@ -65,6 +71,7 @@ export type TIssueModalContext = {
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
   handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
+  handleCreateSubWorkItem: (props: TCreateSubWorkItemProps) => Promise<void>;
 };
 
 export const IssueModalContext = createContext<TIssueModalContext | undefined>(undefined);
