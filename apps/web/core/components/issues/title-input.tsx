@@ -58,11 +58,6 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     }
   }, [value]);
 
-  // Keep currentTitleRef in sync with title state
-  useEffect(() => {
-    currentTitleRef.current = title;
-  }, [title]);
-
   useEffect(() => {
     const textarea = document.querySelector("#title-input");
     if (debouncedValue && debouncedValue !== value) {
@@ -135,7 +130,9 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setIsSubmitting("submitting");
-      setTitle(e.target.value);
+      const titleFromEvent = e.target.value;
+      setTitle(titleFromEvent);
+      currentTitleRef.current = titleFromEvent;
       hasUnsavedChanges.current = true;
     },
     [setIsSubmitting]
