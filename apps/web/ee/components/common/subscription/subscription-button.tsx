@@ -26,13 +26,13 @@ export const SubscriptionButton = (props: TProps) => {
       <button
         tabIndex={-1}
         className={cn(
-          "relative flex items-center gap-x-1.5 w-fit cursor-pointer rounded-2xl px-2.5 py-1 text-center text-sm font-medium outline-none hover:opacity-90",
+          "relative flex items-center gap-x-1.5 w-fit cursor-pointer rounded-2xl px-2.5 py-1 text-center text-sm font-medium outline-none hover:opacity-90 truncate",
           subscriptionColor,
           className
         )}
         onClick={handleClick}
       >
-        <span className="truncate">{children}</span>
+        {children}
       </button>
     </Tooltip>
   );

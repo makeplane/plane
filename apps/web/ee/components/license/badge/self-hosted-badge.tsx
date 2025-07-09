@@ -42,8 +42,8 @@ export const SelfHostedEditionBadge = observer(() => {
       subscriptionType={subscriptionDetail.product}
       handleClick={() => handleSuccessModalToggle(true)}
     >
-      <PlaneIcon className={cn("size-3")} />
-      {getSubscriptionName(subscriptionDetail.product)}
+      <PlaneIcon className="size-3 flex-shrink-0" />
+      <span className="truncate">{getSubscriptionName(subscriptionDetail.product)}</span>
     </SubscriptionButton>
   );
 });

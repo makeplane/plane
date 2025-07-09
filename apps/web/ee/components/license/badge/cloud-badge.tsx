@@ -81,7 +81,7 @@ export const CloudEditionBadge = observer(() => {
           tooltipContent={renderButtonText()}
           showTooltip
         >
-          {renderButtonText()}
+          <span className="truncate">{renderButtonText()}</span>
         </SubscriptionButton>
       )}
       {!showPaymentButton && (
@@ -92,8 +92,8 @@ export const CloudEditionBadge = observer(() => {
             `
           ) : (
             <>
-              <PlaneIcon className={cn("size-3")} />
-              {getSubscriptionName(currentSubscription)}
+              <PlaneIcon className="size-3 flex-shrink-0" />
+              <span className="truncate ">{getSubscriptionName(currentSubscription)}</span>
             </>
           )}
         </SubscriptionButton>
