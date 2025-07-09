@@ -8,7 +8,8 @@ from django_opensearch_dsl.registries import registry
 
 from plane.ee.models import Teamspace, TeamspaceMember
 
-from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
+from ..core import BaseDocument, edge_ngram_analyzer
+from ..core.fields import JsonKeywordField
 
 
 @registry.register_document

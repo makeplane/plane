@@ -2,14 +2,15 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django_opensearch_dsl import fields
 from django_opensearch_dsl.registries import registry
-from plane.db.models import IssueView, Project, ProjectMember
 
-from .base import BaseDocument, JsonKeywordField, edge_ngram_analyzer
+from plane.db.models import Module, Project, ProjectMember
+
+from ..core import BaseDocument, edge_ngram_analyzer
+from ..core.fields import JsonKeywordField
 
 
 @registry.register_document
-class IssueViewDocument(BaseDocument):
-    description = fields.TextField(attr="description")
+class ModuleDocument(BaseDocument):
     project_id = fields.KeywordField(attr="project_id")
     project_identifier = fields.TextField()
     project_archived_at = fields.DateField()
@@ -23,19 +24,19 @@ class IssueViewDocument(BaseDocument):
 
     class Index(BaseDocument.Index):
         name = (
-            f"{settings.OPENSEARCH_INDEX_PREFIX}_issue_views"
+            f"{settings.OPENSEARCH_INDEX_PREFIX}_modules"
             if settings.OPENSEARCH_INDEX_PREFIX
-            else "issue_views"
+            else "modules"
         )
 
     class Django:
-        model = IssueView
-        fields = ["id", "deleted_at"]
+        model = Module
+        fields = ["id", "description", "deleted_at"]
         # queryset_pagination tells dsl to add chunk_size to the queryset iterator.
         # which is required for django to use prefetch_related when using iterator.
         # NOTE: This number can be different for other indexes based on complexity
         # of the query and the number of records present in that table.
-        queryset_pagination = 2500
+        queryset_pagination = 5000
         related_models = [Project, ProjectMember]
 
     def apply_related_to_queryset(self, qs):
@@ -50,9 +51,9 @@ class IssueViewDocument(BaseDocument):
 
     def get_instances_from_related(self, related_instance):
         if isinstance(related_instance, Project):
-            qs = related_instance.project_issueview.all()
+            qs = related_instance.project_module.all()
         elif isinstance(related_instance, ProjectMember):
-            qs = related_instance.project.project_issueview.all()
+            qs = related_instance.project.project_module.all()
         else:
             qs = self.django.model.objects.none()
         return self.apply_related_to_queryset(qs)
@@ -85,8 +86,6 @@ class IssueViewDocument(BaseDocument):
         """
         Data preparation method for active_project_member_user_ids field
         """
-        if not instance.project:
-            return []
         if hasattr(instance.project, "active_project_members"):
             members = instance.project.active_project_members
         else:

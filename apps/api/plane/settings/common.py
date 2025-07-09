@@ -291,6 +291,7 @@ CELERY_IMPORTS = (
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",
+    "plane.ee.bgtasks.batched_search_update_task",
     # silo tasks
     "plane.silo.bgtasks.integration_apps_task",
 )
@@ -591,6 +592,12 @@ OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get(
     "OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None
 )
 
+# Batch processing and memory optimization
+OPENSEARCH_UPDATE_CHUNK_SIZE = int(
+    os.environ.get("OPENSEARCH_UPDATE_CHUNK_SIZE", "1000")
+)  # Chunk size for processing queued updates
+
+
 if OPENSEARCH_ENABLED:
     # OpenSearch Config
     OPENSEARCH_DSL = {
@@ -612,9 +619,10 @@ if OPENSEARCH_ENABLED:
             "http_compress": True,  # Reduce network overhead
         }
     }
+    # Use batched signal processor (only supported mode)
     OPENSEARCH_DSL_SIGNAL_PROCESSOR = os.environ.get(
         "OPENSEARCH_DSL_SIGNAL_PROCESSOR",
-        "plane.ee.documents.signal_handler.CustomCelerySignalProcessor",
+        "plane.ee.documents.core.signals.BatchedCelerySignalProcessor",
     )
 
     INSTALLED_APPS += ["django_opensearch_dsl"]

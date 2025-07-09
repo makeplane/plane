@@ -11,14 +11,15 @@ from plane.db.models import (
 )
 from plane.db.models.issue import IssueRelationChoices
 
-from .base import BaseDocument, KnnVectorField, edge_ngram_analyzer
+from ..core import BaseDocument, edge_ngram_analyzer
+from ..core.fields import KnnVectorField
 
 
 @registry.register_document
 class IssueDocument(BaseDocument):
     description = fields.TextField(
         attr="description_stripped",
-        fields={"keyword": fields.KeywordField()},
+        fields={"keyword": fields.KeywordField(ignore_above=1024)},
     )
     project_id = fields.KeywordField(attr="project_id")
     project_identifier = fields.TextField(
@@ -34,12 +35,14 @@ class IssueDocument(BaseDocument):
     type_id = fields.KeywordField(attr="type_id")
     is_epic = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
-    pretty_sequence = fields.TextField(fields={"keyword": fields.KeywordField()})
+    pretty_sequence = fields.TextField(
+        fields={"keyword": fields.KeywordField(ignore_above=1024)}
+    )
     is_deleted = fields.BooleanField()
     name = fields.TextField(
         analyzer=edge_ngram_analyzer,
         search_analyzer="standard",
-        fields={"keyword": fields.KeywordField()},
+        fields={"keyword": fields.KeywordField(ignore_above=1024)},
     )
     duplicate_of = fields.ListField(fields.KeywordField())
     not_duplicates_with = fields.ListField(fields.KeywordField())
@@ -221,18 +224,20 @@ class IssueDocument(BaseDocument):
 
     def prepare(self, instance):
         """
-        Override prepare method to handle semantic field exclusion during upsert.
+        Override prepare method to handle semantic field exclusion for partial updates.
 
-        If semantic fields haven't changed, exclude them from the prepared data
-        to preserve existing embeddings in OpenSearch.
+        Action context determines field inclusion:
+        - index: Include all fields (full reindex)
+        - update: Exclude semantic fields (preserve existing embeddings)
         """
         data = super().prepare(instance)
 
-        # Check if semantic fields have changed
-        semantic_fields_changed = getattr(instance, "_semantic_fields_changed", False)
+        # For update actions, exclude semantic fields to preserve existing embeddings
+        # The _prepare_action method in BaseDocument sets _semantic_fields_changed = False for updates
+        semantic_fields_changed = getattr(instance, "_semantic_fields_changed", None)
 
-        # If semantic fields haven't changed, exclude them to preserve existing embeddings
-        if not semantic_fields_changed:
+        # Exclude semantic fields for partial updates (semantic_fields_changed = False)
+        if semantic_fields_changed is False:
             semantic_fields = [
                 "description_semantic",
                 "name_semantic",

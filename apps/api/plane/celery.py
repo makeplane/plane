@@ -1,12 +1,13 @@
 # Python imports
 import os
 import logging
+from datetime import timedelta
 
 # Third party imports
 from celery import Celery
 from pythonjsonlogger.jsonlogger import JsonFormatter
 from celery.signals import after_setup_logger, after_setup_task_logger
-from celery.schedules import crontab
+from celery.schedules import crontab, schedule
 
 # Module imports
 from plane.settings.redis import redis_instance
@@ -88,12 +89,21 @@ EE_JOBS = {
         "schedule": crontab(hour="*/12", minute=0),  # Every 12 hours
     },
     "check-every-day-to-sync-workspace-members": {
-        "task": "plane.payment.bgtasks.workspace_subscription_sync_task.schedule_workspace_billing_task",
+        "task": "plane.payment.bgtasks.workspace_subscription_sync_task.schedule_workspace_billing_task",  # noqa: E501
         "schedule": crontab(hour=0, minute=0),  # UTC 00:00
     },
     "track-entity-issue-state-progress": {
-        "task": "plane.ee.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",
+        "task": "plane.ee.bgtasks.entity_issue_state_progress_task.track_entity_issue_state_progress",  # noqa: E501
         "schedule": crontab(hour=0, minute=30),  # UTC 00:30
+    },
+    # OpenSearch batched updates
+    "process-batched-opensearch-updates": {
+        "task": "plane.ee.bgtasks.batched_search_update_task.process_batched_opensearch_updates",  # noqa: E501
+        "schedule": schedule(run_every=timedelta(seconds=5)),  # Every 5 seconds
+    },
+    "log-opensearch-update-queue-metrics": {
+        "task": "plane.ee.bgtasks.batched_search_update_task.log_opensearch_update_queue_metrics",  # noqa: E501
+        "schedule": crontab(minute="*/15"),  # Every 15 minutes
     },
 }
 
