@@ -15,7 +15,7 @@ export const WorkspaceContentWrapper = observer(({ children }: { children: React
     <div className="flex relative size-full overflow-hidden bg-custom-background-90 rounded-lg transition-all ease-in-out duration-300">
       {shouldRenderAppRail && <AppRailRoot />}
       <div
-        className={cn("size-full p-2 flex-grow transition-all ease-in-out duration-300", {
+        className={cn("size-full p-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden", {
           "pl-0": shouldRenderAppRail,
         })}
       >
