@@ -1006,8 +1006,7 @@ div.web-view-spinner div.bar12 {
 html.todesktop body {
   height: 100vh;
   width: 100%;
-  padding: 8px;
-  padding-top: 36px;
+  padding-top: 32px;
 }
 
 html.todesktop .app-container {
@@ -1017,11 +1016,10 @@ html.todesktop .app-container {
   contain: layout style size;
   contain-intrinsic-size: 100%;
   position: relative; /* Ensure it's the containing block */
-  border: 1px solid rgb(var(--color-border-200));
-  border-radius: 6px;
 }
 
 html.todesktop .header {
+  background-color: rgb(var(--color-background-90));
   -webkit-app-region: drag;
 }
 
