@@ -1,6 +1,6 @@
 .table-wrapper {
   overflow-x: auto;
-  padding-bottom: 30px;
+  padding-bottom: 26px;
 
   table {
     position: relative;
@@ -191,18 +191,20 @@
 
   .table-column-insert-button {
     top: 0;
-    right: -20px;
-    width: 20px;
+    right: -16px;
+    width: 16px;
     height: 100%;
     transform: translateX(50%);
+    cursor: col-resize;
   }
 
   .table-row-insert-button {
-    bottom: -20px;
+    bottom: -16px;
     left: 0;
     width: 100%;
-    height: 20px;
+    height: 16px;
     transform: translateY(50%);
+    cursor: row-resize;
   }
 
   /* Show buttons on table hover */
