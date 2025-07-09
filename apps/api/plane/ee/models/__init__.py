@@ -100,3 +100,8 @@ from .template import (
 )
 
 from .page import PageUser
+
+from .recurring import (
+    RecurringWorkitemTask,
+    RecurringWorkitemTaskLog,
+)

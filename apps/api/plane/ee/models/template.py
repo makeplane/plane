@@ -169,7 +169,27 @@ class WorkitemTemplate(WorkspaceBaseModel):
         NONE = "none", "None"
 
     template = models.ForeignKey(
-        Template, on_delete=models.CASCADE, related_name="workitem_templates"
+        Template,
+        on_delete=models.CASCADE,
+        related_name="workitem_templates",
+        null=True,
+        blank=True,
+    )
+    # Parent Workitem Template is the workitem template that the workitem template inherits from
+    parent_workitem_template = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        related_name="child_workitem_templates",
+        null=True,
+        blank=True,
+    )
+    # Project Template is the project that the workitem template belongs to
+    project_template = models.ForeignKey(
+        "ee.ProjectTemplate",
+        on_delete=models.CASCADE,
+        related_name="workitem_templates",
+        null=True,
+        blank=True,
     )
     # basic info fields
     name = models.CharField(max_length=255)
@@ -190,6 +210,13 @@ class WorkitemTemplate(WorkspaceBaseModel):
     type = models.JSONField(default=dict)
     modules = models.JSONField(default=dict)
     properties = models.JSONField(default=dict)
+
+    @property
+    def is_template(self):
+        """
+        Check if the workitem template is a template.
+        """
+        return self.template is not None
 
     class Meta:
         db_table = "workitem_templates"
