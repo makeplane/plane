@@ -37,11 +37,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
 // plane web imports
 import { DeDupeButtonRoot, DuplicateModalRoot } from "@/plane-web/components/de-dupe";
-import {
-  IssueAdditionalProperties,
-  IssueTypeSelect,
-  WorkItemTemplateSelect,
-} from "@/plane-web/components/issues/issue-modal";
+import { IssueTypeSelect, WorkItemTemplateSelect } from "@/plane-web/components/issues/issue-modal";
+import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues/issue-modal/modal-additional-properties";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 
 export interface IssueFormProps {
@@ -475,25 +472,19 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   onClose={onClose}
                 />
               </div>
-              <div
-                className={cn(
-                  "px-5",
-                  activeAdditionalPropertiesLength <= 4 &&
-                    "max-h-[25vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
-                )}
-              >
-                {projectId && (
-                  <IssueAdditionalProperties
-                    issueId={data?.id ?? data?.sourceIssueId}
-                    issueTypeId={watch("type_id")}
-                    projectId={projectId}
-                    workspaceSlug={workspaceSlug?.toString()}
-                    isDraft={isDraft}
-                  />
-                )}
-              </div>
+              <WorkItemModalAdditionalProperties
+                isDraft={isDraft}
+                workItemId={data?.id ?? data?.sourceIssueId}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug?.toString()}
+              />
             </div>
-            <div className="px-4 py-3 border-t-[0.5px] border-custom-border-200 shadow-custom-shadow-xs rounded-b-lg bg-custom-background-100">
+            <div
+              className={cn(
+                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
+                activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
+              )}
+            >
               <div className="pb-3 border-b-[0.5px] border-custom-border-200">
                 <IssueDefaultProperties
                   control={control}
