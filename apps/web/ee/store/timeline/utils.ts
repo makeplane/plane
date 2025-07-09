@@ -222,6 +222,7 @@ export function getNewRelationsMap(
           destinationBlock: destinationBlock.id,
           relationType,
           isAdhering: endPosition.x >= startPosition.x,
+          projectId: currBlock.project_id,
         };
 
         // Add it to the newRelationsMap

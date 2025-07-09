@@ -9,6 +9,7 @@ import {
 
 import {
   ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE,
+  ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   EActivityFilterTypeEE,
   shouldRenderActivity,
 } from "./filter-extended";
@@ -197,6 +198,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_PAGE: TIssueFiltersToDisplayByPageType = {
         values: [],
       },
     },
+    ...ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS,
   },
   issues: {
     list: {

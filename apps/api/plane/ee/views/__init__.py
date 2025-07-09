@@ -92,7 +92,10 @@ from plane.ee.views.app.workspace.connection import (
     WorkspaceUserConnectionView,
 )
 from plane.ee.views.app.workspace.entity_connection import WorkspaceEntityConnectionView
-
+from plane.ee.views.app.workspace.issue import (
+    WorkspaceIssueDetailEndpoint,
+    WorkspaceIssueBulkUpdateDateEndpoint,
+)
 
 from plane.ee.views.api.workspace.credential import (
     WorkspaceCredentialAPIView,

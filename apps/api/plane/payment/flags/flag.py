@@ -72,6 +72,8 @@ class FeatureFlag(Enum):
     NESTED_PAGES = "NESTED_PAGES"
     # Project Templates
     PROJECT_TEMPLATES = "PROJECT_TEMPLATES"
+    # Workspace gantt view
+    GLOBAL_VIEWS_TIMELINE = "GLOBAL_VIEWS_TIMELINE"
     # Shared Pages
     SHARED_PAGES = "SHARED_PAGES"
     # Copy Work Item

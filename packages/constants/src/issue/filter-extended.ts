@@ -4,7 +4,7 @@ import {
   EPICS_DISPLAY_PROPERTIES_KEYS,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
-import { TActivityFilters } from "./filter";
+import { TActivityFilters, TFiltersByLayout } from "./filter";
 import { EActivityFilterType } from "./filter";
 
 export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
@@ -186,6 +186,31 @@ export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
         access: true,
         values: ["sub_issue"],
       },
+    },
+  },
+};
+
+export const ADDITIONAL_MY_ISSUES_DISPLAY_FILTERS: TFiltersByLayout = {
+  gantt_chart: {
+    filters: [
+      "priority",
+      "state_group",
+      "labels",
+      "assignees",
+      "created_by",
+      "subscriber",
+      "project",
+      "start_date",
+      "target_date",
+    ],
+    display_properties: ["key", "issue_type"],
+    display_filters: {
+      order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "-priority"],
+      type: [null, "active", "backlog"],
+    },
+    extra_options: {
+      access: true,
+      values: ["sub_issue"],
     },
   },
 };

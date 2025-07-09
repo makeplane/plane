@@ -120,13 +120,15 @@ export const DependencyPathModal = observer((props: DependencyPathProps) => {
 
   const handleRemoveRelation = async () => {
     try {
-      if (!relation || !relationType) return;
+      const relationProjectId: string = relation?.projectId ?? projectId?.toString();
+
+      if (!relation || !relationType || !relationProjectId) return;
 
       setIsRemoving(true);
 
       await removeRelation(
         workspaceSlug.toString(),
-        projectId.toString(),
+        relationProjectId,
         relation?.originBlock,
         relationType,
         relation?.destinationBlock

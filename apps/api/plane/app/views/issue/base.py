@@ -1354,6 +1354,18 @@ class IssueDetailEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        if (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                member=request.user,
+                role=5,
+                is_active=True,
+            ).exists()
+            and not project.guest_view_all_features
+        ):
+            issue = issue.filter(created_by=request.user)
 
         # Add additional prefetch based on expand parameter
         if self.expand:

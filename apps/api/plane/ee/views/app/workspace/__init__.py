@@ -13,3 +13,5 @@ from .invite import WorkspaceInviteCheckEndpoint
 from .credential import WorkspaceCredentialView, VerifyWorkspaceCredentialView
 from .connection import WorkspaceConnectionView, WorkspaceUserConnectionView
 from .entity_connection import WorkspaceEntityConnectionView
+
+from .issue import WorkspaceIssueDetailEndpoint, WorkspaceIssueBulkUpdateDateEndpoint

@@ -1,6 +1,11 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { EViewAccess, ISearchIssueResponse, TWorkspaceEpicsSearchParams } from "@plane/types";
+import {
+  EViewAccess,
+  IBlockUpdateDependencyData,
+  ISearchIssueResponse,
+  TWorkspaceEpicsSearchParams,
+} from "@plane/types";
 // helpers
 // services
 import { WorkspaceService as CoreWorkspaceService } from "@/services/workspace.service";
@@ -58,5 +63,9 @@ export class WorkspaceService extends CoreWorkspaceService {
     params: TWorkspaceEpicsSearchParams
   ): Promise<ISearchIssueResponse[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/epics/`, { params }).then((response) => response?.data);
+  }
+
+  async updateWorkItemDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[]): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/issue-dates/`, { updates }).then((response) => response?.data);
   }
 }

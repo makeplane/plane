@@ -15,6 +15,8 @@ from plane.ee.views import (
     WorkspaceUserConnectionView,
     WorkspaceEntityConnectionView,
     WorkspaceBulkAssetEndpoint,
+    WorkspaceIssueDetailEndpoint,
+    WorkspaceIssueBulkUpdateDateEndpoint,
 )
 
 
@@ -107,5 +109,15 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/<uuid:entity_id>/bulk/",
         WorkspaceBulkAssetEndpoint.as_view(),
         name="bulk-asset-update",
+    ),
+    path(
+        "workspaces/<str:slug>/issues-detail/",
+        WorkspaceIssueDetailEndpoint.as_view(),
+        name="workspace-issue-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/issue-dates/",
+        WorkspaceIssueBulkUpdateDateEndpoint.as_view(),
+        name="workspace-issue-dates",
     ),
 ]

@@ -34,6 +34,7 @@ export type Relation = {
   destinationBlock: string;
   relationType: ETimelineRelation;
   isAdhering: boolean;
+  projectId?: string;
 };
 
 export type DependencyDraggingDetails = {
