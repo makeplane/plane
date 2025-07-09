@@ -1,7 +1,7 @@
-import { CSSProperties } from "react";
 import { Editor, Range } from "@tiptap/core";
-// types
-import { TEditorCommands } from "@/types";
+import { CSSProperties } from "react";
+// local imports
+import type { TEditorCommands } from "./editor";
 
 export type CommandProps = {
   editor: Editor;

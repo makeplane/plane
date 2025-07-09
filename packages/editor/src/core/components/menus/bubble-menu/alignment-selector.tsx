@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { AlignCenter, AlignLeft, AlignRight, LucideIcon } from "lucide-react";
 // plane utils
 import { cn } from "@plane/utils";

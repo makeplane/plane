@@ -1,6 +1,6 @@
 import { BubbleMenu, BubbleMenuProps, Editor, isNodeSelection, useEditorState } from "@tiptap/react";
 import { FC, useEffect, useState, useRef } from "react";
-// plane utils
+// plane imports
 import { cn } from "@plane/utils";
 // components
 import {
@@ -22,9 +22,10 @@ import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+// types
+import type { TEditorCommands } from "@/types";
 // local components
 import { TextAlignmentSelector } from "./alignment-selector";
-import { TEditorCommands } from "@/types";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
@@ -39,13 +40,13 @@ export interface EditorStateType {
   center: boolean;
   color: { key: string; label: string; textColor: string; backgroundColor: string } | undefined;
   backgroundColor:
-  | {
-    key: string;
-    label: string;
-    textColor: string;
-    backgroundColor: string;
-  }
-  | undefined;
+    | {
+        key: string;
+        label: string;
+        textColor: string;
+        backgroundColor: string;
+      }
+    | undefined;
 }
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {

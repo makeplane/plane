@@ -1,5 +1,3 @@
-// components
-import { EditorContainer, EditorContentWrapper } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // helpers
@@ -7,7 +5,10 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { IReadOnlyEditorProps } from "@/types";
+import type { IReadOnlyEditorProps } from "@/types";
+// local imports
+import { EditorContainer } from "./editor-container";
+import { EditorContentWrapper } from "./editor-content";
 
 export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
   const {
@@ -49,7 +50,7 @@ export const ReadOnlyEditorWrapper = (props: IReadOnlyEditorProps) => {
       id={id}
     >
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} id={id} />
+        <EditorContentWrapper editor={editor} />
       </div>
     </EditorContainer>
   );

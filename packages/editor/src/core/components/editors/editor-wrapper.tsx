@@ -1,13 +1,13 @@
-import { Editor, Extensions } from "@tiptap/core";
-// components
-import { EditorContainer } from "@/components/editors";
+import type { Editor, Extensions } from "@tiptap/core";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // hooks
 import { getEditorClassNames } from "@/helpers/common";
 import { useEditor } from "@/hooks/use-editor";
 // types
-import { IEditorProps } from "@/types";
+import type { IEditorProps } from "@/types";
+// local imports
+import { EditorContainer } from "./editor-container";
 import { EditorContentWrapper } from "./editor-content";
 
 type Props = IEditorProps & {
@@ -78,7 +78,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     >
       {children?.(editor)}
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
+        <EditorContentWrapper editor={editor} tabIndex={tabIndex} />
       </div>
     </EditorContainer>
   );

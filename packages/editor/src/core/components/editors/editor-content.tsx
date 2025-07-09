@@ -4,12 +4,11 @@ import { FC, ReactNode } from "react";
 interface EditorContentProps {
   children?: ReactNode;
   editor: Editor | null;
-  id: string;
   tabIndex?: number;
 }
 
 export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
-  const { editor, children, id, tabIndex } = props;
+  const { editor, children, tabIndex } = props;
 
   return (
     <div tabIndex={tabIndex} onFocus={() => editor?.chain().focus(undefined, { scrollIntoView: false }).run()}>

@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import React, { forwardRef, MutableRefObject } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -7,13 +7,13 @@ import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { WorkItemEmbedExtension } from "@/extensions";
+import { WorkItemEmbedExtension } from "@/extensions/work-item-embed";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
 // types
-import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
+import type { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 
 const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) => {
   const {

@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef } from "react";
 import tippy, { Instance } from "tippy.js";

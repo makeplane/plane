@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 // plane constants
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // plane types
 import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
@@ -117,9 +117,9 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}
                 workspaceSlug={workspaceSlug}
-                onEnterKeyPress={(e) => {
+                onEnterKeyPress={() => {
                   if (!isEmpty && !isSubmitting) {
-                    handleSubmit(onSubmit)(e);
+                    handleSubmit(onSubmit)();
                   }
                 }}
                 ref={editorRef}

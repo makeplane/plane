@@ -2,9 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Check, ChevronDown } from "lucide-react";
-// editor
-import { EditorRefApi } from "@plane/editor";
-// ui
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";

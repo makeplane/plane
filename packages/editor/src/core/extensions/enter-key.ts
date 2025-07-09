@@ -3,8 +3,10 @@ import { Extension } from "@tiptap/core";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
+// types
+import type { IEditorProps } from "@/types";
 
-export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
+export const EnterKeyExtension = (onEnterKeyPress?: IEditorProps["onEnterKeyPress"]) =>
   Extension.create({
     name: CORE_EXTENSIONS.ENTER_KEY,
 

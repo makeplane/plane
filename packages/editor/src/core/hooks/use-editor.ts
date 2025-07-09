@@ -36,7 +36,9 @@ export const useEditor = (props: TEditorHookProps) => {
     initialValue,
     mentionHandler,
     onAssetChange,
+    onBlur,
     onChange,
+    onFocus,
     onTransaction,
     placeholder,
     provider,
@@ -74,6 +76,12 @@ export const useEditor = (props: TEditorHookProps) => {
       onCreate: () => handleEditorReady?.(true),
       onTransaction: () => {
         onTransaction?.();
+      },
+      onFocus: () => {
+        onFocus?.();
+      },
+      onBlur: () => {
+        onBlur?.();
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),

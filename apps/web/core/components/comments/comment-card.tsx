@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { Check, Globe2, Lock, Pencil, Trash2, X } from "lucide-react";
 // PLane
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { TIssueComment, TCommentsOperations } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -150,9 +150,9 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
               initialValue={commentHTML ?? ""}
               value={null}
               onChange={(comment_json, comment_html) => setValue("comment_html", comment_html)}
-              onEnterKeyPress={(e) => {
+              onEnterKeyPress={() => {
                 if (!isEmpty && !isSubmitting) {
-                  handleSubmit(onEnter)(e);
+                  handleSubmit(onEnter)();
                 }
               }}
               showSubmitButton={false}

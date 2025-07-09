@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane types
-import { TSticky } from "@plane/types";
-// plane utils
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
+import type { TSticky } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";

@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import React from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -7,7 +7,7 @@ import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { WorkItemEmbedExtension } from "@/extensions";
+import { WorkItemEmbedExtension } from "@/extensions/work-item-embed";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks

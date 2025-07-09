@@ -1,11 +1,14 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
-import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
+import { DocumentContentLoader } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import type { TAIHandler, TDisplayConfig } from "@/types";
+// local imports
+import { EditorContainer } from "../editor-container";
+import { EditorContentWrapper } from "../editor-content";
 
 type Props = {
   aiHandler?: TAIHandler;
@@ -37,7 +40,7 @@ export const PageRenderer = (props: Props) => {
           editorContainerClassName={editorContainerClassName}
           id={id}
         >
-          <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
+          <EditorContentWrapper editor={editor} tabIndex={tabIndex} />
           {editor.isEditable && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}

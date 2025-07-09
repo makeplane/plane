@@ -1,10 +1,10 @@
 import { forwardRef, useMemo } from "react";
-// components
-import { EditorWrapper } from "@/components/editors/editor-wrapper";
 // extensions
-import { EnterKeyExtension } from "@/extensions";
+import { EnterKeyExtension } from "@/extensions/enter-key";
 // types
-import { EditorRefApi, ILiteTextEditorProps } from "@/types";
+import type { EditorRefApi, ILiteTextEditorProps } from "@/types";
+// local imports
+import { EditorWrapper } from "../editor-wrapper";
 
 const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
   const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [] } = props;

@@ -111,6 +111,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
+  // eslint-disable-next-line no-undef
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
@@ -134,8 +135,10 @@ export interface IEditorProps {
   initialValue: string;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
+  onBlur?: () => void;
   onChange?: (json: object, html: string) => void;
-  onEnterKeyPress?: (e?: any) => void;
+  onEnterKeyPress?: () => void;
+  onFocus?: () => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
