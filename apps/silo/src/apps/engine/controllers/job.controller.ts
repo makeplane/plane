@@ -227,4 +227,34 @@ export class JobController {
       responseHandler(res, 500, error);
     }
   }
+
+  @Post("/:id/trigger-job-step")
+  @useValidateUserAuthentication()
+  async triggerJobStep(req: Request, res: Response) {
+    try {
+      const jobId = req.params.id;
+      const job = await client.importJob.getImportJob(jobId);
+      if (!job?.id) {
+        return res.status(400).json({ message: "Job not found" });
+      }
+
+      const { route, type, data } = req.body;
+
+      if (!route || !type) {
+        return res.status(400).json({ message: "Invalid request, expecting (route, type) to be passed" });
+      }
+
+      await importTaskManger.registerTask(
+        {
+          route,
+          jobId,
+          type,
+        },
+        data
+      );
+      res.status(200).json({ message: "Job step triggered successfully" });
+    } catch (error: any) {
+      responseHandler(res, 500, error);
+    }
+  }
 }
