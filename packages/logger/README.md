@@ -17,7 +17,7 @@ Add this package as a dependency in package.json
 ```typescript
 dependency: {
     ...
-    @plane/logger":"*",
+    "@plane/logger":"workspace:*",
     ...
 }
 ```

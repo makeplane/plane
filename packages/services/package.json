@@ -13,7 +13,8 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/constants": "*",
+    "@plane/constants": "workspace:*",
+    "@plane/types": "workspace:*",
     "axios": "^1.8.3"
   }
 }
