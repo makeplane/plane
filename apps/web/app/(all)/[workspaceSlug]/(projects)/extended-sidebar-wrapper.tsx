@@ -29,7 +29,7 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        `absolute h-full z-[19] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
+        `absolute h-full z-[19] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
         {
           "translate-x-0 opacity-100": isExtendedSidebarOpened,
           [`-translate-x-[${EXTENDED_SIDEBAR_WIDTH}px] opacity-0 hidden`]: !isExtendedSidebarOpened,
