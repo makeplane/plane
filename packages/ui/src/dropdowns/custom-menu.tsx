@@ -69,6 +69,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     noChevron = false,
     optionsClassName = "",
     menuItemsClassName = "",
+    chevronClassName = "",
     verticalEllipsis = false,
     portalElement,
     menuButtonOnClick,
@@ -258,7 +259,9 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     tabIndex={customButtonTabIndex}
                     aria-label={ariaLabel}
                   >
-                    <MoreHorizontal className={`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`} />
+                    <MoreHorizontal
+                      className={cn(`h-3.5 w-3.5 ${verticalEllipsis ? "rotate-90" : ""}`, chevronClassName)}
+                    />
                   </button>
                 </Menu.Button>
               ) : (
@@ -279,7 +282,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     aria-label={ariaLabel}
                   >
                     {label}
-                    {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
+                    {!noChevron && <ChevronDown className={cn("h-3.5 w-3.5", chevronClassName)} />}
                   </button>
                 </Menu.Button>
               )}
