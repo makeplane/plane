@@ -525,7 +525,7 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   pointer-events: none;
   left: 0;
   top: 0;
-  transition: transform 0.2s var(--ease-out-quart);
+  transition: transform 0.2s var(--ease-out-quart) !important;
   will-change: transform;
   opacity: 0.8;
   z-index: 1000;
