@@ -21,6 +21,7 @@ func init() {
 		"windows1252":  charmap.Windows1252,
 		"cp1252":       charmap.Windows1252,
 		"iso-8859-1":   charmap.ISO8859_1,
+		"iso8859-1":    charmap.ISO8859_1,
 		"iso-8859-15":  charmap.ISO8859_15,
 
 		// Central European & Cyrillic

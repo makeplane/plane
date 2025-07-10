@@ -10,6 +10,7 @@ import (
 
 	"plane/email/pkg/utils"
 
+	"github.com/emersion/go-message"
 	"github.com/emersion/go-message/mail"
 	"github.com/emersion/go-smtp"
 	// Import charset support
@@ -82,9 +83,22 @@ func (s *Session) Data(r io.Reader) error {
 		p, err := mr.NextPart()
 		if err == io.EOF {
 			break
-		} else if err != nil {
-			logger.Log.Errorf("failed to read email part: %v", err)
-			return err
+		}
+
+		// If an unknown charset is encountered, log it and continue processing
+		if err != nil {
+			// Import-level check for unknown charset without aborting the whole parsing.
+			if message.IsUnknownCharset(err) {
+				logger.Log.Warnf("unknown charset encountered, skipping charset decoding: %v", err)
+			} else {
+				logger.Log.Errorf("failed to read email part: %v", err)
+				return err
+			}
+		}
+
+		// If NextPart returned a nil part (can occur when charset error happens before part creation), skip to the next iteration.
+		if p == nil {
+			continue
 		}
 
 		switch h := p.Header.(type) {
