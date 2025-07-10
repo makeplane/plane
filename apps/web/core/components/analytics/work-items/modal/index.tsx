@@ -32,7 +32,7 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
 
   return (
     <Transition.Root appear show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-30" onClose={handleClose}>
         <Transition.Child
           as={React.Fragment}
           enter="transition-transform duration-300"

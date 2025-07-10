@@ -21,7 +21,6 @@ import { InsightTable } from "../insight-table";
 
 const analyticsService = new AnalyticsService();
 
-
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
     export: {

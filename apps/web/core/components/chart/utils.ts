@@ -1,7 +1,13 @@
 import { getWeekOfMonth, isValid } from "date-fns";
 import { CHART_X_AXIS_DATE_PROPERTIES, ChartXAxisDateGrouping, TO_CAPITALIZE_PROPERTIES } from "@plane/constants";
 import { ChartXAxisProperty, TChart, TChartDatum } from "@plane/types";
-import { capitalizeFirstLetter, hexToHsl, hslToHex, renderFormattedDate, renderFormattedDateWithoutYear } from "@plane/utils";
+import {
+  capitalizeFirstLetter,
+  hexToHsl,
+  hslToHex,
+  renderFormattedDate,
+  renderFormattedDateWithoutYear,
+} from "@plane/utils";
 //
 
 const getDateGroupingName = (date: string, dateGrouping: ChartXAxisDateGrouping): string => {
@@ -61,7 +67,7 @@ export const parseChartData = (
   const updatedWidgetData: TChartDatum[] = widgetData.map((datum) => {
     const keys = Object.keys(datum);
     const missingKeys = allKeys.filter((key) => !keys.includes(key));
-    const missingValues: Record<string, number> = Object.fromEntries(missingKeys.map(key => [key, 0]));
+    const missingValues: Record<string, number> = Object.fromEntries(missingKeys.map((key) => [key, 0]));
 
     if (xAxisProperty) {
       // capitalize first letter if xAxisProperty is in TO_CAPITALIZE_PROPERTIES and no groupByProperty is set

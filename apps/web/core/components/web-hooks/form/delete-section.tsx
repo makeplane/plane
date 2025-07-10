@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/ui";
 
 type Props = {
@@ -36,7 +37,11 @@ export const WebhookDeleteSection: React.FC<Props> = (props) => {
                   webhook.
                 </span>
                 <div>
-                  <Button variant="danger" onClick={openDeleteModal}>
+                  <Button
+                    variant="danger"
+                    onClick={openDeleteModal}
+                    data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DELETE_BUTTON}
+                  >
                     Delete webhook
                   </Button>
                 </div>

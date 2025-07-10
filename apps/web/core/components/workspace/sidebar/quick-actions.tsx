@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues";
 // constants
 // helpers
 // hooks
-import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { AppSearch } from "@/plane-web/components/workspace";
@@ -30,7 +30,6 @@ export const SidebarQuickActions = observer(() => {
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { joinedProjectIds } = useProject();
   const { allowPermissions } = useUserPermissions();
   // local storage
@@ -73,19 +72,13 @@ export const SidebarQuickActions = observer(() => {
         onSubmit={() => removeWorkspaceDraftIssue()}
         isDraft
       />
-      <div
-        className={cn("flex items-center justify-between gap-1 cursor-pointer", {
-          "flex-col gap-0": isSidebarCollapsed,
-        })}
-      >
+      <div className={cn("flex items-center justify-between gap-1 cursor-pointer", {})}>
         <button
           type="button"
           className={cn(
-            "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90",
+            "relative flex flex-shrink-0 flex-grow items-center gap-2 h-8 text-custom-sidebar-text-300 rounded outline-none hover:bg-custom-sidebar-background-90 px-3 border-[0.5px] border-custom-sidebar-border-300",
             {
-              "justify-center size-8 aspect-square": isSidebarCollapsed,
               "cursor-not-allowed opacity-50 ": disabled,
-              "px-3 border-[0.5px] border-custom-sidebar-border-300": !isSidebarCollapsed,
             }
           )}
           data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
@@ -97,9 +90,7 @@ export const SidebarQuickActions = observer(() => {
           disabled={disabled}
         >
           <PenSquare className="size-4" />
-          {!isSidebarCollapsed && (
-            <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
-          )}
+          <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
         </button>
         <AppSearch />
       </div>

@@ -12,7 +12,8 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   // hooks
   const { config } = useInstance();
 
-  const isOAuthEnabled = (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const isOAuthEnabled =
+    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
 
   if (!isOAuthEnabled) return null;
 

@@ -13,9 +13,7 @@ export type TProjectDisplayFilters = {
   order_by?: TProjectOrderByOptions;
 };
 
-export type TProjectAppliedDisplayFilterKeys =
-  | "my_projects"
-  | "archived_projects";
+export type TProjectAppliedDisplayFilterKeys = "my_projects" | "archived_projects";
 
 export type TProjectFilters = {
   access?: string[] | null;

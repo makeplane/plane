@@ -830,7 +830,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     updates: { id: string; start_date?: string; target_date?: string }[],
     projectId?: string
   ) {
-    if(!projectId) return;
+    if (!projectId) return;
     const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
     try {
       const getIssueById = this.rootIssueStore.issues.getIssueById;

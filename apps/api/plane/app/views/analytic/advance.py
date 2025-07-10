@@ -160,7 +160,8 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             )
 
         return (
-            base_queryset.values("project_id", "project__name").annotate(
+            base_queryset.values("project_id", "project__name")
+            .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),
                 backlog_work_items=Count("id", filter=Q(state__group="backlog")),
@@ -173,8 +174,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
     def get_work_items_stats(self) -> Dict[str, Dict[str, int]]:
         base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"])
         return (
-            base_queryset
-            .values("project_id", "project__name")
+            base_queryset.values("project_id", "project__name")
             .annotate(
                 cancelled_work_items=Count("id", filter=Q(state__group="cancelled")),
                 completed_work_items=Count("id", filter=Q(state__group="completed")),

@@ -39,13 +39,13 @@ export interface EditorStateType {
   center: boolean;
   color: { key: string; label: string; textColor: string; backgroundColor: string } | undefined;
   backgroundColor:
-  | {
-    key: string;
-    label: string;
-    textColor: string;
-    backgroundColor: string;
-  }
-  | undefined;
+    | {
+        key: string;
+        label: string;
+        textColor: string;
+        backgroundColor: string;
+      }
+    | undefined;
 }
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
