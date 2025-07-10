@@ -18,14 +18,7 @@ import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/compon
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import {
-  useIssueDetail,
-  useIssues,
-  useProject,
-  useProjectState,
-  useUser,
-  useUserPermissions,
-} from "@/hooks/store";
+import { useIssueDetail, useIssues, useProject, useProjectState, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 

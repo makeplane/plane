@@ -35,9 +35,9 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
 
   const updateRouteParams = useCallback(
     (key: keyof TIssueQueryFilters, value: string[]) => {
-      const state = key === "state" ? value : issueFilters?.filters?.state ?? [];
-      const priority = key === "priority" ? value : issueFilters?.filters?.priority ?? [];
-      const labels = key === "labels" ? value : issueFilters?.filters?.labels ?? [];
+      const state = key === "state" ? value : (issueFilters?.filters?.state ?? []);
+      const priority = key === "priority" ? value : (issueFilters?.filters?.priority ?? []);
+      const labels = key === "labels" ? value : (issueFilters?.filters?.labels ?? []);
 
       let params: any = { board: activeLayout || "list" };
       if (priority.length > 0) params = { ...params, priority: priority.join(",") };

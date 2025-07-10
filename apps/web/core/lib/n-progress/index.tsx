@@ -1,9 +1,6 @@
-import { start, done } from 'nprogress';
-import {
-  AppProgressBar as AppProgressBarComponent,
-  useRouter,
-} from './AppProgressBar';
-import withSuspense from './withSuspense';
+import { start, done } from "nprogress";
+import { AppProgressBar as AppProgressBarComponent, useRouter } from "./AppProgressBar";
+import withSuspense from "./withSuspense";
 
 export interface NProgressOptions {
   minimum?: number;

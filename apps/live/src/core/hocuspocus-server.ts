@@ -4,10 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { handleAuthentication } from "@/core/lib/authentication.js";
 // extensions
 import { getExtensions } from "@/core/extensions/index.js";
-import {
-  DocumentCollaborativeEvents,
-  TDocumentEventsServer,
-} from "@plane/editor/lib";
+import { DocumentCollaborativeEvents, TDocumentEventsServer } from "@plane/editor/lib";
 // editor types
 import { TUserDetails } from "@plane/editor";
 // types
@@ -61,8 +58,7 @@ export const getHocusPocusServer = async () => {
     },
     async onStateless({ payload, document }) {
       // broadcast the client event (derived from the server event) to all the clients so that they can update their state
-      const response =
-        DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
+      const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
       if (response) {
         document.broadcastStateless(response);
       }

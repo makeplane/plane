@@ -1,10 +1,4 @@
-export const THEMES = [
-  "light",
-  "dark",
-  "light-contrast",
-  "dark-contrast",
-  "custom",
-];
+export const THEMES = ["light", "dark", "light-contrast", "dark-contrast", "custom"];
 
 export interface I_THEME_OPTION {
   key: string;

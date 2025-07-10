@@ -50,11 +50,11 @@ def paginate(base_queryset, queryset, cursor, on_result):
     paginated_data = queryset[start_index:end_index]
 
     # Create the pagination info object
-    prev_cursor = f"{page_size}:{cursor_object.current_page-1}:0"
+    prev_cursor = f"{page_size}:{cursor_object.current_page - 1}:0"
     cursor = f"{page_size}:{cursor_object.current_page}:0"
     next_cursor = None
     if end_index < total_results:
-        next_cursor = f"{page_size}:{cursor_object.current_page+1}:0"
+        next_cursor = f"{page_size}:{cursor_object.current_page + 1}:0"
 
     prev_page_results = False
     if cursor_object.current_page > 0:
