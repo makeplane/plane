@@ -79,9 +79,10 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
 
   return (
     <DocumentEditor
+      key={activeVersion ?? ""}
       editable={false}
       id={activeVersion ?? ""}
-      initialValue={description}
+      value={description}
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"

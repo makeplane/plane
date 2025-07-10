@@ -1,13 +1,13 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { forwardRef } from "react";
 // plane imports
 import { DocumentEditorWithRef, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
 import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-import { cn, generateRandomColor, hslToHex } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
@@ -16,6 +16,7 @@ type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
   "disabledExtensions" | "editable" | "flaggedExtensions"
 > & {
+  embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -34,6 +35,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const {
     containerClassName,
     editable,
+    embedHandler,
     workspaceSlug,
     workspaceId,
     projectId,
@@ -41,7 +43,6 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     ...rest
   } = props;
   // store hooks
-  const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
@@ -56,15 +57,6 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     projectId: projectId?.toString() ?? "",
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
-  // user config
-  const userConfig = useMemo(
-    () => ({
-      id: currentUser?.id ?? "",
-      name: currentUser?.display_name ?? "",
-      color: hslToHex(generateRandomColor(currentUser?.id ?? "")),
-    }),
-    [currentUser?.display_name, currentUser?.id]
-  );
 
   return (
     <DocumentEditorWithRef
@@ -89,8 +81,8 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       }}
       embedHandler={{
         issue: issueEmbedProps,
+        ...embedHandler,
       }}
-      user={userConfig}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

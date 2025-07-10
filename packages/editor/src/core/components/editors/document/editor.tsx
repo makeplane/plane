@@ -31,10 +31,10 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     forwardedRef,
     id,
     handleEditorReady,
-    initialValue,
     mentionHandler,
     onChange,
     user,
+    value,
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
@@ -78,7 +78,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     forwardedRef,
     handleEditorReady,
     id,
-    initialValue,
+    initialValue: value,
     mentionHandler,
     onChange,
   });
