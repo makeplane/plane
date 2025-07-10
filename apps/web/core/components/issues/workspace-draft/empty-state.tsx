@@ -43,7 +43,7 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
             onClick: () => {
               setIsDraftIssueModalOpen(true);
             },
-            disabled: !canPerformEmptyStateActions
+            disabled: !canPerformEmptyStateActions,
           }}
         />
       </div>

@@ -7,9 +7,9 @@ type TArgs = {
   pageId: string;
   params: URLSearchParams;
   updatedDescription: Uint8Array;
-}
+};
 
 export const updateDocument = async (args: TArgs): Promise<void> => {
   const { documentType } = args;
   throw Error(`Update failed: Invalid document type ${documentType} provided.`);
-}
+};

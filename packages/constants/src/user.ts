@@ -52,11 +52,7 @@ export type TUserAllowedPermissions = {
 export const USER_ALLOWED_PERMISSIONS: TUserAllowedPermissions = {
   workspace: {
     dashboard: {
-      read: [
-        EUserPermissions.ADMIN,
-        EUserPermissions.MEMBER,
-        EUserPermissions.GUEST,
-      ],
+      read: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     },
   },
   project: {},
