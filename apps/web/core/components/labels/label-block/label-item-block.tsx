@@ -3,7 +3,7 @@
 import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 // plane helpers
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IIssueLabel } from "@plane/types";
@@ -12,7 +12,6 @@ import { CustomMenu, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // components
-import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
@@ -94,12 +93,6 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
                 className="flex size-5 items-center justify-center rounded hover:bg-custom-background-80"
                 onClick={() => {
                   handleLabelDelete(label);
-                  captureSuccess({
-                    eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
-                    payload: {
-                      id: label?.id,
-                    },
-                  });
                 }}
                 data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >

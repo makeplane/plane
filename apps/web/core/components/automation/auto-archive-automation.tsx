@@ -72,11 +72,11 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
           </div>
           <ToggleSwitch
             value={currentProjectDetails?.archive_in !== 0}
-            onChange={() => {
+            onChange={async () => {
               if (currentProjectDetails?.archive_in === 0) {
-                handleChange({ archive_in: 1 });
+                await handleChange({ archive_in: 1 });
               } else {
-                handleChange({ archive_in: 0 });
+                await handleChange({ archive_in: 0 });
               }
               captureElementAndEvent({
                 element: {

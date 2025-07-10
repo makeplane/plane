@@ -4,12 +4,7 @@ import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  EUserPermissions,
-  EUserPermissionsLevel,
-  PROJECT_SETTINGS_TRACKER_ELEMENTS,
-  PROJECT_SETTINGS_TRACKER_EVENTS,
-} from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -22,7 +17,7 @@ import {
   TLabelOperationsCallbacks,
 } from "@/components/labels";
 // hooks
-import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { SettingsHeading } from "../settings";
@@ -89,14 +84,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           label: t("common.add_label"),
           onClick: () => {
             newLabel();
-            captureElementAndEvent({
-              element: {
-                elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_HEADER_CREATE_BUTTON,
-              },
-              event: {
-                eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
-                state: "SUCCESS",
-              },
+            captureClick({
+              elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_HEADER_CREATE_BUTTON,
             });
           },
         }}
@@ -129,14 +118,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                   text: "Create your first label",
                   onClick: () => {
                     newLabel();
-                    captureElementAndEvent({
-                      element: {
-                        elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_EMPTY_STATE_CREATE_BUTTON,
-                      },
-                      event: {
-                        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
-                        state: "SUCCESS",
-                      },
+                    captureClick({
+                      elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_EMPTY_STATE_CREATE_BUTTON,
                     });
                   },
                 }}

@@ -99,11 +99,11 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
           </div>
           <ToggleSwitch
             value={currentProjectDetails?.close_in !== 0}
-            onChange={() => {
+            onChange={async () => {
               if (currentProjectDetails?.close_in === 0) {
-                handleChange({ close_in: 1, default_state: defaultState });
+                await handleChange({ close_in: 1, default_state: defaultState });
               } else {
-                handleChange({ close_in: 0, default_state: null });
+                await handleChange({ close_in: 0, default_state: null });
               }
               captureElementAndEvent({
                 element: {
