@@ -15,7 +15,7 @@ import { isCommentEmpty } from "@plane/utils";
 import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
 // helpers
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 //
 import { CommentBlock } from "@/plane-web/components/comments";
 import { CommentReactions } from "./comment-reaction";
@@ -139,7 +139,15 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
         <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
           <div
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
+              if (
+                e.key === "Enter" &&
+                !e.shiftKey &&
+                !e.ctrlKey &&
+                !e.metaKey &&
+                !isEmpty &&
+                editorRef.current?.isEditorReadyToDiscard()
+              )
+                handleSubmit(onEnter)(e);
             }}
           >
             <LiteTextEditor

@@ -16,6 +16,7 @@ export const filterPagesByPageType = (pageType: TPageNavigationTabs, pages: TPag
     if (pageType === "public") return page.access === 0 && !page.archived_at;
     if (pageType === "private") return page.access === 1 && !page.archived_at;
     if (pageType === "archived") return page.archived_at;
+    if (pageType === "shared") return page.is_shared && !page.archived_at;
     return true;
   });
 
