@@ -3,6 +3,7 @@
 import { MutableRefObject, useRef, useState } from "react";
 import { LucideIcon, X } from "lucide-react";
 // plane helpers
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { IIssueLabel } from "@plane/types";
@@ -90,7 +91,10 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
             <div className="py-0.5">
               <button
                 className="flex size-5 items-center justify-center rounded hover:bg-custom-background-80"
-                onClick={() => handleLabelDelete(label)}
+                onClick={() => {
+                  handleLabelDelete(label);
+                }}
+                data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
                 <X className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
               </button>

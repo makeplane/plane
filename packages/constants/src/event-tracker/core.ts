@@ -45,6 +45,7 @@ export const PROJECT_TRACKER_EVENTS = {
   create: "project_created",
   update: "project_updated",
   delete: "project_deleted",
+  feature_toggled: "feature_toggled",
 };
 
 export const PROJECT_TRACKER_ELEMENTS = {
@@ -359,6 +360,38 @@ export const ONBOARDING_TRACKER_ELEMENTS = {
 export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
   CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
+};
+
+/**
+ * ===========================================================================
+ * Project Settings Events and Elements
+ * ===========================================================================
+ */
+export const PROJECT_SETTINGS_TRACKER_ELEMENTS = {
+  LABELS_EMPTY_STATE_CREATE_BUTTON: "labels_empty_state_create_button",
+  LABELS_HEADER_CREATE_BUTTON: "labels_header_create_button",
+  LABELS_CONTEXT_MENU: "labels_context_menu",
+  LABELS_DELETE_BUTTON: "labels_delete_button",
+  ESTIMATES_TOGGLE_BUTTON: "estimates_toggle_button",
+  ESTIMATES_EMPTY_STATE_CREATE_BUTTON: "estimates_empty_state_create_button",
+  ESTIMATES_LIST_ITEM: "estimates_list_item",
+  AUTOMATIONS_ARCHIVE_TOGGLE_BUTTON: "automations_archive_toggle_button",
+  AUTOMATIONS_CLOSE_TOGGLE_BUTTON: "automations_close_toggle_button",
+};
+
+export const PROJECT_SETTINGS_TRACKER_EVENTS = {
+  // labels
+  label_created: "label_created",
+  label_updated: "label_updated",
+  label_deleted: "label_deleted",
+  // estimates
+  estimate_created: "estimate_created",
+  estimate_updated: "estimate_updated",
+  estimate_deleted: "estimate_deleted",
+  estimates_toggle: "estimates_toggled",
+  // automations
+  auto_close_workitems: "auto_close_workitems",
+  auto_archive_workitems: "auto_archive_workitems",
 };
 
 /**
