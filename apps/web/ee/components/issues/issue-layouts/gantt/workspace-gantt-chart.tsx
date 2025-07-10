@@ -105,7 +105,7 @@ export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
     );
   };
   // Loading state
-  if (isLoading || issuesLoading || !globalViewId || !groupedIssueIds || getIssueLoader()) {
+  if (isLoading || issuesLoading || !globalViewId || !groupedIssueIds || getIssueLoader() === "init-loader") {
     return <GanttLayoutLoader />;
   }
 
