@@ -1,3 +1,5 @@
+import { EProductSubscriptionEnum } from "@plane/types";
+
 // Dashboard Events
 export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
 export const HEADER_GITHUB_ICON = "header_github_icon";
@@ -267,4 +269,32 @@ export const ONBOARDING_TRACKER_ELEMENTS = {
 export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
   CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
+};
+
+export const WORKSPACE_SETTINGS_TRACKER_EVENTS = {
+  // Billing
+  upgrade_plan_redirected: "upgrade_plan_redirected",
+  // Exports
+  csv_exported: "csv_exported",
+  // Webhooks
+  webhook_created: "webhook_created",
+  webhook_deleted: "webhook_deleted",
+  webhook_toggled: "webhook_toggled",
+  webhook_details_page_toggled: "webhook_details_page_toggled",
+  webhook_updated: "webhook_updated",
+};
+export const WORKSPACE_SETTINGS_TRACKER_ELEMENTS = {
+  // Billing
+  BILLING_UPGRADE_BUTTON: (subscriptionType: EProductSubscriptionEnum) => `billing_upgrade_${subscriptionType}_button`,
+  BILLING_TALK_TO_SALES_BUTTON: "billing_talk_to_sales_button",
+  // Exports
+  EXPORT_BUTTON: "export_button",
+  // Webhooks
+  HEADER_ADD_WEBHOOK_BUTTON: "header_add_webhook_button",
+  EMPTY_STATE_ADD_WEBHOOK_BUTTON: "empty_state_add_webhook_button",
+  LIST_ITEM_DELETE_BUTTON: "list_item_delete_button",
+  WEBHOOK_LIST_ITEM_TOGGLE_SWITCH: "webhook_list_item_toggle_switch",
+  WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH: "webhook_details_page_toggle_switch",
+  WEBHOOK_DELETE_BUTTON: "webhook_delete_button",
+  WEBHOOK_UPDATE_BUTTON: "webhook_update_button",
 };
