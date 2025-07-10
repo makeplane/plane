@@ -1,22 +1,34 @@
 import { EProductSubscriptionEnum } from "@plane/types";
 
-// Dashboard Events
+/**
+ * ===========================================================================
+ * Event Groups
+ * ===========================================================================
+ */
+export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
 export const GITHUB_REDIRECTED_TRACKER_EVENT = "github_redirected";
 export const HEADER_GITHUB_ICON = "header_github_icon";
 
-// Groups
-export const GROUP_WORKSPACE_TRACKER_EVENT = "workspace_metrics";
-
-// Command palette tracker
+/**
+ * ===========================================================================
+ * Command palette tracker
+ * ===========================================================================
+ */
 export const COMMAND_PALETTE_TRACKER_ELEMENTS = {
   COMMAND_PALETTE_SHORTCUT_KEY: "command_palette_shortcut_key",
 };
 
+/**
+ * ===========================================================================
+ * Workspace Events and Elements
+ * ===========================================================================
+ */
 export const WORKSPACE_TRACKER_EVENTS = {
   create: "workspace_created",
   update: "workspace_updated",
   delete: "workspace_deleted",
 };
+
 export const WORKSPACE_TRACKER_ELEMENTS = {
   DELETE_WORKSPACE_BUTTON: "delete_workspace_button",
   ONBOARDING_CREATE_WORKSPACE_BUTTON: "onboarding_create_workspace_button",
@@ -24,11 +36,17 @@ export const WORKSPACE_TRACKER_ELEMENTS = {
   UPDATE_WORKSPACE_BUTTON: "update_workspace_button",
 };
 
+/**
+ * ===========================================================================
+ * Project Events and Elements
+ * ===========================================================================
+ */
 export const PROJECT_TRACKER_EVENTS = {
   create: "project_created",
   update: "project_updated",
   delete: "project_deleted",
 };
+
 export const PROJECT_TRACKER_ELEMENTS = {
   EXTENDED_SIDEBAR_ADD_BUTTON: "extended_sidebar_add_project_button",
   SIDEBAR_CREATE_PROJECT_BUTTON: "sidebar_create_project_button",
@@ -44,6 +62,11 @@ export const PROJECT_TRACKER_ELEMENTS = {
   TOGGLE_FEATURE: "toggle_project_feature",
 };
 
+/**
+ * ===========================================================================
+ * Cycle Events and Elements
+ * ===========================================================================
+ */
 export const CYCLE_TRACKER_EVENTS = {
   create: "cycle_created",
   update: "cycle_updated",
@@ -53,6 +76,7 @@ export const CYCLE_TRACKER_EVENTS = {
   archive: "cycle_archived",
   restore: "cycle_restored",
 };
+
 export const CYCLE_TRACKER_ELEMENTS = {
   RIGHT_HEADER_ADD_BUTTON: "right_header_add_cycle_button",
   EMPTY_STATE_ADD_BUTTON: "empty_state_add_cycle_button",
@@ -63,6 +87,11 @@ export const CYCLE_TRACKER_ELEMENTS = {
   LIST_ITEM: "cycle_list_item",
 } as const;
 
+/**
+ * ===========================================================================
+ * Module Events and Elements
+ * ===========================================================================
+ */
 export const MODULE_TRACKER_EVENTS = {
   create: "module_created",
   update: "module_updated",
@@ -77,6 +106,7 @@ export const MODULE_TRACKER_EVENTS = {
     delete: "module_link_deleted",
   },
 };
+
 export const MODULE_TRACKER_ELEMENTS = {
   RIGHT_HEADER_ADD_BUTTON: "right_header_add_module_button",
   EMPTY_STATE_ADD_BUTTON: "empty_state_add_module_button",
@@ -88,6 +118,11 @@ export const MODULE_TRACKER_ELEMENTS = {
   CARD_ITEM: "module_card_item",
 } as const;
 
+/**
+ * ===========================================================================
+ * Work Item Events and Elements
+ * ===========================================================================
+ */
 export const WORK_ITEM_TRACKER_EVENTS = {
   create: "work_item_created",
   add_existing: "work_item_add_existing",
@@ -145,6 +180,11 @@ export const WORK_ITEM_TRACKER_ELEMENTS = {
   },
 } as const;
 
+/**
+ * ===========================================================================
+ * State Events and Elements
+ * ===========================================================================
+ */
 export const STATE_TRACKER_EVENTS = {
   create: "state_created",
   update: "state_updated",
@@ -156,6 +196,11 @@ export const STATE_TRACKER_ELEMENTS = {
   STATE_LIST_EDIT_BUTTON: "state_list_edit_button",
 };
 
+/**
+ * ===========================================================================
+ * Project Page Events and Elements
+ * ===========================================================================
+ */
 export const PROJECT_PAGE_TRACKER_EVENTS = {
   create: "project_page_created",
   update: "project_page_updated",
@@ -184,6 +229,11 @@ export const PROJECT_PAGE_TRACKER_ELEMENTS = {
   DUPLICATE_BUTTON: "page_duplicate_button",
 } as const;
 
+/**
+ * ===========================================================================
+ * Member Events and Elements
+ * ===========================================================================
+ */
 export const MEMBER_TRACKER_EVENTS = {
   invite: "member_invited",
   accept: "member_accepted",
@@ -206,6 +256,11 @@ export const MEMBER_TRACKER_ELEMENTS = {
   WORKSPACE_INVITATIONS_LIST_CONTEXT_MENU: "workspace_invitations_list_context_menu",
 } as const;
 
+/**
+ * ===========================================================================
+ * Auth Events and Elements
+ * ===========================================================================
+ */
 export const AUTH_TRACKER_EVENTS = {
   code_verify: "code_verified",
   sign_up_with_password: "sign_up_with_password",
@@ -213,6 +268,7 @@ export const AUTH_TRACKER_EVENTS = {
   forgot_password: "forgot_password_clicked",
   new_code_requested: "new_code_requested",
 };
+
 export const AUTH_TRACKER_ELEMENTS = {
   NAVIGATE_TO_SIGN_UP: "navigate_to_sign_up",
   FORGOT_PASSWORD_FROM_SIGNIN: "forgot_password_from_signin",
@@ -223,12 +279,18 @@ export const AUTH_TRACKER_ELEMENTS = {
   VERIFY_CODE: "verify_code",
 };
 
+/**
+ * ===========================================================================
+ * Global View Events and Elements
+ * ===========================================================================
+ */
 export const GLOBAL_VIEW_TRACKER_EVENTS = {
   create: "global_view_created",
   update: "global_view_updated",
   delete: "global_view_deleted",
   open: "global_view_opened",
 };
+
 export const GLOBAL_VIEW_TRACKER_ELEMENTS = {
   RIGHT_HEADER_ADD_BUTTON: "global_view_right_header_add_button",
   HEADER_SAVE_VIEW_BUTTON: "global_view_header_save_view_button",
@@ -236,15 +298,26 @@ export const GLOBAL_VIEW_TRACKER_ELEMENTS = {
   LIST_ITEM: "global_view_list_item",
 };
 
+/**
+ * ===========================================================================
+ * Product Tour Events and Elements
+ * ===========================================================================
+ */
 export const PRODUCT_TOUR_TRACKER_EVENTS = {
   complete: "product_tour_completed",
 };
+
 export const PRODUCT_TOUR_TRACKER_ELEMENTS = {
   START_BUTTON: "product_tour_start_button",
   SKIP_BUTTON: "product_tour_skip_button",
   CREATE_PROJECT_BUTTON: "product_tour_create_project_button",
 };
 
+/**
+ * ===========================================================================
+ * Notification Events and Elements
+ * ===========================================================================
+ */
 export const NOTIFICATION_TRACKER_EVENTS = {
   archive: "notification_archived",
   unarchive: "notification_unarchived",
@@ -252,25 +325,88 @@ export const NOTIFICATION_TRACKER_EVENTS = {
   mark_unread: "notification_marked_unread",
   all_marked_read: "all_notifications_marked_read",
 };
+
 export const NOTIFICATION_TRACKER_ELEMENTS = {
   MARK_ALL_AS_READ_BUTTON: "mark_all_as_read_button",
   ARCHIVE_UNARCHIVE_BUTTON: "archive_unarchive_button",
   MARK_READ_UNREAD_BUTTON: "mark_read_unread_button",
 };
 
+/**
+ * ===========================================================================
+ * User Events
+ * ===========================================================================
+ */
 export const USER_TRACKER_EVENTS = {
   add_details: "user_details_added",
   onboarding_complete: "user_onboarding_completed",
 };
+
+/**
+ * ===========================================================================
+ * Onboarding Events and Elements
+ * ===========================================================================
+ */
 export const ONBOARDING_TRACKER_ELEMENTS = {
   PROFILE_SETUP_FORM: "onboarding_profile_setup_form",
 };
 
+/**
+ * ===========================================================================
+ * Sidebar Events
+ * ===========================================================================
+ */
 export const SIDEBAR_TRACKER_ELEMENTS = {
   USER_MENU_ITEM: "sidenav_user_menu_item",
   CREATE_WORK_ITEM_BUTTON: "sidebar_create_work_item_button",
 };
 
+/**
+ * ===========================================================================
+ * Profile Settings Events and Elements
+ * ===========================================================================
+ */
+export const PROFILE_SETTINGS_TRACKER_EVENTS = {
+  // Account
+  deactivate_account: "deactivate_account",
+  update_profile: "update_profile",
+  // Preferences
+  first_day_updated: "first_day_updated",
+  language_updated: "language_updated",
+  timezone_updated: "timezone_updated",
+  theme_updated: "theme_updated",
+  // Notifications
+  notifications_updated: "notifications_updated",
+  // PAT
+  pat_created: "pat_created",
+  pat_deleted: "pat_deleted",
+};
+
+export const PROFILE_SETTINGS_TRACKER_ELEMENTS = {
+  // Account
+  SAVE_CHANGES_BUTTON: "save_changes_button",
+  DEACTIVATE_ACCOUNT_BUTTON: "deactivate_account_button",
+  // Preferences
+  THEME_DROPDOWN: "preferences_theme_dropdown",
+  FIRST_DAY_OF_WEEK_DROPDOWN: "preferences_first_day_of_week_dropdown",
+  LANGUAGE_DROPDOWN: "preferences_language_dropdown",
+  TIMEZONE_DROPDOWN: "preferences_timezone_dropdown",
+  // Notifications
+  PROPERTY_CHANGES_TOGGLE: "notifications_property_changes_toggle",
+  STATE_CHANGES_TOGGLE: "notifications_state_changes_toggle",
+  COMMENTS_TOGGLE: "notifications_comments_toggle",
+  MENTIONS_TOGGLE: "notifications_mentions_toggle",
+  // PAT
+  HEADER_ADD_PAT_BUTTON: "header_add_pat_button",
+  EMPTY_STATE_ADD_PAT_BUTTON: "empty_state_add_pat_button",
+  LIST_ITEM_DELETE_ICON: "list_item_delete_icon",
+};
+
+/**
+ * ===========================================================================
+ * Workspace Settings Events and Elements
+ * ===========================================================================
+ */
 export const WORKSPACE_SETTINGS_TRACKER_EVENTS = {
   // Billing
   upgrade_plan_redirected: "upgrade_plan_redirected",
@@ -283,6 +419,7 @@ export const WORKSPACE_SETTINGS_TRACKER_EVENTS = {
   webhook_details_page_toggled: "webhook_details_page_toggled",
   webhook_updated: "webhook_updated",
 };
+
 export const WORKSPACE_SETTINGS_TRACKER_ELEMENTS = {
   // Billing
   BILLING_UPGRADE_BUTTON: (subscriptionType: EProductSubscriptionEnum) => `billing_upgrade_${subscriptionType}_button`,
