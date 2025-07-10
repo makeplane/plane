@@ -38,7 +38,10 @@ export const useHashScroll = (args: TArgs): TReturnType => {
 
       if (element) {
         setTimeout(async () => {
-          element.scrollIntoView({ behavior: "smooth" });
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
         }, 200);
 
         return true;
