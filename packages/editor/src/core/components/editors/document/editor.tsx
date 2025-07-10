@@ -57,7 +57,11 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
         flaggedExtensions,
         isEditable: editable,
         fileHandler,
-        userDetails: user,
+        userDetails: user ?? {
+          id: "",
+          name: "",
+          color: "",
+        },
       })
     );
     return additionalExtensions;

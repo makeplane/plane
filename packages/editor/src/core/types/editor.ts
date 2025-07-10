@@ -164,7 +164,7 @@ export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" 
   editable: boolean;
   embedHandler: TEmbedConfig;
   initialValue: Content;
-  user: TUserDetails;
+  user?: TUserDetails;
 }
 
 // read only editor props
