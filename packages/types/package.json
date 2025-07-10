@@ -30,6 +30,7 @@
   "devDependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
-    "tsup": "8.4.0"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }

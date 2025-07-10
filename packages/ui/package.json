@@ -12,8 +12,8 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
+    "build": "tsup --minify",
+    "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
@@ -34,6 +34,7 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
+    "@plane/constants": "*",
     "@plane/hooks": "*",
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
