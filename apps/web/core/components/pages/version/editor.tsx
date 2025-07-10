@@ -1,18 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
+import { TDisplayConfig } from "@plane/editor";
 import { TPageVersion } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useEditorConfig } from "@/hooks/editor";
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web hooks
-import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
@@ -21,23 +17,12 @@ export type TVersionEditorProps = {
 
 export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, versionDetails } = props;
-  // store hooks
-  const { getUserDetails } = useMember();
   // params
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
-  // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
-  // editor config
-  const { getReadOnlyEditorFileHandlers } = useEditorConfig();
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
-    projectId: projectId?.toString() ?? "",
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-  });
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 
@@ -89,32 +74,20 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       </div>
     );
 
-  const description = versionDetails?.description_html;
-  if (description === undefined || description?.trim() === "") return null;
+  const description = versionDetails?.description_json;
+  if (!description) return null;
 
   return (
-    <DocumentReadOnlyEditorWithRef
+    <DocumentEditor
+      editable={false}
       id={activeVersion ?? ""}
-      initialValue={description ?? "<p></p>"}
+      initialValue={description}
       containerClassName="p-0 pb-64 border-none"
-      disabledExtensions={documentEditorExtensions.disabled}
-      flaggedExtensions={documentEditorExtensions.flagged}
       displayConfig={displayConfig}
       editorClassName="pl-10"
-      fileHandler={getReadOnlyEditorFileHandlers({
-        projectId: projectId?.toString() ?? "",
-        workspaceId: workspaceDetails?.id ?? "",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
-      })}
-      mentionHandler={{
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
-        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
-      }}
-      embedHandler={{
-        issue: {
-          widgetCallback: issueEmbedProps.widgetCallback,
-        },
-      }}
+      projectId={projectId?.toString() ?? ""}
+      workspaceId={workspaceDetails?.id ?? ""}
+      workspaceSlug={workspaceSlug?.toString() ?? ""}
     />
   );
 });

@@ -70,7 +70,7 @@ export const useEditor = (props: TEditorHookProps) => {
         }),
         ...extensions,
       ],
-      content: typeof initialValue === "string" && initialValue.trim() !== "" ? initialValue : "<p></p>",
+      content: initialValue,
       onCreate: () => handleEditorReady?.(true),
       onTransaction: () => {
         onTransaction?.();

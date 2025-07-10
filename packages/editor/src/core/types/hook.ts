@@ -1,4 +1,5 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Content } from "@tiptap/core";
 import type { EditorProps } from "@tiptap/pm/view";
 // local imports
 import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorProps } from "./editor";
@@ -27,7 +28,7 @@ export type TEditorHookProps = TCoreHookProps &
   > & {
     editable: boolean;
     enableHistory: boolean;
-    initialValue?: string;
+    initialValue?: Content;
     provider?: HocuspocusProvider;
   };
 

@@ -9,7 +9,7 @@ import "./styles/drag-drop.css";
 // editors
 export {
   CollaborativeDocumentEditorWithRef,
-  DocumentReadOnlyEditorWithRef,
+  DocumentEditorWithRef,
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
