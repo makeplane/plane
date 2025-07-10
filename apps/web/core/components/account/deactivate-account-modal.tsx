@@ -3,10 +3,12 @@
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -35,6 +37,9 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
     await deactivateAccount()
       .then(() => {
+        captureSuccess({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.deactivate_account,
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -44,13 +49,16 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
         router.push("/");
         handleClose();
       })
-      .catch((err: any) =>
+      .catch((err: any) => {
+        captureError({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.deactivate_account,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.error,
-        })
-      )
+        });
+      })
       .finally(() => setIsDeactivating(false));
   };
 
