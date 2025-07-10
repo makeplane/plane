@@ -31,6 +31,6 @@
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "tsup": "8.4.0",
-    "typescript": "5.8.2"
+    "typescript": "5.8.3"
   }
 }
