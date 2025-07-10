@@ -11,10 +11,16 @@ export type SlackAuthState = {
   apiToken: string;
   workspaceId: string;
   workspaceSlug: string;
+  plane_app_installation_id?: string;
 };
 
 export type SlackUserAuthState = Omit<SlackAuthState, "apiToken"> & {
   apiToken?: string;
+};
+
+export type SlackPlaneOAuthState = {
+  slack_code: string;
+  encoded_slack_state: string;
 };
 
 export type SlackBotTokenResponse = {

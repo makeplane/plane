@@ -1,3 +1,4 @@
+import { credentials } from "amqplib";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
 import { IssueWithExpanded } from "@plane/sdk";

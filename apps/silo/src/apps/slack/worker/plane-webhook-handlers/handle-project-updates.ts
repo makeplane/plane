@@ -1,9 +1,9 @@
 import { E_SLACK_ENTITY_TYPE } from "@plane/etl/slack";
 import { PlaneWebhookPayload } from "@plane/sdk";
+import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { createSlackLinkback } from "../../views/issue-linkback";
-import { logger } from "@/logger";
 
 const apiClient = getAPIClient();
 

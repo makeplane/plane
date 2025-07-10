@@ -7,6 +7,7 @@ import { TWorkspaceConnection, TWorkspaceEntityConnection } from "@plane/types";
 // plane web services
 import { SlackIntegrationService } from "@/plane-web/services/integrations/slack.service";
 // plane web store
+import { ApplicationService } from "@/plane-web/services/marketplace/application.service";
 import { RootStore } from "@/plane-web/store/root.store";
 // base integration store
 import { IntegrationBaseStore } from "./base.store";
@@ -57,6 +58,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
   webhookConnection: Record<string, boolean> = {};
   // service
   service: SlackIntegrationService;
+  applicationService: ApplicationService;
 
   constructor(private rootStore: RootStore) {
     super(rootStore);
@@ -85,6 +87,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
 
     // service instance
     this.service = new SlackIntegrationService(encodeURI(SILO_BASE_URL + SILO_BASE_PATH));
+    this.applicationService = new ApplicationService();
   }
   // computed
   get isAppConnected() {
@@ -160,11 +163,17 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
     const userId = this.rootStore.user.data?.id;
     if (!workspaceId || !workspaceSlug || !userId || !this.externalApiToken)
       throw new Error("Workspace ID, Workspace Slug, User ID and External API Token are required");
+
+    // get the plane app
+    const appDetails = await this.service.getPlaneAppDetails();
+    const appInstallation = await this.applicationService.installApplication(workspaceSlug, appDetails.appId);
+
     const response = await this.service.getAppInstallationURL({
       apiToken: this.externalApiToken,
       workspaceId,
       workspaceSlug,
       userId,
+      plane_app_installation_id: appInstallation?.id,
     });
     await this.fetchWebhookConnection(`${SILO_BASE_PATH}/api/slack/plane/events`);
     return response;

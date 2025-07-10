@@ -5,6 +5,7 @@ import {
   E_SLACK_ENTITY_TYPE,
   isUserMessage,
   SlackAuthState,
+  SlackPlaneOAuthState,
   SlackUserAuthState,
   TSlackCommandPayload,
   TSlackPayload,
@@ -17,10 +18,14 @@ import {
   PlaneWebhookPayloadBase,
 } from "@plane/sdk";
 import { env } from "@/env";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { getPlaneAppDetails } from "@/helpers/plane-app-details";
 import { responseHandler } from "@/helpers/response-handler";
 import { Controller, Delete, EnsureEnabled, Get, Post, Put, useValidateUserAuthentication } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
+import { planeOAuthService } from "@/services/oauth";
+import { EOAuthGrantType, ESourceAuthorizationType } from "@/types/oauth";
 import { integrationTaskManager } from "@/worker";
 import { Store } from "@/worker/base";
 import { slackAuth } from "../auth/auth";
@@ -42,9 +47,9 @@ export default class SlackController {
   async getAppAuthURL(req: Request, res: Response) {
     try {
       const body: SlackAuthState = req.body;
-      if (!body.workspaceId || !body.apiToken) {
+      if (!body.workspaceId || !body.apiToken || !body.plane_app_installation_id) {
         return res.status(400).send({
-          message: "Bad Request, expected both apiToken and workspaceId to be present.",
+          message: "Bad Request, expected both apiToken, workspaceId and plane_app_installation_id to be present.",
         });
       }
       const response = slackAuth.getWorkspaceAuthUrl(body);
@@ -189,14 +194,35 @@ export default class SlackController {
         return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CANNOT_CREATE_MULTIPLE_CONNECTIONS}`);
       }
 
+      // use plane_app_installation_id in the state payload and clientid and secret to generate the token
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.SLACK);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS}`);
+      }
+
+      if (!authState.plane_app_installation_id) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_INSTALLATION_ID}`);
+      }
+
+      const tokenResponse = await planeOAuthService.generateToken({
+        client_id: planeAppClientId,
+        client_secret: planeAppClientSecret,
+        grant_type: EOAuthGrantType.CLIENT_CREDENTIALS,
+        app_installation_id: authState.plane_app_installation_id,
+      });
+
       // Create credentials for slack for the workspace
       const credentials = await apiClient.workspaceCredential.createWorkspaceCredential({
         source: E_INTEGRATION_KEYS.SLACK,
-        target_access_token: state.apiToken,
-        source_access_token: response.access_token,
-        source_refresh_token: response.refresh_token,
         workspace_id: state.workspaceId,
         user_id: authState.userId,
+        source_identifier: response.team.id,
+        source_authorization_type: ESourceAuthorizationType.OAUTH,
+        source_access_token: response.access_token,
+        source_refresh_token: response.refresh_token,
+        target_access_token: tokenResponse.access_token,
+        target_identifier: authState.plane_app_installation_id,
+        target_authorization_type: EOAuthGrantType.CLIENT_CREDENTIALS,
       });
 
       const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
@@ -221,9 +247,114 @@ export default class SlackController {
         });
       }
 
-      return res.redirect(`${env.APP_BASE_URL}/${state.workspaceSlug}/settings/integrations/slack/`);
+      return res.redirect(redirectUri);
     } catch (error) {
       return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.GENERIC_ERROR}`);
+    }
+  }
+
+  @Get("/plane-oauth/callback")
+  async oAuthCallback(req: Request, res: Response) {
+    const { code: oauthCode, state: encodedSlackState } = req.query;
+
+    if (!oauthCode || !encodedSlackState) {
+      return res.status(400).send({
+        message: "Bad Request, expected code and state to be present.",
+      });
+  }
+
+    const slackState: SlackPlaneOAuthState = JSON.parse(
+      Buffer.from(encodedSlackState as string, "base64").toString("utf-8")
+    ) as SlackPlaneOAuthState;
+
+    const { slack_code, encoded_slack_state } = slackState;
+
+    const authState = JSON.parse(
+      Buffer.from(encoded_slack_state as string, "base64").toString("utf-8")
+    ) as SlackUserAuthState;
+    let redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/integrations/slack/`;
+    if (authState.profileRedirect) {
+      redirectUri = `${env.APP_BASE_URL}/${authState.workspaceSlug}/settings/account/connections/?workspaceId=${authState.workspaceId}`;
+    }
+
+    try {
+      const { state, response } = await slackAuth.getUserAuthToken({
+        code: slack_code as string,
+        state: authState,
+      });
+
+      if (!response.ok) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      }
+
+      if (!response.authed_user || !response.authed_user.access_token || !response.authed_user.refresh_token) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      }
+
+      const workspaceConnections = await integrationConnectionHelper.getWorkspaceConnections({
+        connection_type: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: state.workspaceId,
+      });
+
+      if (workspaceConnections.length === 0) {
+        // Create a workspace connection for the authenticated team
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
+      }
+
+      const credentials = await apiClient.workspaceCredential.listWorkspaceCredentials({
+        source: E_INTEGRATION_KEYS.SLACK,
+        workspace_id: authState.workspaceId,
+      });
+      if (credentials.length === 0) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
+      }
+
+      const credential = credentials[0];
+      if (!credential.source_access_token || !credential.target_access_token || !credential.target_identifier) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INSTALLATION_NOT_FOUND}`);
+      }
+
+      const userToken = response.authed_user.access_token;
+      const refreshToken = response.authed_user.refresh_token;
+      const slackUserId = response.authed_user.id;
+
+      // get the token from plane oauth service
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.SLACK);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.status(400).send("Invalid app credentials");
+      }
+      // generate the token for the user
+      const tokenResponse = await planeOAuthService.generateToken({
+        client_id: planeAppClientId,
+        client_secret: planeAppClientSecret,
+        grant_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        code: oauthCode as string,
+        redirect_uri: `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/slack/plane-oauth/callback`,
+        app_installation_id: credential.target_identifier,
+        user_id: authState.userId,
+      });
+
+      // Create credentials for slack user for the workspace
+      await integrationConnectionHelper.createOrUpdateWorkspaceCredential({
+        workspace_id: state.workspaceId,
+        user_id: authState.userId,
+        source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
+        source_identifier: slackUserId,
+        source_authorization_type: ESourceAuthorizationType.OAUTH,
+        source_access_token: userToken,
+        source_refresh_token: refreshToken,
+        source_hostname: "",
+        target_access_token: tokenResponse.access_token,
+        target_refresh_token: tokenResponse.refresh_token,
+        target_authorization_type: EOAuthGrantType.AUTHORIZATION_CODE,
+        target_identifier: credential.target_identifier,
+      });
+
+      await updateUserMap(workspaceConnections[0], authState.userId, slackUserId);
+
+      return res.redirect(redirectUri);
+    } catch (error) {
+      return responseHandler(res, 500, error);
     }
   }
 
@@ -244,47 +375,24 @@ export default class SlackController {
     }
 
     try {
-      const { state, response } = await slackAuth.getUserAuthToken({
-        code: code as string,
-        state: authState,
-      });
+      const slackPlaneOAuthState: SlackPlaneOAuthState = {
+        slack_code: code as string,
+        encoded_slack_state: slackState as string,
+      };
 
-      if (!response.ok) {
-        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
+      const { planeAppClientId, planeAppClientSecret } = await getPlaneAppDetails(E_INTEGRATION_KEYS.SLACK);
+      if (!planeAppClientId || !planeAppClientSecret) {
+        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.INVALID_APP_CREDENTIALS}`);
       }
 
-      const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
-        connection_type: E_INTEGRATION_KEYS.SLACK,
-        workspace_id: state.workspaceId,
-      });
+      const siloAppOAuthCallbackURL = `${env.SILO_API_BASE_URL}${env.SILO_BASE_PATH}/api/slack/plane-oauth/callback`;
+      const authorizationURL = planeOAuthService.getPlaneOAuthRedirectUrl(
+        planeAppClientId,
+        siloAppOAuthCallbackURL,
+        Buffer.from(JSON.stringify(slackPlaneOAuthState)).toString("base64")
+      );
 
-      if (!workspaceConnection || workspaceConnection.length === 0) {
-        // Create a workspace connection for the authenticated team
-        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.CONNECTION_NOT_FOUND}`);
-      }
-
-      if (!response.authed_user) {
-        return res.redirect(`${redirectUri}?error=${E_SILO_ERROR_CODES.ERROR_FETCHING_TOKEN}`);
-      }
-
-      const userToken = response.authed_user.access_token;
-      const refreshToken = response.authed_user.refresh_token;
-      const slackUserId = response.authed_user.id;
-
-      // Create credentials for slack for the workspace
-      const workspaceCredentialPromise = apiClient.workspaceCredential.createWorkspaceCredential({
-        source: E_ENTITY_CONNECTION_KEYS.SLACK_USER,
-        target_access_token: state.apiToken,
-        source_access_token: userToken,
-        source_refresh_token: refreshToken,
-        workspace_id: state.workspaceId,
-        user_id: authState.userId,
-      });
-
-      const updateUserMapPromise = updateUserMap(workspaceConnection[0], authState.userId, slackUserId);
-      await Promise.all([workspaceCredentialPromise, updateUserMapPromise]);
-
-      return res.redirect(redirectUri);
+      return res.redirect(authorizationURL);
     } catch (error) {
       return responseHandler(res, 500, error);
     }
@@ -361,7 +469,13 @@ export default class SlackController {
         const connection = connections[0];
 
         // Delete the workspace connection associated with the team
+        const credential = await integrationConnectionHelper.getWorkspaceCredential({
+          credential_id: connection.credential_id,
+        });
         await apiClient.workspaceConnection.deleteWorkspaceConnection(connection.id);
+        if (credential) {
+          await planeOAuthService.deleteTokenFromCache(credential);
+        }
         return res.sendStatus(200);
       }
     } catch (error) {
@@ -393,6 +507,9 @@ export default class SlackController {
 
       await apiClient.workspaceCredential.deleteWorkspaceCredential(credentials[0].id);
 
+      // delete the token from the cache
+      await planeOAuthService.deleteTokenFromCache(credentials[0]);
+
       // Update the workspace connection to remove the user id
       const workspaceConnection = await apiClient.workspaceConnection.listWorkspaceConnections({
         connection_type: E_INTEGRATION_KEYS.SLACK,
@@ -407,6 +524,19 @@ export default class SlackController {
       await updateUserMap(workspaceConnection[0], userId, null);
 
       return res.sendStatus(200);
+    } catch (error) {
+      return responseHandler(res, 500, error);
+    }
+  }
+
+  @Get("/plane-app-details")
+  async getPlaneAppDetails(req: Request, res: Response) {
+    try {
+      const { planeAppId, planeAppClientId } = await getPlaneAppDetails(E_INTEGRATION_KEYS.SLACK);
+      res.status(200).json({
+        appId: planeAppId,
+        clientId: planeAppClientId,
+      });
     } catch (error) {
       return responseHandler(res, 500, error);
     }

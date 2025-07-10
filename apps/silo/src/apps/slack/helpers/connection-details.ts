@@ -3,6 +3,8 @@ import { createSlackService } from "@plane/etl/slack";
 import { Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
 import { TWorkspaceCredential, TWorkspaceConnection } from "@plane/types";
 import { env } from "@/env";
+import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
+import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { slackAuth } from "../auth/auth";
@@ -15,7 +17,7 @@ export const getConnectionDetails = async (
   teamId: string,
   slackUser?: { id: string; email?: string }
 ): Promise<TSlackConnectionDetails | null> => {
-  const [workspaceConnection] = await apiClient.workspaceConnection.listWorkspaceConnections({
+  const workspaceConnection = await integrationConnectionHelper.getWorkspaceConnection({
     connection_id: teamId,
     connection_type: E_INTEGRATION_KEYS.SLACK,
   });
@@ -26,9 +28,9 @@ export const getConnectionDetails = async (
   }
 
   // First get admin credentials to ensure we have a SlackService regardless
-  const adminCredentials = await apiClient.workspaceCredential.getWorkspaceCredential(
-    workspaceConnection.credential_id
-  );
+  const adminCredentials = await integrationConnectionHelper.getWorkspaceCredential({
+    credential_id: workspaceConnection.credential_id,
+  });
 
   if (
     !adminCredentials ||
@@ -65,10 +67,9 @@ export const getConnectionDetails = async (
   // Use user credentials if available, otherwise use admin credentials
   const credentials = userCredentials || adminCredentials;
 
-  const planeClient = new PlaneClient({
-    apiToken: credentials.target_access_token as string,
-    baseURL: env.API_BASE_URL,
-  });
+  logger.info(`[SLACK] Credentials ==== : ${JSON.stringify(credentials)}`);
+
+  const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.SLACK);
 
   return {
     workspaceConnection,
@@ -142,10 +143,7 @@ export const findPlaneUserId = async (
       return null;
     }
 
-    const adminPlaneClient = new PlaneClient({
-      apiToken: adminCredentials.target_access_token,
-      baseURL: env.API_BASE_URL,
-    });
+    const adminPlaneClient = await getPlaneAPIClient(adminCredentials, E_INTEGRATION_KEYS.SLACK);
 
     // Get the members from the workspace and compare the emails in order to find the user
     const members = await adminPlaneClient.users.listAllUsers(workspaceConnection.workspace_slug);
