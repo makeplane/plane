@@ -132,7 +132,7 @@ export interface IEditorProps {
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
   handleEditorReady?: (value: boolean) => void;
   id: string;
-  initialValue: string;
+  initialValue: Content;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
