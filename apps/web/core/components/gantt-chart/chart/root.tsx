@@ -179,7 +179,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
   return (
     <div
       className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
-        "fixed inset-0 z-20 bg-custom-background-100": fullScreenMode,
+        "fixed inset-0 z-30 bg-custom-background-100": fullScreenMode,
         "border-[0.5px] border-custom-border-200": border,
       })}
     >
