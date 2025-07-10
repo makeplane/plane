@@ -9,10 +9,13 @@ import { useParams } from "next/navigation";
 import { Loader, Plus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPageDragPayload } from "@plane/types";
+// plane ui
+import { setToast, TOAST_TYPE } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -192,6 +195,14 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
 
         const newPage = await createPage(payload);
 
+        captureSuccess({
+          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
+          payload: {
+            id: newPage?.id,
+            state: "SUCCESS",
+          },
+        });
+
         // Redirect to the newly created page
         if (newPage?.id) {
           // Get the new page instance which has the getRedirectionLink method
@@ -202,6 +213,12 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
           }
         }
       } catch (error) {
+        captureError({
+          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
+          payload: {
+            state: "ERROR",
+          },
+        });
         console.error("Failed to create page:", error);
       } finally {
         setIsCreatingPage(false);
@@ -256,7 +273,7 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
         onDragStart: () => {
           setIsDropping(true);
         },
-        onDrop: ({ location, self, source }) => {
+        onDrop: async ({ location, self, source }) => {
           setIsDropping(false);
           if (location.current.dropTargets[0]?.element !== self.element) return;
           const { id: droppedPageId } = source.data as TPageDragPayload;
@@ -281,7 +298,46 @@ export const WikiPageSidebarListItemRoot: React.FC<Props> = observer((props) => 
             updatePayload.access = targetAccess;
           }
 
-          droppedPageDetails.update(updatePayload);
+          try {
+            await droppedPageDetails.update(updatePayload);
+            captureSuccess({
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
+              payload: {
+                id: page.id,
+                state: "SUCCESS",
+                updated: {
+                  from_access: page.access,
+                  to_access: droppedPageDetails.access,
+                  from_parent: page.parent_id,
+                  to_parent: droppedPageDetails.parent_id,
+                },
+              },
+            });
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Page moved successfully.",
+            });
+          } catch (error) {
+            captureError({
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
+              payload: {
+                id: page.id,
+                state: "ERROR",
+                updated: {
+                  from_access: page.access,
+                  to_access: droppedPageDetails.access,
+                  from_parent: page.parent_id,
+                  to_parent: droppedPageDetails.parent_id,
+                },
+              },
+            });
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: "Error!",
+              message: "Failed to move page. Please try again later.",
+            });
+          }
         },
         canDrop: ({ source }) => {
           if (

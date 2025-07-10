@@ -6,10 +6,11 @@ import { Loader } from "lucide-react";
 // ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -220,16 +221,29 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
       };
       await createPage(payload)
         .then((res) => {
+          captureSuccess({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+            payload: {
+              id: res?.id,
+              state: "SUCCESS",
+            },
+          });
           const pageId = `/${workspaceSlug}/pages/${res?.id}`;
           router.push(pageId);
         })
-        .catch((err) =>
+        .catch((err) => {
+          captureError({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+            payload: {
+              state: "ERROR",
+            },
+          });
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
             message: err?.data?.error || "Page could not be created. Please try again.",
-          })
-        )
+          });
+        })
         .finally(() => setIsCreatingPage(null));
     },
     [createPage, router, workspaceSlug]

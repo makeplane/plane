@@ -28,10 +28,13 @@ export type TIssueEmbedConfig = {
 };
 
 export type TPageEmbedConfig = {
-  createCallback?: () => Promise<{
-    pageId: string;
-    workspaceSlug: string;
-  }>;
+  createCallback?: () => Promise<
+    | {
+        pageId: string;
+        workspaceSlug: string;
+      }
+    | undefined
+  >;
   searchCallback?: (searchQuery: string) => Promise<TEmbedItem[]>;
   widgetCallback: ({
     pageId,

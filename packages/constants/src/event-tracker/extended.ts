@@ -116,6 +116,33 @@ export const TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS = {
 export const TEAMSPACE_PAGE_TRACKER_EVENTS = {
   PAGE_CREATE: "teamspace_page_created",
 };
+
+export const WORKSPACE_PAGE_TRACKER_EVENTS = {
+  create: "workspace_page_created",
+  update: "workspace_page_updated",
+  delete: "workspace_page_deleted",
+  archive: "workspace_page_archived",
+  restore: "workspace_page_restored",
+  lock: "workspace_page_locked",
+  unlock: "workspace_page_unlocked",
+  access_update: "workspace_page_access_updated",
+  duplicate: "workspace_page_duplicated",
+  favorite: "workspace_page_favorited",
+  unfavorite: "workspace_page_unfavorited",
+  nested_page_create: "workspace_nested_page_created",
+  nested_page_update: "workspace_nested_page_updated",
+  nested_page_delete: "workspace_nested_page_deleted",
+  nested_page_move: "workspace_nested_page_moved",
+  nested_page_duplicate: "workspace_nested_page_duplicated",
+  nested_page_archive: "workspace_nested_page_archived",
+  nested_page_restore: "workspace_nested_page_restored",
+  nested_page_lock: "workspace_nested_page_locked",
+  nested_page_unlock: "workspace_nested_page_unlocked",
+  nested_page_access_update: "workspace_nested_page_access_updated",
+  nested_page_favorite: "workspace_nested_page_favorited",
+  nested_page_unfavorite: "workspace_nested_page_unfavorited",
+};
+
 export const TEAMSPACE_PAGE_TRACKER_ELEMENTS = {
   HEADER_CREATE_PAGE_BUTTON: "teamspace_header_create_page_button",
   EMPTY_STATE_CREATE_PAGE_BUTTON: "teamspace_empty_state_create_page_button",

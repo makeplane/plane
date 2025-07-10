@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // constants
-import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
+import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
@@ -49,7 +49,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
         return removePage({ pageId: page.id })
           .then(() => {
             captureSuccess({
-              eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
               payload: {
                 ...page,
                 state: "SUCCESS",
@@ -61,7 +61,7 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
           })
           .catch(() => {
             captureError({
-              eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_delete,
               payload: {
                 ...page,
                 state: "FAILED",
@@ -140,10 +140,9 @@ export const MultipleDeletePagesModal: React.FC<TConfirmPagesDeleteProps> = obse
               ))}
             </ul>
           </div>
-
-          <p className="text-xs text-custom-text-400 italic">
-            {isMultiplePages ? `Total: ${pages.length} pages will be deleted` : "This page will be permanently deleted"}
-          </p>
+          {isMultiplePages && (
+            <p className="text-xs text-custom-text-400 italic">`Total: ${pages.length} pages will be deleted`</p>
+          )}
         </div>
       }
     />

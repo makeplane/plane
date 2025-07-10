@@ -1,8 +1,11 @@
 import { RefObject, useEffect, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { EPageAccess } from "@plane/constants";
-import { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+import { EPageAccess, WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
+// types
+import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { TPageInstance } from "@/store/pages/base-page";
 import { DragAndDropHookReturn } from "../types";
 
@@ -36,7 +39,7 @@ export const useSectionDragAndDrop = (
         onDragStart: () => {
           setIsDropping(true);
         },
-        onDrop: ({ location, self, source }) => {
+        onDrop: async ({ location, self, source }) => {
           setIsDropping(false);
           if (location.current.dropTargets[0]?.element !== self.element) return;
 
@@ -66,7 +69,37 @@ export const useSectionDragAndDrop = (
             updateData.is_shared = false;
           }
 
-          droppedPageDetails.update(updateData);
+          try {
+            await droppedPageDetails.update(updateData);
+            captureSuccess({
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
+              payload: {
+                id: droppedPageDetails.id,
+                state: "SUCCESS",
+                updated: {
+                  from_access: droppedPageDetails.access,
+                  to_access: newAccess,
+                  from_parent: droppedPageDetails.parent_id,
+                  to_parent: null,
+                },
+              },
+            });
+          } catch (error) {
+            console.error("Failed to update page:", error);
+            captureError({
+              eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_move,
+              payload: {
+                id: droppedPageDetails.id,
+                state: "ERROR",
+                updated: {
+                  from_access: droppedPageDetails.access,
+                  to_access: newAccess,
+                  from_parent: droppedPageDetails.parent_id,
+                  to_parent: null,
+                },
+              },
+            });
+          }
         },
         canDrop: ({ source }) => {
           const sourceData = source.data as TPageDragPayload;

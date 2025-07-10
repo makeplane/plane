@@ -1,11 +1,15 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
+// plane constants
+import { WORKSPACE_PAGE_TRACKER_EVENTS } from "@plane/constants";
 // plane editor
 import { TEmbedConfig, TEmbedItem, TIssueEmbedConfig, TPageEmbedConfig } from "@plane/editor";
 // plane types
 import { TPage, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 // plane ui
 import { PriorityIcon, setToast, TOAST_TYPE } from "@plane/ui";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web components
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageEmbedCardRoot } from "@/plane-web/components/pages";
 // plane web hooks
@@ -104,13 +108,29 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
           name: "",
           parent_id: page.id,
         };
-        const res = await createPage(payload);
+        try {
+          const res = await createPage(payload);
 
-        return {
-          pageId: res?.id ?? "",
-          projectId: projectIdFromParams?.toString() ?? "",
-          workspaceSlug: workspaceSlug?.toString() ?? "",
-        };
+          captureSuccess({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
+            payload: {
+              id: res?.id,
+              state: "SUCCESS",
+            },
+          });
+          return {
+            pageId: res?.id ?? "",
+            workspaceSlug: workspaceSlug?.toString() ?? "",
+          };
+        } catch (error) {
+          console.log(error);
+          captureError({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_create,
+            payload: {
+              state: "ERROR",
+            },
+          });
+        }
       },
       widgetCallback: ({ pageId: pageIdFromNode, updateAttributes }) => (
         <PageEmbedCardRoot
@@ -147,39 +167,71 @@ export const useEditorEmbeds = (props: TEmbedHookProps) => {
         } catch {}
       },
       archivePage: async (pageId: string) => {
+        const page = getPageById(pageId);
+        if (!page) return;
         try {
-          const page = getPageById(pageId);
-          page?.archive({ shouldSync: true });
+          await page?.archive({ shouldSync: true });
+          captureSuccess({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_archive,
+            payload: {
+              id: page?.id,
+              state: "SUCCESS",
+            },
+          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: `${page?.name} archived successfully.`,
           });
-        } catch {}
+        } catch (error) {
+          captureError({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_archive,
+            payload: {
+              id: page?.id,
+              state: "ERROR",
+            },
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Failed to archive page. Please try again later.",
+          });
+        }
       },
       unarchivePage: async (pageId: string) => {
         try {
           const page = getPageById(pageId);
-          page?.restore({ shouldSync: true });
+          await page?.restore({ shouldSync: true });
+          captureSuccess({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_restore,
+            payload: {
+              id: page?.id,
+              state: "SUCCESS",
+            },
+          });
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: "Success!",
             message: `${page?.name} restored successfully.`,
           });
-        } catch {}
+        } catch {
+          captureError({
+            eventName: WORKSPACE_PAGE_TRACKER_EVENTS.nested_page_restore,
+            payload: {
+              id: page?.id,
+              state: "ERROR",
+            },
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: "Error!",
+            message: "Failed to restore page. Please try again later.",
+          });
+        }
       },
       workspaceSlug: workspaceSlug?.toString() ?? "",
     };
-  }, [
-    storeType,
-    page,
-    getPageById,
-    createPage,
-    getRedirectionLink,
-    projectIdFromParams,
-    workspaceSlug,
-    setDeletePageModal,
-  ]);
+  }, [storeType, page, getPageById, createPage, getRedirectionLink, workspaceSlug, setDeletePageModal]);
 
   const embedProps: TEmbedConfig = useMemo(
     () => ({

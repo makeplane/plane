@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { FileText, ListFilter } from "lucide-react";
 // plane imports
-import { EPageAccess } from "@plane/constants";
+import { WORKSPACE_PAGE_TRACKER_EVENTS, EPageAccess } from "@plane/constants";
 import { TPage, TPageNavigationTabs } from "@plane/types";
 import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
 import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
@@ -13,6 +13,8 @@ import { calculateTotalFilters, capitalizeFirstLetter } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common";
 import { FiltersDropdown } from "@/components/issues";
 import { PageFiltersSelection, PageOrderByDropdown, PageSearchInput } from "@/components/pages";
+// event tracker
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
@@ -47,16 +49,30 @@ export const PageTypeHeader: React.FC<Props> = observer((props) => {
 
     await createPage(payload)
       .then((res) => {
+        captureSuccess({
+          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            id: res?.id,
+            state: "SUCCESS",
+          },
+        });
         const pageId = `/${workspaceSlug}/pages/${res?.id}`;
         router.push(pageId);
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureError({
+          eventName: WORKSPACE_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            state: "ERROR",
+            error: err?.data?.error,
+          },
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => setIsCreatingPage(false));
   };
 
