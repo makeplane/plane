@@ -3,8 +3,10 @@
 import React, { FC, useState } from "react";
 import { useParams } from "next/navigation";
 // ui
+import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 
@@ -35,6 +37,12 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
     removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
+        captureSuccess({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
+          payload: {
+            webhook: webhookId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -42,13 +50,20 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
-      .catch((error) =>
+      .catch((error) => {
+        captureError({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
+          payload: {
+            webhook: webhookId,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => setIsDeleting(false));
   };
 

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Pen, Trash } from "lucide-react";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/ui";
 // components
 import { ProIcon } from "@/components/common";
@@ -29,13 +30,17 @@ export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) =
         }
         position="top"
       >
-        <button className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80">
+        <button
+          className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
+          data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
+        >
           <Pen size={12} />
         </button>
       </Tooltip>
       <button
         className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
+        data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
       >
         <Trash size={12} />
       </button>

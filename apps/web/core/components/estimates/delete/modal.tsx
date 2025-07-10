@@ -3,8 +3,10 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useEstimate, useProject, useProjectEstimates } from "@/hooks/store";
 
 type TDeleteEstimateModal = {
@@ -35,6 +37,12 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
         await updateProject(workspaceSlug, projectId, { estimate: null });
       }
       setButtonLoader(false);
+      captureSuccess({
+        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
+        payload: {
+          id: estimateId,
+        },
+      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Estimate deleted",
@@ -43,6 +51,12 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
       handleClose();
     } catch (error) {
       setButtonLoader(false);
+      captureError({
+        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
+        payload: {
+          id: estimateId,
+        },
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Estimate creation failed",
