@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Globe2, Lock } from "lucide-react";
 // plane imports
@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 // components
 import { LiteTextReadOnlyEditor } from "@/components/editor";
 // hooks
-import { useHashScroll } from "@/hooks/use-id-scroll";
+import { useHashScroll } from "@/hooks/use-hash-scroll";
 // local imports
 import { CommentReactions } from "../comment-reaction";
 
