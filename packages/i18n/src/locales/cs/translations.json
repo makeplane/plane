@@ -1042,6 +1042,10 @@
       },
       "upload": {
         "error": "Nahrání přílohy se nezdařilo. Zkuste to prosím později."
+      },
+      "copy_link": {
+        "success": "Odkaz na komentář byl zkopírován do schránky",
+        "error": "Chyba při kopírování odkazu na komentář. Zkuste to prosím později."
       }
     },
     "empty_state": {
