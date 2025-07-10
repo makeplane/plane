@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
 // hooks
 import { TCommentsOperations } from "@plane/types";
-import { CommentCard } from "@/components/comments/comment-card";
+import { CommentCard } from "@/components/comments/card/root";
 import { useIssueDetail } from "@/hooks/store";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues";
@@ -57,7 +57,8 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             comment={comment}
             activityOperations={activityOperations}
             ends={index === 0 ? "top" : index === filteredActivityComments.length - 1 ? "bottom" : undefined}
-            showAccessSpecifier={showAccessSpecifier}
+            showAccessSpecifier={!!showAccessSpecifier}
+            showCopyLinkOption
             disabled={disabled}
             projectId={projectId}
           />
