@@ -7,7 +7,7 @@ RUN xcaddy build \
 
 FROM caddy:2.10.0-builder-alpine
 
-RUN apk add nss-tools bash curl 
+RUN apk add --no-cache nss-tools bash curl
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 

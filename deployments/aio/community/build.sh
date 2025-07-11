@@ -51,7 +51,7 @@ if ! command -v yq &> /dev/null; then
     sudo chmod +x /usr/local/bin/yq
 fi
 
-cd $(dirname $0)
+cd $(dirname "$0")
 
 string_replace(){
     local file="$1"
