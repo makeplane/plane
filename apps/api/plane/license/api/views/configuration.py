@@ -70,6 +70,8 @@ class DisableEmailFeatureEndpoint(BaseAPIView):
                     "EMAIL_HOST_USER",
                     "EMAIL_HOST_PASSWORD",
                     "ENABLE_SMTP",
+                    "EMAIL_PORT",
+                    "EMAIL_FROM",
                 ]
             )
         ).update(
