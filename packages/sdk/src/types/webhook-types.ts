@@ -93,6 +93,8 @@ export type PlaneWebhookPayload = {
   workspace: string;
   project: string;
   issue: string;
+  created_by?: string;
+  actor_display_name?: string;
   isEnterprise: boolean;
 };
 

@@ -1,8 +1,7 @@
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { createSlackService } from "@plane/etl/slack";
-import { Client as PlaneClient, PlaneWebhookPayload } from "@plane/sdk";
+import { PlaneWebhookPayload } from "@plane/sdk";
 import { TWorkspaceCredential, TWorkspaceConnection } from "@plane/types";
-import { env } from "@/env";
 import { integrationConnectionHelper } from "@/helpers/integration-connection-helper";
 import { getPlaneAPIClient } from "@/helpers/plane-api-client";
 import { logger } from "@/logger";
@@ -270,10 +269,13 @@ export const getConnectionDetailsForIssue = async (payload: PlaneWebhookPayload,
     refreshHandler
   );
 
+  const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.SLACK);
+
   return {
     workspaceConnection,
     entityConnection,
     slackService,
+    planeClient,
     isUser,
   };
 };

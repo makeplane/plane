@@ -1,46 +1,51 @@
 import TurndownService from "turndown";
 import { TSlackIssueEntityData } from "@plane/etl/slack";
-import { WebhookIssueCommentPayload } from "@plane/sdk";
+import { PlaneWebhookPayload } from "@plane/sdk";
 import { env } from "@/env";
 import { logger } from "@/logger";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
 import { getPlaneContentParser } from "../../helpers/content-parser";
 import { TSlackWorkspaceConnectionConfig } from "../../types/types";
 
-export const handleIssueCommentWebhook = async (payload: WebhookIssueCommentPayload) => {
+export const handleIssueCommentWebhook = async (payload: PlaneWebhookPayload) => {
   await handleCommentSync(payload);
 };
 
-const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
-  const data = payload as unknown as WebhookIssueCommentPayload["created"];
-
-  // Return the comment if it's already connected to any exisitng connection
-  if (data.data.external_id !== null) return;
-
+const handleCommentSync = async (payload: PlaneWebhookPayload) => {
   logger.info("Received issue comment webhook", {
-    payload: data,
+    payload,
   });
 
   const details = await getConnectionDetailsForIssue(
     {
-      id: data.data.issue,
-      workspace: data.data.workspace,
-      project: data.data.project,
-      issue: data.data.issue,
+      id: payload.issue,
+      workspace: payload.workspace,
+      project: payload.project,
+      issue: payload.issue,
       event: payload.event,
       isEnterprise: false,
     },
-    data.data.created_by
+    payload.created_by ?? null
   );
 
   if (!details) {
     logger.error("No details found for issue comment webhook", {
-      payload: data,
+      payload,
     });
     return;
   }
 
-  const { isUser, entityConnection, slackService, workspaceConnection } = details;
+  const { isUser, entityConnection, slackService, workspaceConnection, planeClient } = details;
+
+  const commentData = await planeClient.issueComment.getComment(
+    entityConnection.workspace_slug,
+    entityConnection.project_id ?? "",
+    payload.issue,
+    payload.id
+  );
+
+  // Return the comment if it's already connected to any exisitng connection
+  if (commentData.external_id !== null) return;
 
   const slackData = entityConnection.entity_data as TSlackIssueEntityData;
 
@@ -58,7 +63,7 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
     workspaceSlug: workspaceConnection.workspace_slug,
     userMap,
   });
-  const comment = await parser.toPlaneHtml(data.data.comment_html);
+  const comment = await parser.toPlaneHtml(commentData.comment_html);
   const turndown = new TurndownService({
     headingStyle: "atx",
     bulletListMarker: "-",
@@ -76,9 +81,19 @@ const handleCommentSync = async (payload: WebhookIssueCommentPayload) => {
   let markdown = turndown.turndown(comment);
 
   // If we don't have the credentials of the user, in that case we'll add the user's information to the comment
-  if (!isUser && payload.activity.actor) {
-    const displayName = payload.activity.actor.display_name;
-    markdown = `*From ${displayName}*\n\n${markdown}`;
+  if (!isUser) {
+    // Find the user in the list
+    let displayName = payload.actor_display_name;
+    // Fallback logic to get the display name from the user
+    if (!displayName) {
+      const users = await planeClient.users.list(entityConnection.workspace_slug, commentData.project);
+      const user = users.find((user) => user.id === commentData.actor);
+      displayName = user?.display_name;
+    }
+
+    if (displayName) {
+      markdown = `*From ${displayName}*\n\n${markdown}`;
+    }
   }
 
   const response = await slackService.sendThreadMessage(channel, entityConnection.entity_id ?? "", markdown);

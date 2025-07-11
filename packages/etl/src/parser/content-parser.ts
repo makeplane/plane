@@ -81,7 +81,9 @@ export class ContentParser {
     const preProcessedRoot = await this.traverseAndProcess(root, this.preprocessExtensions);
     const processedRoot = await this.traverseAndProcess(preProcessedRoot, this.extensions);
     const postProcessedRoot = await this.traverseAndProcess(processedRoot, this.postprocessExtensions);
-    return postProcessedRoot.toString();
+
+    const postProcessedHtml = postProcessedRoot.toString();
+    return postProcessedHtml.length > 0 ? postProcessedHtml : "<p></p>";
   }
 
   /**

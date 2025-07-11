@@ -14,7 +14,7 @@ import {
   E_PLANE_WEBHOOK_ACTION,
   E_PLANE_WEBHOOK_EVENT,
   ExIssue,
-  PlaneWebhookData,
+  ExIssueComment,
   PlaneWebhookPayloadBase,
 } from "@plane/sdk";
 import { env } from "@/env";
@@ -261,7 +261,7 @@ export default class SlackController {
       return res.status(400).send({
         message: "Bad Request, expected code and state to be present.",
       });
-  }
+    }
 
     const slackState: SlackPlaneOAuthState = JSON.parse(
       Buffer.from(encodedSlackState as string, "base64").toString("utf-8")
@@ -729,34 +729,42 @@ export default class SlackController {
   @Post("/plane/events")
   async planeEvents(req: Request, res: Response) {
     try {
-      const payload = req.body as PlaneWebhookData;
+      const isUUID = (id: string | null) => id && uuidValidate(id);
+
+      const payload = req.body as PlaneWebhookPayloadBase<ExIssue | ExIssueComment>;
+      const id = payload.data.id;
+      const workspace = payload.data.workspace;
+      const project = payload.data.project;
+      const issue = payload.data.issue;
+      const actor = payload.activity.actor;
+      const event = payload.event;
 
       logger.info(`[SLACK] [PLANE_EVENTS] Received payload`, {
         headers: req.headers,
         payload: payload,
       });
 
-      const isUUID = (id: string | null) => id && uuidValidate(id);
-
       if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE_COMMENT) {
-        integrationTaskManager.registerTask(
+        integrationTaskManager.registerStoreTask(
           {
             route: "plane-slack-webhook",
             jobId: payload.event,
             type: "issue_comment",
           },
-          payload
+          {
+            id: id,
+            event: event,
+            workspace: workspace,
+            project: project,
+            issue: issue,
+            created_by: actor?.id,
+            actor_display_name: actor?.display_name ?? undefined,
+          },
+          Number(env.DEDUP_INTERVAL)
         );
       }
 
       if (payload.event === E_PLANE_WEBHOOK_EVENT.ISSUE) {
-        const payload = req.body as PlaneWebhookPayloadBase<ExIssue>;
-
-        const id = payload.data.id;
-        const workspace = payload.data.workspace;
-        const project = payload.data.project;
-        const issue = payload.data.issue;
-
         /*
           Checking for the field is important, because from plane sometimes reactions and links are sent with
           action as created, but when the issue is created, the field is not null.
