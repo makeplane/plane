@@ -120,6 +120,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const shouldUsePortal = !embedIssue && peekMode === "full-screen";
 
+  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
+
   const content = (
     <div className="w-full !text-base">
       {issueId && (
@@ -277,7 +279,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
 
-      {shouldUsePortal ? createPortal(content, document.getElementById("full-screen-portal") as HTMLElement) : content}
+      {shouldUsePortal && portalContainer ? createPortal(content, portalContainer) : content}
     </>
   );
 });

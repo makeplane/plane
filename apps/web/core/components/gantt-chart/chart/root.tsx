@@ -177,6 +177,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     scrollContainer.scrollLeft = scrollWidth;
   };
 
+  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
+
   const content = (
     <div
       className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
@@ -219,5 +221,5 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     </div>
   );
 
-  return fullScreenMode ? createPortal(content, document.getElementById("full-screen-portal") as HTMLElement) : content;
+  return fullScreenMode && portalContainer ? createPortal(content, portalContainer) : content;
 });

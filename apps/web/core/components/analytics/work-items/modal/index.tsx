@@ -32,6 +32,8 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
     updateIsEpic(isEpic ?? false);
   }, [isEpic, updateIsEpic]);
 
+  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
+
   if (!isOpen) return null;
 
   const content = (
@@ -65,5 +67,5 @@ export const WorkItemsModal: React.FC<Props> = observer((props) => {
     </div>
   );
 
-  return fullScreen ? createPortal(content, document.getElementById("full-screen-portal") as HTMLElement) : content;
+  return fullScreen && portalContainer ? createPortal(content, portalContainer) : content;
 });
