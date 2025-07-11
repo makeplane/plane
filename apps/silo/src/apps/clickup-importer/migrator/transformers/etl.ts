@@ -69,6 +69,7 @@ export class ClickUpBulkTransformer {
   private readonly clickupService: ClickupAPIService;
   private readonly credential: TWorkspaceCredential;
   private readonly apiClient: APIClient;
+  private userMap: Map<string, string>;
 
   constructor(
     job: TImportJob<TClickUpConfig>,
@@ -88,6 +89,7 @@ export class ClickUpBulkTransformer {
     this.clickupService = clickupService;
     this.credential = credential;
     this.apiClient = getAPIClient();
+    this.userMap = new Map<string, string>();
   }
 
   /**
@@ -310,6 +312,13 @@ export class ClickUpBulkTransformer {
   }
 
   private async getUserMap(): Promise<Map<string, string>> {
+    if (this.userMap.size > 0) {
+      return this.userMap;
+    }
+    logger.info(`Getting user map`, {
+      jobId: this.job.id,
+      teamId: this.teamId,
+    });
     const clickupUsers = await this.clickupService.getTeamMembers(this.teamId);
     const planeUsers = await this.planeClient.users.listAllUsers(this.job.workspace_slug);
     const userMap = new Map<string, string>();
@@ -319,6 +328,7 @@ export class ClickUpBulkTransformer {
         userMap.set(user.email, planeUser.id);
       }
     });
+    this.userMap = userMap;
     return userMap;
   }
 }
