@@ -135,22 +135,22 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
 
     const cachedIssueTypes = await store.get(issueTypesCacheKey);
     if (cachedIssueTypes) {
-      logger.info(`[${job.id}] Found cached issue types`);
+      logger.info(`Found cached issue types`, { jobId: job.id });
       planeIssueTypes = JSON.parse(cachedIssueTypes);
     }
     const cachedIssueProperties = await store.get(issuePropertiesCacheKey);
     if (cachedIssueProperties) {
-      logger.info(`[${job.id}] Found cached issue properties`);
+      logger.info(`Found cached issue properties`, { jobId: job.id });
       planeIssueProperties = JSON.parse(cachedIssueProperties);
     }
     const cachedIssuePropertyOptions = await store.get(issuePropertyOptionsCacheKey);
     if (cachedIssuePropertyOptions) {
-      logger.info(`[${job.id}] Found cached issue property options`);
+      logger.info(`Found cached issue property options`, { jobId: job.id });
       planeIssuePropertiesOptions = JSON.parse(cachedIssuePropertyOptions);
     }
     const cachedModules = await store.get(modulesCacheKey);
     if (cachedModules) {
-      logger.info(`[${job.id}] Found cached modules`);
+      logger.info(`Found cached modules`, { jobId: job.id });
       planeModules = JSON.parse(cachedModules);
     }
 
