@@ -57,6 +57,19 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class DisableEmailFeatureEndpoint(BaseAPIView):
+    permission_classes = [InstanceAdminPermission]
+
+    @invalidate_cache(path="/api/instances/", user=False)
+    def delete(self, request):
+        instance_configurations = InstanceConfiguration.objects.filter(
+            key__in=["EMAIL_HOST", "EMAIL_HOST_USER", "EMAIL_HOST_PASSWORD"]
+        )
+
+        instance_configurations.update(value="")
+        return Response(status=status.HTTP_200_OK)
+
+
 class EmailCredentialCheckEndpoint(BaseAPIView):
     def post(self, request):
         receiver_email = request.data.get("receiver_email", False)
