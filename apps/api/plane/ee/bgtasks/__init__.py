@@ -5,3 +5,4 @@ from .batched_search_update_task import (
     process_batched_opensearch_updates,
     log_opensearch_update_queue_metrics,
 )
+from .search_index_update_task import run_search_index_command
