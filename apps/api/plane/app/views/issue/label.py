@@ -41,7 +41,9 @@ class LabelViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
-            serializer = LabelSerializer(data=request.data)
+            serializer = LabelSerializer(
+                data=request.data, context={"project_id": project_id}
+            )
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -68,8 +70,18 @@ class LabelViewSet(BaseViewSet):
                 {"error": "Label with the same name already exists in the project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # call the parent method to perform the update
-        return super().partial_update(request, *args, **kwargs)
+
+        serializer = LabelSerializer(
+            instance=self.get_object(),
+            data=request.data,
+            context={"project_id": kwargs["project_id"]},
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
@@ -81,6 +93,7 @@ class BulkCreateIssueLabelsEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def post(self, request, slug, project_id):
         label_data = request.data.get("label_data", [])
+
         project = Project.objects.get(pk=project_id)
 
         labels = Label.objects.bulk_create(
