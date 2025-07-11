@@ -136,7 +136,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
               <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
             </Transition.Child>
 
-            <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+            <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
               <Transition.Child
                 as={React.Fragment}
                 enter="ease-out duration-300"

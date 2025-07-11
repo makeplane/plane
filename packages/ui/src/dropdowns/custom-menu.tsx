@@ -186,7 +186,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     <Menu.Items
       data-prevent-outside-click={!!portalElement}
       className={cn(
-        "fixed z-10 translate-y-0",
+        "fixed z-30 translate-y-0",
         menuItemsClassName
       )} /** translate-y-0 is a hack to create new stacking context. Required for safari  */
       static
