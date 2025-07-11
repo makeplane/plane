@@ -9,6 +9,7 @@ from smtplib import (
 
 # Django imports
 from django.core.mail import BadHeaderError, EmailMultiAlternatives, get_connection
+from django.db.models import Q, Case, When, Value
 
 # Third party imports
 from rest_framework import status
@@ -62,16 +63,18 @@ class DisableEmailFeatureEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request):
-        instance_configurations = InstanceConfiguration.objects.filter(
-            key__in=[
-                "EMAIL_HOST",
-                "EMAIL_HOST_USER",
-                "EMAIL_HOST_PASSWORD",
-                "ENABLE_SMTP",
-            ]
+        InstanceConfiguration.objects.filter(
+            Q(
+                key__in=[
+                    "EMAIL_HOST",
+                    "EMAIL_HOST_USER",
+                    "EMAIL_HOST_PASSWORD",
+                    "ENABLE_SMTP",
+                ]
+            )
+        ).update(
+            value=Case(When(key="ENABLE_SMTP", then=Value("0")), default=Value(""))
         )
-
-        instance_configurations.update(value="")
         return Response(status=status.HTTP_200_OK)
 
 
