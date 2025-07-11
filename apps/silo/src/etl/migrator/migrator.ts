@@ -18,7 +18,6 @@ import {
   IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY,
   IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY,
   IMPORT_JOB_PLANE_ISSUE_TYPES_CACHE_KEY,
-  IMPORT_JOB_PLANE_MODULES_CACHE_KEY,
   IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY,
 } from "@/helpers/cache-keys";
 import { IMPORT_JOB_KEYS_TTL_IN_SECONDS } from "@/helpers/constants";
@@ -57,7 +56,6 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     // Create the data required for the workspace
     let planeLabels: ExIssueLabel[] = [];
     let planeUsers: PlaneUser[] = [];
-    let planeModules: { id: string; issues: string[] }[] = [];
     let planeIssueTypes: ExIssueType[] = [];
     let planeIssueProperties: ExIssueProperty[] = [];
     let planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
@@ -129,7 +127,6 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     const issueTypesCacheKey = IMPORT_JOB_PLANE_ISSUE_TYPES_CACHE_KEY(job.id);
     const issuePropertiesCacheKey = IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY(job.id);
     const issuePropertyOptionsCacheKey = IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY(job.id);
-    const modulesCacheKey = IMPORT_JOB_PLANE_MODULES_CACHE_KEY(job.id);
 
     const store = Store.getInstance();
 
@@ -147,11 +144,6 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     if (cachedIssuePropertyOptions) {
       logger.info(`Found cached issue property options`, { jobId: job.id });
       planeIssuePropertiesOptions = JSON.parse(cachedIssuePropertyOptions);
-    }
-    const cachedModules = await store.get(modulesCacheKey);
-    if (cachedModules) {
-      logger.info(`Found cached modules`, { jobId: job.id });
-      planeModules = JSON.parse(cachedModules);
     }
 
     const triggerIssueTypeStep =
@@ -385,16 +377,13 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     );
 
     // ------------------- Module Creation --------------------
-    if (!cachedModules) {
-      planeModules = await createAllModules(
-        job.id,
-        modules as ExModule[],
-        planeClient,
-        job.workspace_slug,
-        job.project_id
-      );
-      await store.set(modulesCacheKey, JSON.stringify(planeModules), IMPORT_JOB_KEYS_TTL_IN_SECONDS);
-    }
+    const planeModules = await createAllModules(
+      job.id,
+      modules as ExModule[],
+      planeClient,
+      job.workspace_slug,
+      job.project_id
+    );
 
     // ------------------- Issue Type Cache Storage -------------------- if the issue type step is triggered
     if (triggerIssueTypeStep) {

@@ -24,8 +24,6 @@ export const IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY = (jobId: string) =>
 export const IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY = (jobId: string) =>
   `silo:import_job_plane_issue_property_options_${jobId}`;
 
-export const IMPORT_JOB_PLANE_MODULES_CACHE_KEY = (jobId: string) => `silo:import_job_plane_modules_${jobId}`;
-
 export const IMPORT_JOB_PLANE_MEMBERS_CACHE_KEY = (jobId: string) => `silo:import_job_plane_members_${jobId}`;
 
 export const IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY = (jobId: string) => `silo:import_job_first_page_pushed_${jobId}`;
