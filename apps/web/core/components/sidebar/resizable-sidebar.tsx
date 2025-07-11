@@ -50,6 +50,8 @@ export function ResizableSidebar({
   const [isHoveringTrigger, setIsHoveringTrigger] = useState(false);
   // refs
   const peekTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const initialWidthRef = useRef<number>(0);
+  const initialMouseXRef = useRef<number>(0);
 
   // handlers
   const setShowPeek = useCallback(
@@ -62,15 +64,22 @@ export function ResizableSidebar({
   const handleResize = useCallback(
     (e: MouseEvent) => {
       if (!isResizing) return;
-      const newWidth = Math.min(Math.max(e.clientX, minWidth), maxWidth);
+
+      const deltaX = e.clientX - initialMouseXRef.current;
+      const newWidth = Math.min(Math.max(initialWidthRef.current + deltaX, minWidth), maxWidth);
       setWidth(newWidth);
     },
     [isResizing, minWidth, maxWidth, setWidth]
   );
 
-  const startResizing = useCallback(() => {
-    setIsResizing(true);
-  }, []);
+  const startResizing = useCallback(
+    (e: React.MouseEvent) => {
+      setIsResizing(true);
+      initialWidthRef.current = width;
+      initialMouseXRef.current = e.clientX;
+    },
+    [width]
+  );
 
   const stopResizing = useCallback(() => {
     setIsResizing(false);
@@ -199,7 +208,7 @@ export function ResizableSidebar({
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-custom-background-100 overflow-hidden relative flex flex-col pt-3",
+            "group/sidebar h-full w-full bg-custom-sidebar-background-100 overflow-hidden relative flex flex-col pt-3",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -215,7 +224,7 @@ export function ResizableSidebar({
             )}
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
-            onMouseDown={startResizing}
+            onMouseDown={(e) => startResizing(e)}
             role="separator"
             aria-label="Resize sidebar"
           />
@@ -257,7 +266,7 @@ export function ResizableSidebar({
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-custom-background-100 overflow-hidden relative flex flex-col z-20 pt-4",
+            "group/sidebar h-full w-full bg-custom-sidebar-background-100 overflow-hidden relative flex flex-col z-20 pt-4",
             "self-center border-r border-custom-sidebar-border-200 rounded-md rounded-tl-none rounded-bl-none",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
@@ -273,7 +282,7 @@ export function ResizableSidebar({
             )}
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
-            onMouseDown={startResizing}
+            onMouseDown={(e) => startResizing(e)}
             role="separator"
             aria-label="Resize sidebar"
           />

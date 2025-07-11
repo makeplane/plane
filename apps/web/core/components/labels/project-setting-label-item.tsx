@@ -2,8 +2,10 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { useParams } from "next/navigation";
 import { X, Pencil } from "lucide-react";
 // types
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store";
 // components
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -67,6 +69,9 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
       },
       isVisible: true,
       text: "Edit label",
