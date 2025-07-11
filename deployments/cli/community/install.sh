@@ -9,7 +9,7 @@ export DOCKERHUB_USER=artifacts.plane.so/makeplane
 export PULL_POLICY=${PULL_POLICY:-if_not_present}
 export GH_REPO=makeplane/plane
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
-export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deploy/selfhost"
+export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
 CPU_ARCH=$(uname -m)
 OS_NAME=$(uname)
@@ -196,7 +196,7 @@ function buildYourOwnImage(){
     REPO=https://github.com/$GH_REPO.git
     git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
 
-    cp "$PLANE_TEMP_CODE_DIR/deploy/selfhost/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
+    cp "$PLANE_TEMP_CODE_DIR/deployments/cli/community/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
 
     cd "$PLANE_TEMP_CODE_DIR" || exit
 

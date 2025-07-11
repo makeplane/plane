@@ -25,6 +25,11 @@ on:
         required: false
         default: false
         type: boolean
+      aio_build:
+        description: "Build for AIO docker image"
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - preview
@@ -36,6 +41,7 @@ env:
   BUILD_TYPE: ${{ github.event.inputs.build_type }}
   RELEASE_VERSION: ${{ github.event.inputs.releaseVersion }}
   IS_PRERELEASE: ${{ github.event.inputs.isPrerelease }}
+  AIO_BUILD: ${{ github.event.inputs.aio_build }}
 
 jobs:
   branch_build_setup:
@@ -54,11 +60,13 @@ jobs:
       dh_img_live: ${{ steps.set_env_variables.outputs.DH_IMG_LIVE }}
       dh_img_backend: ${{ steps.set_env_variables.outputs.DH_IMG_BACKEND }}
       dh_img_proxy: ${{ steps.set_env_variables.outputs.DH_IMG_PROXY }}
+      dh_img_aio: ${{ steps.set_env_variables.outputs.DH_IMG_AIO }}
 
       build_type: ${{steps.set_env_variables.outputs.BUILD_TYPE}}
       build_release: ${{ steps.set_env_variables.outputs.BUILD_RELEASE }}
       build_prerelease: ${{ steps.set_env_variables.outputs.BUILD_PRERELEASE }}
       release_version: ${{ steps.set_env_variables.outputs.RELEASE_VERSION }}
+      aio_build: ${{ steps.set_env_variables.outputs.AIO_BUILD }}
 
     steps:
       - id: set_env_variables
@@ -84,11 +92,14 @@ jobs:
           echo "DH_IMG_LIVE=plane-live" >> $GITHUB_OUTPUT
           echo "DH_IMG_BACKEND=plane-backend" >> $GITHUB_OUTPUT
           echo "DH_IMG_PROXY=plane-proxy" >> $GITHUB_OUTPUT
+          echo "DH_IMG_AIO=plane-aio-community" >> $GITHUB_OUTPUT
 
           echo "BUILD_TYPE=${{env.BUILD_TYPE}}" >> $GITHUB_OUTPUT
           BUILD_RELEASE=false
           BUILD_PRERELEASE=false
           RELVERSION="latest"
+
+          BUILD_AIO=${{ env.AIO_BUILD }}
 
           if [ "${{ env.BUILD_TYPE }}" == "Release" ]; then
             FLAT_RELEASE_VERSION=$(echo "${{ env.RELEASE_VERSION }}" | sed 's/[^a-zA-Z0-9.-]//g')
@@ -108,10 +119,14 @@ jobs:
             if [ "${{ env.IS_PRERELEASE }}" == "true" ]; then
               BUILD_PRERELEASE=true
             fi
+
+            BUILD_AIO=true
           fi
+
           echo "BUILD_RELEASE=${BUILD_RELEASE}" >> $GITHUB_OUTPUT
           echo "BUILD_PRERELEASE=${BUILD_PRERELEASE}" >> $GITHUB_OUTPUT
           echo "RELEASE_VERSION=${RELVERSION}" >> $GITHUB_OUTPUT
+          echo "AIO_BUILD=${BUILD_AIO}" >> $GITHUB_OUTPUT
 
       - id: checkout_files
         name: Checkout Files
@@ -242,12 +257,101 @@ jobs:
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
           docker-image-owner: makeplane
           docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_proxy }}
-          build-context: ./nginx
-          dockerfile-path: ./nginx/Dockerfile
+          build-context: ./apps/proxy
+          dockerfile-path: ./apps/proxy/Dockerfile.ce
           buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
           buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
           buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
           buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+
+  branch_build_push_aio:
+    if: ${{ needs.branch_build_setup.outputs.aio_build == 'true' }}
+    name: Build-Push AIO Docker Image
+    runs-on: ubuntu-22.04
+    needs: [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_api,
+        branch_build_push_proxy
+      ]
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Prepare AIO Assets
+        id: prepare_aio_assets
+        run: |
+          cd deployments/aio/community
+          
+          if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
+            aio_version=${{ needs.branch_build_setup.outputs.release_version }}
+          else
+            aio_version=${{ needs.branch_build_setup.outputs.gh_branch_name }}
+          fi
+          bash ./build.sh --release $aio_version
+          echo "AIO_BUILD_VERSION=${aio_version}" >> $GITHUB_OUTPUT
+
+      - name: Upload AIO Assets
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./deployments/aio/community/dist
+          name: aio-assets-dist
+
+      - name: AIO Build and Push
+        uses: makeplane/actions/build-push@v1.1.0
+        with:
+          build-release: ${{ needs.branch_build_setup.outputs.build_release }}
+          build-prerelease: ${{ needs.branch_build_setup.outputs.build_prerelease }}
+          release-version: ${{ needs.branch_build_setup.outputs.release_version }}
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          docker-image-owner: makeplane
+          docker-image-name: ${{ needs.branch_build_setup.outputs.dh_img_aio }}
+          build-context: ./deployments/aio/community
+          dockerfile-path: ./deployments/aio/community/Dockerfile
+          buildx-driver: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
+          buildx-version: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
+          buildx-platforms: ${{ needs.branch_build_setup.outputs.gh_buildx_platforms }}
+          buildx-endpoint: ${{ needs.branch_build_setup.outputs.gh_buildx_endpoint }}
+          additional-assets: aio-assets-dist
+          additional-assets-dir: ./deployments/aio/community/dist
+          build-args: |
+            PLANE_VERSION=${{ steps.prepare_aio_assets.outputs.AIO_BUILD_VERSION }}
+
+  upload_build_assets:
+    name: Upload Build Assets
+    runs-on: ubuntu-22.04
+    needs: [branch_build_setup, branch_build_push_admin, branch_build_push_web, branch_build_push_space, branch_build_push_live, branch_build_push_api, branch_build_push_proxy]
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Update Assets
+        run: |
+          if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
+            REL_VERSION=${{ needs.branch_build_setup.outputs.release_version }}
+          else
+            REL_VERSION=${{ needs.branch_build_setup.outputs.gh_branch_name }}
+          fi
+
+          cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
+          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deployments/cli/community/docker-compose.yml
+          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deployments/cli/community/variables.env
+
+      - name: Upload Assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: community-assets
+          path: |
+            ./deployments/cli/community/setup.sh
+            ./deployments/cli/community/restore.sh
+            ./deployments/cli/community/restore-airgapped.sh
+            ./deployments/cli/community/docker-compose.yml
+            ./deployments/cli/community/variables.env
+            ./deployments/swarm/community/swarm.sh
 
   publish_release:
     if: ${{ needs.branch_build_setup.outputs.build_type == 'Release' }}
@@ -271,9 +375,9 @@ jobs:
 
       - name: Update Assets
         run: |
-          cp ./deploy/selfhost/install.sh deploy/selfhost/setup.sh
-          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deploy/selfhost/docker-compose.yml
-          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deploy/selfhost/variables.env
+          cp ./deployments/cli/community/install.sh deployments/cli/community/setup.sh
+          sed -i 's/${APP_RELEASE:-stable}/${APP_RELEASE:-'${REL_VERSION}'}/g' deployments/cli/community/docker-compose.yml
+          # sed -i 's/APP_RELEASE=stable/APP_RELEASE='${REL_VERSION}'/g' deployments/cli/community/variables.env
 
       - name: Create Release
         id: create_release
@@ -287,9 +391,10 @@ jobs:
           prerelease: ${{ env.IS_PRERELEASE }}
           generate_release_notes: true
           files: |
-            ${{ github.workspace }}/deploy/selfhost/setup.sh
-            ${{ github.workspace }}/deploy/selfhost/swarm.sh
-            ${{ github.workspace }}/deploy/selfhost/restore.sh
-            ${{ github.workspace }}/deploy/selfhost/restore-airgapped.sh
-            ${{ github.workspace }}/deploy/selfhost/docker-compose.yml
-            ${{ github.workspace }}/deploy/selfhost/variables.env
+            ${{ github.workspace }}/deployments/cli/community/setup.sh
+            ${{ github.workspace }}/deployments/cli/community/restore.sh
+            ${{ github.workspace }}/deployments/cli/community/restore-airgapped.sh
+            ${{ github.workspace }}/deployments/cli/community/docker-compose.yml
+            ${{ github.workspace }}/deployments/cli/community/variables.env
+            ${{ github.workspace }}/deployments/swarm/community/swarm.sh
+
