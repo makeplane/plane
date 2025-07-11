@@ -75,7 +75,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
 
       // if job is cancelled, return true
       if (job.cancelled_at) {
-        logger.info(`[${headers.jobId}] Job is cancelled, skipping the task`);
+        logger.info(`Job is cancelled, skipping the task`, { jobId: headers.jobId });
         return true;
       }
 
@@ -139,8 +139,8 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             const cachedFirstPagePushed = await this.store.get(firstPagePushedCacheKey);
             if (!cachedFirstPagePushed && data?.paginationContext?.page !== 0) {
               // requeue this page, as we are not sure if the first page is pushed or not
-              logger.info(`[${headers.jobId}] First page not pushed, requeuing the next page`);
-              await wait(5000)
+              logger.info(`First page not pushed, requeuing the next page`, { jobId: headers.jobId });
+              await wait(5000);
               await this.pushToQueue(headers, data);
               return true;
             }
