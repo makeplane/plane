@@ -44,6 +44,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"), is_active=True)
             .select_related("workspace", "workspace__owner")
             .select_related("member")
+            .prefetch_related("member__avatar_asset", "workspace__logo_asset")
         )
 
     @allow_permission(
