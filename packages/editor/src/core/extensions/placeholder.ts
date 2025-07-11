@@ -13,7 +13,7 @@ type TArgs = {
 export const CustomPlaceholderExtension = (args: TArgs) => {
   const { placeholder } = args;
 
-  Placeholder.configure({
+  return Placeholder.configure({
     placeholder: ({ editor, node }) => {
       if (!editor.isEditable) return "";
 
