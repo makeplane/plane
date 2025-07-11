@@ -32,6 +32,7 @@ export interface IInstanceStore {
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[] | undefined>;
   fetchInstanceConfigurations: () => Promise<IInstanceConfiguration[] | undefined>;
   updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
+  disableEmail: () => Promise<void>;
 }
 
 export class InstanceStore implements IInstanceStore {
@@ -185,6 +186,32 @@ export class InstanceStore implements IInstanceStore {
     } catch (error) {
       console.error("Error updating the instance configurations");
       throw error;
+    }
+  };
+
+  disableEmail = async () => {
+    const instanceConfigurations = this.instanceConfigurations;
+    try {
+      runInAction(() => {
+        this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
+          if (
+            [
+              "EMAIL_HOST",
+              "EMAIL_PORT",
+              "EMAIL_HOST_USER",
+              "EMAIL_HOST_PASSWORD",
+              "EMAIL_FROM",
+              "ENABLE_SMTP",
+            ].includes(config.key)
+          )
+            return { ...config, value: "" };
+          return config;
+        });
+      });
+      await this.instanceService.disableEmail();
+    } catch (error) {
+      console.error("Error disabling the email");
+      this.instanceConfigurations = instanceConfigurations;
     }
   };
 }
