@@ -1,6 +1,6 @@
 import TurndownService from "turndown";
 import { TSlackIssueEntityData } from "@plane/etl/slack";
-import { PlaneWebhookPayload } from "@plane/sdk";
+import { PlaneUser, PlaneWebhookPayload } from "@plane/sdk";
 import { env } from "@/env";
 import { logger } from "@/logger";
 import { getConnectionDetailsForIssue } from "../../helpers/connection-details";
@@ -87,7 +87,7 @@ const handleCommentSync = async (payload: PlaneWebhookPayload) => {
     // Fallback logic to get the display name from the user
     if (!displayName) {
       const users = await planeClient.users.list(entityConnection.workspace_slug, commentData.project);
-      const user = users.find((user) => user.id === commentData.actor);
+      const user = users.find((user: PlaneUser) => user.id === commentData.actor);
       displayName = user?.display_name;
     }
 
