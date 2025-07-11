@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // component
 import { APITokenService } from "@plane/services";
@@ -14,6 +15,7 @@ import { SettingsHeading } from "@/components/settings";
 import { APITokenSettingsLoader } from "@/components/ui";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
@@ -53,7 +55,12 @@ const ApiTokensPage = observer(() => {
               description={t("account_settings.api_tokens.description")}
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
-                onClick: () => setIsCreateTokenModalOpen(true),
+                onClick: () => {
+                  captureClick({
+                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+                  });
+                  setIsCreateTokenModalOpen(true);
+                },
               }}
             />
             <div>
@@ -69,7 +76,12 @@ const ApiTokensPage = observer(() => {
               description={t("account_settings.api_tokens.description")}
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
-                onClick: () => setIsCreateTokenModalOpen(true),
+                onClick: () => {
+                  captureClick({
+                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+                  });
+                  setIsCreateTokenModalOpen(true);
+                },
               }}
             />
             <div className="h-full w-full flex items-center justify-center">
@@ -81,7 +93,12 @@ const ApiTokensPage = observer(() => {
                 size="md"
                 primaryButton={{
                   text: t("workspace_settings.settings.api_tokens.add_token"),
-                  onClick: () => setIsCreateTokenModalOpen(true),
+                  onClick: () => {
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
+                    });
+                    setIsCreateTokenModalOpen(true);
+                  },
                 }}
               />
             </div>

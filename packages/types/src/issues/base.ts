@@ -7,13 +7,7 @@ export * from "./issue_relation";
 export * from "./issue_sub_issues";
 export * from "./activity/base";
 
-
-export type TLoader =
-  | "init-loader"
-  | "mutation"
-  | "pagination"
-  | "loaded"
-  | undefined;
+export type TLoader = "init-loader" | "mutation" | "pagination" | "loaded" | undefined;
 
 export type TGroupedIssues = {
   [group_id: string]: string[];

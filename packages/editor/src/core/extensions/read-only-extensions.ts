@@ -30,6 +30,7 @@ import { CoreReadOnlyEditorAdditionalExtensions } from "@/plane-editor/extension
 import type { IReadOnlyEditorProps } from "@/types";
 // local imports
 import { CustomImageExtension } from "./custom-image/extension";
+import { EmojiExtension } from "./emoji/extension";
 import { CustomStarterKitExtension } from "./starter-kit";
 
 type Props = Pick<IReadOnlyEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler">;
@@ -41,6 +42,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     CustomStarterKitExtension({
       enableHistory: false,
     }),
+    EmojiExtension,
     CustomQuoteExtension,
     CustomHorizontalRule,
     CustomLinkExtension,

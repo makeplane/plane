@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { XCircle } from "lucide-react";
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IApiToken } from "@plane/types";
 // components
 import { Tooltip } from "@plane/ui";
@@ -31,6 +32,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
+            data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.LIST_ITEM_DELETE_ICON}
           >
             <XCircle className="h-4 w-4 text-red-500" />
           </button>

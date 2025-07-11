@@ -30,7 +30,6 @@ export enum ChartYAxisMetric {
   BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT",
 }
 
-
 export type TAnalyticsTabsBase = "overview" | "work-items";
 export type TAnalyticsGraphsBase = "projects" | "work-items" | "custom-work-items";
 export interface AnalyticsTab {

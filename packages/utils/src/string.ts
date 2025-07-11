@@ -319,7 +319,6 @@ export const copyTextToClipboard = async (text: string): Promise<void> => {
   await navigator.clipboard.writeText(text);
 };
 
-
 /**
  * @description Joins URL path segments properly, removing duplicate slashes using URL encoding
  * @param {...string} segments - URL path segments to join

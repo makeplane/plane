@@ -5,8 +5,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
-    "dev": "turbo run develop",
-    "develop": "next dev --port 3001",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "preview": "next build && next start",
     "start": "next start",

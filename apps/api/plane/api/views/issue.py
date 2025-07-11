@@ -60,6 +60,7 @@ from plane.utils.host import base_host
 from plane.bgtasks.webhook_task import model_activity
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
+
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
     """
     This viewset provides `retrieveByIssueId` on workspace level

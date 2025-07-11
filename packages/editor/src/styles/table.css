@@ -1,10 +1,12 @@
 .table-wrapper {
   overflow-x: auto;
+  padding-bottom: 26px;
 
   table {
+    position: relative;
     border-collapse: collapse;
     table-layout: fixed;
-    margin: 0.5rem 0 1rem 0;
+    margin: 0.5rem 0 0 0;
     border: 1px solid rgba(var(--color-border-200));
     width: 100%;
 
@@ -22,6 +24,7 @@
         margin-bottom: 0;
       }
 
+      /* Selected cell outline */
       &.selectedCell {
         user-select: none;
 
@@ -50,6 +53,7 @@
           border-right: 2px solid rgba(var(--color-primary-100));
         }
       }
+      /* End selected cell outline */
     }
 
     th {
@@ -65,14 +69,16 @@
     }
   }
 
+  /* Selected status */
   &.ProseMirror-selectednode {
     table {
       background-color: rgba(var(--color-primary-100), 0.2);
     }
   }
+  /* End selected status */
 }
 
-/* table dropdown */
+/* Column resizer */
 .table-wrapper table .column-resize-handle {
   position: absolute;
   right: -1px;
@@ -83,6 +89,7 @@
   background-color: rgba(var(--color-primary-100));
   pointer-events: none;
 }
+/* End column resizer */
 
 .table-wrapper .table-controls {
   position: absolute;
@@ -146,3 +153,67 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* Insert buttons */
+.table-wrapper {
+  .table-column-insert-button,
+  .table-row-insert-button {
+    position: absolute;
+    background-color: rgba(var(--color-background-90));
+    color: rgba(var(--color-text-300));
+    border: 1px solid rgba(var(--color-border-200));
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    outline: none;
+    z-index: 10;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: rgba(var(--color-background-80));
+      color: rgba(var(--color-text-100));
+    }
+
+    &.dragging {
+      opacity: 1;
+      pointer-events: auto;
+      background-color: rgba(var(--color-primary-100), 0.2);
+      color: rgba(var(--color-text-100));
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  .table-column-insert-button {
+    top: 0;
+    right: -16px;
+    width: 16px;
+    height: 100%;
+    transform: translateX(50%);
+    cursor: col-resize;
+  }
+
+  .table-row-insert-button {
+    bottom: -16px;
+    left: 0;
+    width: 100%;
+    height: 16px;
+    transform: translateY(50%);
+    cursor: row-resize;
+  }
+
+  /* Show buttons on table hover */
+  &:hover {
+    .table-column-insert-button,
+    .table-row-insert-button {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+/* End insert buttons */
