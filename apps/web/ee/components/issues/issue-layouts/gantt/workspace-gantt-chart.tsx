@@ -11,7 +11,6 @@ import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { IssueGanttBlock } from "@/components/issues";
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 import { GanttLayoutLoader } from "@/components/ui";
-// helpers
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";

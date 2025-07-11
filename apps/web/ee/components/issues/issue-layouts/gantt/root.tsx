@@ -1,14 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
-// plane constants
 // components
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-// helpers
-// hooks
-// plane web hooks
+// local imports
 import { WorkspaceGanttChart } from "./workspace-gantt-chart";
-// store
 
 type Props = {
   isLoading?: boolean;
