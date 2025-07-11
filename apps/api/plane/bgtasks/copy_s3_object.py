@@ -126,7 +126,9 @@ def copy_assets(entity, entity_identifier, project_id, asset_ids, user_id):
 
 
 @shared_task
-def copy_s3_objects(entity_name, entity_identifier, project_id, slug, user_id):
+def copy_s3_objects_of_description_and_assets(
+    entity_name, entity_identifier, project_id, slug, user_id
+):
     """
     Step 1: Extract asset ids from the description_html of the entity
     Step 2: Duplicate the assets
