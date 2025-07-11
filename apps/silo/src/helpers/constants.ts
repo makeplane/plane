@@ -15,3 +15,4 @@ export enum E_STATE_MAP_KEYS {
 
 export const GITHUB_LABEL = "github";
 export const PLANE_LABEL = "plane";
+export const IMPORT_JOB_KEYS_TTL_IN_SECONDS = 60 * 60 * 24; // 24 hours

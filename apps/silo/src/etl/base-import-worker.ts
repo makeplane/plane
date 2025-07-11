@@ -1,5 +1,6 @@
 import { TJobStatus, PlaneEntities } from "@plane/etl/core";
 import { TImportJob } from "@plane/types";
+import { IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY } from "@/helpers/cache-keys";
 import { wait } from "@/helpers/delay";
 import { updateJobWithReport } from "@/helpers/job";
 import { captureException, logger } from "@/logger";
@@ -72,6 +73,12 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
     try {
       const job = await this.getJobInfo(headers.jobId);
 
+      // if job is cancelled, return true
+      if (job.cancelled_at) {
+        logger.info(`Job is cancelled, skipping the task`, { jobId: headers.jobId });
+        return true;
+      }
+
       try {
         switch (headers.type) {
           case "initiate":
@@ -126,6 +133,17 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
               page: data?.paginationContext?.page,
               isLastPage: data?.paginationContext?.isLastPage,
             });
+            // eslint-disable-next-line no-case-declarations
+            const firstPagePushedCacheKey = IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY(headers.jobId);
+            // eslint-disable-next-line no-case-declarations
+            const cachedFirstPagePushed = await this.store.get(firstPagePushedCacheKey);
+            if (!cachedFirstPagePushed && data?.paginationContext?.page !== 0) {
+              // requeue this page, as we are not sure if the first page is pushed or not
+              logger.info(`First page not pushed, requeuing the next page`, { jobId: headers.jobId });
+              await wait(5000);
+              await this.pushToQueue(headers, data);
+              return true;
+            }
             if (data?.paginationContext?.page === 0) {
               await this.update(headers.jobId, "PULLING", {});
             }

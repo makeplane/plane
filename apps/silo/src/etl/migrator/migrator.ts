@@ -14,12 +14,21 @@ import {
   PlaneUser,
 } from "@plane/sdk";
 import { TImportJob } from "@plane/types";
+import {
+  IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY,
+  IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY,
+  IMPORT_JOB_PLANE_ISSUE_TYPES_CACHE_KEY,
+  IMPORT_JOB_PLANE_MODULES_CACHE_KEY,
+  IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY,
+} from "@/helpers/cache-keys";
+import { IMPORT_JOB_KEYS_TTL_IN_SECONDS } from "@/helpers/constants";
 import { updateJobWithReport } from "@/helpers/job";
 import { getPlaneAPIClient, getPlaneFeatureFlagService } from "@/helpers/plane-api-client";
 import { protect } from "@/lib";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
 import { celeryProducer } from "@/worker";
+import { Store } from "@/worker/base";
 import { createAllCycles } from "./cycles.migrator";
 import { getCredentialsForMigration, validateJobForMigration } from "./helpers";
 import {
@@ -48,9 +57,10 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
     // Create the data required for the workspace
     let planeLabels: ExIssueLabel[] = [];
     let planeUsers: PlaneUser[] = [];
-    const planeIssueTypes: ExIssueType[] = [];
-    const planeIssueProperties: ExIssueProperty[] = [];
-    const planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
+    let planeModules: { id: string; issues: string[] }[] = [];
+    let planeIssueTypes: ExIssueType[] = [];
+    let planeIssueProperties: ExIssueProperty[] = [];
+    let planeIssuePropertiesOptions: ExIssuePropertyOption[] = [];
     let defaultIssueType: ExIssueType | undefined = undefined;
 
     // Get the labels and issues from the Plane API
@@ -115,7 +125,40 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
       flag_key: E_FEATURE_FLAGS.ISSUE_TYPES,
     });
 
-    if (isIssueTypeFeatureEnabled) {
+    /* ------------------- Cache Management (TODO: Remove this later) -------------------- */
+    const issueTypesCacheKey = IMPORT_JOB_PLANE_ISSUE_TYPES_CACHE_KEY(job.id);
+    const issuePropertiesCacheKey = IMPORT_JOB_PLANE_ISSUE_PROPERTIES_CACHE_KEY(job.id);
+    const issuePropertyOptionsCacheKey = IMPORT_JOB_PLANE_ISSUE_PROPERTY_OPTIONS_CACHE_KEY(job.id);
+    const modulesCacheKey = IMPORT_JOB_PLANE_MODULES_CACHE_KEY(job.id);
+
+    const store = Store.getInstance();
+
+    const cachedIssueTypes = await store.get(issueTypesCacheKey);
+    if (cachedIssueTypes) {
+      logger.info(`Found cached issue types`, { jobId: job.id });
+      planeIssueTypes = JSON.parse(cachedIssueTypes);
+    }
+    const cachedIssueProperties = await store.get(issuePropertiesCacheKey);
+    if (cachedIssueProperties) {
+      logger.info(`Found cached issue properties`, { jobId: job.id });
+      planeIssueProperties = JSON.parse(cachedIssueProperties);
+    }
+    const cachedIssuePropertyOptions = await store.get(issuePropertyOptionsCacheKey);
+    if (cachedIssuePropertyOptions) {
+      logger.info(`Found cached issue property options`, { jobId: job.id });
+      planeIssuePropertiesOptions = JSON.parse(cachedIssuePropertyOptions);
+    }
+    const cachedModules = await store.get(modulesCacheKey);
+    if (cachedModules) {
+      logger.info(`Found cached modules`, { jobId: job.id });
+      planeModules = JSON.parse(cachedModules);
+    }
+
+    const triggerIssueTypeStep =
+      isIssueTypeFeatureEnabled && (!cachedIssueTypes || !cachedIssueProperties || !cachedIssuePropertyOptions);
+
+    /* ------------------- Issue Type Creation -------------------- */
+    if (triggerIssueTypeStep) {
       // 2. Check if issue type is enabled for the project or not.
       const planeProjectDetails = await protect<ExProject>(
         planeClient.project.getProject.bind(planeClient.project),
@@ -341,13 +384,33 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
       job.project_id
     );
 
-    const planeModules = await createAllModules(
-      job.id,
-      modules as ExModule[],
-      planeClient,
-      job.workspace_slug,
-      job.project_id
-    );
+    // ------------------- Module Creation --------------------
+    if (!cachedModules) {
+      planeModules = await createAllModules(
+        job.id,
+        modules as ExModule[],
+        planeClient,
+        job.workspace_slug,
+        job.project_id
+      );
+      await store.set(modulesCacheKey, JSON.stringify(planeModules), IMPORT_JOB_KEYS_TTL_IN_SECONDS);
+    }
+
+    // ------------------- Issue Type Cache Storage -------------------- if the issue type step is triggered
+    if (triggerIssueTypeStep) {
+      logger.info("Caching issue types, properties and property options, and setting the first page pushed cache key", {
+        jobId: job.id,
+      });
+      await store.set(issueTypesCacheKey, JSON.stringify(planeIssueTypes), IMPORT_JOB_KEYS_TTL_IN_SECONDS);
+      await store.set(issuePropertiesCacheKey, JSON.stringify(planeIssueProperties), IMPORT_JOB_KEYS_TTL_IN_SECONDS);
+      await store.set(
+        issuePropertyOptionsCacheKey,
+        JSON.stringify(planeIssuePropertiesOptions),
+        IMPORT_JOB_KEYS_TTL_IN_SECONDS
+      );
+      await store.set(IMPORT_JOB_FIRST_PAGE_PUSHED_CACHE_KEY(job.id), "true", IMPORT_JOB_KEYS_TTL_IN_SECONDS * 4);
+    }
+    // ------------------- Issue Type Cache Storage --------------------
 
     const generatedIssuePayload = await generateIssuePayload({
       jobId: job.id,
