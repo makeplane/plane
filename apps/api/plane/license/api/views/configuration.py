@@ -63,7 +63,12 @@ class DisableEmailFeatureEndpoint(BaseAPIView):
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request):
         instance_configurations = InstanceConfiguration.objects.filter(
-            key__in=["EMAIL_HOST", "EMAIL_HOST_USER", "EMAIL_HOST_PASSWORD"]
+            key__in=[
+                "EMAIL_HOST",
+                "EMAIL_HOST_USER",
+                "EMAIL_HOST_PASSWORD",
+                "ENABLE_SMTP",
+            ]
         )
 
         instance_configurations.update(value="")
