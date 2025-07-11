@@ -414,7 +414,7 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-[20] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
+              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
               "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
               contentClassName
             )}

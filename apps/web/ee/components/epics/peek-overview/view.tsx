@@ -17,6 +17,7 @@ import { EpicDetailRoot } from "../details/root";
 import { EpicPeekOverviewError } from "./error";
 import { EpicPeekOverviewHeader, TPeekModes } from "./header";
 import { EpicPeekOverviewLoader } from "./loader";
+import { createPortal } from "react-dom";
 
 interface IEpicView {
   workspaceSlug: string;
@@ -117,19 +118,24 @@ export const EpicView: FC<IEpicView> = observer((props) => {
 
   const peekOverviewIssueClassName = cn(
     !embedIssue
-      ? "fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "fixed z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
       "bottom-0 right-0 top-0 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
-      "inset-0 m-4": peekMode === "full-screen",
+      "inset-0 m-4 absolute": peekMode === "full-screen",
     }
   );
 
   const toggleEditEpicModal = (value: boolean) => setEditEpicModal(value);
   const toggleDeleteEpicModal = (value: boolean) => setDeleteEpicModal(value);
   const toggleDuplicateEpicModal = (value: boolean) => setDuplicateEpicModal(value);
-  return (
+
+  const shouldUsePortal = !embedIssue && peekMode === "full-screen";
+
+  const portalElement = document.getElementById("full-screen-portal");
+
+  const content = (
     <>
       {issueId && (
         <div
@@ -178,4 +184,6 @@ export const EpicView: FC<IEpicView> = observer((props) => {
       )}
     </>
   );
+
+  return shouldUsePortal && portalElement ? createPortal(content, portalElement) : content;
 });

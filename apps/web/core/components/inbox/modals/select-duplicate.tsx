@@ -123,7 +123,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <div className="flex flex-wrap items-start">
         <div className="space-y-1 sm:basis-1/2">
-          <Dialog as="div" className="relative z-20" onClose={handleClose}>
+          <Dialog as="div" className="relative z-30" onClose={handleClose}>
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"

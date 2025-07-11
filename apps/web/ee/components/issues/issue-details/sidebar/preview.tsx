@@ -26,7 +26,7 @@ export const CustomerPreview: FC<TProps> = (props) => {
   const stage = CUSTOMER_STAGES.find((stage) => stage.value === customer?.stage);
   return (
     <div className="bg-custom-background-90/40">
-      <div ref={setPopperElement} className={"min-w-[350px] max-w-[400px] z-20"} style={styles.popper}>
+      <div ref={setPopperElement} className={"min-w-[350px] max-w-[400px] z-30"} style={styles.popper}>
         <div className="bg-custom-background-100 border border-custom-border-200 rounded-lg p-5 shadow-custom-shadow-sm">
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center truncate">
