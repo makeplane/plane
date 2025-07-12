@@ -1,5 +1,6 @@
 # Python imports
 import os
+import uuid
 
 # Third party imports
 import boto3
@@ -99,7 +100,7 @@ class S3Storage(S3Boto3Storage):
 
         return response
 
-    def _get_content_disposition(self, disposition, filename=None):
+    def _get_content_disposition(self, disposition, filename=uuid.uuid4().hex):
         """Helper method to generate Content-Disposition header value"""
         if filename:
             # Encode the filename to handle special characters
