@@ -215,7 +215,8 @@ class Issue(ProjectBaseModel):
 
                 with connection.cursor() as cursor:
                     # Get an exclusive lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+                    cursor.execute("SELECT pg_advisory_lock(%s)", [lock_key])
+
                 try:
                     # Get the last sequence for the project
                     last_sequence = IssueSequence.objects.filter(
