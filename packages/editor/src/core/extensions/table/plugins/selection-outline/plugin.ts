@@ -1,8 +1,9 @@
 import { findParentNode, type Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { CellSelection, TableMap } from "@tiptap/pm/tables";
+import { TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 // local imports
+import { isCellSelection } from "../../table/utilities/helpers";
 import { getCellBorderClasses } from "./utils";
 
 type TableCellSelectionOutlinePluginState = {
@@ -25,7 +26,7 @@ export const TableCellSelectionOutlinePlugin = (editor: Editor): Plugin<TableCel
         }
 
         const { selection } = newState;
-        if (!(selection instanceof CellSelection)) return {};
+        if (!isCellSelection(selection)) return {};
 
         const decorations: Decoration[] = [];
         const tableMap = TableMap.get(table.node);
