@@ -309,6 +309,19 @@ class LabelSerializer(BaseSerializer):
         ]
         read_only_fields = ["workspace", "project"]
 
+    def validate_name(self, value):
+        project_id = self.context.get("project_id")
+
+        label = Label.objects.filter(project_id=project_id, name__iexact=value)
+
+        if self.instance:
+            label = label.exclude(id=self.instance.pk)
+
+        if label.exists():
+            raise serializers.ValidationError(detail="LABEL_NAME_ALREADY_EXISTS")
+
+        return value
+
 
 class LabelLiteSerializer(BaseSerializer):
     class Meta:
