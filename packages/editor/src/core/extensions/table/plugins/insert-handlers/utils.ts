@@ -17,285 +17,6 @@ export type TableInfo = {
   rowButtonElement?: HTMLElement;
 };
 
-export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement => {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "table-column-insert-button";
-  button.title = "Insert columns";
-  button.ariaLabel = "Insert columns";
-
-  const icon = document.createElement("span");
-  icon.innerHTML = addSvg;
-  button.appendChild(icon);
-
-  let mouseDownX = 0;
-  let isDragging = false;
-  let dragStarted = false;
-  let columnsAdded = 0;
-  let originalColumnCount = 0; // Track original column count at drag start
-  const DRAG_THRESHOLD = 5;
-  const ACTION_THRESHOLD = 150;
-
-  const onMouseDown = (e: MouseEvent) => {
-    if (e.button !== 0) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    mouseDownX = e.clientX;
-    isDragging = false;
-    dragStarted = false;
-
-    // Initialize with existing column count
-    const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
-    const tableMapData = TableMap.get(currentTableInfo.tableNode);
-    originalColumnCount = tableMapData.width;
-    columnsAdded = originalColumnCount; // Current total columns
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    const deltaX = e.clientX - mouseDownX;
-    const distance = Math.abs(deltaX);
-
-    if (!isDragging && distance > DRAG_THRESHOLD) {
-      isDragging = true;
-      dragStarted = true;
-      button.classList.add("dragging");
-      document.body.style.userSelect = "none";
-    }
-
-    if (isDragging) {
-      // Calculate target columns based on displacement from start position
-      let targetColumns = originalColumnCount; // Start with original count
-
-      if (deltaX > 0) {
-        // Moving right - add columns based on distance
-        let columnsToAdd = 0;
-        while (columnsToAdd * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= deltaX) {
-          columnsToAdd++;
-        }
-        targetColumns = originalColumnCount + columnsToAdd;
-      } else if (deltaX < 0) {
-        // Moving left - remove columns based on distance
-        const leftDistance = Math.abs(deltaX);
-        let columnsToRemove = 0;
-        while (columnsToRemove * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= leftDistance) {
-          columnsToRemove++;
-        }
-        targetColumns = Math.max(1, originalColumnCount - columnsToRemove); // Keep at least 1 column
-      }
-
-      // Add columns if needed
-      while (columnsAdded < targetColumns) {
-        insertColumnAfterLast(editor, tableInfo);
-        columnsAdded++;
-      }
-
-      // Remove columns if needed
-      while (columnsAdded > targetColumns) {
-        const deleted = removeLastColumn(editor, tableInfo);
-        if (deleted) {
-          columnsAdded--;
-        } else {
-          break;
-        }
-      }
-    }
-  };
-
-  const onMouseUp = () => {
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-
-    if (isDragging) {
-      button.classList.remove("dragging");
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    } else if (!dragStarted) {
-      insertColumnAfterLast(editor, tableInfo);
-      columnsAdded++;
-    }
-
-    isDragging = false;
-    dragStarted = false;
-    // Don't reset columnsAdded and originalColumnCount here - they'll be reset on next drag
-  };
-
-  button.addEventListener("mousedown", onMouseDown);
-  button.addEventListener("contextmenu", (e) => e.preventDefault());
-  button.addEventListener("selectstart", (e) => e.preventDefault());
-
-  return button;
-};
-
-export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement => {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "table-row-insert-button";
-  button.title = "Insert rows";
-  button.ariaLabel = "Insert rows";
-
-  const icon = document.createElement("span");
-  icon.innerHTML = addSvg;
-  button.appendChild(icon);
-
-  let mouseDownY = 0;
-  let isDragging = false;
-  let dragStarted = false;
-  let rowsAdded = 0;
-  let originalRowCount = 0; // Track original row count at drag start
-  const DRAG_THRESHOLD = 5;
-  const ACTION_THRESHOLD = 40;
-
-  const onMouseDown = (e: MouseEvent) => {
-    if (e.button !== 0) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    mouseDownY = e.clientY;
-    isDragging = false;
-    dragStarted = false;
-
-    // Initialize with existing row count
-    const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
-    const tableMapData = TableMap.get(currentTableInfo.tableNode);
-    originalRowCount = tableMapData.height;
-    rowsAdded = originalRowCount; // Current total rows
-
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  };
-
-  const onMouseMove = (e: MouseEvent) => {
-    const deltaY = e.clientY - mouseDownY;
-    const distance = Math.abs(deltaY);
-
-    if (!isDragging && distance > DRAG_THRESHOLD) {
-      isDragging = true;
-      dragStarted = true;
-      button.classList.add("dragging");
-      document.body.style.userSelect = "none";
-    }
-
-    if (isDragging) {
-      // Calculate target rows based on displacement from start position
-      let targetRows = originalRowCount; // Start with original count
-
-      if (deltaY > 0) {
-        // Moving down - add rows based on distance
-        let rowsToAdd = 0;
-        while (rowsToAdd * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= deltaY) {
-          rowsToAdd++;
-        }
-        targetRows = originalRowCount + rowsToAdd;
-      } else if (deltaY < 0) {
-        // Moving up - remove rows based on distance
-        const upDistance = Math.abs(deltaY);
-        let rowsToRemove = 0;
-        while (rowsToRemove * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= upDistance) {
-          rowsToRemove++;
-        }
-        targetRows = Math.max(1, originalRowCount - rowsToRemove); // Keep at least 1 row
-      }
-
-      // Add rows if needed
-      while (rowsAdded < targetRows) {
-        insertRowAfterLast(editor, tableInfo);
-        rowsAdded++;
-      }
-
-      // Remove rows if needed
-      while (rowsAdded > targetRows) {
-        const deleted = removeLastRow(editor, tableInfo);
-        if (deleted) {
-          rowsAdded--;
-        } else {
-          break;
-        }
-      }
-    }
-  };
-
-  const onMouseUp = () => {
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUp);
-
-    if (isDragging) {
-      button.classList.remove("dragging");
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    } else if (!dragStarted) {
-      insertRowAfterLast(editor, tableInfo);
-      rowsAdded++;
-    }
-
-    isDragging = false;
-    dragStarted = false;
-    // Don't reset rowsAdded and originalRowCount here - they'll be reset on next drag
-  };
-
-  button.addEventListener("mousedown", onMouseDown);
-  button.addEventListener("contextmenu", (e) => e.preventDefault());
-  button.addEventListener("selectstart", (e) => e.preventDefault());
-
-  return button;
-};
-
-export const findAllTables = (editor: Editor): TableInfo[] => {
-  const tables: TableInfo[] = [];
-  const tableElements = editor.view.dom.querySelectorAll("table");
-
-  tableElements.forEach((tableElement) => {
-    // Find the table's ProseMirror position
-    let tablePos = -1;
-    let tableNode: ProseMirrorNode | null = null;
-
-    // Walk through the document to find matching table nodes
-    editor.state.doc.descendants((node, pos) => {
-      if (node.type.spec.tableRole === "table") {
-        const domAtPos = editor.view.domAtPos(pos + 1);
-        let domTable = domAtPos.node;
-
-        // Navigate to find the table element
-        while (domTable && domTable.parentNode && domTable.nodeType !== Node.ELEMENT_NODE) {
-          domTable = domTable.parentNode;
-        }
-
-        while (domTable && domTable.parentNode && (domTable as HTMLElement).tagName !== "TABLE") {
-          domTable = domTable.parentNode;
-        }
-
-        if (domTable === tableElement) {
-          tablePos = pos;
-          tableNode = node;
-          return false; // Stop iteration
-        }
-      }
-    });
-
-    if (tablePos !== -1 && tableNode) {
-      tables.push({
-        tableElement,
-        tableNode,
-        tablePos,
-      });
-    }
-  });
-
-  return tables;
-};
-
-const getCurrentTableInfo = (editor: Editor, tableInfo: TableInfo): TableInfo => {
-  // Refresh table info to get latest state
-  const tables = findAllTables(editor);
-  const updated = tables.find((t) => t.tableElement === tableInfo.tableElement);
-  return updated || tableInfo;
-};
-
 // Column functions
 const insertColumnAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
@@ -323,14 +44,12 @@ const removeLastColumn = (editor: Editor, tableInfo: TableInfo): boolean => {
   const { tableNode, tablePos } = currentTableInfo;
   const tableMapData = TableMap.get(tableNode);
 
-  // Don't delete if only one column left
   if (tableMapData.width <= 1) {
     return false;
   }
 
   const lastColumnIndex = tableMapData.width - 1;
 
-  // Check if last column is empty
   if (!isColumnEmpty(currentTableInfo, lastColumnIndex)) {
     return false;
   }
@@ -351,45 +70,6 @@ const removeLastColumn = (editor: Editor, tableInfo: TableInfo): boolean => {
   return true;
 };
 
-// Helper function to check if a single cell is empty
-const isCellEmpty = (cell: ProseMirrorNode | null | undefined): boolean => {
-  if (!cell || cell.content.size === 0) {
-    return true;
-  }
-
-  // Check if cell has any non-empty content
-  let hasContent = false;
-  cell.content.forEach((node) => {
-    if (node.type.name === "paragraph") {
-      if (node.content.size > 0) {
-        hasContent = true;
-      }
-    } else if (node.content.size > 0 || node.isText) {
-      hasContent = true;
-    }
-  });
-
-  return !hasContent;
-};
-
-const isColumnEmpty = (tableInfo: TableInfo, columnIndex: number): boolean => {
-  const { tableNode } = tableInfo;
-  const tableMapData = TableMap.get(tableNode);
-
-  // Check each cell in the column
-  for (let row = 0; row < tableMapData.height; row++) {
-    const cellIndex = row * tableMapData.width + columnIndex;
-    const cellPos = tableMapData.map[cellIndex];
-    const cell = tableNode.nodeAt(cellPos);
-
-    if (!isCellEmpty(cell)) {
-      return false;
-    }
-  }
-  return true;
-};
-
-// Row functions
 const insertRowAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
   const { tableNode, tablePos } = currentTableInfo;
@@ -416,14 +96,12 @@ const removeLastRow = (editor: Editor, tableInfo: TableInfo): boolean => {
   const { tableNode, tablePos } = currentTableInfo;
   const tableMapData = TableMap.get(tableNode);
 
-  // Don't delete if only one row left
   if (tableMapData.height <= 1) {
     return false;
   }
 
   const lastRowIndex = tableMapData.height - 1;
 
-  // Check if last row is empty
   if (!isRowEmpty(currentTableInfo, lastRowIndex)) {
     return false;
   }
@@ -444,11 +122,46 @@ const removeLastRow = (editor: Editor, tableInfo: TableInfo): boolean => {
   return true;
 };
 
+// Helper functions
+const isCellEmpty = (cell: ProseMirrorNode | null | undefined): boolean => {
+  if (!cell || cell.content.size === 0) {
+    return true;
+  }
+
+  let hasContent = false;
+  cell.content.forEach((node) => {
+    if (node.type.name === "paragraph") {
+      if (node.content.size > 0) {
+        hasContent = true;
+      }
+    } else if (node.content.size > 0 || node.isText) {
+      hasContent = true;
+    }
+  });
+
+  return !hasContent;
+};
+
+const isColumnEmpty = (tableInfo: TableInfo, columnIndex: number): boolean => {
+  const { tableNode } = tableInfo;
+  const tableMapData = TableMap.get(tableNode);
+
+  for (let row = 0; row < tableMapData.height; row++) {
+    const cellIndex = row * tableMapData.width + columnIndex;
+    const cellPos = tableMapData.map[cellIndex];
+    const cell = tableNode.nodeAt(cellPos);
+
+    if (!isCellEmpty(cell)) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const isRowEmpty = (tableInfo: TableInfo, rowIndex: number): boolean => {
   const { tableNode } = tableInfo;
   const tableMapData = TableMap.get(tableNode);
 
-  // Check each cell in the row
   for (let col = 0; col < tableMapData.width; col++) {
     const cellIndex = rowIndex * tableMapData.width + col;
     const cellPos = tableMapData.map[cellIndex];
@@ -459,4 +172,244 @@ const isRowEmpty = (tableInfo: TableInfo, rowIndex: number): boolean => {
     }
   }
   return true;
+};
+
+type InsertDirection = "column" | "row";
+
+interface InsertButtonConfig {
+  direction: InsertDirection;
+  className: string;
+  title: string;
+  ariaLabel: string;
+  dragThreshold: number;
+  actionThreshold: number;
+  coordinate: "clientX" | "clientY";
+}
+
+interface DragState {
+  mouseDownPosition: number;
+  isDragging: boolean;
+  dragStarted: boolean;
+  itemsAdded: number;
+  originalItemCount: number;
+}
+
+interface InsertHandlers {
+  insertItem: (editor: Editor, tableInfo: TableInfo) => void;
+  removeItem: (editor: Editor, tableInfo: TableInfo) => boolean;
+  getItemCount: (tableNode: ProseMirrorNode) => number;
+  isEmpty: (tableInfo: TableInfo, itemIndex: number) => boolean;
+}
+
+// Column handlers
+const columnHandlers: InsertHandlers = {
+  insertItem: insertColumnAfterLast,
+  removeItem: removeLastColumn,
+  getItemCount: (tableNode) => TableMap.get(tableNode).width,
+  isEmpty: isColumnEmpty,
+};
+
+// Row handlers
+const rowHandlers: InsertHandlers = {
+  insertItem: insertRowAfterLast,
+  removeItem: removeLastRow,
+  getItemCount: (tableNode) => TableMap.get(tableNode).height,
+  isEmpty: isRowEmpty,
+};
+
+// Configuration for different button types
+const BUTTON_CONFIGS: Record<InsertDirection, InsertButtonConfig> = {
+  column: {
+    direction: "column",
+    className: "table-column-insert-button",
+    title: "Insert columns",
+    ariaLabel: "Insert columns",
+    dragThreshold: 5,
+    actionThreshold: 150,
+    coordinate: "clientX",
+  },
+  row: {
+    direction: "row",
+    className: "table-row-insert-button",
+    title: "Insert rows",
+    ariaLabel: "Insert rows",
+    dragThreshold: 5,
+    actionThreshold: 40,
+    coordinate: "clientY",
+  },
+};
+
+const createInsertButton = (
+  editor: Editor,
+  tableInfo: TableInfo,
+  config: InsertButtonConfig,
+  handlers: InsertHandlers
+): HTMLElement => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = config.className;
+  button.title = config.title;
+  button.ariaLabel = config.ariaLabel;
+
+  const icon = document.createElement("span");
+  icon.innerHTML = addSvg;
+  button.appendChild(icon);
+
+  const dragState: DragState = {
+    mouseDownPosition: 0,
+    isDragging: false,
+    dragStarted: false,
+    itemsAdded: 0,
+    originalItemCount: 0,
+  };
+
+  const onMouseDown = (e: MouseEvent) => {
+    if (e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    dragState.mouseDownPosition = e[config.coordinate];
+    dragState.isDragging = false;
+    dragState.dragStarted = false;
+
+    // Initialize with existing item count
+    const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
+    dragState.originalItemCount = handlers.getItemCount(currentTableInfo.tableNode);
+    dragState.itemsAdded = dragState.originalItemCount;
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
+
+  const onMouseMove = (e: MouseEvent) => {
+    const delta = e[config.coordinate] - dragState.mouseDownPosition;
+    const distance = Math.abs(delta);
+
+    if (!dragState.isDragging && distance > config.dragThreshold) {
+      dragState.isDragging = true;
+      dragState.dragStarted = true;
+      button.classList.add("dragging");
+      document.body.style.userSelect = "none";
+    }
+
+    if (dragState.isDragging) {
+      const targetItems = calculateTargetItems(delta, dragState.originalItemCount, config.actionThreshold);
+
+      // Add items if needed
+      while (dragState.itemsAdded < targetItems) {
+        handlers.insertItem(editor, tableInfo);
+        dragState.itemsAdded++;
+      }
+
+      // Remove items if needed
+      while (dragState.itemsAdded > targetItems) {
+        const deleted = handlers.removeItem(editor, tableInfo);
+        if (deleted) {
+          dragState.itemsAdded--;
+        } else {
+          break;
+        }
+      }
+    }
+  };
+
+  const onMouseUp = () => {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+
+    if (dragState.isDragging) {
+      button.classList.remove("dragging");
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    } else if (!dragState.dragStarted) {
+      handlers.insertItem(editor, tableInfo);
+      dragState.itemsAdded++;
+    }
+
+    dragState.isDragging = false;
+    dragState.dragStarted = false;
+  };
+
+  button.addEventListener("mousedown", onMouseDown);
+  button.addEventListener("contextmenu", (e) => e.preventDefault());
+  button.addEventListener("selectstart", (e) => e.preventDefault());
+
+  return button;
+};
+
+const calculateTargetItems = (delta: number, originalCount: number, actionThreshold: number): number => {
+  let targetItems = originalCount;
+
+  if (delta > 0) {
+    // Moving in positive direction - add items
+    let itemsToAdd = 0;
+    while (itemsToAdd * actionThreshold + actionThreshold / 2 <= delta) {
+      itemsToAdd++;
+    }
+    targetItems = originalCount + itemsToAdd;
+  } else if (delta < 0) {
+    // Moving in negative direction - remove items
+    const distance = Math.abs(delta);
+    let itemsToRemove = 0;
+    while (itemsToRemove * actionThreshold + actionThreshold / 2 <= distance) {
+      itemsToRemove++;
+    }
+    targetItems = Math.max(1, originalCount - itemsToRemove);
+  }
+
+  return targetItems;
+};
+
+export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement =>
+  createInsertButton(editor, tableInfo, BUTTON_CONFIGS.column, columnHandlers);
+
+export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement =>
+  createInsertButton(editor, tableInfo, BUTTON_CONFIGS.row, rowHandlers);
+
+export const findAllTables = (editor: Editor): TableInfo[] => {
+  const tables: TableInfo[] = [];
+  const tableElements = editor.view.dom.querySelectorAll("table");
+
+  tableElements.forEach((tableElement) => {
+    let tablePos = -1;
+    let tableNode: ProseMirrorNode | null = null;
+
+    editor.state.doc.descendants((node, pos) => {
+      if (node.type.spec.tableRole === "table") {
+        const domAtPos = editor.view.domAtPos(pos + 1);
+        let domTable = domAtPos.node;
+
+        while (domTable && domTable.parentNode && domTable.nodeType !== Node.ELEMENT_NODE) {
+          domTable = domTable.parentNode;
+        }
+
+        while (domTable && domTable.parentNode && (domTable as HTMLElement).tagName !== "TABLE") {
+          domTable = domTable.parentNode;
+        }
+
+        if (domTable === tableElement) {
+          tablePos = pos;
+          tableNode = node;
+          return false;
+        }
+      }
+    });
+
+    if (tablePos !== -1 && tableNode) {
+      tables.push({
+        tableElement,
+        tableNode,
+        tablePos,
+      });
+    }
+  });
+
+  return tables;
+};
+
+const getCurrentTableInfo = (editor: Editor, tableInfo: TableInfo): TableInfo => {
+  const tables = findAllTables(editor);
+  const updated = tables.find((t) => t.tableElement === tableInfo.tableElement);
+  return updated || tableInfo;
 };
