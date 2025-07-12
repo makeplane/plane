@@ -11,6 +11,7 @@ export type TDocumentEditorAdditionalExtensionsProps = Pick<
   "disabledExtensions" | "flaggedExtensions" | "fileHandler"
 > & {
   embedConfig: TEmbedConfig | undefined;
+  isEditable: boolean;
   provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };

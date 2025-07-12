@@ -10,7 +10,7 @@ import { EFileAssetType, TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor/rich-text/editor";
 // hooks
 import { useEditorAsset, useProjectInbox } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
