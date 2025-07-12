@@ -1,168 +1,169 @@
 {
   "sidebar": {
-    "projects": "Projeks",
-    "pages": "Peycıs",
-    "new_work_item": "Niv vörk aytım",
-    "home": "Hom",
-    "your_work": "Yor vörk",
-    "inbox": "İnboks",
-    "workspace": "Vörkspeys",
-    "views": "Viyus",
-    "analytics": "Analitiks",
-    "work_items": "Vörk aytıms",
-    "cycles": "Saykıls",
-    "modules": "Modüls",
-    "intake": "İnteyk",
-    "drafts": "Drafts",
-    "favorites": "Feyvorits",
+    "projects": "Projeler",
+    "pages": "Sayfalar",
+    "new_work_item": "Yeni iş öğesi",
+    "home": "Ana Sayfa",
+    "your_work": "Çalışmalarınız",
+    "inbox": "Gelen Kutusu",
+    "workspace": "Çalışma Alanı",
+    "views": "Görünümler",
+    "analytics": "Analizler",
+    "work_items": "İş öğeleri",
+    "cycles": "Döngüler",
+    "modules": "Modüller",
+    "intake": "Talep",
+    "drafts": "Taslaklar",
+    "favorites": "Favoriler",
     "pro": "Pro",
-    "upgrade": "Apgreyd"
+    "upgrade": "Yükselt"
   },
   "auth": {
     "common": {
       "email": {
-        "label": "İmeyl",
-        "placeholder": "neym@kampıni.com",
+        "label": "E-posta",
+        "placeholder": "isim@şirket.com",
         "errors": {
-          "required": "İmeyl is required",
-          "invalid": "İmeyl is invalid"
+          "required": "E-posta gerekli",
+          "invalid": "Geçersiz e-posta"
         }
       },
       "password": {
-        "label": "Pasvörd",
-        "set_password": "Set a pasvörd",
-        "placeholder": "Enter pasvörd",
+        "label": "Şifre",
+        "set_password": "Şifre belirle",
+        "placeholder": "Şifreyi girin",
         "confirm_password": {
-          "label": "Konfırm pasvörd",
-          "placeholder": "Konfırm pasvörd"
+          "label": "Şifreyi onayla",
+          "placeholder": "Şifreyi onayla"
         },
         "current_password": {
-          "label": "Körınt pasvörd"
+          "label": "Mevcut şifre",
+          "placeholder": "Mevcut şifreyi girin"
         },
         "new_password": {
-          "label": "Niv pasvörd",
-          "placeholder": "Enter niv pasvörd"
+          "label": "Yeni şifre",
+          "placeholder": "Yeni şifreyi girin"
         },
         "change_password": {
           "label": {
-            "default": "Çeync pasvörd",
-            "submitting": "Çeyncıng pasvörd"
+            "default": "Şifreyi değiştir",
+            "submitting": "Şifre değiştiriliyor"
           }
         },
         "errors": {
-          "match": "Pasvörds don't match",
-          "empty": "Please enter your pasvörd",
-          "length": "Pasvörd length should me more than 8 karakterz",
+          "match": "Şifreler eşleşmiyor",
+          "empty": "Lütfen şifrenizi girin",
+          "length": "Şifre uzunluğu 8 karakterden fazla olmalı",
           "strength": {
-            "weak": "Pasvörd is weak",
-            "strong": "Pasvörd is strong"
+            "weak": "Şifre zayıf",
+            "strong": "Şifre güçlü"
           }
         },
-        "submit": "Set pasvörd",
+        "submit": "Şifreyi belirle",
         "toast": {
           "change_password": {
             "success": {
-              "title": "Sakses!",
-              "message": "Pasvörd çeynced successfully."
+              "title": "Başarılı!",
+              "message": "Şifre başarıyla değiştirildi."
             },
             "error": {
-              "title": "Error!",
-              "message": "Something went wrong. Please try again."
+              "title": "Hata!",
+              "message": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
             }
           }
         }
       },
       "unique_code": {
-        "label": "Yunik kod",
-        "placeholder": "gets-sets-flys",
-        "paste_code": "Peyst the kod sent to your imeyl",
-        "requesting_new_code": "Rikvestıng niv kod",
-        "sending_code": "Sending kod"
+        "label": "Benzersiz kod",
+        "placeholder": "alır-atar-uçar",
+        "paste_code": "E-postanıza gönderilen kodu yapıştırın",
+        "requesting_new_code": "Yeni kod isteniyor",
+        "sending_code": "Kod gönderiliyor"
       },
-      "already_have_an_account": "Already have an akount?",
-      "login": "Log in",
-      "create_account": "Krieyt akount",
-      "new_to_plane": "Niv to Pleyn?",
-      "back_to_sign_in": "Bek to sayn in",
-      "resend_in": "Risend in {seconds} sekınds",
-      "sign_in_with_unique_code": "Sayn in vit yunik kod",
-      "forgot_password": "Forgot your pasvörd?"
+      "already_have_an_account": "Zaten bir hesabınız var mı?",
+      "login": "Giriş yap",
+      "create_account": "Hesap oluştur",
+      "new_to_plane": "Plane'e yeni mi geldiniz?",
+      "back_to_sign_in": "Giriş yapmaya geri dön",
+      "resend_in": "{seconds} saniye içinde tekrar gönder",
+      "sign_in_with_unique_code": "Benzersiz kod ile giriş yap",
+      "forgot_password": "Şifrenizi mi unuttunuz?"
     },
     "sign_up": {
       "header": {
-        "label": "Krieyt an akount to start menıcıng vörk vit your tim.",
+        "label": "Ekibinizle işleri yönetmeye başlamak için bir hesap oluşturun.",
         "step": {
           "email": {
-            "header": "Sayn ap",
+            "header": "Kaydol",
             "sub_header": ""
           },
           "password": {
-            "header": "Sayn ap",
-            "sub_header": "Sayn ap using an imeyl-pasvörd kombıneyşın."
+            "header": "Kaydol",
+            "sub_header": "E-posta-şifre kombinasyonu kullanarak kaydolun."
           },
           "unique_code": {
-            "header": "Sayn ap",
-            "sub_header": "Sayn ap using a yunik kod sent to the imeyl address above."
+            "header": "Kaydol",
+            "sub_header": "Yukarıdaki e-posta adresine gönderilen benzersiz bir kod kullanarak kaydolun."
           }
         }
       },
       "errors": {
         "password": {
-          "strength": "Try setting-ap a strong pasvörd to proceed"
+          "strength": "Devam etmek için güçlü bir şifre belirlemeyi deneyin"
         }
       }
     },
     "sign_in": {
       "header": {
-        "label": "Log in to start menıcıng vörk vit your tim.",
+        "label": "Ekibinizle işleri yönetmeye başlamak için giriş yapın.",
         "step": {
           "email": {
-            "header": "Log in or sayn ap",
+            "header": "Giriş yap veya kaydol",
             "sub_header": ""
           },
           "password": {
-            "header": "Log in or sayn ap",
-            "sub_header": "Use your imeyl-pasvörd kombıneyşın to log in."
+            "header": "Giriş yap veya kaydol",
+            "sub_header": "Giriş yapmak için e-posta-şifre kombinasyonunuzu kullanın."
           },
           "unique_code": {
-            "header": "Log in or sayn ap",
-            "sub_header": "Log in using a yunik kod sent to the imeyl address above."
+            "header": "Giriş yap veya kaydol",
+            "sub_header": "Yukarıdaki e-posta adresine gönderilen benzersiz bir kod kullanarak giriş yapın."
           }
         }
       }
     },
     "forgot_password": {
-      "title": "Reset your pasvörd",
-      "description": "Enter your yuzer akount's verified imeyl address and we will send you a pasvörd reset link.",
-      "email_sent": "We sent the reset link to your imeyl address",
-      "send_reset_link": "Send reset link",
+      "title": "Şifrenizi sıfırlayın",
+      "description": "Kullanıcı hesabınızın doğrulanmış e-posta adresini girin, size bir şifre sıfırlama bağlantısı göndereceğiz.",
+      "email_sent": "Sıfırlama bağlantısını e-posta adresinize gönderdik",
+      "send_reset_link": "Sıfırlama bağlantısı gönder",
       "errors": {
-        "smtp_not_enabled": "We see that your god hasn't enabled SMTP, we will not be able to send a pasvörd reset link"
+        "smtp_not_enabled": "Yöneticinizin SMTP'yi etkinleştirmediğini görüyoruz, bu yüzden şifre sıfırlama bağlantısı gönderemeyeceğiz"
       },
       "toast": {
         "success": {
-          "title": "İmeyl sent",
-          "message": "Çek your inbox for a link to reset your pasvörd. If it doesn't appear within a few minutes, çek your spam folder."
+          "title": "E-posta gönderildi",
+          "message": "Şifrenizi sıfırlamak için gelen kutunuzu kontrol edin. Birkaç dakika içinde gelmezse, spam klasörünüzü kontrol edin."
         },
         "error": {
-          "title": "Error!",
-          "message": "Something went wrong. Please try again."
+          "title": "Hata!",
+          "message": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
         }
       }
     },
     "reset_password": {
-      "title": "Set niv pasvörd",
-      "description": "Sikur your akount vit a strong pasvörd"
+      "title": "Yeni şifre belirle",
+      "description": "Hesabınızı güçlü bir şifreyle güvence altına alın"
     },
     "set_password": {
-      "title": "Sikur your akount",
-      "description": "Setting pasvörd helps you login sikurli"
+      "title": "Hesabınızı güvence altına alın",
+      "description": "Şifre belirlemek güvenli bir şekilde giriş yapmanıza yardımcı olur"
     },
     "sign_out": {
       "toast": {
         "error": {
-          "title": "Error!",
-          "message": "Failed to sayn out. Please try again."
+          "title": "Hata!",
+          "message": "Çıkış yapılamadı. Lütfen tekrar deneyin."
         }
       }
     }
