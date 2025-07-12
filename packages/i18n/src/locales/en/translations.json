@@ -885,6 +885,10 @@
       },
       "upload": {
         "error": "Asset upload failed. Please try again later."
+      },
+      "copy_link": {
+        "success": "Comment link copied to clipboard",
+        "error": "Error copying comment link. Please try again later."
       }
     },
     "empty_state": {

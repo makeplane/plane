@@ -1042,6 +1042,10 @@
       },
       "upload": {
         "error": "Încărcarea fișierului a eșuat. Te rugăm să încerci mai târziu."
+      },
+      "copy_link": {
+        "success": "Linkul comentariului a fost copiat în clipboard",
+        "error": "Eroare la copierea linkului comentariului. Încercați din nou mai târziu."
       }
     },
     "empty_state": {

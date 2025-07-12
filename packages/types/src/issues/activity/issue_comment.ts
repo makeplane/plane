@@ -41,12 +41,13 @@ export type TIssueComment = {
 };
 
 export type TCommentsOperations = {
+  copyCommentLink: (commentId: string) => void;
   createComment: (data: Partial<TIssueComment>) => Promise<Partial<TIssueComment> | undefined>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
   addCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
-  deleteCommentReaction: (commentId: string, reactionEmoji: string, userReactions: TCommentReaction[]) => Promise<void>;
+  deleteCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
   react: (commentId: string, reactionEmoji: string, userReactions: string[]) => Promise<void>;
   reactionIds: (commentId: string) =>
     | {

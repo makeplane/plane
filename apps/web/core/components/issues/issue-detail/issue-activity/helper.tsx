@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TCommentsOperations, TIssueComment } from "@plane/types";
+import { EFileAssetType, type TCommentsOperations } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
-import { formatTextList } from "@plane/utils";
-import { useEditorAsset, useIssueDetail, useMember, useUser } from "@/hooks/store";
+import { copyUrlToClipboard, formatTextList, generateWorkItemLink } from "@plane/utils";
+import { useEditorAsset, useIssueDetail, useMember, useProject, useUser } from "@/hooks/store";
 
 export const useCommentOperations = (
   workspaceSlug: string | undefined,
@@ -18,16 +18,49 @@ export const useCommentOperations = (
     removeComment,
     createCommentReaction,
     removeCommentReaction,
+    issue: { getIssueById },
   } = useIssueDetail();
+  const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
   const { uploadEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
+  // derived values
+  const issueDetails = issueId ? getIssueById(issueId) : undefined;
+  const projectDetails = projectId ? getProjectById(projectId) : undefined;
+  // translation
   const { t } = useTranslation();
 
-  const operations = useMemo(() => {
+  const operations: TCommentsOperations = useMemo(() => {
     // Define operations object with all methods
-    const ops = {
-      createComment: async (data: Partial<TIssueComment>) => {
+    const ops: TCommentsOperations = {
+      copyCommentLink: (id) => {
+        if (!workspaceSlug || !issueDetails) return;
+        try {
+          const workItemLink = generateWorkItemLink({
+            workspaceSlug,
+            projectId: issueDetails.project_id,
+            issueId,
+            projectIdentifier: projectDetails?.identifier,
+            sequenceId: issueDetails.sequence_id,
+          });
+          const commentLink = `${workItemLink}#comment-${id}`;
+          copyUrlToClipboard(commentLink).then(() => {
+            setToast({
+              title: t("common.success"),
+              type: TOAST_TYPE.SUCCESS,
+              message: t("issue.comments.copy_link.success"),
+            });
+          });
+        } catch (error) {
+          console.error("Error in copying comment link:", error);
+          setToast({
+            title: t("common.error.label"),
+            type: TOAST_TYPE.ERROR,
+            message: t("issue.comments.copy_link.error"),
+          });
+        }
+      },
+      createComment: async (data) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           const comment = await createComment(workspaceSlug, projectId, issueId, data);
@@ -45,7 +78,7 @@ export const useCommentOperations = (
           });
         }
       },
-      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
+      updateComment: async (commentId, data) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await updateComment(workspaceSlug, projectId, issueId, commentId, data);
@@ -62,7 +95,7 @@ export const useCommentOperations = (
           });
         }
       },
-      removeComment: async (commentId: string) => {
+      removeComment: async (commentId) => {
         try {
           if (!workspaceSlug || !projectId || !issueId) throw new Error("Missing fields");
           await removeComment(workspaceSlug, projectId, issueId, commentId);
@@ -79,7 +112,7 @@ export const useCommentOperations = (
           });
         }
       },
-      uploadCommentAsset: async (blockId: string, file: File, commentId?: string) => {
+      uploadCommentAsset: async (blockId, file, commentId) => {
         try {
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
           const res = await uploadEditorAsset({
@@ -98,7 +131,7 @@ export const useCommentOperations = (
           throw new Error(t("issue.comments.upload.error"));
         }
       },
-      addCommentReaction: async (commentId: string, reaction: string) => {
+      addCommentReaction: async (commentId, reaction) => {
         try {
           if (!workspaceSlug || !projectId || !commentId) throw new Error("Missing fields");
           await createCommentReaction(workspaceSlug, projectId, commentId, reaction);
@@ -107,7 +140,7 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -115,7 +148,7 @@ export const useCommentOperations = (
           });
         }
       },
-      deleteCommentReaction: async (commentId: string, reaction: string) => {
+      deleteCommentReaction: async (commentId, reaction) => {
         try {
           if (!workspaceSlug || !projectId || !commentId || !currentUser?.id) throw new Error("Missing fields");
           removeCommentReaction(workspaceSlug, projectId, commentId, reaction, currentUser.id);
@@ -124,7 +157,7 @@ export const useCommentOperations = (
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -132,14 +165,14 @@ export const useCommentOperations = (
           });
         }
       },
-      react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {
+      react: async (commentId, reactionEmoji, userReactions) => {
         if (userReactions.includes(reactionEmoji)) await ops.deleteCommentReaction(commentId, reactionEmoji);
         else await ops.addCommentReaction(commentId, reactionEmoji);
       },
-      reactionIds: (commentId: string) => getCommentReactionsByCommentId(commentId),
-      userReactions: (commentId: string) =>
+      reactionIds: (commentId) => getCommentReactionsByCommentId(commentId),
+      userReactions: (commentId) =>
         currentUser ? commentReactionsByUser(commentId, currentUser?.id).map((r) => r.reaction) : [],
-      getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>): string => {
+      getReactionUsers: (reaction, reactionIds) => {
         const reactionUsers = (reactionIds?.[reaction] || [])
           .map((reactionId) => {
             const reactionDetails = getCommentReactionById(reactionId);

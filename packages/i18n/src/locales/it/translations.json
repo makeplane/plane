@@ -1041,6 +1041,10 @@
       },
       "upload": {
         "error": "Caricamento dell'asset fallito. Per favore, riprova più tardi."
+      },
+      "copy_link": {
+        "success": "Link del commento copiato negli appunti",
+        "error": "Errore durante la copia del link del commento. Riprova più tardi."
       }
     },
     "empty_state": {
