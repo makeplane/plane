@@ -1,7 +1,11 @@
 from .instance import InstanceEndpoint, SignUpScreenVisitedEndpoint
 
 
-from .configuration import EmailCredentialCheckEndpoint, InstanceConfigurationEndpoint
+from .configuration import (
+    EmailCredentialCheckEndpoint,
+    InstanceConfigurationEndpoint,
+    DisableEmailFeatureEndpoint,
+)
 
 
 from .admin import (
