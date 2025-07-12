@@ -31,20 +31,26 @@ export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): 
   let mouseDownX = 0;
   let isDragging = false;
   let dragStarted = false;
-  let lastActionX = 0;
-  const DRAG_THRESHOLD = 5; // pixels to start drag
-  const ACTION_THRESHOLD = 150; // pixels total distance to trigger action
+  let columnsAdded = 0;
+  let originalColumnCount = 0; // Track original column count at drag start
+  const DRAG_THRESHOLD = 5;
+  const ACTION_THRESHOLD = 150;
 
   const onMouseDown = (e: MouseEvent) => {
-    if (e.button !== 0) return; // Only left mouse button
+    if (e.button !== 0) return;
 
     e.preventDefault();
     e.stopPropagation();
 
     mouseDownX = e.clientX;
-    lastActionX = e.clientX;
     isDragging = false;
     dragStarted = false;
+
+    // Initialize with existing column count
+    const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
+    const tableMapData = TableMap.get(currentTableInfo.tableNode);
+    originalColumnCount = tableMapData.width;
+    columnsAdded = originalColumnCount; // Current total columns
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -54,35 +60,47 @@ export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): 
     const deltaX = e.clientX - mouseDownX;
     const distance = Math.abs(deltaX);
 
-    // Start dragging if moved more than threshold
     if (!isDragging && distance > DRAG_THRESHOLD) {
       isDragging = true;
       dragStarted = true;
-
-      // Visual feedback
       button.classList.add("dragging");
       document.body.style.userSelect = "none";
     }
 
     if (isDragging) {
-      const totalDistance = Math.abs(e.clientX - lastActionX);
+      // Calculate target columns based on displacement from start position
+      let targetColumns = originalColumnCount; // Start with original count
 
-      // Only trigger action when total distance reaches threshold
-      if (totalDistance >= ACTION_THRESHOLD) {
-        // Determine direction based on current movement relative to last action point
-        const directionFromLastAction = e.clientX - lastActionX;
-
-        // Right direction - add columns
-        if (directionFromLastAction > 0) {
-          insertColumnAfterLast(editor, tableInfo);
-          lastActionX = e.clientX; // Reset action point
+      if (deltaX > 0) {
+        // Moving right - add columns based on distance
+        let columnsToAdd = 0;
+        while (columnsToAdd * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= deltaX) {
+          columnsToAdd++;
         }
-        // Left direction - delete empty columns
-        else if (directionFromLastAction < 0) {
-          const deleted = removeLastColumn(editor, tableInfo);
-          if (deleted) {
-            lastActionX = e.clientX; // Reset action point
-          }
+        targetColumns = originalColumnCount + columnsToAdd;
+      } else if (deltaX < 0) {
+        // Moving left - remove columns based on distance
+        const leftDistance = Math.abs(deltaX);
+        let columnsToRemove = 0;
+        while (columnsToRemove * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= leftDistance) {
+          columnsToRemove++;
+        }
+        targetColumns = Math.max(1, originalColumnCount - columnsToRemove); // Keep at least 1 column
+      }
+
+      // Add columns if needed
+      while (columnsAdded < targetColumns) {
+        insertColumnAfterLast(editor, tableInfo);
+        columnsAdded++;
+      }
+
+      // Remove columns if needed
+      while (columnsAdded > targetColumns) {
+        const deleted = removeLastColumn(editor, tableInfo);
+        if (deleted) {
+          columnsAdded--;
+        } else {
+          break;
         }
       }
     }
@@ -93,22 +111,20 @@ export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): 
     document.removeEventListener("mouseup", onMouseUp);
 
     if (isDragging) {
-      // Clean up drag state
       button.classList.remove("dragging");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
     } else if (!dragStarted) {
-      // Handle as click if no dragging occurred
       insertColumnAfterLast(editor, tableInfo);
+      columnsAdded++;
     }
 
     isDragging = false;
     dragStarted = false;
+    // Don't reset columnsAdded and originalColumnCount here - they'll be reset on next drag
   };
 
   button.addEventListener("mousedown", onMouseDown);
-
-  // Prevent context menu and text selection
   button.addEventListener("contextmenu", (e) => e.preventDefault());
   button.addEventListener("selectstart", (e) => e.preventDefault());
 
@@ -129,20 +145,26 @@ export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTM
   let mouseDownY = 0;
   let isDragging = false;
   let dragStarted = false;
-  let lastActionY = 0;
-  const DRAG_THRESHOLD = 5; // pixels to start drag
-  const ACTION_THRESHOLD = 40; // pixels total distance to trigger action
+  let rowsAdded = 0;
+  let originalRowCount = 0; // Track original row count at drag start
+  const DRAG_THRESHOLD = 5;
+  const ACTION_THRESHOLD = 40;
 
   const onMouseDown = (e: MouseEvent) => {
-    if (e.button !== 0) return; // Only left mouse button
+    if (e.button !== 0) return;
 
     e.preventDefault();
     e.stopPropagation();
 
     mouseDownY = e.clientY;
-    lastActionY = e.clientY;
     isDragging = false;
     dragStarted = false;
+
+    // Initialize with existing row count
+    const currentTableInfo = getCurrentTableInfo(editor, tableInfo);
+    const tableMapData = TableMap.get(currentTableInfo.tableNode);
+    originalRowCount = tableMapData.height;
+    rowsAdded = originalRowCount; // Current total rows
 
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
@@ -152,35 +174,47 @@ export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTM
     const deltaY = e.clientY - mouseDownY;
     const distance = Math.abs(deltaY);
 
-    // Start dragging if moved more than threshold
     if (!isDragging && distance > DRAG_THRESHOLD) {
       isDragging = true;
       dragStarted = true;
-
-      // Visual feedback
       button.classList.add("dragging");
       document.body.style.userSelect = "none";
     }
 
     if (isDragging) {
-      const totalDistance = Math.abs(e.clientY - lastActionY);
+      // Calculate target rows based on displacement from start position
+      let targetRows = originalRowCount; // Start with original count
 
-      // Only trigger action when total distance reaches threshold
-      if (totalDistance >= ACTION_THRESHOLD) {
-        // Determine direction based on current movement relative to last action point
-        const directionFromLastAction = e.clientY - lastActionY;
-
-        // Down direction - add rows
-        if (directionFromLastAction > 0) {
-          insertRowAfterLast(editor, tableInfo);
-          lastActionY = e.clientY; // Reset action point
+      if (deltaY > 0) {
+        // Moving down - add rows based on distance
+        let rowsToAdd = 0;
+        while (rowsToAdd * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= deltaY) {
+          rowsToAdd++;
         }
-        // Up direction - delete empty rows
-        else if (directionFromLastAction < 0) {
-          const deleted = removeLastRow(editor, tableInfo);
-          if (deleted) {
-            lastActionY = e.clientY; // Reset action point
-          }
+        targetRows = originalRowCount + rowsToAdd;
+      } else if (deltaY < 0) {
+        // Moving up - remove rows based on distance
+        const upDistance = Math.abs(deltaY);
+        let rowsToRemove = 0;
+        while (rowsToRemove * ACTION_THRESHOLD + ACTION_THRESHOLD / 2 <= upDistance) {
+          rowsToRemove++;
+        }
+        targetRows = Math.max(1, originalRowCount - rowsToRemove); // Keep at least 1 row
+      }
+
+      // Add rows if needed
+      while (rowsAdded < targetRows) {
+        insertRowAfterLast(editor, tableInfo);
+        rowsAdded++;
+      }
+
+      // Remove rows if needed
+      while (rowsAdded > targetRows) {
+        const deleted = removeLastRow(editor, tableInfo);
+        if (deleted) {
+          rowsAdded--;
+        } else {
+          break;
         }
       }
     }
@@ -191,22 +225,20 @@ export const createRowInsertButton = (editor: Editor, tableInfo: TableInfo): HTM
     document.removeEventListener("mouseup", onMouseUp);
 
     if (isDragging) {
-      // Clean up drag state
       button.classList.remove("dragging");
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
     } else if (!dragStarted) {
-      // Handle as click if no dragging occurred
       insertRowAfterLast(editor, tableInfo);
+      rowsAdded++;
     }
 
     isDragging = false;
     dragStarted = false;
+    // Don't reset rowsAdded and originalRowCount here - they'll be reset on next drag
   };
 
   button.addEventListener("mousedown", onMouseDown);
-
-  // Prevent context menu and text selection
   button.addEventListener("contextmenu", (e) => e.preventDefault());
   button.addEventListener("selectstart", (e) => e.preventDefault());
 
