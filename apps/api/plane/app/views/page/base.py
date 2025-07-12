@@ -40,7 +40,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.bgtasks.copy_s3_object import copy_s3_objects
+from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -606,7 +606,7 @@ class PageDuplicateEndpoint(BaseAPIView):
         )
 
         # Copy the s3 objects uploaded in the page
-        copy_s3_objects.delay(
+        copy_s3_objects_of_description_and_assets.delay(
             entity_name="PAGE",
             entity_identifier=page.id,
             project_id=project_id,
