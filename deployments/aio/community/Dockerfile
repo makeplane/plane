@@ -4,7 +4,8 @@ FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 # **************************************************
 #  STAGE 0: Image Loading
 # **************************************************
-FROM node:20-alpine AS node
+FROM node:22-alpine AS node
+
 FROM artifacts.plane.so/makeplane/plane-frontend:${PLANE_VERSION} AS web-img
 FROM artifacts.plane.so/makeplane/plane-backend:${PLANE_VERSION} AS backend-img
 FROM artifacts.plane.so/makeplane/plane-space:${PLANE_VERSION} AS space-img
@@ -15,7 +16,7 @@ FROM artifacts.plane.so/makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 # **************************************************
 #  STAGE 1: Runner
 # **************************************************
-FROM python:3.12.5-alpine AS runner
+FROM python:3.12.10-alpine AS runner
 
 WORKDIR /app
 
