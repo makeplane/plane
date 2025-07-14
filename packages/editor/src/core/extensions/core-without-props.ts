@@ -12,10 +12,11 @@ import { CustomCalloutExtensionConfig } from "./callout/extension-config";
 import { CustomCodeBlockExtensionWithoutProps } from "./code/without-props";
 import { CustomCodeInlineExtension } from "./code-inline";
 import { CustomColorExtension } from "./custom-color";
+import { CustomImageExtensionConfig } from "./custom-image/extension-config";
 import { CustomLinkExtension } from "./custom-link";
+import { EmojiExtension } from "./emoji/extension";
 import { CustomHorizontalRule } from "./horizontal-rule";
-import { ImageExtensionWithoutProps } from "./image";
-import { CustomImageComponentWithoutProps } from "./image/image-component-without-props";
+import { ImageExtensionConfig } from "./image";
 import { CustomMentionExtensionConfig } from "./mentions/extension-config";
 import { CustomQuoteExtension } from "./quote";
 import { TableHeader, TableCell, TableRow, Table } from "./table";
@@ -55,6 +56,7 @@ export const CoreEditorExtensionsWithoutProps = [
     },
     dropcursor: false,
   }),
+  EmojiExtension,
   CustomQuoteExtension,
   CustomHorizontalRule.configure({
     HTMLAttributes: {
@@ -72,12 +74,8 @@ export const CoreEditorExtensionsWithoutProps = [
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtensionWithoutProps.configure({
-    HTMLAttributes: {
-      class: "rounded-md",
-    },
-  }),
-  CustomImageComponentWithoutProps,
+  ImageExtensionConfig,
+  CustomImageExtensionConfig,
   TiptapUnderline,
   TextStyle,
   TaskList.configure({

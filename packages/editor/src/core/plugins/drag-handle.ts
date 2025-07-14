@@ -16,7 +16,7 @@ const generalSelectors = [
   "blockquote",
   "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
-  ".table-wrapper",
+  "table",
   ".issue-embed",
   ".image-component",
   ".image-upload-component",
@@ -90,7 +90,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
   for (const elem of elements) {
     // Check for table wrapper first
-    if (elem.matches(".table-wrapper")) {
+    if (elem.matches("table")) {
       return elem;
     }
 
@@ -99,7 +99,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     }
 
     // Skip table cells
-    if (elem.closest(".table-wrapper")) {
+    if (elem.closest("table")) {
       continue;
     }
 
@@ -170,7 +170,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       return;
     }
 
-    const scrollableParent = getScrollParent(dragHandleElement);
+    const scrollableParent = getScrollParent(dragHandleElement!);
     if (!scrollableParent) return;
 
     const scrollRegionUp = options.scrollThreshold.up;

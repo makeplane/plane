@@ -53,17 +53,15 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
       const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
       const lastNode = lastNodePos.node();
 
-      // Check if the last node is a  not paragraph
-      if (lastNode && lastNode.type.name !== CORE_EXTENSIONS.PARAGRAPH) {
-        // If last node is not a paragraph, insert a new paragraph at the end
-        const endPosition = editor?.state.doc.content.size;
-        editor?.chain().insertContentAt(endPosition, { type: CORE_EXTENSIONS.PARAGRAPH }).run();
-
-        // Focus the newly added paragraph for immediate editing
-        editor
-          .chain()
-          .setTextSelection(endPosition + 1)
-          .run();
+      // Check if its last node and add new node
+      if (lastNode) {
+        const isLastNodeEmptyParagraph =
+          lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
+        // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
+        if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
+          const endPosition = editor?.state.doc.content.size;
+          editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).focus("end").run();
+        }
       }
     } catch (error) {
       console.error("An error occurred while handling container click to insert new empty node at bottom:", error);

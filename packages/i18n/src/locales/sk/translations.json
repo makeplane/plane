@@ -1345,6 +1345,17 @@
       "project_insights": {
         "title": "Zatiaľ žiadne údaje",
         "description": "Pracovné položky priradené vám, rozdelené podľa stavu, sa zobrazia tu."
+      },
+      "general": {
+        "title": "Sledujte pokrok, pracovné zaťaženie a alokácie. Identifikujte trendy, odstráňte prekážky a urýchlite prácu",
+        "description": "Porovnávajte rozsah s dopytom, odhady a rozširovanie rozsahu. Získajte výkonnosť podľa členov tímu a tímov, a uistite sa, že váš projekt beží načas.",
+        "primary_button": {
+          "text": "Začnite svoj prvý projekt",
+          "comic": {
+            "title": "Analytika funguje najlepšie s Cyklami + Modulmi",
+            "description": "Najprv časovo ohraničte svoje problémy do Cyklov a, ak môžete, zoskupte problémy, ktoré trvajú viac ako jeden cyklus, do Modulov. Pozrite si oboje v ľavej navigácii."
+          }
+        }
       }
     },
     "created_vs_resolved": "Vytvorené vs Vyriešené",
@@ -2471,5 +2482,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane sa nespustil. Toto môže byť spôsobené tým, že sa jedna alebo viac služieb Plane nepodarilo spustiť.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Vyberte View Logs z setup.sh a Docker logov, aby ste si boli istí."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Osnova",
+        "empty_state": {
+          "title": "Chýbajú nadpisy",
+          "description": "Pridajme na túto stránku nejaké nadpisy, aby sa tu zobrazili."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Slová",
+          "characters": "Znaky",
+          "paragraphs": "Odseky",
+          "read_time": "Čas čítania"
+        },
+        "actors_info": {
+          "edited_by": "Upravil",
+          "created_by": "Vytvoril"
+        },
+        "version_history": {
+          "label": "História verzií",
+          "current_version": "Aktuálna verzia"
+        }
+      },
+      "assets": {
+        "label": "Prílohy",
+        "download_button": "Stiahnuť",
+        "empty_state": {
+          "title": "Chýbajú obrázky",
+          "description": "Pridajte obrázky, aby sa tu zobrazili."
+        }
+      }
+    },
+    "open_button": "Otvoriť navigačný panel",
+    "close_button": "Zavrieť navigačný panel",
+    "outline_floating_button": "Otvoriť osnovu"
   }
 }
