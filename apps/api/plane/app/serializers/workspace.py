@@ -76,7 +76,6 @@ class WorkspaceLiteSerializer(BaseSerializer):
 
 class WorkSpaceMemberSerializer(DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
@@ -93,7 +92,6 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
 
 class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
-    workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = WorkspaceMember
