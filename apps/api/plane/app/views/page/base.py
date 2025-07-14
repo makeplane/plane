@@ -53,7 +53,6 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.bgtasks.copy_s3_object import copy_s3_objects
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
 from plane.ee.models.page import PageUser

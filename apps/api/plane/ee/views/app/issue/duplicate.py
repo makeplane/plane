@@ -1,17 +1,22 @@
+import copy
+
 from plane.app.views.base import BaseAPIView
 from plane.db.models import (
     IssueRelation,
-    Workspace,
     Issue,
     IssueType,
     State,
     Project,
     ProjectMember,
+    IssueLink,
 )
 from rest_framework.response import Response
 from rest_framework import status
 from plane.app.serializers.issue import IssueDuplicateSerializer
-from plane.bgtasks.copy_s3_object import copy_s3_objects
+from plane.bgtasks.copy_s3_object import (
+    copy_s3_objects_of_issue_attachment,
+    copy_s3_objects_of_description_and_assets,
+)
 from django.db.models import Q
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -20,7 +25,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 class IssueDuplicateEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.COPY_WORK_ITEM)
     def post(self, request, slug, issue_id):
-        workspace = Workspace.objects.get(slug=slug)
         project_id = request.data.get("project_id")
 
         project_exists = Project.objects.filter(
@@ -47,21 +51,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
             )
 
         original_issue = Issue.objects.get(pk=issue_id)
-        duplicated_issue = original_issue
-
-        #  Fetching all the related work item ids
-        related_issues = list(
-            original_issue.issue_relation.filter(~Q(relation_type="duplicate"))
-            .values("related_issue_id", "relation_type")
-            .distinct()
-        )
-
-        related_issues.append(
-            {"related_issue_id": original_issue.id, "relation_type": "duplicate"}
-        )
-
-        original_issue_id = original_issue.id
-        original_issue_project_id = original_issue.project_id
+        duplicated_issue = copy.deepcopy(original_issue)
 
         # Setting pk as none to duplicate
         duplicated_issue.pk = None
@@ -73,6 +63,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
         duplicated_issue._state.adding = True
         duplicated_issue.issue_cycle_ids = None
         duplicated_issue.issue_module_ids = None
+        duplicated_issue.project_id = project_id
 
         state = State.objects.filter(project_id=project_id, default=True).first()
 
@@ -85,9 +76,6 @@ class IssueDuplicateEndpoint(BaseAPIView):
         destination_issue_types = IssueType.objects.filter(
             project_issue_types__project_id=project_id
         )
-
-        duplicated_issue.project_id = project_id
-
         # Separate epics and regular issue types
         epic_types = [it for it in destination_issue_types if it.is_epic]
         regular_issue_types = [it for it in destination_issue_types if not it.is_epic]
@@ -115,16 +103,36 @@ class IssueDuplicateEndpoint(BaseAPIView):
         duplicated_issue.save()
 
         # Duplicate description assets
-        copy_s3_objects.delay(
+        copy_s3_objects_of_description_and_assets.delay(
             entity_name="ISSUE",
             entity_identifier=duplicated_issue.id,
-            project_id=original_issue_project_id,
+            project_id=original_issue.project_id,
             slug=slug,
             user_id=request.user.id,
             copy_to_entity_project=True,
         )
 
-        # Creating all the related issues
+        # Duplicate issue attachment assets
+        copy_s3_objects_of_issue_attachment.delay(
+            original_issue_id=original_issue.id,
+            entity_identifier=duplicated_issue.id,
+            project_id=original_issue.project_id,
+            user_id=request.user.id,
+            copy_to_entity_project=True,
+        )
+
+        # Duplicating the issue relation
+
+        related_issues = list(
+            original_issue.issue_relation.filter(~Q(relation_type="duplicate"))
+            .values("related_issue_id", "relation_type")
+            .distinct()
+        )
+
+        related_issues.append(
+            {"related_issue_id": original_issue.id, "relation_type": "duplicate"}
+        )
+
         IssueRelation.objects.bulk_create(
             [
                 IssueRelation(
@@ -132,7 +140,7 @@ class IssueDuplicateEndpoint(BaseAPIView):
                     related_issue_id=duplicated_issue.id,
                     relation_type=related_issue["relation_type"],
                     project_id=duplicated_issue.project_id,
-                    workspace_id=workspace.id,
+                    workspace_id=duplicated_issue.workspace_id,
                     created_by=request.user,
                     updated_by=request.user,
                 )
@@ -142,12 +150,31 @@ class IssueDuplicateEndpoint(BaseAPIView):
             ignore_conflicts=True,
         )
 
+        # Duplicating the issue links
+
+        links = original_issue.issue_link.all()
+
+        IssueLink.objects.bulk_create(
+            [
+                IssueLink(
+                    issue_id=duplicated_issue.id,
+                    title=issue_link.title,
+                    url=issue_link.url,
+                    metadata=issue_link.metadata,
+                    project_id=duplicated_issue.project_id,
+                    workspace_id=duplicated_issue.workspace_id,
+                )
+                for issue_link in links
+            ]
+        )
+
+        #  Fetching and returning all the duplicated issue relations.
         issue_relation = (
             IssueRelation.objects.select_related(
                 "related_issue", "workspace", "project"
             )
             .select_related("project", "workspace", "related_issue")
-            .filter(issue_id=original_issue_id, related_issue_id=duplicated_issue.id)
+            .filter(issue_id=original_issue.id, related_issue_id=duplicated_issue.id)
         ).first()
 
         serializer = IssueDuplicateSerializer(issue_relation)
