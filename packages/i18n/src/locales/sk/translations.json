@@ -1046,6 +1046,10 @@
       },
       "upload": {
         "error": "Nahratie prílohy zlyhalo. Skúste to prosím neskôr."
+      },
+      "copy_link": {
+        "success": "Odkaz na komentár bol skopírovaný do schránky",
+        "error": "Chyba pri kopírovaní odkazu na komentár. Skúste to prosím neskôr."
       }
     },
     "empty_state": {

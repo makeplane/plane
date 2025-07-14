@@ -1047,6 +1047,10 @@
       },
       "upload": {
         "error": "Error al subir el archivo. Por favor, inténtalo más tarde."
+      },
+      "copy_link": {
+        "success": "Enlace del comentario copiado al portapapeles",
+        "error": "Error al copiar el enlace del comentario. Inténtelo de nuevo más tarde."
       }
     },
     "empty_state": {

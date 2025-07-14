@@ -1046,6 +1046,10 @@
       },
       "upload": {
         "error": "Falha ao carregar o recurso. Por favor, tente novamente mais tarde."
+      },
+      "copy_link": {
+        "success": "Link do comentário copiado para a área de transferência",
+        "error": "Erro ao copiar o link do comentário. Tente novamente mais tarde."
       }
     },
     "empty_state": {

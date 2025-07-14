@@ -1046,6 +1046,10 @@
       },
       "upload": {
         "error": "Anhang konnte nicht hochgeladen werden. Bitte versuchen Sie es später erneut."
+      },
+      "copy_link": {
+        "success": "Kommentar-Link in die Zwischenablage kopiert",
+        "error": "Fehler beim Kopieren des Kommentar-Links. Bitte versuchen Sie es später erneut."
       }
     },
     "empty_state": {

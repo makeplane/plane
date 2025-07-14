@@ -1045,6 +1045,10 @@
       },
       "upload": {
         "error": "Échec du téléchargement du fichier. Veuillez réessayer plus tard."
+      },
+      "copy_link": {
+        "success": "Lien du commentaire copié dans le presse-papiers",
+        "error": "Erreur lors de la copie du lien du commentaire. Veuillez réessayer plus tard."
       }
     },
     "empty_state": {

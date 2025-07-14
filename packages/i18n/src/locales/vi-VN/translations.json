@@ -1045,6 +1045,10 @@
       },
       "upload": {
         "error": "Không thể tải lên tài nguyên. Vui lòng thử lại sau."
+      },
+      "copy_link": {
+        "success": "Liên kết bình luận đã được sao chép vào clipboard",
+        "error": "Lỗi khi sao chép liên kết bình luận. Vui lòng thử lại sau."
       }
     },
     "empty_state": {
