@@ -188,10 +188,10 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
                   aria-label={t("page_navigation_pane.outline_floating_button")}
                   onClick={handleOpenNavigationPane}
                 >
-                  <PageContentBrowser editorRef={editorRef} showOutline />
+                  <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} showOutline />
                 </div>
                 <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
-                  <PageContentBrowser editorRef={editorRef} />
+                  <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} />
                 </div>
               </div>
             </div>
