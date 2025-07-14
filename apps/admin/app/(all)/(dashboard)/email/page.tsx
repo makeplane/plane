@@ -41,11 +41,6 @@ const InstanceEmailPage = observer(() => {
       return;
     }
     setIsSMTPEnabled(true);
-    setToast({
-      title: "Email feature enabled",
-      message: "Email feature has been enabled",
-      type: TOAST_TYPE.SUCCESS,
-    });
   };
   useEffect(() => {
     if (formattedConfig) {
