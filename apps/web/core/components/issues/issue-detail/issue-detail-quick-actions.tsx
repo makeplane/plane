@@ -10,7 +10,7 @@ import {
   WORK_ITEM_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
 import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components
@@ -21,6 +21,8 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail, useIssues, useProject, useProjectState, useUser, useUserPermissions } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { ConvertWorkItemAction } from "@/plane-web/components/epics";
+import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
 
 type Props = {
   workspaceSlug: string;
@@ -189,6 +191,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
+          <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
+            <ConvertWorkItemAction
+              workItemId={issue?.id}
+              conversionType={EWorkItemConversionType.EPIC}
+              disabled={!isEditable || !!issue?.archived_at}
+            />
+          </WithFeatureFlagHOC>
           <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
               <button

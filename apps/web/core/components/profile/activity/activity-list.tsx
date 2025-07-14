@@ -14,7 +14,7 @@ import { RichTextEditor } from "@/components/editor";
 import { ActivitySettingsLoader } from "@/components/ui";
 // helpers
 // hooks
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useUserProfile, useWorkspace } from "@/hooks/store";
 
 type Props = {
   activity: IUserActivityResponse | undefined;
@@ -25,7 +25,7 @@ export const ActivityList: React.FC<Props> = observer((props) => {
   // params
   const { workspaceSlug } = useParams();
   // store hooks
-  const { data: currentUser } = useUser();
+  const { data: currentUser } = useUserProfile();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() ?? "")?.id ?? "";
