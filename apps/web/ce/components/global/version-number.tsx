@@ -4,5 +4,9 @@ import packageJson from "package.json";
 
 export const PlaneVersionNumber: React.FC = () => {
   const { t } = useTranslation();
-  return <span>{t("version")}: v{packageJson.version}</span>;
+  return (
+    <span>
+      {t("version")}: v{packageJson.version}
+    </span>
+  );
 };

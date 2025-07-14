@@ -21,7 +21,9 @@ class TestWorkspaceAPI:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.workspace_seed_task.workspace_seed.delay")
-    def test_create_workspace_valid_data(self, mock_workspace_seed, session_client, create_user):
+    def test_create_workspace_valid_data(
+        self, mock_workspace_seed, session_client, create_user
+    ):
         """Test creating a workspace with valid data"""
         url = reverse("workspace")
         user = create_user  # Use the create_user fixture directly as it returns a user object
@@ -30,7 +32,7 @@ class TestWorkspaceAPI:
         workspace_data = {
             "name": "Plane",
             "slug": "pla-ne-test",
-            "company_name": "Plane Inc."
+            "company_name": "Plane Inc.",
         }
 
         # Make the request
@@ -57,15 +59,13 @@ class TestWorkspaceAPI:
         mock_workspace_seed.assert_called_once_with(response.data["id"])
 
     @pytest.mark.django_db
-    @patch('plane.bgtasks.workspace_seed_task.workspace_seed.delay')
+    @patch("plane.bgtasks.workspace_seed_task.workspace_seed.delay")
     def test_create_duplicate_workspace(self, mock_workspace_seed, session_client):
         """Test creating a duplicate workspace"""
         url = reverse("workspace")
 
         # Create first workspace
-        session_client.post(
-            url, {"name": "Plane", "slug": "pla-ne"}, format="json"
-        )
+        session_client.post(url, {"name": "Plane", "slug": "pla-ne"}, format="json")
 
         # Try to create a workspace with the same slug
         response = session_client.post(

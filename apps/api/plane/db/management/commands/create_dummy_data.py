@@ -50,7 +50,7 @@ class Command(BaseCommand):
             project_count = int(input("Number of projects to be created: "))
 
             for i in range(project_count):
-                print(f"Please provide the following details for project {i+1}:")
+                print(f"Please provide the following details for project {i + 1}:")
                 issue_count = int(input("Number of issues to be created: "))
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))

@@ -13,18 +13,13 @@ class TestWorkspaceLiteSerializer:
         """Test that the serializer includes the correct fields"""
         # Create a user to be the owner
         owner = User.objects.create(
-            email="test@example.com",
-            first_name="Test",
-            last_name="User"
+            email="test@example.com", first_name="Test", last_name="User"
         )
 
         # Create a workspace with explicit ID to test serialization
         workspace_id = uuid4()
         workspace = Workspace.objects.create(
-            name="Test Workspace",
-            slug="test-workspace",
-            id=workspace_id,
-            owner=owner
+            name="Test Workspace", slug="test-workspace", id=workspace_id, owner=owner
         )
 
         # Serialize the workspace
@@ -43,23 +38,17 @@ class TestWorkspaceLiteSerializer:
         """Test that the serializer fields are read-only"""
         # Create a user to be the owner
         owner = User.objects.create(
-            email="test2@example.com",
-            first_name="Test",
-            last_name="User"
+            email="test2@example.com", first_name="Test", last_name="User"
         )
 
         # Create a workspace
         workspace = Workspace.objects.create(
-            name="Test Workspace",
-            slug="test-workspace",
-            id=uuid4(),
-            owner=owner
+            name="Test Workspace", slug="test-workspace", id=uuid4(), owner=owner
         )
 
         # Try to update via serializer
         serializer = WorkspaceLiteSerializer(
-            workspace,
-            data={"name": "Updated Name", "slug": "updated-slug"}
+            workspace, data={"name": "Updated Name", "slug": "updated-slug"}
         )
 
         # Serializer should be valid (since read-only fields are ignored)

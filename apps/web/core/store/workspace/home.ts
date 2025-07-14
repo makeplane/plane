@@ -20,7 +20,12 @@ export interface IHomeStore {
   // actions
   toggleWidgetSettings: (value?: boolean) => void;
   fetchWidgets: (workspaceSlug: string) => Promise<void>;
-  reorderWidget: (workspaceSlug: string, widgetKey: string, destinationId: string, edge: string | undefined) => Promise<void>;
+  reorderWidget: (
+    workspaceSlug: string,
+    widgetKey: string,
+    destinationId: string,
+    edge: string | undefined
+  ) => Promise<void>;
   toggleWidget: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 }
 

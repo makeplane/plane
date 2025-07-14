@@ -102,4 +102,4 @@ class CycleUserPropertiesSerializer(BaseSerializer):
     class Meta:
         model = CycleUserProperties
         fields = "__all__"
-        read_only_fields = ["workspace", "project", "cycle" "user"]
+        read_only_fields = ["workspace", "project", "cycle", "user"]

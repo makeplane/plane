@@ -134,7 +134,7 @@ def workspace(create_user):
     )
 
     WorkspaceMember.objects.create(
-            workspace=created_workspace, member=create_user, role=20
-        )
-    
+        workspace=created_workspace, member=create_user, role=20
+    )
+
     return created_workspace

@@ -243,64 +243,65 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+    <>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDeleteIssue}
+        isEpic={isEpic}
       />
-
+      {/* drag and delete component */}
       <div
-        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
-        ref={scrollableContainerRef}
+        className={`fixed left-1/2 -translate-x-1/2 ${
+          isDragging ? "z-40" : ""
+        } top-3 mx-3 flex w-72 items-center justify-center`}
+        ref={deleteAreaRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90">
-          {/* drag and delete component */}
-          <div
-            className={`fixed left-1/2 -translate-x-1/2 ${
-              isDragging ? "z-40" : ""
-            } top-3 mx-3 flex w-72 items-center justify-center`}
-            ref={deleteAreaRef}
-          >
-            <div
-              className={`${
-                isDragging ? `opacity-100` : `opacity-0`
-              } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
-              } transition duration-300`}
-            >
-              Drop here to delete the work item.
-            </div>
-          </div>
-
-          <div className="h-full w-max">
-            <KanBanView
-              issuesMap={issueMap}
-              groupedIssueIds={groupedIssueIds ?? {}}
-              getGroupIssueCount={issues.getGroupIssueCount}
-              displayProperties={displayProperties}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              orderBy={orderBy}
-              updateIssue={updateIssue}
-              quickActions={renderQuickActions}
-              handleCollapsedGroups={handleCollapsedGroups}
-              collapsedGroups={collapsedGroups}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-              quickAddCallback={quickAddIssue}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-              canEditProperties={canEditProperties}
-              addIssuesToView={addIssuesToView}
-              scrollableContainerRef={scrollableContainerRef}
-              handleOnDrop={handleOnDrop}
-              loadMoreIssues={fetchMoreIssues}
-              isEpic={isEpic}
-            />
-          </div>
+        <div
+          className={`${
+            isDragging ? `opacity-100` : `opacity-0`
+          } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+            isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+          } transition duration-300`}
+        >
+          Drop here to delete the work item.
         </div>
       </div>
-    </IssueLayoutHOC>
+      <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+        <div
+          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+          ref={scrollableContainerRef}
+        >
+          <div className="relative h-full w-max min-w-full bg-custom-background-90">
+            <div className="h-full w-max">
+              <KanBanView
+                issuesMap={issueMap}
+                groupedIssueIds={groupedIssueIds ?? {}}
+                getGroupIssueCount={issues.getGroupIssueCount}
+                displayProperties={displayProperties}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                orderBy={orderBy}
+                updateIssue={updateIssue}
+                quickActions={renderQuickActions}
+                handleCollapsedGroups={handleCollapsedGroups}
+                collapsedGroups={collapsedGroups}
+                enableQuickIssueCreate={enableQuickAdd}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                quickAddCallback={quickAddIssue}
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                canEditProperties={canEditProperties}
+                addIssuesToView={addIssuesToView}
+                scrollableContainerRef={scrollableContainerRef}
+                handleOnDrop={handleOnDrop}
+                loadMoreIssues={fetchMoreIssues}
+                isEpic={isEpic}
+              />
+            </div>
+          </div>
+        </div>
+      </IssueLayoutHOC>
+    </>
   );
 });
