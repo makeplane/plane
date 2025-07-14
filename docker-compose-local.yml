@@ -122,7 +122,7 @@ services:
 
   api:
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -130,10 +130,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/server:/code
+      - ./apps/api:/code
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
@@ -143,7 +143,7 @@ services:
 
   worker:
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -151,10 +151,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/server:/code
+      - ./apps/api:/code
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -162,7 +162,7 @@ services:
 
   beat-worker:
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -170,10 +170,10 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/server:/code
+      - ./apps/api:/code
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
-      - ./apps/server/.env
+      - ./apps/api/.env
     depends_on:
       - api
       - plane-db
@@ -181,7 +181,7 @@ services:
 
   migrator:
     build:
-      context: ./apps/server
+      context: ./apps/api
       dockerfile: Dockerfile.dev
       args:
         DOCKER_BUILDKIT: 1
@@ -189,23 +189,24 @@ services:
     networks:
       - dev_env
     volumes:
-      - ./apps/server:/code
+      - ./apps/api:/code
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
-      - .env
+      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
 
   # proxy:
   #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile.dev
+  #     context: ./apps/proxy
+  #     dockerfile: Dockerfile.ce
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   ports:
-  #     - ${NGINX_PORT}:80
+  #     - ${LISTEN_HTTP_PORT}:80
+  #     - ${LISTEN_HTTPS_PORT}:443
   #   env_file:
   #     - .env
   #   environment:

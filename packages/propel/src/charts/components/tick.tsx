@@ -23,25 +23,23 @@ export const CustomYAxisTick = React.memo<any>(({ x, y, payload }: any) => (
 
 CustomYAxisTick.displayName = "CustomYAxisTick";
 
-export const CustomRadarAxisTick = React.memo<any>(
-  ({ x, y, payload, getLabel, cx, cy, offset = 16 }: any) => {
-    // Calculate direction vector from center to tick
-    const dx = x - cx;
-    const dy = y - cy;
-    // Normalize and apply offset
-    const length = Math.sqrt(dx * dx + dy * dy);
-    const normX = dx / length;
-    const normY = dy / length;
-    const labelX = x + normX * offset;
-    const labelY = y + normY * offset;
+export const CustomRadarAxisTick = React.memo<any>(({ x, y, payload, getLabel, cx, cy, offset = 16 }: any) => {
+  // Calculate direction vector from center to tick
+  const dx = x - cx;
+  const dy = y - cy;
+  // Normalize and apply offset
+  const length = Math.sqrt(dx * dx + dy * dy);
+  const normX = dx / length;
+  const normY = dy / length;
+  const labelX = x + normX * offset;
+  const labelY = y + normY * offset;
 
-    return (
-      <g transform={`translate(${labelX},${labelY})`}>
-        <text y={0} textAnchor="middle" className={AXIS_TICK_CLASSNAME}>
-          {getLabel ? getLabel(payload.value) : payload.value}
-        </text>
-      </g>
-    );
-  }
-);
+  return (
+    <g transform={`translate(${labelX},${labelY})`}>
+      <text y={0} textAnchor="middle" className={AXIS_TICK_CLASSNAME}>
+        {getLabel ? getLabel(payload.value) : payload.value}
+      </text>
+    </g>
+  );
+});
 CustomRadarAxisTick.displayName = "CustomRadarAxisTick";

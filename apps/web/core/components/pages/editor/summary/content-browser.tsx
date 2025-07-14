@@ -48,7 +48,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
   return (
     <div
       className={cn(
-        "h-full flex flex-col items-start gap-y-1 overflow-y-auto mt-2",
+        "h-full flex flex-col items-start gap-y-1 mt-2",
         {
           "gap-y-2": showOutline,
         },
@@ -62,7 +62,7 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
           return (
             <div
               key={`${marking.level}-${marking.sequence}`}
-              className="h-0.5 bg-custom-border-400 self-end rounded-sm"
+              className="flex-shrink-0 h-0.5 bg-custom-border-400 self-end rounded-sm"
               style={{
                 width: marking.level === 1 ? "20px" : marking.level === 2 ? "18px" : "14px",
               }}

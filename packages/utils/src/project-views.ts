@@ -4,7 +4,7 @@ import orderBy from "lodash/orderBy";
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { IProjectView, TViewFilterProps, TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // local imports
-import { getDate  } from "./datetime";
+import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
 
 /**

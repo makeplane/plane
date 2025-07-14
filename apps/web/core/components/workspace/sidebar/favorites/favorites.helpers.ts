@@ -7,7 +7,7 @@ export type TargetData = {
   parentId: string | null;
   isGroup: boolean;
   isChild: boolean;
-}
+};
 
 /**
  * extracts the Payload and translates the instruction for the current dropTarget based on drag and drop payload
@@ -58,8 +58,7 @@ export const getCanDrop = (source: TDropTarget, favorite: IFavorite | undefined,
   if (!sourceData) return false;
 
   // a favorite cannot be dropped on to itself
-  if (sourceData.id === favorite?.id ) return false;
-
+  if (sourceData.id === favorite?.id) return false;
 
   // if current dropTarget is a child and the favorite being dropped is a group then don't enable drop
   if (isCurrentChild && sourceData.isGroup) return false;

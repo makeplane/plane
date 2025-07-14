@@ -1,5 +1,3 @@
-
-
 export type TChartColorScheme = "modern" | "horizon" | "earthen";
 
 export type TChartDatum = {
@@ -12,5 +10,3 @@ export type TChart = {
   data: TChartDatum[];
   schema: Record<string, string>;
 };
-
-

@@ -159,6 +159,22 @@
     --color-pi-800: 57, 56, 149;
     --color-pi-900: 30, 29, 78;
     --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-subscription-free-200: 69, 80, 104;
+    --color-subscription-free-400: 51, 59, 77;
+
+    --color-subscription-one-200: 101, 42, 14;
+    --color-subscription-one-400: 90, 37, 12;
+
+    --color-subscription-pro-200: 32, 128, 138;
+    --color-subscription-pro-400: 24, 96, 104;
+
+    --color-subscription-business-200: 142, 33, 87;
+    --color-subscription-business-400: 103, 24, 63;
+
+    --color-subscription-enterprise-200: 86, 5, 145;
+    --color-subscription-enterprise-400: 73, 4, 123;
   }
 
   [data-theme="light"],
@@ -497,7 +513,6 @@
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  scroll-behavior: smooth;
 }
 
 body {

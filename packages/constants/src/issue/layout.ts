@@ -1,9 +1,4 @@
-export type TIssueLayout =
-  | "list"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | "gantt";
+export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 
 export enum EIssueLayoutTypes {
   LIST = "list",

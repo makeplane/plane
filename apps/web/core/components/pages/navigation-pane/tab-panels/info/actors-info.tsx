@@ -21,9 +21,9 @@ export const PageNavigationPaneInfoTabActorsInfo: React.FC<Props> = observer((pr
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
-  const { created_by, updated_by } = page;
+  const { owned_by, updated_by } = page;
   const editorInformation = updated_by ? getUserDetails(updated_by) : undefined;
-  const creatorInformation = created_by ? getUserDetails(created_by) : undefined;
+  const creatorInformation = owned_by ? getUserDetails(owned_by) : undefined;
   // translation
   const { t } = useTranslation();
 

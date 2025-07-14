@@ -9,18 +9,12 @@ import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
 import { manualLogger } from "@/core/helpers/logger.js";
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 // core libraries
-import {
-  fetchPageDescriptionBinary,
-  updatePageDescription,
-} from "@/core/lib/page.js";
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page.js";
 // plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";
 // types
-import {
-  type HocusPocusServerContext,
-  type TDocumentTypes,
-} from "@/core/types/common.js";
+import { type HocusPocusServerContext, type TDocumentTypes } from "@/core/types/common.js";
 
 export const getExtensions: () => Promise<Extension[]> = async () => {
   const extensions: Extension[] = [
@@ -35,20 +29,14 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
         const cookie = (context as HocusPocusServerContext).cookie;
         // query params
         const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
+        const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
         // TODO: Fix this lint error.
         // eslint-disable-next-line no-async-promise-executor
         return new Promise(async (resolve) => {
           try {
             let fetchedData = null;
             if (documentType === "project_page") {
-              fetchedData = await fetchPageDescriptionBinary(
-                params,
-                pageId,
-                cookie,
-              );
+              fetchedData = await fetchPageDescriptionBinary(params, pageId, cookie);
             } else {
               fetchedData = await fetchDocument({
                 cookie,
@@ -63,18 +51,11 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           }
         });
       },
-      store: async ({
-        context,
-        state,
-        documentName: pageId,
-        requestParameters,
-      }) => {
+      store: async ({ context, state, documentName: pageId, requestParameters }) => {
         const cookie = (context as HocusPocusServerContext).cookie;
         // query params
         const params = requestParameters;
-        const documentType = params.get("documentType")?.toString() as
-          | TDocumentTypes
-          | undefined;
+        const documentType = params.get("documentType")?.toString() as TDocumentTypes | undefined;
 
         // TODO: Fix this lint error.
         // eslint-disable-next-line no-async-promise-executor
@@ -107,16 +88,12 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
 
       await new Promise<void>((resolve, reject) => {
         redisClient.on("error", (error: any) => {
-          if (
-            error?.code === "ENOTFOUND" ||
-            error.message.includes("WRONGPASS") ||
-            error.message.includes("NOAUTH")
-          ) {
+          if (error?.code === "ENOTFOUND" || error.message.includes("WRONGPASS") || error.message.includes("NOAUTH")) {
             redisClient.disconnect();
           }
           manualLogger.warn(
             `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-            error,
+            error
           );
           reject(error);
         });
@@ -130,12 +107,12 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     } catch (error) {
       manualLogger.warn(
         `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
-        error,
+        error
       );
     }
   } else {
     manualLogger.warn(
-      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)",
+      "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
     );
   }
 

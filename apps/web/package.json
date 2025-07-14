@@ -1,19 +1,18 @@
 {
   "name": "web",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "dev": "turbo run develop",
-    "develop": "next dev --port 3000",
+    "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:errors": "eslint . --ext .ts,.tsx --quiet",
-    "export": "next export",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev:trace": "NEXT_TURBOPACK_TRACING=1 NEXT_CPU_PROF=1 next dev",
-    "view-trace": "next internal turbo-trace-server ./.next/trace"
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.3.0",

@@ -9,13 +9,11 @@ import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // plane ui
-import { Tooltip, DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
+import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/ui";
 // components
 import { SidebarNavItem } from "@/components/sidebar";
 // hooks
 import { useAppTheme, useIssueDetail, useProject, useUserPermissions } from "@/hooks/store";
-import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web constants
 
 export type TNavigationItem = {
   name: string;
@@ -32,17 +30,15 @@ type TProjectItemsProps = {
   workspaceSlug: string;
   projectId: string;
   additionalNavigationItems?: (workspaceSlug: string, projectId: string) => TNavigationItem[];
-  isSidebarCollapsed: boolean;
 };
 
 export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
-  const { workspaceSlug, projectId, additionalNavigationItems, isSidebarCollapsed } = props;
+  const { workspaceSlug, projectId, additionalNavigationItems } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks
   const { t } = useTranslation();
   const { toggleSidebar } = useAppTheme();
   const { getPartialProjectById } = useProject();
-  const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   const {
     issue: { getIssueIdByIdentifier, getIssueById },
@@ -176,28 +172,14 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         if (!hasAccess) return null;
 
         return (
-          <Tooltip
-            key={item.name}
-            isMobile={isMobile}
-            tooltipContent={`${project?.name}: ${t(item.i18n_key)}`}
-            position="right"
-            className="ml-2"
-            disabled={!isSidebarCollapsed}
-          >
-            <Link href={item.href} onClick={handleProjectClick}>
-              <SidebarNavItem
-                className={`pl-[18px] ${isSidebarCollapsed ? "p-0 size-7 justify-center mx-auto" : ""}`}
-                isActive={!!isActive(item)}
-              >
-                <div className="flex items-center gap-1.5 py-[1px]">
-                  <item.icon
-                    className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`}
-                  />
-                  {!isSidebarCollapsed && <span className="text-xs font-medium">{t(item.i18n_key)}</span>}
-                </div>
-              </SidebarNavItem>
-            </Link>
-          </Tooltip>
+          <Link key={item.key} href={item.href} onClick={handleProjectClick}>
+            <SidebarNavItem className="pl-[18px]" isActive={!!isActive(item)}>
+              <div className="flex items-center gap-1.5 py-[1px]">
+                <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
+                <span className="text-xs font-medium">{t(item.i18n_key)}</span>
+              </div>
+            </SidebarNavItem>
+          </Link>
         );
       })}
     </>

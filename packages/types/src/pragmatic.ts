@@ -26,9 +26,4 @@ export interface IPragmaticDropPayload {
   self: TDropTarget & TDropTargetMiscellaneousData;
 }
 
-export type InstructionType =
-  | "reparent"
-  | "reorder-above"
-  | "reorder-below"
-  | "make-child"
-  | "instruction-blocked";
+export type InstructionType = "reparent" | "reorder-above" | "reorder-below" | "make-child" | "instruction-blocked";

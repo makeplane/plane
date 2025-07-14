@@ -1,1 +1,1 @@
-export * from "../../ce/types/common.js"
+export * from "../../ce/types/common.js";
