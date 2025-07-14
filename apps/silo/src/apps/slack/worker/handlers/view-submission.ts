@@ -1,7 +1,8 @@
 import { credentials } from "amqplib";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { ContentParser } from "@plane/etl/parser";
 import { TSlackIssueEntityData, TViewSubmissionPayload } from "@plane/etl/slack";
-import { IssueWithExpanded } from "@plane/sdk";
+import { IssueWithExpanded, PlaneUser } from "@plane/sdk";
 import { env } from "@/env";
 import { CONSTANTS } from "@/helpers/constants";
 import { downloadFile } from "@/helpers/utils";
@@ -13,10 +14,13 @@ import { getSlackContentParser } from "../../helpers/content-parser";
 import { parseIssueFormData, parseLinkWorkItemFormData } from "../../helpers/parse-issue-form";
 import {
   E_MESSAGE_ACTION_TYPES,
+  ParsedIssueData,
+  ShortcutActionPayload,
   SlackPrivateMetadata,
   TSlackConnectionDetails,
   TSlackWorkspaceConnectionConfig,
 } from "../../types/types";
+import { createSlackIntakeLinkback } from "../../views/intake-linkback";
 import { createSlackLinkback } from "../../views/issue-linkback";
 import { createLinkIssueModalView } from "../../views/link-issue-modal";
 
@@ -41,6 +45,7 @@ export const handleViewSubmission = async (data: TViewSubmissionPayload) => {
     case E_MESSAGE_ACTION_TYPES.ISSUE_WEBLINK_SUBMISSION:
       return await handleIssueWeblinkViewSubmission(details, data);
     case E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM:
+    case E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE:
       return await handleCreateNewWorkItemViewSubmission(details, data);
     default:
       logger.error("Unknown view submission callback id:", data.view.callback_id);
@@ -292,7 +297,7 @@ export const handleCreateNewWorkItemViewSubmission = async (
   details: TSlackConnectionDetails,
   data: TViewSubmissionPayload
 ) => {
-  const { workspaceConnection, slackService, planeClient, botCredentials } = details;
+  const { workspaceConnection, slackService, planeClient } = details;
 
   try {
     const parsedData = parseIssueFormData(data.view.state.values);
@@ -309,8 +314,7 @@ export const handleCreateNewWorkItemViewSubmission = async (
 
     const slackUser = await slackService.getUserInfo(data.user.id);
     const members = await planeClient.users.listAllUsers(workspaceConnection.workspace_slug);
-    const member = members.find((m: any) => m.email === slackUser?.user.profile.email);
-
+    const member = members.find((m: PlaneUser) => m.email === slackUser?.user.profile.email);
     const userMap = new Map<string, string>();
     config.userMap?.forEach((user) => {
       userMap.set(user.slackUser, user.planeUserId);
@@ -321,72 +325,12 @@ export const handleCreateNewWorkItemViewSubmission = async (
       teamDomain: data.team.domain,
     });
 
-    let parsedDescription: string;
-
-    try {
-      parsedDescription = await parser.toPlaneHtml(parsedData.description ?? "<p></p>");
-    } catch (error) {
-      logger.error("[SLACK] Error parsing issue description:", error);
-      // Fallback to the original description or a safe default
-      parsedDescription = parsedData.description ?? "<p></p>";
-    }
-
-    const issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.project, {
-      name: parsedData.title,
-      description_html: parsedDescription,
-      created_by: member?.id,
-      state: parsedData.state,
-      priority: parsedData.priority,
-      labels: parsedData.labels,
-    });
-
-    const issueWithFields = await planeClient.issue.getIssueWithFields(
-      workspaceConnection.workspace_slug,
-      parsedData.project,
-      issue.id,
-      ["state", "project", "assignees", "labels"]
-    );
-
-    const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
-
-    const linkBack = createSlackLinkback(
-      workspaceConnection.workspace_slug,
-      issueWithFields,
-      states.results,
-      parsedData.enableThreadSync || false
-    );
-
-    // Step 6: Send the appropriate response based on entity type
-    if (metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION) {
-      /* For shortcut project selection,
-        - Send a thread message to the channel
-        - Create a thread connection if thread sync is enabled
-        Hence, we need to handle the shortcut project selection in a separate function
-      */
-      await handleShortcutProjectSelection(
-        slackService,
-        apiClient,
-        workspaceConnection,
-        planeClient,
-        parsedData,
-        metadata as SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
-        linkBack,
-        issue,
-        botCredentials
-      );
-    } else if (metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION) {
-      /* For command project selection,
-        - Send a message to the response_url, directly to the channel
-        Hence, we need to handle the command project selection in a separate function
-      */
-      await handleCommandProjectSelection(
-        slackService,
-        metadata as SlackPrivateMetadata<typeof ENTITIES.COMMAND_PROJECT_SELECTION>,
-        linkBack
-      );
+    if (data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE) {
+      await createIntakeIssueFromViewSubmission(parsedData, details, metadata, member, details, parser);
+    } else {
+      await createWorkItemFromViewSubmission(data.team.domain, parsedData, details, metadata, member, details, parser);
     }
   } catch (error: any) {
-    // Handle any errors
     const isPermissionError = error?.detail?.includes(CONSTANTS.NO_PERMISSION_ERROR);
     if (isPermissionError) {
       logger.error("Permission error in handleCreateNewWorkItemViewSubmission:", error);
@@ -397,8 +341,140 @@ export const handleCreateNewWorkItemViewSubmission = async (
   }
 };
 
+async function createIntakeIssueFromViewSubmission(
+  parsedData: ParsedIssueData,
+  credentials: TSlackConnectionDetails,
+  metadata: SlackPrivateMetadata,
+  member: PlaneUser | undefined,
+  details: TSlackConnectionDetails,
+  parser: ContentParser
+) {
+  const { workspaceConnection, planeClient, slackService } = details;
+  let parsedDescription: string;
+
+  try {
+    parsedDescription = await parser.toPlaneHtml(parsedData.description ?? "<p></p>");
+  } catch (error) {
+    logger.error("[SLACK] Error parsing issue description:", error);
+    // Fallback to the original description or a safe default
+    parsedDescription = parsedData.description ?? "<p></p>";
+  }
+
+  const issue = await planeClient.intake.create(workspaceConnection.workspace_slug, parsedData.project, {
+    issue: {
+      name: parsedData.title,
+      description_html: parsedDescription,
+      created_by: member?.id,
+      state: parsedData.state,
+      priority: parsedData.priority || "none",
+      labels: parsedData.labels || [],
+      project: parsedData.project,
+    },
+  });
+
+  const linkBack = createSlackIntakeLinkback(workspaceConnection.workspace_slug, issue, false);
+
+  if (metadata.entityPayload.type === ENTITIES.SHORTCUT_PROJECT_SELECTION) {
+    const payload = metadata.entityPayload as ShortcutActionPayload;
+    const channelId = payload.channel.id;
+    const messageTs = payload.message.ts;
+    if (messageTs) {
+      await slackService.sendThreadMessage(
+        channelId,
+        messageTs,
+        {
+          text: "Intake issue created successfully. ✅",
+          blocks: linkBack.blocks,
+        },
+        issue,
+        false
+      );
+    } else {
+      logger.error("No message ts found in entity payload");
+    }
+  }
+}
+
+async function createWorkItemFromViewSubmission(
+  teamDomain: string,
+  parsedData: ParsedIssueData,
+  credentials: TSlackConnectionDetails,
+  metadata: SlackPrivateMetadata,
+  member: PlaneUser | undefined,
+  details: TSlackConnectionDetails,
+  parser: ContentParser
+) {
+  const { workspaceConnection, slackService, planeClient } = details;
+  let parsedDescription: string;
+
+  try {
+    parsedDescription = await parser.toPlaneHtml(parsedData.description ?? "<p></p>");
+  } catch (error) {
+    logger.error("[SLACK] Error parsing issue description:", error);
+    // Fallback to the original description or a safe default
+    parsedDescription = parsedData.description ?? "<p></p>";
+  }
+
+  const issue = await planeClient.issue.create(workspaceConnection.workspace_slug, parsedData.project, {
+    name: parsedData.title,
+    description_html: parsedDescription,
+    created_by: member?.id,
+    state: parsedData.state,
+    priority: parsedData.priority,
+    labels: parsedData.labels,
+  });
+
+  const issueWithFields = await planeClient.issue.getIssueWithFields(
+    workspaceConnection.workspace_slug,
+    parsedData.project,
+    issue.id,
+    ["state", "project", "assignees", "labels"]
+  );
+
+  const states = await planeClient.state.list(workspaceConnection.workspace_slug, issue.project);
+
+  const linkBack = createSlackLinkback(
+    workspaceConnection.workspace_slug,
+    issueWithFields,
+    states.results,
+    parsedData.enableThreadSync || false
+  );
+
+  // Step 6: Send the appropriate response based on entity type
+  if (metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION) {
+    /* For shortcut project selection,
+      - Send a thread message to the channel
+      - Create a thread connection if thread sync is enabled
+      Hence, we need to handle the shortcut project selection in a separate function
+    */
+    await handleShortcutProjectSelection(
+      teamDomain,
+      slackService,
+      apiClient,
+      workspaceConnection,
+      planeClient,
+      parsedData,
+      metadata as SlackPrivateMetadata<typeof ENTITIES.SHORTCUT_PROJECT_SELECTION>,
+      linkBack,
+      issue,
+      credentials
+    );
+  } else if (metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION) {
+    /* For command project selection,
+      - Send a message to the response_url, directly to the channel
+      Hence, we need to handle the command project selection in a separate function
+    */
+    await handleCommandProjectSelection(
+      slackService,
+      metadata as SlackPrivateMetadata<typeof ENTITIES.COMMAND_PROJECT_SELECTION>,
+      linkBack
+    );
+  }
+}
+
 // Helper function for shortcut project selection handling
 async function handleShortcutProjectSelection(
+  teamDomain: string,
   slackService: any,
   apiClient: any,
   workspaceConnection: any,
@@ -437,6 +513,11 @@ async function handleShortcutProjectSelection(
         await Promise.all(fileUploadPromises);
       }
     }
+    // Attach link of the slack thread to the issue
+    const title = "Connected to Slack thread";
+    const link = `https://${teamDomain}.slack.com/archives/${metadata.entityPayload.channel.id}/p${metadata.entityPayload.message?.ts}`;
+
+    await planeClient.issue.createLink(workspaceConnection.workspace_slug, parsedData.project, issue.id, title, link);
   }
 
   // Send thread message

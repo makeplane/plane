@@ -23,7 +23,8 @@ export const handleMessageAction = async (data: TMessageActionPayload) => {
       await handleLinkWorkItem(data);
       break;
     case E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM:
-      await handleCreateNewWorkItem(data);
+    case E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE:
+      await handleCreateNewWorkItem(data, data.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM);
       break;
   }
 };
@@ -112,7 +113,7 @@ const handleLinkWorkItem = async (data: TMessageActionPayload) => {
   }
 };
 
-const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
+const handleCreateNewWorkItem = async (data: TMessageActionPayload, isWorkItem: boolean = true) => {
   // Get the workspace connection for the associated team
   const details = await getConnectionDetails(data.team.id, {
     id: data.user.id,
@@ -141,17 +142,22 @@ const handleCreateNewWorkItem = async (data: TMessageActionPayload) => {
   const projects = await planeClient.project.list(workspaceConnection.workspace_slug);
   const filteredProjects = projects.results.filter((project) => project.is_member === true);
   const plainTextOptions = convertToSlackOptions(filteredProjects);
-  const modal = createProjectSelectionModal(plainTextOptions, {
-    type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
-    message: {
-      text: data.message.text,
-      ts: data.message.ts,
-      blocks: data.message.blocks,
+  const modal = createProjectSelectionModal(
+    plainTextOptions,
+    {
+      type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
+      message: {
+        text: data.message.text,
+        ts: data.message.ts,
+        blocks: data.message.blocks,
+      },
+      channel: {
+        id: data.channel.id,
+      },
     },
-    channel: {
-      id: data.channel.id,
-    },
-  });
+    undefined,
+    isWorkItem
+  );
 
   try {
     const res = await slackService.openModal(data.trigger_id, modal);

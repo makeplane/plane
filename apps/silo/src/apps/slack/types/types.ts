@@ -95,6 +95,7 @@ export type SlackPrivateMetadata<T extends keyof EntityPayloadMapping = keyof En
 export enum E_MESSAGE_ACTION_TYPES {
   LINK_WORK_ITEM = "link_work_item",
   CREATE_NEW_WORK_ITEM = "issue_shortcut",
+  CREATE_INTAKE_ISSUE = "create_intake_issue",
   DISCONNECT_WORK_ITEM = "disconnect_work_item",
   ISSUE_WEBLINK_SUBMISSION = "issue_weblink_submission",
   ISSUE_COMMENT_SUBMISSION = "issue_comment_submission",

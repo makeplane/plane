@@ -2,16 +2,16 @@ import axios from "axios";
 import { TBlockActionModalPayload, TBlockActionPayload } from "@plane/etl/slack";
 import { fetchPlaneAssets } from "@/apps/slack/helpers/fetch-plane-data";
 import { convertToSlackOption, convertToSlackOptions } from "@/apps/slack/helpers/slack-options";
-import { createIssueModalViewFull } from "@/apps/slack/views";
+import { createIssueModalViewFull, createProjectSelectionModal } from "@/apps/slack/views";
 import { CONSTANTS } from "@/helpers/constants";
 import { logger } from "@/logger";
 import { getConnectionDetails } from "../../helpers/connection-details";
 import { ACTIONS, ENTITIES, PLANE_PRIORITIES } from "../../helpers/constants";
 import { E_MESSAGE_ACTION_TYPES, SlackPrivateMetadata, TSlackConnectionDetails } from "../../types/types";
+import { getAccountConnectionBlocks } from "../../views/account-connection";
 import { createCommentModal } from "../../views/create-comment-modal";
 import { createWebLinkModal } from "../../views/create-weblink-modal";
 import { createSlackLinkback } from "../../views/issue-linkback";
-import { getAccountConnectionBlocks } from "../../views/account-connection";
 
 const shouldSkipActions = (data: TBlockActionPayload) => {
   const excludedActions = [E_MESSAGE_ACTION_TYPES.CONNECT_ACCOUNT];
@@ -247,6 +247,30 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
     typeof ENTITIES.SHORTCUT_PROJECT_SELECTION
   >;
 
+  if (data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE) {
+    const intakeEnabled = selectedProject.intake_view;
+    if (!intakeEnabled) {
+      const modal = createProjectSelectionModal(
+        convertToSlackOptions(projects.results),
+        {
+          type: ENTITIES.SHORTCUT_PROJECT_SELECTION,
+          message: {
+            text: metadata.entityPayload.message.text,
+            ts: metadata.entityPayload.message.ts,
+          },
+          channel: {
+            id: metadata.entityPayload.channel.id,
+          },
+        },
+        undefined,
+        false,
+        "Intake is not enabled for this project."
+      );
+      await slackService.updateModal(data.view.id, modal);
+      return;
+    }
+  }
+
   if (
     metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ||
     metadata.entityType === ENTITIES.COMMAND_PROJECT_SELECTION
@@ -260,7 +284,8 @@ async function handleProjectSelectAction(data: TBlockActionModalPayload, details
       },
       metadata.entityType === ENTITIES.SHORTCUT_PROJECT_SELECTION ? metadata.entityPayload.message?.text : "",
       JSON.stringify({ entityType: metadata.entityType, entityPayload: metadata.entityPayload }),
-      metadata.entityPayload.type !== ENTITIES.COMMAND_PROJECT_SELECTION
+      metadata.entityPayload.type !== ENTITIES.COMMAND_PROJECT_SELECTION,
+      data.view.callback_id === E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM
     );
 
     await slackService.updateModal(data.view.id, modal);

@@ -5,22 +5,24 @@ import { E_MESSAGE_ACTION_TYPES, ShortcutActionPayload } from "../types/types";
 export const createProjectSelectionModal = (
   projects: Array<PlainTextOption>,
   privateMetadata: ShortcutActionPayload,
-  type: EntityTypeValue = ENTITIES.SHORTCUT_PROJECT_SELECTION
+  type: EntityTypeValue = ENTITIES.SHORTCUT_PROJECT_SELECTION,
+  isWorkItem: boolean = true,
+  error: string = ""
 ) => ({
   type: "modal",
-  callback_id: E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM,
+  callback_id: isWorkItem ? E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM : E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE,
   private_metadata: JSON.stringify({
     entityType: type,
     entityPayload: privateMetadata,
   }),
   title: {
     type: "plain_text",
-    text: "Create Issue",
+    text: isWorkItem ? "Create Work Item" : "Create Intake Issue",
     emoji: true,
   },
   close: {
     type: "plain_text",
-    text: "Discard Issue",
+    text: "Discard",
     emoji: true,
   },
   blocks: [
@@ -43,5 +45,18 @@ export const createProjectSelectionModal = (
         emoji: true,
       },
     },
+    ...(error
+      ? [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `:warning: *Error:* ${error}`,
+              },
+            ],
+          },
+        ]
+      : []),
   ],
 });

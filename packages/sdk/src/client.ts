@@ -15,7 +15,7 @@ import { UserService } from "@/services/user.service";
 
 // types
 import { ClientOptions } from "@/types/types";
-import { AssetService } from "./services";
+import { AssetService, IntakeService } from "./services";
 
 export class Client {
   options: ClientOptions;
@@ -33,6 +33,7 @@ export class Client {
   issueProperty: IssuePropertyService;
   issuePropertyOption: IssuePropertyOptionService;
   issuePropertyValue: IssuePropertyValueService;
+  intake: IntakeService;
 
   constructor(options: ClientOptions) {
     this.options = options;
@@ -50,5 +51,6 @@ export class Client {
     this.issueProperty = new IssuePropertyService(options);
     this.issuePropertyOption = new IssuePropertyOptionService(options);
     this.issuePropertyValue = new IssuePropertyValueService(options);
+    this.intake = new IntakeService(options);
   }
 }

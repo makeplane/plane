@@ -183,6 +183,29 @@ export type ExIssueAttachment = {
   external_source: string;
 };
 
+export type ExIntakeIssue<T = ExIssue> = {
+  id: string;
+  issue_detail: T;
+  inbox: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  status: number;
+  snoozed_till: string | null;
+  source: string;
+  source_email: string | null;
+  external_source: string | null;
+  external_id: string | null;
+  created_by: string;
+  updated_by: string | null;
+  project: string;
+  workspace: string;
+  intake: string;
+  issue: string;
+  duplicate_to: string | null;
+  extra: Record<string, any>;
+}
+
 /* ----------------- Project Type --------------------- */
 type IProject = {
   id: string;
@@ -206,6 +229,7 @@ type IProject = {
   issue_views_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
+  intake_view: boolean;
   is_time_tracking_enabled: boolean;
   is_issue_type_enabled: boolean;
   cover_image: string;

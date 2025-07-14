@@ -21,15 +21,13 @@ export type IssueModalViewFull = {
   blocks: IssueModalViewBlocks;
 };
 
-export type IssueModalViewBlocks = [
-  StaticSelectInputBlock,
-  PlainTextInputBlock,
-  RichTextInputBlock,
-  StaticSelectInputBlock,
-  StaticSelectInputBlock,
-  MultiExternalSelectInputBlock,
-  ...(CheckboxInputBlock | undefined)[],
-];
+export type IssueModalViewBlocks = (
+  | StaticSelectInputBlock
+  | PlainTextInputBlock
+  | RichTextInputBlock
+  | MultiExternalSelectInputBlock
+  | CheckboxInputBlock
+)[];
 
 export const createIssueModalViewFull = (
   {
@@ -46,34 +44,36 @@ export const createIssueModalViewFull = (
   title?: string,
   privateMetadata: string = "{}",
   showThreadSync: boolean = true,
+  isWorkItem: boolean = true,
   messageBlocks?: any[] // Add optional messageBlocks parameter
 ): IssueModalViewFull => ({
   type: "modal",
-  callback_id: E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM,
+  callback_id: isWorkItem ? E_MESSAGE_ACTION_TYPES.CREATE_NEW_WORK_ITEM : E_MESSAGE_ACTION_TYPES.CREATE_INTAKE_ISSUE,
   private_metadata: privateMetadata,
   title: {
     type: "plain_text",
-    text: "Create Issue",
+    text: isWorkItem ? "Create Work Item" : "Create Intake Issue",
     emoji: true,
   },
   submit: {
     type: "plain_text",
-    text: "Create Issue",
+    text: isWorkItem ? "Create Work Item" : "Create Intake Issue",
     emoji: true,
   },
   close: {
     type: "plain_text",
-    text: "Discard Issue",
+    text: "Discard",
     emoji: true,
   },
   blocks: [
+    // For intake issues (non-work items), only show title, description, and priority
     {
       dispatch_action: true,
-      type: "input",
+      type: "input" as const,
       element: {
-        type: "static_select",
+        type: "static_select" as const,
         placeholder: {
-          type: "plain_text",
+          type: "plain_text" as const,
           text: "Select a Project",
           emoji: true,
         },
@@ -82,74 +82,78 @@ export const createIssueModalViewFull = (
         action_id: ACTIONS.PROJECT,
       },
       label: {
-        type: "plain_text",
+        type: "plain_text" as const,
         text: "Project",
         emoji: true,
       },
     },
     {
-      type: "input",
+      type: "input" as const,
       element: {
-        type: "plain_text_input",
+        type: "plain_text_input" as const,
         placeholder: {
-          type: "plain_text",
+          type: "plain_text" as const,
           text: "Issue Title",
         },
         action_id: ACTIONS.ISSUE_TITLE,
       },
       label: {
-        type: "plain_text",
+        type: "plain_text" as const,
         text: "Title",
         emoji: true,
       },
     },
     {
-      type: "input",
+      type: "input" as const,
       optional: true,
       element: {
-        type: "rich_text_input",
+        type: "rich_text_input" as const,
         action_id: ACTIONS.ISSUE_DESCRIPTION,
         initial_value: {
-          type: "rich_text",
+          type: "rich_text" as const,
           elements: extractRichTextElements(title, messageBlocks),
         },
         placeholder: {
-          type: "plain_text",
+          type: "plain_text" as const,
           text: "Issue Description (Optional)",
         },
       },
       label: {
-        type: "plain_text",
+        type: "plain_text" as const,
         text: "Description",
         emoji: true,
       },
     },
+    ...(isWorkItem
+      ? [
+          {
+            type: "input" as const,
+            optional: true,
+            element: {
+              type: "static_select" as const,
+              placeholder: {
+                type: "plain_text" as const,
+                text: "Select a State",
+                emoji: true,
+              },
+              options: stateOptions,
+              action_id: ACTIONS.ISSUE_STATE,
+            },
+            label: {
+              type: "plain_text" as const,
+              text: "State",
+              emoji: true,
+            },
+          },
+        ]
+      : []),
     {
-      type: "input",
+      type: "input" as const,
       optional: true,
       element: {
-        type: "static_select",
+        type: "static_select" as const,
         placeholder: {
-          type: "plain_text",
-          text: "Select a State",
-          emoji: true,
-        },
-        options: stateOptions,
-        action_id: ACTIONS.ISSUE_STATE,
-      },
-      label: {
-        type: "plain_text",
-        text: "State",
-        emoji: true,
-      },
-    },
-    {
-      type: "input",
-      optional: true,
-      element: {
-        type: "static_select",
-        placeholder: {
-          type: "plain_text",
+          type: "plain_text" as const,
           text: "Select a Priority (Optional)",
           emoji: true,
         },
@@ -157,32 +161,36 @@ export const createIssueModalViewFull = (
         action_id: ACTIONS.ISSUE_PRIORITY,
       },
       label: {
-        type: "plain_text",
+        type: "plain_text" as const,
         text: "Priority",
         emoji: true,
       },
     },
-    {
-      type: "input",
-      optional: true,
-      element: {
-        type: "multi_external_select",
-        placeholder: {
-          type: "plain_text",
-          text: "Labels (Optional)",
-          emoji: true,
-        },
-        min_query_length: 3,
-        action_id: ACTIONS.ISSUE_LABELS,
-        initial_options: [],
-      },
-      label: {
-        type: "plain_text",
-        text: "Labels",
-        emoji: true,
-      },
-    },
-    ...(showThreadSync
+    ...(isWorkItem
+      ? [
+          {
+            type: "input" as const,
+            optional: true,
+            element: {
+              type: "multi_external_select" as const,
+              placeholder: {
+                type: "plain_text" as const,
+                text: "Labels (Optional)",
+                emoji: true,
+              },
+              min_query_length: 3,
+              action_id: ACTIONS.ISSUE_LABELS,
+              initial_options: [],
+            },
+            label: {
+              type: "plain_text" as const,
+              text: "Labels",
+              emoji: true,
+            },
+          },
+        ]
+      : []),
+    ...(showThreadSync && isWorkItem
       ? [
           {
             type: "input" as const,
