@@ -41,8 +41,9 @@ export type THandleTemplateChangeProps = {
 };
 
 export type THandleProjectEntitiesFetchProps = {
+  workItemProjectId: string | null | undefined;
+  workItemTypeId: string | undefined;
   workspaceSlug: string;
-  templateId: string;
 };
 
 export type THandleParentWorkItemDetailsProps = {
