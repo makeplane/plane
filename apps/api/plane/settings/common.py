@@ -566,39 +566,40 @@ OAUTH2_PROVIDER = {
 
 # OpenSearch settings
 OPENSEARCH_ENABLED = os.environ.get("OPENSEARCH_ENABLED", "0") == "1"
-OPENSEARCH_INDEX_PREFIX = os.environ.get("OPENSEARCH_INDEX_PREFIX", "")
-OPENSEARCH_SHARD_COUNT = os.environ.get("OPENSEARCH_SHARD_COUNT", 1)
-OPENSEARCH_REPLICA_COUNT = os.environ.get("OPENSEARCH_REPLICA_COUNT", 0)
-
-# Text Search Performance Optimization
-OPENSEARCH_SEARCH_TIMEOUT = int(
-    os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
-)  # seconds
-OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
-OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
-
-# Optimizations for 2-active-data-node setup with heavy indexing
-OPENSEARCH_BULK_CHUNK_SIZE = int(
-    os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500")
-)  # Smaller chunks
-OPENSEARCH_INDEXING_TIMEOUT = int(
-    os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120")
-)  # Longer indexing timeout
-
-OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE = os.environ.get(
-    "OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE", None
-)
-OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get(
-    "OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None
-)
-
-# Batch processing and memory optimization
-OPENSEARCH_UPDATE_CHUNK_SIZE = int(
-    os.environ.get("OPENSEARCH_UPDATE_CHUNK_SIZE", "1000")
-)  # Chunk size for processing queued updates
-
 
 if OPENSEARCH_ENABLED:
+    # OpenSearch Index Settings
+    OPENSEARCH_INDEX_PREFIX = os.environ.get("OPENSEARCH_INDEX_PREFIX", "")
+    OPENSEARCH_SHARD_COUNT = os.environ.get("OPENSEARCH_SHARD_COUNT", 1)
+    OPENSEARCH_REPLICA_COUNT = os.environ.get("OPENSEARCH_REPLICA_COUNT", 0)
+
+    # Text Search Performance Optimization
+    OPENSEARCH_SEARCH_TIMEOUT = int(
+        os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
+    )  # seconds
+    OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
+    OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
+
+    # Optimizations for 2-active-data-node setup with heavy indexing
+    OPENSEARCH_BULK_CHUNK_SIZE = int(
+        os.environ.get("OPENSEARCH_BULK_CHUNK_SIZE", "500")
+    )  # Smaller chunks
+    OPENSEARCH_INDEXING_TIMEOUT = int(
+        os.environ.get("OPENSEARCH_INDEXING_TIMEOUT", "120")
+    )  # Longer indexing timeout
+
+    OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE = os.environ.get(
+        "OPENSEARCH_ISSUE_INDEX_DEFAULT_PIPELINE", None
+    )
+    OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE = os.environ.get(
+        "OPENSEARCH_PAGE_INDEX_DEFAULT_PIPELINE", None
+    )
+
+    # Batch processing and memory optimization
+    OPENSEARCH_UPDATE_CHUNK_SIZE = int(
+        os.environ.get("OPENSEARCH_UPDATE_CHUNK_SIZE", "1000")
+    )  # Chunk size for processing queued updates
+
     # OpenSearch Config
     OPENSEARCH_DSL = {
         "default": {
