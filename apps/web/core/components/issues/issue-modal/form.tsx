@@ -66,6 +66,7 @@ export interface IssueFormProps {
   handleDraftAndClose?: () => void;
   isProjectSelectionDisabled?: boolean;
   storeType: EIssuesStoreType;
+  convertToWorkItem?: boolean;
 }
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
@@ -92,6 +93,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     handleDraftAndClose,
     isProjectSelectionDisabled = false,
     storeType,
+    convertToWorkItem = false,
   } = props;
 
   // states
@@ -507,6 +509,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   handleFormChange={handleFormChange}
                   setLabelModal={setLabelModal}
                   setSelectedParentIssue={setSelectedParentIssue}
+                  convertToWorkItem={convertToWorkItem}
                 />
               </div>
               <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { type EPageStoreType } from "@/plane-web/hooks/store";
+import { EPageStoreType } from "@/ce/hooks/store";
 // store
 import { TPageInstance } from "@/store/pages/base-page";
 

@@ -1,0 +1,1 @@
+from .invitation import MobileWorkspaceInvitationEndpoint

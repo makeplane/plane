@@ -1,6 +1,6 @@
 import { EIssueLayoutTypes } from "@plane/constants";
+import { WorkspaceSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/roots/workspace-root";
 import { WorkspaceAdditionalLayouts } from "@/plane-web/components/views/helper";
-import { WorkspaceSpreadsheetRoot } from "../issues/issue-layouts/spreadsheet/roots/workspace-root";
 
 export type TWorkspaceLayoutProps = {
   activeLayout: EIssueLayoutTypes | undefined;

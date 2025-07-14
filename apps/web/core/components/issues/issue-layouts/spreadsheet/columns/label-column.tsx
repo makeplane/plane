@@ -25,7 +25,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
     <div className="h-11 border-b-[0.5px] border-custom-border-200 w-full">
       <IssuePropertyLabels
         projectId={issue.project_id ?? null}
-        value={issue.label_ids}
+        value={issue.label_ids || []}
         defaultOptions={defaultLabelOptions}
         onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
         className="h-full w-full "
