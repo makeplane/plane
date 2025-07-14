@@ -21,14 +21,23 @@ const InstanceEmailPage = observer(() => {
   const handleToggle = async () => {
     if (isSMTPEnabled) {
       setIsSubmitting(true);
-      await disableEmail();
-      setIsSMTPEnabled(false);
-      setIsSubmitting(false);
-      setToast({
-        title: "Email feature disabled",
-        message: "Email feature has been disabled",
-        type: TOAST_TYPE.SUCCESS,
-      });
+      try {
+        await disableEmail();
+        setIsSMTPEnabled(false);
+        setToast({
+          title: "Email feature disabled",
+          message: "Email feature has been disabled",
+          type: TOAST_TYPE.SUCCESS,
+        });
+      } catch (error) {
+        setToast({
+          title: "Error disabling email",
+          message: "Failed to disable email feature. Please try again.",
+          type: TOAST_TYPE.ERROR,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
     setIsSMTPEnabled(true);
