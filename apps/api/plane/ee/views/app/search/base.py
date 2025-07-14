@@ -8,16 +8,6 @@ from rest_framework.response import Response
 
 # Local application imports
 from plane.app.views.base import BaseAPIView
-from plane.ee.documents import (
-    IssueDocument,
-    ProjectDocument,
-    CycleDocument,
-    TeamspaceDocument,
-    ModuleDocument,
-    IssueViewDocument,
-    PageDocument,
-    IssueCommentDocument,
-)
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.serializers.app.search_serializers import (
@@ -32,6 +22,18 @@ from plane.ee.serializers.app.search_serializers import (
 )
 from plane.ee.utils.opensearch_helper import OpenSearchHelper
 from plane.utils.exception_logger import log_exception
+
+if settings.OPENSEARCH_ENABLED:
+    from plane.ee.documents import (
+        IssueDocument,
+        ProjectDocument,
+        CycleDocument,
+        TeamspaceDocument,
+        ModuleDocument,
+        IssueViewDocument,
+        PageDocument,
+        IssueCommentDocument,
+    )
 
 
 class EnhancedGlobalSearchEndpoint(BaseAPIView):
@@ -318,6 +320,12 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.ADVANCED_SEARCH)
     def get(self, request, slug):
+        if not getattr(settings, "OPENSEARCH_ENABLED", False):
+            return Response(
+                {"error": "Search service unavailable"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         query = request.query_params.get("search", False)
 
         # Initialize organized results dictionary

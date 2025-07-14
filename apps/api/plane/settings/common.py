@@ -578,7 +578,9 @@ if OPENSEARCH_ENABLED:
         os.environ.get("OPENSEARCH_SEARCH_TIMEOUT", "60")
     )  # seconds
     OPENSEARCH_MAX_PAGE_SIZE = int(os.environ.get("OPENSEARCH_MAX_PAGE_SIZE", "100"))
-    OPENSEARCH_DEFAULT_PAGE_SIZE = int(os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25"))
+    OPENSEARCH_DEFAULT_PAGE_SIZE = int(
+        os.environ.get("OPENSEARCH_DEFAULT_PAGE_SIZE", "25")
+    )
 
     # Optimizations for 2-active-data-node setup with heavy indexing
     OPENSEARCH_BULK_CHUNK_SIZE = int(

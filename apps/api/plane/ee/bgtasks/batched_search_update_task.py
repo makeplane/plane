@@ -3,13 +3,15 @@ import logging
 from celery import shared_task
 from django.conf import settings
 
-from plane.ee.documents import (
-    get_all_search_relevant_models,
-    process_model_batch_with_registry,
-    get_queued_updates_chunks,
-    get_batch_queue_stats,
-)
 from plane.utils.exception_logger import log_exception
+
+if settings.OPENSEARCH_ENABLED:
+    from plane.ee.documents import (
+        get_all_search_relevant_models,
+        process_model_batch_with_registry,
+        get_queued_updates_chunks,
+        get_batch_queue_stats,
+    )
 
 logger = logging.getLogger("plane.worker")
 
