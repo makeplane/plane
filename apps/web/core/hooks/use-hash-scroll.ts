@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 
 type TArgs = {
   elementId: string;
+  scrollDelay?: number;
 };
 
 type TReturnType = {
@@ -19,7 +20,7 @@ type TReturnType = {
  * @returns {TReturnType} Object containing hash match status and scroll function
  */
 export const useHashScroll = (args: TArgs): TReturnType => {
-  const { elementId } = args;
+  const { elementId, scrollDelay = 200 } = args;
   // navigation
   const pathname = usePathname();
 
@@ -37,12 +38,12 @@ export const useHashScroll = (args: TArgs): TReturnType => {
       const element = document.getElementById(elementId);
 
       if (element) {
-        setTimeout(async () => {
+        setTimeout(() => {
           element.scrollIntoView({
             behavior: "smooth",
             block: "center",
           });
-        }, 200);
+        }, scrollDelay);
 
         return true;
       }
@@ -52,7 +53,7 @@ export const useHashScroll = (args: TArgs): TReturnType => {
       console.warn("Hash scroll error:", error);
       return false;
     }
-  }, [elementId]);
+  }, [elementId, scrollDelay]);
 
   /**
    * Extracts multiple IDs from hash string
