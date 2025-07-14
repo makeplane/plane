@@ -74,7 +74,7 @@ export const CustomerListItem: FC<TCustomerListItemProps> = observer((props) => 
       }
       quickActionElement={
         <>
-          <button className="border-[0.5px] border-custom-border-400 bg-custom-background-10 rounded gap-1 flex items-center px-2 py-1 flex-shrink-0 cursor-default">
+          <button className="border-[0.5px] border-custom-border-400 rounded gap-1 flex items-center px-2 py-1 flex-shrink-0 cursor-default">
             <CustomerRequestIcon className="size-3" />
             <p className="text-xs text-custom-text-100">{`${requestCount} ${t("customers.requests.label", { count: requestCount }).toLowerCase()}`}</p>
           </button>
