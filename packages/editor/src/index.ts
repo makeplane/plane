@@ -15,7 +15,7 @@ export {
   RichTextEditorWithRef,
 } from "@/components/editors";
 
-export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+export { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 
 // constants
 export * from "@/constants/common";
