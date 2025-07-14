@@ -59,7 +59,12 @@ export const ProjectEpicQuickActions: React.FC<TProjectEpicQuickActionProps> = o
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
   const isEditingAllowed =
-    allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
+    allowPermissions(
+      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug?.toString(),
+      issue?.project_id ?? ""
+    ) && !readOnly;
   const isDeletingAllowed = isEditingAllowed;
 
   const duplicateEpicPayload = pick(
