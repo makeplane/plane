@@ -18,12 +18,7 @@ export const deleteRowOrTable: () => Command =
     if (!selectedTable) return false;
 
     // Count total rows by examining the table's children
-    let totalRows = 0;
-    for (let i = 0; i < selectedTable.childCount; i++) {
-      const row = selectedTable.child(i);
-      // Count each table row (accounting for potential rowspan)
-      totalRows += row.attrs.rowspan || 1;
-    }
+    const totalRows = selectedTable.childCount;
 
     // If only one row exists, delete the entire ProseMirrorTable
     if (totalRows === 1) {
