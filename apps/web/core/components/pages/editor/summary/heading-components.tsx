@@ -8,7 +8,7 @@ export type THeadingComponentProps = {
 };
 
 const COMMON_CLASSNAME =
-  "w-full py-1 text-left font-medium text-custom-text-300 hover:text-custom-primary-100 truncate transition-colors";
+  "flex-shrink-0 w-full py-1 text-left font-medium text-custom-text-300 hover:text-custom-primary-100 truncate transition-colors";
 
 export const OutlineHeading1 = ({ marking, onClick }: THeadingComponentProps) => (
   <button type="button" onClick={onClick} className={cn(COMMON_CLASSNAME, "text-sm pl-1")}>
