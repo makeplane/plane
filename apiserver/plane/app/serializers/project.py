@@ -24,66 +24,48 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
 
+    def validate_name(self, name):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.filter(name=name, workspace_id=workspace_id)
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_NAME_ALREADY_EXIST",
+            )
+
+        return name
+
+    def validate_identifier(self, identifier):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.filter(
+            identifier=identifier, workspace_id=workspace_id
+        )
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_IDENTIFIER_ALREADY_EXIST",
+            )
+
+        return identifier
+
     def create(self, validated_data):
-        identifier = validated_data.get("identifier", "").strip().upper()
-        name = validated_data.get("name", "")
+        workspace_id = self.context["workspace_id"]
 
-        if identifier == "":
-            raise serializers.ValidationError(detail="Project Identifier is required")
+        project = Project.objects.create(**validated_data, workspace_id=workspace_id)
 
-        if ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=self.context["workspace_id"]
-        ).exists():
-            raise serializers.ValidationError(
-                detail="The project identifier is already taken"
-            )
-
-        if Project.objects.filter(
-            name=name, workspace_id=self.context["workspace_id"]
-        ).exists():
-            raise serializers.ValidationError(detail="The project name is alredy taken")
-
-        project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
+        ProjectIdentifier.objects.create(
+            name=project.identifier, project=project, workspace_id=workspace_id
         )
-        _ = ProjectIdentifier.objects.create(
-            name=project.identifier,
-            project=project,
-            workspace_id=self.context["workspace_id"],
-        )
-        return project
-
-    def update(self, instance, validated_data):
-        identifier = validated_data.get("identifier", "").strip().upper()
-        name = validated_data.get("name", "")
-
-        if identifier == "":
-            raise serializers.ValidationError(
-                detail="The Project Identifier is required. "
-            )
-
-        if (
-            ProjectIdentifier.objects.filter(
-                name=identifier, workspace_id=instance.workspace_id
-            )
-            .exclude(project_id=instance.id)
-            .exists()
-        ):
-            raise serializers.ValidationError(
-                detail="The project identifier is already taken"
-            )
-
-        if (
-            Project.objects.filter(name=name, workspace_id=instance.workspace_id)
-            .exclude(id=instance.id)
-            .exists()
-        ):
-            raise serializers.ValidationError(
-                detail="The project name is already taken"
-            )
-
-        # if project_identifier is None:
-        project = super().update(instance, validated_data)
 
         return project
 
