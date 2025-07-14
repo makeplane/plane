@@ -88,31 +88,63 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         handleNextStep(res.id);
       })
       .catch((err) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
-        if (err?.data.code === "PROJECT_NAME_ALREADY_EXIST") {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("toast.error"),
-            message: t("project_name_already_taken"),
+        try {
+          captureError({
+            eventName: PROJECT_TRACKER_EVENTS.create,
+            payload: {
+              identifier: formData.identifier,
+            },
           });
-        } else if (err?.data.code === "PROJECT_IDENTIFIER_ALREADY_EXIST") {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: t("toast.error"),
-            message: t("project_identifier_already_taken"),
-          });
-        } else {
-          Object.keys(err?.data ?? {}).map((key) => {
+
+          // Handle the new error format where codes are nested in arrays under field names
+          const errorData = err?.data ?? {};
+
+          // Check for specific error codes in the new format
+          if (errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST")) {
             setToast({
               type: TOAST_TYPE.ERROR,
-              title: t("error"),
-              message: err.data[key],
+              title: t("toast.error"),
+              message: t("project_name_already_taken"),
             });
+          }
+
+          if (errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST")) {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("toast.error"),
+              message: t("project_identifier_already_taken"),
+            });
+          }
+
+          // Handle other field-specific errors (excluding name and identifier which are handled above)
+          Object.keys(errorData).forEach((field) => {
+            // Skip name and identifier fields as they're handled separately above
+            if (field === "name" || field === "identifier") return;
+
+            const fieldErrors = errorData[field];
+            if (Array.isArray(fieldErrors)) {
+              fieldErrors.forEach((errorMessage) => {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: t("error"),
+                  message: errorMessage,
+                });
+              });
+            } else if (typeof fieldErrors === "string") {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("error"),
+                message: fieldErrors,
+              });
+            }
+          });
+        } catch (error) {
+          // Fallback error handling if the error processing fails
+          console.error("Error processing API error:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("something_went_wrong"),
           });
         }
       });
