@@ -3,7 +3,8 @@ ARG BUILD_TYPE=full
 # *****************************************************************************
 # STAGE 1: Build the project
 # *****************************************************************************
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
+
 RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
@@ -16,12 +17,12 @@ RUN turbo prune --scope=web --scope=space --scope=admin --docker
 # *****************************************************************************
 # STAGE 2: Install dependencies & build the project
 # *****************************************************************************
-# Add lockfile and package.json's of isolated subworkspace
-FROM node:18-alpine AS installer
+FROM node:22-alpine AS installer
 
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Add lockfile and package.json's of isolated subworkspace
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .

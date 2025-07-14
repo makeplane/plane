@@ -37,7 +37,7 @@ To deploy Plane using Docker Swarm:
 
 Download the required assets as below 
 
-- `docker-compose.yml` from ⇒ <https://prime.plane.so/deployment/assets/v1.8.0/docker-compose.yml> 
+- `swarm-compose.yml` from ⇒ <https://prime.plane.so/deployment/assets/v1.8.0/swarm-compose.yml> 
 - `variables.env` from ⇒ <https://prime.plane.so/deployment/assets/v1.8.0/variables.env> 
 
 Edit the `variables.env` in your favourite editor for 
@@ -56,6 +56,6 @@ Edit the `variables.env` in your favourite editor for
 2. Deploy the stack: 
 
    ```bash
-   docker stack deploy -c deploy/cli-install/docker-caddy.yml plane
+   docker stack deploy -c swarm-compose.yml plane
    ```
 This will deploy the application as a Swarm stack

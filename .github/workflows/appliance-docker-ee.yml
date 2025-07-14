@@ -16,6 +16,11 @@ on:
         type: string
         required: true
         default: 'us-east-1'
+      mark_manifest_latest:
+        description: 'Mark manifest as latest'
+        type: boolean
+        required: false
+        default: false
 
 env:
   # Inputs
@@ -33,10 +38,10 @@ env:
   AWS_SECRET_KEY: ${{ secrets.MARKETPLACE_AWS_SECRET_ACCESS_KEY }}
   # Constants
   CURRENT_MANIFEST_FILE: 'ee-docker-aws-ami-manifest.json'
-  LATEST_MANIFEST_FILE: 'ee-docker-aws-ami-latest-manifest.json'
   EE_PACKER_FILE: 'ee-docker-aws-ami.pkr.hcl'
-  CF_TEMPLATE_FILE: deploy/packer/ee-cloudformation-template.yaml
-  CF_OUTPUT_FILE: deploy/packer/plane-commercial-cloudformation.yaml
+  CF_TEMPLATE_FILE: deployments/ami/commercial/ee-cloudformation-template.yaml
+  CF_OUTPUT_FILE: deployments/ami/commercial/plane-commercial-cloudformation.yaml
+  MARK_MANIFEST_LATEST: ${{ inputs.mark_manifest_latest || false }}
 
 jobs:
 
@@ -61,15 +66,15 @@ jobs:
       - name: Copy Upload Assets
         run: |
           mkdir -p plane-dist
-          cp deploy/packer/cloudinit-ee/* plane-dist/
+          cp deployments/ami/commercial/cloudinit-ee/* plane-dist/
 
       - name: Run `packer init`
         id: init
-        run: "packer init ./deploy/packer/${{ env.EE_PACKER_FILE }}"
+        run: "packer init ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
 
       - name: Run `packer validate`
         id: validate
-        run: "packer validate ./deploy/packer/${{ env.EE_PACKER_FILE }}"
+        run: "packer validate ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
 
       - name: Make Variables File
         id: make_variables_file
@@ -97,7 +102,7 @@ jobs:
             -var "aws_access_key=${{ env.AWS_ACCESS_KEY }}" \
             -var "aws_secret_key=${{ env.AWS_SECRET_KEY }}" \
             -var-file=variables.pkrvars.hcl \
-            ./deploy/packer/${{ env.EE_PACKER_FILE }}
+            ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}
 
       - name: Extract AMI Information and Create Summary
         id: ami_info
@@ -126,11 +131,14 @@ jobs:
 
       - name: Store Manifest in S3
         run: |
-          # Store the current manifest as latest
-          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json
-          
           # Also store a versioned copy
           aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json"
+
+      - name: Store Manifest in S3 as latest
+        if: ${{ env.MARK_MANIFEST_LATEST == 'true' }}
+        run: |
+          # Store the current manifest as latest
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json || true
 
       - name: Upload Build Manifest as Artifact
         uses: actions/upload-artifact@v4

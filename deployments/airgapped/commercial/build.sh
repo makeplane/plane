@@ -59,8 +59,8 @@ rm -rf dist
 mkdir -p dist
 
 # Copy variables.env and docker-compose.yml out of cli-install
-cp ../cli-install/portainer-compose.yml ./dist/docker-compose.yml
-cp ../cli-install/variables.env ./dist/plane.env
+cp ../../portainer/commercial/portainer-compose.yml ./dist/docker-compose.yml
+cp ../../cli/commercial/variables.env ./dist/plane.env
 cp ./install.sh ./dist/install.sh
 cp ./README.md ./dist/README.md
 
