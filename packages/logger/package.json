@@ -23,8 +23,8 @@
   "dependencies": {
     "@types/express": "^4.17.21",
     "express": "^4.21.2",
-    "winston-daily-rotate-file": "^5.0.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
