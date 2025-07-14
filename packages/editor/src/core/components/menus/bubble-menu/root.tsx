@@ -21,10 +21,11 @@ import {
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
+// types
+import { TEditorCommands } from "@/types";
 // local components
 import { TextAlignmentSelector } from "./alignment-selector";
-import { TEditorCommands } from "@/types";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
