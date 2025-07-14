@@ -33,6 +33,15 @@ APPLICATIONS = {
         "description_html": "<p>Slack Integration</p>",
         "redirect_uris": f"{settings.SILO_URL}/api/slack/plane-oauth/callback",
     },
+    "sentry": {
+        "key": "sentry",
+        "name": "Sentry",
+        "slug": "sentry",
+        "short_description": "Sentry Integration",
+        "description_html": "<p>Sentry Integration</p>",
+        "redirect_uris": f"{settings.SILO_URL}/api/oauth/sentry/plane-oauth/callback",
+        "webhook_url": f"{settings.SILO_URL}/api/sentry/plane/events",
+    },
     "importer": {
         "key": "importer",
         "name": "Importer",

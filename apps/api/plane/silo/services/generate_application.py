@@ -44,6 +44,8 @@ def generate_application(
     app_slug = app_data["slug"]
     user = user_model.objects.get(id=user_id)
 
+    webhook_url = app_data.get("webhook_url", None)
+
     with transaction.atomic():
         client_secret = generate_client_secret()
 
@@ -59,6 +61,7 @@ def generate_application(
             "authorization_grant_type": "authorization-code",
             "user_id": user_id,
             "client_secret": client_secret,
+            "webhook_url": webhook_url,
         }
 
         # check if application already exists
@@ -67,6 +70,7 @@ def generate_application(
             # Application already exists, update client_secret
             application.client_secret = client_secret
             application.redirect_uris = app_data["redirect_uris"]
+            application.webhook_url = webhook_url
             application.save()
         else:
             application = application_model.objects.create(**application_data)
