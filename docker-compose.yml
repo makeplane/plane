@@ -160,7 +160,7 @@ services:
     restart: always
     ports:
       - ${LISTEN_HTTP_PORT}:80
-      - ${LISTEN_SSL_PORT}:443
+      - ${LISTEN_HTTPS_PORT}:443
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
