@@ -89,6 +89,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
         isEditingAllowed={!disabled}
         getCommentById={getCommentById}
         projectId={projectId}
+        showCopyLinkOption={false}
       />
     </SidebarContentWrapper>
   );

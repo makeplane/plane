@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { TEAMSPACE_UPDATES_TRACKER_ELEMENTS, TEAMSPACE_UPDATES_TRACKER_EVENTS } from "@plane/constants";
-import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
+import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
@@ -44,10 +44,11 @@ export const useCommentOperations = (
     });
   };
 
-  const operations = useMemo(() => {
+  const operations: TCommentsOperations = useMemo(() => {
     // Define operations object with all methods
-    const ops = {
-      createComment: async (data: Partial<TIssueComment>) => {
+    const ops: TCommentsOperations = {
+      copyCommentLink: () => "",
+      createComment: async (data) => {
         try {
           if (!workspaceSlug || !teamspaceId) throw new Error("Missing fields");
           const comment = await createTeamspaceComment(workspaceSlug, teamspaceId, data);
@@ -67,7 +68,7 @@ export const useCommentOperations = (
           captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_CREATED, "ERROR");
         }
       },
-      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
+      updateComment: async (commentId, data) => {
         try {
           if (!workspaceSlug || !teamspaceId) throw new Error("Missing fields");
           await updateTeamspaceComment(workspaceSlug, teamspaceId, commentId, data);
@@ -86,7 +87,7 @@ export const useCommentOperations = (
           captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_UPDATED, "ERROR", { id: commentId });
         }
       },
-      removeComment: async (commentId: string) => {
+      removeComment: async (commentId) => {
         try {
           if (!workspaceSlug || !teamspaceId) throw new Error("Missing fields");
           await deleteTeamspaceComment(workspaceSlug, teamspaceId, commentId);
@@ -105,7 +106,7 @@ export const useCommentOperations = (
           captureTeamspaceCommentEvent(TEAMSPACE_UPDATES_TRACKER_EVENTS.COMMENT_DELETED, "ERROR", { id: commentId });
         }
       },
-      uploadCommentAsset: async (blockId: string, file: File, commentId?: string): Promise<TFileSignedURLResponse> => {
+      uploadCommentAsset: async (blockId, file: File, commentId): Promise<TFileSignedURLResponse> => {
         try {
           if (!workspaceSlug) throw new Error("Missing fields");
           const res = await uploadEditorAsset({
@@ -129,7 +130,7 @@ export const useCommentOperations = (
           throw error;
         }
       },
-      addCommentReaction: async (commentId: string, reactionEmoji: string) => {
+      addCommentReaction: async (commentId, reactionEmoji) => {
         try {
           if (!workspaceSlug || !teamspaceId) throw new Error("Missing fields");
           await addCommentReaction(workspaceSlug, teamspaceId, commentId, { reaction: reactionEmoji });
@@ -152,7 +153,7 @@ export const useCommentOperations = (
           });
         }
       },
-      deleteCommentReaction: async (commentId: string, reactionEmoji: string) => {
+      deleteCommentReaction: async (commentId, reactionEmoji) => {
         try {
           if (!workspaceSlug || !teamspaceId || !currentUser?.id) throw new Error("Missing fields");
           await deleteCommentReaction(workspaceSlug, teamspaceId, commentId, currentUser.id, reactionEmoji);
@@ -175,17 +176,17 @@ export const useCommentOperations = (
           });
         }
       },
-      react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {
+      react: async (commentId, reactionEmoji, userReactions) => {
         if (userReactions.includes(reactionEmoji)) {
           await ops.deleteCommentReaction(commentId, reactionEmoji);
         } else {
           await ops.addCommentReaction(commentId, reactionEmoji);
         }
       },
-      reactionIds: (commentId: string) => getCommentReactionsByCommentId(commentId),
-      userReactions: (commentId: string) =>
+      reactionIds: (commentId) => getCommentReactionsByCommentId(commentId),
+      userReactions: (commentId) =>
         currentUser && commentReactionsByUser(commentId, currentUser?.id).map((r) => r.reaction),
-      getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>): string => {
+      getReactionUsers: (reaction, reactionIds) => {
         const reactionUsers = (reactionIds?.[reaction] || [])
           .map((reactionId) => {
             const reactionDetails = getCommentReactionById(reactionId);

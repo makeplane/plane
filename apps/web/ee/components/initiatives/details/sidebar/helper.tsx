@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse, TIssueComment } from "@plane/types";
+import { EFileAssetType, TCommentsOperations, TFileSignedURLResponse } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { formatTextList } from "@plane/utils";
 // hooks
@@ -34,10 +34,11 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
   const { t } = useTranslation();
 
   // helper operations
-  const operations = useMemo(() => {
+  const operations: TCommentsOperations = useMemo(() => {
     // Define operations object with all methods
-    const ops = {
-      createComment: async (data: Partial<TIssueComment>) => {
+    const ops: TCommentsOperations = {
+      copyCommentLink: () => "",
+      createComment: async (data) => {
         try {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           const comment = await createInitiativeComment(workspaceSlug, initiativeId, data);
@@ -55,7 +56,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           });
         }
       },
-      updateComment: async (commentId: string, data: Partial<TIssueComment>) => {
+      updateComment: async (commentId, data) => {
         try {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           await updateInitiativeComment(workspaceSlug, initiativeId, commentId, data);
@@ -64,7 +65,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
             type: TOAST_TYPE.SUCCESS,
             message: t("issue.comments.update.success"),
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -72,7 +73,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           });
         }
       },
-      removeComment: async (commentId: string) => {
+      removeComment: async (commentId) => {
         try {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           await deleteInitiativeComment(workspaceSlug, initiativeId, commentId);
@@ -81,7 +82,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
             type: TOAST_TYPE.SUCCESS,
             message: t("issue.comments.remove.success"),
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: t("toast.error"),
             type: TOAST_TYPE.ERROR,
@@ -89,7 +90,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           });
         }
       },
-      uploadCommentAsset: async (blockId: string, file: File, commentId?: string): Promise<TFileSignedURLResponse> => {
+      uploadCommentAsset: async (blockId, file: File, commentId): Promise<TFileSignedURLResponse> => {
         try {
           if (!workspaceSlug) throw new Error("Missing fields");
           const res = await uploadEditorAsset({
@@ -107,7 +108,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           throw new Error("Asset upload failed. Please try again later.");
         }
       },
-      addCommentReaction: async (commentId: string, reactionEmoji: string) => {
+      addCommentReaction: async (commentId, reactionEmoji) => {
         try {
           if (!workspaceSlug || !initiativeId) throw new Error("Missing fields");
           await addCommentReaction(workspaceSlug, initiativeId, commentId, { reaction: reactionEmoji });
@@ -116,7 +117,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -124,7 +125,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           });
         }
       },
-      deleteCommentReaction: async (commentId: string, reactionEmoji: string) => {
+      deleteCommentReaction: async (commentId, reactionEmoji) => {
         try {
           if (!workspaceSlug || !initiativeId || !currentUser?.id) throw new Error("Missing fields");
 
@@ -134,7 +135,7 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-        } catch (error) {
+        } catch {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -142,14 +143,14 @@ export const useCommentOperations = (workspaceSlug: string, initiativeId: string
           });
         }
       },
-      react: async (commentId: string, reactionEmoji: string, userReactions: string[]) => {
+      react: async (commentId, reactionEmoji, userReactions) => {
         if (userReactions.includes(reactionEmoji)) await ops.deleteCommentReaction(commentId, reactionEmoji);
         else await ops.addCommentReaction(commentId, reactionEmoji);
       },
-      reactionIds: (commentId: string) => getCommentReactionsByCommentId(commentId),
-      userReactions: (commentId: string) =>
+      reactionIds: (commentId) => getCommentReactionsByCommentId(commentId),
+      userReactions: (commentId) =>
         currentUser && commentReactionsByUser(commentId, currentUser?.id).map((r) => r.reaction),
-      getReactionUsers: (reaction: string, reactionIds: Record<string, string[]>): string => {
+      getReactionUsers: (reaction, reactionIds) => {
         const reactionUsers = (reactionIds?.[reaction] || [])
           .map((reactionId) => {
             const reactionDetails = getCommentReactionById(reactionId);

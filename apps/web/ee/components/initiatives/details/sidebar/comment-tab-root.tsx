@@ -83,6 +83,7 @@ export const InitiativeSidebarCommentsRoot: FC<Props> = observer((props) => {
           .map((activityComment) => (activityComment as TInitiativeActivityComment).detail as TIssueComment)}
         sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
         isEditingAllowed={!disabled}
+        showCopyLinkOption={false}
       />
     </SidebarContentWrapper>
   );
