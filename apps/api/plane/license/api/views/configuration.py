@@ -63,21 +63,27 @@ class DisableEmailFeatureEndpoint(BaseAPIView):
 
     @invalidate_cache(path="/api/instances/", user=False)
     def delete(self, request):
-        InstanceConfiguration.objects.filter(
-            Q(
-                key__in=[
-                    "EMAIL_HOST",
-                    "EMAIL_HOST_USER",
-                    "EMAIL_HOST_PASSWORD",
-                    "ENABLE_SMTP",
-                    "EMAIL_PORT",
-                    "EMAIL_FROM",
-                ]
+        try:
+            InstanceConfiguration.objects.filter(
+                Q(
+                    key__in=[
+                        "EMAIL_HOST",
+                        "EMAIL_HOST_USER",
+                        "EMAIL_HOST_PASSWORD",
+                        "ENABLE_SMTP",
+                        "EMAIL_PORT",
+                        "EMAIL_FROM",
+                    ]
+                )
+            ).update(
+                value=Case(When(key="ENABLE_SMTP", then=Value("0")), default=Value(""))
             )
-        ).update(
-            value=Case(When(key="ENABLE_SMTP", then=Value("0")), default=Value(""))
-        )
-        return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"error": "Failed to disable email configuration"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class EmailCredentialCheckEndpoint(BaseAPIView):
