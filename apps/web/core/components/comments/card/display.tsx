@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { usePathname } from "next/navigation";
 import { Globe2, Lock } from "lucide-react";
 // plane imports
 import type { EditorReadOnlyRefApi } from "@plane/editor";
+import { useHashScroll } from "@plane/hooks";
 import { EIssueCommentAccessSpecifier, type TCommentsOperations, type TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { LiteTextReadOnlyEditor } from "@/components/editor";
-// hooks
-import { useHashScroll } from "@/hooks/use-hash-scroll";
 // local imports
 import { CommentReactions } from "../comment-reaction";
 
@@ -36,11 +36,14 @@ export const CommentCardDisplay: React.FC<Props> = observer((props) => {
   } = props;
   // states
   const [highlightClassName, setHighlightClassName] = useState("");
+  // navigation
+  const pathname = usePathname();
   // derived values
   const commentBlockId = `comment-${comment?.id}`;
   // scroll to comment
   const { isHashMatch } = useHashScroll({
     elementId: commentBlockId,
+    pathname,
   });
 
   useEffect(() => {

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 type TArgs = {
   elementId: string;
+  pathname: string;
   scrollDelay?: number;
 };
 
@@ -20,10 +20,7 @@ type TReturnType = {
  * @returns {TReturnType} Object containing hash match status and scroll function
  */
 export const useHashScroll = (args: TArgs): TReturnType => {
-  const { elementId, scrollDelay = 200 } = args;
-  // navigation
-  const pathname = usePathname();
-
+  const { elementId, pathname, scrollDelay = 200 } = args;
   // State to track if the current hash contains the provided element ID
   const [isHashMatch, setIsHashMatch] = useState(false);
   // State to track all IDs found in the hash
@@ -119,19 +116,13 @@ export const useHashScroll = (args: TArgs): TReturnType => {
 
   // Return object with hash match status and utility functions
   return {
-    /**
-     * Whether the current URL hash contains the provided element ID
-     */
+    // Whether the current URL hash contains the provided element ID
     isHashMatch,
 
-    /**
-     * Array of all IDs found in the current hash
-     */
+    // Array of all IDs found in the current hash
     hashIds,
 
-    /**
-     * Manually trigger scroll to the element
-     */
+    // Manually trigger scroll to the element
     scrollToElement,
   };
 };
