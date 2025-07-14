@@ -525,6 +525,21 @@ export class TeamspaceStore implements ITeamspaceStore {
   };
 
   /**
+   * Updates project membership for all affected projects
+   * @param workspaceSlug
+   * @param teamspaceId
+   * @returns Promise<void>
+   */
+  private updateProjectMembership = async (workspaceSlug: string, teamspaceId: string) => {
+    const teamspaceProjectIds = this.getTeamspaceProjectIds(teamspaceId) ?? [];
+    // refetch project membership details for all affected projects
+    const projectMembershipPromises = teamspaceProjectIds.map((projectId) =>
+      this.rootStore.memberRoot.project.fetchProjectMembers(workspaceSlug, projectId, true)
+    );
+    await Promise.allSettled(projectMembershipPromises);
+  };
+
+  /**
    * Updates team members of a teamspace and updates the store
    * @param workspaceSlug
    * @param teamspaceId
@@ -554,10 +569,12 @@ export class TeamspaceStore implements ITeamspaceStore {
             ...teamspace,
             member_ids: teamspaceMemberIds,
           }));
-          // Fetch teamspace analytics
-          this.rootStore.teamspaceRoot.teamspaceAnalytics.fetchTeamspaceAnalytics(workspaceSlug, teamspaceId);
         }
+        // Update project membership for all affected projects
+        this.updateProjectMembership(workspaceSlug, teamspaceId);
       });
+      // Fetch teamspace analytics
+      this.rootStore.teamspaceRoot.teamspaceAnalytics.fetchTeamspaceAnalytics(workspaceSlug, teamspaceId);
       // Fetch teamspace activity
       this.rootStore.teamspaceRoot.teamspaceUpdates.fetchTeamActivities(workspaceSlug, teamspaceId);
       return teamspaceMembers;
@@ -587,6 +604,8 @@ export class TeamspaceStore implements ITeamspaceStore {
           ...teamspace,
           member_ids: teamspace.member_ids.filter((id: string) => id !== memberId),
         }));
+        // Update project membership for all affected projects
+        this.updateProjectMembership(workspaceSlug, teamspaceId);
       });
       // Fetch teamspace activity
       this.rootStore.teamspaceRoot.teamspaceUpdates.fetchTeamActivities(workspaceSlug, teamspaceId);
