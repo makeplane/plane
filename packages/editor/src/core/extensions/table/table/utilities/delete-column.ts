@@ -1,5 +1,7 @@
 import type { Command } from "@tiptap/core";
-import { deleteColumn, deleteTable, CellSelection } from "@tiptap/pm/tables";
+import { deleteColumn, deleteTable } from "@tiptap/pm/tables";
+// local imports
+import { isCellSelection } from "./helpers";
 
 export const deleteColumnOrTable: () => Command =
   () =>
@@ -7,7 +9,7 @@ export const deleteColumnOrTable: () => Command =
     const { selection } = state;
 
     // Check if we're in a table and have a cell selection
-    if (!(selection instanceof CellSelection)) {
+    if (!isCellSelection(selection)) {
       return false;
     }
 
