@@ -618,7 +618,7 @@ class IssueReaction(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_reactions"
     )
-    reaction = models.CharField(max_length=20)
+    reaction = models.TextField()
 
     class Meta:
         unique_together = ["issue", "actor", "reaction", "deleted_at"]
@@ -647,7 +647,7 @@ class CommentReaction(ProjectBaseModel):
     comment = models.ForeignKey(
         IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
     )
-    reaction = models.CharField(max_length=20)
+    reaction = models.TextField()
 
     class Meta:
         unique_together = ["comment", "actor", "reaction", "deleted_at"]

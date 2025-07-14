@@ -82,7 +82,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             workspace_id=workspace.id,
             member__email__in=[email.get("email") for email in emails],
             is_active=True,
-        ).select_related("member", "workspace", "workspace__owner")
+        ).select_related("member", "member__avatar_asset")
 
         if workspace_members:
             return Response(

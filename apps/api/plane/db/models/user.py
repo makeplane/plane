@@ -209,6 +209,7 @@ class Profile(TimeAuditModel):
     )
     # General
     theme = models.JSONField(default=dict)
+    is_app_rail_docked = models.BooleanField(default=True)
     # Onboarding
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
