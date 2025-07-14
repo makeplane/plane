@@ -192,20 +192,21 @@ services:
       - ./apps/api:/code
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
-      - .env
+      - ./apps/api/.env
     depends_on:
       - plane-db
       - plane-redis
 
   # proxy:
   #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile.dev
+  #     context: ./apps/proxy
+  #     dockerfile: Dockerfile.ce
   #   restart: unless-stopped
   #   networks:
   #     - dev_env
   #   ports:
-  #     - ${NGINX_PORT}:80
+  #     - ${LISTEN_HTTP_PORT}:80
+  #     - ${LISTEN_HTTPS_PORT}:443
   #   env_file:
   #     - .env
   #   environment:

@@ -9,7 +9,7 @@ export DOCKERHUB_USER=artifacts.plane.so/makeplane
 
 export GH_REPO=makeplane/plane
 export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
-export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deploy/selfhost"
+export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
 
 OS_NAME=$(uname)
 
@@ -150,8 +150,7 @@ function updateEnvFile() {
 function download() {
     cd $SCRIPT_DIR || exit 1  
     TS=$(date +%s)
-    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yml" ]
-    then
+    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yml" ]; then
         mv $PLANE_INSTALL_DIR/docker-compose.yml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yml
     fi
 
