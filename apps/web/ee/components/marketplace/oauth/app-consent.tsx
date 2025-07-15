@@ -23,20 +23,22 @@ import {
 type TAppConsentProps = {
   application: Partial<TUserApplication>;
   consentParams: TConsentParams;
+  workspaceSlug: string;
 };
 
 const oauthService = new OAuthService();
 const applicationService = new ApplicationService();
 const authService = new AuthService();
 
-export const AppConsent = observer(({ application, consentParams }: TAppConsentProps) => {
+export const AppConsent = observer(({ application, consentParams, workspaceSlug }: TAppConsentProps) => {
   const { t } = useTranslation();
   const router = useRouter();
 
   const { workspaces } = useWorkspace();
   const workspacesList = Object.values(workspaces ?? {});
+  const workspaceFromParams = workspacesList.find((workspace) => workspace.slug === workspaceSlug);
 
-  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace>(workspacesList[0]);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<IWorkspace>(workspaceFromParams ?? workspacesList[0]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 

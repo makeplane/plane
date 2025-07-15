@@ -28,7 +28,7 @@ const OAuthPage = observer(() => {
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
 
   const searchParams = useSearchParams();
-  const { client_id, redirect_uri, code_challenge, code_challenge_method, response_type, scope, nonce, state, claims } =
+  const { workspace_slug, client_id, redirect_uri, code_challenge, code_challenge_method, response_type, scope, nonce, state, claims } =
     Object.fromEntries(searchParams.entries());
 
   const { data: application, isLoading } = useSWR(
@@ -67,6 +67,7 @@ const OAuthPage = observer(() => {
               <div className="flex flex-col justify-center flex-grow container h-[100vh-60px] mx-auto max-w-2xl px-10 lg:max-w-2xl lg:px-5 transition-all">
                 <AppConsent
                   application={application}
+                  workspaceSlug={workspace_slug}
                   consentParams={{
                     client_id,
                     redirect_uri,

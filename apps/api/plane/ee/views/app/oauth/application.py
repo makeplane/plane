@@ -1,5 +1,14 @@
 # standard imports
-from django.db.models import BooleanField, Case, Exists, OuterRef, Q, Value, When
+from django.db.models import (
+    BooleanField,
+    Case,
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    When,
+    Subquery,
+)
 from django.utils import timezone
 
 # third-party imports
@@ -150,7 +159,14 @@ class OAuthApplicationEndpoint(BaseAPIView):
                             workspace__slug=slug,
                             status=WorkspaceAppInstallation.Status.INSTALLED,
                         )
-                    )
+                    ),
+                    installation_id=Subquery(
+                        WorkspaceAppInstallation.objects.filter(
+                            application_id=OuterRef("id"),
+                            workspace__slug=slug,
+                            status=WorkspaceAppInstallation.Status.INSTALLED,
+                        ).values("id")[:1]
+                    ),
                 )
 
                 serialised_applications = ApplicationSerializer(applications, many=True)
@@ -176,11 +192,15 @@ class OAuthApplicationEndpoint(BaseAPIView):
             application.is_owned = application.application_owners.filter(
                 workspace__slug=slug
             ).exists()
-            application.is_installed = WorkspaceAppInstallation.objects.filter(
+            application_installation = WorkspaceAppInstallation.objects.filter(
                 application=application,
                 workspace__slug=slug,
                 status=WorkspaceAppInstallation.Status.INSTALLED,
-            ).exists()
+            ).first()
+            application.is_installed = application_installation is not None
+            application.installation_id = (
+                application_installation.id if application_installation else None
+            )
 
             serialised_application = ApplicationSerializer(application)
             return Response(serialised_application.data, status=status.HTTP_200_OK)
@@ -348,3 +368,40 @@ class OAuthApplicationCategoryEndpoint(BaseAPIView):
         application_categories = ApplicationCategory.objects.filter(is_active=True)
         serializer = ApplicationCategorySerializer(application_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def get(self, request, slug, app_slug):
+        application = (
+            Application.objects.filter(slug=app_slug, published_at__isnull=False)
+            .select_related(
+                "logo_asset",
+            )
+            .first()
+        )
+
+        if not application:
+            return Response(
+                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Add ownership and installation info
+        application.is_owned = application.application_owners.filter(
+            workspace__slug=slug
+        ).exists()
+
+        application_installation = WorkspaceAppInstallation.objects.filter(
+            application=application,
+            workspace__slug=slug,
+            status=WorkspaceAppInstallation.Status.INSTALLED,
+        ).first()
+
+        application.is_installed = application_installation is not None
+        application.installation_id = (
+            application_installation.id if application_installation else None
+        )
+
+        serialised_application = ApplicationSerializer(application)
+        return Response(serialised_application.data, status=status.HTTP_200_OK)

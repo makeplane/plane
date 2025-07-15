@@ -239,19 +239,20 @@ class WorkspaceAppInstallation(BaseModel):
                 member=self.app_bot, workspace=self.workspace, role=ROLE.MEMBER.value
             )
 
-            # add this user as a project member to all the projects in the workspace using bulk_create
-            ProjectMember.objects.bulk_create(
-                [
-                    ProjectMember(
-                        workspace=self.workspace,
-                        member=self.app_bot,
-                        project=project,
-                        role=ROLE.MEMBER.value,
-                    )
-                    for project in Project.objects.filter(workspace=self.workspace)
-                ],
-                ignore_conflicts=True,
-            )
+        if self.status == self.Status.INSTALLED:
+          # add this user as a project member to all the projects in the workspace using bulk_create
+          ProjectMember.objects.bulk_create(
+              [
+                  ProjectMember(
+                      workspace=self.workspace,
+                      member=self.app_bot,
+                      project=project,
+                      role=ROLE.MEMBER.value,
+                  )
+                  for project in Project.objects.filter(workspace=self.workspace)
+              ],
+              ignore_conflicts=True,
+          )
         super(WorkspaceAppInstallation, self).save(*args, **kwargs)
 
 

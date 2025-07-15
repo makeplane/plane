@@ -9,13 +9,19 @@ import { orderWorkspacesList } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { ApplicationService, OAuthService } from "@/plane-web/services/marketplace";
 // local imports
 import { WorkspaceSelectorEmptyState } from "./empty-state";
 import { WorkspaceList } from "./workspace-list";
 
+// service
+const applicationService = new ApplicationService();
+const oauthService = new OAuthService();
+
 export enum ESupportedFeatures {
   APPS = "apps",
   PROJECT_TEMPLATES = "project-templates",
+  EXTERNAL_APPS = "external-apps",
 }
 
 const getFeatureName = (feature: ESupportedFeatures) => {
@@ -24,6 +30,8 @@ const getFeatureName = (feature: ESupportedFeatures) => {
       return "Apps";
     case ESupportedFeatures.PROJECT_TEMPLATES:
       return "Project templates";
+    case ESupportedFeatures.EXTERNAL_APPS:
+      return "Marketplace Apps";
   }
 };
 
@@ -42,7 +50,7 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { loader, workspaces } = useWorkspace();
+  const { loader, workspaces, getWorkspaceBySlug } = useWorkspace();
   // derived values
   const currentUserAdminWorkspaces = Object.values(workspaces ?? {})?.filter((w) => w.role === EUserPermissions.ADMIN);
   const isSubmissionButtonDisabled = isSubmitting || loader || !selectedWorkspaceSlug;
@@ -51,6 +59,45 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
     () => orderWorkspacesList(currentUserAdminWorkspaces),
     [currentUserAdminWorkspaces]
   );
+
+  const handleExternalAppSubmission = async (appSlug: string) => {
+    if (!selectedWorkspaceSlug) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Can't submit",
+        message: "Please select a workspace",
+      });
+      return;
+    }
+    const app = await applicationService.getPublishedApplicationBySlug(selectedWorkspaceSlug, appSlug);
+
+    // if the app is installed, redirect to the app configuration page
+    if (app?.is_installed) {
+      // redirect to applications page
+      router.push(`/${selectedWorkspaceSlug}/settings/applications`);
+      return;
+    }
+
+    // if the app is not installed, redirect to the app consent page
+    const redirectUri = app?.redirect_uris.split(" ")[0];
+    if (!app?.client_id || !redirectUri) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Can't submit",
+        message: "Application details not found",
+      });
+      return;
+    }
+    const authorizationUrl = oauthService.getAuthorizationUrl({
+      client_id: app.client_id,
+      redirect_uri: redirectUri,
+      response_type: "code",
+      scope: "read write",
+      workspace_slug: selectedWorkspaceSlug,
+    });
+    // redirect to app consent page
+    window.location.assign(authorizationUrl);
+  };
 
   // Handle submission for features that require manual submission
   const handleSubmission = useCallback(async () => {
@@ -71,6 +118,9 @@ export const WorkspaceSelector = observer((props: TWorkspaceSelectorProps) => {
         case ESupportedFeatures.PROJECT_TEMPLATES:
           await projectTemplateService.copy(selectedWorkspaceSlug, identifier);
           router.push(`/${selectedWorkspaceSlug}/settings/templates`);
+          break;
+        case ESupportedFeatures.EXTERNAL_APPS:
+          await handleExternalAppSubmission(identifier);
           break;
         default:
           setToast({

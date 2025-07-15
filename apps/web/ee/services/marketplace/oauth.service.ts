@@ -13,6 +13,7 @@ export type TConsentParams = {
   nonce?: string;
   state?: string;
   claims?: string;
+  workspace_slug?: string;
 };
 
 export class OAuthService extends APIService {

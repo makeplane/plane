@@ -6,4 +6,5 @@ from .application import (
     OAuthApplicationPublishEndpoint,
     OAuthApplicationClientIdEndpoint,
     OAuthApplicationCategoryEndpoint,
+    OAuthPublishedApplicationBySlugEndpoint,
 )

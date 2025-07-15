@@ -34,6 +34,7 @@ export type TApplication = {
 export type TUserApplication = TApplication & {
   is_owned: boolean;
   is_installed: boolean;
+  installation_id?: string;
 };
 
 export type TApplicationOwner = {

@@ -38,11 +38,12 @@ export const AppListRoot: React.FC<AppListProps> = observer((props) => {
       <Tabs
         tabs={APP_LIST_TABS}
         storageKey={`app-list`}
-        defaultTab="own"
+        defaultTab="third_party"
         size="sm"
         tabListContainerClassName="py-2 divide-x divide-custom-border-200"
         tabListClassName="my-2 max-w-64"
         tabPanelClassName="h-full w-full overflow-hidden overflow-y-auto"
+        storeInLocalStorage={false}
       />
     </div>
   );
