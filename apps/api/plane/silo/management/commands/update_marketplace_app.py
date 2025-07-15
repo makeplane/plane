@@ -14,7 +14,7 @@ class Command(BaseCommand):
     This command is used to manage marketplace apps.
     """
 
-    help = "Marketplace app operations (assign-owner, publish, unpublish)"
+    help = "Marketplace app operations (assign-owner, publish, unpublish, make-app-internal, make-app-external)"
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers(dest="subcommand", required=True)
@@ -45,6 +45,14 @@ class Command(BaseCommand):
         unpublish_parser = subparsers.add_parser("unpublish", help="Unpublish app")
         unpublish_parser.add_argument("app_slug", type=str, help="App slug")
 
+        # Subcommand: make-app-internal
+        make_app_internal_parser = subparsers.add_parser("make-app-internal", help="Make app internal")
+        make_app_internal_parser.add_argument("app_slug", type=str, help="App slug")
+
+        # Subcommand: make-app-external
+        make_app_external_parser = subparsers.add_parser("make-app-external", help="Make app external")
+        make_app_external_parser.add_argument("app_slug", type=str, help="App slug")
+
     def handle(self, *args, **options):
         subcommand = options["subcommand"]
 
@@ -74,6 +82,16 @@ class Command(BaseCommand):
             app_slug = options["app_slug"]
             self.stdout.write(self.style.SUCCESS(f"Unpublishing app {app_slug}"))
             self.unpublish(app_slug)
+
+        elif subcommand == "make-app-internal":
+            app_slug = options["app_slug"]
+            self.stdout.write(self.style.SUCCESS(f"Making app {app_slug} internal"))
+            self.make_app_internal(app_slug)
+
+        elif subcommand == "make-app-external":
+            app_slug = options["app_slug"]
+            self.stdout.write(self.style.SUCCESS(f"Making app {app_slug} external"))
+            self.make_app_external(app_slug)
 
         else:
             raise CommandError("Unknown subcommand")
@@ -116,4 +134,20 @@ class Command(BaseCommand):
         """
         app = Application.objects.get(slug=app_slug)
         app.published_at = None
+        app.save()
+
+    def make_app_internal(self, app_slug):
+        """
+        python manage.py update_marketplace_app make-app-internal <app_slug>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.is_internal = True
+        app.save()
+
+    def make_app_external(self, app_slug):
+        """
+        python manage.py update_marketplace_app make-app-external <app_slug>
+        """
+        app = Application.objects.get(slug=app_slug)
+        app.is_internal = False
         app.save()

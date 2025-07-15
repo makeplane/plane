@@ -87,6 +87,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             "contact_email",
             "support_url",
             "setup_url",
+            "configuration_url",
             "video_url",
             "is_mentionable",
             "website",

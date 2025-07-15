@@ -25,6 +25,7 @@ class PublishedApplicationSerializer(serializers.ModelSerializer):
             "support_url",
             "categories",
             "setup_url",
+            "configuration_url",
             "video_url",
             "attachments",
         ]

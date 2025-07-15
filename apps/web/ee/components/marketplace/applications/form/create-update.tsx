@@ -533,6 +533,26 @@ export const CreateUpdateApplication: React.FC<Props> = observer((props) => {
             />
             {errors.setup_url && <p className="text-red-500 text-xs">{errors.setup_url.message}</p>}
           </div>
+          <div className="flex flex-col gap-1">
+            <div className="text-sm text-custom-text-300">
+              {t("workspace_settings.settings.applications.configuration_url_title")}
+            </div>
+            <Input
+              id="configuration_url"
+              type="text"
+              className="w-full resize-none text-sm"
+              hasError={Boolean(errors.configuration_url)}
+              tabIndex={16}
+              {...register("configuration_url", {
+                pattern: {
+                  value: relativeUrlRegex,
+                  message: t("workspace_settings.settings.applications.invalid_configuration_url_error"),
+                },
+              })}
+              onChange={(e) => handleTextChange("configuration_url", e.target.value)}
+            />
+            {errors.configuration_url && <p className="text-red-500 text-xs">{errors.configuration_url.message}</p>}
+          </div>
           <UploadAppAttachments
             initialValue={formData?.attachments_urls ?? []}
             entityType={EFileAssetType.OAUTH_APP_ATTACHMENT}

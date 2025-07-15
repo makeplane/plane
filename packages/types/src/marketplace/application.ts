@@ -24,6 +24,7 @@ export type TApplication = {
   terms_of_service_url?: string;
   support_url?: string;
   setup_url?: string;
+  configuration_url?: string;
   video_url?: string;
   created_at: string;
   is_mentionable: boolean;
