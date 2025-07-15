@@ -64,7 +64,8 @@
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.1",
     "@types/zxcvbn": "^4.4.4",
-    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
     "typescript": "5.8.3"
   }
 }
