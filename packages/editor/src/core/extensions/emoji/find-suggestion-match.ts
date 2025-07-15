@@ -1,20 +1,5 @@
-import { escapeForRegEx, Range } from "@tiptap/core";
-import { ResolvedPos } from "@tiptap/pm/model";
-
-export interface Trigger {
-  char: string;
-  allowSpaces: boolean;
-  allowToIncludeChar: boolean;
-  allowedPrefixes: string[] | null;
-  startOfLine: boolean;
-  $position: ResolvedPos;
-}
-
-export type SuggestionMatch = {
-  range: Range;
-  query: string;
-  text: string;
-} | null;
+import { escapeForRegEx } from "@tiptap/core";
+import { Trigger, SuggestionMatch } from "@tiptap/suggestion";
 
 export function customFindSuggestionMatch(config: Trigger): SuggestionMatch {
   const { char, allowSpaces: allowSpacesOption, allowToIncludeChar, allowedPrefixes, startOfLine, $position } = config;
