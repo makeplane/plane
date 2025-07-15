@@ -842,7 +842,8 @@ class WorkspaceAssetDownloadEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
-            disposition=f"attachment; filename={asset.asset.name}",
+            disposition="attachment",
+            filename=asset.attributes.get("name", uuid.uuid4().hex),
         )
 
         return HttpResponseRedirect(signed_url)
@@ -869,7 +870,8 @@ class ProjectAssetDownloadEndpoint(BaseAPIView):
         storage = S3Storage(request=request)
         signed_url = storage.generate_presigned_url(
             object_name=asset.asset.name,
-            disposition=f"attachment; filename={asset.asset.name}",
+            disposition="attachment",
+            filename=asset.attributes.get("name", uuid.uuid4().hex),
         )
 
         return HttpResponseRedirect(signed_url)
