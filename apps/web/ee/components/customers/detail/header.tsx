@@ -1,23 +1,24 @@
 "use client";
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 // plane imports
 import { PanelRight } from "lucide-react";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { Breadcrumbs, CustomersIcon, Header, CustomSearchSelect } from "@plane/ui";
+import { Breadcrumbs, CustomersIcon, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CustomerQuickActions } from "@/plane-web/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
 
 export const CustomerDetailHeader: FC = observer(() => {
   const { workspaceSlug, customerId } = useParams();
+  const router = useAppRouter();
   // hooks
   const { currentWorkspace } = useWorkspace();
   const { getCustomerById, customerIds } = useCustomers();
@@ -37,11 +38,7 @@ export const CustomerDetailHeader: FC = observer(() => {
       return {
         value: _customer.id,
         query: _customer.name,
-        content: (
-          <Link href={`/${workspaceSlug}/customers/${_customer.id}`}>
-            <SwitcherLabel logo_url={_customer.logo_url} name={_customer.name} LabelIcon={CustomersIcon} />
-          </Link>
-        ),
+        content: <SwitcherLabel logo_url={_customer.logo_url} name={_customer.name} LabelIcon={CustomersIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -64,15 +61,22 @@ export const CustomerDetailHeader: FC = observer(() => {
               />
               <Breadcrumbs.Item
                 component={
-                  <CustomSearchSelect
-                    label={
-                      <SwitcherLabel logo_url={customer?.logo_url} name={customer?.name} LabelIcon={CustomersIcon} />
+                  <BreadcrumbNavigationSearchDropdown
+                    selectedItem={customerId.toString()}
+                    navigationItems={switcherOptions}
+                    onChange={(value: string) => {
+                      router.push(`/${workspaceSlug}/customers/${value}`);
+                    }}
+                    title={customer?.name}
+                    icon={
+                      <Breadcrumbs.Icon>
+                        <CustomersIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      </Breadcrumbs.Icon>
                     }
-                    value={customerId.toString()}
-                    onChange={() => {}}
-                    options={switcherOptions}
+                    isLast
                   />
                 }
+                isLast
               />
             </Breadcrumbs>
           </div>
