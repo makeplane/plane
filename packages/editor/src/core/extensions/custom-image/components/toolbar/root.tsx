@@ -39,7 +39,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           handleChange={handleAlignmentChange}
           toggleToolbarViewStatus={setShouldShowToolbar}
         />
-        <ImageFullScreenActionRoot image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
+        <ImageFullScreenActionRoot image={props} isMobile={isMobile} toggleToolbarViewStatus={setShouldShowToolbar} />
       </div>
     </>
   );
