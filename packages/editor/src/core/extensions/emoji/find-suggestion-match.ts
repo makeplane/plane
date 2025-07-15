@@ -29,69 +29,51 @@ export function customFindSuggestionMatch(config: Trigger): SuggestionMatch {
     ? new RegExp(`${prefix}${escapedChar}.*?(?=\\s${finalEscapedChar}|$)`, "gm")
     : new RegExp(`${prefix}(?:^)?${escapedChar}[^\\s${finalEscapedChar}]*`, "gm");
 
-  // Get the text block that contains the current position
-  const textBlock = $position.parent;
-
-  if (!textBlock.isTextblock) {
+  // Instead of just looking at nodeBefore.text, we need to extract text from the current paragraph
+  // to properly handle text with decorators like bold, italic, etc.
+  const currentParagraph = $position.parent;
+  if (!currentParagraph.isTextblock) {
     return null;
   }
 
-  // Get the text content of the entire block
-  const blockText = textBlock.textContent;
-  const blockStart = $position.start();
-  const relativePos = $position.pos - blockStart;
+  // Get the start position of the current paragraph
+  const paragraphStart = $position.start();
+  // Extract text content using textBetween which handles text across different nodes/marks
+  const text = $position.doc.textBetween(paragraphStart, $position.pos, "\0", "\0");
 
-  if (relativePos < 0) {
+  if (!text) {
     return null;
   }
 
-  // Look for the trigger character in the text before the current position
-  const textBeforeCursor = blockText.slice(0, relativePos);
+  const textFrom = paragraphStart;
+  const match = Array.from(text.matchAll(regexp)).pop();
 
-  // Find the last occurrence of the trigger character
-  const lastTriggerIndex = textBeforeCursor.lastIndexOf(char);
-
-  if (lastTriggerIndex === -1) {
+  if (!match || match.input === undefined || match.index === undefined) {
     return null;
   }
 
-  // Check if the trigger character has an allowed prefix
-  const prefixChar = lastTriggerIndex > 0 ? textBeforeCursor[lastTriggerIndex - 1] : "\0";
-  const matchPrefixIsAllowed = new RegExp(`^[${allowedPrefixes?.join("")}\0]?$`).test(prefixChar);
+  // JavaScript doesn't have lookbehinds. This hacks a check that first character
+  // is a space or the start of the line
+  const matchPrefix = match.input.slice(Math.max(0, match.index - 1), match.index);
+  const matchPrefixIsAllowed = new RegExp(`^[${allowedPrefixes?.join("")}\0]?$`).test(matchPrefix);
 
   if (allowedPrefixes !== null && !matchPrefixIsAllowed) {
     return null;
   }
 
-  // Extract the potential match text from the trigger character to the cursor position
-  const matchText = textBeforeCursor.slice(lastTriggerIndex);
-
-  // Test if this matches our regex pattern
-  const match = matchText.match(regexp);
-
-  if (!match) {
-    return null;
-  }
-
-  // Calculate the absolute positions
-  const from = blockStart + lastTriggerIndex;
+  // The absolute position of the match in the document
+  const from = textFrom + match.index;
   let to = from + match[0].length;
 
   // Edge case handling; if spaces are allowed and we're directly in between
   // two triggers
-  if (allowSpaces && suffix.test(blockText.slice(to - 1, to + 1))) {
+  if (allowSpaces && suffix.test(text.slice(to - 1, to + 1))) {
     match[0] += " ";
     to += 1;
   }
 
   // If the $position is located within the matched substring, return that range
   if (from < $position.pos && to >= $position.pos) {
-    // Additional check: make sure we're not inside a code block or other restricted context
-    const $from = $position.doc.resolve(from);
-    if ($from.parent.type.spec.code) {
-      return null;
-    }
-
     return {
       range: {
         from,
