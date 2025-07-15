@@ -17,4 +17,6 @@ const initializeStore = () => {
 
 export const store = initializeStore();
 
-export const StoreProvider = ({ children }: { children: ReactElement }) => <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
+export const StoreProvider = ({ children }: { children: ReactElement }) => (
+  <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+);

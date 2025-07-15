@@ -2,4 +2,4 @@ import { IPartialProject, IProject } from "@plane/types";
 
 export type TPartialProject = IPartialProject;
 
-export type TProject =  TPartialProject & IProject;
+export type TProject = TPartialProject & IProject;

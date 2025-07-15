@@ -1,6 +1,6 @@
 {
   "name": "@plane/logger",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
@@ -11,22 +11,26 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "build": "tsup --minify",
+    "dev": "tsup --watch",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
     "express": "^4.21.2",
-    "winston-daily-rotate-file": "^5.0.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
     "@types/node": "^22.5.4",
+    "tsup": "8.4.0",
     "typescript": "5.8.3"
   }
 }

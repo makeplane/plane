@@ -171,7 +171,6 @@ export class ProfileStore implements IUserProfileStore {
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });
-
     } catch (error) {
       runInAction(() => {
         this.error = {
@@ -181,7 +180,7 @@ export class ProfileStore implements IUserProfileStore {
       });
       throw error;
     }
-  }
+  };
 
   /**
    * @description updates the user tour completed status

@@ -1,6 +1,6 @@
 {
   "name": "@plane/constants",
-  "version": "0.27.0",
+  "version": "0.27.1",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
@@ -25,7 +25,7 @@
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@plane/types": "*"
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@plane/eslint-config": "*",
     "@plane/typescript-config": "*",
-    "tsup": "8.4.0"
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }

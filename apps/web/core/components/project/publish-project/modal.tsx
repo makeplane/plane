@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
-import { IProject, TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
+import { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
@@ -17,7 +17,7 @@ import { useProjectPublish } from "@/hooks/store";
 
 type Props = {
   isOpen: boolean;
-  project: IProject;
+  projectId: string;
   onClose: () => void;
 };
 
@@ -41,7 +41,7 @@ const VIEW_OPTIONS: {
 ];
 
 export const PublishProjectModal: React.FC<Props> = observer((props) => {
-  const { isOpen, project, onClose } = props;
+  const { isOpen, onClose, projectId } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);
   // router
@@ -56,7 +56,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     fetchSettingsLoader,
   } = useProjectPublish();
   // derived values
-  const projectPublishSettings = getPublishSettingsByProjectID(project.id);
+  const projectPublishSettings = getPublishSettingsByProjectID(projectId);
+  const isProjectPublished = !!projectPublishSettings?.anchor;
   // form info
   const {
     control,
@@ -77,19 +78,19 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !isOpen) return;
 
     if (!projectPublishSettings) {
-      fetchPublishSettings(workspaceSlug.toString(), project.id);
+      fetchPublishSettings(workspaceSlug.toString(), projectId);
     }
-  }, [fetchPublishSettings, isOpen, project, projectPublishSettings, workspaceSlug]);
+  }, [fetchPublishSettings, isOpen, projectId, projectPublishSettings, workspaceSlug]);
 
   const handlePublishProject = async (payload: Partial<TProjectPublishSettings>) => {
     if (!workspaceSlug) return;
-    await publishProject(workspaceSlug.toString(), project.id, payload);
+    await publishProject(workspaceSlug.toString(), projectId, payload);
   };
 
   const handleUpdatePublishSettings = async (payload: Partial<TProjectPublishSettings>) => {
     if (!workspaceSlug || !payload.id) return;
 
-    await updatePublishSettings(workspaceSlug.toString(), project.id, payload.id, payload).then((res) => {
+    await updatePublishSettings(workspaceSlug.toString(), projectId, payload.id, payload).then((res) => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -106,7 +107,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     setIsUnPublishing(true);
 
-    await unPublishProject(workspaceSlug.toString(), project.id, publishId)
+    await unPublishProject(workspaceSlug.toString(), projectId, publishId)
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,
@@ -142,7 +143,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       view_props: formData.view_props,
     };
 
-    if (formData.id && project.anchor) await handleUpdatePublishSettings(payload);
+    if (formData.id && isProjectPublished) await handleUpdatePublishSettings(payload);
     else await handlePublishProject(payload);
   };
 
@@ -173,7 +174,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
           <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
-          {project.anchor && (
+          {isProjectPublished && (
             <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
@@ -190,7 +191,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
           </Loader>
         ) : (
           <div className="px-5 space-y-4">
-            {project.anchor && projectPublishSettings && (
+            {isProjectPublished && projectPublishSettings && (
               <>
                 <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
@@ -309,7 +310,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
               <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                 Cancel
               </Button>
-              {project.anchor ? (
+              {isProjectPublished ? (
                 isDirty && (
                   <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
