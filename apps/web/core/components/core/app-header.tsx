@@ -23,7 +23,7 @@ export const AppHeader = observer((props: AppHeaderProps) => {
 
   return (
     <div className="z-[18]">
-      <Row className="h-[3.75rem] flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100">
+      <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100">
         {isSidebarToggleVisible() && sidebarCollapsed && <AppSidebarToggleButton />}
         <div className="w-full">{header}</div>
       </Row>

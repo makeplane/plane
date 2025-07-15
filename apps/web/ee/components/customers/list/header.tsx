@@ -29,7 +29,7 @@ export const CustomersListHeader = observer(() => {
 
   return (
     <>
-      <div className="flex-shrink-0 relative z-10 flex h-[3.75rem] w-full">
+      <div className="flex-shrink-0 relative z-10 flex h-header w-full">
         <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
           <Breadcrumbs>
             <Breadcrumbs.Item
