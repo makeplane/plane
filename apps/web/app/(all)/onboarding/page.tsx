@@ -42,10 +42,14 @@ const OnboardingPage = observer(() => {
 
   // computed values
   const workspacesList = Object.values(workspaces ?? {});
+
   // fetching workspaces list
   const { isLoading: workspaceListLoader } = useSWR(USER_WORKSPACES_LIST, () => {
-    user?.id && fetchWorkspaces();
+    if (user?.id) {
+      fetchWorkspaces();
+    }
   });
+
   // fetching user workspace invitations
   const { isLoading: invitationsLoader, data: invitations } = useSWR(
     `USER_WORKSPACE_INVITATIONS_LIST_${user?.id}`,
