@@ -103,26 +103,6 @@ export const getNumberCount = (number: number): string => {
 };
 
 /**
- * @description Converts object to URL query parameters string
- * @param {Object} obj - Object to convert
- * @returns {string} URL query parameters string
- * @example
- * objToQueryParams({ page: 1, search: "test" }) // returns "page=1&search=test"
- * objToQueryParams({ a: null, b: "test" }) // returns "b=test"
- */
-export const objToQueryParams = (obj: any) => {
-  const params = new URLSearchParams();
-
-  if (!obj) return params.toString();
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined && value !== null) params.append(key, value as string);
-  }
-
-  return params.toString();
-};
-
-/**
  * @description: This function will capitalize the first letter of a string
  * @param str String
  * @returns String
