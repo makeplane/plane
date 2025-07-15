@@ -1042,6 +1042,10 @@
       },
       "upload": {
         "error": "Gagal mengunggah aset. Silakan coba lagi nanti."
+      },
+      "copy_link": {
+        "success": "Tautan komentar berhasil disalin ke clipboard",
+        "error": "Gagal menyalin tautan komentar. Silakan coba lagi nanti."
       }
     },
     "empty_state": {
