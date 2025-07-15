@@ -1,12 +1,11 @@
 import { DOMSerializer } from "@tiptap/pm/model";
-import { findChildren, useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
+import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
 import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
