@@ -6,7 +6,6 @@ export type TReadOnlyFileHandler = {
   getAssetDownloadSrc: (path: string) => Promise<string>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
-  isMobile?: boolean;
 };
 
 export type TFileHandler = TReadOnlyFileHandler & {
@@ -21,7 +20,6 @@ export type TFileHandler = TReadOnlyFileHandler & {
      */
     maxFileSize: number;
   };
-  isMobile?: boolean;
 };
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";

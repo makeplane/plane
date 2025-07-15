@@ -38,10 +38,16 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "editable"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isMobile"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
 > & {
   enableHistory: boolean;
-  editable: boolean;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -50,10 +56,11 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    isMobile = false,
     mentionHandler,
     placeholder,
     tabIndex,
-    editable,
+    editable = true,
   } = args;
 
   const extensions = [
@@ -114,10 +121,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     extensions.push(
       ImageExtension({
         fileHandler,
+        isMobile,
       }),
       CustomImageExtension({
         fileHandler,
         isEditable: editable,
+        isMobile,
       })
     );
   }

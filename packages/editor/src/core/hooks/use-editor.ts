@@ -45,22 +45,6 @@ export const useEditor = (props: TEditorHookProps) => {
     value,
   } = props;
 
-  // const [isInitialContentLoaded, setIsInitialContentLoaded] = useState<boolean>(false);
-
-  // // Verifies editor initialization with initial content and triggers a callback with the content height
-  // const onEditorContentLoad = useCallback(() => {
-  //   const editorContainer = document.querySelector(".tiptap");
-  //   if (
-  //     editorContainer &&
-  //     '<p class="editor-paragraph-block"></p>' !== editorContainer.innerHTML &&
-  //     !isInitialContentLoaded &&
-  //     onInitialContentLoad
-  //   ) {
-  //     setIsInitialContentLoaded(true);
-  //     onInitialContentLoad?.(editorContainer.clientHeight);
-  //   }
-  // }, [onInitialContentLoad, isInitialContentLoaded]);
-
   const editor = useTiptapEditor(
     {
       editable,
@@ -89,7 +73,6 @@ export const useEditor = (props: TEditorHookProps) => {
       onCreate: () => handleEditorReady?.(true),
       onTransaction: () => {
         onTransaction?.();
-        // onEditorContentLoad();
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
@@ -145,7 +128,6 @@ export const useEditor = (props: TEditorHookProps) => {
     () => ({
       ...getEditorRefHelpers({ editor, provider }),
       blur: () => editor?.commands.blur(),
-      createNodeSelection: (pos: number) => editor?.commands.setNodeSelection(pos),
       createSelectionAtCursorPosition: () => {
         if (!editor) return;
         const { empty } = editor.state.selection;
@@ -179,7 +161,6 @@ export const useEditor = (props: TEditorHookProps) => {
           }
         }
       },
-      editorHasSynced: () => (provider ? provider.isSynced : false),
       emitRealTimeUpdate: (message) => provider?.sendStateless(message),
       executeMenuItemCommand: (props) => {
         const { itemKey } = props;
@@ -193,54 +174,6 @@ export const useEditor = (props: TEditorHookProps) => {
         } else {
           console.warn(`No command found for item: ${itemKey}`);
         }
-      },
-      findAndDeleteNode: ({ attribute, value }: { attribute: string; value: string | string[] }, nodeName: string) => {
-        // We use a single transaction for all deletions
-        editor
-          ?.chain()
-          .command(({ tr }) => {
-            // Set the metadata directly on the transaction
-            tr.setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true);
-
-            let modified = false;
-
-            // Find and delete nodes based on whether value is an array or single string
-            if (Array.isArray(value)) {
-              // For array of values, find all matching nodes in one pass
-              const allNodesToDelete = value.flatMap((val) =>
-                findChildren(tr.doc, (node) => node.type.name === nodeName && node.attrs[attribute] === val)
-              );
-
-              // If we found nodes to delete
-              if (allNodesToDelete.length > 0) {
-                // Delete nodes in reverse order to maintain position integrity
-                allNodesToDelete
-                  .sort((a, b) => b.pos - a.pos)
-                  .forEach((targetNode) => {
-                    tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
-                  });
-                modified = true;
-              }
-            } else {
-              // Original single value logic
-              const nodes = findChildren(
-                tr.doc,
-                (node) => node.type.name === nodeName && node.attrs[attribute] === value
-              );
-
-              // If we found a node to delete
-              if (nodes.length > 0) {
-                // Get the first matching node
-                const targetNode = nodes[0];
-                // Delete the node directly using the transaction
-                tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
-                modified = true;
-              }
-            }
-
-            return modified; // Return true if we made changes, false otherwise
-          })
-          .run();
       },
       focus: ({ position = "start", scrollIntoView = false }) => editor?.commands.focus(position, { scrollIntoView }),
       getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
@@ -378,7 +311,8 @@ export const useEditor = (props: TEditorHookProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
-      undo: () => editor?.commands.undo(),    }),
+      undo: () => editor?.commands.undo(),
+    }),
     [editor]
   );
 

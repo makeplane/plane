@@ -107,7 +107,6 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  createNodeSelection: (pos: number) => void;
   createSelectionAtCursorPosition: () => void;
   focus: ({ position, scrollIntoView }: { position?: FocusPosition; scrollIntoView?: boolean }) => void;
   getCordsFromPos: (pos?: number) =>
@@ -120,19 +119,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
     | undefined;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
   getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => Record<string, any> | undefined;
-  editorHasSynced: () => boolean;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
-  findAndDeleteNode: (
-    {
-      attribute,
-      value,
-    }: {
-      attribute: string;
-      value: string | string[];
-    },
-    nodeName: string
-  ) => void;
-
   getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
@@ -143,7 +130,6 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
   redo: () => void;
-  // eslint-disable-next-line no-undef
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
@@ -160,6 +146,7 @@ export interface IEditorProps {
   disabledExtensions: TExtensions[];
   editable?: boolean;
   editorClassName?: string;
+  editorProps?: EditorProps;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
@@ -181,15 +168,11 @@ export interface IEditorProps {
 
 export type ILiteTextEditorProps = IEditorProps;
 
-export type IRichTextEditorProps = IEditorProps & {
-  editable: boolean;
-};
+export type IRichTextEditorProps = IEditorProps;
 
 export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
-  editable: boolean;
-  editorProps?: EditorProps;
   embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;

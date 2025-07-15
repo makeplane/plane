@@ -1,4 +1,4 @@
-import { ReactNodeViewRenderer } from "@tiptap/react";
+import { NodeViewProps, ReactNodeViewRenderer } from "@tiptap/react";
 import { v4 as uuidv4 } from "uuid";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
@@ -8,17 +8,18 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import type { TFileHandler, TReadOnlyFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView } from "./components/node-view";
+import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
 import { getImageComponentImageFileMap } from "./utils";
 
 type Props = {
   fileHandler: TFileHandler | TReadOnlyFileHandler;
   isEditable: boolean;
+  isMobile: boolean;
 };
 
 export const CustomImageExtension = (props: Props) => {
-  const { fileHandler, isEditable } = props;
+  const { fileHandler, isEditable, isMobile } = props;
   // derived values
   const { getAssetSrc, getAssetDownloadSrc, restore: restoreImageFn } = fileHandler;
 
@@ -116,7 +117,9 @@ export const CustomImageExtension = (props: Props) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNodeView);
+      return ReactNodeViewRenderer((props: CustomImageNodeViewProps) => (
+        <CustomImageNodeView {...props} isMobile={isMobile} />
+      ));
     },
   });
 };

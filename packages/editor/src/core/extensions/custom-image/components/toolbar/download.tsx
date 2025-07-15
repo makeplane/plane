@@ -4,13 +4,14 @@ import { Tooltip } from "@plane/ui";
 
 type Props = {
   src: string;
+  tooltipDisabled?: boolean;
 };
 
 export const ImageDownloadAction: React.FC<Props> = (props) => {
-  const { src } = props;
+  const { src, tooltipDisabled = false } = props;
 
   return (
-    <Tooltip tooltipContent="Download">
+    <Tooltip disabled={tooltipDisabled} tooltipContent="Download">
       <button
         type="button"
         onClick={() => window.open(src, "_blank")}

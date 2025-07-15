@@ -11,10 +11,11 @@ type Props = {
   activeAlignment: TCustomImageAlignment;
   handleChange: (alignment: TCustomImageAlignment) => void;
   toggleToolbarViewStatus: (val: boolean) => void;
+  tooltipDisabled?: boolean;
 };
 
 export const ImageAlignmentAction: React.FC<Props> = (props) => {
-  const { activeAlignment, handleChange, toggleToolbarViewStatus } = props;
+  const { activeAlignment, handleChange, toggleToolbarViewStatus, tooltipDisabled = false } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // refs
@@ -30,7 +31,7 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
 
   return (
     <div ref={dropdownRef} className="h-full relative">
-      <Tooltip tooltipContent="Align">
+      <Tooltip disabled={tooltipDisabled} tooltipContent="Align">
         <button
           type="button"
           className="h-full flex items-center gap-1 text-white/60 hover:text-white transition-colors"
@@ -43,7 +44,7 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
       {isDropdownOpen && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
-            <Tooltip key={option.value} tooltipContent={option.label}>
+            <Tooltip disabled={tooltipDisabled} key={option.value} tooltipContent={option.label}>
               <button
                 type="button"
                 className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"

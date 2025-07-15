@@ -5,6 +5,7 @@ import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorPr
 
 type TCoreHookProps = Pick<
   IEditorProps,
+  | "editable"
   | "disabledExtensions"
   | "dragDropEnabled"
   | "editorClassName"
@@ -30,7 +31,6 @@ export type TEditorHookProps = TCoreHookProps &
     | "tabIndex"
     | "value"
   > & {
-    editable: boolean;
     enableHistory: boolean;
     initialValue?: string;
     provider?: HocuspocusProvider;
@@ -39,8 +39,6 @@ export type TEditorHookProps = TCoreHookProps &
 export type TCollaborativeEditorHookProps = TCoreHookProps &
   Pick<
     TEditorHookProps,
-    | "dragDropEnabled"
-    | "editable"
     | "fileHandler"
     | "forwardedRef"
     | "id"

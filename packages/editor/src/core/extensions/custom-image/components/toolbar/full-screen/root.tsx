@@ -39,7 +39,7 @@ export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
         width={width}
         toggleFullScreenMode={setIsFullScreenEnabled}
       />
-      <Tooltip tooltipContent="View in full screen">
+      <Tooltip disabled={isMobile} tooltipContent="View in full screen">
         <button
           type="button"
           onClick={(e) => {

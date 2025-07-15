@@ -18,7 +18,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     onTransaction,
     disabledExtensions,
     dragDropEnabled = true,
-    editable,
+    editable = true,
     editorClassName = "",
     editorProps = {},
     embedHandler,

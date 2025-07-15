@@ -33,10 +33,13 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomStarterKitExtension } from "./starter-kit";
 
-type Props = Pick<IReadOnlyEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler">;
+type Props = Pick<
+  IReadOnlyEditorProps,
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "isMobile" | "mentionHandler"
+>;
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { disabledExtensions, fileHandler, flaggedExtensions, mentionHandler } = props;
+  const { disabledExtensions, fileHandler, flaggedExtensions, isMobile = false, mentionHandler } = props;
 
   const extensions = [
     CustomStarterKitExtension({
@@ -90,10 +93,12 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     extensions.push(
       ImageExtension({
         fileHandler,
+        isMobile,
       }),
       CustomImageExtension({
         fileHandler,
         isEditable: false,
+        isMobile,
       })
     );
   }
