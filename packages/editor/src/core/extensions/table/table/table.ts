@@ -26,8 +26,8 @@ import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";
 import { deleteColumnOrTable } from "./utilities/delete-column";
+import { handleDeleteKeyOnTable } from "./utilities/delete-key-shortcut";
 import { deleteRowOrTable } from "./utilities/delete-row";
-import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 import { DEFAULT_COLUMN_WIDTH } from ".";
@@ -236,10 +236,10 @@ export const Table = Node.create<TableOptions>({
         return false;
       },
       "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
-      Backspace: deleteTableWhenAllCellsSelected,
-      "Mod-Backspace": deleteTableWhenAllCellsSelected,
-      Delete: deleteTableWhenAllCellsSelected,
-      "Mod-Delete": deleteTableWhenAllCellsSelected,
+      Backspace: handleDeleteKeyOnTable,
+      "Mod-Backspace": handleDeleteKeyOnTable,
+      Delete: handleDeleteKeyOnTable,
+      "Mod-Delete": handleDeleteKeyOnTable,
       ArrowDown: insertLineBelowTableAction,
       ArrowUp: insertLineAboveTableAction,
     };
