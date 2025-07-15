@@ -6,6 +6,7 @@ from plane.license.api.views import (
     InstanceAdminSignInEndpoint,
     InstanceAdminSignUpEndpoint,
     InstanceConfigurationEndpoint,
+    DisableEmailFeatureEndpoint,
     InstanceEndpoint,
     SignUpScreenVisitedEndpoint,
     InstanceAdminUserMeEndpoint,
@@ -37,6 +38,11 @@ urlpatterns = [
         "configurations/",
         InstanceConfigurationEndpoint.as_view(),
         name="instance-configuration",
+    ),
+    path(
+        "configurations/disable-email-feature/",
+        DisableEmailFeatureEndpoint.as_view(),
+        name="disable-email-configuration",
     ),
     path(
         "admins/sign-in/",

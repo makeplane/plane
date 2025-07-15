@@ -35,7 +35,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
   );
   // store hooks
   const {
-    activity: { getActivityCommentByIssueId },
+    activity: { getActivityAndCommentsByIssueId },
     comment: { getCommentById },
   } = useIssueDetail(EIssueServiceType.EPICS);
 
@@ -49,7 +49,7 @@ export const EpicSidebarCommentsRoot: FC<TEpicSidebarCommentsRootProps> = observ
 
   // derived values
   const project = getProjectById(projectId);
-  const activityComments = getActivityCommentByIssueId(epicId, E_SORT_ORDER.ASC);
+  const activityComments = getActivityAndCommentsByIssueId(epicId, E_SORT_ORDER.ASC);
 
   if (!project) return <></>;
 

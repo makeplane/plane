@@ -2,13 +2,15 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail, useUserPermissions } from "@/hooks/store";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -23,6 +25,8 @@ type Props = {
 
 export const ConvertWorkItemAction: FC<Props> = observer((props) => {
   const { workItemId, conversionType, disabled = false } = props;
+  // navigation
+  const { workspaceSlug } = useParams();
   // hooks
   const {
     issue: { getIssueById: getEpicById },
@@ -40,7 +44,7 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
   } = useIssueDetail();
   const { getProjectFeatures } = useProjectAdvanced();
   const { getProjectDefaultIssueType, getProjectEpicId } = useIssueTypes();
-
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const issue =
     conversionType === EWorkItemConversionType.WORK_ITEM ? getEpicById(workItemId) : getIssueById(workItemId);
@@ -67,11 +71,22 @@ export const ConvertWorkItemAction: FC<Props> = observer((props) => {
     else toggleConversionWarningModal(workItemId);
   };
 
+  const isEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    projectId?.toString()
+  );
+
   if (!isEpicsEnabled) return null;
 
   return (
     <>
-      <ConvertWorkItemIcon conversionType={conversionType} handleOnClick={handleOnClick} disabled={disabled} />
+      <ConvertWorkItemIcon
+        conversionType={conversionType}
+        handleOnClick={handleOnClick}
+        disabled={!isEditable || disabled}
+      />
 
       {isConversionWarningModalOpen === workItemId && conversionType === EWorkItemConversionType.EPIC && (
         <AlertModalCore

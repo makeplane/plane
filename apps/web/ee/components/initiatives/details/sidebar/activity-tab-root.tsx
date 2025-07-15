@@ -28,14 +28,14 @@ export const InitiativeSidebarActivityRoot: FC<Props> = observer((props) => {
   // store hooks
   const {
     initiative: {
-      initiativeCommentActivities: { getActivityCommentByIssueId },
+      initiativeCommentActivities: { getActivityAndCommentByIssueId },
     },
   } = useInitiatives();
 
   const { t } = useTranslation();
 
   // derived values
-  const activityComments = getActivityCommentByIssueId(initiativeId);
+  const activityComments = getActivityAndCommentByIssueId(initiativeId);
 
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
     EActivityFilterType.ACTIVITY,

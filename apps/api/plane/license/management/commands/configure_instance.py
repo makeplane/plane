@@ -90,6 +90,12 @@ class Command(BaseCommand):
                 "is_encrypted": False,
             },
             {
+                "key": "ENABLE_SMTP",
+                "value": os.environ.get("ENABLE_SMTP", "0"),
+                "category": "SMTP",
+                "is_encrypted": False,
+            },
+            {
                 "key": "GITLAB_CLIENT_SECRET",
                 "value": os.environ.get("GITLAB_CLIENT_SECRET"),
                 "category": "GITLAB",

@@ -38,7 +38,7 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
     this.issueActivityService = new IssueActivityService(this.serviceType);
   }
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     const workspace = this.store.workspaceRoot.currentWorkspace;
     if (!workspace?.id || !issueId) return undefined;
 

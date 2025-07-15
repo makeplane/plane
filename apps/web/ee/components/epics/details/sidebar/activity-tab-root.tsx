@@ -32,7 +32,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
   );
   // store hooks
   const {
-    activity: { getActivityCommentByIssueId },
+    activity: { getActivityAndCommentsByIssueId },
     comment: {},
   } = useIssueDetail(EIssueServiceType.EPICS);
 
@@ -40,7 +40,7 @@ export const EpicSidebarActivityRoot: FC<TEpicDetailActivityRootProps> = observe
   const toggleSortOrder = () => setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
 
   // derived values
-  const activityComments = getActivityCommentByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
+  const activityComments = getActivityAndCommentsByIssueId(epicId, sortOrder ?? E_SORT_ORDER.ASC);
 
   const filteredActivityComments = filterActivityOnSelectedFilters(activityComments ?? [], [
     EActivityFilterType.ACTIVITY,

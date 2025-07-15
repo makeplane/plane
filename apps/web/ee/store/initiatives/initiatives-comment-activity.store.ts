@@ -30,7 +30,7 @@ export interface IInitiativeCommentActivityStore {
   commentReactionsByUser: (commentId: string, userId: string) => TIssueCommentReaction[];
 
   getInitiativeComments: (initiativeId: string) => TInitiativeComment[] | undefined;
-  getActivityCommentByIssueId: (initiativeId: string) => TInitiativeActivityComment[] | undefined;
+  getActivityAndCommentByIssueId: (initiativeId: string) => TInitiativeActivityComment[] | undefined;
 
   fetchInitiativeComments: (workspaceSlug: string, initiativeId: string) => Promise<TInitiativeComment[]>;
   createInitiativeComment: (
@@ -122,7 +122,7 @@ export class InitiativeCommentActivityStore implements IInitiativeCommentActivit
 
   getInitiativeComments = computedFn((initiativeId: string) => this.initiativeCommentsMap[initiativeId]);
 
-  getActivityCommentByIssueId = computedFn((initiativeId: string) => {
+  getActivityAndCommentByIssueId = computedFn((initiativeId: string) => {
     if (!initiativeId) return undefined;
 
     let activityComments: TInitiativeActivityComment[] = [];

@@ -275,6 +275,21 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
   );
 };
 
+export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
+  const factory = useMenuItemFactory(props);
+
+  return useMemo(
+    () => [
+      factory.createCopyMenuItem(),
+      factory.createOpenInNewTabMenuItem(),
+      factory.createArchiveMenuItem(),
+      factory.createRestoreMenuItem(),
+      factory.createDeleteMenuItem(),
+    ],
+    [factory]
+  );
+};
+
 export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
   const factory = useMenuItemFactory(props);
 
