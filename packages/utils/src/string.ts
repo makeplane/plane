@@ -248,7 +248,7 @@ export const substringMatch = (text: string, searchQuery: string): boolean => {
 
     // Not all characters of searchQuery found in order
     return false;
-  } catch (error) {
+  } catch (_err) {
     return false;
   }
 };
@@ -277,7 +277,7 @@ const fallbackCopyTextToClipboard = (text: string) => {
     // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
     document.execCommand("copy");
-  } catch (err) {
+  } catch (_err) {
     // catch fallback error
   }
 
