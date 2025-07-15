@@ -10,6 +10,8 @@ import { TUserDetails } from "@plane/editor";
 // types
 import { type HocusPocusServerContext } from "@/core/types/common.js";
 
+export { type Hocuspocus } from "@hocuspocus/server";
+
 export const getHocusPocusServer = async () => {
   const extensions = await getExtensions();
   const serverName = process.env.HOSTNAME || uuidv4();
@@ -53,7 +55,7 @@ export const getHocusPocusServer = async () => {
           userId,
         });
       } catch (error) {
-        throw Error("Authentication unsuccessful!");
+        throw Error("Authentication unsuccessful!", { cause: error });
       }
     },
     async onStateless({ payload, document }) {
