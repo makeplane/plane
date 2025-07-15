@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
