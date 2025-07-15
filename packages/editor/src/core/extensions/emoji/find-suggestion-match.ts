@@ -18,7 +18,6 @@ export type SuggestionMatch = {
 
 export function customFindSuggestionMatch(config: Trigger): SuggestionMatch {
   const { char, allowSpaces: allowSpacesOption, allowToIncludeChar, allowedPrefixes, startOfLine, $position } = config;
-  console.log("customFindSuggestionMatch");
 
   const allowSpaces = allowSpacesOption && !allowToIncludeChar;
 
