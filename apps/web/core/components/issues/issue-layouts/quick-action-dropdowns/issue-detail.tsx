@@ -108,9 +108,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
 
   const customDuplicateAction = async () => {
     setDuplicateWorkItemModal(true);
-    console.log("coming here 0");
     if (toggleDuplicateIssueModal) {
-      console.log("coming here 1");
       toggleDuplicateIssueModal(true);
     }
   };

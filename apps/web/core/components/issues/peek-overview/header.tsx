@@ -141,7 +141,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       });
     } catch (error) {
       setToast({
-        title: t("toast.error "),
+        title: t("toast.error"),
         type: TOAST_TYPE.ERROR,
         message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
       });
