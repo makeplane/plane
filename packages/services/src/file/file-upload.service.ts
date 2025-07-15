@@ -21,10 +21,7 @@ export class FileUploadService extends APIService {
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async uploadFile(
-    url: string,
-    data: FormData,
-  ): Promise<void> {
+  async uploadFile(url: string, data: FormData): Promise<void> {
     this.cancelSource = axios.CancelToken.source();
     return this.post(url, data, {
       headers: {

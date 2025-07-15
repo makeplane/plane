@@ -1,6 +1,6 @@
 {
   "name": "@plane/utils",
-  "version": "0.26.1",
+  "version": "0.27.1",
   "description": "Helper functions shared across multiple apps internally",
   "license": "AGPL-3.0",
   "private": true,
@@ -11,25 +11,35 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts --format esm,cjs --dts --external react --minify",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "build": "tsc --noEmit && tsup --minify",
+    "dev": "tsup --watch",
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@plane/constants": "*",
+    "@plane/types": "*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "isomorphic-dompurify": "^2.16.0",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "tailwind-merge": "^2.5.5",
+    "uuid": "^10.0.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
+    "@types/uuid": "^9.0.8",
     "@types/zxcvbn": "^4.4.5",
     "tsup": "8.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   }
 }

@@ -56,22 +56,6 @@ export const createSimilarString = (str: string) => {
 };
 
 /**
- * @description Copies text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<void>} Promise that resolves when copying is complete
- * @example
- * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
- */
-export const copyTextToClipboard = async (text: string): Promise<void> => {
-  if (typeof navigator === "undefined") return;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error("Failed to copy text: ", err);
-  }
-};
-
-/**
  * @description Copies full URL (origin + path) to clipboard
  * @param {string} path - URL path to copy
  * @returns {Promise<void>} Promise that resolves when copying is complete
@@ -146,39 +130,30 @@ export const objToQueryParams = (obj: any) => {
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
- * @description: This function will remove all the HTML tags from the string
+ * @description : This function will remove all the HTML tags from the string
+ * @param {string} htmlString
+ * @return {string}
+ * @example :
+ * const html = "<p>Some text</p>";
+const text = stripHTML(html);
+console.log(text); // Some text
+ */
+export const sanitizeHTML = (htmlString: string) => {
+  const sanitizedText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: [] }); // sanitize the string to remove all HTML tags
+  return sanitizedText.trim(); // trim the string to remove leading and trailing whitespaces
+};
+
+/**
+ * @description: This function will remove all the HTML tags from the string and truncate the string to the specified length
  * @param {string} html
+ * @param {number} length
  * @return {string}
  * @example:
  * const html = "<p>Some text</p>";
- * const text = stripHTML(html);
+ * const text = stripAndTruncateHTML(html);
  * console.log(text); // Some text
  */
-/**
- * @description Sanitizes HTML string by removing tags and properly escaping entities
- * @param {string} htmlString - HTML string to sanitize
- * @returns {string} Sanitized string with escaped HTML entities
- * @example
- * sanitizeHTML("<p>Hello & 'world'</p>") // returns "Hello &amp; &apos;world&apos;"
- */
-export const sanitizeHTML = (htmlString: string) => {
-  if (!htmlString) return "";
-
-  // First use DOMPurify to remove all HTML tags while preserving text content
-  const sanitizedText = DOMPurify.sanitize(htmlString, {
-    ALLOWED_TAGS: [],
-    ALLOWED_ATTR: [],
-    USE_PROFILES: {
-      html: false,
-      svg: false,
-      svgFilters: false,
-      mathMl: false,
-    },
-  });
-
-  // Additional escaping for quotes and apostrophes
-  return sanitizedText.trim().replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-};
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(sanitizeHTML(html), length);
 
 /**
  * @returns {boolean} true if email is valid, false otherwise
@@ -272,43 +247,127 @@ export const joinWithConjunction = (array: string[], separator: string = ", ", c
  */
 export const ensureUrlHasProtocol = (url: string): string => (url.startsWith("http") ? url : `http://${url}`);
 
-// Browser-only clipboard functions
-// let copyTextToClipboard: (text: string) => Promise<void>;
+/**
+ * @returns {boolean} true if searchQuery is substring of text in the same order, false otherwise
+ * @description Returns true if searchQuery is substring of text in the same order, false otherwise
+ * @param {string} text string to compare from
+ * @param {string} searchQuery
+ * @example substringMatch("hello world", "hlo") => true
+ * @example substringMatch("hello world", "hoe") => false
+ */
+export const substringMatch = (text: string, searchQuery: string): boolean => {
+  try {
+    let searchIndex = 0;
 
-// if (typeof window !== "undefined") {
-//   const fallbackCopyTextToClipboard = (text: string) => {
-//     const textArea = document.createElement("textarea");
-//     textArea.value = text;
+    for (let i = 0; i < text.length; i++) {
+      if (text[i].toLowerCase() === searchQuery[searchIndex]?.toLowerCase()) searchIndex++;
 
-//     // Avoid scrolling to bottom
-//     textArea.style.top = "0";
-//     textArea.style.left = "0";
-//     textArea.style.position = "fixed";
+      // All characters of searchQuery found in order
+      if (searchIndex === searchQuery.length) return true;
+    }
 
-//     document.body.appendChild(textArea);
-//     textArea.focus();
-//     textArea.select();
+    // Not all characters of searchQuery found in order
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
 
-//     try {
-//       // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
-//       // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
-//       document.execCommand("copy");
-//     } catch (err) {}
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+const fallbackCopyTextToClipboard = (text: string) => {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
 
-//     document.body.removeChild(textArea);
-//   };
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
 
-//   copyTextToClipboard = async (text: string) => {
-//     if (!navigator.clipboard) {
-//       fallbackCopyTextToClipboard(text);
-//       return;
-//     }
-//     await navigator.clipboard.writeText(text);
-//   };
-// } else {
-//   copyTextToClipboard = async () => {
-//     throw new Error("copyTextToClipboard is only available in browser environments");
-//   };
-// }
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
 
-// export { copyTextToClipboard };
+  try {
+    // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+    document.execCommand("copy");
+  } catch (err) {
+    // catch fallback error
+  }
+
+  document.body.removeChild(textArea);
+};
+
+/**
+ * @description Copies text to clipboard
+ * @param {string} text - Text to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyTextToClipboard("Hello, World!") // copies "Hello, World!" to clipboard
+ */
+export const copyTextToClipboard = async (text: string): Promise<void> => {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  await navigator.clipboard.writeText(text);
+};
+
+/**
+ * @description Joins URL path segments properly, removing duplicate slashes using URL encoding
+ * @param {...string} segments - URL path segments to join
+ * @returns {string} Properly joined URL path
+ * @example
+ * joinUrlPath("/workspace", "/projects") => "/workspace/projects"
+ * joinUrlPath("/workspace", "projects") => "/workspace/projects"
+ * joinUrlPath("workspace", "projects") => "/workspace/projects"
+ * joinUrlPath("/workspace/", "/projects/") => "/workspace/projects/"
+ */
+export const joinUrlPath = (...segments: string[]): string => {
+  if (segments.length === 0) return "";
+
+  // Filter out empty segments
+  const validSegments = segments.filter((segment) => segment !== "");
+  if (validSegments.length === 0) return "";
+
+  // Process segments to normalize slashes
+  const processedSegments = validSegments.map((segment, index) => {
+    let processed = segment;
+
+    // Remove leading slashes from all segments except the first
+    if (index > 0) {
+      while (processed.startsWith("/")) {
+        processed = processed.substring(1);
+      }
+    }
+
+    // Remove trailing slashes from all segments except the last
+    if (index < validSegments.length - 1) {
+      while (processed.endsWith("/")) {
+        processed = processed.substring(0, processed.length - 1);
+      }
+    }
+
+    return processed;
+  });
+
+  // Join segments with single slash
+  const joined = processedSegments.join("/");
+
+  // Use URL constructor to normalize the path and handle double slashes
+  try {
+    // Create a dummy URL to leverage browser's URL normalization
+    const dummyUrl = new URL(`http://example.com/${joined}`);
+    return dummyUrl.pathname;
+  } catch {
+    // Fallback: manually handle double slashes by splitting and filtering
+    const pathParts = joined.split("/").filter((part) => part !== "");
+    return pathParts.length > 0 ? `/${pathParts.join("/")}` : "";
+  }
+};

@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Tidak dapat menghapus proyek dari favorit. Silakan coba lagi.",
   "project_created_successfully": "Proyek berhasil dibuat",
   "project_created_successfully_description": "Proyek berhasil dibuat. Anda sekarang dapat mulai menambahkan item kerja ke dalamnya.",
+  "project_name_already_taken": "Nama proyek sudah digunakan",
+  "project_identifier_already_taken": "ID proyek sudah digunakan",
   "project_cover_image_alt": "Gambar sampul proyek",
   "name_is_required": "Nama diperlukan",
   "title_should_be_less_than_255_characters": "Judul harus kurang dari 255 karakter",
@@ -872,13 +874,15 @@
     "guests": "Tamu",
     "on_track": "Sesuai Jalur",
     "off_track": "Menyimpang",
+    "at_risk": "Dalam risiko",
     "timeline": "Linimasa",
     "completion": "Penyelesaian",
     "upcoming": "Mendatang",
     "completed": "Selesai",
     "in_progress": "Sedang berlangsung",
     "planned": "Direncanakan",
-    "paused": "Dijedaikan"
+    "paused": "Dijedaikan",
+    "no_of": "Jumlah {entity}"
   },
   "chart": {
     "x_axis": "Sumbu-X",
@@ -1038,6 +1042,10 @@
       },
       "upload": {
         "error": "Gagal mengunggah aset. Silakan coba lagi nanti."
+      },
+      "copy_link": {
+        "success": "Tautan komentar berhasil disalin ke clipboard",
+        "error": "Gagal menyalin tautan komentar. Silakan coba lagi nanti."
       }
     },
     "empty_state": {
@@ -1339,6 +1347,17 @@
       "project_insights": {
         "title": "Belum ada data",
         "description": "Item pekerjaan yang ditugaskan kepada Anda, dipecah berdasarkan status, akan muncul di sini."
+      },
+      "general": {
+        "title": "Lacak kemajuan, beban kerja, dan alokasi. Temukan tren, hapus hambatan, dan percepat pekerjaan",
+        "description": "Lihat lingkup versus permintaan, perkiraan, dan perluasan lingkup. Dapatkan kinerja berdasarkan anggota tim dan tim, dan pastikan proyek Anda berjalan tepat waktu.",
+        "primary_button": {
+          "text": "Mulai proyek pertama Anda",
+          "comic": {
+            "title": "Analitik bekerja paling baik dengan Siklus + Modul",
+            "description": "Pertama, batasi waktu masalah Anda ke dalam Siklus dan, jika Anda bisa, kelompokkan masalah yang lebih dari satu siklus ke dalam Modul. Lihat keduanya di navigasi kiri."
+          }
+        }
       }
     },
     "created_vs_resolved": "Dibuat vs Diselesaikan",
@@ -2460,5 +2479,46 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane tidak berhasil dimulai. Ini bisa karena satu atau lebih layanan Plane gagal untuk dimulai.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Pilih View Logs dari setup.sh dan log Docker untuk memastikan."
+  },
+  "no_of": "Jumlah {entity}",
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Garis Besar",
+        "empty_state": {
+          "title": "Judul hilang",
+          "description": "Mari tambahkan beberapa judul di halaman ini untuk melihatnya di sini."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Kata",
+          "characters": "Karakter",
+          "paragraphs": "Paragraf",
+          "read_time": "Waktu baca"
+        },
+        "actors_info": {
+          "edited_by": "Disunting oleh",
+          "created_by": "Dibuat oleh"
+        },
+        "version_history": {
+          "label": "Riwayat versi",
+          "current_version": "Versi saat ini"
+        }
+      },
+      "assets": {
+        "label": "Aset",
+        "download_button": "Unduh",
+        "empty_state": {
+          "title": "Gambar hilang",
+          "description": "Tambahkan gambar untuk melihatnya di sini."
+        }
+      }
+    },
+    "open_button": "Buka panel navigasi",
+    "close_button": "Tutup panel navigasi",
+    "outline_floating_button": "Buka garis besar"
   }
 }

@@ -1,97 +1,65 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { DOMSerializer, MarkType, NodeType } from "@tiptap/pm/model";
-import { EditorProps } from "@tiptap/pm/view";
-import { useEditor as useTiptapEditor, Extensions } from "@tiptap/react";
-import { useImperativeHandle, MutableRefObject, useEffect, useCallback, useState } from "react";
+import { DOMSerializer } from "@tiptap/pm/model";
+import { findChildren, useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
+import { useImperativeHandle, useEffect } from "react";
 import * as Y from "yjs";
 // components
 import { getEditorMenuItems } from "@/components/menus";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getParagraphCount } from "@/helpers/common";
+import { getEditorRefHelpers } from "@/helpers/editor-ref";
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { insertContentAtSavedSelection } from "@/helpers/insert-content-at-cursor-position";
-import { IMarking, scrollSummary, scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
+import { scrollToNodeViaDOMCoordinates } from "@/helpers/scroll-to-node";
 // props
 import { CoreEditorProps } from "@/props";
 // types
-import type {
-  TDocumentEventsServer,
-  EditorRefApi,
-  TEditorCommands,
-  TFileHandler,
-  TExtensions,
-  TMentionHandler,
-} from "@/types";
-import { CORE_EDITOR_META } from "@/constants/meta";
+import type { TEditorCommands, TEditorHookProps } from "@/types";
 
-export interface CustomEditorProps {
-  editable: boolean;
-  editorClassName: string;
-  editorProps?: EditorProps;
-  enableHistory: boolean;
-  disabledExtensions: TExtensions[];
-  extensions?: Extensions;
-  fileHandler: TFileHandler;
-  forwardedRef?: MutableRefObject<EditorRefApi | null>;
-  handleEditorReady?: (value: boolean) => void;
-  id?: string;
-  initialValue?: string;
-  mentionHandler: TMentionHandler;
-  onChange?: (json: object, html: string) => void;
-  onInitialContentLoad?: (contentHeight: number) => void;
-  onTransaction?: () => void;
-  autofocus?: boolean;
-  placeholder?: string | ((isFocused: boolean, value: string) => string);
-  provider?: HocuspocusProvider;
-  tabIndex?: number;
-  // undefined when prop is not passed, null if intentionally passed to stop
-  // swr syncing
-  value?: string | null | undefined;
-}
-
-export const useEditor = (props: CustomEditorProps) => {
+export const useEditor = (props: TEditorHookProps) => {
   const {
+    autofocus = false,
     disabledExtensions,
     editable = true,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
     enableHistory,
     extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id = "",
     initialValue,
     mentionHandler,
+    onAssetChange,
     onChange,
-    onInitialContentLoad,
     onTransaction,
     placeholder,
+    provider,
     tabIndex,
     value,
-    provider,
-    autofocus = false,
   } = props;
 
-  const [isInitialContentLoaded, setIsInitialContentLoaded] = useState<boolean>(false);
+  // const [isInitialContentLoaded, setIsInitialContentLoaded] = useState<boolean>(false);
 
-  // Verifies editor initialization with initial content and triggers a callback with the content height
-  const onEditorContentLoad = useCallback(() => {
-    const editorContainer = document.querySelector(".tiptap");
-    if (
-      editorContainer &&
-      '<p class="editor-paragraph-block"></p>' !== editorContainer.innerHTML &&
-      !isInitialContentLoaded &&
-      onInitialContentLoad
-    ) {
-      setIsInitialContentLoaded(true);
-      onInitialContentLoad?.(editorContainer.clientHeight);
-    }
-  }, [onInitialContentLoad, isInitialContentLoaded]);
+  // // Verifies editor initialization with initial content and triggers a callback with the content height
+  // const onEditorContentLoad = useCallback(() => {
+  //   const editorContainer = document.querySelector(".tiptap");
+  //   if (
+  //     editorContainer &&
+  //     '<p class="editor-paragraph-block"></p>' !== editorContainer.innerHTML &&
+  //     !isInitialContentLoaded &&
+  //     onInitialContentLoad
+  //   ) {
+  //     setIsInitialContentLoaded(true);
+  //     onInitialContentLoad?.(editorContainer.clientHeight);
+  //   }
+  // }, [onInitialContentLoad, isInitialContentLoaded]);
 
   const editor = useTiptapEditor(
     {
@@ -110,6 +78,7 @@ export const useEditor = (props: CustomEditorProps) => {
           disabledExtensions,
           enableHistory,
           fileHandler,
+          flaggedExtensions,
           mentionHandler,
           placeholder,
           tabIndex,
@@ -120,7 +89,7 @@ export const useEditor = (props: CustomEditorProps) => {
       onCreate: () => handleEditorReady?.(true),
       onTransaction: () => {
         onTransaction?.();
-        onEditorContentLoad();
+        // onEditorContentLoad();
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
@@ -157,19 +126,26 @@ export const useEditor = (props: CustomEditorProps) => {
     editor.commands.updateAssetsUploadStatus?.(assetsUploadStatus);
   }, [editor, fileHandler.assetsUploadStatus]);
 
+  // subscribe to assets list changes
+  const assetsList = useEditorState({
+    editor,
+    selector: ({ editor }) => ({
+      assets: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsList : [],
+    }),
+  });
+  // trigger callback when assets list changes
+  useEffect(() => {
+    const assets = assetsList?.assets;
+    if (!assets || !onAssetChange) return;
+    onAssetChange(assets);
+  }, [assetsList?.assets, onAssetChange]);
+
   useImperativeHandle(
     forwardedRef,
     () => ({
-      undo: () => editor?.commands.undo(),
-      redo: () => editor?.commands.redo(),
+      ...getEditorRefHelpers({ editor, provider }),
       blur: () => editor?.commands.blur(),
-      focus: ({ position, scrollIntoView }) =>
-        editor?.commands.focus(position ?? "start", { scrollIntoView: scrollIntoView ?? false }),
-      scrollToNodeViaDOMCoordinates: ({ pos, behavior = "smooth" }) => {
-        const resolvedPos = pos ?? editor?.state.selection.from;
-        if (!editor || !resolvedPos) return;
-        scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
-      },
+      createNodeSelection: (pos: number) => editor?.commands.setNodeSelection(pos),
       createSelectionAtCursorPosition: () => {
         if (!editor) return;
         const { empty } = editor.state.selection;
@@ -203,19 +179,8 @@ export const useEditor = (props: CustomEditorProps) => {
           }
         }
       },
-      getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
-      getCurrentCursorPosition: () => editor?.state.selection.from,
-      clearEditor: (emitUpdate = false) => {
-        editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
-      },
-      setEditorValue: (content: string, emitUpdate = false) => {
-        editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
-      },
-      setEditorValueAtCursorPosition: (content: string) => {
-        if (editor?.state.selection) {
-          insertContentAtSavedSelection(editor, content);
-        }
-      },
+      editorHasSynced: () => (provider ? provider.isSynced : false),
+      emitRealTimeUpdate: (message) => provider?.sendStateless(message),
       executeMenuItemCommand: (props) => {
         const { itemKey } = props;
         const editorItems = getEditorMenuItems(editor);
@@ -229,82 +194,61 @@ export const useEditor = (props: CustomEditorProps) => {
           console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      isMenuItemActive: (props) => {
-        const { itemKey } = props;
-        const editorItems = getEditorMenuItems(editor);
+      findAndDeleteNode: ({ attribute, value }: { attribute: string; value: string | string[] }, nodeName: string) => {
+        // We use a single transaction for all deletions
+        editor
+          ?.chain()
+          .command(({ tr }) => {
+            // Set the metadata directly on the transaction
+            tr.setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true);
 
-        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
-        const item = getEditorMenuItem(itemKey);
-        if (!item) return false;
+            let modified = false;
 
-        return item.isActive(props);
-      },
-      onHeadingChange: (callback: (headings: IMarking[]) => void) => {
-        // Subscribe to update event emitted from headers extension
-        editor?.on("update", () => {
-          const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
-          if (headings) {
-            callback(headings);
-          }
-        });
-        // Return a function to unsubscribe to the continuous transactions of
-        // the editor on unmounting the component that has subscribed to this
-        // method
-        return () => {
-          editor?.off("update");
-        };
-      },
-      getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
-      onStateChange: (callback: () => void) => {
-        // Subscribe to editor state changes
-        editor?.on("transaction", () => {
-          callback();
-        });
+            // Find and delete nodes based on whether value is an array or single string
+            if (Array.isArray(value)) {
+              // For array of values, find all matching nodes in one pass
+              const allNodesToDelete = value.flatMap((val) =>
+                findChildren(tr.doc, (node) => node.type.name === nodeName && node.attrs[attribute] === val)
+              );
 
-        // Return a function to unsubscribe to the continuous transactions of
-        // the editor on unmounting the component that has subscribed to this
-        // method
-        return () => {
-          editor?.off("transaction");
-        };
-      },
-      getMarkDown: (): string => {
-        const markdownOutput = editor?.storage.markdown.getMarkdown();
-        return markdownOutput;
-      },
-      getDocument: () => {
-        const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
-        const documentHTML = editor?.getHTML() ?? "<p></p>";
-        const documentJSON = editor?.getJSON() ?? null;
+              // If we found nodes to delete
+              if (allNodesToDelete.length > 0) {
+                // Delete nodes in reverse order to maintain position integrity
+                allNodesToDelete
+                  .sort((a, b) => b.pos - a.pos)
+                  .forEach((targetNode) => {
+                    tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
+                  });
+                modified = true;
+              }
+            } else {
+              // Original single value logic
+              const nodes = findChildren(
+                tr.doc,
+                (node) => node.type.name === nodeName && node.attrs[attribute] === value
+              );
 
-        return {
-          binary: documentBinary,
-          html: documentHTML,
-          json: documentJSON,
-        };
+              // If we found a node to delete
+              if (nodes.length > 0) {
+                // Get the first matching node
+                const targetNode = nodes[0];
+                // Delete the node directly using the transaction
+                tr.delete(targetNode.pos, targetNode.pos + targetNode.node.nodeSize);
+                modified = true;
+              }
+            }
+
+            return modified; // Return true if we made changes, false otherwise
+          })
+          .run();
       },
-      scrollSummary: (marking: IMarking): void => {
+      focus: ({ position = "start", scrollIntoView = false }) => editor?.commands.focus(position, { scrollIntoView }),
+      getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
+      getCurrentCursorPosition: () => editor?.state.selection.from,
+      getSelectedNodeAttributes: (attribute) => {
         if (!editor) return;
-        scrollSummary(editor, marking);
-      },
-      isEditorReadyToDiscard: () =>
-        !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
-      setFocusAtPosition: (position: number) => {
-        if (!editor || editor.isDestroyed) {
-          console.error("Editor reference is not available or has been destroyed.");
-          return;
-        }
-        try {
-          const docSize = editor.state.doc.content.size;
-          const safePosition = Math.max(0, Math.min(position, docSize));
-          editor
-            .chain()
-            .insertContentAt(safePosition, [{ type: CORE_EXTENSIONS.PARAGRAPH }])
-            .focus()
-            .run();
-        } catch (error) {
-          console.error("An error occurred while setting focus at position:", error);
-        }
+        editor.commands.extendMarkRange("link");
+        return editor.getAttributes(attribute);
       },
       getSelectedText: () => {
         if (!editor) return null;
@@ -340,24 +284,101 @@ export const useEditor = (props: CustomEditorProps) => {
           editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
         }
       },
-      getDocumentInfo: () => ({
-        characters: editor?.storage?.characterCount?.characters?.() ?? 0,
-        paragraphs: getParagraphCount(editor?.state),
-        words: editor?.storage?.characterCount?.words?.() ?? 0,
-      }),
+      isEditorReadyToDiscard: () =>
+        !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
+      isMenuItemActive: (props) => {
+        const { itemKey } = props;
+        const editorItems = getEditorMenuItems(editor);
+
+        const getEditorMenuItem = (itemKey: TEditorCommands) => editorItems.find((item) => item.key === itemKey);
+        const item = getEditorMenuItem(itemKey);
+        if (!item) return false;
+
+        return item.isActive(props);
+      },
+      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
+      onDocumentInfoChange: (callback) => {
+        const handleDocumentInfoChange = () => {
+          if (!editor) return;
+          callback({
+            characters: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.characters?.() : 0,
+            paragraphs: getParagraphCount(editor?.state),
+            words: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.words?.() : 0,
+          });
+        };
+
+        // Subscribe to update event emitted from character count extension
+        editor?.on("update", handleDocumentInfoChange);
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editor?.off("update", handleDocumentInfoChange);
+        };
+      },
+      onHeadingChange: (callback) => {
+        const handleHeadingChange = () => {
+          if (!editor) return;
+          const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
+          if (headings) {
+            callback(headings);
+          }
+        };
+
+        // Subscribe to update event emitted from headers extension
+        editor?.on("update", handleHeadingChange);
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editor?.off("update", handleHeadingChange);
+        };
+      },
+      onStateChange: (callback) => {
+        // Subscribe to editor state changes
+        editor?.on("transaction", callback);
+
+        // Return a function to unsubscribe to the continuous transactions of
+        // the editor on unmounting the component that has subscribed to this
+        // method
+        return () => {
+          editor?.off("transaction", callback);
+        };
+      },
+      redo: () => editor?.commands.redo(),
+      scrollToNodeViaDOMCoordinates({ pos, behavior = "smooth" }) {
+        const resolvedPos = pos ?? editor?.state.selection.from;
+        if (!editor || !resolvedPos) return;
+        scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
+      },
+      setEditorValueAtCursorPosition: (content) => {
+        if (editor?.state.selection) {
+          insertContentAtSavedSelection(editor, content);
+        }
+      },
+      setFocusAtPosition: (position) => {
+        if (!editor || editor.isDestroyed) {
+          console.error("Editor reference is not available or has been destroyed.");
+          return;
+        }
+        try {
+          const docSize = editor.state.doc.content.size;
+          const safePosition = Math.max(0, Math.min(position, docSize));
+          editor
+            .chain()
+            .insertContentAt(safePosition, [{ type: CORE_EXTENSIONS.PARAGRAPH }])
+            .focus()
+            .run();
+        } catch (error) {
+          console.error("An error occurred while setting focus at position:", error);
+        }
+      },
       setProviderDocument: (value) => {
         const document = provider?.document;
         if (!document) return;
         Y.applyUpdate(document, value);
       },
-      getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => {
-        if (!editor) return;
-        editor.commands.extendMarkRange("link");
-        return editor.getAttributes(attribute);
-      },
-      emitRealTimeUpdate: (message: TDocumentEventsServer) => provider?.sendStateless(message),
-      listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
-    }),
+      undo: () => editor?.commands.undo(),    }),
     [editor]
   );
 

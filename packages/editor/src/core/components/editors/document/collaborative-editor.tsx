@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
-import { DocumentContentLoader, PageRenderer } from "@/components/editors";
+import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -13,14 +13,14 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditor } from "@/types";
+import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
-const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
+const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
+    dragDropEnabled = true,
     extensions: externalExtensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
@@ -29,13 +29,15 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
     editorProps,
     embedHandler,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
-    isDragDropEnabled = true,
     isMobile = false,
     mentionHandler,
-    onEditorClick,
+    onAssetChange,
+    onChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -44,7 +46,7 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   } = props;
 
   const extensions: Extensions = useMemo(() => {
-    const allExtensions = [...externalExtensions];
+    const allExtensions = externalExtensions;
 
     if (embedHandler?.issue) {
       allExtensions.push(
@@ -60,18 +62,20 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     disabledExtensions,
+    dragDropEnabled,
     editable,
     editorClassName,
     editorProps,
     embedHandler,
     extensions,
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
-    isDragDropEnabled,
-    isMobile,
     mentionHandler,
+    onAssetChange,
+    onChange,
     onTransaction,
     placeholder,
     realtimeConfig,
@@ -88,12 +92,6 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
 
   if (!editor) return null;
 
-  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
-    "max-w-[1152px]": displayConfig.wideLayout,
-  });
-
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader className={blockWidthClassName} />;
-
   return (
     <PageRenderer
       aiHandler={aiHandler}
@@ -102,14 +100,14 @@ const CollaborativeDocumentEditor = (props: ICollaborativeDocumentEditor) => {
       editor={editor}
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
+      isLoading={!hasServerSynced && !hasServerConnectionFailed}
       isMobile={isMobile}
-      onEditorClick={onEditorClick}
       tabIndex={tabIndex}
     />
   );
 };
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditor>(
+const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
   (props, ref) => (
     <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
   )

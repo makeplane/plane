@@ -13,8 +13,12 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --external express,ws",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external express,ws",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "check:lint": "eslint . --max-warnings 0",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "express": "^4.21.2",
@@ -28,7 +32,7 @@
     "@types/reflect-metadata": "^0.1.0",
     "@types/ws": "^8.5.10",
     "tsup": "8.4.0",
-    "typescript": "^5.3.3"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "express": ">=4.21.2",

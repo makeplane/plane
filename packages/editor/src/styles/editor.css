@@ -481,3 +481,13 @@ p.editor-paragraph-block + p.editor-paragraph-block {
   background-color: var(--editor-colors-purple-background);
 }
 /* end background colors */
+
+/* emoji styles */
+span[data-name][data-type="emoji"] img {
+  display: inline !important;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  max-width: 1.25em;
+  max-height: 1.25em;
+}

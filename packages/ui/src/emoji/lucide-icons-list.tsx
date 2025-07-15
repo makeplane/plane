@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
-// components
-import { Input } from "../form-fields";
-// helpers
-import { cn } from "../../helpers";
-import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
-// icons
-import { InfoIcon } from "../icons";
-// constants
-import { LUCIDE_ICONS_LIST } from "./icons";
 import { Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
+// local imports
+import { LUCIDE_ICONS_LIST } from "..";
+import { cn } from "../../helpers";
+import { Input } from "../form-fields";
+import { InfoIcon } from "../icons";
+import { DEFAULT_COLORS, TIconsListProps, adjustColorForContrast } from "./emoji-icon-helper";
 
 export const LucideIconsList: React.FC<TIconsListProps> = (props) => {
   const { defaultColor, onChange, searchDisabled = false } = props;

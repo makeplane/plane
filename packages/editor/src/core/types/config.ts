@@ -1,5 +1,9 @@
+// plane imports
+import { TWebhookConnectionQueryParams } from "@plane/types";
+
 export type TReadOnlyFileHandler = {
   checkIfAssetExists: (assetId: string) => Promise<boolean>;
+  getAssetDownloadSrc: (path: string) => Promise<string>;
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
   isMobile?: boolean;
@@ -31,4 +35,16 @@ export type TDisplayConfig = {
   fontSize?: TEditorFontSize;
   lineSpacing?: TEditorLineSpacing;
   wideLayout?: boolean;
+};
+
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+  cookie?: string;
+};
+
+export type TRealtimeConfig = {
+  url: string;
+  queryParams: TWebhookConnectionQueryParams;
 };

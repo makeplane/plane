@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "無法從我的最愛移除專案。請再試一次。",
   "project_created_successfully": "專案建立成功",
   "project_created_successfully_description": "專案建立成功。您現在可以開始新增工作事項。",
+  "project_name_already_taken": "專案名稱已被使用。",
+  "project_identifier_already_taken": "專案識別碼已被使用。",
   "project_cover_image_alt": "專案封面圖片",
   "name_is_required": "名稱為必填",
   "title_should_be_less_than_255_characters": "標題不應超過 255 個字元",
@@ -880,7 +882,9 @@
     "completed": "已完成",
     "in_progress": "進行中",
     "planned": "已計劃",
-    "paused": "暫停"
+    "paused": "暫停",
+    "at_risk": "有風險",
+    "no_of": "{entity} 的數量"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -1040,6 +1044,10 @@
       },
       "upload": {
         "error": "資產上傳失敗。請稍後再試。"
+      },
+      "copy_link": {
+        "success": "評論連結已複製到剪貼簿",
+        "error": "複製評論連結時出錯。請稍後再試。"
       }
     },
     "empty_state": {
@@ -1341,6 +1349,17 @@
       "project_insights": {
         "title": "尚無資料",
         "description": "指派給您的工作項目將依狀態分類顯示在此處。"
+      },
+      "general": {
+        "title": "追蹤進度、工作量和分配。發現趨勢，消除障礙，加速工作進展",
+        "description": "查看範圍與需求、估算和範圍蔓延。獲取團隊成員和團隊的績效，確保您的專案按時運行。",
+        "primary_button": {
+          "text": "開始您的第一個專案",
+          "comic": {
+            "title": "分析功能在週期 + 模組中效果最佳",
+            "description": "首先，將您的問題在週期中進行時間限制，如果可能的話，將跨越多個週期的問題分組到模組中。在左側導覽中查看這兩個功能。"
+          }
+        }
       }
     },
     "created_vs_resolved": "已建立 vs 已解決",
@@ -2465,9 +2484,48 @@
     "previously_edited_by": "先前編輯者",
     "edited_by": "編輯者"
   },
-
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能啟動。這可能是因為一個或多個 Plane 服務啟動失敗。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "從 setup.sh 和 Docker 日誌中選擇 View Logs 來確認。"
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大綱",
+        "empty_state": {
+          "title": "缺少標題",
+          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+        }
+      },
+      "info": {
+        "label": "資訊",
+        "document_info": {
+          "words": "字數",
+          "characters": "字元數",
+          "paragraphs": "段落數",
+          "read_time": "閱讀時間"
+        },
+        "actors_info": {
+          "edited_by": "編輯者",
+          "created_by": "建立者"
+        },
+        "version_history": {
+          "label": "版本歷史",
+          "current_version": "目前版本"
+        }
+      },
+      "assets": {
+        "label": "資源",
+        "download_button": "下載",
+        "empty_state": {
+          "title": "缺少圖片",
+          "description": "添加圖片以在這裡查看它們。"
+        }
+      }
+    },
+    "open_button": "打開導航面板",
+    "close_button": "關閉導航面板",
+    "outline_floating_button": "打開大綱"
   }
 }
