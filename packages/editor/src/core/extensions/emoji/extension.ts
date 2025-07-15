@@ -2,10 +2,21 @@
 import { gitHubEmojis, shortcodeToEmoji } from "@tiptap/extension-emoji";
 import { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { Emoji } from "./emoji";
+import { Emoji, EmojiOptions } from "./emoji";
 import suggestion from "./suggestion";
 
-export const EmojiExtension = Emoji.extend({
+export interface ExtendedEmojiOptions extends EmojiOptions {
+  showSuggestion: boolean;
+}
+
+export const EmojiExtension = Emoji.extend<ExtendedEmojiOptions>({
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      showSuggestion: true,
+    };
+  },
+
   addStorage() {
     return {
       ...this.parent?.(),
@@ -23,8 +34,22 @@ export const EmojiExtension = Emoji.extend({
       },
     };
   },
+
+  addProseMirrorPlugins() {
+    const parentPlugins = this.parent?.() || [];
+
+    // If showSuggestion is false, filter out the Suggestion plugin
+    if (!this.options.showSuggestion) {
+      // Return only the emoji plugin (second plugin from parent)
+      return parentPlugins.filter((plugin, index) => index !== 0);
+    }
+
+    // If showSuggestion is true, return all parent plugins
+    return parentPlugins;
+  },
 }).configure({
   emojis: gitHubEmojis,
   suggestion: suggestion,
   enableEmoticons: true,
+  showSuggestion: true,
 });

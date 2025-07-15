@@ -15,6 +15,7 @@ import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -86,7 +87,7 @@ export const inputRegex = /:([a-zA-Z0-9_+-]+):$/;
 export const pasteRegex = /:([a-zA-Z0-9_+-]+):/g;
 
 export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
-  name: "emoji",
+  name: CORE_EXTENSIONS.EMOJI,
 
   inline: true,
 
@@ -97,7 +98,6 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
   addOptions() {
     return {
       HTMLAttributes: {},
-      // emojis: ,
       emojis: emojis,
       enableEmoticons: false,
       forceFallbackImages: false,
@@ -191,23 +191,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
       return ["span", attributes, `:${node.attrs.name}:`];
     }
 
-    const renderFallbackImage = false;
-
-    return [
-      "span",
-      attributes,
-      renderFallbackImage
-        ? [
-            "img",
-            {
-              src: emojiItem.fallbackImage,
-              draggable: "false",
-              loading: "lazy",
-              align: "absmiddle",
-            },
-          ]
-        : emojiItem.emoji || `:${emojiItem.shortcodes[0]}:`,
-    ];
+    return ["span", attributes, emojiItem.emoji || `:${emojiItem.shortcodes[0]}:`];
   },
 
   renderText({ node }) {
