@@ -83,6 +83,7 @@ class SubIssuesEndpoint(BaseAPIView):
                             ~Q(assignees__id__isnull=True)
                             & Q(assignees__member_project__is_active=True)
                             & Q(issue_assignee__deleted_at__isnull=True)
+                            & Q(assignees__member_project__project_id=project_id)
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),

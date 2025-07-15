@@ -1,7 +1,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value, QuerySet
+from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef
 from django.db.models.functions import Coalesce
 
 # Module imports
@@ -23,6 +23,8 @@ def issue_queryset_grouper(
     group_by: Optional[str],
     sub_group_by: Optional[str],
 ) -> QuerySet[Issue]:
+    project_id = queryset.values_list("project_id", flat=True).first()
+
     FIELD_MAPPER: Dict[str, str] = {
         "label_ids": "labels__id",
         "assignee_ids": "assignees__id",
@@ -42,7 +44,10 @@ def issue_queryset_grouper(
     annotations_map: Dict[str, Tuple[str, Q]] = {
         "assignee_ids": (
             "assignees__id",
-            ~Q(assignees__id__isnull=True) & Q(issue_assignee__deleted_at__isnull=True),
+            ~Q(assignees__id__isnull=True)
+            & Q(issue_assignee__deleted_at__isnull=True)
+            & Q(assignees__member_project__is_active=True)
+            & Q(assignees__member_project__project_id=project_id),
         ),
         "label_ids": (
             "labels__id",
