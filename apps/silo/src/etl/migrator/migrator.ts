@@ -442,6 +442,12 @@ export async function migrateToPlane(job: TImportJob, data: PlaneEntities[], met
       uuidv4(),
       "plane.bgtasks.data_import_task.import_data"
     );
+
+    logger.info("[MIGRATOR] Data import task registered", {
+      jobId: job.id,
+      phase: meta.phase,
+      isLastBatch: meta.isLastBatch,
+    });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     logger.error(`[${job.id}] Error while migrating the data to Plane: ${errorMessage}`);

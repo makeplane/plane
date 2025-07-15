@@ -53,6 +53,28 @@ export class ClickupAPIService {
             await new Promise((resolve) => setTimeout(resolve, waitTime));
             return this.client.request(error.config);
           }
+        } else {
+          // retry 2 times with fixed delay
+          const MAX_RETRIES = 1;
+          const RETRY_DELAY = 1000;
+
+          for (let i = 0; i < MAX_RETRIES; i++) {
+            console.log("Retrying ClickUp API", {
+              status: error?.response?.status,
+              retry: i + 1,
+              max_retries: MAX_RETRIES,
+              retry_delay: RETRY_DELAY,
+            });
+            try {
+              return await this.client.request(error.config);
+            } catch (retryError: any) {
+              // If this is the last retry, reject the promise
+              if (i === MAX_RETRIES - 1) {
+                throw retryError;
+              }
+              await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+            }
+          }
         }
         return Promise.reject(error);
       }

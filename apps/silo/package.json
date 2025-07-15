@@ -6,8 +6,7 @@
   "author": "engineering@plane.so",
   "type": "module",
   "scripts": {
-    "dev": "turbo run develop",
-    "develop": "nodemon --config \"./nodemon.json\"/",
+    "dev": "nodemon --config \"./nodemon.json\"/",
     "build": "rm -rf dist && tsc --noEmit && tsup --minify",
     "start": "node dist/start.cjs",
     "test": "jest",

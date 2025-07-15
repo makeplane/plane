@@ -63,7 +63,7 @@ export class ClickUpBulkTransformer {
   private readonly teamId: string;
   private readonly spaceId: string;
   private readonly folderId: string;
-  private readonly stateMap: TClickUpStateConfig[];
+  private stateMap: TClickUpStateConfig[];
   private readonly priorityMap: TClickUpPriorityConfig[];
   private readonly planeClient: PlaneClient;
   private readonly clickupService: ClickupAPIService;
@@ -136,6 +136,10 @@ export class ClickUpBulkTransformer {
         existingStates.results
       );
       planeStateMapping = stateMapping as TClickUpStateConfig[];
+      if (planeStateMapping.length !== 0) {
+        this.job.config.state = planeStateMapping;
+        this.stateMap = planeStateMapping;
+      }
     }
 
     // updating the job config

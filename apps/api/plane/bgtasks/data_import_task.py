@@ -87,8 +87,25 @@ def update_job_batch_completion(
         # Refresh the object to get updated values
         job.report.refresh_from_db()
 
+        logger.info(
+            "Updated job batch completion",
+            extra={
+                "jobId": job_id,
+                "isLastBatch": is_last_batch,
+                "phase": phase,
+                "imported_batch_count": imported_batch_count,
+                "total_issues": total_issues,
+                "imported_issues": imported_issues,
+                "completed_batch_count": job.report.completed_batch_count,
+                "total_batch_count": job.report.total_batch_count,
+            },
+        )
+
         # Check if all batches are processed and update job status
-        if job.report.completed_batch_count >= job.report.total_batch_count:
+        if (
+            job.report.completed_batch_count >= job.report.total_batch_count
+            or is_last_batch
+        ):
             """
                 We'll make an api call to silo, such that silo can perform
                 any additional processing along with marking the job as finished
@@ -631,8 +648,14 @@ def import_data(slug, project_id, user_id, job_id, payload):
         job_phase = payload.get("phase", "issues")
         is_last_batch = payload.get("isLastBatch", False)
 
-        print(
-            f"inside import_data task for job {job_id} phase {job_phase} issue_count {len(issue_list or [])} lastBatchData {payload.get('isLastBatch', 'None')}"
+        logger.info(
+            "inside import_data task",
+            extra={
+                "jobId": job_id,
+                "phase": job_phase,
+                "issueCount": len(issue_list or []),
+                "lastBatchData": is_last_batch,
+            },
         )
 
         if issue_list:

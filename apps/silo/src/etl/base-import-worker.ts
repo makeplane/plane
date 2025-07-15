@@ -12,7 +12,7 @@ import { migrateToPlane } from "./migrator";
 
 export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements TaskHandler {
   private mq: MQ;
-  private store: Store;
+  store: Store;
 
   constructor(mq: MQ, store: Store) {
     this.mq = mq;
@@ -140,7 +140,7 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             if (!cachedFirstPagePushed && data?.paginationContext?.page !== 0) {
               // requeue this page, as we are not sure if the first page is pushed or not
               logger.info(`First page not pushed, requeuing the next page`, { jobId: headers.jobId });
-              await wait(5000);
+              await wait(30000);
               await this.pushToQueue(headers, data);
               return true;
             }
@@ -149,6 +149,16 @@ export abstract class BaseDataMigrator<TJobConfig, TSourceEntity> implements Tas
             }
             // eslint-disable-next-line no-case-declarations
             const paginatedBatches = await this.batches(job, data.paginationContext, headers);
+            // if the paginated batches are empty, we need to mark the job as finished
+            if (paginatedBatches.length === 0) {
+              await this.update(headers.jobId, "FINISHED", {
+                total_batch_count: paginatedBatches.length,
+                completed_batch_count: paginatedBatches.length,
+                transformed_batch_count: paginatedBatches.length,
+                end_time: new Date(),
+              });
+              return true;
+            }
             // Push the paginated batches to the queue
             for (const batch of paginatedBatches) {
               headers.type = "transform";

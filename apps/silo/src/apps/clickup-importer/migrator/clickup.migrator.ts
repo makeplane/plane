@@ -165,6 +165,12 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
       total_batch_count: batches.length,
     });
 
+    logger.info("[CLICKUP] Batching completed", {
+      jobId: job.id,
+      batchCount: batches.length,
+      paginationContext: currentPageData,
+    });
+
     return finalBatches;
   }
 
@@ -294,6 +300,8 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
 
       // verify availablity of states and plane project update the job config if required
       const isStatesAndProjectAvailable = await clickUpBulkTransformer.verifyStatesAndProject();
+      // clear the cache for the job after updating with states and project
+      await this.store.del(`job:${job.id}:data`);
       if (!isStatesAndProjectAvailable) {
         logger.error(`States and project not available, skipping transformation`, { jobId: job.id });
         return {} as TBatchPullResult<TClickUpEntity>;
