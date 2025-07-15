@@ -24,6 +24,7 @@ export type TEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
     | "value"
+    | "showEmojiSuggestion"
   > & {
     editable: boolean;
     enableHistory: boolean;
@@ -44,6 +45,7 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "onTransaction"
     | "placeholder"
     | "tabIndex"
+    | "showEmojiSuggestion"
   > &
   Pick<ICollaborativeDocumentEditorProps, "embedHandler" | "realtimeConfig" | "serverHandler" | "user">;
 

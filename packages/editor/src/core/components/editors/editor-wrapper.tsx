@@ -38,6 +38,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    showEmojiSuggestion,
   } = props;
 
   const editor = useEditor({
@@ -59,6 +60,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     placeholder,
     tabIndex,
     value,
+    showEmojiSuggestion,
   });
 
   const editorContainerClassName = getEditorClassNames({

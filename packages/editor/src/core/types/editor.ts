@@ -140,6 +140,7 @@ export interface IEditorProps {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
+  showEmojiSuggestion?: boolean;
 }
 
 export type ILiteTextEditorProps = IEditorProps;

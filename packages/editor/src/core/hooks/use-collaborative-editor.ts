@@ -33,6 +33,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     serverHandler,
     tabIndex,
     user,
+    showEmojiSuggestion,
   } = props;
   // states
   const [hasServerConnectionFailed, setHasServerConnectionFailed] = useState(false);
@@ -113,6 +114,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     placeholder,
     provider,
     tabIndex,
+    showEmojiSuggestion,
   });
 
   return {

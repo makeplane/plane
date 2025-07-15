@@ -39,6 +39,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    showEmojiSuggestion,
   } = props;
 
   const extensions: Extensions = [];
@@ -72,6 +73,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     serverHandler,
     tabIndex,
     user,
+    showEmojiSuggestion,
   });
 
   const editorContainerClassNames = getEditorClassNames({

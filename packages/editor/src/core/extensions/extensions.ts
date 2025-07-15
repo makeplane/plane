@@ -43,7 +43,13 @@ import { EmojiExtension } from "./emoji/extension";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "showEmojiSuggestion"
 > & {
   enableHistory: boolean;
   editable: boolean;
@@ -59,6 +65,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     placeholder,
     tabIndex,
     editable,
+    showEmojiSuggestion,
   } = args;
 
   const extensions = [
@@ -98,7 +105,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       },
       ...(enableHistory ? {} : { history: false }),
     }),
-    EmojiExtension,
+    EmojiExtension.configure({
+      showSuggestion: showEmojiSuggestion ?? true,
+    }),
     CustomQuoteExtension,
     CustomHorizontalRule.configure({
       HTMLAttributes: {

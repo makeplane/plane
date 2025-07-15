@@ -42,6 +42,7 @@ export const useEditor = (props: TEditorHookProps) => {
     provider,
     tabIndex,
     value,
+    showEmojiSuggestion,
   } = props;
 
   const editor = useTiptapEditor(
@@ -67,6 +68,7 @@ export const useEditor = (props: TEditorHookProps) => {
           mentionHandler,
           placeholder,
           tabIndex,
+          showEmojiSuggestion,
         }),
         ...extensions,
       ],
