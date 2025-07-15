@@ -30,7 +30,7 @@ const CreateWorkspacePage = observer(() => {
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
   // states
-  const [defaultValues, setDefaultValues] = useState({
+  const [defaultValues, setDefaultValues] = useState<Pick<IWorkspace, "name" | "slug" | "organization_size">>({
     name: "",
     slug: "",
     organization_size: "",
@@ -101,7 +101,7 @@ const CreateWorkspacePage = observer(() => {
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}
                   defaultValues={defaultValues}
-                  setDefaultValues={setDefaultValues as any}
+                  setDefaultValues={setDefaultValues}
                 />
               </div>
             </div>

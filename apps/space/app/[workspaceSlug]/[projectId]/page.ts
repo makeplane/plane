@@ -10,7 +10,7 @@ type Props = {
     workspaceSlug: string;
     projectId: string;
   };
-  searchParams: any;
+  searchParams: Record<'board' | 'peekId', string | undefined>;
 };
 
 export default async function IssuesPage(props: Props) {
@@ -23,7 +23,7 @@ export default async function IssuesPage(props: Props) {
   try {
     response = await publishService.retrieveSettingsByProjectId(workspaceSlug, projectId);
   } catch (error) {
-    // redirect to 404 page on error
+    console.error("Error fetching project publish settings:", error);
     notFound();
   }
 

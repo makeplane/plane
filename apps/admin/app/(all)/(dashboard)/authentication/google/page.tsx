@@ -67,9 +67,11 @@ const InstanceGoogleAuthenticationPage = observer(() => {
               <ToggleSwitch
                 value={Boolean(parseInt(enableGoogleConfig))}
                 onChange={() => {
-                  Boolean(parseInt(enableGoogleConfig)) === true
-                    ? updateConfig("IS_GOOGLE_ENABLED", "0")
-                    : updateConfig("IS_GOOGLE_ENABLED", "1");
+                  if (Boolean(parseInt(enableGoogleConfig)) === true) {
+                    updateConfig("IS_GOOGLE_ENABLED", "0")
+                  } else {
+                    updateConfig("IS_GOOGLE_ENABLED", "1");
+                  }
                 }}
                 size="sm"
                 disabled={isSubmitting || !formattedConfig}
