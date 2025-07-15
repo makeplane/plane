@@ -58,7 +58,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full flex flex-col">
-        <Row className="h-[3.25rem] border-b border-custom-border-200 flex flex-shrink-0">
+        <Row className="h-header border-b border-custom-border-200 flex flex-shrink-0">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
