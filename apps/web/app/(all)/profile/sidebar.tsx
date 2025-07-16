@@ -64,6 +64,7 @@ const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size
 export const ProfileLayoutSidebar = observer(() => {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [imgError, setImgError] = useState(false);
   // router
   const pathname = usePathname();
   // store hooks
@@ -211,11 +212,12 @@ export const ProfileLayoutSidebar = observer(() => {
                         !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                       }`}
                     >
-                      {workspace?.logo_url && workspace.logo_url !== "" ? (
+                      {workspace?.logo_url && workspace.logo_url !== "" && !imgError ? (
                         <img
                           src={getFileURL(workspace.logo_url)}
                           className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
+                          onError={() => setImgError(true)}
                         />
                       ) : (
                         (workspace?.name?.charAt(0) ?? "...")
