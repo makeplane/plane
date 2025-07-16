@@ -40,7 +40,7 @@ export const EmojiExtension = Emoji.extend<ExtendedEmojiOptions>({
 
     // If showSuggestion is false, filter out the Suggestion plugin
     if (!this.options.showSuggestion) {
-      // Return only the emoji plugin (second plugin from parent)
+      // Filter out the suggestion plugin (first plugin from parent)
       return parentPlugins.filter((plugin, index) => index !== 0);
     }
 
