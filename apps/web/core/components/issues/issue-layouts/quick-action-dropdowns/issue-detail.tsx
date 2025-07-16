@@ -217,6 +217,7 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
         }}
         storeType={EIssuesStoreType.PROJECT}
         isDraft={isDraftIssue}
+        fetchIssueDetails={false}
       />
       {issue.project_id && workspaceSlug && (
         <DuplicateWorkItemModal
