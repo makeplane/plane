@@ -105,9 +105,13 @@ def get_model_data(
         else:
             queryset = model.objects.get(pk=event_id)
 
+        serializer = SERIALIZER_MAPPER.get(event)
+
+        if serializer is None:
+            raise ValueError(f"Serializer not found for event: {event}")
+
         # Add prefetch_related for issue querysets to avoid N+1 queries
         if event == "issue":
-
             if many:
                 queryset = queryset.prefetch_related(
                     Prefetch(
@@ -137,11 +141,6 @@ def get_model_data(
                     .first()
                 )
 
-        serializer = SERIALIZER_MAPPER.get(event)
-        if serializer is None:
-            raise ValueError(f"Serializer not found for event: {event}")
-
-        if event == "issue":
             return serializer(
                 queryset, many=many, context={"expand": ["labels", "assignees"]}
             ).data
