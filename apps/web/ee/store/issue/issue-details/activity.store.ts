@@ -47,11 +47,12 @@ export class IssueActivityStore extends IssueActivityStoreCe implements IIssueAc
 
     let activityComments: TIssueActivityComment[] = [];
 
-    const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
-    const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId) || [];
-    const additionalPropertiesActivities =
-      this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId) || [];
+    const activities = this.getActivitiesByIssueId(issueId);
+    const comments = currentStore.comment.getCommentsByIssueId(issueId);
+    const worklogs = this.store.workspaceWorklogs.worklogIdsByIssueId(workspace?.id, issueId);
+    const additionalPropertiesActivities = this.store.issuePropertiesActivity.getPropertyActivityIdsByIssueId(issueId);
+
+    if (!activities || !comments || !worklogs || !additionalPropertiesActivities) return undefined;
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);

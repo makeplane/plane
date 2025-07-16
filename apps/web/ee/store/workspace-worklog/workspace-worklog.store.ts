@@ -166,7 +166,8 @@ export class WorkspaceWorklogStore implements IWorkspaceWorklogStore {
    * @returns { string[] | undefined }
    */
   worklogIdsByIssueId = computedFn((workspaceId: string, issueId: string) => {
-    if (!workspaceId || !issueId || isEmpty(this.worklogs)) return undefined;
+    if (!workspaceId || !issueId || !this.worklogs) return undefined;
+    if (isEmpty(this.worklogs)) return [];
     const workspaceWorklogs = orderBy(Object.values(this.worklogs || []), (w) => convertToEpoch(w.created_at), [
       "desc",
     ]);

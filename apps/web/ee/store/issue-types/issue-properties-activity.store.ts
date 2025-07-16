@@ -44,7 +44,8 @@ export class IssuePropertiesActivityStore implements IIssuePropertiesActivitySto
    * @returns property activity ids
    */
   getPropertyActivityIdsByIssueId = computedFn((issueId: string) => {
-    if (!issueId || isEmpty(this.propertyActivities)) return undefined;
+    if (!issueId || !this.propertyActivities) return undefined;
+    if (isEmpty(this.propertyActivities)) return [];
     const issuePropertyActivityIds = orderBy(
       Object.values(this.propertyActivities || []),
       (w) => convertToEpoch(w.created_at),
