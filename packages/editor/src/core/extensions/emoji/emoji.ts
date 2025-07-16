@@ -104,7 +104,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
       enableEmoticons: false,
       forceFallbackImages: false,
       suggestion: {
-        char: "*",
+        char: ":",
         pluginKey: EmojiSuggestionPluginKey,
         command: ({ editor, range, props }) => {
           // increase range.to by one when the next node is of type "text"
