@@ -20,14 +20,15 @@ declare module "@tiptap/core" {
 
 export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   name: CORE_EXTENSIONS.HORIZONTAL_RULE,
+  group: "block",
 
   addOptions() {
     return {
-      HTMLAttributes: {},
+      HTMLAttributes: {
+        class: "py-4 border-custom-border-400",
+      },
     };
   },
-
-  group: "block",
 
   parseHTML() {
     return [

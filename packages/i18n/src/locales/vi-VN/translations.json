@@ -1043,6 +1043,10 @@
       },
       "upload": {
         "error": "Không thể tải lên tài nguyên. Vui lòng thử lại sau."
+      },
+      "copy_link": {
+        "success": "Liên kết bình luận đã được sao chép vào clipboard",
+        "error": "Lỗi khi sao chép liên kết bình luận. Vui lòng thử lại sau."
       }
     },
     "empty_state": {
@@ -1344,6 +1348,17 @@
       "project_insights": {
         "title": "Chưa có dữ liệu",
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+      },
+      "general": {
+        "title": "Theo dõi tiến độ, khối lượng công việc và phân bổ. Phát hiện xu hướng, loại bỏ rào cản và tăng tốc công việc",
+        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Theo dõi hiệu suất của các thành viên trong nhóm và đội nhóm, đảm bảo dự án của bạn hoạt động đúng tiến độ.",
+        "primary_button": {
+          "text": "Bắt đầu dự án đầu tiên của bạn",
+          "comic": {
+            "title": "Phân tích hoạt động tốt nhất với Chu kỳ + Mô-đun",
+            "description": "Đầu tiên, giới hạn thời gian các vấn đề của bạn trong Chu kỳ và, nếu có thể, nhóm các vấn đề kéo dài hơn một chu kỳ vào Mô-đun. Kiểm tra cả hai trong điều hướng bên trái."
+          }
+        }
       }
     },
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
@@ -2469,5 +2484,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane không khởi động được. Điều này có thể do một hoặc nhiều dịch vụ Plane không khởi động được.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Chọn View Logs từ setup.sh và log Docker để chắc chắn."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Phác thảo",
+        "empty_state": {
+          "title": "Thiếu tiêu đề",
+          "description": "Hãy thêm một số tiêu đề vào trang này để xem chúng ở đây."
+        }
+      },
+      "info": {
+        "label": "Thông tin",
+        "document_info": {
+          "words": "Từ",
+          "characters": "Ký tự",
+          "paragraphs": "Đoạn văn",
+          "read_time": "Thời gian đọc"
+        },
+        "actors_info": {
+          "edited_by": "Được chỉnh sửa bởi",
+          "created_by": "Được tạo bởi"
+        },
+        "version_history": {
+          "label": "Lịch sử phiên bản",
+          "current_version": "Phiên bản hiện tại"
+        }
+      },
+      "assets": {
+        "label": "Tài sản",
+        "download_button": "Tải xuống",
+        "empty_state": {
+          "title": "Thiếu hình ảnh",
+          "description": "Thêm hình ảnh để xem chúng ở đây."
+        }
+      }
+    },
+    "open_button": "Mở bảng điều hướng",
+    "close_button": "Đóng bảng điều hướng",
+    "outline_floating_button": "Mở phác thảo"
   }
 }

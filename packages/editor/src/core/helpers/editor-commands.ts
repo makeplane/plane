@@ -2,8 +2,8 @@ import { Editor, Range } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { InsertImageComponentProps } from "@/extensions";
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
+import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
 import { findTableAncestor } from "@/helpers/common";
 
@@ -109,9 +109,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range)
-    editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3, columnWidth: 150 }).run();
-  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3, columnWidth: 150 }).run();
+  if (range) editor.chain().focus().deleteRange(range).clearNodes().insertTable({ rows: 3, cols: 3 }).run();
+  else editor.chain().focus().clearNodes().insertTable({ rows: 3, cols: 3 }).run();
 };
 
 export const insertImage = ({

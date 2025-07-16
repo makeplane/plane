@@ -1,7 +1,4 @@
-export enum EViewAccess {
-  PRIVATE,
-  PUBLIC,
-}
+import { EViewAccess } from "@plane/types";
 
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;

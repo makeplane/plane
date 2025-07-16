@@ -7,8 +7,6 @@ import {
   addRowBefore,
   CellSelection,
   columnResizing,
-  deleteColumn,
-  deleteRow,
   deleteTable,
   fixTables,
   goToNextCell,
@@ -23,12 +21,16 @@ import { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
 import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";
+import { deleteColumnOrTable } from "./utilities/delete-column";
+import { deleteRowOrTable } from "./utilities/delete-row";
 import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
+import { DEFAULT_COLUMN_WIDTH } from ".";
 
 export interface TableOptions {
   HTMLAttributes: Record<string, any>;
@@ -42,12 +44,7 @@ export interface TableOptions {
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     [CORE_EXTENSIONS.TABLE]: {
-      insertTable: (options?: {
-        rows?: number;
-        cols?: number;
-        withHeaderRow?: boolean;
-        columnWidth?: number;
-      }) => ReturnType;
+      insertTable: (options?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => ReturnType;
       addColumnBefore: () => ReturnType;
       addColumnAfter: () => ReturnType;
       deleteColumn: () => ReturnType;
@@ -81,7 +78,7 @@ declare module "@tiptap/core" {
   }
 }
 
-export const Table = Node.create({
+export const Table = Node.create<TableOptions>({
   name: CORE_EXTENSIONS.TABLE,
 
   addOptions() {
@@ -116,9 +113,15 @@ export const Table = Node.create({
   addCommands() {
     return {
       insertTable:
-        ({ rows = 3, cols = 3, withHeaderRow = false, columnWidth = 150 } = {}) =>
+        ({ rows = 3, cols = 3, withHeaderRow = false } = {}) =>
         ({ tr, dispatch, editor }) => {
-          const node = createTable(editor.schema, rows, cols, withHeaderRow, undefined, columnWidth);
+          const node = createTable({
+            schema: editor.schema,
+            rowsCount: rows,
+            colsCount: cols,
+            withHeaderRow,
+            columnWidth: DEFAULT_COLUMN_WIDTH,
+          });
           if (dispatch) {
             const offset = tr.selection.anchor + 1;
 
@@ -137,10 +140,7 @@ export const Table = Node.create({
         () =>
         ({ state, dispatch }) =>
           addColumnAfter(state, dispatch),
-      deleteColumn:
-        () =>
-        ({ state, dispatch }) =>
-          deleteColumn(state, dispatch),
+      deleteColumn: deleteColumnOrTable,
       addRowBefore:
         () =>
         ({ state, dispatch }) =>
@@ -149,10 +149,7 @@ export const Table = Node.create({
         () =>
         ({ state, dispatch }) =>
           addRowAfter(state, dispatch),
-      deleteRow:
-        () =>
-        ({ state, dispatch }) =>
-          deleteRow(state, dispatch),
+      deleteRow: deleteRowOrTable,
       deleteTable:
         () =>
         ({ state, dispatch }) =>
@@ -264,6 +261,7 @@ export const Table = Node.create({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
       tableControls(),
+      TableInsertPlugin(this.editor),
     ];
 
     if (isResizable) {
