@@ -64,7 +64,6 @@ const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size
 export const ProfileLayoutSidebar = observer(() => {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [imgError, setImgError] = useState(false);
   // router
   const pathname = usePathname();
   // store hooks
@@ -74,6 +73,11 @@ export const ProfileLayoutSidebar = observer(() => {
   const { workspaces } = useWorkspace();
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
+  // workspace image errors
+  const [imgErrors, setImgErrors] = useState<Set<string>>(new Set());
+    const handleImageError = (workspaceId: string) => {
+    setImgErrors(prev => new Set(prev).add(workspaceId));
+  };
 
   const workspacesList = Object.values(workspaces ?? {});
 
@@ -212,12 +216,12 @@ export const ProfileLayoutSidebar = observer(() => {
                         !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
                       }`}
                     >
-                      {workspace?.logo_url && workspace.logo_url !== "" && !imgError ? (
+                      {workspace?.logo_url && workspace.logo_url !== "" && !imgErrors.has(workspace.id) ? (
                         <img
                           src={getFileURL(workspace.logo_url)}
                           className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
-                          onError={() => setImgError(true)}
+                          onError={() => handleImageError(workspace.id)}
                         />
                       ) : (
                         (workspace?.name?.charAt(0) ?? "...")
