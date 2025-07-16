@@ -219,7 +219,20 @@ class ProjectViewSet(BaseViewSet):
             )
             .filter(archived_at__isnull=True)
             .filter(pk=pk)
+            .prefetch_related("project_projectmember")
         ).first()
+
+        project_member_ids = ProjectMember.objects.filter(
+            project_id=pk, is_active=True
+        ).values_list("member_id", flat=True)
+
+        members_ids = set(project_member_ids)
+
+        if project.project_lead_id not in members_ids:
+            project.project_lead = None
+
+        if project.default_assignee_id not in members_ids:
+            project.default_assignee = None
 
         if project is None:
             return Response(
