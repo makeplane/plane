@@ -164,7 +164,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     shouldRender: isEditingAllowed,
   });
 
-  const createCopyMenuItem = (): TContextMenuItem => {
+  const createCopyMenuItem = (workspaceSlug?: string): TContextMenuItem => {
     const baseItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
@@ -180,6 +180,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       activeLayout,
       setCreateUpdateIssueModal,
       setDuplicateWorkItemModal,
+      workspaceSlug,
     });
   };
 
@@ -279,7 +280,7 @@ export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContex
 
   return useMemo(
     () => [
-      factory.createCopyMenuItem(),
+      factory.createCopyMenuItem(props.workspaceSlug),
       factory.createOpenInNewTabMenuItem(),
       factory.createArchiveMenuItem(),
       factory.createRestoreMenuItem(),
