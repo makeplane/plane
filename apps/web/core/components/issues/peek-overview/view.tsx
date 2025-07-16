@@ -1,17 +1,16 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 // types
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 import {
-  DeleteIssueModal,
   IssuePeekOverviewHeader,
   TPeekModes,
   PeekOverviewIssueDetails,
   PeekOverviewProperties,
   TIssueOperations,
-  ArchiveIssueModal,
   IssuePeekOverviewLoader,
   IssuePeekOverviewError,
   IssueDetailWidgets,
@@ -23,7 +22,6 @@ import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // store hooks
 import { IssueActivity } from "../issue-detail/issue-activity";
-import { createPortal } from "react-dom";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -54,16 +52,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
+  const [isDeleteIssueModalOpen, setIsDeleteIssueModalOpen] = useState(false);
+  const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
+  const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
+  const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
   const {
     setPeekIssue,
     isAnyModalOpen,
-    isDeleteIssueModalOpen,
-    isArchiveIssueModalOpen,
-    toggleDeleteIssueModal,
-    toggleArchiveIssueModal,
     issue: { getIssueById, getIsLocalDBIssueDescription },
   } = useIssueDetail();
   const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
@@ -76,11 +74,19 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const isLocalDBIssueDescription = getIsLocalDBIssueDescription(issueId);
 
+  const toggleDeleteIssueModal = (value: boolean) => setIsDeleteIssueModalOpen(value);
+  const toggleArchiveIssueModal = (value: boolean) => setIsArchiveIssueModalOpen(value);
+  const toggleDuplicateIssueModal = (value: boolean) => setIsDuplicateIssueModalOpen(value);
+  const toggleEditIssueModal = (value: boolean) => setIsEditIssueModalOpen(value);
+
+  const isAnyLocalModalOpen =
+    isDeleteIssueModalOpen || isArchiveIssueModalOpen || isDuplicateIssueModalOpen || isEditIssueModalOpen;
+
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyEpicModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen) {
           removeRoutePeekId();
         }
       }
@@ -149,6 +155,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 removeRoutePeekId={removeRoutePeekId}
                 toggleDeleteIssueModal={toggleDeleteIssueModal}
                 toggleArchiveIssueModal={toggleArchiveIssueModal}
+                toggleDuplicateIssueModal={toggleDuplicateIssueModal}
+                toggleEditIssueModal={toggleEditIssueModal}
                 handleRestoreIssue={handleRestore}
                 isArchived={is_archived}
                 issueId={issueId}
@@ -254,32 +262,5 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     </div>
   );
 
-  return (
-    <>
-      {issue && !is_archived && (
-        <ArchiveIssueModal
-          isOpen={isArchiveIssueModalOpen === issueId}
-          handleClose={() => toggleArchiveIssueModal(null)}
-          data={issue}
-          onSubmit={async () => {
-            if (issueOperations.archive) await issueOperations.archive(workspaceSlug, projectId, issueId);
-            removeRoutePeekId();
-          }}
-        />
-      )}
-
-      {issue && isDeleteIssueModalOpen === issue.id && (
-        <DeleteIssueModal
-          isOpen={!!isDeleteIssueModalOpen}
-          handleClose={() => {
-            toggleDeleteIssueModal(null);
-          }}
-          data={issue}
-          onSubmit={async () => issueOperations.remove(workspaceSlug, projectId, issueId)}
-        />
-      )}
-
-      {shouldUsePortal && portalContainer ? createPortal(content, portalContainer) : content}
-    </>
-  );
+  return <>{shouldUsePortal && portalContainer ? createPortal(content, portalContainer) : content}</>;
 });

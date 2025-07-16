@@ -5,4 +5,5 @@ export type TInstanceEmailConfigurationKeys =
   | "EMAIL_HOST_PASSWORD"
   | "EMAIL_USE_TLS"
   | "EMAIL_USE_SSL"
-  | "EMAIL_FROM";
+  | "EMAIL_FROM"
+  | "ENABLE_SMTP";
