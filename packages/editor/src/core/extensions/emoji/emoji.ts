@@ -15,7 +15,8 @@ import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
-import { customFindSuggestionMatch } from "./find-suggestion-match";
+// helpers
+import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -103,7 +104,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
       enableEmoticons: false,
       forceFallbackImages: false,
       suggestion: {
-        char: ":",
+        char: "*",
         pluginKey: EmojiSuggestionPluginKey,
         command: ({ editor, range, props }) => {
           // increase range.to by one when the next node is of type "text"
