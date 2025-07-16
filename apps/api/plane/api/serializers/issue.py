@@ -448,9 +448,29 @@ class LabelLiteSerializer(BaseSerializer):
 class IssueExpandSerializer(BaseSerializer):
     cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
     module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
-    labels = LabelLiteSerializer(read_only=True, many=True)
-    assignees = UserLiteSerializer(read_only=True, many=True)
+
+    labels = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+
+
+    def get_labels(self, obj):
+        expand = self.context.get("expand", [])
+        if "labels" in expand:
+            # Use prefetched data
+            return LabelLiteSerializer(
+                [il.label for il in obj.label_issue.all()], many=True
+            ).data
+        return [il.label_id for il in obj.label_issue.all()]
+
+    def get_assignees(self, obj):
+        expand = self.context.get("expand", [])
+        if "assignees" in expand:
+            return UserLiteSerializer(
+                [ia.assignee for ia in obj.issue_assignee.all()], many=True
+            ).data
+        return [ia.assignee_id for ia in obj.issue_assignee.all()]
+
 
     class Meta:
         model = Issue
@@ -464,42 +484,3 @@ class IssueExpandSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if "assignees" in self.fields:
-            if "assignees" in self.expand:
-                data["assignees"] = UserLiteSerializer(
-                    User.objects.filter(
-                        pk__in=IssueAssignee.objects.filter(issue=instance).values_list(
-                            "assignee_id", flat=True
-                        )
-                    ),
-                    many=True,
-                ).data
-            else:
-                data["assignees"] = [
-                    str(assignee)
-                    for assignee in IssueAssignee.objects.filter(
-                        issue=instance
-                    ).values_list("assignee_id", flat=True)
-                ]
-        if "labels" in self.fields:
-            if "labels" in self.expand:
-                data["labels"] = LabelLiteSerializer(
-                    Label.objects.filter(
-                        pk__in=IssueLabel.objects.filter(issue=instance).values_list(
-                            "label_id", flat=True
-                        )
-                    ),
-                    many=True,
-                ).data
-            else:
-                data["labels"] = [
-                    str(label)
-                    for label in IssueLabel.objects.filter(issue=instance).values_list(
-                        "label_id", flat=True
-                    )
-                ]
-
-        return data

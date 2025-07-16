@@ -12,6 +12,7 @@ from celery import shared_task
 
 # Django imports
 from django.conf import settings
+from django.db.models import Prefetch
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
@@ -42,6 +43,8 @@ from plane.db.models import (
     Webhook,
     WebhookLog,
     IntakeIssue,
+    IssueLabel,
+    IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
@@ -102,13 +105,45 @@ def get_model_data(
         else:
             queryset = model.objects.get(pk=event_id)
 
+        # Add prefetch_related for issue querysets to avoid N+1 queries
+        if event == "issue":
+
+            if many:
+                queryset = queryset.prefetch_related(
+                    Prefetch(
+                        "label_issue",
+                        queryset=IssueLabel.objects.select_related("label"),
+                    ),
+                    Prefetch(
+                        "issue_assignee",
+                        queryset=IssueAssignee.objects.select_related("assignee"),
+                    ),
+                )
+            else:
+                # For single object, we need to convert to queryset first
+                issue_id = queryset.id
+                queryset = (
+                    model.objects.filter(pk=issue_id)
+                    .prefetch_related(
+                        Prefetch(
+                            "label_issue",
+                            queryset=IssueLabel.objects.select_related("label"),
+                        ),
+                        Prefetch(
+                            "issue_assignee",
+                            queryset=IssueAssignee.objects.select_related("assignee"),
+                        ),
+                    )
+                    .first()
+                )
+
         serializer = SERIALIZER_MAPPER.get(event)
         if serializer is None:
             raise ValueError(f"Serializer not found for event: {event}")
 
         if event == "issue":
             return serializer(
-                queryset, many=many, expand=["labels", "assignees"]
+                queryset, many=many, context={"expand": ["labels", "assignees"]}
             ).data
         else:
             return serializer(queryset, many=many).data
