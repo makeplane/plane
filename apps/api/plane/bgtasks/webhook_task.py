@@ -77,6 +77,15 @@ MODEL_MAPPER = {
 logger = logging.getLogger("plane.worker")
 
 
+def get_issue_prefetches():
+    return [
+        Prefetch("label_issue", queryset=IssueLabel.objects.select_related("label")),
+        Prefetch(
+            "issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")
+        ),
+    ]
+
+
 def get_model_data(
     event: str, event_id: Union[str, List[str]], many: bool = False
 ) -> Dict[str, Any]:
@@ -110,34 +119,15 @@ def get_model_data(
         if serializer is None:
             raise ValueError(f"Serializer not found for event: {event}")
 
-        # Add prefetch_related for issue querysets to avoid N+1 queries
+        issue_prefetches = get_issue_prefetches()
         if event == "issue":
             if many:
-                queryset = queryset.prefetch_related(
-                    Prefetch(
-                        "label_issue",
-                        queryset=IssueLabel.objects.select_related("label"),
-                    ),
-                    Prefetch(
-                        "issue_assignee",
-                        queryset=IssueAssignee.objects.select_related("assignee"),
-                    ),
-                )
+                queryset = queryset.prefetch_related(*issue_prefetches)
             else:
-                # For single object, we need to convert to queryset first
                 issue_id = queryset.id
                 queryset = (
                     model.objects.filter(pk=issue_id)
-                    .prefetch_related(
-                        Prefetch(
-                            "label_issue",
-                            queryset=IssueLabel.objects.select_related("label"),
-                        ),
-                        Prefetch(
-                            "issue_assignee",
-                            queryset=IssueAssignee.objects.select_related("assignee"),
-                        ),
-                    )
+                    .prefetch_related(*issue_prefetches)
                     .first()
                 )
 
