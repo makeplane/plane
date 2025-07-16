@@ -19,7 +19,8 @@ from plane.settings.storage import S3Storage
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.app.throttles.asset import AssetRateThrottle
+from plane.throttles.asset import AssetRateThrottle
+
 
 class UserAssetsV2Endpoint(BaseAPIView):
     """This endpoint is used to upload user profile images."""
