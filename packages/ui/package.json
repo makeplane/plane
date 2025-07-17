@@ -37,6 +37,7 @@
     "@plane/constants": "*",
     "@plane/hooks": "*",
     "@plane/utils": "*",
+    "@plane/types": "*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
