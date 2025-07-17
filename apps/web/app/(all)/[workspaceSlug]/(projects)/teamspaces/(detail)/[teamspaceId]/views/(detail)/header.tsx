@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
 import {
-  EIssueLayoutTypes,
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissionsLevel,
@@ -20,6 +19,7 @@ import {
   EViewAccess,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
+  EIssueLayoutTypes,
   IIssueFilterOptions,
 } from "@plane/types";
 // ui

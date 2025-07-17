@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IBlockUpdateData, EIssuesStoreType } from "@plane/types";
+import { TIssue, IBlockUpdateData, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";

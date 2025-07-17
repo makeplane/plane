@@ -1,4 +1,4 @@
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes } from "@plane/types";
 import { WorkspaceSpreadsheetRoot } from "@/components/issues/issue-layouts/spreadsheet/roots/workspace-root";
 import { WorkspaceAdditionalLayouts } from "@/plane-web/components/views/helper";
 

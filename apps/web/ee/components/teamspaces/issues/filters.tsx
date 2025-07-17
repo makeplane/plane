@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 // plane imports
 import {
   EIssueFilterType,
-  EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   TEAMSPACE_WORK_ITEM_TRACKER_ELEMENTS,
   TEAMSPACE_WORK_ITEM_TRACKER_EVENTS,
@@ -16,6 +15,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { isIssueFilterActive } from "@plane/utils";
 // components

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { E_FEATURE_FLAGS, EIssueLayoutTypes } from "@plane/constants";
-import { EIssuesStoreType } from "@plane/types";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { TLayoutSelectionProps } from "@/ce/components/views/helper";
 import { LayoutSelection } from "@/components/issues";
 import { TWorkspaceLayoutProps } from "@/components/views/helper";
