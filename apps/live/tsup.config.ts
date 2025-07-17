@@ -7,7 +7,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   minify: false,
-  target: "node18",
+  target: "node22",
   outDir: "dist",
   env: {
     NODE_ENV: process.env.NODE_ENV || "development",
