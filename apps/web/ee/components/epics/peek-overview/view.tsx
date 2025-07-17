@@ -117,8 +117,9 @@ export const EpicView: FC<IEpicView> = observer((props) => {
   };
 
   const peekOverviewIssueClassName = cn(
+    "flex flex-col",
     !embedIssue
-      ? "fixed z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "fixed z-[25] overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
       "bottom-0 right-0 top-0 w-full lg:w-[1024px] border-0 border-l": peekMode === "side-peek",
