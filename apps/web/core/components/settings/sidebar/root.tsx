@@ -45,12 +45,12 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll">
+      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {categories.map((category) => {
           if (groupedSettings[category].length === 0) return null;
           return (
             <div key={category} className="py-3">
-              <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2">{t(category)}</span>
+              <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2 px-2">{t(category)}</span>
               <div className="relative flex flex-col gap-0.5 h-full mt-2">
                 {groupedSettings[category].map(
                   (setting) =>

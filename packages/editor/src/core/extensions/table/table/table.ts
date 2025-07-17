@@ -7,8 +7,6 @@ import {
   addRowBefore,
   CellSelection,
   columnResizing,
-  deleteColumn,
-  deleteRow,
   deleteTable,
   fixTables,
   goToNextCell,
@@ -23,9 +21,12 @@ import { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
+import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
 import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";
+import { deleteColumnOrTable } from "./utilities/delete-column";
+import { deleteRowOrTable } from "./utilities/delete-row";
 import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
@@ -139,10 +140,7 @@ export const Table = Node.create<TableOptions>({
         () =>
         ({ state, dispatch }) =>
           addColumnAfter(state, dispatch),
-      deleteColumn:
-        () =>
-        ({ state, dispatch }) =>
-          deleteColumn(state, dispatch),
+      deleteColumn: deleteColumnOrTable,
       addRowBefore:
         () =>
         ({ state, dispatch }) =>
@@ -151,10 +149,7 @@ export const Table = Node.create<TableOptions>({
         () =>
         ({ state, dispatch }) =>
           addRowAfter(state, dispatch),
-      deleteRow:
-        () =>
-        ({ state, dispatch }) =>
-          deleteRow(state, dispatch),
+      deleteRow: deleteRowOrTable,
       deleteTable:
         () =>
         ({ state, dispatch }) =>
@@ -266,6 +261,7 @@ export const Table = Node.create<TableOptions>({
         allowTableNodeSelection: this.options.allowTableNodeSelection,
       }),
       tableControls(),
+      TableInsertPlugin(this.editor),
     ];
 
     if (isResizable) {

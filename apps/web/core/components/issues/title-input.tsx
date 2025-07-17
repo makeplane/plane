@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useEffect, useCallback } from "react";
+import { FC, useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TNameDescriptionLoader } from "@plane/types";
@@ -42,11 +42,20 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
   // states
   const [title, setTitle] = useState("");
   const [isLengthVisible, setIsLengthVisible] = useState(false);
+  // ref to track if there are unsaved changes
+  const hasUnsavedChanges = useRef(false);
+  // ref to store current title value for cleanup function
+  const currentTitleRef = useRef(title);
   // hooks
   const debouncedValue = useDebounce(title, 1500);
 
   useEffect(() => {
-    if (value) setTitle(value);
+    if (value) {
+      setTitle(value);
+      currentTitleRef.current = value;
+      // Reset unsaved changes flag when value is set from props
+      hasUnsavedChanges.current = false;
+    }
   }, [value]);
 
   useEffect(() => {
@@ -55,6 +64,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
       if (debouncedValue.trim().length > 0) {
         issueOperations.update(workspaceSlug, projectId, issueId, { name: debouncedValue }).finally(() => {
           setIsSubmitting("saved");
+          hasUnsavedChanges.current = false;
           if (textarea && !textarea.matches(":focus")) {
             const trimmedTitle = debouncedValue.trim();
             if (trimmedTitle !== title) setTitle(trimmedTitle);
@@ -63,6 +73,7 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
       } else {
         setTitle(value || "");
         setIsSubmitting("saved");
+        hasUnsavedChanges.current = false;
       }
     }
     // DO NOT Add more dependencies here. It will cause multiple requests to be sent.
@@ -76,9 +87,11 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
         if (trimmedTitle.length > 0) {
           setTitle(trimmedTitle);
           setIsSubmitting("submitting");
+          hasUnsavedChanges.current = true;
         } else {
           setTitle(value || "");
           setIsSubmitting("saved");
+          hasUnsavedChanges.current = false;
         }
       }
     };
@@ -95,10 +108,32 @@ export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
     };
   }, [title, isSubmitting, setIsSubmitting]);
 
+  // Save on unmount if there are unsaved changes
+  useEffect(
+    () => () => {
+      if (hasUnsavedChanges.current && currentTitleRef.current.trim().length > 0) {
+        issueOperations
+          .update(workspaceSlug, projectId, issueId, { name: currentTitleRef.current.trim() })
+          .catch((error) => {
+            console.error("Failed to save title on unmount:", error);
+          })
+          .finally(() => {
+            setIsSubmitting("saved");
+            hasUnsavedChanges.current = false;
+          });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setIsSubmitting("submitting");
-      setTitle(e.target.value);
+      const titleFromEvent = e.target.value;
+      setTitle(titleFromEvent);
+      currentTitleRef.current = titleFromEvent;
+      hasUnsavedChanges.current = true;
     },
     [setIsSubmitting]
   );

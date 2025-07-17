@@ -1,7 +1,4 @@
-export type TCommandPaletteActionList = Record<
-  string,
-  { title: string; description: string; action: () => void }
->;
+export type TCommandPaletteActionList = Record<string, { title: string; description: string; action: () => void }>;
 
 export type TCommandPaletteShortcutList = {
   key: string;

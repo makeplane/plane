@@ -4,11 +4,10 @@ import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import smoothScrollIntoView from "smooth-scroll-into-view-if-needed";
 import { E_SORT_ORDER } from "@plane/constants";
 import { TCommentsOperations, TIssueComment } from "@plane/types";
 // local components
-import { CommentCard } from "./comment-card";
+import { CommentCard } from "./card/root";
 import { CommentCreate } from "./comment-create";
 
 type TCommentsWrapper = {
@@ -19,10 +18,21 @@ type TCommentsWrapper = {
   comments: TIssueComment[] | string[];
   sortOrder?: E_SORT_ORDER;
   getCommentById?: (activityId: string) => TIssueComment | undefined;
+  showAccessSpecifier?: boolean;
+  showCopyLinkOption?: boolean;
 };
 
 export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
-  const { entityId, activityOperations, comments, getCommentById, isEditingAllowed = true, projectId } = props;
+  const {
+    entityId,
+    activityOperations,
+    comments,
+    getCommentById,
+    isEditingAllowed = true,
+    projectId,
+    showAccessSpecifier = false,
+    showCopyLinkOption = false,
+  } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -61,6 +71,8 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
               disabled={!isEditingAllowed}
               ends={index === 0 ? "top" : index === comments.length - 1 ? "bottom" : undefined}
               projectId={projectId}
+              showAccessSpecifier={showAccessSpecifier}
+              showCopyLinkOption={showCopyLinkOption}
             />
           );
         })}

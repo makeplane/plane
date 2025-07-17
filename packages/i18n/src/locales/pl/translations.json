@@ -1044,6 +1044,10 @@
       },
       "upload": {
         "error": "Nie udało się przesłać załącznika. Spróbuj później."
+      },
+      "copy_link": {
+        "success": "Link do komentarza skopiowany do schowka",
+        "error": "Błąd podczas kopiowania linka do komentarza. Spróbuj ponownie później."
       }
     },
     "empty_state": {

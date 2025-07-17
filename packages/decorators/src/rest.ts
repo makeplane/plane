@@ -21,13 +21,13 @@ export function Controller(baseRoute: string = ""): ClassDecorator {
  * @returns Method decorator
  */
 function createHttpMethodDecorator(
-  method: RestMethod
+  method: RestMethod,
 ): (route: string) => MethodDecorator {
   return function (route: string): MethodDecorator {
     return function (
       target: object,
       propertyKey: string | symbol,
-      descriptor: PropertyDescriptor
+      descriptor: PropertyDescriptor,
     ) {
       Reflect.defineMetadata("method", method, target, propertyKey);
       Reflect.defineMetadata("route", route, target, propertyKey);

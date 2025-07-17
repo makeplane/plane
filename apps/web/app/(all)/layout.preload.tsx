@@ -18,7 +18,7 @@ export const usePreloadResources = () => {
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`,
     ];
 
-    urls.forEach(url => preloadItem(url));
+    urls.forEach((url) => preloadItem(url));
   }, []);
 };
 

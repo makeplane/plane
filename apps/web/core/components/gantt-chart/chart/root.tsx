@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 // plane imports
 // components
@@ -176,10 +177,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     scrollContainer.scrollLeft = scrollWidth;
   };
 
-  return (
+  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
+
+  const content = (
     <div
       className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
-        "fixed inset-0 z-20 bg-custom-background-100": fullScreenMode,
+        "inset-0 z-[25] bg-custom-background-100": fullScreenMode,
         "border-[0.5px] border-custom-border-200": border,
       })}
     >
@@ -217,4 +220,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
       />
     </div>
   );
+
+  return fullScreenMode && portalContainer ? createPortal(content, portalContainer) : content;
 });
