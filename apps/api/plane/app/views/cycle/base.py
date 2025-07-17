@@ -174,6 +174,14 @@ class CycleViewSet(BaseViewSet):
                             Q(
                                 issue_cycle__issue__issue_assignee__deleted_at__isnull=True
                             )
+                        )
+                        & Q(
+                            issue_cycle__issue__assignees__member_project__project_id=self.kwargs.get(
+                                "project_id"
+                            )
+                        )
+                        & Q(
+                            issue_cycle__issue__assignees__member_project__is_active=True
                         ),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
