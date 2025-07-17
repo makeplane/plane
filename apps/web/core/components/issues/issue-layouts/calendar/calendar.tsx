@@ -5,7 +5,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // types
 import {
   EIssuesStoreType,
@@ -18,6 +18,7 @@ import {
   TIssueMap,
   TPaginationData,
   ICalendarWeek,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";

@@ -6,7 +6,6 @@ import { TIssueComment } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
-//
 import { useMember } from "@/hooks/store";
 
 type TCommentBlock = {
@@ -18,13 +17,17 @@ type TCommentBlock = {
 
 export const CommentBlock: FC<TCommentBlock> = observer((props) => {
   const { comment, ends, quickActions, children } = props;
+  // refs
   const commentBlockRef = useRef<HTMLDivElement>(null);
   // store hooks
   const { getUserDetails } = useMember();
-  const { t } = useTranslation();
+  // derived values
   const userDetails = getUserDetails(comment?.actor);
+  // translation
+  const { t } = useTranslation();
 
-  if (!comment || !userDetails) return <></>;
+  if (!comment || !userDetails) return null;
+
   return (
     <div
       className={`relative flex gap-3 ${ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`}`}

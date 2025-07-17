@@ -1,26 +1,22 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
-import { ArchiveIcon, ArchiveRestoreIcon, LinkIcon, Trash2 } from "lucide-react";
-import {
-  ARCHIVABLE_STATE_GROUPS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
+import { LinkIcon } from "lucide-react";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
 import { TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
-import { cn, generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
+import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // components
-import { ArchiveIssueModal, DeleteIssueModal, IssueSubscription } from "@/components/issues";
+import { IssueSubscription } from "@/components/issues";
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useIssues, useProject, useProjectState, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
 
 type Props = {
   workspaceSlug: string;
@@ -31,19 +27,16 @@ type Props = {
 export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
-  // states
-  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-  const [archiveIssueModal, setArchiveIssueModal] = useState(false);
-  const [isRestoring, setIsRestoring] = useState(false);
+
+  // ref
+  const parentRef = useRef<HTMLDivElement>(null);
 
   // router
   const router = useAppRouter();
 
   // hooks
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
-  const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   const {
     issue: { getIssueById },
@@ -61,7 +54,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
 
-  const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(projectId);
 
   const workItemLink = generateWorkItemLink({
@@ -133,8 +125,6 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const handleRestore = async () => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
-    setIsRestoring(true);
-
     await restoreIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString())
       .then(() => {
         setToast({
@@ -150,40 +140,11 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
           title: t("toast.error"),
           message: t("issue.restore.failed.message"),
         });
-      })
-      .finally(() => setIsRestoring(false));
+      });
   };
-
-  // auth
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
-  const canRestoreIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
-  const isArchivingAllowed = !issue?.archived_at && isEditable;
-  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   return (
     <>
-      <DeleteIssueModal
-        handleClose={() => setDeleteIssueModal(false)}
-        isOpen={deleteIssueModal}
-        data={issue}
-        onSubmit={handleDeleteIssue}
-      />
-      <ArchiveIssueModal
-        isOpen={archiveIssueModal}
-        handleClose={() => setArchiveIssueModal(false)}
-        data={issue}
-        onSubmit={handleArchiveIssue}
-      />
       <div className="flex items-center justify-end flex-shrink-0">
         <div className="flex flex-wrap items-center gap-4">
           {currentUser && !issue?.archived_at && (
@@ -199,64 +160,13 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
                 <LinkIcon className="h-4 w-4" />
               </button>
             </Tooltip>
-            {issue?.archived_at && canRestoreIssue ? (
-              <>
-                <Tooltip isMobile={isMobile} tooltipContent="Restore">
-                  <button
-                    type="button"
-                    className={cn(
-                      "grid h-5 w-5 place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary",
-                      {
-                        "hover:text-custom-text-200": isInArchivableGroup,
-                        "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
-                      }
-                    )}
-                    onClick={handleRestore}
-                    disabled={isRestoring}
-                  >
-                    <ArchiveRestoreIcon className="h-4 w-4" />
-                  </button>
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                {isArchivingAllowed && (
-                  <Tooltip
-                    isMobile={isMobile}
-                    tooltipContent={isInArchivableGroup ? t("common.actions.archive") : t("issue.archive.description")}
-                  >
-                    <button
-                      type="button"
-                      className={cn(
-                        "grid h-5 w-5 place-items-center rounded focus:outline-none focus:ring-2 focus:ring-custom-primary",
-                        {
-                          "hover:text-custom-text-200": isInArchivableGroup,
-                          "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
-                        }
-                      )}
-                      onClick={() => {
-                        if (!isInArchivableGroup) return;
-                        setArchiveIssueModal(true);
-                      }}
-                    >
-                      <ArchiveIcon className="h-4 w-4" />
-                    </button>
-                  </Tooltip>
-                )}
-              </>
-            )}
-
-            {isEditable && (
-              <Tooltip tooltipContent={t("common.actions.delete")} isMobile={isMobile}>
-                <button
-                  type="button"
-                  className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
-                  onClick={() => setDeleteIssueModal(true)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </Tooltip>
-            )}
+            <WorkItemDetailQuickActions
+              parentRef={parentRef}
+              issue={issue}
+              handleDelete={handleDeleteIssue}
+              handleArchive={handleArchiveIssue}
+              handleRestore={handleRestore}
+            />
           </div>
         </div>
       </div>

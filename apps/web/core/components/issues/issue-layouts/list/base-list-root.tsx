@@ -2,9 +2,15 @@ import { FC, useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // types
-import { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
+import {
+  EIssuesStoreType,
+  GroupByColumnTypes,
+  TGroupedIssues,
+  TIssueKanbanFilters,
+  EIssueLayoutTypes,
+} from "@plane/types";
 // constants
 // hooks
 import { useIssues, useUserPermissions } from "@/hooks/store";

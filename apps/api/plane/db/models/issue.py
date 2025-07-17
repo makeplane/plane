@@ -215,30 +215,37 @@ class Issue(ProjectBaseModel):
 
                 with connection.cursor() as cursor:
                     # Get an exclusive lock using the project ID as the lock key
-                    cursor.execute("SELECT pg_advisory_xact_lock(%s)", [lock_key])
+                    cursor.execute("SELECT pg_advisory_lock(%s)", [lock_key])
 
-                # Get the last sequence for the project
-                last_sequence = IssueSequence.objects.filter(
-                    project=self.project
-                ).aggregate(largest=models.Max("sequence"))["largest"]
-                self.sequence_id = last_sequence + 1 if last_sequence else 1
-                # Strip the html tags using html parser
-                self.description_stripped = (
-                    None
-                    if (self.description_html == "" or self.description_html is None)
-                    else strip_tags(self.description_html)
-                )
-                largest_sort_order = Issue.objects.filter(
-                    project=self.project, state=self.state
-                ).aggregate(largest=models.Max("sort_order"))["largest"]
-                if largest_sort_order is not None:
-                    self.sort_order = largest_sort_order + 10000
+                try:
+                    # Get the last sequence for the project
+                    last_sequence = IssueSequence.objects.filter(
+                        project=self.project
+                    ).aggregate(largest=models.Max("sequence"))["largest"]
+                    self.sequence_id = last_sequence + 1 if last_sequence else 1
+                    # Strip the html tags using html parser
+                    self.description_stripped = (
+                        None
+                        if (
+                            self.description_html == "" or self.description_html is None
+                        )
+                        else strip_tags(self.description_html)
+                    )
+                    largest_sort_order = Issue.objects.filter(
+                        project=self.project, state=self.state
+                    ).aggregate(largest=models.Max("sort_order"))["largest"]
+                    if largest_sort_order is not None:
+                        self.sort_order = largest_sort_order + 10000
 
-                super(Issue, self).save(*args, **kwargs)
+                    super(Issue, self).save(*args, **kwargs)
 
-                IssueSequence.objects.create(
-                    issue=self, sequence=self.sequence_id, project=self.project
-                )
+                    IssueSequence.objects.create(
+                        issue=self, sequence=self.sequence_id, project=self.project
+                    )
+                finally:
+                    # Release the lock
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
         else:
             # Strip the html tags using html parser
             self.description_stripped = (
@@ -594,7 +601,7 @@ class IssueReaction(ProjectBaseModel):
     issue = models.ForeignKey(
         Issue, on_delete=models.CASCADE, related_name="issue_reactions"
     )
-    reaction = models.CharField(max_length=20)
+    reaction = models.TextField()
 
     class Meta:
         unique_together = ["issue", "actor", "reaction", "deleted_at"]
@@ -623,7 +630,7 @@ class CommentReaction(ProjectBaseModel):
     comment = models.ForeignKey(
         IssueComment, on_delete=models.CASCADE, related_name="comment_reactions"
     )
-    reaction = models.CharField(max_length=20)
+    reaction = models.TextField()
 
     class Meta:
         unique_together = ["comment", "actor", "reaction", "deleted_at"]

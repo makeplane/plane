@@ -64,6 +64,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
             items: props.items,
             command: props.command,
             editor: props.editor,
+            query: props.query,
           },
           editor: props.editor,
         });
@@ -81,6 +82,7 @@ const emojiSuggestion: EmojiOptions["suggestion"] = {
           items: props.items,
           command: props.command,
           editor: props.editor,
+          query: props.query,
         });
       },
 

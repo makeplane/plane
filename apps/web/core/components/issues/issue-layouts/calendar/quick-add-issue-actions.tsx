@@ -5,12 +5,10 @@ import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
-// plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { ISearchIssueResponse, TIssue, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { CustomMenu, setPromiseToast } from "@plane/ui";
 // components

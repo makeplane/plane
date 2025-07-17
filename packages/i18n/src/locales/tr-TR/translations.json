@@ -1045,6 +1045,10 @@
       },
       "upload": {
         "error": "Dosya yüklenemedi. Lütfen daha sonra tekrar deneyin."
+      },
+      "copy_link": {
+        "success": "Yorum bağlantısı panoya kopyalandı",
+        "error": "Yorum bağlantısı kopyalanırken hata oluştu. Lütfen daha sonra tekrar deneyin."
       }
     },
     "empty_state": {
