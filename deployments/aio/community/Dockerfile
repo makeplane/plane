@@ -36,8 +36,9 @@ COPY --from=space-img /app /app/space
 COPY --from=admin-img /app /app/admin
 COPY --from=live-img /app /app/live
 
-RUN rm -rf /app/web/web/.next/cache && \
-    rm -rf /app/space/space/.next/cache
+RUN rm -rf /app/web/apps/web/.next/cache && \
+    rm -rf /app/space/apps/space/.next/cache && \
+    rm -rf /app/admin/apps/admin/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile
