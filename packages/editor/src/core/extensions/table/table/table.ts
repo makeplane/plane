@@ -225,6 +225,14 @@ export const Table = Node.create<TableOptions>({
           return false;
         }
 
+        if (this.editor.commands.goToNextCell()) {
+          return true;
+        }
+
+        if (!this.editor.can().addRowAfter()) {
+          return false;
+        }
+
         return this.editor.chain().addRowAfter().goToNextCell().run();
       },
       "Shift-Tab": () => {
