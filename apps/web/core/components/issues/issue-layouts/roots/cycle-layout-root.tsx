@@ -4,8 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common";
 import { TransferIssues, TransferIssuesModal } from "@/components/cycles";

@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EIssueFilterType, EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType } from "@plane/types";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { EmptyState } from "@/components/common";
 import { WorkspaceActiveLayout } from "@/components/views/helper";

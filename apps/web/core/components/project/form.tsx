@@ -104,18 +104,66 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           message: t("project_settings.general.toast.success"),
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: projectId,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: error?.error ?? t("project_settings.general.toast.error"),
-        });
+      .catch((err) => {
+        try {
+          captureError({
+            eventName: PROJECT_TRACKER_EVENTS.update,
+            payload: {
+              id: projectId,
+            },
+          });
+
+          // Handle the new error format where codes are nested in arrays under field names
+          const errorData = err ?? {};
+
+          // Check for specific error codes in the new format
+          if (errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST")) {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("toast.error"),
+              message: t("project_name_already_taken"),
+            });
+          }
+
+          if (errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST")) {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("toast.error"),
+              message: t("project_identifier_already_taken"),
+            });
+          }
+
+          // Handle other field-specific errors (excluding name and identifier which are handled above)
+          Object.keys(errorData).forEach((field) => {
+            // Skip name and identifier fields as they're handled separately above
+            if (field === "name" || field === "identifier") return;
+
+            const fieldErrors = errorData[field];
+            if (Array.isArray(fieldErrors)) {
+              fieldErrors.forEach((errorMessage) => {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: t("error"),
+                  message: errorMessage,
+                });
+              });
+            } else if (typeof fieldErrors === "string") {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("error"),
+                message: fieldErrors,
+              });
+            }
+          });
+        } catch (error) {
+          // Fallback error handling if the error processing fails
+          console.error("Error processing API error:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("something_went_wrong"),
+          });
+        }
       });
   };
 

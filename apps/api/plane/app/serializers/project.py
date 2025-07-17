@@ -27,23 +27,49 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
 
-    def create(self, validated_data):
-        identifier = validated_data.get("identifier", "").strip().upper()
-        if identifier == "":
-            raise serializers.ValidationError(detail="Project Identifier is required")
+    def validate_name(self, name):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
 
-        if ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=self.context["workspace_id"]
-        ).exists():
-            raise serializers.ValidationError(detail="Project Identifier is taken")
-        project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
+        project = Project.objects.filter(name=name, workspace_id=workspace_id)
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_NAME_ALREADY_EXIST",
+            )
+
+        return name
+
+    def validate_identifier(self, identifier):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.filter(
+            identifier=identifier, workspace_id=workspace_id
         )
-        _ = ProjectIdentifier.objects.create(
-            name=project.identifier,
-            project=project,
-            workspace_id=self.context["workspace_id"],
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_IDENTIFIER_ALREADY_EXIST",
+            )
+
+        return identifier
+
+    def create(self, validated_data):
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.create(**validated_data, workspace_id=workspace_id)
+
+        ProjectIdentifier.objects.create(
+            name=project.identifier, project=project, workspace_id=workspace_id
         )
+
         return project
 
     def update(self, instance, validated_data):

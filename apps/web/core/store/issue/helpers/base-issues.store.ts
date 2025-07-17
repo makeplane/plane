@@ -13,7 +13,7 @@ import update from "lodash/update";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
-import { EIssueLayoutTypes, ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
+import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
 import {
   EIssueServiceType,
@@ -31,6 +31,7 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
