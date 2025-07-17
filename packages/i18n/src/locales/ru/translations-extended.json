@@ -1129,6 +1129,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Подключите ваше рабочее пространство Sentry к Plane.",
+    "connected_sentry_workspaces": "Подключенные рабочие пространства Sentry",
+    "connected_on": "Подключено {date}",
+    "disconnect_workspace": "Отключить рабочее пространство {name}",
+    "state_mapping": {
+      "title": "Сопоставление состояний",
+      "description": "Сопоставьте состояния инцидентов Sentry с состояниями вашего проекта. Настройте, какие состояния использовать, когда инцидент Sentry разрешен или не разрешен.",
+      "add_new_state_mapping": "Добавить новое сопоставление состояний",
+      "empty_state": "Сопоставления состояний не настроены. Создайте первое сопоставление для синхронизации состояний инцидентов Sentry с состояниями вашего проекта.",
+      "failed_loading_state_mappings": "Не удалось загрузить ваши сопоставления состояний. Это может быть связано с проблемой сети или проблемой с интеграцией.",
+      "loading_project_states": "Загрузка состояний проекта...",
+      "error_loading_states": "Ошибка загрузки состояний",
+      "no_states_available": "Состояния недоступны",
+      "no_permission_states": "У вас нет разрешения на доступ к состояниям для этого проекта",
+      "states_not_found": "Состояния проекта не найдены",
+      "server_error_states": "Ошибка сервера при загрузке состояний"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Подключите и синхронизируйте вашу организацию GitHub Enterprise с Plane.",

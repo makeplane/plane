@@ -72,6 +72,8 @@ import {
   GitlabStore,
   IConnectionStore,
   ConnectionStore,
+  ISentryStore,
+  SentryStore,
   GithubEnterpriseStore,
   IGithubEnterpriseStore,
 } from "./integrations";
@@ -127,6 +129,7 @@ export class RootStore extends CoreRootStore {
   githubIntegration: IGithubStore;
   githubEnterpriseIntegration: IGithubEnterpriseStore;
   gitlabIntegration: IGitlabStore;
+  sentryIntegration: ISentryStore;
   initiativeFilterStore: IInitiativeFilterStore;
   initiativeStore: IInitiativeStore;
   // dashboards
@@ -177,6 +180,7 @@ export class RootStore extends CoreRootStore {
     this.githubIntegration = new GithubStore(this);
     this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
+    this.sentryIntegration = new SentryStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
     // dashboards
@@ -226,6 +230,7 @@ export class RootStore extends CoreRootStore {
     this.githubIntegration = new GithubStore(this);
     this.githubEnterpriseIntegration = new GithubEnterpriseStore(this);
     this.gitlabIntegration = new GitlabStore(this);
+    this.sentryIntegration = new SentryStore(this);
     this.initiativeFilterStore = new InitiativeFilterStore(this);
     this.initiativeStore = new InitiativeStore(this, this.initiativeFilterStore);
     // dashboards

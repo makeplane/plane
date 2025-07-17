@@ -10,6 +10,7 @@ import { TFeatureFlags } from "@/plane-web/types/feature-flag";
 // logos
 import GitHubLogo from "@/public/services/github.svg";
 import GitlabLogo from "@/public/services/gitlab.svg";
+import SentryLogo from "@/public/services/sentry.svg";
 import SlackLogo from "@/public/services/slack.png";
 
 export type IntegrationProps = {
@@ -44,6 +45,14 @@ const INTEGRATIONS_LIST: IntegrationProps[] = [
     key: "slack",
     title: "Slack",
     logo: SlackLogo,
+    beta: true,
+  },
+  {
+    flag: E_FEATURE_FLAGS.SENTRY_INTEGRATION,
+    urlSlug: "sentry",
+    key: "sentry",
+    title: "Sentry",
+    logo: SentryLogo,
     beta: true,
   },
   {

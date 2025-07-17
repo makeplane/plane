@@ -1129,6 +1129,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Kết nối không gian làm việc Sentry của bạn với Plane.",
+    "connected_sentry_workspaces": "Không gian làm việc Sentry đã kết nối",
+    "connected_on": "Đã kết nối vào {date}",
+    "disconnect_workspace": "Ngắt kết nối không gian làm việc {name}",
+    "state_mapping": {
+      "title": "Ánh xạ trạng thái",
+      "description": "Ánh xạ trạng thái sự cố Sentry với trạng thái dự án của bạn. Cấu hình trạng thái nào sử dụng khi sự cố Sentry được giải quyết hoặc chưa giải quyết.",
+      "add_new_state_mapping": "Thêm ánh xạ trạng thái mới",
+      "empty_state": "Chưa cấu hình ánh xạ trạng thái. Tạo ánh xạ đầu tiên để đồng bộ trạng thái sự cố Sentry với trạng thái dự án của bạn.",
+      "failed_loading_state_mappings": "Chúng tôi không thể tải ánh xạ trạng thái của bạn. Điều này có thể do vấn đề mạng hoặc vấn đề với tích hợp.",
+      "loading_project_states": "Đang tải trạng thái dự án...",
+      "error_loading_states": "Lỗi khi tải trạng thái",
+      "no_states_available": "Không có trạng thái khả dụng",
+      "no_permission_states": "Bạn không có quyền truy cập trạng thái cho dự án này",
+      "states_not_found": "Không tìm thấy trạng thái dự án",
+      "server_error_states": "Lỗi máy chủ khi tải trạng thái"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Kết nối và đồng bộ tổ chức GitHub Enterprise của bạn với Plane.",

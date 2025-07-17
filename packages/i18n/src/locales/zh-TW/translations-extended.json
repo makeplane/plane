@@ -1139,6 +1139,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "將您的Sentry工作空間連接到Plane。",
+    "connected_sentry_workspaces": "已連接的Sentry工作空間",
+    "connected_on": "連接於{date}",
+    "disconnect_workspace": "斷開{name}工作空間",
+    "state_mapping": {
+      "title": "狀態映射",
+      "description": "將Sentry事件狀態映射到您的專案狀態。配置當Sentry事件已解決或未解決時使用哪些狀態。",
+      "add_new_state_mapping": "添加新狀態映射",
+      "empty_state": "未配置狀態映射。建立您的第一個映射以同步Sentry事件狀態與您的專案狀態。",
+      "failed_loading_state_mappings": "我們無法載入您的狀態映射。這可能是由於網路問題或整合問題。",
+      "loading_project_states": "正在載入專案狀態...",
+      "error_loading_states": "載入狀態時出錯",
+      "no_states_available": "沒有可用狀態",
+      "no_permission_states": "您沒有權限存取此專案的狀態",
+      "states_not_found": "未找到專案狀態",
+      "server_error_states": "載入狀態時伺服器錯誤"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "連接並同步您的 GitHub Enterprise 組織與 Plane。",

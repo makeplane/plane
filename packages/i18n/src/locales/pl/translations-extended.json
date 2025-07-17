@@ -1139,6 +1139,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Połącz swój obszar roboczy Sentry z Plane.",
+    "connected_sentry_workspaces": "Połączone obszary robocze Sentry",
+    "connected_on": "Połączono {date}",
+    "disconnect_workspace": "Odłącz obszar roboczy {name}",
+    "state_mapping": {
+      "title": "Mapowanie stanów",
+      "description": "Mapuj stany incydentów Sentry na stany swojego projektu. Skonfiguruj, które stany używać, gdy incydent Sentry jest rozwiązany lub nierozwiązany.",
+      "add_new_state_mapping": "Dodaj nowe mapowanie stanu",
+      "empty_state": "Nie skonfigurowano mapowań stanów. Utwórz swoje pierwsze mapowanie, aby zsynchronizować stany incydentów Sentry ze stanami swojego projektu.",
+      "failed_loading_state_mappings": "Nie udało się załadować mapowań stanów. Może to być spowodowane problemem z siecią lub problemem z integracją.",
+      "loading_project_states": "Ładowanie stanów projektu...",
+      "error_loading_states": "Błąd ładowania stanów",
+      "no_states_available": "Brak dostępnych stanów",
+      "no_permission_states": "Nie masz uprawnień do dostępu do stanów dla tego projektu",
+      "states_not_found": "Nie znaleziono stanów projektu",
+      "server_error_states": "Błąd serwera podczas ładowania stanów"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Połącz i synchronizuj swoją organizację GitHub Enterprise z Plane.",

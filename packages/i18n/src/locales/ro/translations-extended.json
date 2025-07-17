@@ -1138,6 +1138,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Conectează spațiul tău de lucru Sentry cu Plane.",
+    "connected_sentry_workspaces": "Spații de lucru Sentry conectate",
+    "connected_on": "Conectat la {date}",
+    "disconnect_workspace": "Deconectează spațiul de lucru {name}",
+    "state_mapping": {
+      "title": "Maparea stărilor",
+      "description": "Mapează stările incidentelor Sentry la stările proiectului tău. Configurează ce stări să folosești când un incident Sentry este rezolvat sau nerezolvat.",
+      "add_new_state_mapping": "Adaugă mapare nouă de stare",
+      "empty_state": "Nu sunt configurate mapări de stări. Creează prima ta mapare pentru a sincroniza stările incidentelor Sentry cu stările proiectului tău.",
+      "failed_loading_state_mappings": "Nu am putut încărca mapările tale de stări. Aceasta ar putea fi din cauza unei probleme de rețea sau a unei probleme cu integrarea.",
+      "loading_project_states": "Se încarcă stările proiectului...",
+      "error_loading_states": "Eroare la încărcarea stărilor",
+      "no_states_available": "Nu sunt disponibile stări",
+      "no_permission_states": "Nu ai permisiunea de a accesa stările pentru acest proiect",
+      "states_not_found": "Stările proiectului nu au fost găsite",
+      "server_error_states": "Eroare de server la încărcarea stărilor"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Conectează și sincronizează organizația ta GitHub Enterprise cu Plane.",

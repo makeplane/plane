@@ -1139,6 +1139,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Verbinden Sie Ihren Sentry-Arbeitsbereich mit Plane.",
+    "connected_sentry_workspaces": "Verbundene Sentry-Arbeitsbereiche",
+    "connected_on": "Verbunden am {date}",
+    "disconnect_workspace": "Arbeitsbereich {name} trennen",
+    "state_mapping": {
+      "title": "Status-Zuordnung",
+      "description": "Ordnen Sie Sentry-Incident-Status Ihren Projekt-Status zu. Konfigurieren Sie, welche Status verwendet werden sollen, wenn ein Sentry-Incident gelöst oder ungelöst ist.",
+      "add_new_state_mapping": "Neue Status-Zuordnung hinzufügen",
+      "empty_state": "Keine Status-Zuordnungen konfiguriert. Erstellen Sie Ihre erste Zuordnung, um Sentry-Incident-Status mit Ihren Projekt-Status zu synchronisieren.",
+      "failed_loading_state_mappings": "Wir konnten Ihre Status-Zuordnungen nicht laden. Dies könnte an einem Netzwerkproblem oder einem Problem mit der Integration liegen.",
+      "loading_project_states": "Projekt-Status werden geladen...",
+      "error_loading_states": "Fehler beim Laden der Status",
+      "no_states_available": "Keine Status verfügbar",
+      "no_permission_states": "Sie haben keine Berechtigung, auf Status für dieses Projekt zuzugreifen",
+      "states_not_found": "Projekt-Status nicht gefunden",
+      "server_error_states": "Serverfehler beim Laden der Status"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Verbinden und synchronisieren Sie Ihre GitHub Enterprise-Organisation mit Plane.",

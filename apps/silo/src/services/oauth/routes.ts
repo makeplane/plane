@@ -70,15 +70,7 @@ export class OAuthRoutes {
         return res.status(400).json({ message: "Missing required fields" });
       }
 
-      const authUrl = await this.controller.getAuthUrl(integrationKey as E_INTEGRATION_KEYS, {
-        workspace_id,
-        workspace_slug,
-        plane_api_token,
-        target_host: env.API_BASE_URL,
-        user_id,
-        plane_app_installation_id,
-        config_key,
-      });
+      const authUrl = await this.controller.getAuthUrl(integrationKey as E_INTEGRATION_KEYS, req.body);
 
       res.send(authUrl);
     } catch (error) {

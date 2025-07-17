@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+import { env } from "@/env";
 
 export const isGithubEnabled = function () {
   return (
@@ -19,6 +19,10 @@ export const isGitlabEnabled = function () {
   return env.GITLAB_CLIENT_ID && env.GITLAB_CLIENT_SECRET;
 };
 
+export const isSentryEnabled = function () {
+  return env.SENTRY_CLIENT_ID && env.SENTRY_CLIENT_SECRET;
+}
+
 export const isGithubEnterpriseEnabled = function () {
   return true;
 };
@@ -28,6 +32,7 @@ export const getSupportedIntegrations = () =>
     isGithubEnabled() && E_INTEGRATION_KEYS.GITHUB,
     isSlackEnabled() && E_INTEGRATION_KEYS.SLACK,
     isGitlabEnabled() && E_INTEGRATION_KEYS.GITLAB,
+    isSentryEnabled() && E_INTEGRATION_KEYS.SENTRY,
     isGithubEnterpriseEnabled() && E_INTEGRATION_KEYS.GITHUB_ENTERPRISE,
   ].filter(Boolean) as E_INTEGRATION_KEYS[];
 
@@ -39,6 +44,8 @@ export const checkIntegrationAvailability = (key: E_INTEGRATION_KEYS) => {
       return isSlackEnabled();
     case E_INTEGRATION_KEYS.GITLAB:
       return isGitlabEnabled();
+    case E_INTEGRATION_KEYS.SENTRY:
+      return isSentryEnabled();
     case E_INTEGRATION_KEYS.GITHUB_ENTERPRISE:
       return isGithubEnterpriseEnabled();
     default:

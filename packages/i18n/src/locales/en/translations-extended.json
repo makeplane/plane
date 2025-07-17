@@ -3,7 +3,6 @@
   "pi_chat": "Pi Chat",
   "in_app": "In-app",
   "forms": "Forms",
-
   "common": {
     "worklogs": "Worklogs",
     "live": "Live",
@@ -65,7 +64,7 @@
             "message": "Pages update failed"
           }
         },
-        "remove": {
+        "remove":{
           "success": {
             "title": "Page removed",
             "message": "Page removed successfully"
@@ -635,7 +634,7 @@
       "teamspaces": {
         "title": "Teamspaces",
         "heading": "Teamspaces",
-        "description": "See your team’s work in a separate space with linked projects, tasks, team charts, pages, and views."
+        "description": "See your team's work in a separate space with linked projects, tasks, team charts, pages, and views."
       },
       "initiatives": {
         "title": "Initiatives",
@@ -1247,6 +1246,26 @@
         "failed_upserting_project_connection": "Failed to upsert project connection",
         "failed_loading_project_connections": "We couldn't load your project connections. This could be due to a network issue or a problem with the integration."
       }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Connect your Sentry workspace with Plane.",
+    "connected_sentry_workspaces": "Connected Sentry workspaces",
+    "connected_on": "Connected on {date}",
+    "disconnect_workspace": "Disconnect {name} workspace",
+    "state_mapping": {
+      "title": "State Mapping",
+      "description": "Map Sentry issue states to your project states. Configure which states to use when a Sentry issue is resolved or unresolved.",
+      "add_new_state_mapping": "Add new state mapping",
+      "empty_state": "No state mappings configured. Create your first mapping to sync Sentry issue states with your project states.",
+      "failed_loading_state_mappings": "We couldn't load your state mappings. This could be due to a network issue or a problem with the integration.",
+      "loading_project_states": "Loading project states...",
+      "error_loading_states": "Error loading states",
+      "no_states_available": "No states available",
+      "no_permission_states": "You don't have permission to access states for this project",
+      "states_not_found": "Project states not found",
+      "server_error_states": "Server error while loading states"
     }
   },
   "github_enterprise_integration": {

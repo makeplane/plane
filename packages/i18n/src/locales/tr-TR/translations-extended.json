@@ -1154,6 +1154,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Sentry çalışma alanınızı Plane ile bağlayın.",
+    "connected_sentry_workspaces": "Bağlı Sentry çalışma alanları",
+    "connected_on": "{date} tarihinde bağlandı",
+    "disconnect_workspace": "{name} çalışma alanını bağlantısını kes",
+    "state_mapping": {
+      "title": "Durum eşleştirme",
+      "description": "Sentry olay durumlarını proje durumlarınızla eşleştirin. Bir Sentry olayı çözüldüğünde veya çözülmediğinde hangi durumların kullanılacağını yapılandırın.",
+      "add_new_state_mapping": "Yeni durum eşleştirme ekle",
+      "empty_state": "Durum eşleştirme yapılandırılmamış. Sentry olay durumlarını proje durumlarınızla senkronize etmek için ilk eşleştirmenizi oluşturun.",
+      "failed_loading_state_mappings": "Durum eşleştirmelerinizi yükleyemedik. Bu, ağ sorunu veya entegrasyon sorunu nedeniyle olabilir.",
+      "loading_project_states": "Proje durumları yükleniyor...",
+      "error_loading_states": "Durumlar yüklenirken hata",
+      "no_states_available": "Kullanılabilir durum yok",
+      "no_permission_states": "Bu proje için durumlara erişim izniniz yok",
+      "states_not_found": "Proje durumları bulunamadı",
+      "server_error_states": "Durumlar yüklenirken sunucu hatası"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "GitHub Enterprise organizasyonunuzu Plane ile bağlayın ve senkronize edin.",

@@ -24,6 +24,7 @@ import { TaskHandler, TaskHeaders } from "@/types";
 import { MQ, s3Client, Store } from "./base";
 import { Lock } from "./base/lock";
 import { TMQEntityOptions } from "./base/types";
+import { SentryPlaneWebhookHandler, SentryWebhookHandler } from "@/apps/sentry/worker/worker";
 
 // It's 30 mins, but we want to be safe and set it to 25 minutes
 const MQ_CONSUMER_TIMEOUT = 25 * 60 * 1000; // 25 minutes
@@ -67,6 +68,10 @@ class WorkerFactory {
         return new SlackInteractionHandler(mq, store);
       case "plane-slack-webhook":
         return new PlaneSlackWebhookWorker(mq, store);
+      case "sentry-webhook":
+        return new SentryWebhookHandler(mq, store);
+      case "plane-sentry-webhook":
+        return new SentryPlaneWebhookHandler(mq, store);
       case "flatfile":
         return new FlatfileMigrator(mq, store);
       case "clickup":

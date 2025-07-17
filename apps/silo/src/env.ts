@@ -63,6 +63,15 @@ const envSchema = z.object({
   // Slack Env Variables
   SLACK_CLIENT_ID: z.string().optional(),
   SLACK_CLIENT_SECRET: z.string().optional(),
+  // Sentry Env Variables
+  SENTRY_BASE_URL: z
+    .string()
+    .optional()
+    .default("https://sentry.io")
+    .transform((str) => str.replace(/\/$/, "")),
+  SENTRY_CLIENT_ID: z.string().optional(),
+  SENTRY_CLIENT_SECRET: z.string().optional(),
+  SENTRY_INTEGRATION_SLUG: z.string().optional().default("plane"),
   // Flatfile Env Variables
   FLATFILE_API_KEY: z.string().optional(),
   // AES Env Variables

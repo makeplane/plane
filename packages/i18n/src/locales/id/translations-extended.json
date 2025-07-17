@@ -1139,6 +1139,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Hubungkan ruang kerja Sentry Anda dengan Plane.",
+    "connected_sentry_workspaces": "Ruang kerja Sentry yang terhubung",
+    "connected_on": "Terhubung pada {date}",
+    "disconnect_workspace": "Putuskan ruang kerja {name}",
+    "state_mapping": {
+      "title": "Pemetaan status",
+      "description": "Petakan status insiden Sentry ke status proyek Anda. Konfigurasikan status mana yang digunakan ketika insiden Sentry diselesaikan atau tidak diselesaikan.",
+      "add_new_state_mapping": "Tambahkan pemetaan status baru",
+      "empty_state": "Tidak ada pemetaan status yang dikonfigurasi. Buat pemetaan pertama Anda untuk menyinkronkan status insiden Sentry dengan status proyek Anda.",
+      "failed_loading_state_mappings": "Kami tidak dapat memuat pemetaan status Anda. Ini mungkin disebabkan oleh masalah jaringan atau masalah dengan integrasi.",
+      "loading_project_states": "Memuat status proyek...",
+      "error_loading_states": "Kesalahan memuat status",
+      "no_states_available": "Tidak ada status yang tersedia",
+      "no_permission_states": "Anda tidak memiliki izin untuk mengakses status untuk proyek ini",
+      "states_not_found": "Status proyek tidak ditemukan",
+      "server_error_states": "Kesalahan server saat memuat status"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Hubungkan dan sinkronkan organisasi GitHub Enterprise Anda dengan Plane.",

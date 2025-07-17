@@ -1138,6 +1138,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "SentryワークスペースをPlaneに接続します。",
+    "connected_sentry_workspaces": "接続されたSentryワークスペース",
+    "connected_on": "{date}に接続",
+    "disconnect_workspace": "{name}ワークスペースを切断",
+    "state_mapping": {
+      "title": "状態マッピング",
+      "description": "Sentryインシデントの状態をプロジェクトの状態にマッピングします。Sentryインシデントが解決されたり未解決の場合に使用する状態を設定します。",
+      "add_new_state_mapping": "新しい状態マッピングを追加",
+      "empty_state": "状態マッピングが設定されていません。Sentryインシデントの状態をプロジェクトの状態と同期するための最初のマッピングを作成してください。",
+      "failed_loading_state_mappings": "状態マッピングを読み込めませんでした。ネットワークの問題または統合の問題が原因である可能性があります。",
+      "loading_project_states": "プロジェクトの状態を読み込み中...",
+      "error_loading_states": "状態の読み込みエラー",
+      "no_states_available": "利用可能な状態がありません",
+      "no_permission_states": "このプロジェクトの状態にアクセスする権限がありません",
+      "states_not_found": "プロジェクトの状態が見つかりません",
+      "server_error_states": "状態の読み込み中にサーバーエラーが発生しました"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "GitHub Enterpriseの組織をPlaneと連携・同期します。",

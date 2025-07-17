@@ -45,6 +45,10 @@
       "types": "./dist/flatfile/index.d.ts",
       "default": "./dist/flatfile/index.js"
     },
+    "./sentry": {
+      "types": "./dist/sentry/index.d.ts",
+      "default": "./dist/sentry/index.js"
+    },
     "./clickup": {
       "types": "./dist/clickup/index.d.ts",
       "default": "./dist/clickup/index.js"
@@ -55,7 +59,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsup --minify",
+    "build": "rm -rf dist && NODE_OPTIONS='--max-old-space-size=4096' tsup --minify",
     "dev": "tsup --watch",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "check:lint": "eslint . --max-warnings 0",

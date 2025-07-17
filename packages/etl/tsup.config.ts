@@ -12,11 +12,11 @@ export default defineConfig((options: Options) => ({
     "src/linear/index.ts",
     "src/slack/index.ts",
     "src/flatfile/index.ts",
+    "src/sentry/index.ts",
     "src/clickup/index.ts",
   ],
   format: ["cjs", "esm"],
   dts: true,
   clean: false,
-  sourcemap: true,
   ...options,
 }));

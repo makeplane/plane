@@ -11,6 +11,7 @@ import {
   IssueWithExpanded,
   Optional,
   Paginated,
+  ExIssueLink,
 } from "@/types/types";
 
 export class IssueService extends APIService {
@@ -98,6 +99,22 @@ export class IssueService extends APIService {
       title: title,
       url: url,
     })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteLink(slug: string, projectId: string, issueId: string, linkId: string) {
+    return this.delete(`/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/links/${linkId}/`)
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getLinks(slug: string, projectId: string, issueId: string): Promise<Paginated<ExIssueLink>> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/${projectId}/issues/${issueId}/links/`)
       .then((response) => response.data)
       .catch((error) => {
         throw error?.response?.data;

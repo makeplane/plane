@@ -1,3 +1,5 @@
+import { E_INTEGRATION_KEYS } from "@plane/constants";
+
 // github workspace connection type and data
 export enum EGithubWorkspaceConnectionType {
   GITHUB = "GITHUB",
@@ -57,7 +59,7 @@ export type TGitlabWorkspaceConnectionData = {
 };
 
 // workspace connections
-export type TWorkspaceConnectionType = TGithubWorkspaceConnectionType | TGitlabWorkspaceConnectionType;
+export type TWorkspaceConnectionType = keyof typeof E_INTEGRATION_KEYS
 
 export type TWorkspaceConnection<TWorkspaceConnectionData extends object> = {
   id: string | undefined;

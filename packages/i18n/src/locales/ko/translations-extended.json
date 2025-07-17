@@ -1139,6 +1139,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Sentry 작업 공간을 Plane에 연결하세요.",
+    "connected_sentry_workspaces": "연결된 Sentry 작업 공간",
+    "connected_on": "{date}에 연결됨",
+    "disconnect_workspace": "{name} 작업 공간 연결 해제",
+    "state_mapping": {
+      "title": "상태 매핑",
+      "description": "Sentry 인시던트 상태를 프로젝트 상태에 매핑하세요. Sentry 인시던트가 해결되거나 미해결일 때 사용할 상태를 구성하세요.",
+      "add_new_state_mapping": "새 상태 매핑 추가",
+      "empty_state": "상태 매핑이 구성되지 않았습니다. Sentry 인시던트 상태를 프로젝트 상태와 동기화하기 위한 첫 번째 매핑을 만드세요.",
+      "failed_loading_state_mappings": "상태 매핑을 로드할 수 없었습니다. 네트워크 문제 또는 통합 문제로 인한 것일 수 있습니다.",
+      "loading_project_states": "프로젝트 상태 로딩 중...",
+      "error_loading_states": "상태 로딩 오류",
+      "no_states_available": "사용 가능한 상태가 없습니다",
+      "no_permission_states": "이 프로젝트의 상태에 액세스할 권한이 없습니다",
+      "states_not_found": "프로젝트 상태를 찾을 수 없습니다",
+      "server_error_states": "상태 로딩 중 서버 오류"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "깃허브 엔터프라이즈 조직을 플레인과 연결하고 동기화하세요.",

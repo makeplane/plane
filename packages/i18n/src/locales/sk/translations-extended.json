@@ -1146,6 +1146,26 @@
       }
     }
   },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Pripojte váš Sentry pracovný priestor s Plane.",
+    "connected_sentry_workspaces": "Pripojené Sentry pracovné priestory",
+    "connected_on": "Pripojené {date}",
+    "disconnect_workspace": "Odpojiť pracovný priestor {name}",
+    "state_mapping": {
+      "title": "Mapovanie stavov",
+      "description": "Mapujte stavy incidentov Sentry na stavy vášho projektu. Nakonfigurujte, ktoré stavy použiť, keď je incident Sentry vyriešený alebo nevyriešený.",
+      "add_new_state_mapping": "Pridať nové mapovanie stavu",
+      "empty_state": "Nie sú nakonfigurované žiadne mapovania stavov. Vytvorte svoje prvé mapovanie na synchronizáciu stavov incidentov Sentry so stavmi vášho projektu.",
+      "failed_loading_state_mappings": "Nepodarilo sa nám načítať vaše mapovania stavov. Môže to byť spôsobené problémom so sieťou alebo problémom s integráciou.",
+      "loading_project_states": "Načítavanie stavov projektu...",
+      "error_loading_states": "Chyba pri načítavaní stavov",
+      "no_states_available": "Nie sú dostupné žiadne stavy",
+      "no_permission_states": "Nemáte povolenie na prístup k stavom pre tento projekt",
+      "states_not_found": "Stavy projektu sa nenašli",
+      "server_error_states": "Chyba servera pri načítavaní stavov"
+    }
+  },
   "github_enterprise_integration": {
     "name": "GitHub Enterprise",
     "description": "Pripojte a synchronizujte vašu GitHub Enterprise organizáciu s Plane.",

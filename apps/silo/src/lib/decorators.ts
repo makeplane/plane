@@ -8,6 +8,10 @@ import { RequestHandler } from "express";
 import { validateUserAuthentication } from "@/middleware/auth.middleware";
 import { checkIntegrationAvailability } from "@/helpers/app";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
+
+type Constructor = {
+  new (...args: any[]): any;
+};
 /**
  * Controller decorator
  * @param baseRoute
@@ -16,6 +20,63 @@ import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 export function Controller(baseRoute: string = ""): ClassDecorator {
   return function (target: Function) {
     Reflect.defineMetadata("baseRoute", baseRoute, target);
+  };
+}
+
+/**
+ * Decorator factory for inheriting from multiple controller classes
+ * @param subControllers Array of parent controller classes to inherit from
+ */
+export function ConnectSubController(subControllers: Constructor[]) {
+  return function <T extends Constructor>(target: T) {
+    // Process each parent controller
+    subControllers.forEach((subController) => {
+      // Get parent metadata
+      const parentMethods = Object.getOwnPropertyNames(subController.prototype).filter(
+        (name) => name !== "constructor"
+      );
+
+      // Copy parent methods and their metadata to child
+      parentMethods.forEach((methodName) => {
+        // Skip if method already exists in target
+        if (!target.prototype[methodName]) {
+          const method = subController.prototype[methodName];
+          target.prototype[methodName] = method;
+
+          // Copy method metadata
+          const route = Reflect.getMetadata("route", subController.prototype, methodName);
+          const httpMethod = Reflect.getMetadata("method", subController.prototype, methodName);
+          const middlewares = Reflect.getMetadata("middlewares", subController.prototype, methodName) || [];
+
+          if (route) {
+            Reflect.defineMetadata("route", route, target.prototype, methodName);
+          }
+          if (httpMethod) {
+            Reflect.defineMetadata("method", httpMethod, target.prototype, methodName);
+          }
+          if (middlewares.length > 0) {
+            Reflect.defineMetadata("middlewares", middlewares, target.prototype, methodName);
+          }
+        }
+      });
+
+      // Copy class-level decorators
+      const parentDecorators = Reflect.getMetadata("decorators", subController) || [];
+      parentDecorators.forEach((decorator: ClassDecorator) => {
+        decorator(target);
+      });
+
+      // Copy class-level metadata
+      const parentMetadataKeys = Reflect.getMetadataKeys(subController);
+      parentMetadataKeys.forEach((key) => {
+        const metadata = Reflect.getMetadata(key, subController);
+        if (!Reflect.hasMetadata(key, target)) {
+          Reflect.defineMetadata(key, metadata, target);
+        }
+      });
+    });
+
+    return target;
   };
 }
 
@@ -83,11 +144,21 @@ export function Delete(route: string): any {
  * @param baseRoute
  * @returns
  */
-export function Middleware(middleware: RequestHandler): any {
+export function Middleware(middleware: RequestHandler | RequestHandler[]) {
   return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    const middlewares = Reflect.getMetadata("middlewares", target, propertyKey) || [];
-    middlewares.push(middleware);
-    Reflect.defineMetadata("middlewares", middlewares, target, propertyKey);
+    // Convert single middleware to array
+    const middlewareArray = Array.isArray(middleware) ? middleware : [middleware];
+
+    // Get existing middlewares or initialize empty array
+    const existingMiddlewares: RequestHandler[] = Reflect.getMetadata("middlewares", target, propertyKey) || [];
+
+    // Combine existing and new middlewares
+    const updatedMiddlewares = [...existingMiddlewares, ...middlewareArray];
+
+    // Store the combined middlewares
+    Reflect.defineMetadata("middlewares", updatedMiddlewares, target, propertyKey);
+
+    return descriptor;
   };
 }
 

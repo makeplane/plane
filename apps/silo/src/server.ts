@@ -28,6 +28,7 @@ import GithubEnterpriseController from "./apps/github-enterprise/controllers";
 import GitlabController from "./apps/gitlab/controller";
 import JiraDataCenterController from "./apps/jira-server-importer/controllers";
 import { NotionController } from "./apps/notion-importer/controller";
+import SentryControllers from "./apps/sentry/controllers";
 import SlackController from "./apps/slack/controllers";
 
 // Helpers and Utils
@@ -65,6 +66,7 @@ export default class Server {
       CSVController,
       ClickupController,
       OAuthRoutes,
+      ...SentryControllers,
     ],
   };
 
