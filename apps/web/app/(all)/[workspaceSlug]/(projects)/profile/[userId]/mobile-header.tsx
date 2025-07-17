@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ChevronDown } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -16,6 +16,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssueLayouts,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
