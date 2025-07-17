@@ -13,6 +13,8 @@ import { logger, manualLogger } from "@/core/helpers/logger.js";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common.js";
 
+process.title = "Plane Live Server";
+
 export class Server {
   private app: expressWs.Application;
   private router: expressWs.Router;
