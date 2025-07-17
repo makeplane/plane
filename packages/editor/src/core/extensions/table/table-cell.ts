@@ -1,7 +1,9 @@
 import { mergeAttributes, Node } from "@tiptap/core";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { TableMap } from "@tiptap/pm/tables";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { findParentNodeOfType } from "@/helpers/common";
 // local imports
 import { TableCellSelectionOutlinePlugin } from "./plugins/selection-outline/plugin";
 import { DEFAULT_COLUMN_WIDTH } from "./table";
@@ -62,52 +64,37 @@ export const TableCell = Node.create<TableCellOptions>({
         const { state } = editor.view;
         const { selection } = state;
 
+        if (isCellSelection(selection)) return false;
+
         // Check if we're at the start of the cell
-        if (selection.from !== selection.to || selection.$head.parentOffset !== 0) {
-          return false;
-        }
+        if (selection.from !== selection.to || selection.$head.parentOffset !== 0) return false;
 
         // Find table and current cell
-        let tableNode: ProseMirrorNode | null = null;
-        let currentCellNode: ProseMirrorNode | null = null;
-        let cellPos: number | null = null;
-        let cellDepth: number | null = null;
-
-        for (let depth = selection.$head.depth; depth > 0; depth--) {
-          const node = selection.$head.node(depth);
-          if (node.type.name === CORE_EXTENSIONS.TABLE) {
-            tableNode = node;
-          }
-          if (node.type.name === CORE_EXTENSIONS.TABLE_CELL || node.type.name === CORE_EXTENSIONS.TABLE_HEADER) {
-            currentCellNode = node;
-            cellPos = selection.$head.start(depth);
-            cellDepth = depth;
-          }
-        }
+        const tableNode = findParentNodeOfType(selection, [CORE_EXTENSIONS.TABLE])?.node;
+        const currentCellInfo = findParentNodeOfType(selection, [
+          CORE_EXTENSIONS.TABLE_CELL,
+          CORE_EXTENSIONS.TABLE_HEADER,
+        ]);
+        const currentCellNode = currentCellInfo?.node;
+        const cellPos = currentCellInfo?.pos;
+        const cellDepth = currentCellInfo?.depth;
 
         if (!tableNode || !currentCellNode || cellPos === null || cellDepth === null) return false;
 
         // Check if this is the only cell in the TableMap (1 row, 1 column)
-        const isOnlyCell = tableNode.childCount === 1 && tableNode.firstChild?.childCount === 1;
+        const tableMap = TableMap.get(tableNode);
+        const isOnlyCell = tableMap.width === 1 && tableMap.height === 1;
         if (!isOnlyCell) return false;
-        // Check if cell is selected (CellSelection)
-        const isCellSelected = isCellSelection(selection);
 
-        if (isCellSelected) {
-          // Cell is already selected, delete the TableNode
-          editor.chain().focus().deleteTable().run();
-          return true;
-        } else {
-          // Cell has content, select the entire cell
-          // Use the position that points to the cell node itself, not its content
-          const cellNodePos = selection.$head.before(cellDepth);
+        // Cell has content, select the entire cell
+        // Use the position that points to the cell node itself, not its content
+        const cellNodePos = selection.$head.before(cellDepth);
 
-          editor.commands.setCellSelection({
-            anchorCell: cellNodePos,
-            headCell: cellNodePos,
-          });
-          return true;
-        }
+        editor.commands.setCellSelection({
+          anchorCell: cellNodePos,
+          headCell: cellNodePos,
+        });
+        return true;
       },
     };
   },
