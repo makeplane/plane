@@ -7,7 +7,7 @@ interface ControllerInstance {
 }
 
 interface ControllerConstructor {
-  new (...args: any[]): ControllerInstance;
+  new (...args: unknown[]): ControllerInstance;
   prototype: ControllerInstance;
 }
 
@@ -34,9 +34,9 @@ export function registerWebSocketControllers(
 
       if (
         typeof handler === "function" &&
-        typeof (router as any).ws === "function"
+        'ws' in router && typeof router.ws === "function"
       ) {
-        (router as any).ws(
+        router.ws(
           `${baseRoute}${route}`,
           (ws: WebSocket, req: Request) => {
             try {

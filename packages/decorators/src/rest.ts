@@ -10,6 +10,7 @@ type RestMethod = "get" | "post" | "put" | "patch" | "delete";
  * @returns
  */
 export function Controller(baseRoute: string = ""): ClassDecorator {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return function (target: Function) {
     Reflect.defineMetadata("baseRoute", baseRoute, target);
   };
@@ -27,7 +28,6 @@ function createHttpMethodDecorator(
     return function (
       target: object,
       propertyKey: string | symbol,
-      descriptor: PropertyDescriptor,
     ) {
       Reflect.defineMetadata("method", method, target, propertyKey);
       Reflect.defineMetadata("route", route, target, propertyKey);
@@ -51,7 +51,6 @@ export function Middleware(middleware: RequestHandler): MethodDecorator {
   return function (
     target: object,
     propertyKey: string | symbol,
-    descriptor: PropertyDescriptor,
   ) {
     const middlewares =
       Reflect.getMetadata("middlewares", target, propertyKey) || [];
