@@ -1,4 +1,4 @@
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes } from "@plane/types";
 import { TWorkspaceLayoutProps } from "@/components/views/helper";
 
 export type TLayoutSelectionProps = {

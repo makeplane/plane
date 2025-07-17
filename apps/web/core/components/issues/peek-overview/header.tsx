@@ -1,15 +1,14 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ArchiveRestoreIcon, Link2, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
+import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TNameDescriptionLoader } from "@plane/types";
+import { EIssuesStoreType, TNameDescriptionLoader } from "@plane/types";
 import {
-  ArchiveIcon,
   CenterPanelIcon,
   CustomSelect,
   FullScreenPanelIcon,
@@ -18,12 +17,15 @@ import {
   Tooltip,
   setToast,
 } from "@plane/ui";
-import { copyUrlToClipboard, cn, generateWorkItemLink } from "@plane/utils";
+import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // components
-import { IssueSubscription, NameDescriptionUpdateStatus } from "@/components/issues";
+import { IssueSubscription, NameDescriptionUpdateStatus, WorkItemDetailQuickActions } from "@/components/issues";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
 // store hooks
-import { useIssueDetail, useProject, useProjectState, useUser } from "@/hooks/store";
+
+import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
+import { useAppRouter } from "@/hooks/use-app-router";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -56,9 +58,11 @@ export type PeekOverviewHeaderProps = {
   isArchived: boolean;
   disabled: boolean;
   embedIssue: boolean;
-  toggleDeleteIssueModal: (issueId: string | null) => void;
-  toggleArchiveIssueModal: (issueId: string | null) => void;
-  handleRestoreIssue: () => void;
+  toggleDeleteIssueModal: (value: boolean) => void;
+  toggleArchiveIssueModal: (value: boolean) => void;
+  toggleDuplicateIssueModal: (value: boolean) => void;
+  toggleEditIssueModal: (value: boolean) => void;
+  handleRestoreIssue: () => Promise<void>;
   isSubmitting: TNameDescriptionLoader;
 };
 
@@ -75,23 +79,33 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     removeRoutePeekId,
     toggleDeleteIssueModal,
     toggleArchiveIssueModal,
+    toggleDuplicateIssueModal,
+    toggleEditIssueModal,
     handleRestoreIssue,
     isSubmitting,
   } = props;
+  // ref
+  const parentRef = useRef<HTMLDivElement>(null);
+  // router
+  const router = useAppRouter();
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
   const {
     issue: { getIssueById },
+    setPeekIssue,
+    removeIssue,
+    archiveIssue,
   } = useIssueDetail();
-  const { getStateById } = useProjectState();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
   // derived values
   const issueDetails = getIssueById(issueId);
-  const stateDetails = issueDetails ? getStateById(issueDetails?.state_id) : undefined;
   const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
   const projectIdentifier = getProjectIdentifierById(issueDetails?.project_id);
+  const {
+    issues: { removeIssue: removeArchivedIssue },
+  } = useIssues(EIssuesStoreType.ARCHIVED);
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
@@ -113,10 +127,49 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
       });
     });
   };
-  // auth
-  const isArchivingAllowed = !isArchived && !disabled;
-  const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isRestoringAllowed = isArchived && !disabled;
+
+  const handleDeleteIssue = async () => {
+    try {
+      const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
+
+      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
+        setPeekIssue(undefined);
+        captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.delete,
+          payload: { id: issueId },
+        });
+      });
+    } catch (error) {
+      setToast({
+        title: t("toast.error"),
+        type: TOAST_TYPE.ERROR,
+        message: t("entity.delete.failed", { entity: t("issue.label", { count: 1 }) }),
+      });
+      captureError({
+        eventName: WORK_ITEM_TRACKER_EVENTS.delete,
+        payload: { id: issueId },
+        error: error as Error,
+      });
+    }
+  };
+
+  const handleArchiveIssue = async () => {
+    try {
+      await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
+        router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issueDetails?.id}`);
+      });
+      captureSuccess({
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
+        payload: { id: issueId },
+      });
+    } catch (error) {
+      captureError({
+        eventName: WORK_ITEM_TRACKER_EVENTS.archive,
+        payload: { id: issueId },
+        error: error as Error,
+      });
+    }
+  };
 
   return (
     <div
@@ -178,39 +231,20 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
             </button>
           </Tooltip>
-          {isArchivingAllowed && (
-            <Tooltip
-              isMobile={isMobile}
-              tooltipContent={isInArchivableGroup ? t("common.actions.archive") : t("issue.archive.description")}
-            >
-              <button
-                type="button"
-                className={cn("text-custom-text-300", {
-                  "hover:text-custom-text-200": isInArchivableGroup,
-                  "cursor-not-allowed text-custom-text-400": !isInArchivableGroup,
-                })}
-                onClick={() => {
-                  if (!isInArchivableGroup) return;
-                  toggleArchiveIssueModal(issueId);
-                }}
-              >
-                <ArchiveIcon className="h-4 w-4" />
-              </button>
-            </Tooltip>
-          )}
-          {isRestoringAllowed && (
-            <Tooltip tooltipContent={t("common.actions.restore")} isMobile={isMobile}>
-              <button type="button" onClick={handleRestoreIssue}>
-                <ArchiveRestoreIcon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-              </button>
-            </Tooltip>
-          )}
-          {!disabled && (
-            <Tooltip tooltipContent={t("common.actions.delete")} isMobile={isMobile}>
-              <button type="button" onClick={() => toggleDeleteIssueModal(issueId)}>
-                <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
-              </button>
-            </Tooltip>
+          {issueDetails && (
+            <WorkItemDetailQuickActions
+              parentRef={parentRef}
+              issue={issueDetails}
+              handleDelete={handleDeleteIssue}
+              handleArchive={handleArchiveIssue}
+              handleRestore={handleRestoreIssue}
+              readOnly={disabled}
+              toggleDeleteIssueModal={toggleDeleteIssueModal}
+              toggleArchiveIssueModal={toggleArchiveIssueModal}
+              toggleDuplicateIssueModal={toggleDuplicateIssueModal}
+              toggleEditIssueModal={toggleEditIssueModal}
+              isPeekMode
+            />
           )}
         </div>
       </div>

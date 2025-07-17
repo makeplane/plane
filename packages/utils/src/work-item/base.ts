@@ -3,7 +3,6 @@ import isEmpty from "lodash/isEmpty";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
-  EIssueLayoutTypes,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   STATE_GROUPS,
   TIssuePriorities,
@@ -22,6 +21,7 @@ import {
   TStateGroups,
   TSubGroupedIssues,
   TUnGroupedIssues,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // local imports
 import { orderArrayBy } from "../array";

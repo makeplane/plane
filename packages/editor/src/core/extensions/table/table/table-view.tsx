@@ -7,6 +7,8 @@ import { icons } from "src/core/extensions/table/table/icons";
 import tippy, { Instance, Props } from "tippy.js";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { isCellSelection } from "./utilities/helpers";
 
 type ToolboxItem = {
   label: string;
@@ -95,7 +97,7 @@ function setCellsBackgroundColor(editor: Editor, color: { backgroundColor: strin
 function setTableRowBackgroundColor(editor: Editor, color: { backgroundColor: string; textColor: string }) {
   const { state, dispatch } = editor.view;
   const { selection } = state;
-  if (!(selection instanceof CellSelection)) {
+  if (!isCellSelection(selection)) {
     return false;
   }
 

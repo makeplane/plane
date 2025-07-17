@@ -12,6 +12,7 @@ export interface CopyMenuHelperProps {
   activeLayout: string;
   setCreateUpdateIssueModal: (open: boolean) => void;
   setDuplicateWorkItemModal?: (open: boolean) => void;
+  workspaceSlug?: string;
 }
 
 export const createCopyMenuWithDuplication = (props: CopyMenuHelperProps): TContextMenuItem => {
