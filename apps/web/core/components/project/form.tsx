@@ -120,8 +120,6 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
 
           if (nameError || identifierError) {
-            console.log("coming here 1");
-
             if (nameError) {
               setToast({
                 type: TOAST_TYPE.ERROR,
