@@ -271,7 +271,7 @@ export const useEditor = (props: TEditorHookProps) => {
         Y.applyUpdate(document, value);
       },
     }),
-    [editor]
+    [provider, editor]
   );
 
   if (!editor) {

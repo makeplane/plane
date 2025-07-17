@@ -118,18 +118,18 @@ export function LowlightPlugin({
             transaction.steps.some(
               (step) =>
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                // @ts-expect-error
                 step.from !== undefined &&
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                // @ts-expect-error
                 step.to !== undefined &&
                 oldNodes.some(
                   (node) =>
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
+                    // @ts-expect-error
                     node.pos >= step.from &&
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
+                    // @ts-expect-error
                     node.pos + node.node.nodeSize <= step.to
                 )
             ))
