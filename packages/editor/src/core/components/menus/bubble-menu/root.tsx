@@ -24,7 +24,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
 import { TEditorCommands } from "@/types";
-// local components
+// local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
