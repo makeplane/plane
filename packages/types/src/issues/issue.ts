@@ -7,6 +7,14 @@ import { TIssuePublicComment } from "./activity/issue_comment";
 import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
 import { EUpdateStatus } from "../enums";
 
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
+}
+
 export enum EIssueServiceType {
   ISSUES = "issues",
   EPICS = "epics",

@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
+import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -12,6 +12,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { Button } from "@plane/ui";
 // components

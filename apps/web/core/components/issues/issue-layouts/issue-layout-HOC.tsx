@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes } from "@plane/types";
 import {
   CalendarLayoutLoader,
   GanttLayoutLoader,

@@ -2,9 +2,9 @@
 
 import React from "react";
 // plane constants
-import { EIssueLayoutTypes, ISSUE_LAYOUTS } from "@plane/constants";
-// plane i18n
+import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Tooltip } from "@plane/ui";
 // types

@@ -6,14 +6,8 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import {
-  EIssueLayoutTypes,
-  EIssueFilterType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { DeleteIssueModal } from "@/components/issues";
 //constants
 //hooks
