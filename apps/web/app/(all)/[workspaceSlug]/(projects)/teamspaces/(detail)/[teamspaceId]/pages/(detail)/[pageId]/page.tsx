@@ -19,9 +19,9 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
-// plane web hooks
+// plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-// services
 import { WorkspaceService } from "@/plane-web/services";
 import { TeamspacePageVersionService } from "@/plane-web/services/teamspace/teamspace-page-version.service";
 import { TeamspacePageService } from "@/plane-web/services/teamspace/teamspace-pages.service";
@@ -161,6 +161,7 @@ const TeamspacePageDetailsPage = observer(() => {
             workspaceSlug={workspaceSlug}
           />
           <IssuePeekOverview />
+          <EpicPeekOverview />
         </div>
       </div>
     </>

@@ -21,9 +21,9 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
-// plane web hooks
+// plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // services
 import { ProjectPageService, ProjectPageVersionService } from "@/services/page";
@@ -202,6 +202,7 @@ const PageDetailsPage = observer(() => {
             customRealtimeEventHandlers={customRealtimeEventHandlers}
           />
           <IssuePeekOverview />
+          <EpicPeekOverview />
         </div>
       </div>
     </>

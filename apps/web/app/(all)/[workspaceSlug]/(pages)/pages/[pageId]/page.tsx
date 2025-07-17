@@ -18,9 +18,9 @@ import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
+// plane web imports
+import { EpicPeekOverview } from "@/plane-web/components/epics";
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
-// plane web services
 import { WorkspaceService } from "@/plane-web/services";
 import { WorkspacePageService, WorkspacePageVersionService } from "@/plane-web/services/page";
 // services
@@ -181,6 +181,7 @@ const PageDetailsPage = observer(() => {
             workspaceSlug={workspaceSlug.toString()}
           />
           <IssuePeekOverview />
+          <EpicPeekOverview />
         </div>
       </div>
     </>

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // constants
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
-import { EUserProjectRoles, IIssueDisplayProperties } from "@plane/types";
+import { EIssueServiceType, EUserProjectRoles, IIssueDisplayProperties } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
@@ -22,43 +22,64 @@ type Props = {
 
 export const IssueEmbedCard: React.FC<Props> = observer((props) => {
   const { issueId, projectId, workspaceSlug } = props;
-
   // states
   const [error, setError] = useState<any | null>(null);
-
   // store hooks
   const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
   } = useIssueDetail();
-
+  const {
+    setPeekIssue: setPeekEpic,
+    issue: { fetchIssue: fetchEpic, getIssueById: getEpicById, updateIssue: updateEpic },
+  } = useIssueDetail(EIssueServiceType.EPICS);
   // derived values
   const projectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const issueDetails = getIssueById(issueId);
-
+  const issueDetails = getIssueById(issueId) ?? getEpicById(issueId);
+  const isEpic = !!issueDetails?.is_epic;
+  // callbacks
+  const updateHandler = isEpic ? updateEpic : updateIssue;
+  const setPeekHandler = isEpic ? setPeekEpic : setPeekIssue;
   // auth
   const isReadOnly = !!projectRole && projectRole < EUserProjectRoles.MEMBER;
-
   // issue display properties
-  const displayProperties: IIssueDisplayProperties = {};
+  const displayProperties: IIssueDisplayProperties = useMemo(() => {
+    const properties: IIssueDisplayProperties = {};
+    ISSUE_DISPLAY_PROPERTIES.forEach((property) => {
+      properties[property.key] = true;
+    });
+    return properties;
+  }, []);
 
-  ISSUE_DISPLAY_PROPERTIES.forEach((property) => {
-    displayProperties[property.key] = true;
-  });
+  // handle click
+  const handleClick = useCallback(() => {
+    setPeekHandler({
+      issueId,
+      projectId,
+      workspaceSlug,
+    });
+  }, [issueId, projectId, setPeekHandler, workspaceSlug]);
 
   // fetch issue details if not available
   useEffect(() => {
     if (!issueDetails) {
       fetchIssue(workspaceSlug, projectId, issueId)
         .then(() => setError(null))
-        .catch((error) => setError(error));
+        .catch((error) => {
+          setError(error);
+          fetchEpic(workspaceSlug, projectId, issueId)
+            .then(() => setError(null))
+            .catch((error) => {
+              setError(error);
+            });
+        });
     }
-  }, [fetchIssue, issueDetails, issueId, projectId, workspaceSlug]);
+  }, [fetchEpic, fetchIssue, issueDetails, issueId, projectId, workspaceSlug]);
 
   if (!issueDetails && !error)
     return (
-      <div className="rounded-md p-3 my-2">
+      <div className="rounded-md my-2">
         <Loader className="px-6">
           <Loader.Item height="30px" />
           <div className="mt-3 space-y-2">
@@ -81,13 +102,7 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
     <div
       className="issue-embed cursor-pointer space-y-2 rounded-md bg-custom-background-90 p-3 my-2"
       role="button"
-      onClick={() =>
-        setPeekIssue({
-          issueId,
-          projectId,
-          workspaceSlug,
-        })
-      }
+      onClick={handleClick}
     >
       <IssueIdentifier
         issueId={issueId}
@@ -102,11 +117,8 @@ export const IssueEmbedCard: React.FC<Props> = observer((props) => {
           displayProperties={displayProperties}
           activeLayout="Page work item embed"
           updateIssue={async (projectId, issueId, data) => {
-            if (projectId) {
-              return await updateIssue(workspaceSlug, projectId, issueId, data);
-            }
-
-            return;
+            if (!projectId) return;
+            updateHandler(workspaceSlug, projectId, issueId, data);
           }}
           isReadOnly={isReadOnly}
         />
