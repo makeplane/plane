@@ -1,7 +1,8 @@
 import uuid
 
 from django.contrib.auth.hashers import make_password
-from django.db import models
+from django.db import models, transaction
+from django.utils import timezone
 
 from oauth2_provider.models import (
     AbstractAccessToken,
@@ -17,6 +18,9 @@ from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url
 from plane.db.mixins import SoftDeleteModel, UserAuditModel
 from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember
 from plane.db.models.user import BotTypeEnum
+from plane.authentication.bgtasks.send_app_uninstall_webhook import (
+    send_app_uninstall_webhook,
+)
 from plane.utils.html_processor import strip_tags
 
 
@@ -174,6 +178,7 @@ class WorkspaceAppInstallation(BaseModel):
         INSTALLED = "installed"
         FAILED = "failed"
         REAUTHORIZE = "reauthorize"
+        UNINSTALLED = "uninstalled"
 
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -219,20 +224,36 @@ class WorkspaceAppInstallation(BaseModel):
         # create bot user and attach
         if not self.app_bot:
             username = f"{self.workspace.slug}_{self.application.slug}_bot"
-            bot_type = (
-                BotTypeEnum.APP_BOT.value if self.application.is_mentionable else None
-            )
-            self.app_bot = User.objects.create(
-                username=username,
-                display_name=f"{self.application.name} Bot",
-                first_name=f"{self.application.name}",
-                last_name="Bot",
-                is_bot=True,
-                bot_type=bot_type,
-                email=f"{username}@plane.so",
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-            )
+            # check if any old installation exists with the same app and workspace
+            # it would have been marked as inactive by the uninstall endpoint
+            existing_installation = WorkspaceAppInstallation.all_objects.filter(
+                application=self.application,
+                workspace=self.workspace,
+            ).first()
+            if existing_installation:
+                # make that bot active in case it was marked as inactive by the uninstall endpoint and use that bot
+                if not existing_installation.app_bot.is_active:
+                    existing_installation.app_bot.is_active = True
+                    existing_installation.app_bot.save()
+                self.app_bot = existing_installation.app_bot
+            else:
+                # create a new bot user
+                bot_type = (
+                    BotTypeEnum.APP_BOT.value
+                    if self.application.is_mentionable
+                    else None
+                )
+                self.app_bot = User.objects.create(
+                    username=username,
+                    display_name=f"{self.application.name} Bot",
+                    first_name=f"{self.application.name}",
+                    last_name="Bot",
+                    is_bot=True,
+                    bot_type=bot_type,
+                    email=f"{username}@plane.so",
+                    password=make_password(uuid.uuid4().hex),
+                    is_password_autoset=True,
+                )
 
             # add this user to the workspace members
             WorkspaceMember.objects.create(
@@ -254,6 +275,58 @@ class WorkspaceAppInstallation(BaseModel):
               ignore_conflicts=True,
           )
         super(WorkspaceAppInstallation, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """
+        Override delete method to handle cleanup when uninstalling an app:
+        - Delete associated webhook
+        - Expire/revoke tokens for the app bot and workspace members
+        - Remove bot from project and workspace members
+        - Mark bot as inactive
+        """
+        with transaction.atomic():
+            # Get the app bot user
+            app_bot = self.app_bot
+
+            # Delete the webhook for the installation
+            webhook = self.webhook
+            if webhook:
+                webhook.delete()
+
+            # Delete the tokens for the installation
+            # Expire any access token for the bot
+            AccessToken.objects.filter(user=app_bot).update(expires=timezone.now())
+            # Revoke any refresh token for the bot
+            RefreshToken.objects.filter(user=app_bot).update(revoked=timezone.now())
+            # Expire any access token and refresh token for any members of the workspace for the application
+            workspace_member_ids = WorkspaceMember.objects.filter(
+                workspace=self.workspace
+            ).values_list("member_id", flat=True)
+            AccessToken.objects.filter(
+                user__in=workspace_member_ids, application=self.application
+            ).update(expires=timezone.now())
+            RefreshToken.objects.filter(
+                user__in=workspace_member_ids, application=self.application
+            ).update(revoked=timezone.now())
+
+            # Remove the bot from project and workspace members
+            ProjectMember.objects.filter(
+                member=app_bot, workspace=self.workspace
+            ).update(deleted_at=timezone.now(), is_active=False)
+            WorkspaceMember.objects.filter(
+                member=app_bot, workspace=self.workspace
+            ).update(deleted_at=timezone.now(), is_active=False)
+
+            # Mark the app bot user as inactive
+            if app_bot:
+                app_bot.is_active = False
+                app_bot.save()
+
+            # delete the workspace app installation
+            self.status = self.Status.UNINSTALLED
+            self.save()
+            # Call the parent delete method
+            super().delete(*args, **kwargs)
 
 
 class ApplicationAttachment(BaseModel):

@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # local imports
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceOwnerPermission
 from plane.authentication.models import (
     Application,
     ApplicationOwner,
@@ -30,8 +30,9 @@ from plane.authentication.serializers import (
     WorkspaceAppInstallationSerializer,
     ApplicationCategorySerializer,
 )
-from plane.db.models.workspace import Workspace
+from plane.db.models import Workspace
 from plane.ee.views.base import BaseAPIView
+from plane.authentication.bgtasks.send_app_uninstall_webhook import send_app_uninstall_webhook
 
 
 class OAuthApplicationEndpoint(BaseAPIView):
@@ -269,7 +270,7 @@ class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
 
 
 class OAuthApplicationInstallEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [WorkspaceOwnerPermission]
 
     def post(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
@@ -369,6 +370,31 @@ class OAuthApplicationCategoryEndpoint(BaseAPIView):
         serializer = ApplicationCategorySerializer(application_categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class OAuthApplicationDetailEndpoint(BaseAPIView):
+    permission_classes = [WorkspaceOwnerPermission]
+
+    def delete(self, request, slug, pk):
+        workspace = Workspace.objects.get(slug=slug)
+        workspace_app_installation = WorkspaceAppInstallation.objects.filter(
+            id=pk, workspace=workspace
+        ).first()
+        if not workspace_app_installation:
+            return Response(
+                {"error": "Installation not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+        # get the webhook url and application id
+        webhook_url = workspace_app_installation.webhook.url if workspace_app_installation.webhook else None
+        application_id = workspace_app_installation.application.id
+
+        # Delete the workspace app installation (cleanup is handled in the model's delete method)
+        workspace_app_installation.delete()
+
+        # send webhook within the transaction
+        if webhook_url:
+            send_app_uninstall_webhook.delay(
+                webhook_url, workspace.id, application_id, workspace_app_installation.id
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
     permission_classes = [WorkSpaceAdminPermission]

@@ -5,7 +5,7 @@ from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
-from plane.db.models import User, Workspace, FileAsset
+from plane.db.models import User, Workspace, FileAsset, WorkspaceMember
 from plane.db.models.api import APIToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -53,6 +53,18 @@ def workspace(db, create_user):
         name="Test Workspace", slug="test-workspace", id=uuid4(), owner=create_user
     )
     return workspace
+
+
+@pytest.fixture
+def project(db, workspace, create_user):
+    """Create and return a project instance for OAuth testing"""
+    from plane.tests.factories import ProjectFactory
+    
+    return ProjectFactory(
+        workspace=workspace,
+        created_by=create_user,
+        updated_by=create_user,
+    )
 
 
 @pytest.fixture
@@ -176,6 +188,44 @@ def plane_server(live_server):
     """
     return live_server
 
+
+# OAuth Application Testing Fixtures
+@pytest.fixture
+def oauth_application(db, create_user, workspace):
+    """Create and return an OAuth application instance"""
+    from plane.tests.factories import ApplicationFactory, ApplicationOwnerFactory
+    
+    app = ApplicationFactory(
+        user=create_user,
+        created_by=create_user,
+        updated_by=create_user,
+    )
+    
+    # Create application owner
+    ApplicationOwnerFactory(
+        user=create_user,
+        application=app,
+        workspace=workspace,
+    )
+    
+    return app
+
+
+@pytest.fixture
+def workspace_app_installation(db, workspace, oauth_application, create_user):
+    """Create and return a workspace app installation instance"""
+    from plane.tests.factories import WorkspaceAppInstallationFactory
+    from plane.authentication.models import WorkspaceAppInstallation
+    
+    # When this factory creates and saves the WorkspaceAppInstallation,
+    # the model's save() method automatically creates a bot user and adds it
+    # to workspace and project members
+    return WorkspaceAppInstallationFactory(
+        workspace=workspace,
+        application=oauth_application,
+        installed_by=create_user,
+        status=WorkspaceAppInstallation.Status.INSTALLED,
+    )
 
 @pytest.fixture
 def workspace(create_user):

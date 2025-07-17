@@ -8,6 +8,7 @@ from plane.ee.views.app.oauth import (
     OAuthApplicationPublishEndpoint,
     OAuthApplicationClientIdEndpoint,
     OAuthApplicationCategoryEndpoint,
+    OAuthApplicationDetailEndpoint,
     OAuthPublishedApplicationBySlugEndpoint,
 )
 
@@ -36,6 +37,11 @@ urlpatterns = [
         "workspaces/<str:slug>/applications/<uuid:pk>/install/",
         OAuthApplicationInstallEndpoint.as_view(),
         name="application-install",
+    ),
+    path(
+        "workspaces/<str:slug>/app-installations/<uuid:pk>/",
+        OAuthApplicationDetailEndpoint.as_view(),
+        name="application-detail",
     ),
     path(
         "workspaces/<str:slug>/applications/<uuid:pk>/publish/",
