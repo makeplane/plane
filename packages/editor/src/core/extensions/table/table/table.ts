@@ -219,23 +219,23 @@ export const Table = Node.create<TableOptions>({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.isActive(CORE_EXTENSIONS.TABLE)) {
-          if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
-            return false;
-          }
-          if (this.editor.commands.goToNextCell()) {
-            return true;
-          }
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
 
-          if (!this.editor.can().addRowAfter()) {
-            return false;
-          }
-
-          return this.editor.chain().addRowAfter().goToNextCell().run();
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
         }
-        return false;
+
+        return this.editor.chain().addRowAfter().goToNextCell().run();
       },
-      "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
+      "Shift-Tab": () => {
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
+
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
+        }
+
+        return this.editor.commands.goToPreviousCell();
+      },
       Backspace: handleDeleteKeyOnTable,
       "Mod-Backspace": handleDeleteKeyOnTable,
       Delete: handleDeleteKeyOnTable,
