@@ -172,12 +172,12 @@ export const CreateUpdateWorkspaceDashboardModal: React.FC<Props> = observer((pr
                               return (
                                 <div
                                   key={projectId}
-                                  className="h-6 px-1 rounded bg-custom-background-80 text-sm text-custom-text-200 flex items-center gap-1"
+                                  className="h-6 px-1 rounded bg-custom-background-80 text-sm text-custom-text-200 flex items-center gap-1 truncate"
                                 >
                                   <span className="flex-shrink-0 size-3 grid place-items-center">
                                     <Logo logo={projectDetails.logo_props} size={12} />
                                   </span>
-                                  {projectDetails.name}
+                                  <span className="truncate">{projectDetails.name}</span>
                                 </div>
                               );
                             })
