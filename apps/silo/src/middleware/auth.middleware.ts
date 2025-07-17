@@ -8,7 +8,7 @@ import { responseHandler } from "@/helpers/response-handler";
 
 export const validateUserAuthentication = () => async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userEndpoint = encodeURI(`${env.API_BASE_URL}/api/users/me`);
+    const userEndpoint = encodeURI(`${env.API_BASE_URL}/api/users/me/`);
     // Fetch external API token
     const userResponse = await axios.get(userEndpoint, {
       headers: {

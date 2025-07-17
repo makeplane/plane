@@ -66,7 +66,13 @@ export const getConnectionDetails = async (
   // Use user credentials if available, otherwise use admin credentials
   const credentials = userCredentials || adminCredentials;
 
-  logger.info(`[SLACK] Credentials ==== : ${JSON.stringify(credentials)}`);
+  logger.info("[SLACK] Credentials", {
+    credentials: {
+      id: credentials.id,
+      source_authorization_type: credentials.source_authorization_type,
+      target_authorization_type: credentials.target_authorization_type,
+    },
+  });
 
   const planeClient = await getPlaneAPIClient(credentials, E_INTEGRATION_KEYS.SLACK);
 
@@ -101,9 +107,12 @@ const getCredentialsWithFallback = async (
 
   if (!userCredentials || userCredentials.length === 0) {
     // TODO: Send a message to the same channel where the user is in order to notify the user to connect their account
-    logger.info(
-      `[SLACK] Credentials not found for user ${slackUser.email} in the workspace ${workspaceConnection.workspace_slug}`
-    );
+    logger.info("[SLACK] Credentials not found user", {
+      user: {
+        email: slackUser.email,
+        slug: workspaceConnection.workspace_slug,
+      },
+    });
     return null;
   }
 
@@ -150,7 +159,12 @@ export const findPlaneUserId = async (
 
     if (!planeUser) {
       // This case can hit if the user is an external customer and doesn't have access to the plane workspace
-      logger.info(`[SLACK] User ${slackUser.email} not found in the workspace ${workspaceConnection.workspace_slug}`);
+      logger.info("[SLACK] User not found in the workspace", {
+        user: {
+          email: slackUser.email,
+          slug: workspaceConnection.workspace_slug,
+        },
+      });
       return null;
     } else {
       // Let's update the workspace connection with the user id
