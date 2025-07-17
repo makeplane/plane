@@ -17,6 +17,7 @@ export interface EmojiListProps {
   items: EmojiItem[];
   command: (item: { name: string }) => void;
   editor: Editor;
+  query: string;
 }
 
 export interface EmojiListRef {
@@ -43,7 +44,7 @@ const updatePosition = (editor: Editor, element: HTMLElement) => {
 };
 
 export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) => {
-  const { items, command, editor } = props;
+  const { items, command, editor, query } = props;
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -140,6 +141,10 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
     }),
     [handleKeyDown]
   );
+
+  if (query.length <= 0) {
+    return null;
+  }
 
   return (
     <div
