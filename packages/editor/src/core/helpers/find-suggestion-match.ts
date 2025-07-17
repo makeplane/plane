@@ -1,7 +1,7 @@
 import { escapeForRegEx } from "@tiptap/core";
 import { Trigger, SuggestionMatch } from "@tiptap/suggestion";
 
-export function customFindSuggestionMatch(config: Trigger): SuggestionMatch {
+export function customFindSuggestionMatch(config: Trigger): SuggestionMatch | null {
   const { char, allowSpaces: allowSpacesOption, allowToIncludeChar, allowedPrefixes, startOfLine, $position } = config;
 
   const allowSpaces = allowSpacesOption && !allowToIncludeChar;
@@ -40,9 +40,9 @@ export function customFindSuggestionMatch(config: Trigger): SuggestionMatch {
   // JavaScript doesn't have lookbehinds. This hacks a check that first character
   // is a space or the start of the line
   const matchPrefix = match.input.slice(Math.max(0, match.index - 1), match.index);
-  const matchPrefixIsAllowed = new RegExp(`^[${allowedPrefixes?.join("")}\0]?$`).test(matchPrefix);
+  const matchPrefixIsAllowed = new RegExp(`^[${allowedPrefixes?.join("")}]?$`).test(matchPrefix);
 
-  if (allowedPrefixes !== null && !matchPrefixIsAllowed) {
+  if (allowedPrefixes && allowedPrefixes.length > 0 && !matchPrefixIsAllowed) {
     return null;
   }
 
