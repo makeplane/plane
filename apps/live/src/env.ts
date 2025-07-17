@@ -1,8 +1,8 @@
-import * as dotenv from "dotenv";
+import * as dotenvx from "@dotenvx/dotenvx";
 import { z } from "zod";
 
 // Load environment variables from .env file
-dotenv.config();
+dotenvx.config();
 
 // Define environment schema with validation
 const envSchema = z.object({

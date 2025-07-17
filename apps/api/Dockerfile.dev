@@ -1,19 +1,30 @@
-FROM python:3.12.5-alpine AS backend
+FROM python:3.12.10-alpine
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV INSTANCE_CHANGELOG_URL https://sites.plane.so/pages/f366114e9aba4cbfbe4265b8f2b74f65
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/f366114e9aba4cbfbe4265b8f2b74f65
 
 
-RUN apk --no-cache add \
-    "bash~=5.2" \
+# Update system packages for security
+RUN apk update && apk upgrade
+
+WORKDIR /code
+
+
+RUN apk add --no-cache --upgrade \
     "libpq" \
     "libxslt" \
-    "nodejs-current" \
     "xmlsec" \
-    "libffi-dev" \
+    "ca-certificates" \
+    "openssl"
+
+COPY requirements.txt ./
+COPY requirements ./requirements
+RUN apk add --no-cache libffi-dev
+RUN apk add --no-cache --virtual .build-deps \
     "bash~=5.2" \
     "g++" \
     "gcc" \
@@ -23,18 +34,22 @@ RUN apk --no-cache add \
     "postgresql-dev" \
     "libc-dev" \
     "linux-headers" \
-    "xmlsec-dev"
+    "xmlsec-dev"\
+    && \
+    pip install -r requirements/local.txt --compile --no-cache-dir \
+    && \
+    apk del .build-deps \
+    && \
+    rm -rf /var/cache/apk/*
 
-WORKDIR /code
+# Add in Django deps and generate Django's static files
+COPY manage.py manage.py
+COPY plane plane/
+COPY templates templates/
+COPY package.json package.json
 
-COPY requirements.txt ./requirements.txt
-ADD requirements ./requirements
-
-# Install the local development settings
-RUN pip install -r requirements/local.txt --compile --no-cache-dir
-
-
-COPY . .
+RUN apk --no-cache add "bash~=5.2"
+COPY ./bin ./bin/
 
 RUN mkdir -p /code/plane/logs
 RUN chmod -R +x /code/bin

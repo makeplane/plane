@@ -5,7 +5,7 @@ export default defineConfig((options: Options) => ({
   format: ["cjs", "esm"],
   dts: true,
   clean: false,
-  external: ["react"],
+  external: ["react", "@plane/types"],
   injectStyle: true,
   ...options,
 }));

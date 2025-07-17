@@ -1,7 +1,7 @@
-import * as dotenv from "dotenv";
+import * as dotenvx from "@dotenvx/dotenvx";
 import { z } from "zod";
 import { logger } from "@/logger";
-dotenv.config();
+dotenvx.config();
 
 const envSchema = z.object({
   // App Env Variables

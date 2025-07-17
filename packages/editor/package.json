@@ -6,18 +6,18 @@
   "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs"
     },
     "./lib": {
       "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
+      "types": "./dist/lib.d.ts",
       "import": "./dist/lib.mjs"
     }
   },

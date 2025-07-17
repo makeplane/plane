@@ -1,6 +1,6 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import * as dotenv from "dotenv";
+import * as dotenvx from "@dotenvx/dotenvx";
 import express, { Application, Request, Response, NextFunction } from "express";
 
 // lib
@@ -70,7 +70,7 @@ export default class Server {
 
   constructor() {
     // Initialize environment variables first
-    dotenv.config();
+    dotenvx.config();
 
     this.app = express();
     this.port = Number(env.PORT);

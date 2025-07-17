@@ -11,9 +11,9 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=13",
+    "dev": "turbo run dev --concurrency=17",
     "start": "turbo run start",
-    "clean": "turbo run clean",
+    "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "check": "turbo run check"
   },

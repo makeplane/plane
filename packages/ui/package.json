@@ -36,6 +36,7 @@
     "@headlessui/react": "^1.7.3",
     "@plane/constants": "*",
     "@plane/hooks": "*",
+    "@plane/types": "*",
     "@plane/utils": "*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
