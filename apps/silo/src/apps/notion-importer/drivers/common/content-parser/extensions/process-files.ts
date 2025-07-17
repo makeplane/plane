@@ -1,6 +1,7 @@
 import { HTMLElement } from "node-html-parser";
+import { v4 as uuidv4 } from "uuid";
 import { IParserExtension } from "@plane/etl/parser";
-import { logger } from "@/logger";
+import { TAssetInfo } from "@/apps/notion-importer/types";
 
 export interface NotionFileParserConfig {
   // Required for retrieving assets from cache
@@ -10,6 +11,7 @@ export interface NotionFileParserConfig {
   // Required for creating a link from an asset ID
   workspaceSlug: string;
   apiBaseUrl: string;
+  uuidGenerator?: () => string;
   context?: Map<string, string>;
 }
 
@@ -32,21 +34,50 @@ export class NotionFileParserExtension implements IParserExtension {
       // Normalize the path - Notion uses relative paths with URL encoding
       const normalizedPath = this.normalizeFilePath(href);
 
+
       // Get the asset ID using the normalized path
-      const assetId = this.config.assetMap.get(normalizedPath);
-      if (!assetId) {
-        logger.warn(`Asset ID not found for path: ${normalizedPath}`);
-        return node;
+      const assetInfo = JSON.parse(this.config.assetMap.get(normalizedPath) || "{}") as TAssetInfo;
+      if (assetInfo.id) {
+        return this.createAttachmentComponent(assetInfo.id, {
+          name: assetInfo.name,
+          type: assetInfo.type,
+          size: assetInfo.size,
+        });
+      } else {
+        const fileSource = this.getFileSource(node);
+        return this.createAttachmentComponent(fileSource, {
+          name: fileSource,
+          type: "application/octet-stream",
+          size: 0,
+        });
       }
-
-      // Replace the href with the asset url
-      const assetUrl = this.createLinkFromAssetId(this.config.apiBaseUrl, assetId);
-      node.setAttribute("href", assetUrl);
-
-      return node;
     }
 
     return node;
+  }
+
+  protected getFileSource(node: HTMLElement): string {
+    const href = node.getAttribute("href");
+    return href || "";
+  }
+
+  protected createAttachmentComponent(
+    src: string,
+    file: {
+      name: string;
+      type: string;
+      size: number;
+    }
+  ): HTMLElement {
+    const attachmentComponent = new HTMLElement("attachment-component", {});
+    const id = this.config.uuidGenerator?.() || uuidv4();
+    const cleanedFileName = file.name.split("/").pop();
+    attachmentComponent.setAttribute("id", id);
+    attachmentComponent.setAttribute("src", src);
+    attachmentComponent.setAttribute("data-name", cleanedFileName || file.name);
+    attachmentComponent.setAttribute("data-file-type", file.type);
+    attachmentComponent.setAttribute("data-file-size", file.size.toString());
+    return attachmentComponent;
   }
 
   protected normalizeFilePath(src: string): string {

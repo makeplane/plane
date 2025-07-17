@@ -9,44 +9,22 @@ export class ConfluenceFileParserExtension extends NotionFileParserExtension {
   shouldParse(node: HTMLElement): boolean {
     const hasAnchorTag = node.tagName === "A";
     const isNotPageLink = !node.getAttribute("href")?.includes("/pages/");
-    return hasAnchorTag && isNotPageLink;
+    const isNotMention = !node.getAttribute("href")?.includes("/people/");
+    return hasAnchorTag && isNotPageLink && isNotMention;
   }
 
-  async mutate(node: HTMLElement): Promise<HTMLElement> {
-    await super.mutate(node);
-    const wasNodeModified = node.getAttribute("href")?.startsWith(this.config.apiBaseUrl) ?? false;
-
-    if (wasNodeModified) {
-      /*
-       * If the node was modified, we need to ensure that it has some text to
-       * display, otherwise we will not be able to click on the link
-       */
-      const fileTitle = node.getAttribute("data-linked-resource-default-alias");
-      if (fileTitle) {
-        node.set_content(fileTitle);
+  protected getFileSource(node: HTMLElement): string {
+    if (this.config.context?.has("data-base-url")) {
+      const baseUrl = this.config.context.get("data-base-url");
+      const innerText = node.innerText;
+      const containerId = this.getContainerId(node);
+      if (!containerId) {
+        return "";
       }
-
-      return node;
-    } else {
-      /*
-       * We need to get the url from the node and replace the href of the node,
-       * such that when the user clicks on the link, he will be able to download
-       * the file if not from plane then from confluence
-       */
-
-      if (this.config.context?.has("data-base-url")) {
-        const baseUrl = this.config.context.get("data-base-url");
-        const innerText = node.innerText;
-        const containerId = this.getContainerId(node);
-        if (!containerId) {
-          return node;
-        }
-        const fileSrc = `${baseUrl}/download/attachments/${containerId}/${innerText}`;
-        node.setAttribute("href", fileSrc);
-      }
-
-      return node;
+      return `${baseUrl}/download/attachments/${containerId}/${innerText}`;
     }
+
+    return node.getAttribute("href") || "";
   }
 
   protected normalizeFilePath(src: string): string {

@@ -2,7 +2,7 @@ import * as bluebird from "bluebird";
 import mimetics from "mimetics";
 import { Client, ExPage } from "@plane/sdk";
 import { TImportJob, TPage } from "@plane/types";
-import { ENotionImporterKeyType, ENotionMigrationType, TNotionMigratorData } from "@/apps/notion-importer/types";
+import { ENotionImporterKeyType, ENotionMigrationType, TAssetInfo, TNotionMigratorData } from "@/apps/notion-importer/types";
 import { TZipFileNode } from "@/lib/zip-manager";
 import { logger } from "@/logger";
 import { getAPIClient } from "@/services/client";
@@ -188,7 +188,15 @@ export class NotionPhaseOneMigrator extends NotionMigratorBase {
             content.length
           );
 
-          result.set(`${parentPath}/${node.name}`, assetId);
+          const assetInfo: TAssetInfo = {
+            id: assetId,
+            name: node.name,
+            type: parsed?.mime ?? "application/octet-stream",
+            size: content.length,
+          }
+
+          result.set(`${parentPath}/${node.name}`, JSON.stringify(assetInfo));
+
         } catch (error) {
           logger.error(`Error uploading asset for job ${job.id} and node ${node.name}`, {
             jobId: job.id,

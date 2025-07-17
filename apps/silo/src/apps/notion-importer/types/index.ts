@@ -42,3 +42,10 @@ export type TDocContentParserConfig = {
   apiBaseUrl: string;
   context?: Map<string, string>;
 };
+
+export type TAssetInfo = {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+};

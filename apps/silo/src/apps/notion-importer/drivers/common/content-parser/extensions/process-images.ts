@@ -1,5 +1,6 @@
 import { HTMLElement } from "node-html-parser";
 import { IParserExtension } from "@plane/etl/parser";
+import { TAssetInfo } from "@/apps/notion-importer/types";
 import { logger } from "@/logger";
 
 export interface NotionImageParserConfig {
@@ -27,15 +28,15 @@ export class NotionImageParserExtension implements IParserExtension {
       const normalizedPath = this.normalizeImagePath(src);
 
       // Get the asset ID using the normalized path
-      const assetId = this.config.assetMap.get(normalizedPath);
-      if (!assetId) {
+      const assetInfo = JSON.parse(this.config.assetMap.get(normalizedPath) || "{}") as TAssetInfo;
+      if (!assetInfo.id) {
         logger.warn(`Asset ID not found for path: ${normalizedPath}`);
         return node;
       }
 
       // Create the image component
       const component = new HTMLElement("image-component", {}, "");
-      component.setAttribute("src", assetId);
+      component.setAttribute("src", assetInfo.id);
 
       return component;
     }
