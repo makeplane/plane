@@ -91,7 +91,7 @@ export class ProfileStore implements IProfileStore {
         this.data = userProfile;
       });
       return userProfile;
-    } catch (error) {
+    } catch (_error) {
       runInAction(() => {
         this.isLoading = false;
         this.error = {
@@ -118,7 +118,7 @@ export class ProfileStore implements IProfileStore {
       }
       const userProfile = await this.userService.updateProfile(data);
       return userProfile;
-    } catch (error) {
+    } catch (_error) {
       if (currentUserProfileData) {
         Object.keys(currentUserProfileData).forEach((key: string) => {
           const userKey: keyof TUserProfile = key as keyof TUserProfile;

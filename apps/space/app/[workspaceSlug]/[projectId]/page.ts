@@ -10,7 +10,7 @@ type Props = {
     workspaceSlug: string;
     projectId: string;
   };
-  searchParams: Record<'board' | 'peekId', string | undefined>;
+  searchParams: Record<"board" | "peekId", string | undefined>;
 };
 
 export default async function IssuesPage(props: Props) {
