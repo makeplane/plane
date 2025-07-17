@@ -402,35 +402,22 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
-        workspace = Workspace.objects.get(slug=slug)
+        try:
+            workspace = Workspace.objects.get(slug=slug)
 
-        serializer = ProjectSerializer(
-            data={**request.data}, context={"workspace_id": workspace.id}
-        )
-        if serializer.is_valid():
-            serializer.save()
-
-            # Add the user as Administrator to the project
-            _ = ProjectMember.objects.create(
-                project_id=serializer.data["id"], member=request.user, role=20
+            serializer = ProjectSerializer(
+                data={**request.data}, context={"workspace_id": workspace.id}
             )
-            # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(
-                project_id=serializer.data["id"], user=request.user
-            )
+            if serializer.is_valid():
+                serializer.save()
 
-            if serializer.data["project_lead"] is not None and str(
-                serializer.data["project_lead"]
-            ) != str(request.user.id):
-                ProjectMember.objects.create(
-                    project_id=serializer.data["id"],
-                    member_id=serializer.data["project_lead"],
-                    role=20,
+                # Add the user as Administrator to the project
+                _ = ProjectMember.objects.create(
+                    project_id=serializer.data["id"], member=request.user, role=20
                 )
                 # Also create the issue property for the user
-                IssueUserProperty.objects.create(
-                    project_id=serializer.data["id"],
-                    user_id=serializer.data["project_lead"],
+                _ = IssueUserProperty.objects.create(
+                    project_id=serializer.data["id"], user=request.user
                 )
 
                 if serializer.data["project_lead"] is not None and str(
@@ -447,127 +434,145 @@ class ProjectViewSet(BaseViewSet):
                         user_id=serializer.data["project_lead"],
                     )
 
-                # Default states
-                states = [
-                    {
-                        "name": "Backlog",
-                        "color": "#60646C",
-                        "sequence": 15000,
-                        "group": "backlog",
-                        "default": True,
-                    },
-                    {
-                        "name": "Todo",
-                        "color": "#60646C",
-                        "sequence": 25000,
-                        "group": "unstarted",
-                    },
-                    {
-                        "name": "In Progress",
-                        "color": "#F59E0B",
-                        "sequence": 35000,
-                        "group": "started",
-                    },
-                    {
-                        "name": "Done",
-                        "color": "#46A758",
-                        "sequence": 45000,
-                        "group": "completed",
-                    },
-                    {
-                        "name": "Cancelled",
-                        "color": "#9AA4BC",
-                        "sequence": 55000,
-                        "group": "cancelled",
-                    },
-                ]
-
-                State.objects.bulk_create(
-                    [
-                        State(
-                            name=state["name"],
-                            color=state["color"],
-                            project=serializer.instance,
-                            sequence=state["sequence"],
-                            workspace=serializer.instance.workspace,
-                            group=state["group"],
-                            default=state.get("default", False),
-                            created_by=request.user,
+                    if serializer.data["project_lead"] is not None and str(
+                        serializer.data["project_lead"]
+                    ) != str(request.user.id):
+                        ProjectMember.objects.create(
+                            project_id=serializer.data["id"],
+                            member_id=serializer.data["project_lead"],
+                            role=20,
                         )
-                        for state in states
+                        # Also create the issue property for the user
+                        IssueUserProperty.objects.create(
+                            project_id=serializer.data["id"],
+                            user_id=serializer.data["project_lead"],
+                        )
+
+                    # Default states
+                    states = [
+                        {
+                            "name": "Backlog",
+                            "color": "#60646C",
+                            "sequence": 15000,
+                            "group": "backlog",
+                            "default": True,
+                        },
+                        {
+                            "name": "Todo",
+                            "color": "#60646C",
+                            "sequence": 25000,
+                            "group": "unstarted",
+                        },
+                        {
+                            "name": "In Progress",
+                            "color": "#F59E0B",
+                            "sequence": 35000,
+                            "group": "started",
+                        },
+                        {
+                            "name": "Done",
+                            "color": "#46A758",
+                            "sequence": 45000,
+                            "group": "completed",
+                        },
+                        {
+                            "name": "Cancelled",
+                            "color": "#9AA4BC",
+                            "sequence": 55000,
+                            "group": "cancelled",
+                        },
                     ]
-                )
 
-                # validating the PROJECT_GROUPING feature flag is enabled
-                if check_workspace_feature_flag(
-                    feature_key=FeatureFlag.PROJECT_GROUPING,
-                    slug=slug,
-                    user_id=str(request.user.id),
-                    default_value=False,
-                ):
-                    # validating the is_project_grouping_enabled workspace feature is enabled
-                    if check_workspace_feature(
-                        slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
+                    State.objects.bulk_create(
+                        [
+                            State(
+                                name=state["name"],
+                                color=state["color"],
+                                project=serializer.instance,
+                                sequence=state["sequence"],
+                                workspace=serializer.instance.workspace,
+                                group=state["group"],
+                                default=state.get("default", False),
+                                created_by=request.user,
+                            )
+                            for state in states
+                        ]
+                    )
+
+                    # validating the PROJECT_GROUPING feature flag is enabled
+                    if check_workspace_feature_flag(
+                        feature_key=FeatureFlag.PROJECT_GROUPING,
+                        slug=slug,
+                        user_id=str(request.user.id),
+                        default_value=False,
                     ):
-                        state_id = request.data.get("state_id", None)
-                        priority = request.data.get("priority", "none")
-                        start_date = request.data.get("start_date", None)
-                        target_date = request.data.get("target_date", None)
+                        # validating the is_project_grouping_enabled workspace feature is enabled
+                        if check_workspace_feature(
+                            slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED
+                        ):
+                            state_id = request.data.get("state_id", None)
+                            priority = request.data.get("priority", "none")
+                            start_date = request.data.get("start_date", None)
+                            target_date = request.data.get("target_date", None)
 
-                        if state_id is None:
-                            state_id = (
-                                ProjectState.objects.filter(
-                                    workspace=workspace, default=True
+                            if state_id is None:
+                                state_id = (
+                                    ProjectState.objects.filter(
+                                        workspace=workspace, default=True
+                                    )
+                                    .values_list("id", flat=True)
+                                    .first()
                                 )
-                                .values_list("id", flat=True)
-                                .first()
+
+                            # also create project attributes
+                            _ = ProjectAttribute.objects.create(
+                                project_id=serializer.data.get("id"),
+                                state_id=state_id,
+                                priority=priority,
+                                start_date=start_date,
+                                target_date=target_date,
+                                workspace_id=workspace.id,
                             )
 
-                        # also create project attributes
-                        _ = ProjectAttribute.objects.create(
-                            project_id=serializer.data.get("id"),
-                            state_id=state_id,
-                            priority=priority,
-                            start_date=start_date,
-                            target_date=target_date,
-                            workspace_id=workspace.id,
-                        )
+                    project = (
+                        self.get_queryset().filter(pk=serializer.data["id"]).first()
+                    )
 
-                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                    # Create the project feature
+                    _ = ProjectFeature.objects.create(
+                        workspace_id=workspace.id, project_id=project.id
+                    )
 
-                # Create the project feature
-                _ = ProjectFeature.objects.create(
-                    workspace_id=workspace.id, project_id=project.id
-                )
+                    # Create the model activity
+                    model_activity.delay(
+                        model_name="project",
+                        model_id=str(project.id),
+                        requested_data=request.data,
+                        current_instance=None,
+                        actor_id=request.user.id,
+                        slug=slug,
+                        origin=base_host(request=request, is_app=True),
+                    )
 
-                # Create the model activity
-                model_activity.delay(
-                    model_name="project",
-                    model_id=str(project.id),
-                    requested_data=request.data,
-                    current_instance=None,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
+                    project_activity.delay(
+                        type="project.activity.created",
+                        requested_data=json.dumps(
+                            self.request.data, cls=DjangoJSONEncoder
+                        ),
+                        actor_id=str(request.user.id),
+                        project_id=str(project.id),
+                        current_instance=None,
+                        epoch=int(timezone.now().timestamp()),
+                        notification=True,
+                        origin=request.META.get("HTTP_ORIGIN"),
+                    )
 
-                project_activity.delay(
-                    type="project.activity.created",
-                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    project_id=str(project.id),
-                    current_instance=None,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=True,
-                    origin=request.META.get("HTTP_ORIGIN"),
-                )
-
-                serializer = ProjectListSerializer(
-                    project, context={"request": request, "slug": slug}
-                )
-                payload = self.update_project_member_role(serializer.data)
-                return Response(payload, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    serializer = ProjectListSerializer(
+                        project, context={"request": request, "slug": slug}
+                    )
+                    payload = self.update_project_member_role(serializer.data)
+                    return Response(payload, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
                 return Response(
@@ -581,73 +586,6 @@ class ProjectViewSet(BaseViewSet):
             return Response(
                 {"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-        except serializers.ValidationError:
-            return Response(
-                {
-                    "name": "Backlog",
-                    "color": "#60646C",
-                    "sequence": 15000,
-                    "group": "backlog",
-                    "default": True,
-                },
-                {
-                    "name": "Todo",
-                    "color": "#60646C",
-                    "sequence": 25000,
-                    "group": "unstarted",
-                },
-                {
-                    "name": "In Progress",
-                    "color": "#F59E0B",
-                    "sequence": 35000,
-                    "group": "started",
-                },
-                {
-                    "name": "Done",
-                    "color": "#46A758",
-                    "sequence": 45000,
-                    "group": "completed",
-                },
-                {
-                    "name": "Cancelled",
-                    "color": "#9AA4BC",
-                    "sequence": 55000,
-                    "group": "cancelled",
-                },
-            ]
-
-            State.objects.bulk_create(
-                [
-                    State(
-                        name=state["name"],
-                        color=state["color"],
-                        project=serializer.instance,
-                        sequence=state["sequence"],
-                        workspace=serializer.instance.workspace,
-                        group=state["group"],
-                        default=state.get("default", False),
-                        created_by=request.user,
-                    )
-                    for state in states
-                ]
-            )
-
-            project = self.get_queryset().filter(pk=serializer.data["id"]).first()
-
-            # Create the model activity
-            model_activity.delay(
-                model_name="project",
-                model_id=str(project.id),
-                requested_data=request.data,
-                current_instance=None,
-                actor_id=request.user.id,
-                slug=slug,
-                origin=base_host(request=request, is_app=True),
-            )
-
-            serializer = ProjectListSerializer(project)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, pk=None):
         try:
