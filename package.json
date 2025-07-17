@@ -20,7 +20,7 @@
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.5.4"
+    "turbo": "^2.5.5"
   },
   "resolutions": {
     "brace-expansion": "2.0.2",
