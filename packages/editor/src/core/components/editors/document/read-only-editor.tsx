@@ -25,6 +25,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     fileHandler,
     flaggedExtensions,
     id,
+    isTouchDevice,
     forwardedRef,
     handleEditorReady,
     initialValue,
@@ -64,6 +65,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
+      isTouchDevice={!!isTouchDevice}
     />
   );
 };

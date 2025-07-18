@@ -2,25 +2,28 @@ import { useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
-import type { TCustomImageAlignment } from "../../types";
+import type { CustomImageExtensionOptions, TCustomImageAlignment } from "../../types";
 import { ImageAlignmentAction } from "./alignment";
 import { ImageDownloadAction } from "./download";
 import { ImageFullScreenActionRoot } from "./full-screen";
 
 type Props = {
   alignment: TCustomImageAlignment;
-  width: string;
-  height: string;
   aspectRatio: number;
-  src: string;
   downloadSrc: string;
+  extensionOptions: CustomImageExtensionOptions;
   handleAlignmentChange: (alignment: TCustomImageAlignment) => void;
+  height: string;
+  src: string;
+  width: string;
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {
-  const { alignment, downloadSrc, handleAlignmentChange } = props;
+  const { alignment, downloadSrc, extensionOptions, handleAlignmentChange } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
+  // derived values
+  const { isTouchDevice } = extensionOptions;
 
   return (
     <>
@@ -32,13 +35,17 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           }
         )}
       >
-        <ImageDownloadAction src={downloadSrc} />
+        {!isTouchDevice && <ImageDownloadAction src={downloadSrc} />}
         <ImageAlignmentAction
           activeAlignment={alignment}
           handleChange={handleAlignmentChange}
           toggleToolbarViewStatus={setShouldShowToolbar}
         />
-        <ImageFullScreenActionRoot image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
+        <ImageFullScreenActionRoot
+          extensionOptions={extensionOptions}
+          image={props}
+          toggleToolbarViewStatus={setShouldShowToolbar}
+        />
       </div>
     </>
   );

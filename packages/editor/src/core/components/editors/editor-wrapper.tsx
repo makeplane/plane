@@ -27,6 +27,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     extensions,
     id,
     initialValue,
+    isTouchDevice,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
@@ -75,6 +76,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       editor={editor}
       editorContainerClassName={editorContainerClassName}
       id={id}
+      isTouchDevice={!!isTouchDevice}
     >
       {children?.(editor)}
       <div className="flex flex-col">

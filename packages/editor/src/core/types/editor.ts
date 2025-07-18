@@ -111,6 +111,7 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
+  // eslint-disable-next-line no-undef
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
@@ -132,6 +133,7 @@ export interface IEditorProps {
   handleEditorReady?: (value: boolean) => void;
   id: string;
   initialValue: string;
+  isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
@@ -172,6 +174,7 @@ export interface IReadOnlyEditorProps
     | "handleEditorReady"
     | "id"
     | "initialValue"
+    | "isTouchDevice"
   > {
   fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;

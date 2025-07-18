@@ -57,6 +57,8 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const [hasErroredOnFirstLoad, setHasErroredOnFirstLoad] = useState(false);
   const [hasTriedRestoringImageOnce, setHasTriedRestoringImageOnce] = useState(false);
+  // extension options
+  const isTouchDevice = extension.options.isTouchDevice;
 
   const updateAttributesSafely = useCallback(
     (attributes: Partial<TCustomImageAttributes>, errorMessage: string) => {
@@ -188,11 +190,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
   const handleImageMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
+      if (isTouchDevice) {
+        e.preventDefault();
+        editor.commands.blur();
+      }
       const pos = getPos();
       const nodeSelection = NodeSelection.create(editor.state.doc, pos);
       editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
     },
-    [editor, getPos]
+    [editor, getPos, isTouchDevice]
   );
 
   // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
@@ -280,14 +286,15 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         {showImageToolbar && (
           <ImageToolbarRoot
             alignment={nodeAlignment ?? "left"}
-            width={size.width}
-            height={size.height}
             aspectRatio={size.aspectRatio === null ? 1 : size.aspectRatio}
-            src={resolvedImageSrc}
             downloadSrc={resolvedDownloadSrc}
+            extensionOptions={extension.options}
             handleAlignmentChange={(alignment) =>
               updateAttributesSafely({ alignment }, "Failed to update attributes while changing alignment:")
             }
+            height={size.height}
+            width={size.width}
+            src={resolvedImageSrc}
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (

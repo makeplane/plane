@@ -35,6 +35,7 @@ export const CustomImageExtension = (props: Props) => {
         getImageSource: getAssetSrc,
         restoreImage: restoreImageFn,
         uploadImage: upload,
+        isTouchDevice: false,
       };
     },
 

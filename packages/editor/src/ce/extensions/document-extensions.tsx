@@ -8,7 +8,7 @@ import type { IEditorProps, TExtensions, TUserDetails } from "@/types";
 
 export type TDocumentEditorAdditionalExtensionsProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "isTouchDevice"
 > & {
   embedConfig: TEmbedConfig | undefined;
   provider?: HocuspocusProvider;

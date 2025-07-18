@@ -11,15 +11,16 @@ const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 type Props = {
   aspectRatio: number;
-  isFullScreenEnabled: boolean;
   downloadSrc: string;
+  isFullScreenEnabled: boolean;
+  isTouchDevice: boolean;
   src: string;
   toggleFullScreenMode: (val: boolean) => void;
   width: string;
 };
 
 const ImageFullScreenModalWithoutPortal = (props: Props) => {
-  const { aspectRatio, isFullScreenEnabled, downloadSrc, src, toggleFullScreenMode, width } = props;
+  const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -251,22 +252,26 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
               <Plus className="size-4" />
             </button>
           </div>
-          <button
-            type="button"
-            onClick={() => window.open(downloadSrc, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
-            aria-label="Download image"
-          >
-            <Download className="size-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => window.open(src, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
-            aria-label="Open image in new tab"
-          >
-            <ExternalLink className="size-4" />
-          </button>
+          {!isTouchDevice && (
+            <button
+              type="button"
+              onClick={() => window.open(downloadSrc, "_blank")}
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              aria-label="Download image"
+            >
+              <Download className="size-4" />
+            </button>
+          )}
+          {!isTouchDevice && (
+            <button
+              type="button"
+              onClick={() => window.open(src, "_blank")}
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              aria-label="Open image in new tab"
+            >
+              <ExternalLink className="size-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -30,6 +30,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     forwardedRef,
     handleEditorReady,
     id,
+    isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
@@ -63,6 +64,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     forwardedRef,
     handleEditorReady,
     id,
+    isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
@@ -90,6 +92,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       editor={editor}
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
+      isTouchDevice={!!isTouchDevice}
       isLoading={!hasServerSynced && !hasServerConnectionFailed}
       tabIndex={tabIndex}
     />

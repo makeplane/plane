@@ -5,7 +5,7 @@ import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorPr
 
 type TCoreHookProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "editorClassName" | "extensions" | "flaggedExtensions" | "handleEditorReady"
+  "disabledExtensions" | "editorClassName" | "extensions" | "flaggedExtensions" | "handleEditorReady" | "isTouchDevice"
 > & {
   editorProps?: EditorProps;
 };

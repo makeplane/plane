@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -10,16 +10,18 @@ import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
 
-interface EditorContainerProps {
+type Props = {
   children: ReactNode;
   displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
-}
+  isTouchDevice: boolean;
+};
 
-export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, displayConfig, editor, editorContainerClassName, id } = props;
+export const EditorContainer: FC<Props> = (props) => {
+  const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
+  // refs
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -94,7 +96,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        {!isTouchDevice && <LinkViewContainer editor={editor} containerRef={containerRef} />}
       </div>
     </>
   );
