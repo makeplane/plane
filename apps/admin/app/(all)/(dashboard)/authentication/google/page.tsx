@@ -68,7 +68,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
                 value={Boolean(parseInt(enableGoogleConfig))}
                 onChange={() => {
                   if (Boolean(parseInt(enableGoogleConfig)) === true) {
-                    updateConfig("IS_GOOGLE_ENABLED", "0")
+                    updateConfig("IS_GOOGLE_ENABLED", "0");
                   } else {
                     updateConfig("IS_GOOGLE_ENABLED", "1");
                   }

@@ -40,12 +40,12 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       const labels = key === "labels" ? value : (issueFilters?.filters?.labels ?? []);
 
       const params: {
-        board: TIssueLayout | string
-        priority?: string
-        states?: string
-        labels?: string
+        board: TIssueLayout | string;
+        priority?: string;
+        states?: string;
+        labels?: string;
       } = {
-        board: activeLayout || "list"
+        board: activeLayout || "list",
       };
 
       if (priority.length > 0) params.priority = priority.join(",");
