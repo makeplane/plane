@@ -11,7 +11,7 @@ export const PlannedState: React.FC<ISvgIcons> = ({ width = "10", height = "11",
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
-    <g clip-path="url(#clip0_3180_28635)">
+    <g clipPath="url(#clip0_3180_28635)">
       <path
         fillRule="evenodd"
         clipRule="evenodd"
