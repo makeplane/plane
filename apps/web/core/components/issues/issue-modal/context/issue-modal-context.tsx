@@ -27,6 +27,12 @@ export type TCreateUpdatePropertyValuesProps = {
   isDraft?: boolean;
 };
 
+export type TCreateSubWorkItemProps = {
+  workspaceSlug: string;
+  projectId: string;
+  parentId: string;
+};
+
 export type THandleTemplateChangeProps = {
   workspaceSlug: string;
   reset: UseFormReset<TIssue>;
@@ -34,8 +40,9 @@ export type THandleTemplateChangeProps = {
 };
 
 export type THandleProjectEntitiesFetchProps = {
+  workItemProjectId: string | null | undefined;
+  workItemTypeId: string | undefined;
   workspaceSlug: string;
-  templateId: string;
 };
 
 export type THandleParentWorkItemDetailsProps = {
@@ -64,6 +71,7 @@ export type TIssueModalContext = {
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
   handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
+  handleCreateSubWorkItem: (props: TCreateSubWorkItemProps) => Promise<void>;
 };
 
 export const IssueModalContext = createContext<TIssueModalContext | undefined>(undefined);

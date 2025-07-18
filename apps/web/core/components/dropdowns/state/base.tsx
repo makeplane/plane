@@ -2,45 +2,44 @@
 
 import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// ui
+import { IState } from "@plane/types";
 import { ComboDropDown, Spinner, StateGroupIcon } from "@plane/ui";
-// helpers
 import { cn } from "@plane/utils";
-// hooks
-import { useProjectState } from "@/hooks/store";
-import { useDropdown } from "@/hooks/use-dropdown";
-// Plane-web
-import { StateOption } from "@/plane-web/components/workflow";
 // components
-import { DropdownButton } from "./buttons";
-// constants
-import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
-// types
-import { TDropdownProps } from "./types";
+import { DropdownButton } from "@/components/dropdowns/buttons";
+import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
+import { TDropdownProps } from "@/components/dropdowns/types";
+// hooks
+import { useDropdown } from "@/hooks/use-dropdown";
+// plane web imports
+import { StateOption } from "@/plane-web/components/workflow";
 
-type Props = TDropdownProps & {
+export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
+  alwaysAllowStateChange?: boolean;
   button?: ReactNode;
   dropdownArrow?: boolean;
   dropdownArrowClassName?: string;
+  filterAvailableStateIds?: boolean;
+  getStateById: (stateId: string | null | undefined) => IState | undefined;
+  iconSize?: string;
+  isForWorkItemCreation?: boolean;
+  isInitializing?: boolean;
   onChange: (val: string) => void;
   onClose?: () => void;
+  onDropdownOpen?: () => void;
   projectId: string | undefined;
-  showDefaultState?: boolean;
-  value: string | undefined | null;
   renderByDefault?: boolean;
-  stateIds?: string[];
-  filterAvailableStateIds?: boolean;
-  isForWorkItemCreation?: boolean;
-  alwaysAllowStateChange?: boolean;
-  iconSize?: string;
+  showDefaultState?: boolean;
+  stateIds: string[];
+  value: string | undefined | null;
 };
 
-export const StateDropdown: React.FC<Props> = observer((props) => {
+export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps> = observer((props) => {
   const {
     button,
     buttonClassName,
@@ -50,29 +49,35 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     disabled = false,
     dropdownArrow = false,
     dropdownArrowClassName = "",
+    getStateById,
     hideIcon = false,
+    iconSize = "size-4",
+    isInitializing = false,
     onChange,
     onClose,
+    onDropdownOpen,
     placement,
-    projectId,
+    renderByDefault = true,
     showDefaultState = true,
     showTooltip = false,
+    stateIds,
     tabIndex,
     value,
-    renderByDefault = true,
-    stateIds,
-    iconSize = "size-4",
   } = props;
-  // states
-  const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const [stateLoader, setStateLoader] = useState(false);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  // states
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  // store hooks
+  const { t } = useTranslation();
+  const statesList = stateIds.map((stateId) => getStateById(stateId)).filter((state) => !!state);
+  const defaultState = statesList?.find((state) => state?.default);
+  const stateValue = !!value ? value : showDefaultState ? defaultState?.id : undefined;
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -85,16 +90,19 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
       },
     ],
   });
-  // store hooks
-  const { t } = useTranslation();
-  const { workspaceSlug } = useParams();
-  const { fetchProjectStates, getProjectStates, getStateById } = useProjectState();
-  const statesList = stateIds
-    ? stateIds.map((stateId) => getStateById(stateId)).filter((state) => !!state)
-    : getProjectStates(projectId);
-  const defaultState = statesList?.find((state) => state?.default);
-  const stateValue = !!value ? value : showDefaultState ? defaultState?.id : undefined;
+  // dropdown init
+  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
+    dropdownRef,
+    inputRef,
+    isOpen,
+    onClose,
+    onOpen: onDropdownOpen,
+    query,
+    setIsOpen,
+    setQuery,
+  });
 
+  // derived values
   const options = statesList?.map((state) => ({
     value: state?.id,
     query: `${state?.name}`,
@@ -115,25 +123,6 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
 
   const selectedState = stateValue ? getStateById(stateValue) : undefined;
-
-  const onOpen = async () => {
-    if (!statesList && workspaceSlug && projectId) {
-      setStateLoader(true);
-      await fetchProjectStates(workspaceSlug.toString(), projectId);
-      setStateLoader(false);
-    }
-  };
-
-  const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
-    dropdownRef,
-    inputRef,
-    isOpen,
-    onClose,
-    onOpen,
-    query,
-    setIsOpen,
-    setQuery,
-  });
 
   const dropdownOnChange = (val: string) => {
     onChange(val);
@@ -178,7 +167,7 @@ export const StateDropdown: React.FC<Props> = observer((props) => {
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
           >
-            {stateLoader ? (
+            {isInitializing ? (
               <Spinner className="h-3.5 w-3.5" />
             ) : (
               <>

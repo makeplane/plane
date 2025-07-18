@@ -230,6 +230,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
         });
+
+        // create sub work item
+        await handleCreateSubWorkItem({
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: response.project_id,
+          parentId: response.id,
+        });
       }
 
       setToast({
