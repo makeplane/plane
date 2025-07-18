@@ -2,15 +2,15 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
+  "version": "0.27.1",
   "sideEffects": false,
   "license": "AGPL-3.0",
-  "version": "0.27.1",
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**"
-  ],
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup --minify",
