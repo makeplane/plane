@@ -52,6 +52,7 @@ def duplicate_project(template_project, user, name, identifier):
     template_project.pk = None
     template_project.name = name
     template_project.identifier = new_identifier
+    template_project.archived_at = None
     template_project.created_by = user
     template_project.updated_by = user
     template_project.save()
@@ -485,7 +486,6 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
-                print(e)
                 return Response(
                     {
                         "name": "The project name is already taken",
@@ -494,7 +494,6 @@ class ProjectViewSet(BaseViewSet):
                     status=status.HTTP_409_CONFLICT,
                 )
             else:
-                print(e)
                 return Response(
                     {
                         "identifier": "The project identifier is already taken",
