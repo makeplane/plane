@@ -5,11 +5,10 @@ import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
 import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { getDiscountPillStyle } from "@plane/ui";
 import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
-// helpers
-import { getDiscountPillStyle } from "@/components/workspace/billing/subscription";
 // local components
 import { PlanCheckoutButton, TCheckoutParams } from "./checkout-button";
 
@@ -76,7 +75,7 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
           Yearly
           {yearlyDiscount > 0 && (
             <span className={cn(getDiscountPillStyle(planVariant), "rounded-full px-1.5 py-0.5 ml-1 text-xs")}>
-              -{yearlyDiscount}%
+              -{"testasjf;alsdkfja;sdlkfja;sldkfj;lk"}%
             </span>
           )}
         </>
