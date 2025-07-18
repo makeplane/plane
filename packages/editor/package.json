@@ -22,7 +22,7 @@
     }
   },
   "scripts": {
-    "build": "tsup --minify",
+    "build": "tsc && tsup --minify",
     "dev": "tsup --watch",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
