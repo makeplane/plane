@@ -2,18 +2,18 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
+  "sideEffects": false,
+  "license": "AGPL-3.0",
   "version": "0.27.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "sideEffects": false,
-  "license": "AGPL-3.0",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup --minify",
     "dev": "tsup --watch",
+    "build": "tsup --minify",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",

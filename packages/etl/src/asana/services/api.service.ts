@@ -1,4 +1,4 @@
-const Asana = require("asana");
+import * as Asana from "asana";
 // types
 import {
   AsanaAttachment,

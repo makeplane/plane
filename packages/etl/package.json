@@ -11,51 +11,63 @@
   "exports": {
     "./asana": {
       "types": "./dist/asana/index.d.ts",
-      "default": "./dist/asana/index.js"
+      "import": "./dist/asana/index.js",
+      "require": "./dist/asana/index.js"
     },
     "./core": {
       "types": "./dist/core/index.d.ts",
-      "default": "./dist/core/index.js"
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.js"
     },
     "./github": {
       "types": "./dist/github/index.d.ts",
-      "default": "./dist/github/index.js"
+      "import": "./dist/github/index.js",
+      "require": "./dist/github/index.js"
     },
     "./gitlab": {
       "types": "./dist/gitlab/index.d.ts",
-      "default": "./dist/gitlab/index.js"
+      "import": "./dist/gitlab/index.js",
+      "require": "./dist/gitlab/index.js"
     },
     "./jira": {
       "types": "./dist/jira/index.d.ts",
-      "default": "./dist/jira/index.js"
+      "import": "./dist/jira/index.js",
+      "require": "./dist/jira/index.js"
     },
     "./jira-server": {
       "types": "./dist/jira-server/index.d.ts",
-      "default": "./dist/jira-server/index.js"
+      "import": "./dist/jira-server/index.js",
+      "require": "./dist/jira-server/index.js"
     },
     "./linear": {
       "types": "./dist/linear/index.d.ts",
-      "default": "./dist/linear/index.js"
+      "import": "./dist/linear/index.js",
+      "require": "./dist/linear/index.js"
     },
     "./slack": {
       "types": "./dist/slack/index.d.ts",
-      "default": "./dist/slack/index.js"
+      "import": "./dist/slack/index.js",
+      "require": "./dist/slack/index.js"
     },
     "./flatfile": {
       "types": "./dist/flatfile/index.d.ts",
-      "default": "./dist/flatfile/index.js"
+      "import": "./dist/flatfile/index.js",
+      "require": "./dist/flatfile/index.js"
     },
     "./sentry": {
       "types": "./dist/sentry/index.d.ts",
-      "default": "./dist/sentry/index.js"
+      "import": "./dist/sentry/index.js",
+      "require": "./dist/sentry/index.js"
     },
     "./clickup": {
       "types": "./dist/clickup/index.d.ts",
-      "default": "./dist/clickup/index.js"
+      "import": "./dist/clickup/index.js",
+      "require": "./dist/clickup/index.js"
     },
     "./parser": {
       "types": "./dist/parser/index.d.ts",
-      "default": "./dist/parser/index.js"
+      "import": "./dist/parser/index.js",
+      "require": "./dist/parser/index.js"
     }
   },
   "scripts": {

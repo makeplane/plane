@@ -2,9 +2,9 @@
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
     "esModuleInterop": true,
-    "module": "ESNext",
-    "target": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
     "allowJs": true,
     "resolveJsonModule": true,
     "lib": ["ESNext", "DOM"],

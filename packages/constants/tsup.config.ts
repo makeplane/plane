@@ -7,5 +7,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   minify: true,
+  splitting: true,
+  treeshake: true,
   external: ["@plane/types"],
 });

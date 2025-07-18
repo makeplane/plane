@@ -5,6 +5,8 @@
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
+    "build": "tsup --minify",
+    "dev": "tsc --noEmit && tsup --watch",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -15,5 +17,11 @@
   "dependencies": {
     "@plane/constants": "*",
     "axios": "^1.8.3"
+  },
+  "devDependencies": {
+    "@plane/eslint-config": "*",
+    "@plane/typescript-config": "*",
+    "tsup": "8.4.0",
+    "typescript": "5.8.3"
   }
 }
