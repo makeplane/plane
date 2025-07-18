@@ -111,7 +111,7 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
     }
 
     return true;
-  }, [linkRemoved, positionRef.from, positionRef.to, editor, from, to, initialText, localText, localUrl]);
+  }, [linkRemoved, positionRef, editor, from, to, initialText, localText, localUrl]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
