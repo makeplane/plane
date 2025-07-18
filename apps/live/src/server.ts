@@ -116,7 +116,7 @@ export class Server {
     if (this.httpServer) {
       this.httpServer.close(() => {
         manualLogger.info("Express server closed gracefully.");
-        process.exit(1);
+        process.exit(0);
       });
     }
   }
