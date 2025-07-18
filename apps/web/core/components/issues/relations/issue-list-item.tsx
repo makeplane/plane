@@ -12,7 +12,7 @@ import { generateWorkItemLink } from "@plane/utils";
 import { RelationIssueProperty } from "@/components/issues/relations";
 // helpers
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -58,7 +58,6 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     toggleDeleteIssueModal,
   } = useIssueDetail(issueServiceType);
   const project = useProject();
-  const { getProjectStates } = useProjectState();
   const { isMobile } = usePlatformOS();
   // derived values
   const issue = getIssueById(relationIssueId);
@@ -66,9 +65,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const projectId = issue?.project_id;
-  const currentIssueStateDetail =
-    (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
-    undefined;
+
   if (!issue || !projectId) return <></>;
 
   const workItemLink = generateWorkItemLink({
@@ -129,12 +126,6 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
           <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
             <span className="size-5 flex-shrink-0" />
             <div className="flex w-full truncate cursor-pointer items-center gap-3">
-              <div
-                className="h-2 w-2 flex-shrink-0 rounded-full"
-                style={{
-                  backgroundColor: currentIssueStateDetail?.color ?? "#737373",
-                }}
-              />
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier
