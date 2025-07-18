@@ -7,7 +7,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
+    "dev": "tsup --watch --onSuccess \"dotenv -e .env -- node dist/server.js\"",
     "build": "tsc --noEmit && tsup",
     "start": "node --env-file=.env dist/server.js",
     "check:lint": "eslint . --max-warnings 0",
@@ -56,6 +56,7 @@
     "@types/node": "^20.14.9",
     "@types/pino-http": "^5.8.4",
     "concurrently": "^9.0.1",
+    "dotenv-cli": "^8.0.0",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "tsup": "8.4.0",
