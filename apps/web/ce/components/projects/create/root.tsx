@@ -30,7 +30,7 @@ export type TCreateProjectFormProps = {
 };
 
 export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
-  const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
+  const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus, templateId } = props;
   // store
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject } = useProject();
@@ -63,6 +63,10 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
     if (coverImage?.startsWith("http")) {
       formData.cover_image = coverImage;
       formData.cover_image_asset = null;
+    }
+
+    if (templateId) {
+      (formData as any).template_id = templateId;
     }
 
     return createProject(workspaceSlug.toString(), formData)

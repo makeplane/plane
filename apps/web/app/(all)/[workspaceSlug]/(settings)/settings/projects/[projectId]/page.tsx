@@ -12,6 +12,7 @@ import {
   ArchiveProjectSelection,
   DeleteProjectModal,
   DeleteProjectSection,
+  DuplicateProjectSection,
   ProjectDetailsForm,
   ProjectDetailsFormLoader,
 } from "@/components/project";
@@ -78,6 +79,10 @@ const ProjectSettingsPage = observer(() => {
 
         {isAdmin && currentProjectDetails && (
           <>
+            <DuplicateProjectSection
+              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId.toString()}
+            />
             <ArchiveProjectSelection
               projectDetails={currentProjectDetails}
               handleArchive={() => setArchiveProject(true)}

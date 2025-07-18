@@ -40,6 +40,87 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
+from plane.db.models import Issue
+
+
+def duplicate_project(template_project, user, *, name=None, identifier=None):
+    """Duplicate a project with its issues.
+
+    Parameters
+    ----------
+    template_project: Project
+        The project to duplicate.
+    user: User
+        The user initiating the duplication.
+    name: str | None
+        Optional name for the duplicated project.
+    identifier: str | None
+        Optional identifier for the duplicated project.
+    """
+    base_identifier = template_project.identifier
+    if identifier:
+        new_identifier = identifier.strip().upper()
+    else:
+        new_identifier = f"{base_identifier}-COPY"
+        counter = 1
+        while ProjectIdentifier.objects.filter(
+            name=new_identifier, workspace=template_project.workspace
+        ).exists():
+            counter += 1
+            new_identifier = f"{base_identifier}-COPY{counter}"
+
+    original_id = template_project.id
+    original_default_state = template_project.default_state_id
+    template_project.pk = None
+    template_project.name = name or f"{template_project.name} (Copy)"
+    template_project.identifier = new_identifier
+    template_project.created_by = user
+    template_project.updated_by = user
+    template_project.save()
+
+    ProjectIdentifier.objects.create(
+        name=new_identifier,
+        project=template_project,
+        workspace=template_project.workspace,
+    )
+
+    ProjectMember.objects.create(
+        project=template_project, member=user, role=20
+    )
+    IssueUserProperty.objects.create(project=template_project, user=user)
+
+    states_map = {}
+    for state in State.objects.filter(project_id=original_id):
+        old_id = state.id
+        state.pk = None
+        state.project = template_project
+        state.workspace = template_project.workspace
+        state.created_by = user
+        state.updated_by = user
+        state.save()
+        states_map[old_id] = state
+
+    if original_default_state and original_default_state in states_map:
+        template_project.default_state = states_map[original_default_state]
+        template_project.save(update_fields=["default_state"])
+
+    for issue in Issue.objects.filter(project_id=original_id):
+        assignees = list(issue.assignees.all())
+        labels = list(issue.labels.all())
+        old_state = issue.state_id
+        issue.pk = None
+        issue.project = template_project
+        issue.workspace = template_project.workspace
+        issue.state = states_map.get(old_state)
+        issue.created_by = user
+        issue.updated_by = user
+        issue.save()
+        if assignees:
+            issue.assignees.set(assignees)
+        if labels:
+            issue.labels.set(labels)
+
+    return template_project
 
 
 class ProjectViewSet(BaseViewSet):
@@ -241,6 +322,38 @@ class ProjectViewSet(BaseViewSet):
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
+            template_id = request.data.get("template_id")
+            if template_id:
+                template_project = Project.objects.filter(
+                    pk=template_id,
+                    workspace__slug=slug,
+                ).first()
+                if not template_project:
+                    return Response(
+                        {"error": "Template project does not exist"},
+                        status=status.HTTP_404_NOT_FOUND,
+                    )
+                new_project = duplicate_project(template_project, request.user)
+                name = request.data.get("name")
+                identifier = request.data.get("identifier")
+                if name:
+                    new_project.name = name
+                if identifier:
+                    if ProjectIdentifier.objects.filter(
+                        name=identifier.strip().upper(),
+                        workspace_id=new_project.workspace_id,
+                    ).exists():
+                        return Response(
+                            {"identifier": "The project identifier is already taken"},
+                            status=status.HTTP_409_CONFLICT,
+                        )
+                    new_project.identifier = identifier.strip().upper()
+                    ProjectIdentifier.objects.filter(project=new_project).update(
+                        name=new_project.identifier
+                    )
+                new_project.save()
+                serializer = ProjectListSerializer(new_project)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             serializer = ProjectSerializer(
                 data={**request.data}, context={"workspace_id": workspace.id}
