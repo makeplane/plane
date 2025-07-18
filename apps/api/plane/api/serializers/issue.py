@@ -448,9 +448,29 @@ class LabelLiteSerializer(BaseSerializer):
 class IssueExpandSerializer(BaseSerializer):
     cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
     module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
-    labels = LabelLiteSerializer(read_only=True, many=True)
-    assignees = UserLiteSerializer(read_only=True, many=True)
+
+    labels = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
+
+
+    def get_labels(self, obj):
+        expand = self.context.get("expand", [])
+        if "labels" in expand:
+            # Use prefetched data
+            return LabelLiteSerializer(
+                [il.label for il in obj.label_issue.all()], many=True
+            ).data
+        return [il.label_id for il in obj.label_issue.all()]
+
+    def get_assignees(self, obj):
+        expand = self.context.get("expand", [])
+        if "assignees" in expand:
+            return UserLiteSerializer(
+                [ia.assignee for ia in obj.issue_assignee.all()], many=True
+            ).data
+        return [ia.assignee_id for ia in obj.issue_assignee.all()]
+
 
     class Meta:
         model = Issue
