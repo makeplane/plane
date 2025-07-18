@@ -5,7 +5,7 @@ import set from "lodash/set";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane constants
 import { computedFn } from "mobx-utils";
-import { EIssueLayoutTypes, EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // base class
 import {
   EIssuesStoreType,
@@ -17,6 +17,7 @@ import {
   TIssueParams,
   TStaticViewTypes,
   IssuePaginationOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // services
 import { handleIssueQueryParamsByLayout } from "@plane/utils";

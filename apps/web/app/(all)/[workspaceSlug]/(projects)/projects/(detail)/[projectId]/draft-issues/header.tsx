@@ -4,7 +4,7 @@ import { FC, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -13,6 +13,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
@@ -94,7 +95,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
   const issueCount = undefined;
 
   return (
-    <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div className="flex items-center gap-2.5">
           <Breadcrumbs isLoading={loader === "init-loader"}>

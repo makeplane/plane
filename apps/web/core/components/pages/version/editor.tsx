@@ -86,7 +86,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       containerClassName="p-0 pb-64 border-none"
       displayConfig={displayConfig}
       editorClassName="pl-10"
-      projectId={projectId?.toString() ?? ""}
+      projectId={projectId?.toString()}
       workspaceId={workspaceDetails?.id ?? ""}
       workspaceSlug={workspaceSlug?.toString() ?? ""}
     />

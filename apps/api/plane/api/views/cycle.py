@@ -25,7 +25,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.serializers import CycleIssueSerializer, CycleSerializer
+from plane.api.serializers import CycleIssueSerializer, CycleSerializer, IssueSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -639,7 +639,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: CycleSerializer(
+            on_results=lambda issues: IssueSerializer(
                 issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )

@@ -396,6 +396,9 @@ module.exports = {
         80: "18rem",
         96: "21.6rem",
       },
+      height: {
+        header: "3.25rem",
+      },
       space: {
         0: "0",
         0.5: "0.1125rem",

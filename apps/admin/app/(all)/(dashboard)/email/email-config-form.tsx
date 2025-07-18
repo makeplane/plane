@@ -49,9 +49,9 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       EMAIL_USE_TLS: config["EMAIL_USE_TLS"],
       EMAIL_USE_SSL: config["EMAIL_USE_SSL"],
       EMAIL_FROM: config["EMAIL_FROM"],
+      ENABLE_SMTP: config["ENABLE_SMTP"],
     },
   });
-
   const emailFormFields: TControllerInputFormField[] = [
     {
       key: "EMAIL_HOST",
@@ -101,7 +101,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   ];
 
   const onSubmit = async (formData: EmailFormValues) => {
-    const payload: Partial<EmailFormValues> = { ...formData };
+    const payload: Partial<EmailFormValues> = { ...formData, ENABLE_SMTP: "1" };
 
     await updateInstanceConfigurations(payload)
       .then(() =>

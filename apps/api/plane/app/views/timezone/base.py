@@ -116,6 +116,7 @@ class TimezoneEndpoint(APIView):
             ("Astrakhan", "Europe/Astrakhan"),  # UTC+04:00
             ("Tbilisi", "Asia/Tbilisi"),  # UTC+04:00
             ("Mauritius", "Indian/Mauritius"),  # UTC+04:00
+            ("Kabul", "Asia/Kabul"),  # UTC+04:30
             ("Islamabad", "Asia/Karachi"),  # UTC+05:00
             ("Karachi", "Asia/Karachi"),  # UTC+05:00
             ("Tashkent", "Asia/Tashkent"),  # UTC+05:00

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Layers } from "lucide-react";
 // plane constants
-import { EIssueLayoutTypes, ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -15,6 +15,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   IProjectView,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";

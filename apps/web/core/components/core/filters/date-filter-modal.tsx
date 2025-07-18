@@ -50,7 +50,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={handleClose}>
+      <Dialog as="div" className="relative z-30" onClose={handleClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
