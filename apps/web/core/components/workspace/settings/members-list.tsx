@@ -47,7 +47,9 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
   // derived values
   const searchedMemberIds = getSearchedWorkspaceMemberIds(searchQuery);
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
-  const memberDetails = searchedMemberIds?.map((memberId) => getWorkspaceMemberDetails(memberId));
+    const memberDetails = searchedMemberIds
+      ?.map((memberId) => getWorkspaceMemberDetails(memberId))
+      .filter((member) => member?.is_active);
 
   return (
     <>

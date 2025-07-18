@@ -19,6 +19,7 @@ export interface IWorkspaceMembership {
   id: string;
   member: string;
   role: EUserPermissions;
+  is_active?: boolean;
 }
 
 export interface IWorkspaceMemberStore {
@@ -175,6 +176,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       id: workspaceMember.id,
       role: workspaceMember.role,
       member: this.memberRoot?.memberMap?.[workspaceMember.member],
+      is_active: workspaceMember.is_active,
     };
     return memberDetails;
   });
@@ -207,6 +209,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
             id: member.id,
             member: member.member.id,
             role: member.role,
+            is_active: member.is_active,
           });
         });
       });
