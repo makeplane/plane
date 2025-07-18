@@ -1,13 +1,14 @@
 import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Editor } from "@tiptap/react";
 import { useEffect } from "react";
-import { EventToPayloadMap, ICollaborativeDocumentEditor, BroadcastedEventUnion } from "@/types";
+// types
+import { EventToPayloadMap, ICollaborativeDocumentEditorProps, BroadcastedEventUnion } from "@/types";
 
 export const useRealtimeEvents = (props: {
   editor: Editor | null;
   provider: HocuspocusProvider;
   id: string;
-  updatePageProperties: ICollaborativeDocumentEditor["updatePageProperties"];
+  updatePageProperties: ICollaborativeDocumentEditorProps["updatePageProperties"];
 }) => {
   const { editor, updatePageProperties, provider, id } = props;
 

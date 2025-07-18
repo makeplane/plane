@@ -4,15 +4,13 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { DOMSerializer } from "@tiptap/pm/model";
 import { useEditor } from "@tiptap/react";
 import { useImperativeHandle } from "react";
-import * as Y from "yjs";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // extensions
-import { IMarking, SmoothCursorExtension } from "@/extensions";
+import { SmoothCursorExtension } from "@/extensions";
 import { TitleExtensions } from "@/extensions/title-extension";
 // helpers
-import { getParagraphCount } from "@/helpers/common";
-import { scrollSummary } from "@/helpers/scroll-to-node";
+import { getEditorRefHelpers } from "@/helpers/editor-ref";
 // types
 import { EditorTitleRefApi } from "@/types/editor";
 
@@ -71,6 +69,10 @@ export const useTitleEditor = (props: TitleEditorProps) => {
   );
 
   useImperativeHandle(titleRef, () => ({
+    ...getEditorRefHelpers({
+      editor,
+      provider,
+    }),
     clearEditor: (emitUpdate = false) => {
       editor
         ?.chain()
@@ -82,52 +84,6 @@ export const useTitleEditor = (props: TitleEditorProps) => {
     setEditorValue: (content: string) => {
       editor?.commands.setContent(content);
     },
-    blur: () => editor?.commands.blur(),
-    getMarkDown: (): string => {
-      const markdownOutput = editor?.storage.markdown.getMarkdown();
-      return markdownOutput;
-    },
-    getDocument: () => {
-      const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
-      const documentHTML = editor?.getHTML() ?? "<p></p>";
-      const documentJSON = editor?.getJSON() ?? null;
-
-      return {
-        binary: documentBinary,
-        html: documentHTML,
-        json: documentJSON,
-      };
-    },
-    scrollSummary: (marking: IMarking): void => {
-      if (!editor) return;
-      scrollSummary(editor, marking);
-    },
-    getSelectedText: () => {
-      if (!editor) return null;
-
-      const { state } = editor;
-      const { from, to, empty } = state.selection;
-
-      if (empty) return null;
-
-      const nodesArray: string[] = [];
-      state.doc.nodesBetween(from, to, (node, _pos, parent) => {
-        if (parent === state.doc && editor) {
-          const serializer = DOMSerializer.fromSchema(editor.schema);
-          const dom = serializer.serializeNode(node);
-          const tempDiv = document.createElement("div");
-          tempDiv.appendChild(dom);
-          nodesArray.push(tempDiv.innerHTML);
-        }
-      });
-      const selection = nodesArray.join("");
-      return selection;
-    },
-    getDocumentInfo: () => ({
-      characters: editor?.storage?.characterCount?.characters?.() ?? 0,
-      paragraphs: getParagraphCount(editor?.state),
-      words: editor?.storage?.characterCount?.words?.() ?? 0,
-    }),
   }));
 
   return editor;
