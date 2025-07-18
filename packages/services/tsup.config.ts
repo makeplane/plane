@@ -9,5 +9,5 @@ export default defineConfig({
   minify: true,
   splitting: true,
   treeshake: true,
-  external: ["winston", "winston-daily-rotate-file"],
+  external: ["axios"],
 });
