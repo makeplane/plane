@@ -40,7 +40,7 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
-from plane.db.models import Issue, Module, ModuleIssue
+from plane.db.models import Issue, IssueLabel, Module, ModuleIssue
 
 
 def duplicate_project(template_project, user, name, identifier):
@@ -48,11 +48,11 @@ def duplicate_project(template_project, user, name, identifier):
     original_project_id = template_project.id
     original_default_state = template_project.default_state_id
 
-    # Duplicate project
+    # Duplicate the project
     template_project.pk = None
     template_project.name = name
     template_project.identifier = new_identifier
-    template_project.archived_at = None
+    template_project.archived_at = None  # Unset archive status
     template_project.created_by = user
     template_project.updated_by = user
     template_project.save()
@@ -85,8 +85,9 @@ def duplicate_project(template_project, user, name, identifier):
     # Duplicate modules
     module_map = {}
     for module in Module.objects.filter(project_id=original_project_id):
-        members = list(module.members.all())
         old_id = module.id
+        members = list(module.members.all())
+
         module.pk = None
         module.project = template_project
         module.workspace = template_project.workspace
@@ -97,27 +98,34 @@ def duplicate_project(template_project, user, name, identifier):
             module.members.set(members)
         module_map[old_id] = module
 
-    # Duplicate issues without setting parent
+    # Duplicate issues (defer parent linking)
     issue_map = {}
     for issue in Issue.objects.filter(project_id=original_project_id):
+        old_id = issue.id
+        old_parent_id = issue.parent_id
         labels = list(issue.labels.all())
         issue_modules = list(
             ModuleIssue.objects.filter(issue=issue).values_list("module_id", flat=True)
         )
-        old_id = issue.id
-        old_parent_id = issue.parent_id
 
         issue.pk = None
         issue.project = template_project
         issue.workspace = template_project.workspace
         issue.state = states_map.get(issue.state_id)
-        issue.parent = None  # Defer linking parent
+        issue.parent = None
         issue.created_by = user
         issue.updated_by = user
         issue.save()
 
-        if labels:
-            issue.labels.set(labels)
+        for label in labels:
+            IssueLabel.objects.create(
+                issue=issue,
+                label=label,
+                project=template_project,
+                workspace=template_project.workspace,
+                created_by=user,
+                updated_by=user,
+            )
 
         for old_module_id in issue_modules:
             if old_module_id in module_map:
@@ -135,7 +143,7 @@ def duplicate_project(template_project, user, name, identifier):
             "old_parent_id": old_parent_id,
         }
 
-    # Link parent issues after all are saved
+    # Restore parent–child links
     for old_issue_id, data in issue_map.items():
         new_issue = data["new_issue"]
         old_parent_id = data["old_parent_id"]
