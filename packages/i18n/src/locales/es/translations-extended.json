@@ -1,0 +1,2479 @@
+{
+  "sidebar": {
+    "pi_chat": "PI Chat",
+    "initiatives": "Iniciativas",
+    "teamspaces": "Espacios de equipo",
+    "epics": "Epics",
+    "upgrade_plan": "Actualizar plan",
+    "plane_pro": "Plane Pro",
+    "business": "Business",
+    "customers": "Clientes"
+  },
+  "workspace_dashboards": "Tableros",
+  "pi_chat": "PI Chat",
+  "in_app": "En la aplicación",
+  "forms": "Formularios",
+  "choose_workspace_for_integration": "Elige un espacio de trabajo para conectar esta app",
+  "integrations_description": "Las apps que funcionan con Plane deben conectarse a un espacio de trabajo donde eres administrador.",
+  "create_a_new_workspace": "Crear un nuevo espacio de trabajo",
+  "learn_more_about_workspaces": "Aprende más sobre espacios de trabajo",
+  "no_workspaces_to_connect": "No hay espacios de trabajo para conectar",
+  "no_workspaces_to_connect_description": "Necesitarás crear un espacio de trabajo para poder conectar integraciones y plantillas",
+  "common": {
+    "worklogs": "Registros de trabajo",
+    "live": "En vivo",
+    "epics": "Epics",
+    "project_updates": "Actualizaciones del proyecto",
+    "overview": "Resumen",
+    "workflows": "Flujos de trabajo",
+    "members_and_teamspaces": "Miembros y espacios de equipo"
+  },
+  "updates": {
+    "add_update": "Agregar actualización",
+    "add_update_placeholder": "Escribe tu actualización aquí",
+    "empty": {
+      "title": "Aún no hay actualizaciones",
+      "description": "Puedes ver las actualizaciones aquí."
+    },
+    "delete": {
+      "title": "Eliminar actualización",
+      "confirmation": "¿Estás seguro de querer eliminar esta actualización? Esta acción es irreversible.",
+      "success": {
+        "title": "Actualización eliminada",
+        "message": "La actualización se ha eliminado correctamente"
+      },
+      "error": {
+        "title": "Actualización no eliminada",
+        "message": "La actualización no se pudo eliminar"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reacción creada",
+          "message": "Reacción creada con éxito"
+        },
+        "error": {
+          "title": "Reacción no creada",
+          "message": "No se pudo crear la reacción"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reacción eliminada",
+          "message": "Reacción eliminada con éxito"
+        },
+        "error": {
+          "title": "Reacción no eliminada",
+          "message": "No se pudo eliminar la reacción"
+        }
+      }
+    },
+    "progress": {
+      "title": "Progreso",
+      "since_last_update": "Desde la última actualización",
+      "comments": "{count, plural, one{# comentario} other{# comentarios}}"
+    },
+    "create": {
+      "success": {
+        "title": "Actualización creada",
+        "message": "Actualización creada con éxito"
+      },
+      "error": {
+        "title": "Actualización no creada",
+        "message": "No se pudo crear la actualización"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Actualización actualizada",
+        "message": "Actualización actualizada con éxito"
+      },
+      "error": {
+        "title": "Actualización no actualizada",
+        "message": "No se pudo actualizar la actualización"
+      }
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Comienza antes",
+      "start_after": "Comienza después",
+      "finish_before": "Termina antes",
+      "finish_after": "Termina después"
+    }
+  },
+
+  "pages": {
+    "link_pages": "Enlazar páginas",
+    "show_wiki_pages": "Mostrar páginas de wiki",
+    "link_pages_to": "Enlazar páginas a",
+    "linked_pages": "Páginas enlazadas",
+    "no_description": "Esta página está vacía. Escriba algo aquí y véalo como este marcador de posición",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Páginas actualizadas",
+          "message": "Páginas actualizadas con éxito"
+        },
+        "error": {
+          "title": "Páginas no actualizadas",
+          "message": "No se pudieron actualizar las páginas"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Página eliminada",
+          "message": "Página eliminada con éxito"
+        },
+        "error": {
+          "title": "Página no eliminada",
+          "message": "No se pudo eliminar la página"
+        }
+      }
+    }
+  },
+
+  "profile": {
+    "actions": {
+      "connections": "Conexiones"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "Iniciativas",
+      "sub_heading": "Desbloquea el nivel más alto de organización para todo tu trabajo en Plane",
+      "title": "Habilitar iniciativas",
+      "description": "Establece objetivos más grandes para monitorear el progreso",
+      "toast": {
+        "updating": "Actualizando función de iniciativas",
+        "enable_success": "Función de iniciativas habilitada exitosamente.",
+        "disable_success": "Función de iniciativas deshabilitada exitosamente.",
+        "error": "¡Error al actualizar la función de iniciativas!"
+      }
+    },
+    "customers": {
+      "heading": "Clientes",
+      "settings_heading": "Administra el trabajo según lo que es importante para tus clientes.",
+      "settings_sub_heading": "Convierte las solicitudes de los clientes en elementos de trabajo, asigna prioridad según las solicitudes y vincula los estados de los elementos de trabajo a los registros de los clientes. Pronto podrás integrar tu CRM o herramienta de soporte para una mejor gestión del trabajo según los atributos de los clientes."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "No hay integraciones configuradas",
+        "description": "Configura GitHub y otras integraciones para sincronizar los elementos de trabajo de tu proyecto."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Editar sistema de estimaciones",
+        "add_or_update": {
+          "title": "Agregar, actualizar o eliminar estimaciones",
+          "description": "Gestiona el sistema actual agregando, actualizando o eliminando los puntos o categorías."
+        },
+        "switch": {
+          "title": "Cambiar tipo de estimación",
+          "description": "Convierte tu sistema de puntos a sistema de categorías y viceversa."
+        }
+      },
+      "switch": "Cambiar sistema de estimaciones",
+      "current": "Sistema de estimaciones actual",
+      "select": "Seleccionar un sistema de estimaciones",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Estimaciones reordenadas",
+            "message": "Las estimaciones han sido reordenadas en tu proyecto."
+          },
+          "error": {
+            "title": "Error al reordenar estimaciones",
+            "message": "No pudimos reordenar las estimaciones, por favor intenta de nuevo"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Por favor completa este campo de estimación",
+        "repeat": "El valor de estimación no puede repetirse"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Propiedades",
+        "description": "Agrega propiedades personalizadas a tu épica."
+      },
+      "disabled": "Deshabilitado"
+    }
+  },
+  "teamspaces": {
+    "label": "Espacios de equipo",
+    "empty_state": {
+      "general": {
+        "title": "Los espacios de equipo desbloquean una mejor organización y seguimiento en Plane",
+        "description": "Crea una superficie dedicada para cada equipo del mundo real, separada de todas las demás superficies de trabajo en Plane, y personalízalas para adaptarse a la forma en que trabaja tu equipo.",
+        "primary_button": {
+          "text": "Crear un nuevo espacio de equipo"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Aún no has vinculado ningún espacio de equipo.",
+          "description": "Los propietarios del espacio de equipo y del proyecto pueden gestionar el acceso a los proyectos."
+        }
+      },
+      "primary_button": {
+        "text": "Vincular un espacio de equipo"
+      },
+      "secondary_button": {
+        "text": "Más información"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Nombre del espacio de equipo",
+          "members": "Miembros",
+          "accountType": "Tipo de cuenta"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Eliminar espacio de equipo"
+            },
+            "confirm": {
+              "title": "Eliminar {teamspaceName} de {projectName}",
+              "description": "Cuando elimines este espacio de equipo de un proyecto vinculado, los miembros aquí perderán el acceso al proyecto vinculado."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "No se encontraron espacios de equipo coincidentes"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Has vinculado un espacio de equipo a este proyecto.} other {Has vinculado # espacios de equipo a este proyecto.}}",
+            "description": "{additionalCount, plural, =0 {El espacio de equipo {firstTeamspaceName} ahora está vinculado a este proyecto.} other {El espacio de equipo {firstTeamspaceName} y {additionalCount} más ahora están vinculados a este proyecto.}}"
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Has eliminado ese espacio de equipo de este proyecto.",
+            "description": "El espacio de equipo {teamspaceName} fue eliminado de {projectName}."
+          },
+          "error": {
+            "title": "Eso no funcionó.",
+            "description": "Inténtalo de nuevo o recarga esta página antes de intentarlo de nuevo."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Buscar espacios de equipo",
+        "info": {
+          "title": "Agregar un espacio de equipo otorga a todos los miembros del espacio de equipo acceso a este proyecto.",
+          "link": "Más información"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "No tienes ningún espacio de equipo para vincular.",
+            "description": "O bien no estás en un espacio de equipo que puedas vincular o ya has vinculado todos los espacios de equipo disponibles."
+          },
+          "no_results": {
+            "title": "Eso no coincide con ninguno de tus espacios de equipo.",
+            "description": "Prueba con otro término o asegúrate de tener espacios de equipo para vincular."
+          }
+        },
+        "primary_button": {
+          "text": "Vincular espacio(s) de equipo seleccionado(s)"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Crea elementos de trabajo específicos del equipo.",
+        "description": "Los elementos de trabajo que están asignados a miembros de este equipo en cualquier proyecto vinculado aparecerán automáticamente aquí. Si esperas ver algunos elementos de trabajo aquí, asegúrate de que tus proyectos vinculados tengan elementos de trabajo asignados a miembros de este equipo o crea elementos de trabajo.",
+        "primary_button": {
+          "text": "Agregar elementos de trabajo a un proyecto vinculado"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "No hay elementos de trabajo específicos del equipo para los filtros aplicados",
+        "description": "Cambia algunos de esos filtros o bórralos todos para ver los elementos de trabajo relevantes para este espacio.",
+        "secondary_button": {
+          "text": "Borrar todos los filtros"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Ninguno de tus proyectos vinculados tiene un Cycle activo.",
+        "description": "Los Cycles activos en proyectos vinculados aparecerán automáticamente aquí. Si esperas ver un Cycle activo, asegúrate de que esté ejecutándose en un proyecto vinculado en este momento."
+      },
+      "completed": {
+        "title": "Ninguno de tus proyectos vinculados tiene un Cycle completado.",
+        "description": "Los Cycles completados en proyectos vinculados aparecerán automáticamente aquí. Si esperas ver un Cycle completado, asegúrate de que también esté completado en un proyecto vinculado."
+      },
+      "upcoming": {
+        "title": "Ninguno de tus proyectos vinculados tiene un Cycle próximo.",
+        "description": "Los Cycles próximos en proyectos vinculados aparecerán automáticamente aquí. Si esperas ver un Cycle próximo, asegúrate de que también esté en un proyecto vinculado."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Las vistas de tu equipo de tu trabajo sin interrumpir otras vistas en tu espacio de trabajo",
+        "description": "Ve el trabajo de tu equipo en vistas que se guardan solo para tu equipo y separadamente de las vistas de un proyecto.",
+        "primary_button": {
+          "text": "Crear una vista"
+        }
+      },
+      "filter": {
+        "title": "No hay vistas coincidentes",
+        "description": "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Aloja el conocimiento de tu equipo en Pages.",
+        "description": "A diferencia de las Pages en un proyecto, puedes guardar conocimiento específico de un equipo en un conjunto separado de Pages aquí. Obtén todas las funciones de Pages, crea documentos de mejores prácticas y wikis de equipo fácilmente.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "filter": {
+        "title": "No hay Pages coincidentes",
+        "description": "Elimina los filtros para ver todas las Pages"
+      },
+      "search": {
+        "title": "No hay Pages coincidentes",
+        "description": "Elimina los criterios de búsqueda para ver todas las Pages"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Ninguno de tus proyectos vinculados tiene elementos de trabajo publicados.",
+        "description": "Crea algunos elementos de trabajo en uno o más de esos proyectos para ver el progreso por fechas, estados y prioridad."
+      },
+      "relation": {
+        "blocking": {
+          "title": "No tienes ningún elemento de trabajo bloqueando a un compañero de equipo.",
+          "description": "¡Buen trabajo! Has despejado el camino para tu equipo. Eres un buen jugador de equipo."
+        },
+        "blocked": {
+          "title": "No tienes elementos de trabajo de compañeros que te estén bloqueando.",
+          "description": "¡Buenas noticias! Puedes avanzar en todos tus elementos de trabajo asignados."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Ninguno de tus proyectos vinculados tiene elementos de trabajo publicados.",
+          "description": "Crea algunos elementos de trabajo en uno o más de esos proyectos para ver la distribución del trabajo por proyecto y miembros del equipo."
+        },
+        "filter": {
+          "title": "No hay estadísticas de equipo para los filtros aplicados.",
+          "description": "Crea algunos elementos de trabajo en uno o más de esos proyectos para ver la distribución del trabajo por proyecto y miembros del equipo."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "label": "Iniciativas",
+    "placeholder": "{count, plural, one{# iniciativa} other{# iniciativas}}",
+    "add_initiative": "Agregar Iniciativa",
+    "create_initiative": "Crear Iniciativa",
+    "update_initiative": "Actualizar Iniciativa",
+    "initiative_name": "Nombre de la iniciativa",
+    "all_initiatives": "Todas las Iniciativas",
+    "delete_initiative": "Eliminar Iniciativa",
+    "fill_all_required_fields": "Por favor complete todos los campos requeridos.",
+    "toast": {
+      "create_success": "Iniciativa {name} creada exitosamente.",
+      "create_error": "Error al crear la iniciativa. ¡Por favor intente nuevamente!",
+      "update_success": "Iniciativa {name} actualizada exitosamente.",
+      "update_error": "Error al actualizar la iniciativa. ¡Por favor intente nuevamente!",
+      "delete": {
+        "success": "Iniciativa eliminada exitosamente.",
+        "error": "Error al eliminar la Iniciativa"
+      },
+      "link_copied": "Enlace de la iniciativa copiado al portapapeles.",
+      "project_update_success": "Proyectos de la iniciativa actualizados exitosamente.",
+      "project_update_error": "Error al actualizar los proyectos de la iniciativa. ¡Por favor intente nuevamente!",
+      "epic_update_success": "Epic{count, plural, one { agregado a la Iniciativa exitosamente.} other {s agregados a la Iniciativa exitosamente.}}",
+      "epic_update_error": "Error al agregar Epic a la Iniciativa. Por favor intente más tarde."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Organiza el trabajo al más alto nivel con Iniciativas",
+        "description": "Cuando necesitas organizar trabajo que abarca varios proyectos y equipos, las Iniciativas son útiles. Conecta proyectos y Epics a iniciativas, ve actualizaciones automáticamente consolidadas y ve el bosque antes que los árboles.",
+        "primary_button": {
+          "text": "Crear una iniciativa"
+        }
+      },
+      "search": {
+        "title": "No hay iniciativas coincidentes",
+        "description": "No se detectaron iniciativas con los criterios de búsqueda. \n Crea una nueva iniciativa en su lugar."
+      },
+      "not_found": {
+        "title": "La Iniciativa no existe",
+        "description": "La Iniciativa que estás buscando no existe o ha sido eliminada.",
+        "primary_button": {
+          "text": "Ver otras Iniciativas"
+        }
+      },
+      "epics": {
+        "title": "No tienes Epics que coincidan con los filtros que has aplicado.",
+        "subHeading": "Para ver todos los Epics, elimina todos los filtros aplicados.",
+        "action": "Eliminar filtros"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Escribe una nota, un documento o una base de conocimiento completa. Obtén ayuda de Galileo, el asistente de IA de Plane, para comenzar",
+        "description": "Las Pages son espacios de pensamiento en Plane. Toma notas de reuniones, fórmalas fácilmente, integra elementos de trabajo, organízalas usando una biblioteca de componentes y mantenlas todas en el contexto de tu proyecto. Para hacer cualquier documento rápidamente, invoca a Galileo, la IA de Plane, con un atajo o el clic de un botón.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "private": {
+        "title": "Aún no hay Pages privadas",
+        "description": "Mantén tus pensamientos privados aquí. Cuando estés listo para compartir, el equipo está a un clic de distancia.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "public": {
+        "title": "Aún no hay Pages públicas",
+        "description": "Ve las Pages compartidas con todos en tu espacio de trabajo aquí mismo.",
+        "primary_button": {
+          "text": "Crea tu primera Page"
+        }
+      },
+      "archived": {
+        "title": "Aún no hay Pages archivadas",
+        "description": "Archiva las Pages que no estén en tu radar. Accede a ellas aquí cuando las necesites."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "No hay Epics seleccionados",
+    "add_selected_epics": "Agregar Epics seleccionados",
+    "epic_link_copied_to_clipboard": "Enlace del Epic copiado al portapapeles.",
+    "project_link_copied_to_clipboard": "Enlace del proyecto copiado al portapapeles",
+    "empty_state": {
+      "general": {
+        "title": "Crea un Epic y asígnalo a alguien, incluso a ti mismo",
+        "description": "Para trabajos más grandes que abarcan varios Cycles y pueden existir en varios Modules, crea un Epic. Vincula elementos de trabajo y sub-elementos en un proyecto a un Epic y accede a un elemento de trabajo desde la vista general.",
+        "primary_button": {
+          "text": "Crear un Epic"
+        }
+      },
+      "section": {
+        "title": "Aún no hay Epics",
+        "description": "Comienza a agregar Epics para gestionar y seguir el progreso.",
+        "primary_button": {
+          "text": "Agregar Epics"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No se encontraron Epics coincidentes"
+      },
+      "no_epics": {
+        "title": "No se encontraron Epics"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "No hay Cycles activos",
+        "description": "Cycles de tus proyectos que incluyen cualquier período que abarque la fecha de hoy dentro de su rango. Encuentra el progreso y los detalles de todos tus Cycles activos aquí."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Agrega elementos de trabajo al Cycle para ver su \n progreso"
+      },
+      "priority": {
+        "title": "Observa los elementos de trabajo de alta prioridad abordados en \n el Cycle de un vistazo."
+      },
+      "assignee": {
+        "title": "Agrega asignados a los elementos de trabajo para ver un \n desglose del trabajo por asignados."
+      },
+      "label": {
+        "title": "Agrega etiquetas a los elementos de trabajo para ver el \n desglose del trabajo por etiquetas."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Integraciones"
+      },
+      "imports": {
+        "title": "Importaciones"
+      },
+      "worklogs": {
+        "title": "Registros de trabajo"
+      },
+      "project_states": {
+        "title": "Estados del proyecto"
+      },
+      "teamspaces": {
+        "title": "Espacios de equipo"
+      },
+      "initiatives": {
+        "title": "Iniciativas"
+      },
+      "customers": {
+        "title": "Clientes"
+      },
+      "cancel_trial": {
+        "title": "Cancela primero tu periodo de prueba.",
+        "description": "Tienes un periodo de prueba activo en uno de nuestros planes de pago. Por favor, cancélalo primero para continuar.",
+        "dismiss": "Cerrar",
+        "cancel": "Cancelar prueba",
+        "cancel_success_title": "Periodo de prueba cancelado.",
+        "cancel_success_message": "Ahora puedes eliminar el espacio de trabajo.",
+        "cancel_error_title": "Eso no funcionó.",
+        "cancel_error_message": "Por favor, inténtalo de nuevo."
+      },
+      "applications": {
+        "title": "Aplicaciones",
+        "applicationId_copied": "ID de aplicación copiado al portapapeles",
+        "clientId_copied": "ID de cliente copiado al portapapeles",
+        "clientSecret_copied": "Secreto de cliente copiado al portapapeles",
+        "third_party_apps": "Aplicaciones de terceros",
+        "your_apps": "Tus aplicaciones",
+        "connect": "Conectar",
+        "connected": "Conectado",
+        "install": "Instalar",
+        "installed": "Instalado",
+        "app_available": "Has hecho que esta aplicación esté disponible para usar con un espacio de trabajo de Plane",
+        "app_available_description": "Conecta un espacio de trabajo de Plane para comenzar a usarla",
+        "client_id_and_secret": "ID y Secreto de Cliente",
+        "client_id_and_secret_description": "Copia y guarda esta clave secreta. No podrás ver esta clave después de hacer clic en Cerrar.",
+        "client_id_and_secret_download": "Puedes descargar un CSV con la clave desde aquí.",
+        "application_id": "ID de Aplicación",
+        "client_id": "ID de Cliente",
+        "client_secret": "Secreto de Cliente",
+        "export_as_csv": "Exportar como CSV",
+        "slug_already_exists": "El slug ya existe",
+        "failed_to_create_application": "Error al crear la aplicación",
+        "upload_logo": "Subir Logo",
+        "app_name_title": "¿Cómo llamarás a esta aplicación?",
+        "app_name_error": "El nombre de la aplicación es obligatorio",
+        "app_short_description_title": "Dale una breve descripción a esta aplicación",
+        "app_short_description_error": "La descripción corta de la aplicación es obligatoria",
+        "app_description_title": "También escribe una descripción más larga para quienes quieran saber más. Presiona / para comandos",
+        "app_description_error": "La descripción de la aplicación es obligatoria",
+        "app_slug_title": "Slug de la aplicación",
+        "app_slug_error": "El slug de la aplicación es obligatorio",
+        "app_maker_title": "Creador de la aplicación",
+        "app_maker_error": "El creador de la aplicación es obligatorio",
+        "webhook_url_title": "URL del Webhook",
+        "webhook_url_error": "La URL del webhook es obligatoria",
+        "invalid_webhook_url_error": "URL del webhook inválida",
+        "redirect_uris_title": "URIs de redirección",
+        "redirect_uris_error": "Las URIs de redirección son obligatorias",
+        "invalid_redirect_uris_error": "URIs de redirección inválidas",
+        "redirect_uris_description": "Ingresa las URIs separadas por espacios donde la aplicación redirigirá después del usuario, por ejemplo https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Orígenes Javascript autorizados",
+        "authorized_javascript_origins_error": "Los orígenes Javascript autorizados son obligatorios",
+        "invalid_authorized_javascript_origins_error": "Orígenes Javascript autorizados inválidos",
+        "authorized_javascript_origins_description": "Ingresa los orígenes separados por espacios donde la aplicación podrá hacer solicitudes, por ejemplo app.com example.com",
+        "create_app": "Crear aplicación",
+        "update_app": "Actualizar aplicación",
+        "regenerate_client_secret_description": "Regenerar el secreto de cliente. Si regeneras el secreto, podrás copiar la clave o descargarla en un archivo CSV justo después.",
+        "regenerate_client_secret": "Regenerar secreto de cliente",
+        "regenerate_client_secret_confirm_title": "¿Seguro que quieres regenerar el secreto de cliente?",
+        "regenerate_client_secret_confirm_description": "La aplicación que use este secreto dejará de funcionar. Necesitarás actualizar el secreto en la aplicación.",
+        "regenerate_client_secret_confirm_cancel": "Cancelar",
+        "regenerate_client_secret_confirm_regenerate": "Regenerar",
+        "read_only_access_to_workspace": "Acceso de solo lectura a tu espacio de trabajo",
+        "write_access_to_workspace": "Acceso de escritura a tu espacio de trabajo",
+        "read_only_access_to_user_profile": "Acceso de solo lectura a tu perfil de usuario",
+        "write_access_to_user_profile": "Acceso de escritura a tu perfil de usuario",
+        "connect_app_to_workspace": "Conectar {app} a tu espacio de trabajo {workspace}",
+        "user_permissions": "Permisos de usuario",
+        "user_permissions_description": "Los permisos de usuario se utilizan para otorgar acceso al perfil del usuario.",
+        "workspace_permissions": "Permisos del espacio de trabajo",
+        "workspace_permissions_description": "Los permisos del espacio de trabajo se utilizan para otorgar acceso al espacio de trabajo.",
+        "with_the_permissions": "con los permisos",
+        "app_consent_title": "{app} está solicitando acceso a tu espacio de trabajo y perfil de Plane.",
+        "choose_workspace_to_connect_app_with": "Elige un espacio de trabajo para conectar la aplicación",
+        "app_consent_workspace_permissions_title": "{app} desea",
+        "app_consent_user_permissions_title": "{app} también puede solicitar el permiso de un usuario para los siguientes recursos. Estos permisos serán solicitados y autorizados únicamente por un usuario.",
+        "app_consent_accept_title": "Al aceptar, tú",
+        "app_consent_accept_1": "Concedes a la aplicación acceso a tus datos de Plane donde sea que puedas usar la aplicación dentro o fuera de Plane",
+        "app_consent_accept_2": "Aceptas la Política de Privacidad y Términos de Uso de {app}",
+        "accepting": "Aceptando...",
+        "accept": "Aceptar",
+        "categories": "Categorías",
+        "select_app_categories": "Seleccionar categorías de la aplicación",
+        "categories_title": "Categorías",
+        "categories_error": "Las categorías son requeridas",
+        "invalid_categories_error": "Categorías inválidas",
+        "categories_description": "Selecciona las categorías que mejor describen la aplicación",
+        "privacy_policy_url_title": "URL de la Política de Privacidad",
+        "privacy_policy_url_error": "La URL de la Política de Privacidad es requerida",
+        "invalid_privacy_policy_url_error": "URL de la Política de Privacidad inválida",
+        "terms_of_service_url_title": "URL de los Términos de Servicio",
+        "terms_of_service_url_error": "Los Términos de Servicio son requeridos",
+        "invalid_terms_of_service_url_error": "URL de los Términos de Servicio inválida",
+        "support_url_title": "URL de Soporte",
+        "support_url_error": "La URL de Soporte es requerida",
+        "invalid_support_url_error": "URL de Soporte inválida",
+        "video_url_title": "URL del Video",
+        "video_url_error": "El URL del Video es requerido",
+        "invalid_video_url_error": "URL del Video inválida",
+        "setup_url_title": "URL de Configuración",
+        "setup_url_error": "La URL de Configuración es requerida",
+        "invalid_setup_url_error": "URL de Configuración inválida",
+        "configuration_url_title": "URL de Configuración",
+        "configuration_url_error": "La URL de Configuración es requerida",
+        "invalid_configuration_url_error": "URL de Configuración inválida",
+        "contact_email_title": "Correo de Contacto",
+        "contact_email_error": "El correo de contacto es requerido",
+        "invalid_contact_email_error": "Correo de contacto inválido",
+        "upload_attachments": "Subir adjuntos",
+        "uploading_images": "Subiendo {count} Imagen{count, plural, one {s} other {s}}",
+        "drop_images_here": "Arrastra imágenes aquí",
+        "click_to_upload_images": "Haz clic para subir imágenes",
+        "invalid_file_or_exceeds_size_limit": "Archivo inválido o excede el límite de tamaño ({size} MB)",
+        "uploading": "Subiendo...",
+        "upload_and_save": "Subir y guardar"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "No se pueden archivar elementos de trabajo",
+        "message": "Solo los elementos de trabajo pertenecientes a grupos de estado Completado o Cancelado pueden ser archivados."
+      },
+      "invalid_issue_start_date": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "La fecha de inicio seleccionada es posterior a la fecha de vencimiento de algunos elementos de trabajo. Asegúrese de que la fecha de inicio sea anterior a la fecha de vencimiento."
+      },
+      "invalid_issue_target_date": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "La fecha de vencimiento seleccionada es anterior a la fecha de inicio de algunos elementos de trabajo. Asegúrese de que la fecha de vencimiento sea posterior a la fecha de inicio."
+      },
+      "invalid_state_transition": {
+        "title": "No se pueden actualizar elementos de trabajo",
+        "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "Tipos de elementos de trabajo",
+    "label_lowercase": "tipos de elementos de trabajo",
+    "settings": {
+      "title": "Tipos de elementos de trabajo",
+      "properties": {
+        "title": "Propiedades personalizadas del elemento de trabajo",
+        "tooltip": "Cada tipo de elemento de trabajo viene con un conjunto predeterminado de propiedades como Título, Descripción, Asignado, Estado, Prioridad, Fecha de inicio, Fecha de vencimiento, Module, Cycle, etc. También puedes personalizar y agregar tus propias propiedades para adaptarlo a las necesidades de tu equipo.",
+        "add_button": "Agregar nueva propiedad",
+        "dropdown": {
+          "label": "Tipo de propiedad",
+          "placeholder": "Seleccionar tipo"
+        },
+        "property_type": {
+          "text": {
+            "label": "Texto"
+          },
+          "number": {
+            "label": "Número"
+          },
+          "dropdown": {
+            "label": "Desplegable"
+          },
+          "boolean": {
+            "label": "Booleano"
+          },
+          "date": {
+            "label": "Fecha"
+          },
+          "member_picker": {
+            "label": "Selector de miembros"
+          }
+        },
+        "attributes": {
+          "label": "Atributos",
+          "text": {
+            "single_line": {
+              "label": "Línea única"
+            },
+            "multi_line": {
+              "label": "Párrafo"
+            },
+            "readonly": {
+              "label": "Solo lectura",
+              "header": "Datos de solo lectura"
+            },
+            "invalid_text_format": {
+              "label": "Formato de texto inválido"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Agregar número"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Selección única"
+            },
+            "multi_select": {
+              "label": "Selección múltiple"
+            },
+            "no_default_value": {
+              "label": "Sin valor predeterminado"
+            }
+          },
+          "boolean": {
+            "label": "Verdadero | Falso",
+            "no_default": "Sin valor predeterminado"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opciones",
+              "form": {
+                "placeholder": "Agregar opción",
+                "errors": {
+                  "name": {
+                    "required": "El nombre de la opción es obligatorio.",
+                    "integrity": "Ya existe una opción con el mismo nombre."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Seleccionar opción",
+                "multi": {
+                  "default": "Seleccionar opciones",
+                  "variable": "{count} opciones seleccionadas"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} creada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al crear la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} actualizada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al actualizar la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} eliminada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al eliminar la propiedad. ¡Por favor intente nuevamente!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} propiedad {name}",
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Propiedad {name} {action} exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al {action} la propiedad. ¡Por favor intente nuevamente!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Título"
+            },
+            "description": {
+              "placeholder": "Descripción"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Debes nombrar tu propiedad.",
+              "max_length": "El nombre de la propiedad no debe exceder los 255 caracteres."
+            },
+            "property_type": {
+              "required": "Debes seleccionar un tipo de propiedad."
+            },
+            "options": {
+              "required": "Debes agregar al menos una opción."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Activo",
+          "tooltip": {
+            "disabled": "Clic para deshabilitar",
+            "enabled": "Clic para habilitar"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Eliminar esta propiedad",
+          "description": "La eliminación de propiedades puede llevar a la pérdida de datos existentes.",
+          "secondary_description": "¿Deseas deshabilitar la propiedad en su lugar?",
+          "primary_button": "{action}, eliminarla",
+          "secondary_button": "Sí, deshabilitarla"
+        },
+        "mandate_confirmation": {
+          "label": "Propiedad obligatoria",
+          "content": "Parece que hay una opción predeterminada para esta propiedad. Hacer la propiedad obligatoria eliminará el valor predeterminado y los usuarios deberán agregar un valor de su elección.",
+          "tooltip": {
+            "disabled": "Este tipo de propiedad no puede ser obligatorio",
+            "enabled": "Desmarca para hacer el campo opcional",
+            "checked": "Marca para hacer el campo obligatorio"
+          }
+        },
+        "empty_state": {
+          "title": "Agregar propiedades personalizadas",
+          "description": "Las nuevas propiedades que agregues para este tipo de elemento de trabajo aparecerán aquí."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Eliminar este tipo",
+        "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
+        "primary_button": "Sí, eliminarlo",
+        "toast": {
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Tipo de elemento de trabajo eliminado con éxito."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el tipo de elemento de trabajo. ¡Inténtalo de nuevo!"
+          }
+        },
+        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?"
+      },
+      "cant_delete_linked_message": "No se puede eliminar este tipo de elemento de trabajo porque está vinculado a elementos de trabajo existentes."
+    },
+    "create": {
+      "title": "Crear tipo de elemento de trabajo",
+      "button": "Agregar tipo de elemento de trabajo",
+      "toast": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo creado exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Actualizar tipo de elemento de trabajo",
+      "button": "Actualizar tipo de elemento de trabajo",
+      "toast": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo {name} actualizado exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": {
+            "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dale a este tipo de elemento de trabajo un nombre único"
+        },
+        "description": {
+          "placeholder": "Describe para qué está destinado este tipo de elemento de trabajo y cuándo debe usarse."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipo de elemento de trabajo {name}",
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Tipo de elemento de trabajo {name} {action} exitosamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al {action} el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+        }
+      },
+      "tooltip": "Clic para {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Habilitar tipos de elementos de trabajo",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Habilitar"
+        },
+        "confirmation": {
+          "title": "Una vez habilitados, los tipos de elementos de trabajo no se pueden deshabilitar.",
+          "description": "El elemento de trabajo de Plane se convertirá en el tipo de elemento de trabajo predeterminado para este proyecto y aparecerá con su icono y fondo en este proyecto.",
+          "button": {
+            "default": "Habilitar",
+            "loading": "Configurando"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Obtén Pro para habilitar tipos de elementos de trabajo.",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Obtener Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Actualiza para habilitar tipos de elementos de trabajo.",
+        "description": "Da forma a los elementos de trabajo con tipos de elementos de trabajo. Personaliza con iconos, fondos y propiedades y configúralos para este proyecto.",
+        "primary_button": {
+          "text": "Actualizar"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "Importaciones",
+    "logo": "Logo",
+    "import_message": "Importa tus datos de {serviceName} a proyectos de Plane",
+    "deactivate": "Desactivar",
+    "deactivating": "Desactivando",
+    "migrating": "Migrando",
+    "migrations": "Migraciones",
+    "refreshing": "Actualizando",
+    "import": "Importar",
+    "serial_number": "Nº Serie",
+    "project": "Proyecto",
+    "workspace": "Espacio de trabajo",
+    "status": "Estado",
+    "total_batches": "Total de lotes",
+    "imported_batches": "Lotes importados",
+    "re_run": "Volver a ejecutar",
+    "cancel": "Cancelar",
+    "start_time": "Hora de inicio",
+    "no_jobs_found": "No se encontraron trabajos",
+    "no_project_imports": "Aún no has importado ningún proyecto de {serviceName}",
+    "cancel_import_job": "Cancelar trabajo de importación",
+    "cancel_import_job_confirmation": "¿Estás seguro de que deseas cancelar este trabajo de importación? Esto detendrá el proceso de importación para este proyecto.",
+    "re_run_import_job": "Volver a ejecutar trabajo de importación",
+    "re_run_import_job_confirmation": "¿Estás seguro de que deseas volver a ejecutar este trabajo de importación? Esto reiniciará el proceso de importación para este proyecto.",
+    "upload_csv_file": "Sube un archivo CSV para importar datos de usuarios.",
+    "connect_importer": "Conectar {serviceName}",
+    "migration_assistant": "Asistente de migración",
+    "migration_assistant_description": "Migra sin problemas tus proyectos de {serviceName} a Plane con nuestro potente asistente.",
+    "token_helper": "Obtendrás esto de tu",
+    "personal_access_token": "Token de acceso personal",
+    "source_token_expired": "Token expirado",
+    "source_token_expired_description": "El token proporcionado ha expirado. Por favor, desactiva y vuelve a conectar con nuevas credenciales.",
+    "user_email": "Correo electrónico del usuario",
+    "select_state": "Seleccionar estado",
+    "select_service_project": "Seleccionar proyecto de {serviceName}",
+    "loading_service_projects": "Cargando proyectos de {serviceName}",
+    "select_service_workspace": "Seleccionar espacio de trabajo de {serviceName}",
+    "loading_service_workspaces": "Cargando espacios de trabajo de {serviceName}",
+    "select_priority": "Seleccionar prioridad",
+    "select_service_team": "Seleccionar equipo de {serviceName}",
+    "add_seat_msg_free_trial": "Estás intentando importar {additionalUserCount} usuarios no registrados y solo tienes {currentWorkspaceSubscriptionAvailableSeats} asientos disponibles en el plan actual. Para continuar importando, actualiza ahora.",
+    "add_seat_msg_paid": "Estás intentando importar {additionalUserCount} usuarios no registrados y solo tienes {currentWorkspaceSubscriptionAvailableSeats} asientos disponibles en el plan actual. Para continuar importando, compra al menos {extraSeatRequired} asientos adicionales.",
+    "skip_user_import_title": "Omitir importación de datos de usuario",
+    "skip_user_import_description": "Omitir la importación de usuarios resultará en que los elementos de trabajo, comentarios y otros datos de {serviceName} sean creados por el usuario que realiza la migración en Plane. Aún puedes agregar usuarios manualmente más tarde.",
+    "invalid_pat": "Token de acceso personal inválido"
+  },
+  "integrations": {
+    "integrations": "Integraciones",
+    "loading": "Cargando",
+    "unauthorized": "No estás autorizado para ver esta página.",
+    "configure": "Configurar",
+    "not_enabled": "{name} no está habilitado para este espacio de trabajo.",
+    "not_configured": "No configurado",
+    "disconnect_personal_account": "Desconectar cuenta personal de {providerName}",
+    "not_configured_message_admin": "La integración de {name} no está configurada. Por favor, contacta con el administrador de tu instancia para configurarla.",
+    "not_configured_message_support": "La integración de {name} no está configurada. Por favor, contacta con soporte para configurarla.",
+    "external_api_unreachable": "No se puede acceder a la API externa. Por favor, inténtalo más tarde.",
+    "error_fetching_supported_integrations": "No se pueden obtener las integraciones soportadas. Por favor, inténtalo más tarde.",
+    "back_to_integrations": "Volver a integraciones",
+    "select_state": "Seleccionar estado"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Conecta y sincroniza tu elemento de trabajo de GitHub con Plane",
+    "connect_org": "Conectar organización",
+    "connect_org_description": "Conecta tu organización de GitHub con Plane",
+    "processing": "Procesando",
+    "org_added_desc": "Organización de GitHub agregada por y tiempo",
+    "connection_fetch_error": "Error al obtener detalles de conexión del servidor",
+    "personal_account_connected": "Cuenta personal conectada",
+    "personal_account_connected_description": "Tu cuenta personal de GitHub está conectada a Plane",
+    "connect_personal_account": "Conectar cuenta personal",
+    "connect_personal_account_description": "Conecta tu cuenta personal de GitHub con Plane",
+    "repo_mapping": "Mapeo de repositorios",
+    "repo_mapping_description": "Mapea tus repositorios de GitHub con proyectos de Plane",
+    "remove_entity": "Eliminar entidad",
+    "remove_entity_confirmation": "¿Estás seguro de que deseas eliminar esta entidad?",
+    "issue_sync_message": "Los elementos de trabajo están sincronizados con {project}",
+    "link": "Vincular repositorio de GitHub al proyecto de Plane",
+    "pull_request_automation": "Automatización de pull request",
+    "pull_request_automation_description": "Configura el mapeo de estados de pull request de GitHub a Plane",
+    "DRAFT_MR_OPENED": "Al abrir PR borrador, establecer el estado a",
+    "MR_OPENED": "Al abrir PR, establecer el estado a",
+    "MR_READY_FOR_MERGE": "Cuando PR esté listo para fusionar, establecer el estado a",
+    "MR_REVIEW_REQUESTED": "Al solicitar revisión de PR, establecer el estado a",
+    "MR_MERGED": "Al fusionar PR, establecer el estado a",
+    "MR_CLOSED": "Al cerrar PR, establecer el estado a"
+  },
+  "gitlab_integration": {
+    "name": "GitLab",
+    "description": "Conecta y sincroniza tus solicitudes de fusión de GitLab con Plane",
+    "connection_fetch_error": "Error al obtener detalles de conexión del servidor",
+    "connect_org": "Conectar organización",
+    "connect_org_description": "Conecta tu organización de GitLab con Plane",
+    "project_connections": "Conexiones de proyecto de GitLab",
+    "project_connections_description": "Sincroniza solicitudes de fusión de GitLab a proyectos de Plane",
+    "plane_project_connection": "Conexión de proyecto de Plane",
+    "plane_project_connection_description": "Configura el mapeo de estados de solicitudes de fusión de GitLab a proyectos de Plane",
+    "remove_connection": "Eliminar conexión",
+    "remove_connection_confirmation": "¿Estás seguro de que deseas eliminar esta conexión?",
+    "link": "Vincular repositorio de GitLab al proyecto de Plane",
+    "pull_request_automation": "Automatización de solicitud de fusión",
+    "pull_request_automation_description": "Configura el mapeo de estados de solicitud de fusión de GitLab a Plane",
+    "DRAFT_MR_OPENED": "Al abrir MR borrador, establecer el estado a",
+    "MR_OPENED": "Al abrir MR, establecer el estado a",
+    "MR_REVIEW_REQUESTED": "Al solicitar revisión de MR, establecer el estado a",
+    "MR_READY_FOR_MERGE": "Cuando MR esté listo para fusionar, establecer el estado a",
+    "MR_MERGED": "Al fusionar MR, establecer el estado a",
+    "MR_CLOSED": "Al cerrar MR, establecer el estado a",
+    "integration_enabled_text": "Con la integración de GitLab habilitada, puedes automatizar flujos de trabajo de elementos de trabajo",
+    "choose_entity": "Elegir entidad",
+    "choose_project": "Elegir proyecto",
+    "link_plane_project": "Vincular proyecto de Plane"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Conecta tu espacio de trabajo de Slack con Plane",
+    "connect_personal_account": "Conecta tu cuenta personal de Slack con Plane",
+    "personal_account_connected": "Tu cuenta personal de {providerName} ahora está conectada a Plane",
+    "link_personal_account": "Vincula tu cuenta personal de {providerName} a Plane",
+    "connected_slack_workspaces": "Espacios de trabajo de Slack conectados",
+    "connected_on": "Conectado el {date}",
+    "disconnect_workspace": "Desconectar espacio de trabajo {name}",
+    "project_updates": {
+      "title": "Actualizaciones de Proyecto",
+      "description": "Configura notificaciones de actualizaciones de proyectos para tus proyectos",
+      "add_new_project_update": "Añadir nueva notificación de actualizaciones de proyecto",
+      "project_updates_empty_state": "Los proyectos conectados con Canales de Slack aparecerán aquí.",
+      "project_updates_form": {
+        "title": "Configurar Actualizaciones de Proyecto",
+        "description": "Recibir notificaciones de actualizaciones de proyecto en Slack cuando se crean elementos de trabajo",
+        "failed_to_load_channels": "Error al cargar canales de Slack",
+        "project_dropdown": {
+          "placeholder": "Seleccionar un proyecto",
+          "label": "Proyecto de Plane",
+          "no_projects": "No hay proyectos disponibles"
+        },
+        "channel_dropdown": {
+          "label": "Canal de Slack",
+          "placeholder": "Seleccionar un canal",
+          "no_channels": "No hay canales disponibles"
+        },
+        "all_projects_connected": "Todos los proyectos ya están conectados a canales de Slack.",
+        "all_channels_connected": "Todos los canales de Slack ya están conectados a proyectos.",
+        "project_connection_success": "Conexión de proyecto creada exitosamente",
+        "project_connection_updated": "Conexión de proyecto actualizada exitosamente",
+        "project_connection_deleted": "Conexión de proyecto eliminada exitosamente",
+        "failed_delete_project_connection": "Error al eliminar conexión de proyecto",
+        "failed_create_project_connection": "Error al crear conexión de proyecto",
+        "failed_upserting_project_connection": "Error al actualizar conexión de proyecto",
+        "failed_loading_project_connections": "No pudimos cargar tus conexiones de proyecto. Esto podría deberse a un problema de red o un problema con la integración."
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Conecta tu espacio de trabajo de Sentry con Plane.",
+    "connected_sentry_workspaces": "Espacios de trabajo de Sentry conectados",
+    "connected_on": "Conectado el {date}",
+    "disconnect_workspace": "Desconectar espacio de trabajo {name}",
+    "state_mapping": {
+      "title": "Mapeo de estados",
+      "description": "Mapea los estados de incidencias de Sentry a los estados de tu proyecto. Configura qué estados usar cuando una incidencia de Sentry se resuelve o no se resuelve.",
+      "add_new_state_mapping": "Agregar nuevo mapeo de estado",
+      "empty_state": "No hay mapeos de estado configurados. Crea tu primer mapeo para sincronizar los estados de incidencias de Sentry con los estados de tu proyecto.",
+      "failed_loading_state_mappings": "No pudimos cargar tus mapeos de estado. Esto podría deberse a un problema de red o un problema con la integración.",
+      "loading_project_states": "Cargando estados del proyecto...",
+      "error_loading_states": "Error al cargar estados",
+      "no_states_available": "No hay estados disponibles",
+      "no_permission_states": "No tienes permiso para acceder a los estados de este proyecto",
+      "states_not_found": "Estados del proyecto no encontrados",
+      "server_error_states": "Error del servidor al cargar estados"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Conecta y sincroniza tu organización de GitHub Enterprise con Plane.",
+    "app_form_title": "Configuración de GitHub Enterprise",
+    "app_form_description": "Configura GitHub Enterprise para conectarse con Plane.",
+    "app_id_title": "ID de la app",
+    "app_id_description": "El ID de la app que creaste en tu organización de GitHub Enterprise.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID es requerido",
+    "app_name_title": "Slug de la app",
+    "app_name_description": "El slug de la app que creaste en tu organización de GitHub Enterprise.",
+    "app_name_error": "App slug es requerido",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "URL base",
+    "base_url_description": "La URL base de tu organización de GitHub Enterprise.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "URL base es requerida",
+    "invalid_base_url_error": "URL base inválida",
+    "client_id_title": "ID del cliente",
+    "client_id_description": "El ID del cliente de la app que creaste en tu organización de GitHub Enterprise.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID del cliente es requerido",
+    "client_secret_title": "Secret del cliente",
+    "client_secret_description": "El secret del cliente de la app que creaste en tu organización de GitHub Enterprise.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Secret del cliente es requerido",
+    "webhook_secret_title": "Secret del webhook",
+    "webhook_secret_description": "El secret del webhook de la app que creaste en tu organización de GitHub Enterprise.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Secret del webhook es requerido",
+    "private_key_title": "Clave privada (Base64 codificado)",
+    "private_key_description": "Clave privada de la app que creaste en tu organización de GitHub Enterprise.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Clave privada es requerida",
+    "connect_app": "Conectar app"
+  },
+  "file_upload": {
+    "upload_text": "Haz clic aquí para subir archivo",
+    "drag_drop_text": "Arrastrar y soltar",
+    "processing": "Procesando",
+    "invalid": "Tipo de archivo inválido",
+    "missing_fields": "Campos faltantes",
+    "success": "¡{fileName} subido!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Los parámetros de consulta proporcionados son inválidos o faltan campos requeridos",
+    "invalid_installation_account": "La cuenta de instalación proporcionada no es válida",
+    "generic_error": "Ocurrió un error inesperado al procesar tu solicitud",
+    "connection_not_found": "No se pudo encontrar la conexión solicitada",
+    "multiple_connections_found": "Se encontraron múltiples conexiones cuando solo se esperaba una",
+    "installation_not_found": "No se pudo encontrar la instalación solicitada",
+    "user_not_found": "No se pudo encontrar el usuario solicitado",
+    "error_fetching_token": "Error al obtener el token de autenticación",
+    "cannot_create_multiple_connections": "Ya tienes una conexión con una organización. Por favor, desconecta la conexión existente antes de conectar una nueva.",
+    "invalid_app_credentials": "Las credenciales de la aplicación proporcionadas son inválidas",
+    "invalid_app_installation_id": "Error al instalar la aplicación"
+  },
+  "import_status": {
+    "created": "Creado",
+    "initiated": "Iniciado",
+    "pulling": "Extrayendo",
+    "pulled": "Extraído",
+    "transforming": "Transformando",
+    "transformed": "Transformado",
+    "pushing": "Enviando",
+    "finished": "Finalizado",
+    "error": "Error",
+    "cancelled": "Cancelado"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Importa tus datos de Jira a proyectos de Plane",
+    "personal_access_token": "Token de acceso personal",
+    "user_email": "Correo electrónico del usuario",
+    "atlassian_security_settings": "Configuración de seguridad de Atlassian",
+    "email_description": "Este es el correo electrónico vinculado a tu token de acceso personal",
+    "jira_domain": "Dominio de Jira",
+    "jira_domain_description": "Este es el dominio de tu instancia de Jira",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de Jira. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_jira": "Configurar Jira",
+      "description_configure_jira": "Por favor, selecciona el espacio de trabajo de Jira desde el cual deseas migrar tus datos.",
+      "title_import_users": "Importar usuarios",
+      "description_import_users": "Por favor, agrega los usuarios que deseas migrar de Jira a Plane. Alternativamente, puedes omitir este paso y agregar usuarios manualmente más tarde.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Hemos coincidido automáticamente los estados de Jira con los estados de Plane lo mejor posible. Por favor, mapea los estados restantes antes de continuar, también puedes crear estados y mapearlos manualmente.",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Hemos coincidido automáticamente las prioridades lo mejor posible. Por favor, mapea las prioridades restantes antes de continuar.",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de Jira a Plane."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Importa tus datos de Asana a proyectos de Plane",
+    "select_asana_priority_field": "Seleccionar campo de prioridad de Asana",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de Asana. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_asana": "Configurar Asana",
+      "description_configure_asana": "Por favor, selecciona el espacio de trabajo y proyecto de Asana desde el cual deseas migrar tus datos.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Por favor, selecciona los estados de Asana que deseas mapear a los estados del proyecto de Plane",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Por favor, selecciona las prioridades de Asana que deseas mapear a las prioridades del proyecto de Plane",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de Asana a Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Importa tus datos de Linear a proyectos de Plane",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de Linear. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_linear": "Configurar Linear",
+      "description_configure_linear": "Por favor, selecciona el equipo de Linear desde el cual deseas migrar tus datos.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Hemos coincidido automáticamente los estados de Linear con los estados de Plane lo mejor posible. Por favor, mapea los estados restantes antes de continuar, también puedes crear estados y mapearlos manualmente.",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Por favor, selecciona las prioridades de Linear que deseas mapear a las prioridades del proyecto de Plane",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de Linear a Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Importa tus datos de Jira Server a proyectos de Plane",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de Jira. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_jira": "Configurar Jira",
+      "description_configure_jira": "Por favor, selecciona el espacio de trabajo de Jira desde el cual deseas migrar tus datos.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Por favor, selecciona los estados de Jira que deseas mapear a los estados del proyecto de Plane",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Por favor, selecciona las prioridades de Jira que deseas mapear a las prioridades del proyecto de Plane",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de Jira a Plane."
+    }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Importa tus datos de Notion a proyectos de Plane.",
+    "steps": {
+      "title_upload_zip": "Subir ZIP exportado de Notion",
+      "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Notion."
+    },
+    "upload": {
+      "drop_file_here": "Suelta tu archivo zip de Notion aquí",
+      "upload_title": "Subir exportación de Notion",
+      "drag_drop_description": "Arrastra y suelta tu archivo zip de exportación de Notion, o haz clic para navegar",
+      "file_type_restriction": "Solo se admiten archivos .zip exportados desde Notion",
+      "select_file": "Seleccionar archivo",
+      "uploading": "Subiendo...",
+      "preparing_upload": "Preparando subida...",
+      "confirming_upload": "Confirmando subida...",
+      "confirming": "Confirmando...",
+      "upload_complete": "Subida completada",
+      "upload_failed": "Fallo en la subida",
+      "start_import": "Iniciar importación",
+      "retry_upload": "Reintentar subida",
+      "upload": "Subir",
+      "ready": "Listo",
+      "error": "Error",
+      "upload_complete_message": "¡Subida completada!",
+      "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Notion.",
+      "upload_progress_message": "Por favor, no cierres esta ventana."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Importa tus datos de Confluence al wiki de Plane.",
+    "steps": {
+      "title_upload_zip": "Subir ZIP exportado de Confluence",
+      "description_upload_zip": "Por favor, sube el archivo ZIP que contiene tus datos de Confluence."
+    },
+    "upload": {
+      "drop_file_here": "Suelta tu archivo zip de Confluence aquí",
+      "upload_title": "Subir exportación de Confluence",
+      "drag_drop_description": "Arrastra y suelta tu archivo zip de exportación de Confluence, o haz clic para navegar",
+      "file_type_restriction": "Solo se admiten archivos .zip exportados desde Confluence",
+      "select_file": "Seleccionar archivo",
+      "uploading": "Subiendo...",
+      "preparing_upload": "Preparando subida...",
+      "confirming_upload": "Confirmando subida...",
+      "confirming": "Confirmando...",
+      "upload_complete": "Subida completada",
+      "upload_failed": "Fallo en la subida",
+      "start_import": "Iniciar importación",
+      "retry_upload": "Reintentar subida",
+      "upload": "Subir",
+      "ready": "Listo",
+      "error": "Error",
+      "upload_complete_message": "¡Subida completada!",
+      "upload_complete_description": "Haz clic en \"Iniciar importación\" para comenzar a procesar tus datos de Confluence.",
+      "upload_progress_message": "Por favor, no cierres esta ventana."
+    }
+  },
+
+  "flatfile_importer": {
+    "flatfile_importer_description": "Importa tus datos CSV a proyectos de Plane",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos CSV. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_csv": "Configurar CSV",
+      "description_configure_csv": "Por favor, sube tu archivo CSV y configura los campos que se mapearán a los campos de Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Importa tus datos de ClickUp a proyectos de Plane",
+    "select_service_space": "Seleccionar espacio de {serviceName}",
+    "select_service_folder": "Seleccionar carpeta de {serviceName}",
+    "selected": "Seleccionado",
+    "users": "Usuarios",
+    "steps": {
+      "title_configure_plane": "Configurar Plane",
+      "description_configure_plane": "Por favor, primero crea el proyecto en Plane donde deseas migrar tus datos de ClickUp. Una vez creado el proyecto, selecciónalo aquí.",
+      "title_configure_clickup": "Configurar ClickUp",
+      "description_configure_clickup": "Por favor, selecciona el equipo, espacio y carpeta de ClickUp desde el cual deseas migrar tus datos.",
+      "title_map_states": "Mapear estados",
+      "description_map_states": "Hemos coincidido automáticamente los estados de ClickUp con los estados de Plane lo mejor posible. Por favor, mapea los estados restantes antes de continuar, también puedes crear estados y mapearlos manualmente.",
+      "title_map_priorities": "Mapear prioridades",
+      "description_map_priorities": "Por favor, selecciona las prioridades de ClickUp que deseas mapear a las prioridades del proyecto de Plane.",
+      "title_summary": "Resumen",
+      "description_summary": "Aquí hay un resumen de los datos que serán migrados de ClickUp a Plane."
+    }
+  },
+
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Barra",
+          "long_label": "Gráfico de barras",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "grouped": "Agrupado"
+          },
+          "orientation": {
+            "label": "Orientación",
+            "horizontal": "Horizontal",
+            "vertical": "Vertical",
+            "placeholder": "Añadir orientación"
+          },
+          "bar_color": "Color de barra"
+        },
+        "line_chart": {
+          "short_label": "Línea",
+          "long_label": "Gráfico de líneas",
+          "chart_models": {
+            "basic": "Básico",
+            "multi_line": "Multi-línea"
+          },
+          "line_color": "Color de línea",
+          "line_type": {
+            "label": "Tipo de línea",
+            "solid": "Sólida",
+            "dashed": "Discontinua",
+            "placeholder": "Añadir tipo de línea"
+          }
+        },
+        "area_chart": {
+          "short_label": "Área",
+          "long_label": "Gráfico de área",
+          "chart_models": {
+            "basic": "Básico",
+            "stacked": "Apilado",
+            "comparison": "Comparación"
+          },
+          "fill_color": "Color de relleno"
+        },
+        "donut_chart": {
+          "short_label": "Dona",
+          "long_label": "Gráfico de dona",
+          "chart_models": {
+            "basic": "Básico",
+            "progress": "Progreso"
+          },
+          "center_value": "Valor central",
+          "completed_color": "Color de completado"
+        },
+        "pie_chart": {
+          "short_label": "Circular",
+          "long_label": "Gráfico circular",
+          "chart_models": {
+            "basic": "Básico"
+          },
+          "group": {
+            "label": "Piezas agrupadas",
+            "group_thin_pieces": "Agrupar piezas delgadas",
+            "minimum_threshold": {
+              "label": "Umbral mínimo",
+              "placeholder": "Añadir umbral"
+            },
+            "name_group": {
+              "label": "Nombre del grupo",
+              "placeholder": "\"Menos del 5%\""
+            }
+          },
+          "show_values": "Mostrar valores",
+          "value_type": {
+            "percentage": "Porcentaje",
+            "count": "Conteo"
+          }
+        },
+        "text": {
+          "short_label": "Texto",
+          "long_label": "Texto",
+          "alignment": {
+            "label": "Alineación de texto",
+            "left": "Izquierda",
+            "center": "Centro",
+            "right": "Derecha",
+            "placeholder": "Añadir alineación de texto"
+          },
+          "text_color": "Color de texto"
+        }
+      },
+      "color_palettes": {
+        "modern": "Moderno",
+        "horizon": "Horizonte",
+        "earthen": "Terroso"
+      },
+      "common": {
+        "add_widget": "Añadir widget",
+        "widget_title": {
+          "label": "Nombre de este widget",
+          "placeholder": "p.ej., \"Por hacer ayer\", \"Todos Completados\""
+        },
+        "chart_type": "Tipo de gráfico",
+        "visualization_type": {
+          "label": "Tipo de visualización",
+          "placeholder": "Añadir tipo de visualización"
+        },
+        "date_group": {
+          "label": "Grupo de fecha",
+          "placeholder": "Añadir grupo de fecha"
+        },
+        "group_by": "Agrupar por",
+        "stack_by": "Apilar por",
+        "daily": "Diario",
+        "weekly": "Semanal",
+        "monthly": "Mensual",
+        "yearly": "Anual",
+        "work_item_count": "Conteo de elementos de trabajo",
+        "estimate_point": "Punto estimado",
+        "pending_work_item": "Elementos de trabajo pendientes",
+        "completed_work_item": "Elementos de trabajo completados",
+        "in_progress_work_item": "Elementos de trabajo en progreso",
+        "blocked_work_item": "Elementos de trabajo bloqueados",
+        "work_item_due_this_week": "Elementos de trabajo que vencen esta semana",
+        "work_item_due_today": "Elementos de trabajo que vencen hoy",
+        "color_scheme": {
+          "label": "Esquema de color",
+          "placeholder": "Añadir esquema de color"
+        },
+        "smoothing": "Suavizado",
+        "markers": "Marcadores",
+        "legends": "Leyendas",
+        "tooltips": "Tooltips",
+        "opacity": {
+          "label": "Opacidad",
+          "placeholder": "Añadir opacidad"
+        },
+        "border": "Borde",
+        "widget_configuration": "Configuración del widget",
+        "configure_widget": "Configurar widget",
+        "guides": "Guías",
+        "style": "Estilo",
+        "area_appearance": "Apariencia del área",
+        "comparison_line_appearance": "Apariencia de línea de comparación",
+        "add_property": "Añadir propiedad",
+        "add_metric": "Añadir métrica"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "grouped": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "multi_line": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Agrupar por le falta un valor."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "stacked": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor.",
+            "group_by": "A Apilar por le falta un valor."
+          },
+          "comparison": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          },
+          "progress": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Al eje X le falta un valor.",
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "A la métrica le falta un valor."
+          }
+        },
+        "ask_admin": "Solicite a su administrador que configure este widget."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Crear nuevo dashboard",
+        "update": "Actualizar dashboard"
+      },
+      "title": {
+        "label": "Nombre su dashboard.",
+        "placeholder": "\"Capacidad entre proyectos\", \"Carga de trabajo por equipo\", \"Estado en todos los proyectos\"",
+        "required_error": "El título es obligatorio"
+      },
+      "project": {
+        "label": "Elegir proyectos",
+        "placeholder": "Los datos de estos proyectos alimentarán este dashboard.",
+        "required_error": "Los proyectos son obligatorios"
+      },
+      "create_dashboard": "Crear dashboard",
+      "update_dashboard": "Actualizar dashboard"
+    },
+    "delete_modal": {
+      "heading": "Eliminar dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Presente su progreso en dashboards bajo demanda y permanentes.",
+        "description": "Construya cualquier dashboard que necesite y personalice cómo se ven sus datos para una presentación perfecta de su progreso.",
+        "coming_soon_to_mobile": "Próximamente en la aplicación móvil",
+        "card_1": {
+          "title": "Para todos sus proyectos",
+          "description": "Obtenga una visión completa de su espacio de trabajo con todos sus proyectos o filtre sus datos de trabajo para esa vista perfecta de su progreso."
+        },
+        "card_2": {
+          "title": "Para cualquier dato en Plane",
+          "description": "Vaya más allá de la Analítica predeterminada y los gráficos de Ciclo prediseñados para ver equipos, iniciativas o cualquier otra cosa como nunca antes."
+        },
+        "card_3": {
+          "title": "Para todas sus necesidades de visualización de datos",
+          "description": "Elija entre varios gráficos personalizables con controles detallados para ver y mostrar sus datos de trabajo exactamente como desee."
+        },
+        "card_4": {
+          "title": "Bajo demanda y permanentes",
+          "description": "Construya una vez, mantenga para siempre con actualizaciones automáticas de sus datos, indicadores contextuales para cambios de alcance y enlaces permanentes compartibles."
+        },
+        "card_5": {
+          "title": "Exportaciones y comunicaciones programadas",
+          "description": "Para esos momentos en que los enlaces no funcionan, exporte sus dashboards a PDFs puntuales o programe su envío automático a las partes interesadas."
+        },
+        "card_6": {
+          "title": "Diseño automático para todos los dispositivos",
+          "description": "Cambie el tamaño de sus widgets para el diseño que desee y véalo exactamente igual en dispositivos móviles, tabletas y otros navegadores."
+        }
+      },
+      "dashboards_list": {
+        "title": "Visualice datos en widgets, construya sus dashboards con widgets y vea lo último bajo demanda.",
+        "description": "Construya sus dashboards con Widgets Personalizados que muestran sus datos en el alcance que especifique. Obtenga dashboards para todo su trabajo a través de proyectos y equipos y comparta enlaces permanentes con las partes interesadas para seguimiento bajo demanda."
+      },
+      "dashboards_search": {
+        "title": "Eso no coincide con el nombre de un dashboard.",
+        "description": "Asegúrese de que su consulta sea correcta o intente otra consulta."
+      },
+      "widgets_list": {
+        "title": "Visualice sus datos como desee.",
+        "description": "Use líneas, barras, gráficos circulares y otros formatos para ver sus datos de la manera que desee desde las fuentes que especifique."
+      },
+      "widget_data": {
+        "title": "Nada que ver aquí",
+        "description": "Actualice o agregue datos para verlos aquí."
+      }
+    },
+    "common": {
+      "editing": "Editando"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Permitir nuevos elementos de trabajo",
+      "work_item_creation_disable_tooltip": "La creación de elementos de trabajo está deshabilitada para este estado",
+      "default_state": "El estado predeterminado permite que todos los miembros creen nuevos elementos de trabajo. Esto no se puede cambiar",
+      "state_change_count": "{count, plural, one {1 cambio de estado permitido} other {{count} cambios de estado permitidos}}",
+      "movers_count": "{count, plural, one {1 revisor listado} other {{count} revisores listados}}",
+      "state_changes": {
+        "label": {
+          "default": "Agregar cambio de estado permitido",
+          "loading": "Agregando cambio de estado permitido"
+        },
+        "move_to": "Cambiar estado a",
+        "movers": {
+          "label": "Cuando se revisa por",
+          "tooltip": "Los revisores son personas que están permitidas para mover elementos de trabajo de un estado a otro.",
+          "add": "Agregar revisores"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "No puedes mover este elemento de trabajo aquí."
+    },
+    "workflow_enabled": {
+      "label": "Cambio de estado"
+    },
+    "workflow_tree": {
+      "label": "Para elementos de trabajo en",
+      "state_change_label": "pueden moverlo a"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Controla el caos de los cambios y revisiones con Workflows.",
+        "description": "Establece reglas para dónde se mueve tu trabajo, quién y cuándo con Workflows en Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Ver historial de cambios",
+      "reset_workflow": "Restablecer flujo de trabajo"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "¿Estás seguro de que deseas restablecer este flujo de trabajo?",
+        "description": "Si restableces este flujo de trabajo, todas tus reglas de cambio de estado serán eliminadas y tendrás que crearlas de nuevo para que funcionen en este proyecto."
+      },
+      "delete_state_change": {
+        "title": "¿Estás seguro de que deseas eliminar esta regla de cambio de estado?",
+        "description": "Una vez eliminada, no podrás deshacer este cambio y tendrás que establecer la regla de nuevo si la deseas para este proyecto."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} flujo de trabajo",
+        "success": {
+          "title": "Éxito",
+          "message": "Flujo de trabajo {action} con éxito"
+        },
+        "error": {
+          "title": "Error",
+          "message": "El flujo de trabajo no pudo ser {action}. Por favor, inténtalo de nuevo."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Éxito",
+          "message": "El flujo de trabajo se restableció con éxito"
+        },
+        "error": {
+          "title": "Error al restablecer flujo de trabajo",
+          "message": "El flujo de trabajo no pudo ser restablecido. Por favor, inténtalo de nuevo."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Error al agregar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser agregada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Error al modificar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser modificada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Error al eliminar regla de cambio de estado",
+          "message": "La regla de cambio de estado no pudo ser eliminada. Por favor, inténtalo de nuevo."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Error al modificar revisores de regla de cambio de estado",
+          "message": "Los revisores de la regla de cambio de estado no pudieron ser modificados. Por favor, inténtalo de nuevo."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Cliente} other {Clientes}}",
+    "drop_down": {
+      "placeholder": "Seleccionar cliente",
+      "required": "Por favor seleccione un cliente",
+      "no_selection": "Sin clientes"
+    },
+    "upgrade": {
+      "title": "Prioriza y gestiona el trabajo con los clientes.",
+      "description": "Asocia tu trabajo con los clientes y prioriza según sus atributos."
+    },
+    "properties": {
+      "default": {
+        "title": "Predeterminado",
+        "customer_name": {
+          "name": "Nombre del cliente",
+          "placeholder": "Puede ser un nombre personal o de empresa",
+          "validation": {
+            "required": "El nombre del cliente es obligatorio.",
+            "max_length": "El nombre del cliente no puede tener más de 255 caracteres."
+          }
+        },
+        "description": {
+          "name": "Descripción",
+          "validation": {}
+        },
+        "email": {
+          "name": "Correo electrónico",
+          "placeholder": "Ingrese su correo electrónico",
+          "validation": {
+            "required": "El correo electrónico es obligatorio.",
+            "pattern": "El formato del correo electrónico es incorrecto."
+          }
+        },
+        "website_url": {
+          "name": "Sitio web",
+          "placeholder": "Cualquier URL que comience con https:// es válida.",
+          "placeholder_short": "Agregar sitio web",
+          "validation": {
+            "pattern": "URL del sitio web no válida"
+          }
+        },
+        "employees": {
+          "name": "Empleados",
+          "placeholder": "Si el cliente es una empresa, ingrese el número de empleados.",
+          "validation": {
+            "min_length": "El número de empleados no puede ser menor que 0.",
+            "max_length": "El número de empleados no puede ser mayor que 2147483647."
+          }
+        },
+        "size": {
+          "name": "Tamaño",
+          "placeholder": "Agregar tamaño de la empresa",
+          "validation": {
+            "min_length": "Tamaño no válido"
+          }
+        },
+        "domain": {
+          "domain": "Industria",
+          "placeholder": "Retail, e-Commerce, Fintech, Banca",
+          "placeholder_short": "Agregar industria",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Etapa",
+          "placeholder": "Seleccionar etapa",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Estado del contrato",
+          "placeholder": "Seleccionar estado del contrato",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Ingresos",
+          "placeholder": "Este es el ingreso anual del cliente.",
+          "placeholder_short": "Agregar ingresos",
+          "validation": {
+            "min_length": "Los ingresos no pueden ser menores que 0."
+          }
+        },
+        "invalid_value": "Valor de propiedad no válido."
+      },
+      "custom": {
+        "title": "Propiedades personalizadas",
+        "info": "Agrega los atributos únicos de tus clientes a Plane para gestionar mejor los elementos de trabajo o los registros de clientes."
+      },
+      "empty_state": {
+        "title": "Agregar propiedades personalizadas",
+        "description": "Las propiedades personalizadas que deseas que coincidan manual o automáticamente con tu CRM aparecerán aquí."
+      },
+      "add": {
+        "primary_button": "Agregar nueva propiedad"
+      }
+    },
+    "stage": {
+      "lead": "Prospecto",
+      "sales_qualified_lead": "Prospecto calificado para ventas",
+      "contract_negotiation": "Negociación de contrato",
+      "closed_won": "Cerrado, ganado",
+      "closed_lost": "Cerrado, perdido"
+    },
+    "contract_status": {
+      "active": "Activo",
+      "pre_contract": "Precontrato",
+      "signed": "Firmado",
+      "inactive": "Inactivo"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "No se encontraron registros de clientes.",
+        "description": "El enlace de este registro podría no ser válido o haber sido eliminado.",
+        "primary_button": "Ir al cliente",
+        "secondary_button": "Agregar cliente"
+      },
+      "search": {
+        "title": "Parece que no tienes registros de clientes que coincidan con ese término.",
+        "description": "Prueba con otro término de búsqueda o contáctanos si estás seguro de que deberías ver resultados para ese término."
+      },
+      "list": {
+        "title": "Gestiona el volumen, la velocidad y el flujo de clientes según la importancia de los mismos en tu trabajo.",
+        "description": "Con la función 'Clientes' de Plane, puedes crear un nuevo cliente desde cero y asociarlo a tu trabajo. Posteriormente podrás importarlos junto con sus propiedades personalizadas a otras herramientas.",
+        "primary_button": "Agregar primer cliente"
+      }
+    },
+    "settings": {
+      "unauthorized": "No tienes permisos para acceder a esta página.",
+      "description": "Realiza un seguimiento y gestiona la relación con tus clientes en tu flujo de trabajo.",
+      "enable": "Habilitar clientes",
+      "toasts": {
+        "enable": {
+          "loading": "Habilitando la función de clientes...",
+          "success": {
+            "title": "La función de clientes ha sido habilitada para este espacio de trabajo.",
+            "message": "I membri possono ora aggiungere record clienti, collegarli agli elementi di lavoro e altro ancora."
+          },
+          "error": {
+            "title": "No se puede habilitar la función de clientes.",
+            "message": "Inténtalo de nuevo o vuelve más tarde. Si el problema persiste, contacta con el soporte."
+          }
+        },
+        "disable": {
+          "loading": "Deshabilitando la función de clientes...",
+          "success": {
+            "title": "Los clientes han sido deshabilitados",
+            "message": "La función de clientes se ha deshabilitado correctamente."
+          },
+          "error": {
+            "title": "Error",
+            "message": "No se puede deshabilitar la función de clientes."
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "No se pudo obtener la lista de clientes.",
+          "message": "Intenta recargar la página o vuelve más tarde."
+        }
+      },
+      "copy_link": {
+        "title": "Has copiado el enlace directo del cliente.",
+        "message": "Pégalo en cualquier lugar, y te llevará directamente a esta página."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} ahora está disponible",
+          "message": "Puedes referenciar este cliente en tus elementos de trabajo y realizar un seguimiento de sus solicitudes.",
+          "actions": {
+            "view": "Ver",
+            "copy_link": "Copiar enlace",
+            "copied": "¡Copiado!"
+          }
+        },
+        "error": {
+          "title": "No se pudo crear este registro.",
+          "message": "Guarda nuevamente o copia el texto no guardado a un nuevo registro, preferentemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "El cliente se actualizó correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "No se pudo actualizar el cliente. ¡Intenta nuevamente!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "No se pudo cargar el logo del cliente.",
+          "message": "Guarda el logo nuevamente o comienza desde cero."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Has eliminado el elemento de trabajo de este cliente.",
+            "message": "También hemos eliminado automáticamente a este cliente de los elementos de trabajo."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo eliminar el elemento de trabajo del registro de este cliente."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "No se pudo agregar este elemento de trabajo al cliente.",
+            "message": "Intenta nuevamente, o vuelve más tarde. Si el error persiste, contacta con soporte."
+          },
+          "success": {
+            "title": "Has agregado el elemento de trabajo al cliente.",
+            "message": "También hemos agregado automáticamente a este cliente a los elementos de trabajo."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Editar",
+      "copy_link": "Copiar enlace del cliente",
+      "delete": "Eliminar"
+    },
+    "create": {
+      "label": "Crear registro de cliente",
+      "loading": "Creando",
+      "cancel": "Cancelar"
+    },
+    "update": {
+      "label": "Actualizar cliente",
+      "loading": "Actualizando"
+    },
+    "delete": {
+      "title": "¿Estás seguro de que deseas eliminar el registro del cliente {customer_name}?",
+      "description": "Todos los datos asociados con este registro se eliminarán de forma permanente. No podrás restaurar este registro más tarde."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Actualmente no hay solicitudes que mostrar.",
+          "description": "Crea una solicitud desde tu cliente y asócialo a tus elementos de trabajo.",
+          "button": "Agregar nueva solicitud"
+        },
+        "search": {
+          "title": "Parece que no tienes solicitudes que coincidan con ese término.",
+          "description": "Prueba con otro término de búsqueda o contáctanos si estás seguro de que deberías ver resultados para ese término."
+        }
+      },
+      "label": "{count, plural, one {Solicitud} other {Solicitudes}}",
+      "add": "Agregar solicitud",
+      "create": "Crear solicitud",
+      "update": "Actualizar solicitud",
+      "form": {
+        "name": {
+          "placeholder": "Ponle un nombre a esta solicitud",
+          "validation": {
+            "required": "El nombre es obligatorio.",
+            "max_length": "El nombre de la solicitud no puede tener más de 255 caracteres."
+          }
+        },
+        "description": {
+          "placeholder": "Describe la solicitud o pega los comentarios del cliente desde otras herramientas."
+        },
+        "source": {
+          "add": "Agregar fuente",
+          "update": "Actualizar fuente",
+          "url": {
+            "label": "URL",
+            "required": "La URL es obligatoria",
+            "invalid": "URL no válida"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Enlace copiado",
+          "message": "El enlace de la solicitud del cliente ha sido copiado al portapapeles."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Subiendo archivo adjunto...",
+            "success": {
+              "title": "Archivo adjunto cargado",
+              "message": "El archivo adjunto se cargó correctamente."
+            },
+            "error": {
+              "title": "Error al cargar archivo adjunto",
+              "message": "No se pudo cargar el archivo adjunto."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "¡Error!",
+              "message": "Solo puedes cargar un archivo a la vez."
+            }
+          },
+          "length": {
+            "message": "El tamaño del archivo debe ser menor a {size} MB"
+          },
+          "remove": {
+            "success": {
+              "title": "Archivo adjunto eliminado",
+              "message": "El archivo adjunto fue eliminado correctamente."
+            },
+            "error": {
+              "title": "No se pudo eliminar el archivo adjunto",
+              "message": "No se pudo eliminar el archivo adjunto."
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "¡Éxito!",
+              "message": "La fuente se actualizó correctamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "No se pudo actualizar la fuente."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "¡Error!",
+              "message": "No se pudo agregar el elemento de trabajo a la solicitud. Intenta nuevamente."
+            },
+            "success": {
+              "title": "¡Éxito!",
+              "message": "El elemento de trabajo fue agregado a la solicitud."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "¡Solicitud actualizada con éxito!",
+            "title": "¡Éxito!"
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo actualizar la solicitud. ¡Intenta nuevamente!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "¡Solicitud creada con éxito!",
+            "title": "¡Éxito!"
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "No se pudo crear la solicitud. ¡Intenta nuevamente!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Elementos de trabajo vinculados",
+      "link": "Vincular elementos de trabajo",
+      "empty_state": {
+        "list": {
+          "title": "Parece que aún no has vinculado ningún elemento de trabajo a este cliente.",
+          "description": "Vincula elementos de trabajo existentes desde cualquier proyecto aquí para realizar un seguimiento de este cliente.",
+          "button": "Vincular elementos de trabajo"
+        }
+      },
+      "action": {
+        "remove_epic": "Eliminar épica",
+        "remove": "Eliminar elemento de trabajo"
+      }
+    },
+    "sidebar": {
+      "properties": "Propiedades"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Plantillas",
+      "description": "Ahorra un 80% del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando utilizas plantillas.",
+      "options": {
+        "project": {
+          "label": "Plantillas de proyecto"
+        },
+        "work_item": {
+          "label": "Plantillas de elementos de trabajo"
+        },
+        "page": {
+          "label": "Plantillas de página"
+        }
+      },
+      "create_template": {
+        "label": "Crear plantilla",
+        "no_permission": {
+          "project": "Contacta con el administrador de tu proyecto para crear plantillas",
+          "workspace": "Contacta con el administrador de tu espacio de trabajo para crear plantillas"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Usar plantilla",
+          "loading": "Usando"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Derivado del espacio de trabajo"
+        },
+        "project": {
+          "info": "Derivado del proyecto"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de proyecto.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Nombra tu proyecto.",
+            "validation": {
+              "required": "El título del proyecto es obligatorio",
+              "maxLength": "El título del proyecto debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe el propósito y los objetivos de este proyecto."
+          },
+          "button": {
+            "create": "Crear plantilla de proyecto",
+            "update": "Actualizar plantilla de proyecto"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de elemento de trabajo.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Dale un título a este elemento de trabajo.",
+            "validation": {
+              "required": "El título del elemento de trabajo es obligatorio",
+              "maxLength": "El título del elemento de trabajo debe tener menos de 255 caracteres"
+            }
+          },
+          "description": {
+            "placeholder": "Describe este elemento de trabajo para que quede claro lo que conseguirás cuando lo completes."
+          },
+          "button": {
+            "create": "Crear plantilla de elemento de trabajo",
+            "update": "Actualizar plantilla de elemento de trabajo"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Nombra tu plantilla de página.",
+              "validation": {
+                "required": "El nombre de la plantilla es obligatorio",
+                "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+              }
+            },
+            "description": {
+              "placeholder": "Describe cuándo y cómo utilizar esta plantilla."
+            }
+          },
+          "name": {
+            "placeholder": "Página sin título",
+            "validation": {
+              "maxLength": "El nombre de la página debe tener menos de 255 caracteres"
+            }
+          },
+          "button": {
+            "create": "Crear plantilla de página",
+            "update": "Actualizar plantilla de página"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Configuración de publicación} other {Publicar en el Marketplace}}",
+          "unpublish_action": "Retirar del Marketplace",
+          "title": "Haga que su plantilla sea descubrible y reconocible.",
+          "name": {
+            "label": "Nombre de la plantilla",
+            "placeholder": "Nombra tu plantilla",
+            "validation": {
+              "required": "El nombre de la plantilla es obligatorio",
+              "maxLength": "El nombre de la plantilla debe tener menos de 255 caracteres"
+            }
+          },
+          "short_description": {
+            "label": "Descripción corta",
+            "placeholder": "Esta plantilla es ideal para los Project Managers que gestionan varios proyectos al mismo tiempo.",
+            "validation": {
+              "required": "La descripción corta es obligatoria"
+            }
+          },
+          "description": {
+            "label": "Descripción",
+            "placeholder": "Mejora la productividad y simplifica la comunicación con nuestra integración de reconocimiento de voz.\n• Transcripción en tiempo real: Convierte palabras habladas en texto preciso instantáneamente.\n• Creación de tareas y comentarios: Añade tareas, descripciones y comentarios a través de comandos de voz.",
+            "validation": {
+              "required": "La descripción es obligatoria"
+            }
+          },
+          "category": {
+            "label": "Categoría",
+            "placeholder": "Elige dónde crees que esta plantilla se adapte mejor. Puedes elegir más de una.",
+            "validation": {
+              "required": "Al menos una categoría es obligatoria"
+            }
+          },
+          "keywords": {
+            "label": "Palabras clave",
+            "placeholder": "Usa términos que creas que tus usuarios buscarán cuando estén buscando esta plantilla.",
+            "helperText": "Introduce palabras clave separadas por comas que sean útiles para que los usuarios encuentren esta plantilla en la búsqueda.",
+            "validation": {
+              "required": "Al menos una palabra clave es obligatoria"
+            }
+          },
+          "company_name": {
+            "label": "Nombre de la empresa",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "El nombre de la empresa es obligatorio",
+              "maxLength": "El nombre de la empresa debe tener menos de 255 caracteres"
+            }
+          },
+          "contact_email": {
+            "label": "Correo electrónico de soporte",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Dirección de correo electrónico no válida",
+              "required": "El correo electrónico de soporte es obligatorio",
+              "maxLength": "El correo electrónico de soporte debe tener menos de 255 caracteres"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Enlace a tu política de privacidad",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Enlace a tus términos de uso",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL no válida",
+              "maxLength": "La URL debe tener menos de 800 caracteres"
+            }
+          },
+          "cover_image": {
+            "label": "Añade una imagen de portada que se mostrará en el Marketplace",
+            "upload_title": "Subir imagen de portada",
+            "upload_placeholder": "Haz clic para subir o arrastra y suelta para subir una imagen de portada",
+            "drop_here": "Soltar aquí",
+            "click_to_upload": "Haz clic para subir",
+            "invalid_file_or_exceeds_size_limit": "Archivo no válido o excede el límite de tamaño. Por favor, inténtalo de nuevo.",
+            "upload_and_save": "Subir y guardar",
+            "uploading": "Subiendo",
+            "remove": "Eliminar",
+            "removing": "Eliminando",
+            "validation": {
+              "required": "La imagen de portada es obligatoria"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Incluye documentos y capturas de pantalla que creas que harán que los usuarios de esta plantilla vean lo que puedes hacer con ella.",
+            "validation": {
+              "required": "Al menos una captura de pantalla es obligatoria"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Plantillas",
+        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
+        "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
+      },
+      "no_templates": {
+        "button": "Crea tu primera plantilla"
+      },
+      "no_labels": {
+        "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
+      },
+      "page": {
+        "no_templates": {
+          "title": "No hay plantillas a las que tengas acceso.",
+          "description": "Por favor, crea una plantilla"
+        },
+        "no_results": {
+          "title": "Eso no coincide con ninguna plantilla.",
+          "description": "Intenta buscar con otros términos."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Plantilla creada",
+          "message": "{templateName}, la plantilla de {templateType}, ya está disponible para tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos crear esa plantilla esta vez.",
+          "message": "Intenta guardar tus detalles de nuevo o cópialos a una nueva plantilla, preferiblemente en otra pestaña."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Plantilla modificada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido modificada."
+        },
+        "error": {
+          "title": "No pudimos guardar los cambios en esta plantilla.",
+          "message": "Intenta guardar tus detalles de nuevo o vuelve a esta plantilla más tarde. Si sigues teniendo problemas, contacta con nosotros."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Plantilla eliminada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido eliminada de tu espacio de trabajo."
+        },
+        "error": {
+          "title": "No pudimos eliminar esa plantilla esta vez.",
+          "message": "Intenta eliminarla de nuevo o vuelve a intentarlo más tarde. Si no puedes eliminarla entonces, contacta con nosotros."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Plantilla retirada",
+          "message": "{templateName}, la plantilla de {templateType}, ha sido retirada."
+        },
+        "error": {
+          "title": "No pudimos retirar esa plantilla esta vez.",
+          "message": "Intenta retirarla de nuevo o vuelve a intentarlo más tarde. Si no puedes retirarla entonces, contacta con nosotros."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Eliminar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres eliminar la plantilla-",
+        "suffix": "? Todos los datos relacionados con la plantilla se eliminarán permanentemente. Esta acción no se puede deshacer."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Retirar plantilla",
+      "description": {
+        "prefix": "¿Estás seguro de que quieres retirar la plantilla-",
+        "suffix": "? Esta plantilla ya no estará disponible para los usuarios en el marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Agregar nueva plantilla",
+        "project": "Agregar nueva plantilla"
+      },
+      "label": {
+        "project": "Seleccionar una plantilla de proyecto",
+        "page": "Elegir desde plantilla"
+      },
+      "tooltip": {
+        "work_item": "Seleccionar una plantilla de elemento de trabajo"
+      },
+      "no_results": {
+        "work_item": "No se encontraron plantillas.",
+        "project": "No se encontraron plantillas."
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Proyectos por estado",
+    "active_users": "Usuarios activos",
+    "intake_trends": "Tendencias de admisión",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del ciclo aparecerán aquí. Agrega elementos de trabajo a los ciclos para comenzar a rastrear el progreso."
+      },
+      "module_progress": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de progreso del módulo aparecerán aquí. Agrega elementos de trabajo a los módulos para comenzar a rastrear el progreso."
+      },
+      "intake_trends": {
+        "title": "Aún no hay datos",
+        "description": "Los análisis de tendencias de entrada aparecerán aquí. Agrega elementos de trabajo a la entrada para comenzar a rastrear tendencias."
+      }
+    },
+    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
+  }
+}

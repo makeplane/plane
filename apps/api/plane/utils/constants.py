@@ -64,4 +64,9 @@ RESTRICTED_WORKSPACE_SLUGS = [
     "licenses",
     "instances",
     "instance",
+    "oauth",
+    "applications",
+    "workspace-selector",
 ]
+
+RESTRICTED_ISSUE_PROPERTY_DISPLAY_NAMES = ["state", "due date", "cycle", "modules"]
