@@ -234,7 +234,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           <div className="flex items-center">
             <button
               type="button"
-              onClick={() => handleMagnification("decrease")}
+              onClick={(e) => {
+                if (isTouchDevice) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                handleMagnification("decrease");
+              }}
               className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
@@ -244,7 +250,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
             <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
-              onClick={() => handleMagnification("increase")}
+              onClick={(e) => {
+                if (isTouchDevice) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                handleMagnification("increase");
+              }}
               className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
@@ -284,7 +296,10 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
   if (portal) {
     modal = ReactDOM.createPortal(modal, portal);
   } else {
-    console.warn("Portal element #editor-portal not found. Rendering inline.");
+    console.warn("Portal element #editor-portal not found. Rendering in document.body");
+    if (typeof document !== "undefined" && document.body) {
+      modal = ReactDOM.createPortal(modal, document.body);
+    }
   }
   return modal;
 };

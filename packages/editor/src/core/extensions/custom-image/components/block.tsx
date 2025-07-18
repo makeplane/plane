@@ -260,7 +260,12 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
               if (!resolvedImageSrc) {
                 throw new Error("No resolved image source available");
               }
-              imageRef.current.src = resolvedImageSrc;
+              if (isTouchDevice) {
+                const refreshedSrc = await extension.options.getImageSource?.(imgNodeSrc);
+                imageRef.current.src = refreshedSrc;
+              } else {
+                imageRef.current.src = resolvedImageSrc;
+              }
             } catch {
               // if the image failed to even restore, then show the error state
               setFailedToLoadImage(true);
