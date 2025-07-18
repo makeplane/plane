@@ -8,7 +8,6 @@ import { PanelRight } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
-  EIssueLayoutTypes,
   EUserPermissions,
   EUserPermissionsLevel,
   EProjectFeatureKey,
@@ -23,6 +22,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, ContrastIcon, BreadcrumbNavigationSearchDropdown, Header, Tooltip } from "@plane/ui";
 import { cn, isIssueFilterActive } from "@plane/utils";

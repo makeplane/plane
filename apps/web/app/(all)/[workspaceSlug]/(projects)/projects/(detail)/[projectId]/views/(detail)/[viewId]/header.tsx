@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { Layers, Lock } from "lucide-react";
 // plane constants
 import {
-  EIssueLayoutTypes,
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
@@ -22,6 +21,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { Breadcrumbs, Button, Tooltip, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";

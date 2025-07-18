@@ -3,7 +3,6 @@ import isEmpty from "lodash/isEmpty";
 import {
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
-  EIssueLayoutTypes,
   EIssueFilterType,
   ENABLE_ISSUE_DEPENDENCIES,
 } from "@plane/constants";
@@ -18,6 +17,7 @@ import {
   TIssueKanbanFilters,
   TIssueParams,
   TStaticViewTypes,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";

@@ -7,8 +7,6 @@ import {
   addRowBefore,
   CellSelection,
   columnResizing,
-  deleteColumn,
-  deleteRow,
   deleteTable,
   fixTables,
   goToNextCell,
@@ -27,7 +25,9 @@ import { TableInsertPlugin } from "../plugins/insert-handlers/plugin";
 import { tableControls } from "./table-controls";
 import { TableView } from "./table-view";
 import { createTable } from "./utilities/create-table";
-import { deleteTableWhenAllCellsSelected } from "./utilities/delete-table-when-all-cells-selected";
+import { deleteColumnOrTable } from "./utilities/delete-column";
+import { handleDeleteKeyOnTable } from "./utilities/delete-key-shortcut";
+import { deleteRowOrTable } from "./utilities/delete-row";
 import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-action";
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 import { DEFAULT_COLUMN_WIDTH } from ".";
@@ -140,10 +140,7 @@ export const Table = Node.create<TableOptions>({
         () =>
         ({ state, dispatch }) =>
           addColumnAfter(state, dispatch),
-      deleteColumn:
-        () =>
-        ({ state, dispatch }) =>
-          deleteColumn(state, dispatch),
+      deleteColumn: deleteColumnOrTable,
       addRowBefore:
         () =>
         ({ state, dispatch }) =>
@@ -152,10 +149,7 @@ export const Table = Node.create<TableOptions>({
         () =>
         ({ state, dispatch }) =>
           addRowAfter(state, dispatch),
-      deleteRow:
-        () =>
-        ({ state, dispatch }) =>
-          deleteRow(state, dispatch),
+      deleteRow: deleteRowOrTable,
       deleteTable:
         () =>
         ({ state, dispatch }) =>
@@ -225,27 +219,35 @@ export const Table = Node.create<TableOptions>({
   addKeyboardShortcuts() {
     return {
       Tab: () => {
-        if (this.editor.isActive(CORE_EXTENSIONS.TABLE)) {
-          if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
-            return false;
-          }
-          if (this.editor.commands.goToNextCell()) {
-            return true;
-          }
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
 
-          if (!this.editor.can().addRowAfter()) {
-            return false;
-          }
-
-          return this.editor.chain().addRowAfter().goToNextCell().run();
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
         }
-        return false;
+
+        if (this.editor.commands.goToNextCell()) {
+          return true;
+        }
+
+        if (!this.editor.can().addRowAfter()) {
+          return false;
+        }
+
+        return this.editor.chain().addRowAfter().goToNextCell().run();
       },
-      "Shift-Tab": () => this.editor.commands.goToPreviousCell(),
-      Backspace: deleteTableWhenAllCellsSelected,
-      "Mod-Backspace": deleteTableWhenAllCellsSelected,
-      Delete: deleteTableWhenAllCellsSelected,
-      "Mod-Delete": deleteTableWhenAllCellsSelected,
+      "Shift-Tab": () => {
+        if (!this.editor.isActive(CORE_EXTENSIONS.TABLE)) return false;
+
+        if (this.editor.isActive(CORE_EXTENSIONS.LIST_ITEM) || this.editor.isActive(CORE_EXTENSIONS.TASK_ITEM)) {
+          return false;
+        }
+
+        return this.editor.commands.goToPreviousCell();
+      },
+      Backspace: handleDeleteKeyOnTable,
+      "Mod-Backspace": handleDeleteKeyOnTable,
+      Delete: handleDeleteKeyOnTable,
+      "Mod-Delete": handleDeleteKeyOnTable,
       ArrowDown: insertLineBelowTableAction,
       ArrowUp: insertLineAboveTableAction,
     };

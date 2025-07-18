@@ -73,9 +73,9 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   const handleLayoutChange = (layout: TCalendarLayouts, closePopover: any) => {
-    if (!projectId || !updateFilters) return;
+    if (!updateFilters) return;
 
-    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         layout,
@@ -93,9 +93,9 @@ export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((prop
   const handleToggleWeekends = () => {
     const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
-    if (!projectId || !updateFilters) return;
+    if (!updateFilters) return;
 
-    updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, {
+    updateFilters(projectId?.toString(), EIssueFilterType.DISPLAY_FILTERS, {
       calendar: {
         ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
         show_weekends: !showWeekends,

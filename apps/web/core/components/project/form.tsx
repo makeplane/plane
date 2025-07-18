@@ -104,18 +104,53 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           message: t("project_settings.general.toast.success"),
         });
       })
-      .catch((error) => {
-        captureError({
-          eventName: PROJECT_TRACKER_EVENTS.update,
-          payload: {
-            id: projectId,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("toast.error"),
-          message: error?.error ?? t("project_settings.general.toast.error"),
-        });
+      .catch((err) => {
+        try {
+          captureError({
+            eventName: PROJECT_TRACKER_EVENTS.update,
+            payload: {
+              id: projectId,
+            },
+          });
+
+          // Handle the new error format where codes are nested in arrays under field names
+          const errorData = err ?? {};
+
+          const nameError = errorData.name?.includes("PROJECT_NAME_ALREADY_EXIST");
+          const identifierError = errorData?.identifier?.includes("PROJECT_IDENTIFIER_ALREADY_EXIST");
+
+          if (nameError || identifierError) {
+            if (nameError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_name_already_taken"),
+              });
+            }
+
+            if (identifierError) {
+              setToast({
+                type: TOAST_TYPE.ERROR,
+                title: t("toast.error"),
+                message: t("project_identifier_already_taken"),
+              });
+            }
+          } else {
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("toast.error"),
+              message: t("something_went_wrong"),
+            });
+          }
+        } catch (error) {
+          // Fallback error handling if the error processing fails
+          console.error("Error processing API error:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("something_went_wrong"),
+          });
+        }
       });
   };
 

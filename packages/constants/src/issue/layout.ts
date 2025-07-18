@@ -1,12 +1,6 @@
-export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
+import { EIssueLayoutTypes } from "@plane/types";
 
-export enum EIssueLayoutTypes {
-  LIST = "list",
-  KANBAN = "kanban",
-  CALENDAR = "calendar",
-  GANTT = "gantt_chart",
-  SPREADSHEET = "spreadsheet",
-}
+export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 
 export type TIssueLayoutMap = Record<
   EIssueLayoutTypes,
