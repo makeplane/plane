@@ -1,0 +1,2464 @@
+{
+  "sidebar": {
+    "pi_chat": "Pi Chat",
+    "initiatives": "Sáng kiến",
+    "teamspaces": "Không gian nhóm",
+    "epics": "Epics",
+    "upgrade_plan": "Nâng cấp gói",
+    "plane_pro": "Plane Pro",
+    "business": "Doanh nghiệp",
+    "customers": "Khách hàng"
+  },
+  "workspace_dashboards": "Bảng điều khiển",
+  "pi_chat": "Pi Chat",
+  "in_app": "Trong ứng dụng",
+  "forms": "Biểu mẫu",
+  "choose_workspace_for_integration": "Chọn không gian làm việc để kết nối ứng dụng này",
+  "integrations_description": "Ứng dụng làm việc với Plane phải kết nối với không gian làm việc mà bạn là quản trị viên.",
+  "create_a_new_workspace": "Tạo không gian làm việc mới",
+  "learn_more_about_workspaces": "Tìm hiểu thêm về không gian làm việc",
+  "no_workspaces_to_connect": "Không có không gian làm việc để kết nối",
+  "no_workspaces_to_connect_description": "Bạn cần tạo không gian làm việc để kết nối ứng dụng này",
+  "common": {
+    "worklogs": "Nhật ký công việc",
+    "live": "Trực tiếp",
+    "epics": "Epics",
+    "project_updates": "Cập nhật dự án",
+    "overview": "Tổng quan",
+    "workflows": "Quy trình làm việc",
+    "templates": "Mẫu",
+    "members_and_teamspaces": "Thành viên và không gian nhóm"
+  },
+  "updates": {
+    "add_update": "Thêm cập nhật",
+    "add_update_placeholder": "Thêm cập nhật của bạn ở đây",
+    "empty": {
+      "title": "Chưa có cập nhật",
+      "description": "Bạn có thể xem cập nhật ở đây."
+    },
+    "create": {
+      "success": {
+        "title": "Cập nhật đã được tạo",
+        "message": "Cập nhật đã được tạo thành công."
+      },
+      "error": {
+        "title": "Không thể tạo cập nhật",
+        "message": "Không thể tạo cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Cập nhật đã được cập nhật",
+        "message": "Cập nhật đã được cập nhật thành công."
+      },
+      "error": {
+        "title": "Không thể cập nhật cập nhật",
+        "message": "Không thể cập nhật cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "delete": {
+      "success": {
+        "title": "Cập nhật đã được xóa",
+        "message": "Cập nhật đã được xóa thành công."
+      },
+      "error": {
+        "title": "Không thể xóa cập nhật",
+        "message": "Không thể xóa cập nhật. Vui lòng thử lại!"
+      }
+    },
+    "reaction": {
+      "create": {
+        "success": {
+          "title": "Reaction đã được tạo",
+          "message": "Reaction đã được tạo thành công."
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Reaction đã được xóa",
+          "message": "Reaction đã được xóa thành công."
+        }
+      }
+    },
+    "progress": {
+      "title": "Tiến độ",
+      "since_last_update": "Từ lần cập nhật cuối cùng",
+      "comments": "{count, plural, one{# bình luận} other{# bình luận}}"
+    }
+  },
+  "issue": {
+    "relation": {
+      "start_before": "Bắt đầu Trước",
+      "start_after": "Bắt đầu Sau",
+      "finish_before": "Kết thúc Trước",
+      "finish_after": "Kết thúc Sau"
+    }
+  },
+
+  "pages": {
+    "link_pages": "Kết nối trang",
+    "show_wiki_pages": "Hiển thị trang Wiki",
+    "link_pages_to": "Kết nối trang đến",
+    "linked_pages": "Trang đã kết nối",
+    "no_description": "Trang này trống. Viết điều gì đó và xem nó ở đây như thế này",
+    "toasts": {
+      "link": {
+        "success": {
+          "title": "Trang đã được cập nhật",
+          "message": "Trang đã được cập nhật thành công"
+        },
+        "error": {
+          "title": "Trang không được cập nhật",
+          "message": "Trang không được cập nhật"
+        }
+      },
+      "remove": {
+        "success": {
+          "title": "Trang đã được xóa",
+          "message": "Trang đã được xóa thành công"
+        },
+        "error": {
+          "title": "Trang không được xóa",
+          "message": "Trang không được xóa"
+        }
+      }
+    }
+  },
+
+  "profile": {
+    "actions": {
+      "connections": "Kết nối"
+    }
+  },
+  "project_settings": {
+    "initiatives": {
+      "heading": "Sáng kiến",
+      "sub_heading": "Mở khóa cấp độ tổ chức cao nhất cho tất cả công việc của bạn trong Plane.",
+      "title": "Bật Sáng kiến",
+      "description": "Đặt mục tiêu lớn hơn để theo dõi tiến độ",
+      "toast": {
+        "updating": "Đang cập nhật tính năng sáng kiến",
+        "enable_success": "Tính năng sáng kiến đã được bật thành công.",
+        "disable_success": "Tính năng sáng kiến đã được tắt thành công.",
+        "error": "Không thể cập nhật tính năng sáng kiến!"
+      }
+    },
+    "customers": {
+      "heading": "Khách hàng",
+      "settings_heading": "Quản lý công việc theo những gì quan trọng đối với khách hàng của bạn.",
+      "settings_sub_heading": "Đưa yêu cầu của khách hàng vào mục công việc, gán ưu tiên theo yêu cầu, và tổng hợp trạng thái công việc vào hồ sơ khách hàng. Sắp tới, bạn sẽ tích hợp với CRM hoặc công cụ Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng."
+    },
+    "empty_state": {
+      "integrations": {
+        "title": "Không có tích hợp nào được cấu hình",
+        "description": "Cấu hình GitHub và các tích hợp khác để đồng bộ hóa các mục công việc dự án của bạn."
+      }
+    },
+    "estimates": {
+      "edit": {
+        "title": "Chỉnh sửa hệ thống ước tính",
+        "add_or_update": {
+          "title": "Thêm, cập nhật hoặc xóa ước tính",
+          "description": "Quản lý hệ thống hiện tại bằng cách thêm, cập nhật hoặc xóa điểm hoặc danh mục."
+        },
+        "switch": {
+          "title": "Thay đổi loại ước tính",
+          "description": "Chuyển đổi hệ thống điểm của bạn thành hệ thống danh mục và ngược lại."
+        }
+      },
+      "switch": "Chuyển đổi hệ thống ước tính",
+      "current": "Hệ thống ước tính hiện tại",
+      "select": "Chọn hệ thống ước tính",
+      "toasts": {
+        "reorder": {
+          "success": {
+            "title": "Đã sắp xếp lại ước tính",
+            "message": "Ước tính đã được sắp xếp lại trong dự án của bạn."
+          },
+          "error": {
+            "title": "Sắp xếp lại ước tính thất bại",
+            "message": "Chúng tôi không thể sắp xếp lại ước tính, vui lòng thử lại"
+          }
+        }
+      },
+      "validation": {
+        "fill": "Vui lòng điền vào trường ước tính này",
+        "repeat": "Giá trị ước tính không thể lặp lại"
+      }
+    },
+    "epics": {
+      "properties": {
+        "title": "Thuộc tính",
+        "description": "Thêm thuộc tính tùy chỉnh vào epic của bạn."
+      },
+      "disabled": "Đã vô hiệu hóa"
+    }
+  },
+  "teamspaces": {
+    "label": "Không gian nhóm",
+    "empty_state": {
+      "general": {
+        "title": "Không gian nhóm mở khóa tổ chức và theo dõi tốt hơn trong Plane.",
+        "description": "Tạo một bề mặt dành riêng cho mỗi nhóm trong thực tế, tách biệt với tất cả các bề mặt làm việc khác trong Plane, và tùy chỉnh chúng để phù hợp với cách nhóm của bạn làm việc.",
+        "primary_button": {
+          "text": "Tạo không gian nhóm mới"
+        }
+      }
+    }
+  },
+  "teamspace_projects": {
+    "settings": {
+      "empty_state": {
+        "no_teamspaces": {
+          "title": "Bạn chưa liên kết bất kỳ không gian nhóm nào.",
+          "description": "Chủ sở hữu không gian nhóm và dự án có thể quản lý quyền truy cập vào các dự án."
+        }
+      },
+      "primary_button": {
+        "text": "Liên kết không gian nhóm"
+      },
+      "secondary_button": {
+        "text": "Tìm hiểu thêm"
+      },
+      "table": {
+        "columns": {
+          "teamspaceName": "Tên không gian nhóm",
+          "members": "Thành viên",
+          "accountType": "Loại tài khoản"
+        },
+        "actions": {
+          "remove": {
+            "button": {
+              "text": "Xóa không gian nhóm"
+            },
+            "confirm": {
+              "title": "Xóa {teamspaceName} khỏi {projectName}",
+              "description": "Khi bạn xóa không gian nhóm này khỏi dự án liên kết, các thành viên ở đây sẽ mất quyền truy cập vào dự án liên kết."
+            }
+          }
+        },
+        "empty_state": {
+          "no_results": {
+            "title": "Không tìm thấy không gian nhóm phù hợp"
+          }
+        }
+      },
+      "toast": {
+        "add_teamspace": {
+          "success": {
+            "title": "{count, plural, one {Bạn đã liên kết một không gian nhóm với dự án này.} other {Bạn đã liên kết # không gian nhóm với dự án này.}}",
+            "description": "{additionalCount, plural, =0 {Không gian nhóm {firstTeamspaceName} hiện đã được liên kết với dự án này.} other {Không gian nhóm {firstTeamspaceName} và {additionalCount} không gian khác hiện đã được liên kết với dự án này.}}"
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        },
+        "remove_teamspace": {
+          "success": {
+            "title": "Bạn đã xóa không gian nhóm đó khỏi dự án này.",
+            "description": "Không gian nhóm {teamspaceName} đã được xóa khỏi {projectName}."
+          },
+          "error": {
+            "title": "Điều đó không thành công.",
+            "description": "Hãy thử lại hoặc tải lại trang này trước khi thử lại."
+          }
+        }
+      },
+      "link_teamspace": {
+        "placeholder": "Tìm kiếm không gian nhóm",
+        "info": {
+          "title": "Thêm không gian nhóm cấp cho tất cả thành viên không gian nhóm quyền truy cập vào dự án này.",
+          "link": "Tìm hiểu thêm"
+        },
+        "empty_state": {
+          "no_teamspaces": {
+            "title": "Bạn không có không gian nhóm nào để liên kết.",
+            "description": "Hoặc bạn không ở trong không gian nhóm mà bạn có thể liên kết hoặc bạn đã liên kết tất cả các không gian nhóm có sẵn."
+          },
+          "no_results": {
+            "title": "Điều đó không khớp với bất kỳ không gian nhóm nào của bạn.",
+            "description": "Hãy thử một thuật ngữ khác hoặc đảm bảo bạn có không gian nhóm để liên kết."
+          }
+        },
+        "primary_button": {
+          "text": "Liên kết không gian nhóm đã chọn"
+        }
+      }
+    }
+  },
+  "teamspace_work_items": {
+    "empty_state": {
+      "no_work_items": {
+        "title": "Tạo mục công việc cụ thể cho nhóm.",
+        "description": "Các mục công việc được gán cho thành viên của nhóm này trong bất kỳ dự án liên kết nào sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một số mục công việc ở đây, hãy đảm bảo dự án liên kết của bạn có mục công việc được gán cho thành viên của nhóm này hoặc tạo mục công việc.",
+        "primary_button": {
+          "text": "Thêm mục công việc vào dự án liên kết"
+        }
+      },
+      "work_items_empty_filter": {
+        "title": "Không có mục công việc cụ thể cho nhóm nào cho các bộ lọc đã áp dụng",
+        "description": "Thay đổi một số bộ lọc đó hoặc xóa tất cả để xem các mục công việc liên quan đến không gian này.",
+        "secondary_button": {
+          "text": "Xóa tất cả bộ lọc"
+        }
+      }
+    }
+  },
+  "teamspace_cycles": {
+    "empty_state": {
+      "current": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ đang hoạt động.",
+        "description": "Các chu kỳ đang hoạt động trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ đang hoạt động, hãy đảm bảo nó đang chạy trong một dự án liên kết ngay bây giờ."
+      },
+      "completed": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ đã hoàn thành.",
+        "description": "Các chu kỳ đã hoàn thành trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ đã hoàn thành, hãy đảm bảo nó cũng đã hoàn thành trong một dự án liên kết."
+      },
+      "upcoming": {
+        "title": "Không có dự án liên kết nào của bạn có chu kỳ sắp tới.",
+        "description": "Các chu kỳ sắp tới trong các dự án liên kết sẽ tự động xuất hiện ở đây. Nếu bạn mong đợi thấy một chu kỳ sắp tới, hãy đảm bảo nó cũng có trong một dự án liên kết."
+      }
+    }
+  },
+  "teamspace_views": {
+    "empty_state": {
+      "team_view": {
+        "title": "Góc nhìn của nhóm bạn về công việc của bạn mà không làm gián đoạn bất kỳ góc nhìn nào khác trong workspace của bạn",
+        "description": "Xem công việc của nhóm bạn trong các góc nhìn được lưu chỉ dành cho nhóm của bạn và tách biệt với góc nhìn của dự án.",
+        "primary_button": {
+          "text": "Tạo một góc nhìn"
+        }
+      },
+      "filter": {
+        "title": "Không có góc nhìn phù hợp",
+        "description": "Không có góc nhìn nào phù hợp với tiêu chí tìm kiếm. \n Tạo góc nhìn mới thay thế."
+      }
+    }
+  },
+  "teamspace_pages": {
+    "empty_state": {
+      "team_page": {
+        "title": "Lưu trữ kiến thức của nhóm bạn trong Trang Nhóm.",
+        "description": "Không giống như các trang trong một dự án, bạn có thể lưu kiến thức cụ thể cho một nhóm trong một bộ trang riêng biệt ở đây. Nhận tất cả các tính năng của Trang, tạo tài liệu thực hành tốt nhất và wiki nhóm một cách dễ dàng.",
+        "primary_button": {
+          "text": "Tạo trang nhóm đầu tiên của bạn"
+        }
+      },
+      "filter": {
+        "title": "Không có trang phù hợp",
+        "description": "Loại bỏ bộ lọc để xem tất cả các trang"
+      },
+      "search": {
+        "title": "Không có trang phù hợp",
+        "description": "Loại bỏ tiêu chí tìm kiếm để xem tất cả các trang"
+      }
+    }
+  },
+  "teamspace_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Không có dự án liên kết nào của bạn có mục công việc đã xuất bản.",
+        "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem tiến độ theo ngày, trạng thái và ưu tiên."
+      },
+      "relation": {
+        "blocking": {
+          "title": "Bạn không có bất kỳ mục công việc nào đang chặn một đồng đội.",
+          "description": "Làm tốt lắm! Bạn đã dọn đường cho nhóm của mình. Bạn là một người chơi đồng đội tốt."
+        },
+        "blocked": {
+          "title": "Bạn không có bất kỳ mục công việc nào của đồng đội đang chặn bạn.",
+          "description": "Tin tốt! Bạn có thể tiến triển trong tất cả các mục công việc được gán cho bạn."
+        }
+      },
+      "stats": {
+        "general": {
+          "title": "Không có dự án liên kết nào của bạn có mục công việc đã xuất bản.",
+          "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem phân phối công việc theo dự án và thành viên nhóm."
+        },
+        "filter": {
+          "title": "Không có thống kê nhóm nào cho các bộ lọc đã áp dụng.",
+          "description": "Tạo một số mục công việc trong một hoặc nhiều dự án đó để xem phân phối công việc theo dự án và thành viên nhóm."
+        }
+      }
+    }
+  },
+  "initiatives": {
+    "label": "Sáng kiến",
+    "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
+    "add_initiative": "Thêm Sáng kiến",
+    "create_initiative": "Tạo Sáng kiến",
+    "update_initiative": "Cập nhật Sáng kiến",
+    "initiative_name": "Tên sáng kiến",
+    "all_initiatives": "Tất cả Sáng kiến",
+    "delete_initiative": "Xóa Sáng kiến",
+    "fill_all_required_fields": "Vui lòng điền vào tất cả các trường bắt buộc.",
+    "toast": {
+      "create_success": "Sáng kiến {name} đã được tạo thành công.",
+      "create_error": "Không thể tạo sáng kiến. Vui lòng thử lại!",
+      "update_success": "Sáng kiến {name} đã được cập nhật thành công.",
+      "update_error": "Không thể cập nhật sáng kiến. Vui lòng thử lại!",
+      "delete": {
+        "success": "Sáng kiến đã được xóa thành công.",
+        "error": "Không thể xóa Sáng kiến"
+      },
+      "link_copied": "Liên kết sáng kiến đã được sao chép vào clipboard.",
+      "project_update_success": "Dự án sáng kiến đã được cập nhật thành công.",
+      "project_update_error": "Không thể cập nhật dự án sáng kiến. Vui lòng thử lại!",
+      "epic_update_success": "Epic{count, plural, one { đã được thêm vào Sáng kiến thành công.} other {s đã được thêm vào Sáng kiến thành công.}}",
+      "epic_update_error": "Thêm Epic vào Sáng kiến thất bại. Vui lòng thử lại sau."
+    },
+    "empty_state": {
+      "general": {
+        "title": "Tổ chức công việc ở cấp độ cao nhất với Sáng kiến",
+        "description": "Khi bạn cần tổ chức công việc trải rộng qua nhiều dự án và nhóm, Sáng kiến rất hữu ích. Kết nối dự án và epic với sáng kiến, xem cập nhật được tổng hợp tự động, và nhìn thấy toàn cảnh trước khi đi vào chi tiết.",
+        "primary_button": {
+          "text": "Tạo một sáng kiến"
+        }
+      },
+      "search": {
+        "title": "Không có sáng kiến phù hợp",
+        "description": "Không phát hiện sáng kiến nào với tiêu chí phù hợp. \n Tạo một sáng kiến mới thay thế."
+      },
+      "not_found": {
+        "title": "Sáng kiến không tồn tại",
+        "description": "Sáng kiến bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.",
+        "primary_button": {
+          "text": "Xem Sáng kiến khác"
+        }
+      },
+      "epics": {
+        "title": "Không có sáng kiến phù hợp",
+        "subHeading": "Tạo một sáng kiến mới thay thế.",
+        "action": "Tạo sáng kiến"
+      }
+    }
+  },
+  "workspace_pages": {
+    "empty_state": {
+      "general": {
+        "title": "Viết ghi chú, tài liệu, hoặc cơ sở kiến thức đầy đủ. Nhờ Galileo, trợ lý AI của Plane, giúp bạn bắt đầu",
+        "description": "Trang là không gian lưu trữ ý tưởng trong Plane. Ghi lại ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng mục công việc, bố trí chúng bằng thư viện các thành phần, và giữ tất cả trong ngữ cảnh dự án của bạn. Để làm ngắn gọn bất kỳ tài liệu nào, gọi Galileo, AI của Plane, bằng phím tắt hoặc nhấp vào nút.",
+        "primary_button": {
+          "text": "Tạo trang đầu tiên của bạn"
+        }
+      },
+      "private": {
+        "title": "Chưa có trang riêng tư",
+        "description": "Giữ suy nghĩ riêng tư của bạn ở đây. Khi bạn sẵn sàng chia sẻ, nhóm chỉ cách một cú nhấp chuột.",
+        "primary_button": {
+          "text": "Tạo trang đầu tiên của bạn"
+        }
+      },
+      "public": {
+        "title": "Chưa có trang công khai",
+        "description": "Xem các trang được chia sẻ với mọi người trong workspace của bạn ngay tại đây.",
+        "primary_button": {
+          "text": "Tạo trang đầu tiên của bạn"
+        }
+      },
+      "archived": {
+        "title": "Chưa có trang đã lưu trữ",
+        "description": "Lưu trữ các trang không nằm trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần thiết."
+      }
+    }
+  },
+  "epics": {
+    "label": "Epics",
+    "no_epics_selected": "Không có epic nào được chọn",
+    "add_selected_epics": "Thêm các epic đã chọn",
+    "epic_link_copied_to_clipboard": "Liên kết Epic đã được sao chép vào clipboard.",
+    "project_link_copied_to_clipboard": "Liên kết dự án đã được sao chép vào clipboard",
+    "empty_state": {
+      "general": {
+        "title": "Tạo một epic và gán nó cho ai đó, thậm chí là chính bạn",
+        "description": "Đối với khối lượng công việc lớn hơn kéo dài qua nhiều chu kỳ và có thể tồn tại qua các module, hãy tạo một epic. Liên kết các mục công việc và mục công việc phụ trong một dự án với một epic và chuyển vào một mục công việc từ tổng quan.",
+        "primary_button": {
+          "text": "Tạo một Epic"
+        }
+      },
+      "section": {
+        "title": "Chưa có epic nào",
+        "description": "Bắt đầu thêm epic để quản lý và theo dõi tiến độ.",
+        "primary_button": {
+          "text": "Thêm epic"
+        }
+      }
+    }
+  },
+  "epic_relation": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy epic phù hợp"
+      },
+      "no_epics": {
+        "title": "Không tìm thấy epic nào"
+      }
+    }
+  },
+  "workspace_cycles": {
+    "empty_state": {
+      "active": {
+        "title": "Không có chu kỳ đang hoạt động",
+        "description": "Chu kỳ của các dự án của bạn bao gồm bất kỳ khoảng thời gian nào bao gồm ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết của tất cả chu kỳ đang hoạt động của bạn tại đây."
+      }
+    }
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Thêm mục công việc vào chu kỳ để xem tiến độ \n của nó"
+      },
+      "priority": {
+        "title": "Quan sát các mục công việc ưu tiên cao được giải quyết trong \n chu kỳ chỉ với một cái nhìn."
+      },
+      "assignee": {
+        "title": "Thêm người được gán cho mục công việc để xem \n phân tích công việc theo người được gán."
+      },
+      "label": {
+        "title": "Thêm nhãn vào mục công việc để xem \n phân tích công việc theo nhãn."
+      }
+    }
+  },
+  "workspace_settings": {
+    "settings": {
+      "integrations": {
+        "title": "Tích hợp"
+      },
+      "imports": {
+        "title": "Nhập dữ liệu"
+      },
+      "worklogs": {
+        "title": "Nhật ký công việc"
+      },
+      "project_states": {
+        "title": "Trạng thái dự án"
+      },
+      "teamspaces": {
+        "title": "Không gian nhóm"
+      },
+      "initiatives": {
+        "title": "Sáng kiến"
+      },
+      "customers": {
+        "title": "Khách hàng"
+      },
+      "cancel_trial": {
+        "title": "Hủy bỏ dùng thử trước.",
+        "description": "Bạn đang có gói dùng thử cho một trong các gói trả phí của chúng tôi. Vui lòng hủy nó trước để tiếp tục.",
+        "dismiss": "Bỏ qua",
+        "cancel": "Hủy dùng thử",
+        "cancel_success_title": "Đã hủy dùng thử.",
+        "cancel_success_message": "Bây giờ bạn có thể xóa workspace.",
+        "cancel_error_title": "Điều đó không hoạt động.",
+        "cancel_error_message": "Vui lòng thử lại."
+      },
+      "applications": {
+        "title": "Ứng dụng",
+        "applicationId_copied": "ID ứng dụng đã được sao chép vào clipboard",
+        "clientId_copied": "ID khách hàng đã được sao chép vào clipboard",
+        "clientSecret_copied": "Secret khách hàng đã được sao chép vào clipboard",
+        "third_party_apps": "Ứng dụng thứ ba",
+        "your_apps": "Ứng dụng của bạn",
+        "connect": "Kết nối",
+        "connected": "Đã kết nối",
+        "install": "Cài đặt",
+        "installed": "Đã cài đặt",
+        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
+        "client_id_and_secret": "ID khách hàng và Secret",
+        "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
+        "client_id_and_secret_download": "Bạn có thể tải xuống một CSV với khóa từ đây.",
+        "application_id": "ID ứng dụng",
+        "client_id": "ID khách hàng",
+        "client_secret": "Secret khách hàng",
+        "export_as_csv": "Xuất ra CSV",
+        "slug_already_exists": "Slug đã tồn tại",
+        "failed_to_create_application": "Không thể tạo ứng dụng",
+        "upload_logo": "Tải lên Logo",
+        "app_name_title": "Bạn sẽ gọi ứng dụng này là gì",
+        "app_name_error": "Tên ứng dụng là bắt buộc",
+        "app_short_description_title": "Đưa ra một mô tả ngắn cho ứng dụng này",
+        "app_short_description_error": "Mô tả ngắn ứng dụng là bắt buộc",
+        "app_description_title": "Viết thêm một mô tả dài hơn cho những người muốn biết thêm. Nhấn / để thực hiện lệnh",
+        "app_description_error": "Mô tả ứng dụng là bắt buộc",
+        "app_slug_title": "Slug ứng dụng",
+        "app_slug_error": "Slug ứng dụng là bắt buộc",
+        "app_maker_title": "Người tạo ứng dụng",
+        "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "webhook_url_title": "URL Webhook",
+        "webhook_url_error": "URL Webhook là bắt buộc",
+        "invalid_webhook_url_error": "URL Webhook không hợp lệ",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs là bắt buộc",
+        "invalid_redirect_uris_error": "Redirect URIs không hợp lệ",
+        "redirect_uris_description": "Nhập các URI cách nhau bởi dấu cách mà ứng dụng sẽ chuyển hướng sau khi người dùng e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins là bắt buộc",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins không hợp lệ",
+        "authorized_javascript_origins_description": "Nhập các nguồn cách nhau bởi dấu cách mà ứng dụng sẽ được phép thực hiện yêu cầu e.g app.com example.com",
+        "create_app": "Tạo ứng dụng",
+        "update_app": "Cập nhật ứng dụng",
+        "regenerate_client_secret_description": "Tạo lại khóa bí mật. Nếu bạn tạo lại khóa, bạn có thể sao chép khóa hoặc tải xuống nó thành một tệp CSV ngay sau đó.",
+        "regenerate_client_secret": "Tạo lại khóa bí mật",
+        "regenerate_client_secret_confirm_title": "Bạn có chắc chắn muốn tạo lại khóa bí mật?",
+        "regenerate_client_secret_confirm_description": "Ứng dụng sử dụng khóa này sẽ ngừng hoạt động. Bạn sẽ cần cập nhật khóa trong ứng dụng.",
+        "regenerate_client_secret_confirm_cancel": "Hủy bỏ",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Truy cập chỉ đọc vào workspace của bạn",
+        "write_access_to_workspace": "Truy cập viết vào workspace của bạn",
+        "read_only_access_to_user_profile": "Truy cập chỉ đọc vào hồ sơ người dùng của bạn",
+        "write_access_to_user_profile": "Truy cập viết vào hồ sơ người dùng của bạn",
+        "connect_app_to_workspace": "Kết nối {app} vào workspace của bạn {workspace}",
+        "user_permissions": "Quyền người dùng",
+        "user_permissions_description": "Quyền người dùng được sử dụng để cấp quyền truy cập vào hồ sơ người dùng.",
+        "workspace_permissions": "Quyền workspace",
+        "workspace_permissions_description": "Quyền workspace được sử dụng để cấp quyền truy cập vào workspace.",
+        "with_the_permissions": "với quyền",
+        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Plane của bạn và hồ sơ.",
+        "choose_workspace_to_connect_app_with": "Chọn một workspace để kết nối ứng dụng",
+        "app_consent_workspace_permissions_title": "{app} muốn",
+        "app_consent_user_permissions_title": "{app} cũng có thể yêu cầu quyền của người dùng cho các tài nguyên sau. Các quyền này sẽ được yêu cầu và được cấp phép chỉ bởi một người dùng.",
+        "app_consent_accept_title": "Bằng cách chấp nhận, bạn",
+        "app_consent_accept_1": "Cấp quyền truy cập vào dữ liệu Plane của bạn ở bất kỳ đâu bạn có thể sử dụng ứng dụng bên trong hoặc ngoài Plane",
+        "app_consent_accept_2": "Đồng ý với Chính sách bảo mật và Điều khoản sử dụng của {app}",
+        "accepting": "Đang chấp nhận...",
+        "accept": "Chấp nhận",
+        "categories": "Danh mục",
+        "select_app_categories": "Chọn danh mục ứng dụng",
+        "categories_title": "Danh mục",
+        "categories_error": "Danh mục là bắt buộc",
+        "invalid_categories_error": "Danh mục không hợp lệ",
+        "categories_description": "Chọn các danh mục phù hợp nhất với ứng dụng",
+        "privacy_policy_url_title": "URL Chính sách bảo mật",
+        "privacy_policy_url_error": "URL Chính sách bảo mật là bắt buộc",
+        "invalid_privacy_policy_url_error": "URL Chính sách bảo mật không hợp lệ",
+        "terms_of_service_url_title": "URL Điều khoản sử dụng",
+        "terms_of_service_url_error": "URL Điều khoản sử dụng là bắt buộc",
+        "invalid_terms_of_service_url_error": "URL Điều khoản sử dụng không hợp lệ",
+        "support_url_title": "URL Hỗ trợ",
+        "support_url_error": "URL Hỗ trợ là bắt buộc",
+        "invalid_support_url_error": "URL Hỗ trợ không hợp lệ",
+        "video_url_title": "URL Video",
+        "video_url_error": "URL Video là bắt buộc",
+        "invalid_video_url_error": "URL Video không hợp lệ",
+        "setup_url_title": "URL Cài đặt",
+        "setup_url_error": "URL Cài đặt là bắt buộc",
+        "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
+        "configuration_url_title": "URL Cấu hình",
+        "configuration_url_error": "URL Cấu hình là bắt buộc",
+        "invalid_configuration_url_error": "URL Cấu hình không hợp lệ",
+        "contact_email_title": "Email Liên hệ",
+        "contact_email_error": "Email Liên hệ là bắt buộc",
+        "invalid_contact_email_error": "Email Liên hệ không hợp lệ",
+        "upload_attachments": "Tải lên tệp đính kèm",
+        "uploading_images": "Tải lên {count, plural, one {hình ảnh} other {hình ảnh}}",
+        "drop_images_here": "Đặt hình ảnh vào đây",
+        "click_to_upload_images": "Nhấp để tải lên hình ảnh",
+        "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
+        "uploading": "Đang tải lên...",
+        "upload_and_save": "Tải lên và lưu"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Không thể lưu trữ mục công việc",
+        "message": "Chỉ các mục công việc thuộc nhóm trạng thái Hoàn thành hoặc Đã hủy mới có thể được lưu trữ."
+      },
+      "invalid_issue_start_date": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Ngày bắt đầu đã chọn vượt quá ngày đến hạn cho một số mục công việc. Đảm bảo ngày bắt đầu phải trước ngày đến hạn."
+      },
+      "invalid_issue_target_date": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Ngày đến hạn đã chọn trước ngày bắt đầu cho một số mục công việc. Đảm bảo ngày đến hạn phải sau ngày bắt đầu."
+      },
+      "invalid_state_transition": {
+        "title": "Không thể cập nhật mục công việc",
+        "message": "Thay đổi trạng thái không được phép cho một số mục công việc. Đảm bảo thay đổi trạng thái được cho phép."
+      }
+    }
+  },
+  "work_item_types": {
+    "label": "Loại mục công việc",
+    "label_lowercase": "loại mục công việc",
+    "settings": {
+      "title": "Loại mục công việc",
+      "properties": {
+        "title": "Thuộc tính tùy chỉnh",
+        "tooltip": "Mỗi loại mục công việc đi kèm với một bộ thuộc tính mặc định như Tiêu đề, Mô tả, Người được giao, Trạng thái, Ưu tiên, Ngày bắt đầu, Ngày đến hạn, Module, Chu kỳ, v.v. Bạn cũng có thể tùy chỉnh và thêm thuộc tính riêng của mình để phù hợp với nhu cầu của nhóm bạn.",
+        "add_button": "Thêm thuộc tính mới",
+        "dropdown": {
+          "label": "Loại thuộc tính",
+          "placeholder": "Chọn loại"
+        },
+        "property_type": {
+          "text": {
+            "label": "Văn bản"
+          },
+          "number": {
+            "label": "Số"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Ngày"
+          },
+          "member_picker": {
+            "label": "Chọn thành viên"
+          }
+        },
+        "attributes": {
+          "label": "Thuộc tính",
+          "text": {
+            "single_line": {
+              "label": "Một dòng"
+            },
+            "multi_line": {
+              "label": "Đoạn văn"
+            },
+            "readonly": {
+              "label": "Chỉ đọc",
+              "header": "Dữ liệu chỉ đọc"
+            },
+            "invalid_text_format": {
+              "label": "Định dạng văn bản không hợp lệ"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Thêm số"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Chọn một"
+            },
+            "multi_select": {
+              "label": "Chọn nhiều"
+            },
+            "no_default_value": {
+              "label": "Không có giá trị mặc định"
+            }
+          },
+          "boolean": {
+            "label": "Đúng | Sai",
+            "no_default": "Không có giá trị mặc định"
+          },
+          "option": {
+            "create_update": {
+              "label": "Tùy chọn",
+              "form": {
+                "placeholder": "Thêm tùy chọn",
+                "errors": {
+                  "name": {
+                    "required": "Tên tùy chọn là bắt buộc.",
+                    "integrity": "Tùy chọn với cùng tên đã tồn tại."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Chọn tùy chọn",
+                "multi": {
+                  "default": "Chọn tùy chọn",
+                  "variable": "{count} tùy chọn đã chọn"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được tạo thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể tạo thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được cập nhật thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể cập nhật thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được xóa thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể xóa thuộc tính. Vui lòng thử lại!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} thuộc tính {name}",
+            "success": {
+              "title": "Thành công!",
+              "message": "Thuộc tính {name} đã được {action} thành công."
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể {action} thuộc tính. Vui lòng thử lại!"
+            }
+          }
+        },
+        "create_update": {
+          "form": {
+            "display_name": {
+              "placeholder": "Tiêu đề"
+            },
+            "description": {
+              "placeholder": "Mô tả"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Bạn phải đặt tên cho thuộc tính của mình.",
+              "max_length": "Tên thuộc tính không được vượt quá 255 ký tự."
+            },
+            "property_type": {
+              "required": "Bạn phải chọn một loại thuộc tính."
+            },
+            "options": {
+              "required": "Bạn phải thêm ít nhất một tùy chọn."
+            }
+          }
+        },
+        "enable_disable": {
+          "label": "Đang hoạt động",
+          "tooltip": {
+            "disabled": "Nhấp để vô hiệu hóa",
+            "enabled": "Nhấp để kích hoạt"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Xóa thuộc tính này",
+          "description": "Việc xóa thuộc tính có thể dẫn đến mất dữ liệu hiện có.",
+          "secondary_description": "Bạn có muốn vô hiệu hóa thuộc tính thay thế?",
+          "primary_button": "{action}, xóa nó",
+          "secondary_button": "Có, vô hiệu hóa nó"
+        },
+        "mandate_confirmation": {
+          "label": "Thuộc tính bắt buộc",
+          "content": "Có vẻ như có một tùy chọn mặc định cho thuộc tính này. Việc làm cho thuộc tính trở thành bắt buộc sẽ xóa giá trị mặc định và người dùng sẽ phải thêm một giá trị theo lựa chọn của họ.",
+          "tooltip": {
+            "disabled": "Loại thuộc tính này không thể được làm thành bắt buộc",
+            "enabled": "Bỏ chọn để đánh dấu trường là tùy chọn",
+            "checked": "Chọn để đánh dấu trường là bắt buộc"
+          }
+        },
+        "empty_state": {
+          "title": "Thêm thuộc tính tùy chỉnh",
+          "description": "Các thuộc tính mới bạn thêm cho loại mục công việc này sẽ hiển thị ở đây."
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Xóa loại này",
+        "description": "Việc xóa các loại có thể dẫn đến mất dữ liệu hiện có.",
+        "primary_button": "Vâng, xóa nó",
+        "toast": {
+          "success": {
+            "title": "Thành công!",
+            "message": "Đã xóa thành công loại mục công việc."
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể xóa loại mục công việc. Vui lòng thử lại!"
+          }
+        },
+        "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?"
+      },
+      "cant_delete_linked_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
+    },
+    "create": {
+      "title": "Tạo loại mục công việc",
+      "button": "Thêm loại mục công việc",
+      "toast": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc đã được tạo thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Cập nhật loại mục công việc",
+      "button": "Cập nhật loại mục công việc",
+      "toast": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc {name} đã được cập nhật thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": {
+            "conflict": "Loại {name} đã tồn tại. Hãy chọn một tên khác."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Đặt cho loại mục công việc này một tên duy nhất"
+        },
+        "description": {
+          "placeholder": "Mô tả loại mục công việc này dùng để làm gì và khi nào nên sử dụng nó."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} loại mục công việc {name}",
+        "success": {
+          "title": "Thành công!",
+          "message": "Loại mục công việc {name} đã được {action} thành công."
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể {action} loại mục công việc. Vui lòng thử lại!"
+        }
+      },
+      "tooltip": "Nhấp để {action}"
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Kích hoạt Loại mục công việc",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Kích hoạt"
+        },
+        "confirmation": {
+          "title": "Khi đã kích hoạt, Loại mục công việc không thể bị vô hiệu hóa.",
+          "description": "Mục công việc của Plane sẽ trở thành loại mục công việc mặc định cho dự án này và sẽ hiển thị với biểu tượng và nền của nó trong dự án này.",
+          "button": {
+            "default": "Kích hoạt",
+            "loading": "Đang thiết lập"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Nâng cấp lên Pro để kích hoạt Loại mục công việc.",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Nâng cấp lên Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Nâng cấp để kích hoạt Loại mục công việc.",
+        "description": "Định hình mục công việc theo công việc của bạn với Loại mục công việc. Tùy chỉnh với biểu tượng, nền và thuộc tính và cấu hình chúng cho dự án này.",
+        "primary_button": {
+          "text": "Nâng cấp"
+        }
+      }
+    }
+  },
+  "importers": {
+    "imports": "Nhập",
+    "logo": "Logo",
+    "import_message": "Nhập dữ liệu {serviceName} của bạn vào các dự án plane.",
+    "deactivate": "Hủy kích hoạt",
+    "deactivating": "Đang hủy kích hoạt",
+    "migrating": "Đang di chuyển",
+    "migrations": "Di chuyển",
+    "refreshing": "Đang làm mới",
+    "import": "Nhập",
+    "serial_number": "STT.",
+    "project": "Dự án",
+    "workspace": "Workspace",
+    "status": "Trạng thái",
+    "total_batches": "Tổng số lô",
+    "imported_batches": "Số lô đã nhập",
+    "re_run": "Chạy lại",
+    "cancel": "Hủy",
+    "start_time": "Thời gian bắt đầu",
+    "no_jobs_found": "Không tìm thấy công việc nào",
+    "no_project_imports": "Bạn chưa nhập bất kỳ dự án {serviceName} nào.",
+    "cancel_import_job": "Hủy công việc nhập",
+    "cancel_import_job_confirmation": "Bạn có chắc muốn hủy công việc nhập này không? Điều này sẽ dừng quá trình nhập cho dự án này.",
+    "re_run_import_job": "Chạy lại công việc nhập",
+    "re_run_import_job_confirmation": "Bạn có chắc muốn chạy lại công việc nhập này không? Điều này sẽ khởi động lại quá trình nhập cho dự án này.",
+    "upload_csv_file": "Tải lên tệp CSV để nhập dữ liệu người dùng.",
+    "connect_importer": "Kết nối {serviceName}",
+    "migration_assistant": "Trợ lý di chuyển",
+    "migration_assistant_description": "Di chuyển dự án {serviceName} của bạn sang Plane một cách liền mạch với trợ lý mạnh mẽ của chúng tôi.",
+    "token_helper": "Bạn sẽ nhận được từ",
+    "personal_access_token": "Mã thông báo truy cập cá nhân",
+    "source_token_expired": "Mã thông báo hết hạn",
+    "source_token_expired_description": "Mã thông báo đã cung cấp đã hết hạn. Vui lòng hủy kích hoạt và kết nối lại với bộ thông tin đăng nhập mới.",
+    "user_email": "Email người dùng",
+    "select_state": "Chọn trạng thái",
+    "select_service_project": "Chọn dự án {serviceName}",
+    "loading_service_projects": "Đang tải dự án {serviceName}",
+    "select_service_workspace": "Chọn workspace {serviceName}",
+    "loading_service_workspaces": "Đang tải workspace {serviceName}",
+    "select_priority": "Chọn ưu tiên",
+    "select_service_team": "Chọn nhóm {serviceName}",
+    "add_seat_msg_free_trial": "Bạn đang cố nhập {additionalUserCount} người dùng chưa đăng ký và bạn chỉ có {currentWorkspaceSubscriptionAvailableSeats} chỗ có sẵn trong gói hiện tại. Để tiếp tục nhập, hãy nâng cấp ngay.",
+    "add_seat_msg_paid": "Bạn đang cố nhập {additionalUserCount} người dùng chưa đăng ký và bạn chỉ có {currentWorkspaceSubscriptionAvailableSeats} chỗ có sẵn trong gói hiện tại. Để tiếp tục nhập, hãy mua ít nhất {extraSeatRequired} chỗ bổ sung.",
+    "skip_user_import_title": "Bỏ qua việc nhập dữ liệu người dùng",
+    "skip_user_import_description": "Việc bỏ qua nhập người dùng sẽ dẫn đến mục công việc, bình luận và dữ liệu khác từ {serviceName} được tạo bởi người dùng thực hiện việc di chuyển trong Plane. Bạn vẫn có thể thêm người dùng thủ công sau.",
+    "invalid_pat": "Mã thông báo truy cập cá nhân không hợp lệ"
+  },
+  "integrations": {
+    "integrations": "Tích hợp",
+    "loading": "Đang tải",
+    "unauthorized": "Bạn không được phép xem trang này.",
+    "configure": "Cấu hình",
+    "not_enabled": "{name} không được kích hoạt cho workspace này.",
+    "not_configured": "Chưa được cấu hình",
+    "disconnect_personal_account": "Ngắt kết nối tài khoản {providerName} cá nhân",
+    "not_configured_message_admin": "Tích hợp {name} chưa được cấu hình. Vui lòng liên hệ quản trị viên để cấu hình.",
+    "not_configured_message_support": "Tích hợp {name} chưa được cấu hình. Vui lòng liên hệ hỗ trợ để cấu hình.",
+    "external_api_unreachable": "Không thể truy cập API bên ngoài. Vui lòng thử lại sau.",
+    "error_fetching_supported_integrations": "Không thể lấy các tích hợp được hỗ trợ. Vui lòng thử lại sau.",
+    "back_to_integrations": "Quay lại tích hợp",
+    "select_state": "Chọn trạng thái"
+  },
+  "github_integration": {
+    "name": "GitHub",
+    "description": "Kết nối và đồng bộ mục công việc GitHub của bạn với Plane.",
+    "connect_org": "Kết nối tổ chức",
+    "connect_org_description": "Kết nối tổ chức GitHub của bạn với Plane.",
+    "processing": "Đang xử lý",
+    "org_added_desc": "Tổ chức GitHub được thêm bởi và thời gian",
+    "connection_fetch_error": "Lỗi khi lấy chi tiết kết nối từ máy chủ",
+    "personal_account_connected": "Tài khoản cá nhân đã được kết nối",
+    "personal_account_connected_description": "Tài khoản GitHub cá nhân của bạn đã được kết nối với Plane.",
+    "connect_personal_account": "Kết nối tài khoản cá nhân",
+    "connect_personal_account_description": "Kết nối tài khoản GitHub cá nhân của bạn với Plane.",
+    "repo_mapping": "Ánh xạ kho lưu trữ",
+    "repo_mapping_description": "Ánh xạ kho lưu trữ GitHub của bạn với các dự án Plane.",
+    "remove_entity": "Xóa thực thể",
+    "remove_entity_confirmation": "Bạn có chắc muốn xóa thực thể này không?",
+    "issue_sync_message": "Mục công việc được đồng bộ hóa với {project}",
+    "link": "Liên kết kho lưu trữ GitHub với dự án Plane",
+    "pull_request_automation": "Tự động hóa Pull Request",
+    "pull_request_automation_description": "Cấu hình ánh xạ trạng thái pull request từ GitHub sang Plane",
+    "DRAFT_MR_OPENED": "Khi dự thảo PR mở, đặt trạng thái thành",
+    "MR_OPENED": "Khi PR mở, đặt trạng thái thành",
+    "MR_READY_FOR_MERGE": "Khi PR sẵn sàng để hợp nhất, đặt trạng thái thành",
+    "MR_REVIEW_REQUESTED": "Khi yêu cầu xem xét PR, đặt trạng thái thành",
+    "MR_MERGED": "Khi PR được hợp nhất, đặt trạng thái thành",
+    "MR_CLOSED": "Khi PR đóng, đặt trạng thái thành"
+  },
+  "gitlab_integration": {
+    "name": "Gitlab",
+    "description": "Kết nối và đồng bộ Merge Requests của Gitlab với Plane.",
+    "connection_fetch_error": "Lỗi khi lấy chi tiết kết nối từ máy chủ",
+    "connect_org": "Kết nối tổ chức",
+    "connect_org_description": "Kết nối tổ chức Gitlab của bạn với Plane.",
+    "project_connections": "Kết nối dự án Gitlab",
+    "project_connections_description": "Đồng bộ yêu cầu hợp nhất từ Gitlab sang dự án Plane.",
+    "plane_project_connection": "Kết nối dự án Plane",
+    "plane_project_connection_description": "Cấu hình ánh xạ trạng thái pull request từ Gitlab sang dự án Plane",
+    "remove_connection": "Xóa kết nối",
+    "remove_connection_confirmation": "Bạn có chắc muốn xóa kết nối này không?",
+    "link": "Liên kết kho lưu trữ Gitlab với dự án Plane",
+    "pull_request_automation": "Tự động hóa Pull Request",
+    "pull_request_automation_description": "Cấu hình ánh xạ trạng thái pull request từ Gitlab sang Plane",
+    "DRAFT_MR_OPENED": "Khi dự thảo MR mở, đặt trạng thái thành",
+    "MR_OPENED": "Khi MR mở, đặt trạng thái thành",
+    "MR_REVIEW_REQUESTED": "Khi yêu cầu xem xét MR, đặt trạng thái thành",
+    "MR_READY_FOR_MERGE": "Khi MR sẵn sàng để hợp nhất, đặt trạng thái thành",
+    "MR_MERGED": "Khi MR được hợp nhất, đặt trạng thái thành",
+    "MR_CLOSED": "Khi MR đóng, đặt trạng thái thành",
+    "integration_enabled_text": "Với tích hợp Gitlab được Kích hoạt, bạn có thể tự động hóa quy trình làm việc của mục công việc",
+    "choose_entity": "Chọn thực thể",
+    "choose_project": "Chọn dự án",
+    "link_plane_project": "Liên kết dự án Plane"
+  },
+  "slack_integration": {
+    "name": "Slack",
+    "description": "Kết nối workspace Slack của bạn với Plane.",
+    "connect_personal_account": "Kết nối tài khoản Slack cá nhân của bạn với Plane.",
+    "personal_account_connected": "Tài khoản {providerName} cá nhân của bạn hiện đã được kết nối với Plane.",
+    "link_personal_account": "Liên kết tài khoản {providerName} cá nhân của bạn với Plane.",
+    "connected_slack_workspaces": "Các workspace Slack đã kết nối",
+    "connected_on": "Đã kết nối vào {date}",
+    "disconnect_workspace": "Ngắt kết nối workspace {name}",
+    "project_updates": {
+      "title": "Cập Nhật Dự Án",
+      "description": "Cấu hình thông báo cập nhật dự án cho các dự án của bạn",
+      "add_new_project_update": "Thêm thông báo cập nhật dự án mới",
+      "project_updates_empty_state": "Các dự án kết nối với Kênh Slack sẽ xuất hiện ở đây.",
+      "project_updates_form": {
+        "title": "Cấu Hình Cập Nhật Dự Án",
+        "description": "Nhận thông báo cập nhật dự án trong Slack khi các mục công việc được tạo",
+        "failed_to_load_channels": "Không thể tải kênh từ Slack",
+        "project_dropdown": {
+          "placeholder": "Chọn dự án",
+          "label": "Dự Án Plane",
+          "no_projects": "Không có dự án nào khả dụng"
+        },
+        "channel_dropdown": {
+          "label": "Kênh Slack",
+          "placeholder": "Chọn kênh",
+          "no_channels": "Không có kênh nào khả dụng"
+        },
+        "all_projects_connected": "Tất cả các dự án đã được kết nối với kênh Slack.",
+        "all_channels_connected": "Tất cả các kênh Slack đã được kết nối với dự án.",
+        "project_connection_success": "Kết nối dự án được tạo thành công",
+        "project_connection_updated": "Kết nối dự án được cập nhật thành công",
+        "project_connection_deleted": "Kết nối dự án được xóa thành công",
+        "failed_delete_project_connection": "Không thể xóa kết nối dự án",
+        "failed_create_project_connection": "Không thể tạo kết nối dự án",
+        "failed_upserting_project_connection": "Không thể cập nhật kết nối dự án",
+        "failed_loading_project_connections": "Chúng tôi không thể tải kết nối dự án của bạn. Điều này có thể do sự cố mạng hoặc sự cố với tích hợp."
+      }
+    }
+  },
+  "sentry_integration": {
+    "name": "Sentry",
+    "description": "Kết nối không gian làm việc Sentry của bạn với Plane.",
+    "connected_sentry_workspaces": "Không gian làm việc Sentry đã kết nối",
+    "connected_on": "Đã kết nối vào {date}",
+    "disconnect_workspace": "Ngắt kết nối không gian làm việc {name}",
+    "state_mapping": {
+      "title": "Ánh xạ trạng thái",
+      "description": "Ánh xạ trạng thái sự cố Sentry với trạng thái dự án của bạn. Cấu hình trạng thái nào sử dụng khi sự cố Sentry được giải quyết hoặc chưa giải quyết.",
+      "add_new_state_mapping": "Thêm ánh xạ trạng thái mới",
+      "empty_state": "Chưa cấu hình ánh xạ trạng thái. Tạo ánh xạ đầu tiên để đồng bộ trạng thái sự cố Sentry với trạng thái dự án của bạn.",
+      "failed_loading_state_mappings": "Chúng tôi không thể tải ánh xạ trạng thái của bạn. Điều này có thể do vấn đề mạng hoặc vấn đề với tích hợp.",
+      "loading_project_states": "Đang tải trạng thái dự án...",
+      "error_loading_states": "Lỗi khi tải trạng thái",
+      "no_states_available": "Không có trạng thái khả dụng",
+      "no_permission_states": "Bạn không có quyền truy cập trạng thái cho dự án này",
+      "states_not_found": "Không tìm thấy trạng thái dự án",
+      "server_error_states": "Lỗi máy chủ khi tải trạng thái"
+    }
+  },
+  "github_enterprise_integration": {
+    "name": "GitHub Enterprise",
+    "description": "Kết nối và đồng bộ tổ chức GitHub Enterprise của bạn với Plane.",
+    "app_form_title": "Cấu hình GitHub Enterprise",
+    "app_form_description": "Cấu hình GitHub Enterprise để kết nối với Plane.",
+    "app_id_title": "ID Ứng dụng",
+    "app_id_description": "ID ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "app_id_placeholder": "e.g., \"1234567890\"",
+    "app_id_error": "App ID là bắt buộc",
+    "app_name_title": "Slug Ứng dụng",
+    "app_name_description": "Slug ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "app_name_error": "Slug ứng dụng là bắt buộc",
+    "app_name_placeholder": "e.g., \"plane-github-enterprise\"",
+    "base_url_title": "URL Cơ Bản",
+    "base_url_description": "URL cơ bản của tổ chức GitHub Enterprise của bạn.",
+    "base_url_placeholder": "e.g., \"https://gh.plane.town\"",
+    "base_url_error": "URL cơ bản là bắt buộc",
+    "invalid_base_url_error": "URL cơ bản không hợp lệ",
+    "client_id_title": "ID Khách Hàng",
+    "client_id_description": "ID khách hàng của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "client_id_placeholder": "e.g., \"1234567890\"",
+    "client_id_error": "ID khách hàng là bắt buộc",
+    "client_secret_title": "Secret Khách Hàng",
+    "client_secret_description": "Secret khách hàng của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "client_secret_placeholder": "e.g., \"1234567890\"",
+    "client_secret_error": "Secret khách hàng là bắt buộc",
+    "webhook_secret_title": "Secret Webhook",
+    "webhook_secret_description": "Secret webhook của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "webhook_secret_placeholder": "e.g., \"1234567890\"",
+    "webhook_secret_error": "Secret webhook là bắt buộc",
+    "private_key_title": "Private Key (Base64 encoded)",
+    "private_key_description": "Private key của ứng dụng bạn đã tạo trong tổ chức GitHub Enterprise của bạn.",
+    "private_key_placeholder": "e.g., \"MIIEpAIBAAKCAQEA...",
+    "private_key_error": "Private key là bắt buộc",
+    "connect_app": "Kết nối Ứng dụng"
+  },
+  "file_upload": {
+    "upload_text": "Nhấp vào đây để tải lên tệp",
+    "drag_drop_text": "Kéo và thả",
+    "processing": "Đang xử lý",
+    "invalid": "Loại tệp không hợp lệ",
+    "missing_fields": "Thiếu trường",
+    "success": "{fileName} đã được tải lên!"
+  },
+  "silo_errors": {
+    "invalid_query_params": "Tham số truy vấn được cung cấp không hợp lệ hoặc thiếu trường bắt buộc",
+    "invalid_installation_account": "Tài khoản cài đặt được cung cấp không hợp lệ",
+    "generic_error": "Đã xảy ra lỗi không mong muốn khi xử lý yêu cầu của bạn",
+    "connection_not_found": "Không thể tìm thấy kết nối được yêu cầu",
+    "multiple_connections_found": "Nhiều kết nối đã được tìm thấy khi chỉ mong đợi một kết nối",
+    "installation_not_found": "Không thể tìm thấy cài đặt được yêu cầu",
+    "user_not_found": "Không thể tìm thấy người dùng được yêu cầu",
+    "error_fetching_token": "Không thể lấy mã thông báo xác thực",
+    "invalid_app_credentials": "Các thông tin xác thực ứng dụng đã cung cấp không hợp lệ",
+    "invalid_app_installation_id": "Không thể cài đặt ứng dụng"
+  },
+  "import_status": {
+    "created": "Đã tạo",
+    "initiated": "Đã bắt đầu",
+    "pulling": "Đang kéo",
+    "pulled": "Đã kéo",
+    "transforming": "Đang chuyển đổi",
+    "transformed": "Đã chuyển đổi",
+    "pushing": "Đang đẩy",
+    "finished": "Hoàn thành",
+    "error": "Lỗi",
+    "cancelled": "Đã hủy"
+  },
+  "jira_importer": {
+    "jira_importer_description": "Nhập dữ liệu Jira của bạn vào các dự án Plane.",
+    "personal_access_token": "Mã thông báo truy cập cá nhân",
+    "user_email": "Email người dùng",
+    "atlassian_security_settings": "Cài đặt bảo mật Atlassian",
+    "email_description": "Đây là email được liên kết với mã thông báo truy cập cá nhân của bạn",
+    "jira_domain": "Tên miền Jira",
+    "jira_domain_description": "Đây là tên miền của phiên bản Jira của bạn",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Jira của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_jira": "Cấu hình Jira",
+      "description_configure_jira": "Vui lòng chọn workspace Jira mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_import_users": "Nhập người dùng",
+      "description_import_users": "Vui lòng thêm người dùng bạn muốn di chuyển từ Jira sang Plane. Ngoài ra, bạn có thể bỏ qua bước này và thêm người dùng thủ công sau.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái Jira với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Chúng tôi đã tự động khớp các ưu tiên theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ ưu tiên còn lại nào trước khi tiếp tục.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
+    }
+  },
+  "asana_importer": {
+    "asana_importer_description": "Nhập dữ liệu Asana của bạn vào các dự án Plane.",
+    "select_asana_priority_field": "Chọn trường ưu tiên Asana",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Asana của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_asana": "Cấu hình Asana",
+      "description_configure_asana": "Vui lòng chọn workspace và dự án Asana mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Vui lòng chọn trạng thái Asana mà bạn muốn ánh xạ đến trạng thái dự án Plane.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Asana mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Asana sang Plane."
+    }
+  },
+  "linear_importer": {
+    "linear_importer_description": "Nhập dữ liệu Linear của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Linear của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_linear": "Cấu hình Linear",
+      "description_configure_linear": "Vui lòng chọn nhóm Linear mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái Linear với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Linear mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Linear sang Plane."
+    }
+  },
+  "jira_server_importer": {
+    "jira_server_importer_description": "Nhập dữ liệu Jira Server của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu Jira của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_jira": "Cấu hình Jira",
+      "description_configure_jira": "Vui lòng chọn workspace Jira mà bạn muốn di chuyển dữ liệu từ đó.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Vui lòng chọn trạng thái Jira mà bạn muốn ánh xạ đến trạng thái dự án Plane.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên Jira mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ Jira sang Plane."
+    }
+  },
+
+  "notion_importer": {
+    "notion_importer_description": "Nhập dữ liệu Notion của bạn vào các dự án Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Notion",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Notion của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Notion của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Notion",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Notion của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Notion",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Notion của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+
+  "confluence_importer": {
+    "confluence_importer_description": "Nhập dữ liệu Confluence của bạn vào wiki Plane.",
+    "steps": {
+      "title_upload_zip": "Tải lên ZIP xuất từ Confluence",
+      "description_upload_zip": "Vui lòng tải lên tệp ZIP chứa dữ liệu Confluence của bạn."
+    },
+    "upload": {
+      "drop_file_here": "Thả tệp zip Confluence của bạn vào đây",
+      "upload_title": "Tải lên xuất dữ liệu Confluence",
+      "drag_drop_description": "Kéo và thả tệp zip xuất Confluence của bạn, hoặc nhấp để duyệt",
+      "file_type_restriction": "Chỉ hỗ trợ các tệp .zip được xuất từ Confluence",
+      "select_file": "Chọn tệp",
+      "uploading": "Đang tải lên...",
+      "preparing_upload": "Đang chuẩn bị tải lên...",
+      "confirming_upload": "Đang xác nhận tải lên...",
+      "confirming": "Đang xác nhận...",
+      "upload_complete": "Tải lên hoàn tất",
+      "upload_failed": "Tải lên thất bại",
+      "start_import": "Bắt đầu nhập",
+      "retry_upload": "Thử lại tải lên",
+      "upload": "Tải lên",
+      "ready": "Sẵn sàng",
+      "error": "Lỗi",
+      "upload_complete_message": "Tải lên hoàn tất!",
+      "upload_complete_description": "Nhấp \"Bắt đầu nhập\" để bắt đầu xử lý dữ liệu Confluence của bạn.",
+      "upload_progress_message": "Vui lòng không đóng cửa sổ này."
+    }
+  },
+
+  "flatfile_importer": {
+    "flatfile_importer_description": "Nhập dữ liệu CSV của bạn vào các dự án Plane.",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu CSV của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_csv": "Cấu hình CSV",
+      "description_configure_csv": "Vui lòng tải lên tệp CSV của bạn và cấu hình các trường được ánh xạ đến trường Plane."
+    }
+  },
+
+  "clickup_importer": {
+    "clickup_importer_description": "Nhập dữ liệu ClickUp của bạn vào các dự án Plane.",
+    "select_service_space": "Chọn {serviceName} Space",
+    "select_service_folder": "Chọn {serviceName} Folder",
+    "selected": "Đã chọn",
+    "users": "Người dùng",
+    "steps": {
+      "title_configure_plane": "Cấu hình Plane",
+      "description_configure_plane": "Vui lòng tạo trước dự án trong Plane mà bạn dự định di chuyển dữ liệu ClickUp của mình. Sau khi dự án được tạo, hãy chọn nó tại đây.",
+      "title_configure_clickup": "Cấu hình ClickUp",
+      "description_configure_clickup": "Vui lòng chọn nhóm ClickUp, không gian và thư mục từ đó bạn muốn di chuyển dữ liệu của mình.",
+      "title_map_states": "Ánh xạ trạng thái",
+      "description_map_states": "Chúng tôi đã tự động khớp trạng thái ClickUp với trạng thái Plane theo khả năng tốt nhất của mình. Vui lòng ánh xạ bất kỳ trạng thái còn lại nào trước khi tiếp tục, bạn cũng có thể tạo trạng thái và ánh xạ chúng thủ công.",
+      "title_map_priorities": "Ánh xạ ưu tiên",
+      "description_map_priorities": "Vui lòng chọn ưu tiên ClickUp mà bạn muốn ánh xạ đến ưu tiên dự án Plane.",
+      "title_summary": "Tóm tắt",
+      "description_summary": "Đây là tóm tắt dữ liệu sẽ được di chuyển từ ClickUp sang Plane."
+    }
+  },
+
+  "dashboards": {
+    "widget": {
+      "chart_types": {
+        "bar_chart": {
+          "short_label": "Cột",
+          "long_label": "Biểu đồ cột",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "stacked": "Xếp chồng",
+            "grouped": "Nhóm"
+          },
+          "orientation": {
+            "label": "Hướng",
+            "horizontal": "Ngang",
+            "vertical": "Dọc",
+            "placeholder": "Thêm hướng"
+          },
+          "bar_color": "Màu cột"
+        },
+        "line_chart": {
+          "short_label": "Đường",
+          "long_label": "Biểu đồ đường",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "multi_line": "Đa đường"
+          },
+          "line_color": "Màu đường",
+          "line_type": {
+            "label": "Kiểu đường",
+            "solid": "Liền",
+            "dashed": "Đứt khúc",
+            "placeholder": "Thêm kiểu đường"
+          }
+        },
+        "area_chart": {
+          "short_label": "Vùng",
+          "long_label": "Biểu đồ vùng",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "stacked": "Xếp chồng",
+            "comparison": "So sánh"
+          },
+          "fill_color": "Màu tô"
+        },
+        "donut_chart": {
+          "short_label": "Bánh rỗng",
+          "long_label": "Biểu đồ bánh rỗng",
+          "chart_models": {
+            "basic": "Cơ bản",
+            "progress": "Tiến độ"
+          },
+          "center_value": "Giá trị trung tâm",
+          "completed_color": "Màu hoàn thành"
+        },
+        "pie_chart": {
+          "short_label": "Bánh tròn",
+          "long_label": "Biểu đồ bánh tròn",
+          "chart_models": {
+            "basic": "Cơ bản"
+          },
+          "group": {
+            "label": "Phần được nhóm",
+            "group_thin_pieces": "Nhóm phần mỏng",
+            "minimum_threshold": {
+              "label": "Ngưỡng tối thiểu",
+              "placeholder": "Thêm ngưỡng"
+            },
+            "name_group": {
+              "label": "Tên nhóm",
+              "placeholder": "\"Ít hơn 5%\""
+            }
+          },
+          "show_values": "Hiển thị giá trị",
+          "value_type": {
+            "percentage": "Phần trăm",
+            "count": "Số lượng"
+          }
+        },
+        "text": {
+          "short_label": "Văn bản",
+          "long_label": "Văn bản",
+          "alignment": {
+            "label": "Căn chỉnh văn bản",
+            "left": "Trái",
+            "center": "Giữa",
+            "right": "Phải",
+            "placeholder": "Thêm căn chỉnh văn bản"
+          },
+          "text_color": "Màu văn bản"
+        }
+      },
+      "color_palettes": {
+        "modern": "Hiện đại",
+        "horizon": "Chân trời",
+        "earthen": "Đất"
+      },
+      "common": {
+        "add_widget": "Thêm widget",
+        "widget_title": {
+          "label": "Đặt tên widget này",
+          "placeholder": "vd., \"Việc cần làm hôm qua\", \"Tất cả hoàn thành\""
+        },
+        "chart_type": "Loại biểu đồ",
+        "visualization_type": {
+          "label": "Kiểu trực quan hóa",
+          "placeholder": "Thêm kiểu trực quan hóa"
+        },
+        "date_group": {
+          "label": "Nhóm ngày",
+          "placeholder": "Thêm nhóm ngày"
+        },
+        "grouping": "Phân nhóm",
+        "group_by": "Nhóm theo",
+        "stacking": "Xếp chồng",
+        "stack_by": "Xếp chồng theo",
+        "daily": "Hàng ngày",
+        "weekly": "Hàng tuần",
+        "monthly": "Hàng tháng",
+        "yearly": "Hàng năm",
+        "work_item_count": "Số lượng mục công việc",
+        "estimate_point": "Điểm ước tính",
+        "pending_work_item": "Mục công việc đang chờ",
+        "completed_work_item": "Mục công việc đã hoàn thành",
+        "in_progress_work_item": "Mục công việc đang thực hiện",
+        "blocked_work_item": "Mục công việc bị chặn",
+        "work_item_due_this_week": "Mục công việc đến hạn tuần này",
+        "work_item_due_today": "Mục công việc đến hạn hôm nay",
+        "color_scheme": {
+          "label": "Bảng màu",
+          "placeholder": "Thêm bảng màu"
+        },
+        "smoothing": "Làm mịn",
+        "markers": "Điểm đánh dấu",
+        "legends": "Chú thích",
+        "tooltips": "Chú giải",
+        "opacity": {
+          "label": "Độ trong suốt",
+          "placeholder": "Thêm độ trong suốt"
+        },
+        "border": "Viền",
+        "widget_configuration": "Cấu hình widget",
+        "configure_widget": "Cấu hình widget",
+        "guides": "Hướng dẫn",
+        "style": "Kiểu",
+        "area_appearance": "Giao diện vùng",
+        "comparison_line_appearance": "Giao diện đường so sánh",
+        "add_property": "Thêm thuộc tính",
+        "add_metric": "Thêm chỉ số"
+      },
+      "not_configured_state": {
+        "bar_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "stacked": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Xếp chồng theo đang thiếu giá trị."
+          },
+          "grouped": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Nhóm theo đang thiếu giá trị."
+          }
+        },
+        "line_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "multi_line": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Nhóm theo đang thiếu giá trị."
+          }
+        },
+        "area_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "stacked": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị.",
+            "group_by": "Xếp chồng theo đang thiếu giá trị."
+          },
+          "comparison": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "donut_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          },
+          "progress": {
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "pie_chart": {
+          "basic": {
+            "x_axis_property": "Trục x đang thiếu giá trị.",
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "text": {
+          "basic": {
+            "y_axis_metric": "Chỉ số đang thiếu giá trị."
+          }
+        },
+        "ask_admin": "Yêu cầu quản trị viên của bạn cấu hình widget này."
+      }
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Tạo dashboard mới",
+        "update": "Cập nhật dashboard"
+      },
+      "title": {
+        "label": "Đặt tên dashboard của bạn.",
+        "placeholder": "\"Năng lực giữa các dự án\", \"Khối lượng công việc theo nhóm\", \"Trạng thái trên tất cả các dự án\"",
+        "required_error": "Yêu cầu tiêu đề"
+      },
+      "project": {
+        "label": "Chọn dự án",
+        "placeholder": "Dữ liệu từ các dự án này sẽ cung cấp cho dashboard này.",
+        "required_error": "Yêu cầu dự án"
+      },
+      "create_dashboard": "Tạo dashboard",
+      "update_dashboard": "Cập nhật dashboard"
+    },
+    "delete_modal": {
+      "heading": "Xóa dashboard"
+    },
+    "empty_state": {
+      "feature_flag": {
+        "title": "Trình bày tiến độ của bạn trong các dashboard theo yêu cầu, vĩnh viễn.",
+        "description": "Xây dựng bất kỳ dashboard nào bạn cần và tùy chỉnh cách dữ liệu của bạn hiển thị để có bản trình bày hoàn hảo về tiến độ của bạn.",
+        "coming_soon_to_mobile": "Sắp có trên ứng dụng di động",
+        "card_1": {
+          "title": "Cho tất cả dự án của bạn",
+          "description": "Có cái nhìn tổng quan về workspace của bạn với tất cả các dự án hoặc chia dữ liệu công việc của bạn để có cái nhìn hoàn hảo về tiến độ của bạn."
+        },
+        "card_2": {
+          "title": "Cho bất kỳ dữ liệu nào trong Plane",
+          "description": "Vượt xa Analytics có sẵn và biểu đồ Chu kỳ đã làm sẵn để xem các nhóm, sáng kiến hoặc bất cứ thứ gì khác như bạn chưa từng thấy trước đây."
+        },
+        "card_3": {
+          "title": "Cho tất cả nhu cầu trực quan hóa dữ liệu của bạn",
+          "description": "Chọn từ nhiều biểu đồ có thể tùy chỉnh với các điều khiển chi tiết để xem và hiển thị dữ liệu công việc của bạn chính xác như cách bạn muốn."
+        },
+        "card_4": {
+          "title": "Theo yêu cầu và vĩnh viễn",
+          "description": "Xây dựng một lần, giữ mãi mãi với tự động làm mới dữ liệu của bạn, cờ theo ngữ cảnh cho thay đổi phạm vi, và permalinks có thể chia sẻ."
+        },
+        "card_5": {
+          "title": "Xuất và lịch trình liên lạc",
+          "description": "Cho những lúc liên kết không hoạt động, lấy dashboard của bạn ra dưới dạng PDF một lần hoặc lên lịch để tự động gửi cho các bên liên quan."
+        },
+        "card_6": {
+          "title": "Tự động bố trí cho tất cả thiết bị",
+          "description": "Điều chỉnh kích thước widget của bạn cho bố cục bạn muốn và xem nó giống hệt nhau trên di động, máy tính bảng và các trình duyệt khác."
+        }
+      },
+      "dashboards_list": {
+        "title": "Trực quan hóa dữ liệu trong widget, xây dựng dashboard của bạn với widget, và xem mới nhất theo yêu cầu.",
+        "description": "Xây dựng dashboard của bạn với Widget tùy chỉnh hiển thị dữ liệu của bạn trong phạm vi bạn chỉ định. Nhận dashboard cho tất cả công việc của bạn trên các dự án và nhóm và chia sẻ permalinks với các bên liên quan để theo dõi theo yêu cầu."
+      },
+      "dashboards_search": {
+        "title": "Điều đó không khớp với tên dashboard.",
+        "description": "Đảm bảo truy vấn của bạn là đúng hoặc thử một truy vấn khác."
+      },
+      "widgets_list": {
+        "title": "Trực quan hóa dữ liệu của bạn theo cách bạn muốn.",
+        "description": "Sử dụng đường, cột, bánh tròn và các định dạng khác để xem dữ liệu của bạn\ntheo cách bạn muốn từ các nguồn bạn chỉ định."
+      },
+      "widget_data": {
+        "title": "Không có gì để xem ở đây",
+        "description": "Làm mới hoặc thêm dữ liệu để xem nó ở đây."
+      }
+    },
+    "common": {
+      "editing": "Đang chỉnh sửa"
+    }
+  },
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Cho phép mục công việc mới",
+      "work_item_creation_disable_tooltip": "Tạo mục công việc bị vô hiệu hóa cho trạng thái này",
+      "default_state": "Trạng thái mặc định cho phép tất cả thành viên tạo mục công việc mới. Điều này không thể thay đổi",
+      "state_change_count": "{count, plural, one {1 thay đổi trạng thái được cho phép} other {{count} thay đổi trạng thái được cho phép}}",
+      "movers_count": "{count, plural, one {1 người xem xét được liệt kê} other {{count} người xem xét được liệt kê}}",
+      "state_changes": {
+        "label": {
+          "default": "Thêm thay đổi trạng thái được cho phép",
+          "loading": "Đang thêm thay đổi trạng thái được cho phép"
+        },
+        "move_to": "Thay đổi trạng thái thành",
+        "movers": {
+          "label": "Khi được xem xét bởi",
+          "tooltip": "Người xem xét là những người được phép di chuyển mục công việc từ một trạng thái sang trạng thái khác.",
+          "add": "Thêm người xem xét"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Bạn không thể di chuyển mục công việc này đến đây."
+    },
+    "workflow_enabled": {
+      "label": "Thay đổi trạng thái"
+    },
+    "workflow_tree": {
+      "label": "Đối với mục công việc trong",
+      "state_change_label": "có thể di chuyển nó đến"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Kiểm soát sự hỗn loạn của thay đổi và xem xét với Quy trình làm việc.",
+        "description": "Đặt quy tắc cho nơi công việc của bạn di chuyển, bởi ai và khi nào với Quy trình làm việc trong Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Xem lịch sử thay đổi",
+      "reset_workflow": "Đặt lại quy trình làm việc"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Bạn có chắc muốn đặt lại quy trình làm việc này không?",
+        "description": "Nếu bạn đặt lại quy trình làm việc này, tất cả các quy tắc thay đổi trạng thái của bạn sẽ bị xóa và bạn sẽ phải tạo lại chúng để chạy chúng trong dự án này."
+      },
+      "delete_state_change": {
+        "title": "Bạn có chắc muốn xóa quy tắc thay đổi trạng thái này không?",
+        "description": "Sau khi xóa, bạn không thể hoàn tác thay đổi này và bạn sẽ phải đặt lại quy tắc nếu bạn muốn nó chạy cho dự án này."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} quy trình làm việc",
+        "success": {
+          "title": "Thành công",
+          "message": "Quy trình làm việc {action} thành công"
+        },
+        "error": {
+          "title": "Lỗi",
+          "message": "Quy trình làm việc không thể {action}. Vui lòng thử lại."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Thành công",
+          "message": "Quy trình làm việc đặt lại thành công"
+        },
+        "error": {
+          "title": "Lỗi đặt lại quy trình làm việc",
+          "message": "Quy trình làm việc không thể đặt lại. Vui lòng thử lại."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Lỗi thêm quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể thêm. Vui lòng thử lại."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Lỗi sửa đổi quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể sửa đổi. Vui lòng thử lại."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Lỗi xóa quy tắc thay đổi trạng thái",
+          "message": "Quy tắc thay đổi trạng thái không thể xóa. Vui lòng thử lại."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Lỗi sửa đổi người xem xét quy tắc thay đổi trạng thái",
+          "message": "Người xem xét quy tắc thay đổi trạng thái không thể sửa đổi. Vui lòng thử lại."
+        }
+      }
+    }
+  },
+  "customers": {
+    "label": "{count, plural, one {Khách hàng} other {Khách hàng}}",
+    "upgrade": {
+      "title": "Ưu tiên và quản lý công việc với Khách hàng.",
+      "description": "Ánh xạ công việc của bạn với khách hàng và ưu tiên theo thuộc tính khách hàng."
+    },
+    "properties": {
+      "default": {
+        "title": "Thuộc tính mặc định",
+        "customer_name": {
+          "name": "Tên khách hàng",
+          "placeholder": "Đây có thể là tên của người hoặc doanh nghiệp",
+          "validation": {
+            "required": "Tên khách hàng là bắt buộc.",
+            "max_length": "Tên khách hàng không thể nhiều hơn 255 ký tự."
+          }
+        },
+        "description": {
+          "name": "Mô tả",
+          "validation": {}
+        },
+        "email": {
+          "name": "Email",
+          "placeholder": "Nhập email",
+          "validation": {
+            "required": "Email là bắt buộc.",
+            "pattern": "Địa chỉ email không hợp lệ."
+          }
+        },
+        "website_url": {
+          "name": "Website",
+          "placeholder": "Bất kỳ URL nào với https:// sẽ hoạt động.",
+          "placeholder_short": "Thêm website",
+          "validation": {
+            "pattern": "URL website không hợp lệ"
+          }
+        },
+        "employees": {
+          "name": "Nhân viên",
+          "placeholder": "Số lượng nhân viên nếu khách hàng của bạn là doanh nghiệp.",
+          "validation": {
+            "min_length": "Số nhân viên không thể ít hơn 0."
+          }
+        },
+        "size": {
+          "name": "Quy mô",
+          "placeholder": "Thêm quy mô công ty",
+          "validation": {
+            "min_length": "Quy mô không hợp lệ"
+          }
+        },
+        "domain": {
+          "name": "Ngành",
+          "placeholder": "Bán lẻ, Thương mại điện tử, Fintech, Ngân hàng",
+          "placeholder_short": "Thêm ngành",
+          "validation": {}
+        },
+        "stage": {
+          "name": "Giai đoạn",
+          "placeholder": "Chọn giai đoạn",
+          "validation": {}
+        },
+        "contract_status": {
+          "name": "Trạng thái hợp đồng",
+          "placeholder": "Chọn trạng thái hợp đồng",
+          "validation": {}
+        },
+        "revenue": {
+          "name": "Doanh thu",
+          "placeholder": "Đây là doanh thu khách hàng của bạn tạo ra hàng năm.",
+          "validation": {
+            "min_length": "Doanh thu không thể ít hơn 0."
+          }
+        }
+      },
+      "custom": {
+        "title": "Thuộc tính tùy chỉnh",
+        "info": "Thêm thuộc tính độc đáo của khách hàng vào Plane để bạn có thể quản lý mục công việc hoặc hồ sơ khách hàng tốt hơn."
+      },
+      "empty_state": {
+        "title": "Bạn chưa có thuộc tính tùy chỉnh nào.",
+        "description": "Thuộc tính tùy chỉnh mà bạn muốn thấy trong mục công việc, ở nơi khác trong Plane, hoặc bên ngoài Plane trong CRM hoặc công cụ khác, sẽ xuất hiện ở đây khi bạn thêm chúng."
+      },
+      "add": {
+        "primary_button": "Thêm thuộc tính mới"
+      }
+    },
+    "stage": {
+      "lead": "Tiềm năng",
+      "sales_qualified_lead": "Tiềm năng đủ điều kiện bán hàng",
+      "contract_negotiation": "Đàm phán hợp đồng",
+      "closed_won": "Đã đóng thành công",
+      "closed_lost": "Đã đóng thất bại"
+    },
+    "contract_status": {
+      "active": "Đang hoạt động",
+      "pre_contract": "Tiền hợp đồng",
+      "signed": "Đã ký",
+      "inactive": "Không hoạt động"
+    },
+    "empty_state": {
+      "detail": {
+        "title": "Chúng tôi không thể tìm thấy hồ sơ khách hàng đó.",
+        "description": "Liên kết đến hồ sơ này có thể sai hoặc hồ sơ này có thể đã bị xóa.",
+        "primary_button": "Đi đến khách hàng",
+        "secondary_button": "Thêm khách hàng"
+      },
+      "search": {
+        "title": "Có vẻ như bạn không có hồ sơ khách hàng phù hợp với thuật ngữ đó.",
+        "description": "Thử với thuật ngữ tìm kiếm khác hoặc liên hệ với chúng tôi nếu bạn chắc chắn nên thấy kết quả cho thuật ngữ đó."
+      },
+      "list": {
+        "title": "Quản lý khối lượng, nhịp độ và luồng công việc của bạn theo những gì quan trọng đối với khách hàng của bạn.",
+        "description": "Với Khách hàng, một tính năng chỉ có trong Plane, bây giờ bạn có thể tạo khách hàng mới từ đầu và kết nối họ với công việc của bạn. Sắp tới, bạn sẽ đưa họ từ các công cụ khác cùng với các thuộc tính tùy chỉnh quan trọng đối với bạn.",
+        "primary_button": "Thêm khách hàng đầu tiên của bạn"
+      }
+    },
+    "settings": {
+      "unauthorized": "Bạn không được phép truy cập trang này.",
+      "description": "Theo dõi và quản lý mối quan hệ khách hàng trong quy trình làm việc của bạn.",
+      "enable": "Kích hoạt Khách hàng",
+      "toasts": {
+        "enable": {
+          "loading": "Đang kích hoạt tính năng khách hàng...",
+          "success": {
+            "title": "Bạn đã bật Khách hàng cho workspace này.",
+            "message": "Bạn không thể tắt nó lại."
+          },
+          "error": {
+            "title": "Chúng tôi không thể bật Khách hàng lúc này.",
+            "message": "Thử lại hoặc quay lại màn hình này sau. Nếu vẫn không hoạt động.",
+            "action": "Nói chuyện với hỗ trợ"
+          }
+        },
+        "disable": {
+          "loading": "Đang vô hiệu hóa tính năng khách hàng...",
+          "success": {
+            "title": "Đã vô hiệu hóa Khách hàng",
+            "message": "Tính năng Khách hàng đã vô hiệu hóa thành công!"
+          },
+          "error": {
+            "title": "Lỗi",
+            "message": "Không thể vô hiệu hóa tính năng khách hàng!"
+          }
+        }
+      }
+    },
+    "toasts": {
+      "list": {
+        "error": {
+          "title": "Chúng tôi không thể lấy danh sách khách hàng của bạn.",
+          "message": "Thử lại hoặc làm mới trang này."
+        }
+      },
+      "copy_link": {
+        "title": "Bạn đã sao chép liên kết trực tiếp đến khách hàng này.",
+        "message": "Dán vào bất kỳ đâu và nó sẽ dẫn trở lại đây."
+      },
+      "create": {
+        "success": {
+          "title": "{customer_name} hiện đã có sẵn",
+          "message": "Bạn có thể tham khảo khách hàng này trong mục công việc và theo dõi yêu cầu từ họ.",
+          "actions": {
+            "view": "Xem",
+            "copy_link": "Sao chép liên kết",
+            "copied": "Đã sao chép!"
+          }
+        },
+        "error": {
+          "title": "Chúng tôi không thể tạo hồ sơ lúc này.",
+          "message": "Thử lưu lại hoặc sao chép văn bản chưa lưu của bạn vào một mục mới, tốt nhất là trong tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Thành công!",
+          "message": "Đã cập nhật khách hàng thành công!"
+        },
+        "error": {
+          "title": "Lỗi!",
+          "message": "Không thể cập nhật khách hàng. Thử lại!"
+        }
+      },
+      "logo": {
+        "error": {
+          "title": "Chúng tôi không thể tải lên logo của khách hàng.",
+          "message": "Thử lưu logo lại hoặc bắt đầu từ đầu."
+        }
+      },
+      "work_item": {
+        "remove": {
+          "success": {
+            "title": "Bạn đã xóa một mục công việc khỏi hồ sơ của khách hàng này.",
+            "message": "Chúng tôi cũng đã tự động xóa khách hàng này khỏi mục công việc."
+          },
+          "error": {
+            "title": "Chúng tôi không thể xóa mục công việc đó khỏi hồ sơ của khách hàng này lúc này.",
+            "message": "Chúng tôi cũng đã tự động xóa khách hàng này khỏi mục công việc."
+          }
+        },
+        "add": {
+          "error": {
+            "title": "Chúng tôi không thể thêm mục công việc đó vào hồ sơ của khách hàng này lúc này.",
+            "message": "Thử thêm mục công việc đó lại hoặc quay lại sau. Nếu vẫn không hoạt động, hãy liên hệ với chúng tôi."
+          },
+          "success": {
+            "title": "Bạn đã thêm một mục công việc vào hồ sơ của khách hàng này.",
+            "message": "Chúng tôi cũng đã tự động thêm khách hàng này vào mục công việc."
+          }
+        }
+      }
+    },
+    "quick_actions": {
+      "edit": "Chỉnh sửa",
+      "copy_link": "Sao chép liên kết đến khách hàng",
+      "delete": "Xóa"
+    },
+    "create": {
+      "label": "Tạo hồ sơ khách hàng",
+      "loading": "Đang tạo",
+      "cancel": "Hủy"
+    },
+    "update": {
+      "label": "Cập nhật khách hàng",
+      "loading": "Đang cập nhật"
+    },
+    "delete": {
+      "title": "Bạn có chắc chắn muốn xóa hồ sơ khách hàng {customer_name}?",
+      "description": "Tất cả dữ liệu liên quan đến hồ sơ này sẽ bị xóa vĩnh viễn. Bạn không thể khôi phục hồ sơ này sau."
+    },
+    "requests": {
+      "empty_state": {
+        "list": {
+          "title": "Chưa có yêu cầu nào để hiển thị.",
+          "description": "Tạo yêu cầu từ khách hàng của bạn để bạn có thể liên kết chúng với mục công việc.",
+          "button": "Thêm yêu cầu mới"
+        },
+        "search": {
+          "title": "Có vẻ như bạn không có yêu cầu phù hợp với thuật ngữ đó.",
+          "description": "Thử với thuật ngữ tìm kiếm khác hoặc liên hệ với chúng tôi nếu bạn chắc chắn nên thấy kết quả cho thuật ngữ đó."
+        }
+      },
+      "label": "{count, plural, one {Yêu cầu} other {Yêu cầu}}",
+      "add": "Thêm yêu cầu",
+      "create": "Tạo yêu cầu",
+      "update": "Cập nhật yêu cầu",
+      "form": {
+        "name": {
+          "placeholder": "Đặt tên cho yêu cầu này",
+          "validation": {
+            "required": "Tên là bắt buộc.",
+            "max_length": "Tên yêu cầu không nên vượt quá 255 ký tự."
+          }
+        },
+        "description": {
+          "placeholder": "Mô tả bản chất của yêu cầu hoặc dán bình luận của khách hàng này từ công cụ khác."
+        },
+        "source": {
+          "add": "Thêm nguồn",
+          "update": "Cập nhật nguồn",
+          "url": {
+            "label": "URL",
+            "required": "URL là bắt buộc",
+            "invalid": "URL website không hợp lệ"
+          }
+        }
+      },
+      "toasts": {
+        "copy_link": {
+          "title": "Đã sao chép liên kết",
+          "message": "Liên kết yêu cầu khách hàng đã được sao chép vào clipboard."
+        },
+        "attachment": {
+          "upload": {
+            "loading": "Đang tải lên tệp đính kèm...",
+            "success": {
+              "title": "Đã tải lên tệp đính kèm",
+              "message": "Tệp đính kèm đã được tải lên thành công."
+            },
+            "error": {
+              "title": "Tệp đính kèm không được tải lên",
+              "message": "Không thể tải lên tệp đính kèm."
+            }
+          },
+          "size": {
+            "error": {
+              "title": "Lỗi!",
+              "message": "Chỉ có thể tải lên một tệp mỗi lần."
+            }
+          },
+          "length": {
+            "message": "Tệp phải có kích thước {size}MB hoặc nhỏ hơn"
+          },
+          "remove": {
+            "success": {
+              "title": "Đã xóa tệp đính kèm",
+              "message": "Tệp đính kèm đã được xóa thành công"
+            },
+            "error": {
+              "title": "Tệp đính kèm không được xóa",
+              "message": "Không thể xóa tệp đính kèm"
+            }
+          }
+        },
+        "source": {
+          "update": {
+            "success": {
+              "title": "Thành công!",
+              "message": "Đã cập nhật nguồn thành công!"
+            },
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể cập nhật nguồn."
+            }
+          }
+        },
+        "work_item": {
+          "add": {
+            "error": {
+              "title": "Lỗi!",
+              "message": "Không thể thêm mục công việc vào yêu cầu. Thử lại."
+            },
+            "success": {
+              "title": "Thành công!",
+              "message": "Đã thêm mục công việc vào yêu cầu."
+            }
+          }
+        },
+        "update": {
+          "success": {
+            "message": "Đã cập nhật yêu cầu thành công!",
+            "title": "Thành công!"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể cập nhật yêu cầu. Thử lại!"
+          }
+        },
+        "create": {
+          "success": {
+            "message": "Đã tạo yêu cầu thành công!",
+            "title": "Thành công!"
+          },
+          "error": {
+            "title": "Lỗi!",
+            "message": "Không thể tạo yêu cầu. Thử lại!"
+          }
+        }
+      }
+    },
+    "linked_work_items": {
+      "label": "Mục công việc đã liên kết",
+      "link": "Liên kết mục công việc",
+      "empty_state": {
+        "list": {
+          "title": "Có vẻ như bạn chưa liên kết mục công việc nào với khách hàng này.",
+          "description": "Liên kết mục công việc hiện có từ bất kỳ dự án nào ở đây để bạn có thể theo dõi chúng theo khách hàng này.",
+          "button": "Liên kết mục công việc"
+        }
+      },
+      "action": {
+        "remove_epic": "Xóa epic",
+        "remove": "Xóa mục công việc"
+      }
+    },
+    "sidebar": {
+      "properties": "Thuộc tính"
+    }
+  },
+  "templates": {
+    "settings": {
+      "title": "Mẫu",
+      "description": "Lưu 80% thời gian đã tiêu tốn trong việc tạo dự án, mục công việc và trang khi bạn sử dụng các mẫu.",
+      "options": {
+        "project": {
+          "label": "Mẫu dự án"
+        },
+        "work_item": {
+          "label": "Mẫu mục công việc"
+        },
+        "page": {
+          "label": "Mẫu trang"
+        }
+      },
+      "create_template": {
+        "label": "Tạo mẫu",
+        "no_permission": {
+          "project": "Liên hệ quản trị dự án của bạn để tạo mẫu",
+          "workspace": "Liên hệ quản trị workspace của bạn để tạo mẫu"
+        }
+      },
+      "use_template": {
+        "button": {
+          "default": "Sử dụng mẫu",
+          "loading": "Đang áp dụng"
+        }
+      },
+      "template_source": {
+        "workspace": {
+          "info": "Được thừa kế từ workspace"
+        },
+        "project": {
+          "info": "Được thừa kế từ dự án"
+        }
+      },
+      "form": {
+        "project": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu dự án của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Đặt tên cho dự án của bạn.",
+            "validation": {
+              "required": "Tên dự án là bắt buộc",
+              "maxLength": "Tên dự án không nên vượt quá 255 ký tự"
+            }
+          },
+          "description": {
+            "placeholder": "Mô tả mục tiêu và mục tiêu của dự án này."
+          },
+          "button": {
+            "create": "Tạo mẫu dự án",
+            "update": "Cập nhật mẫu dự án"
+          }
+        },
+        "work_item": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu mục công việc của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Đặt tên cho mục công việc của bạn.",
+            "validation": {
+              "required": "Tên mục công việc là bắt buộc",
+              "maxLength": "Tên mục công việc không nên vượt quá 255 ký tự"
+            }
+          },
+          "description": {
+            "placeholder": "Mô tả mục công việc này để rõ ràng những gì bạn sẽ hoàn thành khi hoàn tất điều này."
+          },
+          "button": {
+            "create": "Tạo mẫu mục công việc",
+            "update": "Cập nhật mẫu mục công việc"
+          }
+        },
+        "page": {
+          "template": {
+            "name": {
+              "placeholder": "Đặt tên cho mẫu trang của bạn.",
+              "validation": {
+                "required": "Tên mẫu là bắt buộc",
+                "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+              }
+            },
+            "description": {
+              "placeholder": "Mô tả khi và cách sử dụng mẫu này."
+            }
+          },
+          "name": {
+            "placeholder": "Trang không có tên",
+            "validation": {
+              "maxLength": "Tên trang không nên vượt quá 255 ký tự"
+            }
+          },
+          "button": {
+            "create": "Tạo mẫu trang",
+            "update": "Cập nhật mẫu trang"
+          }
+        },
+        "publish": {
+          "action": "{isPublished, select, true {Cài đặt xuất bản} other {Xuất bản lên Marketplace}}",
+          "unpublish_action": "Gỡ khỏi Marketplace",
+          "title": "Làm cho mẫu của bạn dễ khám phá và nhận biết.",
+          "name": {
+            "label": "Tên mẫu",
+            "placeholder": "Đặt tên cho mẫu của bạn",
+            "validation": {
+              "required": "Tên mẫu là bắt buộc",
+              "maxLength": "Tên mẫu không nên vượt quá 255 ký tự"
+            }
+          },
+          "short_description": {
+            "label": "Mô tả ngắn",
+            "placeholder": "Mẫu này rất phù hợp cho các Quản lý Dự án đang quản lý nhiều dự án cùng lúc.",
+            "validation": {
+              "required": "Mô tả ngắn là bắt buộc"
+            }
+          },
+          "description": {
+            "label": "Mô tả",
+            "placeholder": "Nâng cao năng suất và tối ưu hóa giao tiếp với tính năng Chuyển đổi Giọng nói thành Văn bản.\n• Chuyển đổi thời gian thực: Chuyển đổi lời nói thành văn bản chính xác ngay lập tức.\n• Tạo nhiệm vụ và bình luận: Thêm nhiệm vụ, mô tả và bình luận thông qua lệnh thoại.",
+            "validation": {
+              "required": "Mô tả là bắt buộc"
+            }
+          },
+          "category": {
+            "label": "Danh mục",
+            "placeholder": "Chọn nơi bạn nghĩ phù hợp nhất. Bạn có thể chọn nhiều hơn một.",
+            "validation": {
+              "required": "Cần ít nhất một danh mục"
+            }
+          },
+          "keywords": {
+            "label": "Từ khóa",
+            "placeholder": "Sử dụng các thuật ngữ mà bạn nghĩ người dùng sẽ tìm kiếm khi tìm mẫu này.",
+            "helperText": "Nhập các từ khóa được phân tách bằng dấu phẩy, có khả năng giúp người dùng tìm kiếm từ khóa này.",
+            "validation": {
+              "required": "Cần ít nhất một từ khóa"
+            }
+          },
+          "company_name": {
+            "label": "Tên công ty",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Tên công ty là bắt buộc",
+              "maxLength": "Tên công ty không nên vượt quá 255 ký tự"
+            }
+          },
+          "contact_email": {
+            "label": "Email hỗ trợ",
+            "placeholder": "help@plane.so",
+            "validation": {
+              "invalid": "Địa chỉ email không hợp lệ",
+              "required": "Email hỗ trợ là bắt buộc",
+              "maxLength": "Email hỗ trợ không nên vượt quá 255 ký tự"
+            }
+          },
+          "privacy_policy_url": {
+            "label": "Liên kết đến chính sách bảo mật của bạn",
+            "placeholder": "https://planes.so/privacy-policy",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "terms_of_service_url": {
+            "label": "Liên kết đến điều khoản sử dụng của bạn",
+            "placeholder": "https://planes.so/terms-of-use",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
+          "cover_image": {
+            "label": "Thêm ảnh bìa sẽ được hiển thị trong marketplace",
+            "upload_title": "Tải lên ảnh bìa",
+            "upload_placeholder": "Nhấp để tải lên hoặc kéo và thả để tải lên ảnh bìa",
+            "drop_here": "Thả vào đây",
+            "click_to_upload": "Nhấp để tải lên",
+            "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước. Vui lòng thử lại.",
+            "upload_and_save": "Tải lên và lưu",
+            "uploading": "Đang tải lên",
+            "remove": "Xóa",
+            "removing": "Đang xóa",
+            "validation": {
+              "required": "Ảnh bìa là bắt buộc"
+            }
+          },
+          "attach_screenshots": {
+            "label": "Bao gồm tài liệu và hình ảnh mà bạn nghĩ sẽ giúp người xem hiểu rõ hơn về mẫu này.",
+            "validation": {
+              "required": "Cần ít nhất một ảnh chụp màn hình"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Mẫu",
+        "description": "Với mẫu dự án, mẫu mục công việc và mẫu trang trong Plane, bạn không phải tạo dự án từ đầu hoặc thiết lập thuộc tính mục công việc theo cách thủ công.",
+        "sub_description": "Nhận lại 80% thời gian quản lý của bạn khi bạn sử dụng Mẫu."
+      },
+      "no_templates": {
+        "button": "Tạo mẫu của bạn"
+      },
+      "no_labels": {
+        "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "page": {
+        "no_templates": {
+          "title": "Không có mẫu nào mà bạn có quyền truy cập.",
+          "description": "Vui lòng tạo một mẫu"
+        },
+        "no_results": {
+          "title": "Điều đó không khớp với mẫu nào.",
+          "description": "Thử tìm kiếm bằng các thuật ngữ khác."
+        }
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Mẫu đã được tạo",
+          "message": "{templateName}, mẫu {templateType}, hiện có sẵn cho workspace của bạn."
+        },
+        "error": {
+          "title": "Chúng tôi không thể tạo mẫu đó lần này.",
+          "message": "Thử lưu lại chi tiết của bạn hoặc sao chép chúng sang mẫu mới, nhất quán trong một tab khác."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Mẫu đã được thay đổi",
+          "message": "{templateName}, mẫu {templateType}, đã được thay đổi."
+        },
+        "error": {
+          "title": "Chúng tôi không thể lưu thay đổi cho mẫu này.",
+          "message": "Thử lưu lại chi tiết của bạn hoặc quay lại mẫu này sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Mẫu đã được xóa",
+          "message": "{templateName}, mẫu {templateType}, đã được xóa khỏi workspace của bạn."
+        },
+        "error": {
+          "title": "Chúng tôi không thể xóa mẫu đó lần này.",
+          "message": "Thử xóa nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      },
+      "unpublish": {
+        "success": {
+          "title": "Mẫu đã được gỡ xuất bản",
+          "message": "{templateName}, mẫu {templateType}, đã được gỡ xuất bản."
+        },
+        "error": {
+          "title": "Chúng tôi không thể gỡ xuất bản mẫu đó lần này.",
+          "message": "Thử gỡ xuất bản nó lại hoặc quay lại nó sau. Nếu vẫn còn vấn đề, liên hệ với chúng tôi."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Xóa mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn xóa mẫu-",
+        "suffix": "? Tất cả dữ liệu liên quan đến mẫu sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
+      }
+    },
+    "unpublish_confirmation": {
+      "title": "Gỡ xuất bản mẫu",
+      "description": {
+        "prefix": "Bạn có chắc chắn muốn gỡ xuất bản mẫu-",
+        "suffix": "? Mẫu này sẽ không còn khả dụng cho người dùng trên marketplace."
+      }
+    },
+    "dropdown": {
+      "add": {
+        "work_item": "Thêm mẫu mới",
+        "project": "Thêm mẫu mới"
+      },
+      "label": {
+        "project": "Chọn mẫu dự án",
+        "page": "Chọn từ mẫu"
+      },
+      "tooltip": {
+        "work_item": "Chọn mẫu mục công việc"
+      },
+      "no_results": {
+        "work_item": "Không tìm thấy mẫu.",
+        "project": "Không tìm thấy mẫu."
+      }
+    }
+  },
+  "workspace_analytics": {
+    "projects_by_status": "Dự án theo trạng thái",
+    "active_users": "Người dùng hoạt động",
+    "intake_trends": "Xu hướng tiếp nhận",
+    "empty_state": {
+      "cycle_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm các hạng mục công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
+      },
+      "module_progress": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích tiến độ mô-đun sẽ hiển thị ở đây. Thêm các hạng mục công việc vào mô-đun để bắt đầu theo dõi tiến độ."
+      },
+      "intake_trends": {
+        "title": "Chưa có dữ liệu",
+        "description": "Phân tích xu hướng intake sẽ hiển thị ở đây. Thêm các hạng mục công việc vào intake để bắt đầu theo dõi xu hướng."
+      }
+    },
+    "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
+  }
+}

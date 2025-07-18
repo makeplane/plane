@@ -51,9 +51,10 @@
   &::after {
     content: "";
     position: absolute;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     left: calc(-1 * var(--horizontal-offset));
-    height: 100%;
+    height: calc(100% - 1.5px);
     width: calc(100% + (var(--horizontal-offset) * 2));
     background-color: rgba(var(--color-primary-100), 0.2);
     border-radius: 4px;
@@ -69,37 +70,6 @@
       background-color: rgba(var(--color-background-100), 0.2);
     }
   }
-}
-
-/* for targeting the task list items */
-li.ProseMirror-selectednode:not(.dragging)[data-checked]::after {
-  margin-left: -5px;
-}
-
-/* for targeting the unordered list items */
-ul > li.ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -10px; /* Adjust as needed */
-}
-
-/* Initialize a counter for the ordered list */
-ol {
-  counter-reset: item;
-}
-
-/* for targeting the ordered list items */
-ol > li.ProseMirror-selectednode:not(.dragging)::after {
-  counter-increment: item;
-  margin-left: -18px;
-}
-
-/* for targeting the ordered list items after the 9th item */
-ol > li:nth-child(n + 10).ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -25px;
-}
-
-/* for targeting the ordered list items after the 99th item */
-ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
-  margin-left: -35px;
 }
 
 .ProseMirror node-image,
