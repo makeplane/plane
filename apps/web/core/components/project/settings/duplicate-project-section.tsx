@@ -21,13 +21,6 @@ export const DuplicateProjectSection: React.FC<Props> = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const defaultData = projectDetails
-    ? {
-        ...projectDetails,
-        name: `${projectDetails.name} copy`,
-        identifier: `${projectDetails.identifier}-COPY`,
-      }
-    : undefined;
 
   return (
     <Disclosure as="div" className="border-t border-custom-border-100 py-4">
@@ -49,7 +42,7 @@ export const DuplicateProjectSection: React.FC<Props> = ({
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
-                  Create a new project with the current project's configuration.
+                  Create a new project with the current project&apos;s configuration.
                 </span>
                 <Button variant="primary" onClick={() => setIsModalOpen(true)}>
                   Duplicate project
@@ -62,7 +55,7 @@ export const DuplicateProjectSection: React.FC<Props> = ({
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               workspaceSlug={workspaceSlug}
-              data={defaultData}
+              data={projectDetails}
               templateId={projectId}
             />
           )}

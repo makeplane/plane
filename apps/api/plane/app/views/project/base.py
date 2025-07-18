@@ -40,39 +40,17 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
-from plane.db.models import Issue
+from plane.db.models import Issue, Module, ModuleIssue
 
 
-def duplicate_project(template_project, user, *, name=None, identifier=None):
-    """Duplicate a project with its issues.
-
-    Parameters
-    ----------
-    template_project: Project
-        The project to duplicate.
-    user: User
-        The user initiating the duplication.
-    name: str | None
-        Optional name for the duplicated project.
-    identifier: str | None
-        Optional identifier for the duplicated project.
-    """
-    base_identifier = template_project.identifier
-    if identifier:
-        new_identifier = identifier.strip().upper()
-    else:
-        new_identifier = f"{base_identifier}-COPY"
-        counter = 1
-        while ProjectIdentifier.objects.filter(
-            name=new_identifier, workspace=template_project.workspace
-        ).exists():
-            counter += 1
-            new_identifier = f"{base_identifier}-COPY{counter}"
-
-    original_id = template_project.id
+def duplicate_project(template_project, user, name, identifier):
+    new_identifier = identifier.strip().upper()
+    original_project_id = template_project.id
     original_default_state = template_project.default_state_id
+
+    # Duplicate project
     template_project.pk = None
-    template_project.name = name or f"{template_project.name} (Copy)"
+    template_project.name = name
     template_project.identifier = new_identifier
     template_project.created_by = user
     template_project.updated_by = user
@@ -84,13 +62,12 @@ def duplicate_project(template_project, user, *, name=None, identifier=None):
         workspace=template_project.workspace,
     )
 
-    ProjectMember.objects.create(
-        project=template_project, member=user, role=20
-    )
+    ProjectMember.objects.create(project=template_project, member=user, role=20)
     IssueUserProperty.objects.create(project=template_project, user=user)
 
+    # Duplicate states
     states_map = {}
-    for state in State.objects.filter(project_id=original_id):
+    for state in State.objects.filter(project_id=original_project_id):
         old_id = state.id
         state.pk = None
         state.project = template_project
@@ -104,21 +81,66 @@ def duplicate_project(template_project, user, *, name=None, identifier=None):
         template_project.default_state = states_map[original_default_state]
         template_project.save(update_fields=["default_state"])
 
-    for issue in Issue.objects.filter(project_id=original_id):
-        assignees = list(issue.assignees.all())
+    # Duplicate modules
+    module_map = {}
+    for module in Module.objects.filter(project_id=original_project_id):
+        members = list(module.members.all())
+        old_id = module.id
+        module.pk = None
+        module.project = template_project
+        module.workspace = template_project.workspace
+        module.created_by = user
+        module.updated_by = user
+        module.save()
+        if members:
+            module.members.set(members)
+        module_map[old_id] = module
+
+    # Duplicate issues without setting parent
+    issue_map = {}
+    for issue in Issue.objects.filter(project_id=original_project_id):
         labels = list(issue.labels.all())
-        old_state = issue.state_id
+        issue_modules = list(
+            ModuleIssue.objects.filter(issue=issue).values_list("module_id", flat=True)
+        )
+        old_id = issue.id
+        old_parent_id = issue.parent_id
+
         issue.pk = None
         issue.project = template_project
         issue.workspace = template_project.workspace
-        issue.state = states_map.get(old_state)
+        issue.state = states_map.get(issue.state_id)
+        issue.parent = None  # Defer linking parent
         issue.created_by = user
         issue.updated_by = user
         issue.save()
-        if assignees:
-            issue.assignees.set(assignees)
+
         if labels:
             issue.labels.set(labels)
+
+        for old_module_id in issue_modules:
+            if old_module_id in module_map:
+                ModuleIssue.objects.create(
+                    issue=issue,
+                    module=module_map[old_module_id],
+                    project=template_project,
+                    workspace=template_project.workspace,
+                    created_by=user,
+                    updated_by=user,
+                )
+
+        issue_map[old_id] = {
+            "new_issue": issue,
+            "old_parent_id": old_parent_id,
+        }
+
+    # Link parent issues after all are saved
+    for old_issue_id, data in issue_map.items():
+        new_issue = data["new_issue"]
+        old_parent_id = data["old_parent_id"]
+        if old_parent_id and old_parent_id in issue_map:
+            new_issue.parent = issue_map[old_parent_id]["new_issue"]
+            new_issue.save(update_fields=["parent"])
 
     return template_project
 
@@ -333,25 +355,35 @@ class ProjectViewSet(BaseViewSet):
                         {"error": "Template project does not exist"},
                         status=status.HTTP_404_NOT_FOUND,
                     )
-                new_project = duplicate_project(template_project, request.user)
                 name = request.data.get("name")
                 identifier = request.data.get("identifier")
-                if name:
-                    new_project.name = name
-                if identifier:
-                    if ProjectIdentifier.objects.filter(
-                        name=identifier.strip().upper(),
-                        workspace_id=new_project.workspace_id,
-                    ).exists():
-                        return Response(
-                            {"identifier": "The project identifier is already taken"},
-                            status=status.HTTP_409_CONFLICT,
-                        )
-                    new_project.identifier = identifier.strip().upper()
-                    ProjectIdentifier.objects.filter(project=new_project).update(
-                        name=new_project.identifier
+                if name and Project.objects.filter(
+                    name=name,
+                    workspace=workspace,
+                    deleted_at__isnull=True,
+                ).exists():
+                    return Response(
+                        {
+                            "name": "The project name is already taken",
+                            "code": "PROJECT_NAME_ALREADY_EXIST",
+                        },
+                        status=status.HTTP_409_CONFLICT,
                     )
-                new_project.save()
+
+                if identifier and ProjectIdentifier.objects.filter(
+                    name=identifier.strip().upper(),
+                    workspace=workspace,
+                ).exists():
+                    return Response(
+                        {
+                            "identifier": "The project identifier is already taken",
+                            "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
+                        },
+                        status=status.HTTP_409_CONFLICT,
+                    )
+
+                new_project = duplicate_project(template_project, request.user, name=name, identifier=identifier)
+
                 serializer = ProjectListSerializer(new_project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -453,10 +485,20 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             if "already exists" in str(e):
+                print(e)
                 return Response(
                     {
                         "name": "The project name is already taken",
                         "code": "PROJECT_NAME_ALREADY_EXIST",
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
+            else:
+                print(e)
+                return Response(
+                    {
+                        "identifier": "The project identifier is already taken",
+                        "code": "PROJECT_IDENTIFIER_ALREADY_EXIST",
                     },
                     status=status.HTTP_409_CONFLICT,
                 )
