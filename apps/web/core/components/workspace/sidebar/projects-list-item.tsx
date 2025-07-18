@@ -9,7 +9,7 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight, Copy } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
@@ -20,7 +20,7 @@ import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLin
 // components
 import { cn } from "@plane/utils";
 import { Logo } from "@/components/common/logo";
-import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
+import { LeaveProjectModal, PublishProjectModal, CreateProjectModal } from "@/components/project";
 // helpers
 // hooks
 import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
@@ -67,6 +67,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const isProjectListOpen = getIsProjectListOpen(projectId);
@@ -207,6 +208,15 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
+      {workspaceSlug && (
+        <CreateProjectModal
+          isOpen={duplicateModalOpen}
+          onClose={() => setDuplicateModalOpen(false)}
+          workspaceSlug={workspaceSlug.toString()}
+          data={project}
+          templateId={projectId}
+        />
+      )}
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
       <Disclosure key={`${project.id}_${URLProjectId}`} defaultOpen={isProjectListOpen} as="div">
         <div
@@ -329,6 +339,14 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     <span>{t("copy_link")}</span>
                   </span>
                 </CustomMenu.MenuItem>
+                {isAuthorized && (
+                  <CustomMenu.MenuItem onClick={() => setDuplicateModalOpen(true)}>
+                    <span className="flex items-center justify-start gap-2">
+                      <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+                      <span>{t("duplicate_project")}</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )}
                 {isAuthorized && (
                   <CustomMenu.MenuItem
                     onClick={() => {
