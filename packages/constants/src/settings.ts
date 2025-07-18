@@ -1,5 +1,5 @@
+import { PROFILE_SETTINGS } from "./profile";
 import { WORKSPACE_SETTINGS } from "./workspace";
-import { PROFILE_SETTINGS } from ".";
 
 export enum WORKSPACE_SETTINGS_CATEGORY {
   ADMINISTRATION = "administration",
