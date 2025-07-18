@@ -1,21 +1,17 @@
 "use client";
 
-import { useState, useMemo, useCallback, memo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { ArchiveIcon, ChevronRight, FileText, Loader } from "lucide-react";
 // plane imports
-import { ControlLink, EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { EmptyPageIcon, RestrictedPageIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { cn, getPageName } from "@plane/utils";
 // components
 import { Logo } from "@/components/common";
-// helpers
-import { cn } from "@/helpers/common.helper";
-import { getPageName } from "@/helpers/page.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -29,7 +25,7 @@ type Props = {
 };
 
 const WikiPageSidebarListItemComponent = observer((props: Props) => {
-  const { handleToggleExpanded, isDragging, isExpanded, paddingLeft, pageId, isHovered, canShowAddButton } = props;
+  const { handleToggleExpanded, isExpanded, paddingLeft, pageId, isHovered, canShowAddButton } = props;
   // states
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -56,6 +52,7 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     archived_at,
     canCurrentUserAccessPage,
     logo_props,
+    name,
   } = page ?? {};
 
   const isNestedPagesDisabledForPage = useMemo(
@@ -67,20 +64,6 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     () => is_description_empty || description_html === "<p></p>",
     [is_description_empty, description_html]
   );
-
-  // Function to determine the appropriate logo to display
-  const pageEmbedLogo = useMemo(() => {
-    if (!canCurrentUserAccessPage || isNestedPagesDisabledForPage) {
-      return <RestrictedPageIcon className="size-3.5" />;
-    }
-    if (logo_props?.in_use) {
-      return <Logo logo={logo_props} size={14} type="lucide" />;
-    }
-    if (!isDescriptionEmpty) {
-      return <FileText className="size-3.5" />;
-    }
-    return <EmptyPageIcon className="size-3.5" />;
-  }, [logo_props, isDescriptionEmpty, canCurrentUserAccessPage, isNestedPagesDisabledForPage]);
 
   const isPageActive = useMemo(
     () => pathname === `/${workspaceSlug}/pages/${page?.id}/`,
@@ -96,15 +79,49 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
 
   const showAddButton = isHovered && canShowAddButton;
 
+  // Centralized page content and state based on conditions
+  const pageContent = useMemo(() => {
+    const baseName = getPageName(name);
+    const isRestricted = !canCurrentUserAccessPage;
+    const needsUpgrade = isNestedPagesDisabledForPage;
+    const isArchived = !!archived_at;
+
+    const displayName = (() => {
+      if (needsUpgrade) return "Please upgrade to view";
+      if (isRestricted) return "Restricted Access";
+      return baseName;
+    })();
+
+    return {
+      tooltipText: baseName,
+      logo: (() => {
+        if (isRestricted || needsUpgrade) {
+          return <RestrictedPageIcon className="size-3.5" />;
+        }
+        if (logo_props?.in_use) {
+          return <Logo logo={logo_props} size={14} type="lucide" />;
+        }
+        if (!isDescriptionEmpty) {
+          return <FileText className="size-3.5" />;
+        }
+        return <EmptyPageIcon className="size-3.5" />;
+      })(),
+      status: {
+        isRestricted,
+        needsUpgrade,
+        isArchived,
+        hasAccess: !isRestricted && !needsUpgrade,
+      },
+      displayName,
+    };
+  }, [canCurrentUserAccessPage, isNestedPagesDisabledForPage, archived_at, logo_props, isDescriptionEmpty, name]);
+
   // Memoize event handlers to prevent recreation
   const handleMouseEnter = useCallback(() => setIsHovering(true), []);
   const handleMouseLeave = useCallback(() => setIsHovering(false), []);
-  const handleNavigate = useCallback(() => {
-    router.push(pageLink);
-  }, [router, pageLink]);
 
   const handleSubPagesToggle = useCallback(
-    async (e: React.MouseEvent) => {
+    async (e: React.MouseEvent | React.KeyboardEvent) => {
       e.stopPropagation();
       e.preventDefault();
       handleToggleExpanded();
@@ -128,6 +145,40 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
     [handleToggleExpanded, isExpanded, fetchSubPages]
   );
 
+  const handleNavigate = useCallback(
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (!pageContent?.status.hasAccess) {
+        return;
+      }
+
+      if ("metaKey" in e && (e.metaKey || e.ctrlKey)) {
+        window.open(pageLink, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // Regular click navigation
+      if (!isPageActive) {
+        router.push(pageLink);
+      } else {
+        handleSubPagesToggle(e);
+      }
+    },
+    [isPageActive, pageContent?.status.hasAccess, router, pageLink, handleSubPagesToggle]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      // Handle Enter and Space keys for accessibility
+      if (e.key === "Enter" || e.key === " ") {
+        handleNavigate(e);
+      }
+    },
+    [handleNavigate]
+  );
+
   // Memoize class names
   const linkClassName = useMemo(
     () =>
@@ -136,9 +187,11 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
         {
           "justify-center": isCollapsed,
           "bg-custom-primary-100/10 hover:bg-custom-primary-100/10 text-custom-primary-100 font-medium": isPageActive,
+          "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
+          "cursor-default": !pageContent?.status.hasAccess || isPageActive,
         }
       ),
-    [isCollapsed, isPageActive]
+    [isCollapsed, isPageActive, pageContent?.status.hasAccess]
   );
 
   const contentContainerClassName = useMemo(
@@ -163,15 +216,19 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
   if (!page) return null;
 
   return (
-    <Tooltip tooltipContent={page.name} position="right" disabled={!isCollapsed} isMobile={isMobile}>
-      <ControlLink
+    <Tooltip tooltipContent={pageContent?.tooltipText} position="right" disabled={!isCollapsed} isMobile={isMobile}>
+      <div
+        role="button"
+        tabIndex={0}
         className={linkClassName}
-        disabled={isPageActive || !canCurrentUserAccessPage}
-        href={pageLink}
         onClick={handleNavigate}
-        target="_self"
+        onKeyDown={handleKeyDown}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        aria-label={pageContent?.displayName}
+        aria-expanded={shouldShowSubPagesButton ? isExpanded : undefined}
+        aria-disabled={pageContent?.status.hasAccess ?? true}
+        aria-current={isPageActive ? "page" : undefined}
       >
         <div className={contentContainerClassName} style={contentStyle}>
           <div className="size-4 flex-shrink-0 grid place-items-center">
@@ -189,23 +246,17 @@ const WikiPageSidebarListItemComponent = observer((props: Props) => {
                 )}
               </button>
             ) : (
-              <span className="grid place-items-center">{pageEmbedLogo}</span>
+              <span className="grid place-items-center">{pageContent?.logo}</span>
             )}
           </div>
-          {!isNestedPagesDisabledForPage ? (
-            <p className="truncate text-sm flex-grow min-w-0">
-              {canCurrentUserAccessPage ? getPageName(page.name) : `Restricted Access`}
-            </p>
-          ) : (
-            <p className="truncate text-sm flex-grow min-w-0">{"Please upgrade to view"}</p>
-          )}
+          <p className="truncate text-sm flex-grow min-w-0">{pageContent?.displayName}</p>
         </div>
         {archived_at && (
           <div className="flex-shrink-0 size-4 grid place-items-center">
             <ArchiveIcon className="size-3.5 text-custom-text-300" />
           </div>
         )}
-      </ControlLink>
+      </div>
     </Tooltip>
   );
 });

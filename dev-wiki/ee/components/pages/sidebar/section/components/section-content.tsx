@@ -1,7 +1,7 @@
-import React, { useRef, memo } from "react";
-import { Disclosure } from "@headlessui/react";
-import { Loader } from "lucide-react";
+import React, { memo } from "react";
 import { useParams } from "next/navigation";
+import { Loader } from "lucide-react";
+import { Disclosure } from "@headlessui/react";
 import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { WikiPageSidebarListItemRoot } from "../../list-item-root";
@@ -25,7 +25,7 @@ const VirtualizedSectionContentComponent: React.FC<SectionContentProps> = ({
   const renderPlaceholder = (pageId: string) => (
     <div className="flex items-center px-2 text-custom-text-200" style={{ height: "30px" }}>
       <Loader className="size-3 mr-2 animate-spin opacity-30" />
-      <div className="h-2 bg-custom-background-80 rounded w-3/4 opacity-20"></div>
+      <div className="h-2 bg-custom-background-80 rounded w-3/4 opacity-20" />
     </div>
   );
 

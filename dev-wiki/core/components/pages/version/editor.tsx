@@ -112,6 +112,7 @@ export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props
       initialValue={description ?? "<p></p>"}
       containerClassName="p-0 pb-64 border-none"
       disabledExtensions={disabledExtensions}
+      flaggedExtensions={[]}
       displayConfig={displayConfig}
       editorClassName="pl-10"
       fileHandler={getReadOnlyEditorFileHandlers({

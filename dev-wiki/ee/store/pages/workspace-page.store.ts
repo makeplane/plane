@@ -5,9 +5,11 @@ import { EPageAccess } from "@plane/constants";
 // types
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
-import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@/helpers/page.helper";
+import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
+// services
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 import { TWorkspacePage, WorkspacePage } from "./workspace-page";
@@ -26,10 +28,12 @@ export interface IWorkspacePageStore {
   publicPageIds: string[];
   privatePageIds: string[];
   archivedPageIds: string[];
+  sharedPageIds: string[];
   // filtered page type arrays
   filteredPublicPageIds: string[];
   filteredPrivatePageIds: string[];
   filteredArchivedPageIds: string[];
+  filteredSharedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
   currentWorkspacePageIds: string[] | undefined;
@@ -52,6 +56,9 @@ export interface IWorkspacePageStore {
   getOrFetchPageInstance: ({ pageId }: { pageId: string }) => Promise<TWorkspacePage | undefined>;
   removePageInstance: (pageId: string) => void;
   updatePagesInStore: (pages: TPage[]) => void;
+  // page sharing actions
+  fetchPageSharedUsers: (pageId: string) => Promise<void>;
+  bulkUpdatePageSharedUsers: (pageId: string, sharedUsers: TPageSharedUser[]) => Promise<void>;
 }
 
 export class WorkspacePageStore implements IWorkspacePageStore {
@@ -68,16 +75,19 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   publicPageIds: string[] = [];
   privatePageIds: string[] = [];
   archivedPageIds: string[] = [];
+  sharedPageIds: string[] = [];
   // filtered page type arrays
   filteredPublicPageIds: string[] = [];
   filteredPrivatePageIds: string[] = [];
   filteredArchivedPageIds: string[] = [];
+  filteredSharedPageIds: string[] = [];
   // private props
   private _rootParentMap: Map<string, string | null> = new Map(); // pageId => rootParentId
   // disposers for reactions
   private disposers: (() => void)[] = [];
   // services
   pageService: WorkspacePageService;
+  pageShareService: PageShareService;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -90,10 +100,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       publicPageIds: observable,
       privatePageIds: observable,
       archivedPageIds: observable,
+      sharedPageIds: observable,
       // filtered page type arrays
       filteredPublicPageIds: observable,
       filteredPrivatePageIds: observable,
       filteredArchivedPageIds: observable,
+      filteredSharedPageIds: observable,
       // computed
       currentWorkspacePageIds: computed,
       // helper actions
@@ -107,10 +119,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       createPage: action,
       removePage: action,
       updatePagesInStore: action,
+      // page sharing actions
+      fetchPageSharedUsers: action,
+      bulkUpdatePageSharedUsers: action,
     });
 
     // service
     this.pageService = new WorkspacePageService();
+    this.pageShareService = new PageShareService();
 
     // Set up reactions to automatically update page type arrays
     this.setupReactions();
@@ -129,11 +145,13 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         // Track the version property of each page to detect updates
         pageVersions: Object.values(this.data).map((page) => ({
           id: page.id,
+          name: page.name,
           updated_at: page.updated_at,
           access: page.access,
           archived_at: page.archived_at,
           deleted_at: page.deleted_at,
           parent_id: page.parent_id,
+          is_shared: page.is_shared,
         })),
         currentWorkspace: this.store.workspaceRoot.currentWorkspace?.id,
       }),
@@ -229,6 +247,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         return this.filteredPrivatePageIds;
       case "archived":
         return this.filteredArchivedPageIds;
+      case "shared":
+        return this.filteredSharedPageIds;
       default:
         return [];
     }
@@ -308,10 +328,12 @@ export class WorkspacePageStore implements IWorkspacePageStore {
         this.publicPageIds = [];
         this.privatePageIds = [];
         this.archivedPageIds = [];
+        this.sharedPageIds = [];
         // Clear filtered arrays
         this.filteredPublicPageIds = [];
         this.filteredPrivatePageIds = [];
         this.filteredArchivedPageIds = [];
+        this.filteredSharedPageIds = [];
       });
       return;
     }
@@ -320,12 +342,17 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const workspacePages = allPages.filter((page) => page.workspace === currentWorkspace.id);
 
     // ---------- PUBLIC PAGES ----------
-    // Unfiltered public pages (sorted by updated_at)
+    // Unfiltered public pages (sorted alphabetically by name)
     const publicPages = workspacePages.filter(
-      (page) => page.access === EPageAccess.PUBLIC && !page.parent_id && !page.archived_at && !page.deleted_at
+      (page) =>
+        page.access === EPageAccess.PUBLIC &&
+        !page.parent_id &&
+        !page.archived_at &&
+        !page.deleted_at &&
+        !page.is_shared
     );
-    const sortedPublicPages = publicPages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    const sortedPublicPages = publicPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newPublicPageIds = sortedPublicPages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
@@ -343,10 +370,9 @@ export class WorkspacePageStore implements IWorkspacePageStore {
     const newFilteredPublicPageIds = sortedFilteredPublicPages
       .map((page) => page.id)
       .filter((id): id is string => id !== undefined);
-
     // ---------- PRIVATE PAGES ----------
     // Unfiltered private pages (sorted by updated_at)
-    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at);
+    const nonArchivedPages = workspacePages.filter((page) => !page.archived_at && !page.deleted_at && !page.is_shared);
     const privateParentPages = nonArchivedPages.filter(
       (page) => page.access === EPageAccess.PRIVATE && !page.parent_id
     );
@@ -356,8 +382,8 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return rootParent?.access !== EPageAccess.PRIVATE;
     });
     const combinedPrivatePages = [...privateParentPages, ...privateChildPages];
-    const sortedPrivatePages = combinedPrivatePages.sort(
-      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    const sortedPrivatePages = combinedPrivatePages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newPrivatePageIds = sortedPrivatePages.map((page) => page.id).filter((id): id is string => id !== undefined);
 
@@ -377,15 +403,15 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       .filter((id): id is string => id !== undefined);
 
     // ---------- ARCHIVED PAGES ----------
-    // Unfiltered archived pages (sorted by archived_at)
+    // Unfiltered archived pages (sorted alphabetically by name)
     const archivedWorkspacePages = workspacePages.filter((page) => page.archived_at && !page.deleted_at);
     const topLevelArchivedPages = archivedWorkspacePages.filter((page) => {
       if (!page.parent_id) return true; // Include pages without parents
       const rootParent = this.findRootParent(page);
       return !rootParent?.archived_at;
     });
-    const sortedArchivedPages = topLevelArchivedPages.sort(
-      (a, b) => new Date(b.archived_at ?? 0).getTime() - new Date(a.archived_at ?? 0).getTime()
+    const sortedArchivedPages = topLevelArchivedPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
     );
     const newArchivedPageIds = sortedArchivedPages
       .map((page) => page.id)
@@ -406,17 +432,52 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       .map((page) => page.id)
       .filter((id): id is string => id !== undefined);
 
+    // ---------- SHARED PAGES ----------
+    // Shared pages come directly from API when fetched with type="shared"
+    // Only show pages at first level that don't have a shared parent
+    const sharedPages = workspacePages.filter((page) => {
+      if (!page.is_shared) return false;
+
+      // If page has no parent, include it
+      if (!page.parent_id) return true;
+
+      // If page has a parent, check if parent is shared
+      const parentPage = this.getPageById(page.parent_id);
+      return !parentPage?.is_shared;
+    });
+    const sortedSharedPages = sharedPages.sort(
+      (a, b) => new Date(b.updated_at ?? 0).getTime() - new Date(a.updated_at ?? 0).getTime()
+    );
+    const newSharedPageIds = sortedSharedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
+
+    // Filtered shared pages (with all filters applied)
+    const filteredSharedPages = sharedPages.filter(
+      (page) =>
+        getPageName(page.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
+        shouldFilterPage(page, this.filters.filters)
+    );
+    const sortedFilteredSharedPages = orderPages(
+      filteredSharedPages as unknown as TPage[],
+      this.filters.sortKey,
+      this.filters.sortBy
+    ) as unknown as TWorkspacePage[];
+    const newFilteredSharedPageIds = sortedFilteredSharedPages
+      .map((page) => page.id)
+      .filter((id): id is string => id !== undefined);
+
     // Update arrays in a single runInAction to batch updates
     runInAction(() => {
       // Update unfiltered arrays
       this.publicPageIds = newPublicPageIds;
       this.privatePageIds = newPrivatePageIds;
       this.archivedPageIds = newArchivedPageIds;
+      this.sharedPageIds = newSharedPageIds;
 
       // Update filtered arrays
       this.filteredPublicPageIds = newFilteredPublicPageIds;
       this.filteredPrivatePageIds = newFilteredPrivatePageIds;
       this.filteredArchivedPageIds = newFilteredArchivedPageIds;
+      this.filteredSharedPageIds = newFilteredSharedPageIds;
     });
   };
 
@@ -543,6 +604,14 @@ export class WorkspacePageStore implements IWorkspacePageStore {
       return page;
     } catch (error) {
       runInAction(() => {
+        // Remove the page from store if fetch fails (page might not exist or be inaccessible)
+        if (pageId && this.data[pageId]) {
+          delete this.data[pageId];
+        }
+
+        // Clear any cached root parent references for this page
+        this._rootParentMap.delete(pageId);
+
         this.loader = undefined;
         this.error = {
           title: "Failed",
@@ -721,5 +790,78 @@ export class WorkspacePageStore implements IWorkspacePageStore {
 
   clearRootParentCache = () => {
     this._rootParentMap.clear();
+  };
+
+  // Page sharing actions
+  fetchPageSharedUsers = async (pageId: string) => {
+    try {
+      const { workspaceSlug } = this.store.router;
+      if (!workspaceSlug || !pageId) return;
+
+      const sharedUsers = await this.pageShareService.getWorkspacePageSharedUsers(workspaceSlug, pageId);
+      const finalUsers = sharedUsers.map((user) => ({
+        user_id: user.user_id,
+        access: user.access,
+      }));
+
+      runInAction(() => {
+        const page = this.getPageById(pageId);
+        if (page && finalUsers) {
+          page.updateSharedUsers(finalUsers);
+        }
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to fetch page shared users. Please try again later.",
+        };
+      });
+      throw error;
+    }
+  };
+
+  bulkUpdatePageSharedUsers = async (pageId: string, sharedUsers: TPageSharedUser[]) => {
+    const oldSharedUsers = this.getPageById(pageId)?.sharedUsers || [];
+    try {
+      const { workspaceSlug } = this.store.router;
+      if (!workspaceSlug || !pageId) return;
+
+      const page = this.getPageById(pageId);
+      if (!page) return;
+
+      // Optimistically update the state
+      runInAction(() => {
+        if (sharedUsers.length === 0) {
+          page.is_shared = false;
+        } else {
+          page.is_shared = true;
+        }
+        page.updateSharedUsers(sharedUsers);
+      });
+
+      // Make API call
+      await this.pageShareService.bulkUpdateWorkspacePageSharedUsers(workspaceSlug, pageId, sharedUsers);
+    } catch (error) {
+      runInAction(() => {
+        // Revert to old shared users list on error
+        const page = this.getPageById(pageId);
+        if (page) {
+          if (oldSharedUsers.length === 0) {
+            page.is_shared = false;
+          } else {
+            page.is_shared = true;
+          }
+          page.updateSharedUsers(oldSharedUsers);
+        }
+        this.loader = undefined;
+        this.error = {
+          title: "Failed",
+          description: "Failed to bulk update page shared users. Please try again later.",
+        };
+      });
+      throw error;
+    }
   };
 }

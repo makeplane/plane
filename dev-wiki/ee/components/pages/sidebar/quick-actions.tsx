@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { FilePlus2 } from "lucide-react";
 // helpers
-import { cn } from "@/helpers/common.helper";
+import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store";
 // plane web components
@@ -10,7 +10,6 @@ import { AppSearch } from "@/plane-web/components/workspace/sidebar";
 export const PagesAppSidebarQuickActions = observer(() => {
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
-  // const { toggleCreatePageModal } = useCommandPalette();
   // derived values
   const isSidebarCollapsed = !!sidebarCollapsed;
 
@@ -28,11 +27,6 @@ export const PagesAppSidebarQuickActions = observer(() => {
             "flex-shrink-0 p-0 size-8 grid place-items-center border-none": isSidebarCollapsed,
           }
         )}
-        // onClick={() =>
-        //   toggleCreatePageModal({
-        //     isOpen: true,
-        //   })
-        // }
       >
         <FilePlus2 className="size-4" />
         {!isSidebarCollapsed && "New page"}

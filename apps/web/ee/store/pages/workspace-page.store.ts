@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import set from "lodash/set";
 import { makeObservable, observable, runInAction, action, computed, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
@@ -7,10 +6,10 @@ import { EPageAccess } from "@plane/constants";
 import { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
-// services
-import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 // plane web services
 import { WorkspacePageService } from "@/plane-web/services/page";
+// services
+import { PageShareService, TPageSharedUser } from "@/plane-web/services/page/page-share.service";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 import { TWorkspacePage, WorkspacePage } from "./workspace-page";

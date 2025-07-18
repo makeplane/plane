@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -25,7 +25,7 @@ export const PagesAppSidebarList: React.FC<Props> = observer((props) => {
 
   // derived values
   const isCollapsed = !!sidebarCollapsed;
-  const sectionsList: TPageNavigationTabs[] = ["public", "private", "archived"];
+  const sectionsList: TPageNavigationTabs[] = ["public", "private", "shared", "archived"];
   // Current page ID (without UUID validation to keep it simple)
   const currentPageId = pageId ? pageId.toString() : undefined;
 

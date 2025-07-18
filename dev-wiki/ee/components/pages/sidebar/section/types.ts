@@ -1,7 +1,7 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { LucideIcon } from "lucide-react";
 // plane imports
-import { TPage, TPageNavigationTabs } from "@plane/types";
+import { TPageNavigationTabs } from "@plane/types";
 import { ISvgIcons } from "@plane/ui";
 
 // Basic section details type
@@ -47,4 +47,3 @@ export interface SectionRootProps {
 export interface DragAndDropHookReturn {
   isDropping: boolean;
 }
-

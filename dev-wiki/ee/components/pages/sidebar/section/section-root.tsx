@@ -15,6 +15,7 @@ import { useAppTheme } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // local imports
 import { SectionHeader, SectionContent } from "./components";
 import { SECTION_DETAILS } from "./constants";
@@ -40,12 +41,20 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const { sidebarCollapsed } = useAppTheme();
-  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds } = usePageStore(
+  const { createPage, getPageById, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } = usePageStore(
     EPageStoreType.WORKSPACE
   );
 
+  // feature flag check for shared pages
+  const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);
+
+  // Don't render shared section if feature flag is disabled
+  if (sectionType === "shared" && !isSharedPagesEnabled) {
+    return null;
+  }
+
   // Custom hooks
-  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById);
+  const { isDropping } = useSectionDragAndDrop(listSectionRef, getPageById, sectionType);
   const { isLoading } = useSectionPages(sectionType);
 
   // Get the page IDs based on section type directly from store's observable arrays
@@ -57,10 +66,12 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
         return privatePageIds;
       case "archived":
         return archivedPageIds;
+      case "shared":
+        return sharedPageIds;
       default:
         return [];
     }
-  }, [publicPageIds, privatePageIds, archivedPageIds, sectionType]);
+  }, [publicPageIds, privatePageIds, archivedPageIds, sharedPageIds, sectionType]);
 
   // Memoize derived values
   const pageIds = useMemo(() => getStorePageIds(), [getStorePageIds]);
@@ -79,9 +90,11 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
     // Determine current section of the page
     const currentPageSection = currentPage?.archived_at
       ? "archived"
-      : currentPage?.access === EPageAccess.PRIVATE
-        ? "private"
-        : "public";
+      : currentPage?.is_shared
+        ? "shared"
+        : currentPage?.access === EPageAccess.PRIVATE
+          ? "private"
+          : "public";
 
     if (!currentPageSection) return;
 
@@ -139,10 +152,11 @@ const WikiSidebarListSectionRootContent: React.FC<SectionRootProps> = observer((
 
   // Control loader visibility based on pageIds and loading state
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && pageIds.length === 0) {
+      // Only show loader if we're loading and have no cached data
       setShowLoader(true);
     } else if (pageIds.length > 0) {
-      // Short delay to prevent flickering if data arrives quickly
+      // If we have data, hide the loader (even if still loading for refresh)
       const timer = setTimeout(() => setShowLoader(false), 100);
       return () => clearTimeout(timer);
     } else {

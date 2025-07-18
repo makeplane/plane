@@ -2,14 +2,18 @@ import set from "lodash/set";
 import { computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
+
 import { EPageAccess } from "@plane/constants";
-import { EUserWorkspaceRoles, TPage } from "@plane/types";
+import { TPage, EUserWorkspaceRoles } from "@plane/types";
+// helpers
+import { getPageName } from "@plane/utils";
+// services
+import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // store
 import { BasePage, TPageInstance } from "@/store/pages/base-page";
-// services
-import { WorkspacePageService } from "../../services/page";
+
 const workspacePageService = new WorkspacePageService();
 
 export type TWorkspacePage = TPageInstance;
@@ -85,11 +89,14 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
 
   get subPageIds() {
     const pages = Object.values(this.rootStore.workspacePages.data);
-    const subPageIds = pages
-      .filter((page) => page.parent_id === this.id && !page.deleted_at)
-      .map((page) => page.id)
-      .filter((id): id is string => id !== undefined);
-    return subPageIds;
+    const filteredPages = pages.filter((page) => page.parent_id === this.id && !page.deleted_at);
+
+    // Sort pages alphabetically by name
+    const sortedPages = filteredPages.sort((a, b) =>
+      getPageName(a.name).toLowerCase().localeCompare(getPageName(b.name).toLowerCase())
+    );
+
+    return sortedPages.map((page) => page.id).filter((id): id is string => id !== undefined);
   }
 
   get subPages() {
@@ -100,20 +107,38 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    * @description returns true if the current logged in user can access the page
    */
   get canCurrentUserAccessPage() {
+    // Owner can always access
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.is_shared || this.hasSharedAccess) {
+      return this.is_shared || this.canViewWithSharedAccess;
+    }
+    // Fallback to regular access control
     const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic || this.isCurrentUserOwner;
+    return isPagePublic;
   }
 
   /**
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
+    // Owner can always edit
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence over role-based access
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
+      !!currentUserWorkspaceRole &&
+      currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER &&
+      this.canCurrentUserAccessPage
     );
   }
 
@@ -121,10 +146,17 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
+    // Owner can always duplicate
+    if (this.isCurrentUserOwner) return true;
+
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     return (
       this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
     );
@@ -148,34 +180,52 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    if (this.isCurrentUserOwner) return true;
 
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    if (this.hasSharedAccess) return false;
+
+    // Fallback to regular access control
+    const { workspaceSlug } = this.rootStore.router;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+
+    return currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    // Owner can always delete
+    if (this.isCurrentUserOwner) return true;
 
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    // Shared access users cannot delete pages
+    if (this.hasSharedAccess) return false;
+
+    // Fallback to regular access control
+    const { workspaceSlug } = this.rootStore.router;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+
+    return currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   }
 
   /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
+    // Owner can always favorite
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access users can favorite if they have at least view access
+    if (this.hasSharedAccess) {
+      return this.canViewWithSharedAccess;
+    }
+
+    // Fallback to regular access control
     const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.workspaceInfoBySlug(
-      workspaceSlug?.toString() || ""
-    )?.role;
+    const currentUserWorkspaceRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
     return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
   }
@@ -193,17 +243,26 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
   get isContentEditable() {
     const { workspaceSlug } = this.rootStore.router;
 
-    const isOwner = this.isCurrentUserOwner;
-    const currentUserRole = this.rootStore.user.permission.workspaceInfoBySlug(workspaceSlug?.toString() || "")?.role;
-    const isPublic = this.access === EPageAccess.PUBLIC;
     const isArchived = this.archived_at;
     const isLocked = this.is_locked;
 
-    return (
-      !isArchived &&
-      !isLocked &&
-      (isOwner || (isPublic && !!currentUserRole && currentUserRole >= EUserWorkspaceRoles.MEMBER))
-    );
+    // Can't edit if archived or locked
+    if (isArchived || isLocked) return false;
+
+    const isPublic = this.access === EPageAccess.PUBLIC;
+
+    // Owner can always edit (if not archived/locked)
+    if (this.isCurrentUserOwner) return true;
+
+    // Shared access takes precedence
+    if (this.hasSharedAccess) {
+      return this.canEditWithSharedAccess;
+    }
+
+    const currentUserRole =
+      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+
+    return isPublic && !!currentUserRole && currentUserRole >= EUserWorkspaceRoles.MEMBER;
   }
 
   getRedirectionLink = computedFn(() => {

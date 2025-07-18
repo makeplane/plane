@@ -5,6 +5,7 @@ import useSWR from "swr";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
+import { SidebarHelpSection } from "@/components/sidebar";
 import { SidebarDropdown } from "@/components/workspace";
 // helpers
 import { cn } from "@/helpers/common.helper";
@@ -107,6 +108,8 @@ export const PagesAppSidebar = observer(() => {
         />
         <PagesAppSidebarList expandedPageIds={expandedPageIds} setExpandedPageIds={setExpandedPageIds} />
       </div>
+
+      <SidebarHelpSection />
     </div>
   );
 });

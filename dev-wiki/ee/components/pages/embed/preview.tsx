@@ -170,6 +170,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   containerClassName="p-0 pl-3 border-none"
                   editorClassName="p-2.5 text-xs"
                   disabledExtensions={disabledExtensions}
+                  flaggedExtensions={[]}
                   displayConfig={{
                     fontSize: "small-font",
                   }}

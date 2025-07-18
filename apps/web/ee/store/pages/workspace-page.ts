@@ -5,12 +5,12 @@ import { computedFn } from "mobx-utils";
 import { EPageAccess } from "@plane/constants";
 import { EUserWorkspaceRoles, TPage } from "@plane/types";
 import { getPageName } from "@plane/utils";
+// services
+import { WorkspacePageService } from "@/plane-web/services/page";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 // store
 import { BasePage, TPageInstance } from "@/store/pages/base-page";
-// services
-import { WorkspacePageService } from "../../services/page";
 
 const workspacePageService = new WorkspacePageService();
 

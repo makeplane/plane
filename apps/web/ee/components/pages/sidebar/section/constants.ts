@@ -1,5 +1,4 @@
 import { ArchiveIcon, Globe2, Lock, Share } from "lucide-react";
-import { TPageNavigationTabs } from "@plane/types";
 import { SectionDetailsMap } from "./types";
 
 // Constants for section details
