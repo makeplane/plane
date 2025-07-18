@@ -3,14 +3,14 @@
   "description": "UI components shared across multiple apps internally",
   "private": true,
   "version": "0.27.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [
-    "dist/**"
+    "dist"
   ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup --minify",
     "dev": "tsup --watch",
