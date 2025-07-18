@@ -87,8 +87,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
       const redisClient = new Redis(redisUrl);
 
       await new Promise<void>((resolve, reject) => {
-        redisClient.on("error", (err: unknown) => {
-          const error = err as Error & { code?: string };
+        redisClient.on("error", (error: any) => {
           if (error?.code === "ENOTFOUND" || error.message.includes("WRONGPASS") || error.message.includes("NOAUTH")) {
             redisClient.disconnect();
           }

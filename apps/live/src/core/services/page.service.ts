@@ -20,12 +20,7 @@ export class PageService extends APIService {
       });
   }
 
-  async fetchDescriptionBinary(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-    cookie: string
-  ): Promise<Iterable<number>> {
+  async fetchDescriptionBinary(workspaceSlug: string, projectId: string, pageId: string, cookie: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -49,7 +44,7 @@ export class PageService extends APIService {
       description: object;
     },
     cookie: string
-  ): Promise<unknown> {
+  ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/description/`, data, {
       headers: {
         Cookie: cookie,
