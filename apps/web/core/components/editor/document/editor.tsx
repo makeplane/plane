@@ -39,13 +39,13 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     workspaceSlug,
     workspaceId,
     projectId,
-    disabledExtensions: additionalDisabledExtensions,
+    disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
   // store hooks
   const { getUserDetails } = useMember();
   // editor flaggings
-  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString());
+  const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug);
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
@@ -54,8 +54,8 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   const { getEditorFileHandlers } = useEditorConfig();
   // issue-embed
   const { issueEmbedProps } = useIssueEmbed({
-    projectId: projectId?.toString() ?? "",
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    projectId,
+    workspaceSlug,
   });
 
   return (
@@ -76,7 +76,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
           if (!res) throw new Error("Failed in fetching mentions");
           return res;
         },
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
+        renderComponent: EditorMentionsRoot,
         getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
       }}
       embedHandler={{
