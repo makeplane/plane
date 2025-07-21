@@ -1,40 +1,41 @@
 // plane imports
-import { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse } from "@plane/types";
-import { TEditorAssetType } from "@plane/types/src/enums";
+import { TDocumentPayload, TDuplicateAssetData, TDuplicateAssetResponse, TEditorAssetType } from "@plane/types";
+// plane web imports
+import {
+  extractAdditionalAssetsFromHTMLContent,
+  replaceAdditionalAssetsInHTMLContent,
+} from "@/plane-editor/helpers/parser";
 // local imports
 import { convertHTMLDocumentToAllFormats } from "./yjs-utils";
 
 /**
- * @description function to extract all image assets from HTML content
+ * @description function to extract all assets from HTML content
  * @param htmlContent
- * @returns {string[]} array of image asset sources
+ * @returns {string[]} array of asset sources
  */
-export const extractImageAssetsFromHTMLContent = (htmlContent: string): string[] => {
+const extractAssetsFromHTMLContent = (htmlContent: string): string[] => {
   // create a DOM parser
   const parser = new DOMParser();
   // parse the HTML string into a DOM document
   const doc = parser.parseFromString(htmlContent, "text/html");
-  // get all image components
-  const imageComponents = doc.querySelectorAll("image-component");
-  // collect all unique image sources
-  const imageSources = new Set<string>();
+  // collect all unique asset sources
+  const assetSources = new Set<string>();
   // extract sources from image components
+  const imageComponents = doc.querySelectorAll("image-component");
   imageComponents.forEach((component) => {
     const src = component.getAttribute("src");
-    if (src) imageSources.add(src);
+    if (src) assetSources.add(src);
   });
-  return Array.from(imageSources);
+  const additionalAssetIds = extractAdditionalAssetsFromHTMLContent(htmlContent);
+  return [...Array.from(assetSources), ...additionalAssetIds];
 };
 
 /**
- * @description function to replace image assets in HTML content with new IDs
+ * @description function to replace assets in HTML content with new IDs
  * @param props
- * @returns {string} HTML content with replaced image assets
+ * @returns {string} HTML content with replaced assets
  */
-export const replaceImageAssetsInHTMLContent = (props: {
-  htmlContent: string;
-  assetMap: Record<string, string>;
-}): string => {
+const replaceAssetsInHTMLContent = (props: { htmlContent: string; assetMap: Record<string, string> }): string => {
   const { htmlContent, assetMap } = props;
   // create a DOM parser
   const parser = new DOMParser();
@@ -48,11 +49,15 @@ export const replaceImageAssetsInHTMLContent = (props: {
       component.setAttribute("src", assetMap[oldSrc]);
     }
   });
-  // serialize the document back into a string
-  return doc.body.innerHTML;
+  // replace additional sources
+  const replacedHTMLContent = replaceAdditionalAssetsInHTMLContent({
+    htmlContent: doc.body.innerHTML,
+    assetMap,
+  });
+  return replacedHTMLContent;
 };
 
-export const getEditorContentWithReplacedImageAssets = async (props: {
+export const getEditorContentWithReplacedAssets = async (props: {
   descriptionHTML: string;
   entityId: string;
   entityType: TEditorAssetType;
@@ -63,18 +68,18 @@ export const getEditorContentWithReplacedImageAssets = async (props: {
   const { descriptionHTML, entityId, entityType, projectId, variant, duplicateAssetService } = props;
   let replacedDescription = descriptionHTML;
   // step 1: extract image assets from the description
-  const imageAssets = extractImageAssetsFromHTMLContent(descriptionHTML);
-  if (imageAssets.length !== 0) {
+  const assetIds = extractAssetsFromHTMLContent(descriptionHTML);
+  if (assetIds.length !== 0) {
     // step 2: duplicate the image assets
     const duplicateAssetsResponse = await duplicateAssetService({
       entity_id: entityId,
       entity_type: entityType,
       project_id: projectId,
-      asset_ids: imageAssets,
+      asset_ids: assetIds,
     });
     if (Object.keys(duplicateAssetsResponse ?? {}).length > 0) {
       // step 3: replace the image assets in the description
-      replacedDescription = replaceImageAssetsInHTMLContent({
+      replacedDescription = replaceAssetsInHTMLContent({
         htmlContent: descriptionHTML,
         assetMap: duplicateAssetsResponse,
       });

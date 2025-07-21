@@ -22,6 +22,21 @@ export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
   return url;
 };
 
+/**
+ * @description generate the file source using assetId
+ * @param {TEditorSrcArgs} args
+ */
+export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
+  const { assetId, projectId, workspaceSlug } = args;
+  let url: string | undefined = "";
+  if (projectId) {
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${assetId}/`);
+  } else {
+    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/download/${assetId}/`);
+  }
+  return url;
+};
+
 export const getTextContent = (jsx: JSX.Element | React.ReactNode | null | undefined): string => {
   if (!jsx) return "";
 

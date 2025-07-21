@@ -252,8 +252,8 @@ export const CustomTreeMapContent: React.FC<any> = ({
                     {bottom.labelTruncated
                       ? truncateText(
                           label,
-                        availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.SM) - 4,
-                        LAYOUT.TEXT.FONT_SIZES.SM
+                          availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.SM) - 4,
+                          LAYOUT.TEXT.FONT_SIZES.SM
                         )
                       : label}
                   </tspan>

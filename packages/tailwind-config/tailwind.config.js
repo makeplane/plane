@@ -18,10 +18,10 @@ module.exports = {
       "./pages/**/*.tsx",
       "./app/**/*.tsx",
       "./ui/**/*.tsx",
-      "../packages/ui/src/**/*.{js,ts,jsx,tsx}",
-      "../packages/propel/src/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/src/**/*.{js,ts,jsx,tsx}",
-      "!../packages/ui/**/*.stories{js,ts,jsx,tsx}",
+      "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/propel/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/editor/src/**/*.{js,ts,jsx,tsx}",
+      "!../../packages/ui/**/*.stories{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -395,6 +395,9 @@ module.exports = {
         72: "16.2rem",
         80: "18rem",
         96: "21.6rem",
+      },
+      height: {
+        header: "3.25rem",
       },
       space: {
         0: "0",

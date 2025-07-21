@@ -21,10 +21,11 @@ import {
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-// local components
-import { TextAlignmentSelector } from "./alignment-selector";
+import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
+// types
 import { TEditorCommands } from "@/types";
+// local imports
+import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
@@ -39,13 +40,13 @@ export interface EditorStateType {
   center: boolean;
   color: { key: string; label: string; textColor: string; backgroundColor: string } | undefined;
   backgroundColor:
-  | {
-    key: string;
-    label: string;
-    textColor: string;
-    backgroundColor: string;
-  }
-  | undefined;
+    | {
+        key: string;
+        label: string;
+        textColor: string;
+        backgroundColor: string;
+      }
+    | undefined;
 }
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {

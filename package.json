@@ -2,24 +2,20 @@
   "name": "plane",
   "description": "Open-source project management that unlocks customer value",
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.26.1",
+  "version": "0.27.1",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
-    "web",
-    "space",
-    "admin",
-    "live",
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=13",
+    "dev": "turbo run dev --concurrency=18",
     "start": "turbo run start",
-    "lint": "turbo run lint",
-    "lint:errors": "turbo run lint:errors",
     "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "fix": "turbo run fix",
+    "check": "turbo run check"
   },
   "devDependencies": {
     "prettier": "latest",

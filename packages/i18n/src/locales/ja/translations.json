@@ -1043,6 +1043,10 @@
       },
       "upload": {
         "error": "アセットのアップロードに失敗しました。後でもう一度お試しください。"
+      },
+      "copy_link": {
+        "success": "コメントリンクがクリップボードにコピーされました",
+        "error": "コメントリンクのコピーに失敗しました。後でもう一度お試しください。"
       }
     },
     "empty_state": {
@@ -1344,6 +1348,17 @@
       "project_insights": {
         "title": "まだデータがありません",
         "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。"
+      },
+      "general": {
+        "title": "進捗、ワークロード、割り当てを追跡する。傾向を発見し、障害を除去し、作業をより迅速に進める",
+        "description": "範囲と需要、見積もり、スコープクリープを確認する。チームメンバーとチームのパフォーマンスを把握し、プロジェクトが時間通りに実行されることを確実にする。",
+        "primary_button": {
+          "text": "最初のプロジェクトを開始",
+          "comic": {
+            "title": "アナリティクスはサイクル + モジュールで最もよく機能します",
+            "description": "まず、作業項目をサイクルに時間枠を設定し、可能であれば、複数のサイクルにまたがる作業項目をモジュールにグループ化してください。左側のナビゲーションで両方をチェックしてください。"
+          }
+        }
       }
     },
     "created_vs_resolved": "作成 vs 解決",
@@ -2470,5 +2485,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Planeが起動しませんでした。これは1つまたは複数のPlaneサービスの起動に失敗したことが原因である可能性があります。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "setup.shとDockerログからView Logsを選択して確認してください。"
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "アウトライン",
+        "empty_state": {
+          "title": "見出しがありません",
+          "description": "このページに見出しを追加してここで確認しましょう。"
+        }
+      },
+      "info": {
+        "label": "情報",
+        "document_info": {
+          "words": "単語数",
+          "characters": "文字数",
+          "paragraphs": "段落数",
+          "read_time": "読了時間"
+        },
+        "actors_info": {
+          "edited_by": "編集者",
+          "created_by": "作成者"
+        },
+        "version_history": {
+          "label": "バージョン履歴",
+          "current_version": "現在のバージョン"
+        }
+      },
+      "assets": {
+        "label": "アセット",
+        "download_button": "ダウンロード",
+        "empty_state": {
+          "title": "画像がありません",
+          "description": "画像を追加してここで確認してください。"
+        }
+      }
+    },
+    "open_button": "ナビゲーションパネルを開く",
+    "close_button": "ナビゲーションパネルを閉じる",
+    "outline_floating_button": "アウトラインを開く"
   }
 }
