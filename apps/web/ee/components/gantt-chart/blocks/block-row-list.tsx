@@ -1,1 +1,1 @@
-export { GanttChartRowList } from "@/components/gantt-chart/blocks/block-row-list";
+export * from "ce/components/gantt-chart/blocks/block-row-list";
