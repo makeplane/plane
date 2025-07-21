@@ -1,1 +1,1 @@
-export type TPageExtended = Record<string, unknown>;
+export type TPageExtended = object;
