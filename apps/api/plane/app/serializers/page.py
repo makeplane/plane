@@ -13,6 +13,8 @@ from plane.db.models import (
     PageVersion,
 )
 
+from plane.ee.models.page import PageUser
+
 
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
@@ -24,6 +26,13 @@ class PageSerializer(BaseSerializer):
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    anchor = serializers.CharField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent", queryset=Page.objects.all(), required=False, allow_null=True
+    )
+    shared_access = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
+    sub_pages_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Page
@@ -34,7 +43,6 @@ class PageSerializer(BaseSerializer):
             "access",
             "color",
             "labels",
-            "parent",
             "is_favorite",
             "is_locked",
             "archived_at",
@@ -47,8 +55,15 @@ class PageSerializer(BaseSerializer):
             "logo_props",
             "label_ids",
             "project_ids",
+            "anchor",
+            "external_id",
+            "external_source",
+            "parent_id",
+            "sub_pages_count",
+            "shared_access",
+            "is_shared",
         ]
-        read_only_fields = ["workspace", "owned_by"]
+        read_only_fields = ["workspace", "owned_by", "anchor"]
 
     def create(self, validated_data):
         labels = validated_data.pop("labels", None)
@@ -120,28 +135,42 @@ class PageSerializer(BaseSerializer):
 
 class PageDetailSerializer(PageSerializer):
     description_html = serializers.CharField()
+    is_favorite = serializers.BooleanField(read_only=True)
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent", queryset=Page.objects.all(), required=False, allow_null=True
+    )
+    shared_access = serializers.IntegerField(read_only=True)
 
     class Meta(PageSerializer.Meta):
         fields = PageSerializer.Meta.fields + ["description_html"]
 
 
-class SubPageSerializer(BaseSerializer):
-    entity_details = serializers.SerializerMethodField()
+class PageLiteSerializer(BaseSerializer):
+    project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    sub_pages_count = serializers.IntegerField(read_only=True)
+    is_shared = serializers.BooleanField(read_only=True)
 
     class Meta:
-        model = PageLog
-        fields = "__all__"
-        read_only_fields = ["workspace", "page"]
-
-    def get_entity_details(self, obj):
-        entity_name = obj.entity_name
-        if entity_name == "forward_link" or entity_name == "back_link":
-            try:
-                page = Page.objects.get(pk=obj.entity_identifier)
-                return PageSerializer(page).data
-            except Page.DoesNotExist:
-                return None
-        return None
+        model = Page
+        fields = [
+            "id",
+            "name",
+            "access",
+            "logo_props",
+            "is_locked",
+            "archived_at",
+            "parent_id",
+            "workspace",
+            "project_ids",
+            "sub_pages_count",
+            "owned_by",
+            "deleted_at",
+            "is_description_empty",
+            "updated_at",
+            "moved_to_page",
+            "moved_to_project",
+            "is_shared",
+        ]
 
 
 class PageLogSerializer(BaseSerializer):
@@ -184,5 +213,15 @@ class PageVersionDetailSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "sub_pages_data",
         ]
         read_only_fields = ["workspace", "page"]
+
+
+class PageUserSerializer(BaseSerializer):
+    user_id = serializers.UUIDField(source="user.id", read_only=True)
+
+    class Meta:
+        model = PageUser
+        fields = "__all__"
+        read_only_fields = ["workspace", "page", "user"]

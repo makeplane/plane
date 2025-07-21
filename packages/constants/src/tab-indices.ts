@@ -1,3 +1,4 @@
+import { CUSTOMER_FORM_TAB_INDICES } from "./tab-indices-extended";
 export const ISSUE_FORM_TAB_INDICES = [
   "name",
   "description_html",
@@ -79,6 +80,7 @@ export enum ETabIndices {
   PROJECT_MODULE = "project-module",
   PROJECT_VIEW = "project-view",
   PROJECT_PAGE = "project-page",
+  CUSTOMER_FORM = "customer-form",
 }
 
 export const TAB_INDEX_MAP: Record<ETabIndices, string[]> = {
@@ -90,4 +92,5 @@ export const TAB_INDEX_MAP: Record<ETabIndices, string[]> = {
   [ETabIndices.PROJECT_MODULE]: PROJECT_MODULE_TAB_INDICES,
   [ETabIndices.PROJECT_VIEW]: PROJECT_VIEW_TAB_INDICES,
   [ETabIndices.PROJECT_PAGE]: PROJECT_PAGE_TAB_INDICES,
+  [ETabIndices.CUSTOMER_FORM]: CUSTOMER_FORM_TAB_INDICES,
 };
