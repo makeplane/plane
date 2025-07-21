@@ -14,7 +14,7 @@ export interface IGanttBlock {
   sort_order: number | undefined;
   start_date: string | undefined;
   target_date: string | undefined;
-  meta: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 export interface IBlockUpdateData {
@@ -32,7 +32,7 @@ export interface IBlockUpdateDependencyData {
   id: string;
   start_date?: string;
   target_date?: string;
-  project_id?: string;
+  meta?: Record<string, any>;
 }
 
 export type TGanttViews = "week" | "month" | "quarter";

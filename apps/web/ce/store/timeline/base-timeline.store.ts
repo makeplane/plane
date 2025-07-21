@@ -295,7 +295,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
 
     if (!currBlock?.position || !this.currentViewData) return [];
 
-    const updatePayload: IBlockUpdateDependencyData = { id };
+    const updatePayload: IBlockUpdateDependencyData = { id, meta: currBlock.meta };
 
     // If shouldUpdateHalfBlock or the start date is available then update start date
     if (shouldUpdateHalfBlock || currBlock.start_date) {
