@@ -2371,6 +2371,12 @@
       "no_labels": {
         "description": " Aún no hay etiquetas. Crea etiquetas para ayudar a organizar y filtrar elementos de trabajo en tu proyecto."
       },
+      "no_work_items": {
+        "description": "Aún no hay elementos de trabajo. Añade uno para estructurar tu trabajo mejor."
+      },
+      "no_sub_work_items": {
+        "description": "No hay sub-elementos de trabajo aún. Añade uno para estructurar tu trabajo mejor."
+      },
       "page": {
         "no_templates": {
           "title": "No hay plantillas a las que tengas acceso.",

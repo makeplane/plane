@@ -2369,6 +2369,12 @@
       "no_labels": {
         "description": " Nu există etichete încă. Creează etichete pentru a ajuta la organizarea și filtrarea elementelor de lucru în proiectul tău."
       },
+      "no_work_items": {
+        "description": "Nu există elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
+      },
+      "no_sub_work_items": {
+        "description": "Nu există sub-elemente de lucru încă. Adaugă unul pentru a structura mai bine munca ta."
+      },
       "page": {
         "no_templates": {
           "title": "Nu există șabloane la care aveți acces.",

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Plus, Shapes } from "lucide-react";
 // ui
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ETemplateType } from "@plane/types";
 import { Button, CustomSearchSelect, Loader } from "@plane/ui";
@@ -158,6 +158,7 @@ export const ProjectTemplateDropdown = observer((props: TProjectTemplateDropdown
             variant="link-neutral"
             className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded text-xs text-custom-text-200 font-medium hover:bg-custom-background-80"
             onClick={redirectToCreateTemplatePage}
+            data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_PROJECT_MODAL_CREATE_BUTTON}
           >
             <Plus className="size-3.5" />
             {t("templates.dropdown.add.project")}

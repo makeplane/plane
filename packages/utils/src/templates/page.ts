@@ -32,13 +32,13 @@ export const extractPageFormData = (pageData: TPageTemplate["template_data"]): T
   project: pageData.project,
 });
 
-type TBuildPageTemplateSchemaParams = {
+type TBuildPageTemplateBlueprintParams = {
   workspaceId: string;
 };
 
 export type TBuildPageTemplateFormDataParams = {
   formData: TPageTemplateForm;
-} & TBuildPageTemplateSchemaParams;
+} & TBuildPageTemplateBlueprintParams;
 
 /**
  * Converts form data back to the page template format
@@ -53,7 +53,7 @@ export const pageTemplateFormDataToData = ({
     name: template.name,
     short_description: template.short_description,
     template_type: ETemplateType.PAGE,
-    template_data: buildPageTemplateSchema({
+    template_data: buildPageTemplateBlueprint({
       workspaceId,
       page,
     }),
@@ -62,12 +62,12 @@ export const pageTemplateFormDataToData = ({
 
 type TBuildPageTemplateDataParams = {
   page: TPageTemplateForm["page"];
-} & TBuildPageTemplateSchemaParams;
+} & TBuildPageTemplateBlueprintParams;
 
 /**
- * Builds the page template schema
+ * Builds the page template blueprint
  */
-const buildPageTemplateSchema = ({
+const buildPageTemplateBlueprint = ({
   workspaceId,
   page,
 }: TBuildPageTemplateDataParams): TPageTemplate["template_data"] => ({

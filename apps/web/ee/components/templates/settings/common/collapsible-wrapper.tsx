@@ -11,17 +11,29 @@ type TChildProps = {
 };
 
 type TTemplateCollapsibleWrapper = {
-  title: string;
-  children: React.ReactNode | ((props: TChildProps) => React.ReactNode);
   actionElement?: React.ReactNode | ((props: TChildProps) => React.ReactNode);
+  borderPosition?: "top" | "bottom";
+  borderVariant?: "strong" | "light" | "none";
+  children: React.ReactNode | ((props: TChildProps) => React.ReactNode);
+  defaultOpen?: boolean;
   isOptional?: boolean;
-  showBottomBorder?: boolean;
+  showBorder?: boolean;
+  title: string;
 };
 
 export const TemplateCollapsibleWrapper = observer((props: TTemplateCollapsibleWrapper) => {
-  const { title, children, actionElement, isOptional = true, showBottomBorder = true } = props;
+  const {
+    title,
+    children,
+    actionElement,
+    defaultOpen = false,
+    isOptional = true,
+    showBorder = true,
+    borderPosition = "bottom",
+    borderVariant = "strong",
+  } = props;
   // state
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   // plane hooks
   const { t } = useTranslation();
 
@@ -61,7 +73,13 @@ export const TemplateCollapsibleWrapper = observer((props: TTemplateCollapsibleW
           </div>
         </div>
       }
-      className={cn("w-full py-3", { "border-b border-custom-border-200": showBottomBorder })}
+      className={cn("w-full py-3", {
+        "border-custom-border-200": borderVariant === "strong",
+        "border-custom-border-100": borderVariant === "light",
+        "border-b": borderPosition === "bottom",
+        "border-t": borderPosition === "top",
+        "border-none": !showBorder || borderVariant === "none",
+      })}
       buttonClassName="w-full"
     >
       {typeof children === "function" ? children({ isOpen, setIsOpen }) : children}

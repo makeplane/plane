@@ -2,44 +2,25 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 // plane imports
-import { EIssueServiceType, EWorkItemTypeEntity, TIssueServiceType } from "@plane/types";
+import { IIssueType, TIssuePropertyValues } from "@plane/types";
 import { getPropertiesDefaultValues } from "@plane/utils";
-// hooks
+// store hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-// plane web hooks
-import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
-// plane web services
-import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
-// local components
-import { IssueAdditionalPropertyValues } from "./root";
+// plane web imports
+import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values/root";
 
 type TIssueAdditionalPropertyValuesCreateProps = {
-  issueId: string | undefined;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   issueTypeId: string;
+  issuePropertyValues: TIssuePropertyValues;
+  arePropertyValuesInitializing: boolean;
   projectId: string;
-  workspaceSlug: string;
-  entityType: EWorkItemTypeEntity;
-  isDraft?: boolean;
-  issueServiceType?: TIssueServiceType;
 };
-
-const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPropertyValuesCreateProps> = observer(
   (props) => {
-    const {
-      issueId,
-      issueTypeId,
-      projectId,
-      workspaceSlug,
-      entityType,
-      isDraft = false,
-      issueServiceType = EIssueServiceType.ISSUES,
-    } = props;
-    // states
-    const [issuePropertyValues, setIssuePropertyValues] = React.useState({});
+    const { getWorkItemTypeById, issueTypeId, issuePropertyValues, arePropertyValuesInitializing, projectId } = props;
     // store hooks
     const {
       workItemTemplateId,
@@ -47,31 +28,10 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
       issuePropertyValueErrors,
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
     } = useIssueModal();
-    const issueType = useIssueType(issueTypeId);
-    const { isWorkItemTypeEntityEnabledForProject } = useIssueTypes();
-    // services
-    const issuePropertyValuesService = new IssuePropertyValuesService(issueServiceType);
+    const issueType = getWorkItemTypeById(issueTypeId);
     // derived values
     const issueTypeDetail = issueType?.asJSON;
     const activeProperties = issueType?.activeProperties;
-    const isWorkItemTypeEntityEnabled = isWorkItemTypeEntityEnabledForProject(workspaceSlug, projectId, entityType);
-    // fetch issue property values
-    const { data, isLoading } = useSWR(
-      workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
-        ? `ISSUE_PROPERTY_VALUES_${workspaceSlug}_${projectId}_${issueId}_${entityType}_${isWorkItemTypeEntityEnabled}`
-        : null,
-      () =>
-        workspaceSlug && projectId && issueId && entityType && isWorkItemTypeEntityEnabled
-          ? isDraft
-            ? draftIssuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
-            : issuePropertyValuesService.fetchAll(workspaceSlug, projectId, issueId)
-          : null,
-      {}
-    );
-
-    useEffect(() => {
-      if (data) setIssuePropertyValues(data);
-    }, [data]);
 
     useEffect(() => {
       // If template is applied, then we don't need to set the default values from here.
@@ -82,7 +42,8 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
           ...issuePropertyValues,
         });
       }
-    }, [activeProperties, handleIssuePropertyValueUpdate, issuePropertyValues, workItemTemplateId]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeProperties, handleIssuePropertyValueUpdate, workItemTemplateId]);
 
     const handlePropertyValueChange = (propertyId: string, value: string[]) => {
       handleIssuePropertyValueUpdate((prev) => ({
@@ -96,13 +57,14 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     return (
       <div className="pt-2">
         <IssueAdditionalPropertyValues
+          getWorkItemTypeById={getWorkItemTypeById}
+          handlePropertyValueChange={handlePropertyValueChange}
+          arePropertyValuesInitializing={arePropertyValuesInitializing}
+          issuePropertyValueErrors={issuePropertyValueErrors}
+          issuePropertyValues={issuePropertyDefaultValues}
           issueTypeId={issueTypeId}
           projectId={projectId}
-          issuePropertyValues={issuePropertyDefaultValues}
-          issuePropertyValueErrors={issuePropertyValueErrors}
           variant="create"
-          isPropertyValuesLoading={isLoading}
-          handlePropertyValueChange={handlePropertyValueChange}
         />
       </div>
     );

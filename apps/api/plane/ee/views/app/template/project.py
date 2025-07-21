@@ -8,6 +8,8 @@ from typing import Dict, List, Any, Optional, Tuple
 from django.db.models.query import Prefetch
 from django.http import HttpRequest
 from django.utils import timezone
+from django.db import transaction
+
 
 # Third party imports
 from rest_framework import status
@@ -16,7 +18,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import FileAsset, Workspace
-from plane.ee.models import ProjectTemplate, Template
+from plane.ee.models import ProjectTemplate, Template, WorkitemTemplate
 from plane.ee.serializers import (
     ProjectTemplateSerializer,
     TemplateDataSerializer,
@@ -27,7 +29,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.settings.storage import S3Storage
 from plane.utils.url import is_valid_url
 from plane.utils.uuid import is_valid_uuid
-
+from plane.utils.exception_logger import log_exception
 from .base import TemplateBaseEndpoint
 
 
@@ -77,10 +79,20 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         workspace = Workspace.objects.get(slug=slug)
         # get the template data
         template_data = request.data.pop("template_data", {})
+
+        # pop the workitem data
+        workitem_data = template_data.pop("workitems", [])
+
         # validate project fields
         success, errors = self.validate_project_fields(template_data)
         if not success:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # validate the workitem data
+        for workitem in workitem_data:
+            success, errors = self.validate_workitem_fields(workitem)
+            if not success:
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         # create a new template only after validation is successful
         template_serializer = TemplateSerializer(data=request.data)
@@ -103,6 +115,33 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = ProjectTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
+            # create all the workitem templates
+            workitem_templates = []
+            for workitem in workitem_data:
+                # pop the workspace and project since they are not needed
+                workitem.pop("workspace", None)
+                workitem.pop("project", None)
+                workitem_templates.append(
+                    WorkitemTemplate(
+                        project_template=serializer.instance,
+                        workspace_id=workspace.id,
+                        **workitem,
+                    )
+                )
+
+            try:
+                WorkitemTemplate.objects.bulk_create(workitem_templates)
+            except Exception as e:
+                log_exception(e)
+                # If workitem template creation fails, cleanup project template and template
+                serializer.instance.delete()  # Delete the project template
+                template.delete()  # Delete the main template
+                return Response(
+                    {"error": "Failed to create workitem templates", "details": str(e)},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             # templates
             template = (
                 Template.objects.filter(workspace_id=workspace.id, pk=template.id)
@@ -129,6 +168,9 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         )
         template_data = request.data.pop("template_data", {})
 
+        # pop the workitem data
+        workitem_data = template_data.pop("workitems", [])
+
         template_serializer = TemplateSerializer(
             template, data=request.data, partial=True
         )
@@ -145,6 +187,12 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
             if not success:
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
+            # validate the workitem data
+            for workitem in workitem_data:
+                success, errors = self.validate_workitem_fields(workitem)
+                if not success:
+                    return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
             project_template = ProjectTemplate.objects.get(
                 workspace__slug=slug, template_id=pk
             )
@@ -153,6 +201,37 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
             )
             if project_serializer.is_valid():
                 project_serializer.save()
+
+                try:
+                    with transaction.atomic():
+                        # delete the existing workitem templates
+                        WorkitemTemplate.objects.filter(
+                            project_template_id=project_template.id
+                        ).delete(soft=False)
+
+                        workitem_template = []
+                        for workitem in workitem_data:
+                            workitem.pop("workspace", None)
+                            workitem.pop("project", None)
+                            workitem_template.append(
+                                WorkitemTemplate(
+                                    project_template=project_template,
+                                    workspace_id=template.workspace_id,
+                                    **workitem,
+                                )
+                            )
+
+                        # create a new work item template
+                        WorkitemTemplate.objects.bulk_create(workitem_template)
+                except Exception as e:
+                    log_exception(e)
+                    return Response(
+                        {
+                            "error": "Failed to create workitem templates",
+                            "details": str(e),
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
             else:
                 return Response(
                     project_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -384,7 +463,9 @@ class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
         Returns:
             Optional[str]: None if the URL is invalid, otherwise the extracted asset ID.
         """
-        url_pattern: str = r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"  # noqa: E501
+        url_pattern: str = (
+            r"^/api/assets/v2/static/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/?$"  # noqa: E501
+        )
 
         pattern_match = re.match(url_pattern, url)
         if not pattern_match:

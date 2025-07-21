@@ -172,7 +172,7 @@ export const mockCreateCustomProperty = async ({
     is_required: data.is_required,
     default_value: data.default_value,
     is_active: data.is_active,
-    issue_type: issueTypeId,
+    issue_type: data.issue_type || issueTypeId,
     is_multi: data.is_multi,
     created_at: new Date(),
     created_by: data.created_by,

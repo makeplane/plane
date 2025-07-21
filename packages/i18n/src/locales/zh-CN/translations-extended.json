@@ -2372,6 +2372,12 @@
       "no_labels": {
         "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
       },
+      "no_work_items": {
+        "description": "还没有工作项。添加一个以更好地组织您的工作。"
+      },
+      "no_sub_work_items": {
+        "description": "还没有子工作项。添加一个以更好地组织您的工作。"
+      },
       "page": {
         "no_templates": {
           "title": "您没有访问任何模板。",

@@ -64,7 +64,7 @@
             "message": "Pages update failed"
           }
         },
-        "remove":{
+        "remove": {
           "success": {
             "title": "Page removed",
             "message": "Page removed successfully"
@@ -2537,7 +2537,13 @@
         "button": "Create your first template"
       },
       "no_labels": {
-        "description": " No labels yet. Create labels to help organize and filter work items in you project."
+        "description": "No labels yet. Create labels to help organize and filter work items in you project."
+      },
+      "no_work_items": {
+        "description": "No work items yet. Add one to structure your work better."
+      },
+      "no_sub_work_items": {
+        "description": "No sub-work items yet. Add one to structure your work better."
       },
       "page": {
         "no_templates": {

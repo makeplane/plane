@@ -52,7 +52,6 @@ export const TemplatesUpgrade: FC<TTemplatesUpgradeProps> = observer((props: TTe
                 target="_blank"
                 href="https://plane.so/contact"
                 className={"bg-transparent underline text-sm text-custom-primary-200 my-auto font-medium"}
-                onClick={() => {}}
               >
                 {t("common.upgrade_cta.talk_to_sales")}
               </Link>

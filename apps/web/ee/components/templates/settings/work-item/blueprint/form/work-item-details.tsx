@@ -1,27 +1,61 @@
 import { useRef } from "react";
-import { observer } from "mobx-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, FieldPath, FieldValues, useFormContext } from "react-hook-form";
 // plane imports
 import { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TWorkItemTemplateForm } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Input } from "@plane/ui";
-import { getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
+import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor";
 // hooks
+import { getNestedError } from "@/helpers/react-hook-form.helper";
 import { useEditorAsset, useMember, useWorkspace } from "@/hooks/store";
 // plane web hooks
 import { validateWhitespaceI18n } from "@/plane-web/components/templates/settings/common";
 import { useEditorMentionSearch } from "@/plane-web/hooks/use-editor-mention-search";
 
-type TWorkItemDetailsProps = {
-  workspaceSlug: string;
-  projectId: string | null;
+type TUseMobxData = {
+  usePropsForAdditionalData: false;
 };
 
-export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
-  const { workspaceSlug, projectId } = props;
+type TUsePropsData = {
+  memberIds: string[];
+  usePropsForAdditionalData: true;
+};
+
+type TWorkItemBlueprintDetailsProps<T extends FieldValues> = {
+  assetEntityType?: EFileAssetType;
+  fieldPaths: {
+    name: FieldPath<T>;
+    description: FieldPath<T>;
+  };
+  inputBorderVariant?: "primary" | "true-transparent";
+  inputTextSize?: "md" | "lg";
+  placeholders?: {
+    name?: string;
+    description?: string;
+  };
+  projectId: string | undefined | null;
+  validation?: {
+    nameRequired?: string;
+    nameMaxLength?: string;
+  };
+  workspaceSlug: string;
+} & (TUseMobxData | TUsePropsData);
+
+export const WorkItemBlueprintDetails = <T extends FieldValues>(props: TWorkItemBlueprintDetailsProps<T>) => {
+  const {
+    assetEntityType = EFileAssetType.ISSUE_DESCRIPTION,
+    fieldPaths,
+    inputBorderVariant = "true-transparent",
+    inputTextSize = "md",
+    placeholders,
+    projectId,
+    usePropsForAdditionalData,
+    validation,
+    workspaceSlug,
+  } = props;
   // refs
   const issueTitleRef = useRef<HTMLInputElement | null>(null);
   const editorRef = useRef<EditorRefApi>(null);
@@ -30,21 +64,27 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   const {
-    project: { getProjectMemberIds },
+    project: { getProjectMemberIds: getProjectMemberIdsFromStore },
   } = useMember();
   const { uploadEditorAsset } = useEditorAsset();
   // form context
   const {
     control,
     formState: { errors },
-  } = useFormContext<TWorkItemTemplateForm>();
+  } = useFormContext<T>();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
-  const projectMemberIds = projectId ? getProjectMemberIds(projectId, true) : [];
+  const projectMemberIds = usePropsForAdditionalData
+    ? props.memberIds
+    : projectId
+      ? getProjectMemberIdsFromStore(projectId, true)
+      : [];
   // use editor mention search
   const { searchEntity } = useEditorMentionSearch({
     memberIds: projectMemberIds ?? [],
   });
+  // Get errors for the specific fields
+  const nameError = getNestedError(errors, fieldPaths.name);
 
   if (!workspaceId) {
     return null;
@@ -56,67 +96,71 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
       <div>
         <Controller
           control={control}
-          name="work_item.name"
+          name={fieldPaths.name}
           rules={{
-            validate: (value) => {
+            validate: (value: string) => {
               const result = validateWhitespaceI18n(value);
               if (result) {
                 return t(result);
               }
               return undefined;
             },
-            required: t("templates.settings.form.work_item.name.validation.required"),
+            required: validation?.nameRequired || t("templates.settings.form.work_item.name.validation.required"),
             maxLength: {
               value: 255,
-              message: t("templates.settings.form.work_item.name.validation.maxLength"),
+              message: validation?.nameMaxLength || t("templates.settings.form.work_item.name.validation.maxLength"),
             },
           }}
           render={({ field: { value, onChange, ref } }) => (
             <Input
-              id="work_item.name"
-              name="work_item.name"
+              id={fieldPaths.name}
+              name={fieldPaths.name}
               type="text"
-              value={value}
+              value={value || ""}
               onChange={(e) => {
                 onChange(e.target.value);
               }}
               ref={issueTitleRef || ref}
-              hasError={Boolean(errors.work_item?.name)}
-              placeholder={t("templates.settings.form.work_item.name.placeholder")}
-              className="w-full text-lg font-bold p-0"
-              mode="true-transparent"
-              inputSize="md"
+              hasError={Boolean(nameError)}
+              placeholder={placeholders?.name || t("templates.settings.form.work_item.name.placeholder")}
+              className={cn("w-full", {
+                "p-0": inputBorderVariant === "true-transparent",
+                "text-lg font-bold": inputTextSize === "lg",
+                "text-base": inputTextSize === "md",
+              })}
+              mode={inputBorderVariant}
             />
           )}
         />
-        {errors?.work_item?.name && typeof errors.work_item.name.message === "string" && (
-          <span className="text-xs font-medium text-red-500">{errors.work_item.name.message}</span>
+        {nameError && typeof nameError.message === "string" && (
+          <span className="text-xs font-medium text-red-500">{nameError.message}</span>
         )}
       </div>
-
       {/* Work Item Description */}
-      {/* TODO: Test and handle attachments */}
       <div className="space-y-1">
         <Controller
-          name="work_item.description_html"
+          name={fieldPaths.description}
           control={control}
           render={({ field: { value, onChange } }) => (
             <RichTextEditor
               editable
               id="work-item-description"
               initialValue={value ?? "<p></p>"}
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={workspaceSlug}
               workspaceId={workspaceId}
-              projectId={projectId ?? undefined}
+              projectId={projectId || undefined}
               ref={editorRef}
               searchMentionCallback={searchEntity}
               onChange={(_description_json, description_html) => onChange(description_html)}
               placeholder={(isFocused, value) =>
                 isEditorEmpty(value)
-                  ? t("templates.settings.form.work_item.description.placeholder")
+                  ? placeholders?.description || t("templates.settings.form.work_item.description.placeholder")
                   : t(`${getDescriptionPlaceholderI18n(isFocused, value)}`)
               }
-              containerClassName="min-h-[80px] px-0"
+              containerClassName={cn("min-h-[120px]", {
+                "border border-custom-border-100 py-2": inputBorderVariant === "primary",
+                "px-0": inputBorderVariant === "true-transparent",
+              })}
               disabledExtensions={["image", "attachments"]}
               uploadFile={async (blockId, file) => {
                 try {
@@ -124,7 +168,7 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
                     blockId,
                     data: {
                       entity_identifier: "",
-                      entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                      entity_type: assetEntityType,
                     },
                     file,
                     workspaceSlug: workspaceSlug || "",
@@ -142,4 +186,4 @@ export const WorkItemDetails = observer((props: TWorkItemDetailsProps) => {
       </div>
     </>
   );
-});
+};

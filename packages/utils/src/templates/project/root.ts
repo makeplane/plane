@@ -2,14 +2,15 @@
 import {
   ETemplateType,
   IUserLite,
-  TProjectState,
   TProjectTemplate,
   TProjectTemplateForm,
   TProjectTemplateFormData,
+  TWorkItemBlueprintFormData,
 } from "@plane/types";
 // local imports
 import { extractTemplateBasicFormData } from "../base";
-import { buildProjectTemplateSchema } from "./build";
+import { TWorkItemBlueprintFormDataListInvalid } from "../work-item/blueprint/sanitize";
+import { buildProjectTemplateBlueprint, TBuildProjectTemplateBlueprintParams } from "./build";
 import { extractProjectCreationFormData, extractProjectTemplateFormData } from "./extract";
 import {
   TSanitizeProjectCreationFormParams,
@@ -18,7 +19,7 @@ import {
 } from "./sanitize";
 
 /**
- * Generic sanitization result for any work item data
+ * Generic sanitization result for any project data
  * - 'valid' contains the sanitized data
  * - 'invalid' contains invalid IDs for each field
  */
@@ -29,7 +30,9 @@ export type TProjectSanitizationResult<T> = {
       ? string[]
       : T[K] extends IUserLite | string | null | undefined
         ? string | null
-        : never;
+        : T[K] extends Array<TWorkItemBlueprintFormData>
+          ? TWorkItemBlueprintFormDataListInvalid<T[K]>
+          : never;
   };
 };
 
@@ -59,7 +62,7 @@ export const projectTemplateDataToSanitizedFormData = async (
   };
 };
 
-export type TExtractAndSanitizeProjectCreationFormParams = TSanitizeProjectCreationFormParams & {
+type TExtractAndSanitizeProjectCreationFormParams = TSanitizeProjectCreationFormParams & {
   projectData: TProjectTemplate["template_data"];
 };
 
@@ -97,7 +100,7 @@ type TExtractAndSanitizeProjectFormDataParams = TSanitizeProjectTemplateFormData
  * Extracts and sanitizes project form data
  * Returns both valid data and invalid IDs for UI error handling
  */
-export const extractAndSanitizeProjectTemplateFormData = async (
+const extractAndSanitizeProjectTemplateFormData = async (
   params: TExtractAndSanitizeProjectFormDataParams
 ): Promise<TProjectSanitizationResult<TProjectTemplateFormData>> => {
   const { projectData } = params;
@@ -124,36 +127,24 @@ export const extractAndSanitizeProjectTemplateFormData = async (
   };
 };
 
-type TBuildProjectTemplateSchemaParams = {
-  workspaceId: string;
-  getWorkspaceProjectStateById: (projectStateId: string) => TProjectState | undefined;
-  getUserDetails: (userId: string) => IUserLite | undefined;
-};
-
 type TProjectTemplateFormDataParams = {
   formData: TProjectTemplateForm;
-} & TBuildProjectTemplateSchemaParams;
+} & TBuildProjectTemplateBlueprintParams;
 
 /**
  * Converts form data back to the project template format
  */
-export const projectTemplateFormDataToData = ({
-  workspaceId,
-  formData,
-  getWorkspaceProjectStateById,
-  getUserDetails,
-}: TProjectTemplateFormDataParams): Partial<TProjectTemplate> => {
+export const projectTemplateFormDataToData = (params: TProjectTemplateFormDataParams): Partial<TProjectTemplate> => {
+  const { formData, ...rest } = params;
   const { template, project } = formData;
 
   return {
     name: template.name,
     short_description: template.short_description,
     template_type: ETemplateType.PROJECT,
-    template_data: buildProjectTemplateSchema({
-      workspaceId,
+    template_data: buildProjectTemplateBlueprint({
+      ...rest,
       project,
-      getWorkspaceProjectStateById,
-      getUserDetails,
     }),
   };
 };

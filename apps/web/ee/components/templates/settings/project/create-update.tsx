@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, PROJECT_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ETemplateType } from "@plane/types";
 // hooks
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getTemplateSettingsBasePath, getTemplateTypeI18nName, projectTemplateFormDataToData } from "@plane/utils";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
@@ -53,17 +54,18 @@ export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProject
   );
 
   const handleFormSubmit = async (data: TProjectTemplateFormSubmitData) => {
-    const { data: templateData } = data;
+    const { data: templateData, workItemListCustomPropertyValues } = data;
 
     // Get current workspace detail
     const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
     if (!currentWorkspace) return;
 
     const payload = projectTemplateFormDataToData({
-      workspaceId: currentWorkspace.id,
       formData: templateData,
-      getWorkspaceProjectStateById: getProjectStateById,
       getUserDetails,
+      getWorkspaceProjectStateById: getProjectStateById,
+      workItemListCustomPropertyValues,
+      workspaceId: currentWorkspace.id,
     });
 
     if (operationToPerform === EProjectFormOperation.UPDATE && templateData.template.id) {
@@ -81,12 +83,24 @@ export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProject
                 templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
               }),
             });
+            captureSuccess({
+              eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
+            });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("templates.toasts.update.error.title"),
               message: t("templates.toasts.update.error.message"),
+            });
+            captureError({
+              eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
             });
           });
       }
@@ -95,7 +109,7 @@ export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProject
         workspaceSlug,
         templateData: payload,
       })
-        .then(() => {
+        .then((template) => {
           router.push(templateSettingsPagePath);
           setToast({
             type: TOAST_TYPE.SUCCESS,
@@ -105,12 +119,21 @@ export const CreateUpdateProjectTemplate = observer((props: TCreateUpdateProject
               templateType: t(getTemplateTypeI18nName(ETemplateType.PROJECT))?.toLowerCase(),
             }),
           });
+          captureSuccess({
+            eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.CREATE,
+            payload: {
+              id: template?.id,
+            },
+          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("templates.toasts.create.error.title"),
             message: t("templates.toasts.create.error.message"),
+          });
+          captureError({
+            eventName: PROJECT_TEMPLATE_TRACKER_EVENTS.CREATE,
           });
         });
     }

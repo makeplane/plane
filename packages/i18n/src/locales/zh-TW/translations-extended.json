@@ -2373,6 +2373,12 @@
       "no_labels": {
         "description": " 尚無標籤。創建標籤以幫助組織和篩選專案中的工作項目。"
       },
+      "no_work_items": {
+        "description": "尚無工作項目。添加一個以更好地組織您的工作。"
+      },
+      "no_sub_work_items": {
+        "description": "尚無子工作項目。添加一個以更好地組織您的工作。"
+      },
       "page": {
         "no_templates": {
           "title": "您沒有訪問任何模板。",

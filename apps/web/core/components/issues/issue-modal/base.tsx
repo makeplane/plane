@@ -75,7 +75,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     removeSubIssue,
   } = useIssueDetail();
   const { removeSubIssue: removeEpicSubIssue } = useIssueDetail(EIssueServiceType.EPICS);
-  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
+  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleConvert, handleCreateSubWorkItem } =
+    useIssueModal();
   const { getProjectByIdentifier } = useProject();
   const { getIssueTypeById } = useIssueTypes();
   // current store details

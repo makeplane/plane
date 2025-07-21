@@ -5,7 +5,7 @@ from pytest_django.fixtures import django_db_setup
 from unittest.mock import patch, MagicMock
 from uuid import uuid4
 
-from plane.db.models import User, Workspace, FileAsset, WorkspaceMember
+from plane.db.models import User, Workspace, FileAsset, Project, WorkspaceMember
 from plane.db.models.api import APIToken
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -245,3 +245,15 @@ def workspace(create_user):
     )
 
     return created_workspace
+
+
+@pytest.fixture
+def project(db, workspace, create_user):
+    """Create and return a project instance"""
+    project = Project.objects.create(
+        name="Test Project",
+        workspace=workspace,
+        created_by=create_user,
+        identifier="test123",
+    )
+    return project

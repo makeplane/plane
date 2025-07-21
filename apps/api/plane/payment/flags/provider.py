@@ -5,7 +5,7 @@ import requests
 from django.conf import settings
 
 # Third party imports
-from openfeature.provider.provider import AbstractProvider
+from openfeature.provider import AbstractProvider
 from openfeature.provider.metadata import Metadata
 from openfeature.flag_evaluation import FlagResolutionDetails
 

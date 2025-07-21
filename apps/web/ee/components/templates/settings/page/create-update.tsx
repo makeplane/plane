@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { extractAssetsFromHTMLContent } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { ETemplateType, PartialDeep, TPageTemplateForm } from "@plane/types";
@@ -13,6 +13,8 @@ import {
   pageTemplateDataToTemplateFormData,
   pageTemplateFormDataToData,
 } from "@plane/utils";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -154,12 +156,24 @@ export const CreateUpdatePageTemplate: React.FC<Props> = observer((props) => {
                 templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
               }),
             });
+            captureSuccess({
+              eventName: PAGE_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
+            });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("templates.toasts.update.error.title"),
               message: t("templates.toasts.update.error.message"),
+            });
+            captureError({
+              eventName: PAGE_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
             });
           });
       }
@@ -191,12 +205,21 @@ export const CreateUpdatePageTemplate: React.FC<Props> = observer((props) => {
               templateType: t(getTemplateTypeI18nName(ETemplateType.WORK_ITEM))?.toLowerCase(),
             }),
           });
+          captureSuccess({
+            eventName: PAGE_TEMPLATE_TRACKER_EVENTS.CREATE,
+            payload: {
+              id: response?.id,
+            },
+          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("templates.toasts.create.error.title"),
             message: t("templates.toasts.create.error.message"),
+          });
+          captureError({
+            eventName: PAGE_TEMPLATE_TRACKER_EVENTS.CREATE,
           });
         });
     }

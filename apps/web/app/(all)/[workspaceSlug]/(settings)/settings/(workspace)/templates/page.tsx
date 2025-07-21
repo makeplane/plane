@@ -64,6 +64,7 @@ const TemplatesWorkspaceSettingsPage = observer(() => {
                 workspaceSlug={workspaceSlug?.toString()}
                 currentLevel={ETemplateLevel.WORKSPACE}
                 buttonSize="sm"
+                variant="settings"
               />
             )}
           </>

@@ -22,7 +22,7 @@ import {
 import { CreateLabelModal } from "@/components/labels";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useLabel, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { IssueAdditionalProperties } from "../../issues";
@@ -98,6 +98,7 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
     issue: { getIssueById },
   } = useIssueDetail();
   const { getStateById } = useProjectState();
+  const { createLabel } = useLabel();
 
   const epicDetails = getProjectEpicDetails(routeProjectId?.toString());
 
@@ -260,9 +261,9 @@ export const EpicFormRoot: FC<EpicFormProps> = observer((props) => {
     <FormProvider {...methods}>
       {projectId && (
         <CreateLabelModal
+          createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId)}
           isOpen={labelModal}
           handleClose={() => setLabelModal(false)}
-          projectId={projectId}
           onSuccess={(response) => {
             setValue<"label_ids">("label_ids", [...watch("label_ids"), response.id]);
             handleFormChange();

@@ -26,7 +26,7 @@ import { IssueLabelSelect } from "@/components/issues/select";
 import { CreateLabelModal } from "@/components/labels";
 // helpers
 // hooks
-import { useProject, useProjectEstimates } from "@/hooks/store";
+import { useLabel, useProject, useProjectEstimates } from "@/hooks/store";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { TSelectionHelper, TSelectionSnapshot } from "@/hooks/use-multiple-select";
 import { IssueTypeDropdown, TIssueTypeOptionTooltip } from "@/plane-web/components/issue-types/dropdowns";
@@ -67,7 +67,13 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
     issues: { bulkUpdateProperties },
   } = useIssuesStore();
   const { currentActiveEstimateId, areEstimateEnabledByProjectId } = useProjectEstimates();
-  const { isWorkItemTypeEnabledForProject, getIssueTypeIdsWithMandatoryProperties } = useIssueTypes();
+  const {
+    loader: workItemTypeLoader,
+    getProjectIssueTypes,
+    isWorkItemTypeEnabledForProject,
+    getIssueTypeIdsWithMandatoryProperties,
+  } = useIssueTypes();
+  const { createLabel } = useLabel();
   // derived values
   const projectDetails = projectId ? getProjectById(projectId.toString()) : undefined;
   const isCyclesEnabled = !!projectDetails?.cycle_view;
@@ -246,9 +252,9 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
             render={({ field: { onChange, value } }) => (
               <>
                 <CreateLabelModal
+                  createLabel={createLabel.bind(createLabel, workspaceSlug?.toString(), projectId?.toString())}
                   isOpen={createLabelModal}
                   handleClose={() => setCreateLabelModal(false)}
-                  projectId={projectId.toString()}
                   onSuccess={(res) => onChange([...value, res.id])}
                 />
                 <div className="h-6">
@@ -335,16 +341,18 @@ export const IssueBulkOperationsProperties: React.FC<Props> = observer((props) =
                 render={({ field: { value, onChange } }) => (
                   <div className={cn("h-6")}>
                     <IssueTypeDropdown
-                      issueTypeId={value}
-                      projectId={projectId?.toString()}
                       disabled={isUpdateDisabled}
-                      variant="xs"
-                      optionTooltip={optionTooltip}
+                      getWorkItemTypes={getProjectIssueTypes}
                       handleIssueTypeChange={(issueTypeId) => {
                         // Allow issue type to be null (unset issue type)
                         const newValue = value === issueTypeId ? null : issueTypeId;
                         onChange(newValue);
                       }}
+                      isInitializing={workItemTypeLoader === "init-loader"}
+                      issueTypeId={value}
+                      optionTooltip={optionTooltip}
+                      projectId={projectId?.toString()}
+                      variant="xs"
                     />
                   </div>
                 )}

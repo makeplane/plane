@@ -1,28 +1,28 @@
 import { observer } from "mobx-react";
-// ui
+// plane imports
+import { IIssueType } from "@plane/types";
 import { CustomSearchSelect, LayersIcon, Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 // ce imports
 import { TIssueTypeDropdownVariant } from "@/ce/components/issues";
-// helpers
-import { cn } from "@plane/utils";
 // plane web types
 import { IssueTypeLogo } from "@/plane-web/components/issue-types";
-// plane web hooks
-import { useIssueTypes } from "@/plane-web/hooks/store";
 
 export type TIssueTypeOptionTooltip = {
   [issueTypeId: string]: string; // issue type id --> tooltip content
 };
 
 type TIssueTypeDropdownProps = {
-  issueTypeId: string | null;
-  projectId: string;
-  disabled?: boolean;
-  variant?: TIssueTypeDropdownVariant;
-  placeholder?: string;
-  optionTooltip?: TIssueTypeOptionTooltip;
   buttonClassName?: string;
+  disabled?: boolean;
+  getWorkItemTypes: (projectId: string, activeOnly: boolean) => Record<string, IIssueType>;
   handleIssueTypeChange: (value: string) => void;
+  isInitializing?: boolean;
+  issueTypeId: string | null;
+  optionTooltip?: TIssueTypeOptionTooltip;
+  placeholder?: string;
+  projectId: string;
+  variant?: TIssueTypeDropdownVariant;
 };
 
 export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
@@ -32,15 +32,15 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
     disabled = false,
     variant = "sm",
     placeholder = "Work item type",
+    isInitializing = false,
     handleIssueTypeChange,
     optionTooltip,
     buttonClassName,
+    getWorkItemTypes,
   } = props;
-  // store hooks
-  const { loader: issueTypesLoader, getProjectIssueTypes } = useIssueTypes();
   // derived values
-  const allIssueTypes = getProjectIssueTypes(projectId, false);
-  const activeIssueTypes = getProjectIssueTypes(projectId, true);
+  const allIssueTypes = getWorkItemTypes(projectId, false);
+  const activeIssueTypes = getWorkItemTypes(projectId, true);
 
   // Can be used with CustomSearchSelect as well
   const issueTypeOptions = Object.entries(activeIssueTypes).map(([issueTypeId, issueTypeDetail]) => ({
@@ -62,7 +62,7 @@ export const IssueTypeDropdown = observer((props: TIssueTypeDropdownProps) => {
     tooltip: optionTooltip?.[issueTypeId] ?? undefined,
   }));
 
-  if (issueTypesLoader === "init-loader") {
+  if (isInitializing) {
     return (
       <Loader className="w-16 h-full">
         <Loader.Item height="100%" />

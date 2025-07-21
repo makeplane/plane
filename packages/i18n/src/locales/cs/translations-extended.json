@@ -2371,7 +2371,13 @@
         "button": "Vytvořte svou první šablonu"
       },
       "no_labels": {
-        "description": " No labels yet. Create labels to help organize and filter work items in you project."
+        "description": "Zatím žádné štítky. Vytvořte štítky, abyste pomohli organizovat a filtrovat pracovní položky v projektu."
+      },
+      "no_work_items": {
+        "description": "Zatím žádné pracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."
+      },
+      "no_sub_work_items": {
+        "description": "Zatím žádné podpracovní položky. Přidejte jednu, abyste strukturovali svou práci lépe."
       },
       "page": {
         "no_templates": {

@@ -1,5 +1,7 @@
 import { TProjectTemplateFormData } from "@plane/types";
 import { isValidId, partitionValidIds } from "../../common";
+import { sanitizeMultipleWorkItemFormDataBlueprints } from "../work-item";
+import { projectTemplateFormGettersHelpers } from "./helper";
 import { TMockCreateWorkItemTypeInstanceParams } from "./work-item-type";
 
 export type TSanitizeProjectCreationFormParams = {
@@ -11,7 +13,7 @@ export type TSanitizeProjectCreationFormParams = {
 export type TSanitizeProjectTemplateFormDataParams = TSanitizeProjectCreationFormParams &
   Omit<TMockCreateWorkItemTypeInstanceParams, "data">;
 
-export type TSanitizeProjectCreationFormDataParams = TSanitizeProjectCreationFormParams & {
+type TSanitizeProjectCreationFormDataParams = TSanitizeProjectCreationFormParams & {
   workspaceId: string;
   extractedData: Partial<TProjectTemplateFormData>;
 };
@@ -50,6 +52,15 @@ export const sanitizeProjectCreationFormData = (params: TSanitizeProjectCreation
     workspaceUserIds
   );
 
+  // Check work items validity
+  const helpers = projectTemplateFormGettersHelpers(extractedData);
+  const workItemsResult = sanitizeMultipleWorkItemFormDataBlueprints(extractedData.workitems ?? [], {
+    getProjectStateIds: () => helpers.stateIds,
+    getProjectLabelIds: () => helpers.labelIds,
+    getProjectModuleIds: () => [],
+    getProjectMemberIds: () => helpers.memberIds,
+  });
+
   // Return both sanitized data and invalid IDs
   return {
     valid: {
@@ -57,11 +68,13 @@ export const sanitizeProjectCreationFormData = (params: TSanitizeProjectCreation
       state_id: isProjectStateValid ? projectStateId : undefined,
       project_lead: isProjectLeadValid ? projectLead : undefined,
       members: validMemberIds,
+      workitems: workItemsResult.valid,
     },
     invalid: {
       state_id: invalidProjectStateId,
       project_lead: invalidProjectLead,
       members: invalidMemberIds,
+      ...(Object.keys(workItemsResult.invalid).length > 0 ? { workitems: workItemsResult.invalid } : {}),
     },
   };
 };

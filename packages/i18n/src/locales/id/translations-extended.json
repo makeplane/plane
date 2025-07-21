@@ -2370,6 +2370,12 @@
       "no_labels": {
         "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
       },
+      "no_work_items": {
+        "description": "Belum ada item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."
+      },
+      "no_sub_work_items": {
+        "description": "Belum ada sub-item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."
+      },
       "page": {
         "no_templates": {
           "title": "Tidak ada template yang dapat Anda akses.",

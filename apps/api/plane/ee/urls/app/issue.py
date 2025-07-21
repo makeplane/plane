@@ -10,6 +10,7 @@ from plane.ee.views.app import (
     IssueDuplicateEndpoint,
     IssuePageViewSet,
     PageSearchViewSet,
+    SubWorkitemTemplateEndpoint,
 )
 
 
@@ -77,4 +78,11 @@ urlpatterns = [
         name="issue-page-search",
     ),
     # End Page List Endpoint
+    # Sub-workitem Template Endpoint
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:workitem_id>/sub-workitem-template/",
+        SubWorkitemTemplateEndpoint.as_view(),
+        name="sub-workitem-template",
+    ),
+    # End Sub-workitem Template Endpoint
 ]

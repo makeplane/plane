@@ -15,7 +15,7 @@ import {
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
   extractAndSanitizeCustomPropertyValuesFormData,
-  extractAndSanitizeWorkItemFormData,
+  extractAndSanitizeWorkItemTemplateFormData,
   getPropertiesDefaultValues,
 } from "@plane/utils";
 // ce imports
@@ -24,6 +24,7 @@ import { TIssueModalProviderProps } from "@/ce/components/issues";
 import {
   IssueModalContext,
   TActiveAdditionalPropertiesProps,
+  TCreateSubWorkItemProps,
   TCreateUpdatePropertyValuesProps,
   THandleProjectEntitiesFetchProps,
   THandleTemplateChangeProps,
@@ -37,10 +38,12 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
 import { useIssuePropertiesActivity, useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
+import { IssueService } from "@/plane-web/services/issue/issue.service";
 import { DraftIssuePropertyValuesService, IssuePropertyValuesService } from "@/plane-web/services/issue-types";
 // local imports
 import { ConversionToastActionItems } from "../conversion-toast-action-items";
 
+const workItemService = new IssueService();
 const issuePropertyValuesService = new IssuePropertyValuesService();
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
@@ -191,11 +194,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
    */
   const handleProjectEntitiesFetch = useCallback(
     async (props: THandleProjectEntitiesFetchProps) => {
-      const { workspaceSlug, templateId } = props;
-      // get template details
-      const template = getTemplateById(templateId);
-      // get work item project id from the template
-      const workItemProjectId = template?.template_data.project;
+      const { workItemTypeId, workspaceSlug, workItemProjectId } = props;
 
       if (!workItemProjectId) return;
 
@@ -223,8 +222,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       }
       // custom properties
       const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug, workItemProjectId);
-      const templateWorkItemTypeId = template.template_data.type?.id;
-      if (isWorkItemTypeEnabled && templateWorkItemTypeId) {
+      if (isWorkItemTypeEnabled && workItemTypeId) {
         const isCustomPropertiesFetched = getProjectWorkItemPropertiesFetchedMap(
           workItemProjectId,
           EWorkItemTypeEntity.WORK_ITEM
@@ -240,7 +238,6 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
       await Promise.all(entitiesToFetch);
     },
     [
-      getTemplateById,
       getProjectStateIds,
       getProjectMemberFetchStatus,
       getProjectLabelIds,
@@ -270,10 +267,14 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
 
       if (template) {
         // fetch all entities required in the work item modal for the template
-        await handleProjectEntitiesFetch({ workspaceSlug, templateId: workItemTemplateId });
+        await handleProjectEntitiesFetch({
+          workItemProjectId: template.template_data.project,
+          workItemTypeId: template.template_data.type?.id,
+          workspaceSlug,
+        });
 
         // Get the sanitized work item form data
-        const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemFormData({
+        const { valid: sanitizedWorkItemFormData } = extractAndSanitizeWorkItemTemplateFormData({
           workItemData: template.template_data,
           getProjectStateIds: getAvailableWorkItemCreationStateIds,
           getProjectLabelIds,
@@ -361,6 +362,20 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
     }
   };
 
+  /**
+   * Used to create a sub work item
+   */
+  const handleCreateSubWorkItem = useCallback(
+    async (props: TCreateSubWorkItemProps) => {
+      const { workspaceSlug, projectId, parentId } = props;
+      // check if work item template id is available
+      if (!workItemTemplateId) return;
+      // create sub work item
+      await workItemService.createSubWorkItemUsingTemplate(workspaceSlug, projectId, parentId, workItemTemplateId);
+    },
+    [workItemTemplateId]
+  );
+
   return (
     <IssueModalContext.Provider
       value={{
@@ -382,6 +397,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         handleProjectEntitiesFetch,
         handleTemplateChange,
         handleConvert,
+        handleCreateSubWorkItem,
       }}
     >
       {children}

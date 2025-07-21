@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Shapes } from "lucide-react";
 // plane imports
+import { PAGE_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ce imports
 import { PageTemplatePicker as PageTemplatePickerCE, TPageTemplatePickerProps } from "@/ce/components/pages/editor";
@@ -41,6 +42,7 @@ export const PageTemplatePicker: React.FC<TPageTemplatePickerProps> = observer((
           type="button"
           onClick={() => setIsApplyTemplateModalOpen(true)}
           className="flex items-center gap-1 p-1 rounded font-medium text-sm hover:bg-custom-background-80 text-custom-text-300 outline-none transition-colors"
+          data-ph-element={PAGE_TEMPLATE_TRACKER_ELEMENTS.EDITOR_TEMPLATE_PICKER_BUTTON}
         >
           <Shapes className="flex-shrink-0 size-4" />
           {t("templates.dropdown.label.page")}

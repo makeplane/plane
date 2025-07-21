@@ -21,6 +21,10 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
+    """
+    Workitem Template Endpoint
+    """
+
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def get(self, request, slug, pk=None):
@@ -34,7 +38,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
                 .prefetch_related(
                     Prefetch(
                         "workitem_templates",
-                        queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
+                        queryset=WorkitemTemplate.objects.filter(
+                            workspace__slug=slug
+                        ).select_related("parent_workitem_template"),
                         to_attr="template_data",
                     )
                 )
@@ -50,7 +56,9 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
             .prefetch_related(
                 Prefetch(
                     "workitem_templates",
-                    queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
+                    queryset=WorkitemTemplate.objects.filter(
+                        workspace__slug=slug
+                    ).select_related("parent_workitem_template"),
                     to_attr="template_data",
                 )
             )
@@ -67,9 +75,19 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         # get the template data
         template_data = request.data.pop("template_data", {})
         # validate workitem fields
+        # pop the subworkitem data from the template data
+        subworkitem_data = template_data.pop("sub_workitems", [])
+
+        # validate the base work item fields
         success, errors = self.validate_workitem_fields(template_data)
         if not success:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Loop through the subworkitem data and validate the fields
+        for subworkitem in subworkitem_data:
+            success, errors = self.validate_workitem_fields(subworkitem)
+            if not success:
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         # create a new template only after validation is successful
         template_serializer = TemplateSerializer(data=request.data)
@@ -92,15 +110,35 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         serializer = WorkitemTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
+            bulk_subworkitem_data = []
+            for subworkitem in subworkitem_data:
+                subworkitem.pop("workspace")
+                project_id = subworkitem.pop("project", None)
+
+                bulk_subworkitem_data.append(
+                    WorkitemTemplate(
+                        parent_workitem_template=serializer.instance,
+                        workspace=workspace,
+                        project_id=project_id,
+                        **subworkitem,
+                    )
+                )
+
+            # Create all the subworkitems for the parent workitem
+            WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
+
             # templates
             template = (
                 Template.objects.filter(workspace_id=workspace.id, pk=template.id)
                 .prefetch_related(
                     Prefetch(
                         "workitem_templates",
-                        queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
+                        queryset=WorkitemTemplate.objects.filter(
+                            workspace__slug=slug
+                        ).select_related("parent_workitem_template"),
                         to_attr="template_data",
-                    )
+                    ),
                 )
                 .first()
             )
@@ -130,18 +168,50 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
 
         # validate template data
         if template_data:
+            # pop the subworkitem data from the template data
+            subworkitem_data = template_data.pop("sub_workitems", [])
+
+            # validate the base work item fields
             success, errors = self.validate_workitem_fields(template_data)
             if not success:
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
+            # Loop through the subworkitem data and validate the fields
+            for subworkitem in subworkitem_data:
+                success, errors = self.validate_workitem_fields(subworkitem)
+                if not success:
+                    return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # get the workitem template
             workitem_template = WorkitemTemplate.objects.get(
                 workspace__slug=slug, template_id=pk
             )
+            # validate the workitem template
             workitem_serializer = WorkitemTemplateSerializer(
                 workitem_template, data=template_data, partial=True
             )
             if workitem_serializer.is_valid():
                 workitem_serializer.save()
+                # delete the existing subworkitem templates
+                WorkitemTemplate.objects.filter(
+                    parent_workitem_template_id=workitem_template.id,
+                ).delete(soft=False)
+                # create a new work item template for each subworkitem
+                bulk_subworkitem_data = []
+                for subworkitem in subworkitem_data:
+                    subworkitem.pop("workspace")
+                    project_id = subworkitem.pop("project", None)
+
+                    bulk_subworkitem_data.append(
+                        WorkitemTemplate(
+                            parent_workitem_template=workitem_serializer.instance,
+                            workspace_id=template.workspace_id,
+                            project_id=project_id,
+                            **subworkitem,
+                        )
+                    )
+                WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
+
             else:
                 return Response(
                     workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -152,14 +222,16 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
             .prefetch_related(
                 Prefetch(
                     "workitem_templates",
-                    queryset=WorkitemTemplate.objects.filter(workspace__slug=slug),
+                    queryset=WorkitemTemplate.objects.filter(
+                        workspace__slug=slug
+                    ).select_related("parent_workitem_template"),
                     to_attr="template_data",
                 )
             )
             .first()
         )
         serializer = TemplateDataSerializer(template)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
@@ -186,7 +258,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
                     "workitem_templates",
                     queryset=WorkitemTemplate.objects.filter(
                         workspace__slug=slug, project_id=project_id
-                    ),
+                    ).select_related("parent_workitem_template"),
                     to_attr="template_data",
                 )
             )
@@ -200,10 +272,19 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
     def post(self, request, slug, project_id):
         # get the template data
         template_data = request.data.pop("template_data", {})
+        # pop the subworkitem data from the template data
+        subworkitem_data = template_data.pop("sub_workitems", [])
+
         # validate workitem fields
         success, errors = self.validate_workitem_fields(template_data)
         if not success:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Loop through the subworkitem data and validate the fields
+        for subworkitem in subworkitem_data:
+            success, errors = self.validate_workitem_fields(subworkitem)
+            if not success:
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         # create a new template
         template_serializer = TemplateSerializer(data=request.data)
@@ -225,6 +306,23 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = WorkitemTemplateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+
+            # create a new work item template for each subworkitem
+            bulk_subworkitem_data = []
+            for subworkitem in subworkitem_data:
+                subworkitem.pop("workspace")
+                subworkitem.pop("project")
+
+                bulk_subworkitem_data.append(
+                    WorkitemTemplate(
+                        parent_workitem_template=serializer.instance,
+                        workspace_id=template.workspace_id,
+                        project_id=project_id,
+                        **subworkitem,
+                    )
+                )
+            WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
+
             # Fetch the template and work item
             template = (
                 Template.objects.filter(project_id=project_id, pk=template.id)
@@ -233,7 +331,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
                         "workitem_templates",
                         queryset=WorkitemTemplate.objects.filter(
                             workspace__slug=slug, project_id=project_id
-                        ),
+                        ).select_related("parent_workitem_template"),
                         to_attr="template_data",
                     )
                 )
@@ -265,18 +363,48 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
 
         # validate template data
         if template_data:
+            # pop the subworkitem data from the template data
+            subworkitem_data = template_data.pop("sub_workitems", [])
+
             success, errors = self.validate_workitem_fields(template_data)
             if not success:
                 return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
+            # Loop through the subworkitem data and validate the fields
+            for subworkitem in subworkitem_data:
+                success, errors = self.validate_workitem_fields(subworkitem)
+                if not success:
+                    return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # get the workitem template
             workitem_template = WorkitemTemplate.objects.get(
                 workspace__slug=slug, template_id=pk, project_id=project_id
             )
+            # validate the workitem template
             workitem_serializer = WorkitemTemplateSerializer(
                 workitem_template, data=template_data, partial=True
             )
             if workitem_serializer.is_valid():
                 workitem_serializer.save()
+                # delete the existing subworkitem templates
+                WorkitemTemplate.objects.filter(
+                    parent_workitem_template_id=workitem_template.id,
+                ).delete(soft=False)
+                # create a new work item template for each subworkitem
+                bulk_subworkitem_data = []
+                for subworkitem in subworkitem_data:
+                    subworkitem.pop("workspace")
+                    subworkitem.pop("project")
+
+                    bulk_subworkitem_data.append(
+                        WorkitemTemplate(
+                            parent_workitem_template=workitem_serializer.instance,
+                            workspace_id=template.workspace_id,
+                            project_id=project_id,
+                            **subworkitem,
+                        )
+                    )
+                WorkitemTemplate.objects.bulk_create(bulk_subworkitem_data)
             else:
                 return Response(
                     workitem_serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -297,7 +425,7 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             .first()
         )
         serializer = TemplateDataSerializer(template)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)

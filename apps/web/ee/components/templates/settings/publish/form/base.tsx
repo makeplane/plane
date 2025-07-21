@@ -5,6 +5,7 @@ import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
+import { PROJECT_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TBaseTemplateWithData, TPublishTemplateFormWithData } from "@plane/types";
 import { Button } from "@plane/ui";
@@ -73,10 +74,18 @@ export const PublishTemplateFormRoot = observer(
                 size="sm"
                 className={cn(COMMON_BUTTON_CLASS_NAME)}
                 onClick={handleFormCancel}
+                data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_CANCEL_BUTTON}
               >
                 {t("common.cancel")}
               </Button>
-              <Button variant="primary" type="submit" size="sm" className={cn("shadow-sm")} loading={isSubmitting}>
+              <Button
+                variant="primary"
+                type="submit"
+                size="sm"
+                className={cn("shadow-sm")}
+                loading={isSubmitting}
+                data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.PUBLISH_FORM_SUBMIT_BUTTON}
+              >
                 {isSubmitting ? t("common.confirming") : t("common.save_changes")}
               </Button>
             </div>

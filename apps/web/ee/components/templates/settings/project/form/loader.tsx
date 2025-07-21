@@ -2,12 +2,12 @@ import { Loader } from "@plane/ui";
 
 export const ProjectTemplateLoader = () => (
   <Loader className="flex flex-col items-center w-full h-full">
-    <Loader className="space-y-4 w-full max-w-4xl px-page-x py-page-y md:p-9">
+    <Loader className="space-y-4 w-full px-page-x py-page-y md:p-9">
       <Loader.Item height="40px" />
       <Loader.Item height="80px" />
     </Loader>
     <Loader className="bg-custom-background-90/80 flex flex-col items-center w-full h-full">
-      <div className="w-full max-w-4xl px-page-x py-page-y md:p-9">
+      <div className="w-full px-page-x py-page-y md:p-9">
         <div className="space-y-2">
           <Loader.Item height="140px" />
           <Loader className="flex flex-col gap-y-4 py-8 w-full">

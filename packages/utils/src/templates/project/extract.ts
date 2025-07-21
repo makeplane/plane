@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 // plane imports
 import {
   CompleteOrEmpty,
@@ -6,10 +7,11 @@ import {
   IState,
   TProjectTemplate,
   TProjectTemplateFormData,
-  TProjectWorkItemTypeSchema,
+  TProjectWorkItemTypeBlueprint,
 } from "@plane/types";
 // local imports
 import { extractIds, isComplete } from "../../common";
+import { extractWorkItemFormDataBlueprint } from "../work-item";
 import { mockCreateOrUpdateLabel } from "./label";
 import { mockCreateOrUpdateState } from "./state";
 import {
@@ -29,6 +31,7 @@ export const extractProjectCreationFormData = (params: TExtractProjectCreationFo
   const { projectData } = params;
 
   return {
+    id: uuidv4(),
     name: projectData.name,
     description: projectData.description,
     logo_props: projectData.logo_props,
@@ -55,9 +58,11 @@ export const extractProjectTemplateFormData = async (
   params: TExtractProjectTemplateFormDataParams
 ): Promise<TProjectTemplateFormData> => {
   const { projectData } = params;
+  // Extract base project data
+  const baseProjectData = extractProjectCreationFormData({ projectData });
 
   return {
-    ...extractProjectCreationFormData({ projectData }),
+    ...baseProjectData,
     // additional attributes
     workitem_types: await extractProjectWorkItemTypeFormData({
       ...params,
@@ -87,11 +92,14 @@ export const extractProjectTemplateFormData = async (
     is_project_updates_enabled: projectData.is_project_updates_enabled,
     is_epic_enabled: projectData.is_epic_enabled,
     is_workflow_enabled: projectData.is_workflow_enabled,
+    workitems: projectData.workitems.map((workItem) =>
+      extractWorkItemFormDataBlueprint({ ...workItem, project: baseProjectData.id })
+    ),
   };
 };
 
-export type TProcessWorkItemTypeParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
-  workItemType: CompleteOrEmpty<TProjectWorkItemTypeSchema>;
+type TProcessWorkItemTypeParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
+  workItemType: CompleteOrEmpty<TProjectWorkItemTypeBlueprint>;
 };
 
 /**
@@ -128,14 +136,14 @@ const processWorkItemType = async (
   return { id: workItemType.id, instance: workItemTypeInstance };
 };
 
-export type TExtractProjectWorkItemTypeFormDataParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
+type TExtractProjectWorkItemTypeFormDataParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
   workItemTypes: TProjectTemplate["template_data"]["workitem_types"];
 };
 
 /**
  * Extracts project work item type form data
  */
-export const extractProjectWorkItemTypeFormData = async (
+const extractProjectWorkItemTypeFormData = async (
   params: TExtractProjectWorkItemTypeFormDataParams
 ): Promise<Record<string, IIssueType>> => {
   const { workItemTypes } = params;
@@ -155,14 +163,14 @@ export const extractProjectWorkItemTypeFormData = async (
   return workItemTypesFormData;
 };
 
-export type TExtractProjectEpicFormDataParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
+type TExtractProjectEpicFormDataParams = Omit<TMockCreateWorkItemTypeInstanceParams, "data"> & {
   epics: TProjectTemplate["template_data"]["epics"];
 };
 
 /**
  * Extracts project epic form data
  */
-export const extractProjectEpicFormData = async (
+const extractProjectEpicFormData = async (
   params: TExtractProjectEpicFormDataParams
 ): Promise<IIssueType | undefined> => {
   const { epics } = params;
@@ -177,7 +185,7 @@ export const extractProjectEpicFormData = async (
   return result.instance;
 };
 
-export type TExtractProjectLabelFormDataParams = {
+type TExtractProjectLabelFormDataParams = {
   workspaceSlug: string;
   projectId: string;
   labels: TProjectTemplate["template_data"]["labels"];
@@ -186,9 +194,7 @@ export type TExtractProjectLabelFormDataParams = {
 /**
  * Extracts project label form data
  */
-export const extractProjectLabelFormData = async (
-  params: TExtractProjectLabelFormDataParams
-): Promise<IIssueLabel[]> => {
+const extractProjectLabelFormData = async (params: TExtractProjectLabelFormDataParams): Promise<IIssueLabel[]> => {
   const labelFormData: IIssueLabel[] = [];
 
   for (const label of params.labels) {
@@ -199,7 +205,7 @@ export const extractProjectLabelFormData = async (
   return labelFormData;
 };
 
-export type TExtractProjectStateFormDataParams = {
+type TExtractProjectStateFormDataParams = {
   workspaceSlug: string;
   projectId: string;
   states: TProjectTemplate["template_data"]["states"];
@@ -208,7 +214,7 @@ export type TExtractProjectStateFormDataParams = {
 /**
  * Extracts project state form data
  */
-export const extractProjectStateFormData = async (params: TExtractProjectStateFormDataParams): Promise<IState[]> => {
+const extractProjectStateFormData = async (params: TExtractProjectStateFormDataParams): Promise<IState[]> => {
   const { states } = params;
 
   const stateFormData: IState[] = [];

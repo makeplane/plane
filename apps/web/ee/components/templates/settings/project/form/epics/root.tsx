@@ -33,7 +33,7 @@ export const ProjectEpicWorkItemType = observer(() => {
             />
           </div>
         }
-        showBottomBorder={false}
+        showBorder={false}
       >
         <EpicPropertiesRoot
           epicId={projectEpic.id}

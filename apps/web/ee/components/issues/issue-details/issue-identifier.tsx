@@ -1,12 +1,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EWorkItemTypeEntity } from "@plane/types";
-// ui
+// plane imports
+import { EWorkItemTypeEntity, IIssueType } from "@plane/types";
 import { Loader, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-// ce components
-// helpers
 import { cn } from "@plane/utils";
+// ce components
 import {
   IssueIdentifier as BaseIssueIdentifier,
   TIssueIdentifierProps,
@@ -57,14 +56,15 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
 };
 
 type TIssueTypeIdentifier = {
+  getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
   issueTypeId: string;
   size?: "xs" | "sm" | "md" | "lg";
 };
 
 export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => {
-  const { issueTypeId, size = "sm" } = props;
+  const { getWorkItemTypeById, issueTypeId, size = "sm" } = props;
   // hooks
-  const issueType = useIssueType(issueTypeId);
+  const issueType = getWorkItemTypeById ? getWorkItemTypeById(issueTypeId) : useIssueType(issueTypeId);
 
   return (
     <Tooltip tooltipContent={issueType?.name} disabled={!issueType?.name} position="top-left">
@@ -80,13 +80,19 @@ export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) =>
   );
 });
 
-export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
+type TIssueIdentifierPropsExtended = TIssueIdentifierProps & {
+  getWorkItemTypeById?: (workItemTypeId: string) => IIssueType | undefined;
+  isWorkItemTypeEntityEnabled?: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
+};
+
+export const IssueIdentifier: React.FC<TIssueIdentifierPropsExtended> = observer((props) => {
   const {
+    displayProperties,
+    enableClickToCopyIdentifier = false,
+    getWorkItemTypeById,
     projectId,
     size = "sm",
     textContainerClassName = "",
-    displayProperties,
-    enableClickToCopyIdentifier = false,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -104,7 +110,8 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const projectIdentifier = isUsingStoreData ? getProjectIdentifierById(projectId) : props.projectIdentifier;
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
   const issueType = useIssueType(issueTypeId);
-  const isWorkItemTypeEntityEnabled = isWorkItemTypeEntityEnabledForProject(
+  const isWorkItemTypeEntityEnabled = props.isWorkItemTypeEntityEnabled ?? isWorkItemTypeEntityEnabledForProject;
+  const isWorkItemTypeEnabled = isWorkItemTypeEntityEnabled(
     workspaceSlug?.toString(),
     projectId,
     issueType?.is_epic ? EWorkItemTypeEntity.EPIC : EWorkItemTypeEntity.WORK_ITEM
@@ -112,7 +119,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   const shouldRenderIssueTypeIcon = displayProperties ? displayProperties.issue_type : true;
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
-  if (!isWorkItemTypeEntityEnabled) {
+  if (!isWorkItemTypeEnabled) {
     const baseProps = {
       projectId,
       size,
@@ -142,7 +149,9 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
 
   return (
     <div className={cn("flex flex-shrink-0 items-center", size === "xs" ? "space-x-1" : "space-x-2")}>
-      {shouldRenderIssueTypeIcon && issueTypeId && <IssueTypeIdentifier issueTypeId={issueTypeId} size={size} />}
+      {shouldRenderIssueTypeIcon && issueTypeId && (
+        <IssueTypeIdentifier getWorkItemTypeById={getWorkItemTypeById} issueTypeId={issueTypeId} size={size} />
+      )}
       {shouldRenderIssueID && (
         <IdentifierText
           identifier={`${projectIdentifier}-${issueSequenceId}`}

@@ -68,6 +68,7 @@ const TemplatesProjectSettingsPage = observer(() => {
             projectId={projectId?.toString()}
             currentLevel={ETemplateLevel.PROJECT}
             buttonSize="sm"
+            variant="settings"
           />
         }
       />

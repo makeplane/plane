@@ -33,7 +33,7 @@ type TPropertyValueSelectProps = {
   propertyValueError?: EIssuePropertyValueError;
   projectId: string | undefined;
   variant: TPropertyValueVariant;
-  isPropertyValuesLoading: boolean;
+  arePropertyValuesInitializing: boolean;
   isDisabled: boolean;
   onPropertyValueChange: (value: string[]) => Promise<void>;
   getPropertyInstanceById: (customPropertyId: string) => IIssueProperty<EIssuePropertyType> | undefined;
@@ -46,7 +46,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
     propertyValueError,
     projectId,
     variant,
-    isPropertyValuesLoading,
+    arePropertyValuesInitializing,
     onPropertyValueChange,
     getPropertyInstanceById,
     isDisabled,
@@ -167,7 +167,7 @@ export const PropertyValueSelect = observer((props: TPropertyValueSelectProps) =
 
   const propertyTypeKey = getIssuePropertyTypeKey(propertyDetail?.property_type, propertyDetail?.relation_type);
 
-  const CurrentPropertyAttribute = isPropertyValuesLoading ? (
+  const CurrentPropertyAttribute = arePropertyValuesInitializing ? (
     <Loader className="w-full min-h-8">
       <Loader.Item height="32px" />
     </Loader>

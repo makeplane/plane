@@ -18,7 +18,7 @@ from rest_framework.response import Response
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.serializers import ProjectSerializer, ProjectListSerializer
 from plane.db.models.asset import FileAsset
-from plane.ee.bgtasks.project_template_task import create_project_from_template
+from plane.ee.bgtasks.template_task import create_project_from_template
 from plane.db.models import (
     Workspace,
     IssueUserProperty,
@@ -55,6 +55,10 @@ from plane.utils.host import base_host
 
 
 class ProjectTemplateUseEndpoint(BaseAPIView):
+    """
+    This endpoint is used to create a project from the project template.
+    """
+
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(
             member=self.request.user,
@@ -246,22 +250,24 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                 # Get all states from templates
                 states = project_template.states
 
-                State.objects.bulk_create(
-                    [
-                        State(
-                            name=state["name"],
-                            description=state.get("description", ""),
-                            color=state["color"],
-                            project=serializer.instance,
-                            sequence=state["sequence"],
-                            workspace=workspace,
-                            group=state["group"],
-                            default=state.get("default", False),
-                            created_by=request.user,
-                        )
-                        for state in states
-                    ]
-                )
+                # Create state map
+                state_map = {}
+
+                # Create states individually since we will be using the state_map for workitem creation
+                for state in states:
+                    created_state = State.objects.create(
+                        name=state["name"],
+                        description=state.get("description", ""),
+                        color=state["color"],
+                        project=serializer.instance,
+                        sequence=state["sequence"],
+                        workspace=workspace,
+                        group=state["group"],
+                        default=state.get("default", False),
+                        created_by=request.user,
+                    )
+                    # Create state map
+                    state_map[str(state.get("id"))] = str(created_state.id)
 
                 # validating the PROJECT_GROUPING feature flag is enabled
                 if check_workspace_feature_flag(
@@ -384,6 +390,7 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                     str(template_id),
                     str(project.id),
                     str(request.user.id),
+                    state_map,
                     base_host(request=request, is_app=True),
                 )
 

@@ -305,13 +305,13 @@ class IssuePropertyOption(PydanticBaseModel):
 
 class IssueProperty(PydanticBaseModel):
     id: UUID4
-    name: str = Field(..., max_length=255)
-    display_name: str = Field(..., max_length=255)
+    name: Optional[str] = Field(None, max_length=255)
+    display_name: Optional[str] = Field(..., max_length=255)
     property_type: str
     relation_type: Optional[str] = None
     logo_props: Dict
     is_required: bool = False
-    settings: Dict
+    settings: Optional[Dict] = {}
     is_active: bool = True
     type: Type
     is_multi: bool = False

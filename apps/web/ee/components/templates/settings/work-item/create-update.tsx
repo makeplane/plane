@@ -2,19 +2,26 @@ import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ETemplateType, PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData } from "@plane/types";
+import {
+  ETemplateType,
+  PartialDeep,
+  TWorkItemTemplateForm,
+  TWorkItemTemplateFormData,
+  TIssuePropertyValues,
+} from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 import {
-  extractAndSanitizeCustomPropertyValuesFormData,
-  getPropertiesDefaultValues,
   getTemplateTypeI18nName,
   getTemplateSettingsBasePath,
   TWorkItemSanitizationResult,
   workItemTemplateDataToSanitizedFormData,
-  workItemTemplateFormDataToData,
+  workItemTemplateFormDataToTemplate,
+  processWorkItemCustomProperties,
 } from "@plane/utils";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useLabel, useMember, useModule, useProjectState, useWorkspace } from "@/hooks/store";
@@ -47,6 +54,9 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   const [templateInvalidIds, setTemplateInvalidIds] = useState<
     TWorkItemSanitizationResult<TWorkItemTemplateFormData>["invalid"] | undefined
   >(undefined);
+  const [subWorkItemCustomPropertyValues, setSubWorkItemCustomPropertyValues] = useState<
+    Record<string, TIssuePropertyValues>
+  >({});
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -111,7 +121,11 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
       setIsApplyingTemplate(true);
 
       // fetch all entities required for the template
-      await handleProjectEntitiesFetch({ workspaceSlug, templateId });
+      await handleProjectEntitiesFetch({
+        workItemProjectId: templateDetails.template_data.project,
+        workItemTypeId: templateDetails.template_data.type?.id,
+        workspaceSlug,
+      });
 
       // Get the sanitized work item form data
       const { form: sanitizedWorkItemFormData, invalidIds } = workItemTemplateDataToSanitizedFormData({
@@ -130,22 +144,32 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
       const isWorkItemTypeEnabled =
         !!templateDetails.template_data.project &&
         isWorkItemTypeEnabledForProject(workspaceSlug, templateDetails.template_data.project);
-      const templateWorkItemTypeId = templateDetails.template_data.type?.id;
-      // Handle custom property change if work item type is enabled and available
-      if (isWorkItemTypeEnabled && templateWorkItemTypeId) {
-        const templateWorkItemType = getIssueTypeById(templateWorkItemTypeId);
-        const getPropertyById = templateWorkItemType?.getPropertyById;
-        if (getPropertyById) {
-          // Get the sanitized custom property values form data
-          const sanitizedCustomPropertyValues = extractAndSanitizeCustomPropertyValuesFormData({
-            properties: templateDetails.template_data.properties,
-            getPropertyById,
-          });
-          // Update the custom property values
-          setIssuePropertyValues({
-            ...getPropertiesDefaultValues(templateWorkItemType?.activeProperties ?? []),
-            ...sanitizedCustomPropertyValues,
-          });
+      if (isWorkItemTypeEnabled) {
+        // For main work item
+        const workItemProperties = processWorkItemCustomProperties(
+          templateDetails.template_data.type?.id,
+          templateDetails.template_data.properties,
+          getIssueTypeById
+        );
+
+        if (workItemProperties) {
+          setIssuePropertyValues(workItemProperties);
+        }
+
+        // For sub work items
+        for (const subWorkItem of templateDetails.template_data.sub_workitems) {
+          const subWorkItemProperties = processWorkItemCustomProperties(
+            subWorkItem.type?.id,
+            subWorkItem.properties,
+            getIssueTypeById
+          );
+
+          if (subWorkItemProperties && subWorkItem.id) {
+            setSubWorkItemCustomPropertyValues((prev) => ({
+              ...prev,
+              [subWorkItem.id!]: subWorkItemProperties, // Non-null assertion because we already checked for subWorkItem.id
+            }));
+          }
         }
       }
 
@@ -194,6 +218,18 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     []
   );
 
+  /**
+   * Handles the change of sub work item custom property values
+   * @param workItemId - The work item id
+   * @param customPropertyValues - The custom property values
+   */
+  const handleWorkItemListCustomPropertyValuesChange = useCallback(
+    (workItemId: string, customPropertyValues: TIssuePropertyValues) => {
+      setSubWorkItemCustomPropertyValues((prev) => ({ ...prev, [workItemId]: customPropertyValues }));
+    },
+    []
+  );
+
   const handleFormSubmit = async (data: TWorkItemTemplateFormSubmitData) => {
     const { data: templateData } = data;
 
@@ -201,10 +237,11 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
     if (!currentWorkspace) return;
 
-    const payload = workItemTemplateFormDataToData({
+    const payload = workItemTemplateFormDataToTemplate({
       workspaceId: currentWorkspace.id,
       formData: templateData,
       customPropertyValues: issuePropertyValues,
+      subWorkItemListCustomPropertyValues: subWorkItemCustomPropertyValues,
       getWorkItemTypeById: getIssueTypeById,
       getWorkItemPropertyById: getIssuePropertyById,
       getStateById: getStateById,
@@ -228,12 +265,24 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
                 templateType: t(getTemplateTypeI18nName(template.template_type))?.toLowerCase(),
               }),
             });
+            captureSuccess({
+              eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
+            });
           })
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
               title: t("templates.toasts.update.error.title"),
               message: t("templates.toasts.update.error.message"),
+            });
+            captureError({
+              eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.UPDATE,
+              payload: {
+                id: template.id,
+              },
             });
           });
       }
@@ -245,7 +294,7 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
           ? { level: ETemplateLevel.PROJECT, projectId: props.projectId }
           : { level: ETemplateLevel.WORKSPACE }),
       })
-        .then(() => {
+        .then((template) => {
           resetLocalStates();
           router.push(templateSettingsPagePath);
           setToast({
@@ -256,12 +305,21 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
               templateType: t(getTemplateTypeI18nName(ETemplateType.WORK_ITEM))?.toLowerCase(),
             }),
           });
+          captureSuccess({
+            eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.CREATE,
+            payload: {
+              id: template?.id,
+            },
+          });
         })
         .catch(() => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("templates.toasts.create.error.title"),
             message: t("templates.toasts.create.error.message"),
+          });
+          captureError({
+            eventName: WORKITEM_TEMPLATE_TRACKER_EVENTS.CREATE,
           });
         });
     }
@@ -279,12 +337,15 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   return (
     <WorkItemTemplateFormRoot
       currentLevel={currentLevel}
-      operation={operationToPerform}
-      preloadedData={getDataForPreload()}
-      templateInvalidIds={templateInvalidIds}
-      handleTemplateInvalidIdsChange={handleTemplateInvalidIdsChange}
       handleFormCancel={handleFormCancel}
       handleFormSubmit={handleFormSubmit}
+      handleTemplateInvalidIdsChange={handleTemplateInvalidIdsChange}
+      handleWorkItemListCustomPropertyValuesChange={handleWorkItemListCustomPropertyValuesChange}
+      operation={operationToPerform}
+      preloadedData={getDataForPreload()}
+      subWorkItemCustomPropertyValues={subWorkItemCustomPropertyValues}
+      templateId={templateId}
+      templateInvalidIds={templateInvalidIds}
     />
   );
 });

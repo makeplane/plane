@@ -166,3 +166,87 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   LIST_ITEM_FAVORITE_BUTTON: "teamspace_view_list_item_favorite_button",
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
+
+// Project Template Tracker Start
+
+export const PROJECT_TEMPLATE_TRACKER_EVENTS = {
+  CREATE: "project_template_created",
+  UPDATE: "project_template_updated",
+  DELETE: "project_template_deleted",
+  PUBLISH: "project_template_published",
+  UNPUBLISH: "project_template_unpublished",
+};
+export const PROJECT_TEMPLATE_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_CREATE_BUTTON: "project_template_settings_page_create_button",
+  EMPTY_STATE_CREATE_BUTTON: "project_template_empty_state_create_button",
+  CREATE_PROJECT_MODAL_CREATE_BUTTON: "project_template_create_project_modal_create_button",
+  CREATE_PROJECT_MODAL_TEMPLATE_OPTION: "project_template_create_project_modal_template_option",
+  LIST_ITEM_EDIT_BUTTON: "project_template_list_item_edit_button",
+  LIST_ITEM_PUBLISH_BUTTON: "project_template_list_item_publish_button",
+  LIST_ITEM_UNPUBLISH_BUTTON: "project_template_list_item_unpublish_button",
+  LIST_ITEM_DELETE_BUTTON: "project_template_list_item_delete_button",
+  LIST_ITEM_USE_TEMPLATE_BUTTON: "project_template_list_item_use_template_button",
+  CREATE_UPDATE_FORM_CANCEL_BUTTON: "project_template_create_update_form_cancel_button",
+  CREATE_UPDATE_FORM_SUBMIT_BUTTON: "project_template_create_update_form_submit_button",
+  PUBLISH_FORM_CANCEL_BUTTON: "project_template_publish_form_cancel_button",
+  PUBLISH_FORM_SUBMIT_BUTTON: "project_template_publish_form_submit_button",
+};
+
+// Project Template Tracker End
+
+// Workitem Template Tracker Start
+
+export const WORKITEM_TEMPLATE_TRACKER_EVENTS = {
+  CREATE: "workitem_template_created",
+  UPDATE: "workitem_template_updated",
+  DELETE: "workitem_template_deleted",
+  PUBLISH: "workitem_template_published",
+  UNPUBLISH: "workitem_template_unpublished",
+};
+export const WORKITEM_TEMPLATE_TRACKER_ELEMENTS = {
+  WORKSPACE_SETTINGS_PAGE_CREATE_BUTTON: "workitem_template_workspace_settings_page_create_button",
+  PROJECT_SETTINGS_PAGE_CREATE_BUTTON: "workitem_template_project_settings_page_create_button",
+  WORKSPACE_EMPTY_STATE_CREATE_BUTTON: "workitem_template_workspace_empty_state_create_button",
+  PROJECT_EMPTY_STATE_CREATE_BUTTON: "workitem_template_project_empty_state_create_button",
+  CREATE_WORKITEM_MODAL_CREATE_BUTTON: "workitem_template_create_workitem_modal_create_button",
+  CREATE_WORKITEM_MODAL_TEMPLATE_OPTION: "workitem_template_create_workitem_modal_template_option",
+  LIST_ITEM_EDIT_BUTTON: "workitem_template_list_item_edit_button",
+  LIST_ITEM_PUBLISH_BUTTON: "workitem_template_list_item_publish_button",
+  LIST_ITEM_UNPUBLISH_BUTTON: "workitem_template_list_item_unpublish_button",
+  LIST_ITEM_DELETE_BUTTON: "workitem_template_list_item_delete_button",
+  LIST_ITEM_USE_TEMPLATE_BUTTON: "workitem_template_list_item_use_template_button",
+  WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON: "workitem_template_workspace_create_update_form_cancel_button",
+  PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON: "workitem_template_project_create_update_form_cancel_button",
+  WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON: "workitem_template_workspace_create_update_form_submit_button",
+  PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON: "workitem_template_project_create_update_form_submit_button",
+};
+
+// Workitem Template Tracker End
+
+// Page Template Tracker Start
+
+export const PAGE_TEMPLATE_TRACKER_EVENTS = {
+  CREATE: "page_template_created",
+  UPDATE: "page_template_updated",
+  DELETE: "page_template_deleted",
+  PUBLISH: "page_template_published",
+  UNPUBLISH: "page_template_unpublished",
+};
+export const PAGE_TEMPLATE_TRACKER_ELEMENTS = {
+  WORKSPACE_SETTINGS_PAGE_CREATE_BUTTON: "page_template_workspace_settings_page_create_button",
+  PROJECT_SETTINGS_PAGE_CREATE_BUTTON: "page_template_project_settings_page_create_button",
+  WORKSPACE_EMPTY_STATE_CREATE_BUTTON: "page_template_workspace_empty_state_create_button",
+  PROJECT_EMPTY_STATE_CREATE_BUTTON: "page_template_project_empty_state_create_button",
+  EDITOR_TEMPLATE_PICKER_BUTTON: "page_template_editor_template_picker_button",
+  LIST_ITEM_EDIT_BUTTON: "page_template_list_item_edit_button",
+  LIST_ITEM_PUBLISH_BUTTON: "page_template_list_item_publish_button",
+  LIST_ITEM_UNPUBLISH_BUTTON: "page_template_list_item_unpublish_button",
+  LIST_ITEM_DELETE_BUTTON: "page_template_list_item_delete_button",
+  LIST_ITEM_USE_TEMPLATE_BUTTON: "page_template_list_item_use_template_button",
+  WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON: "page_template_workspace_create_update_form_cancel_button",
+  PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON: "page_template_project_create_update_form_cancel_button",
+  WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON: "page_template_workspace_create_update_form_submit_button",
+  PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON: "page_template_project_create_update_form_submit_button",
+};
+
+// Page Template Tracker End

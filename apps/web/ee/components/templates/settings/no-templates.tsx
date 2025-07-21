@@ -36,6 +36,7 @@ export const NoTemplatesEmptyState = observer((props: TNoTemplatesEmptyStateProp
                 {...props}
                 buttonSize="md"
                 buttonI18nLabel="templates.empty_state.no_templates.button"
+                variant="empty_state"
               />
             }
           />

@@ -1,15 +1,22 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { EProjectPriority, PROJECT_UNSPLASH_COVERS, RANDOM_EMOJI_CODES } from "@plane/constants";
+import {
+  EProjectPriority,
+  PROJECT_TEMPLATE_TRACKER_ELEMENTS,
+  PROJECT_UNSPLASH_COVERS,
+  RANDOM_EMOJI_CODES,
+} from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import {
   EIssuePropertyType,
   IIssueProperty,
   IIssueType,
+  TIssuePropertyValues,
   TProjectTemplateForm,
   TProjectTemplateFormData,
 } from "@plane/types";
@@ -17,6 +24,8 @@ import { Button } from "@plane/ui";
 import {
   cn,
   generateAdditionalProjectTemplateFormData,
+  projectTemplateFormGettersHelpers,
+  processWorkItemCustomProperties,
   projectTemplateDataToSanitizedFormData,
   TProjectSanitizationResult,
 } from "@plane/utils";
@@ -26,6 +35,8 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { rootStore } from "@/lib/store-context";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
+import { TemplateDetails } from "@/plane-web/components/templates/settings/common/form/template-details";
+import { WorkItemBlueprintListRoot } from "@/plane-web/components/templates/settings/work-item/blueprint/list/root";
 import { useProjectTemplates, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { IssuePropertyOption } from "@/plane-web/store/issue-types/issue-property-option";
 import { IssueType } from "@/plane-web/store/issue-types/issue-type";
@@ -38,7 +49,6 @@ import { ProjectLabels } from "./labels";
 import { ProjectTemplateLoader } from "./loader";
 import { ProjectDetails } from "./project-details";
 import { ProjectStates } from "./states";
-import { TemplateDetails } from "./template-details";
 import { ProjectWorkItemTypes } from "./work-item-types/root";
 
 export enum EProjectFormOperation {
@@ -48,6 +58,7 @@ export enum EProjectFormOperation {
 
 export type TProjectTemplateFormSubmitData = {
   data: TProjectTemplateForm;
+  workItemListCustomPropertyValues: Record<string, TIssuePropertyValues>;
 };
 
 export type TGetPreloadedDataProps = {
@@ -71,6 +82,7 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
   },
   project: {
     // basics
+    id: "",
     name: "",
     description: "",
     logo_props: {
@@ -88,6 +100,8 @@ export const DEFAULT_PROJECT_TEMPLATE_FORM_DATA: TProjectTemplateForm = {
     states: [],
     workitem_types: {},
     epics: undefined,
+    // work items
+    workitems: [],
     // project grouping
     state_id: undefined,
     priority: EProjectPriority.NONE,
@@ -127,17 +141,31 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
   const [templateInvalidIds, setTemplateInvalidIds] = useState<
     TProjectSanitizationResult<TProjectTemplateFormData>["invalid"] | undefined
   >(undefined);
+  const [workItemListCustomPropertyValues, setWorkItemListCustomPropertyValues] = useState<
+    Record<string, TIssuePropertyValues>
+  >({});
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { loader, getTemplateById } = useProjectTemplates();
   const {
+    getUserDetails,
     workspace: { getWorkspaceMemberIds },
   } = useMember();
   const { getProjectStateIdsByWorkspaceId } = useWorkspaceProjectStates();
   // form state
+  const defaultValues = useMemo(
+    () => ({
+      ...DEFAULT_PROJECT_TEMPLATE_FORM_DATA,
+      project: {
+        ...DEFAULT_PROJECT_TEMPLATE_FORM_DATA.project,
+        id: uuidv4(),
+      },
+    }),
+    []
+  );
   const methods = useForm<TProjectTemplateForm>({
-    defaultValues: DEFAULT_PROJECT_TEMPLATE_FORM_DATA,
+    defaultValues,
   });
   const {
     watch,
@@ -145,38 +173,8 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
+  // derived values
   const isDirty = Object.keys(methods.formState.dirtyFields).length > 0;
-
-  // handlers
-  /**
-   * Get the work item type by id
-   * @param workItemTypeId - The work item type id
-   * @returns The work item type
-   */
-  const getWorkItemTypeById = useCallback(
-    (workItemTypeId: string) => {
-      const currentWorkItemTypes = watch("project.workitem_types");
-      return currentWorkItemTypes[workItemTypeId];
-    },
-    [watch]
-  );
-
-  /**
-   * Get the custom property by id
-   * @param customPropertyId - The custom property id
-   * @returns The custom property
-   */
-  const getCustomPropertyById = useCallback(
-    (customPropertyId: string) => {
-      const currentWorkItemTypes = watch("project.workitem_types");
-      const allCustomProperties = Object.values(currentWorkItemTypes).flatMap(
-        (workItemType) => workItemType.properties
-      );
-      return allCustomProperties.find((customProperty) => customProperty.id === customPropertyId);
-    },
-    [watch]
-  );
 
   /**
    * Reset the local states
@@ -187,6 +185,32 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
   }, []);
 
   /**
+   * Preload the work item custom properties values for the template
+   */
+  const preloadWorkItemCustomPropertyValues = useCallback(async () => {
+    if (!templateId) return;
+    const templateDetails = getTemplateById(templateId)?.asJSON;
+    if (!templateDetails) return;
+    const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
+    // Set the work item custom property values
+    for (const workItem of templateDetails.template_data.workitems) {
+      const workItemProperties = processWorkItemCustomProperties(
+        workItem.type?.id,
+        workItem.properties,
+        projectGetterHelpers.getWorkItemTypeById
+      );
+
+      if (workItemProperties && workItem.id) {
+        setWorkItemListCustomPropertyValues((prev) => ({
+          ...prev,
+          [workItem.id!]: workItemProperties, // Non-null assertion because we already checked for workItem.id
+        }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getTemplateById, templateId]);
+
+  /**
    * Handle template data preload
    * This is used to generate form data from template details.
    */
@@ -195,6 +219,7 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
       if (!templateId || loader === "init-loader") return;
       const templateDetails = getTemplateById(templateId)?.asJSON;
       if (!templateDetails) return;
+      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
 
       setIsApplyingTemplate(true);
 
@@ -211,14 +236,13 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
         getWorkspaceProjectStateIds: getProjectStateIdsByWorkspaceId,
         getWorkspaceMemberIds,
-        getWorkItemTypeById,
-        getCustomPropertyById,
+        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
+        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
       });
 
       // Set the preloaded data and invalid IDs
       setPreloadedData(sanitizedProjectFormData);
       setTemplateInvalidIds(invalidIds);
-
       setIsApplyingTemplate(false);
     };
 
@@ -227,23 +251,15 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
     } else {
       resetLocalStates();
     }
-  }, [
-    loader,
-    templateId,
-    workspaceSlug,
-    getTemplateById,
-    getProjectStateIdsByWorkspaceId,
-    getWorkspaceMemberIds,
-    getWorkItemTypeById,
-    getCustomPropertyById,
-    resetLocalStates,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loader, templateId, workspaceSlug, getTemplateById]);
 
   /**
    * Update default form data, whenever preloaded data is changed.
    */
   useEffect(() => {
     const updateDefaultFormData = async () => {
+      const projectGetterHelpers = projectTemplateFormGettersHelpers(watch("project"));
       // Generate default form data
       const additionalDefaultValueForReset = await generateAdditionalProjectTemplateFormData({
         workspaceSlug: workspaceSlug?.toString(),
@@ -254,20 +270,23 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
             ...params,
           }),
         createOptionInstance: (option) => new IssuePropertyOption(rootStore, option),
-        getWorkItemTypeById,
-        getCustomPropertyById,
+        getWorkItemTypeById: projectGetterHelpers.getWorkItemTypeById,
+        getCustomPropertyById: projectGetterHelpers.getCustomPropertyById,
       });
       // Reset the form with the default values
       if (preloadedData) {
-        reset(merge({}, DEFAULT_PROJECT_TEMPLATE_FORM_DATA, preloadedData));
+        reset(merge({}, defaultValues, preloadedData));
+        // Custom property values should be preloaded after the form is updated with the preloaded data since it depends on the work item types.
+        await preloadWorkItemCustomPropertyValues();
       } else {
         // If no preloaded data is available, use the additional default values
-        reset(merge({}, DEFAULT_PROJECT_TEMPLATE_FORM_DATA, additionalDefaultValueForReset));
+        reset(merge({}, defaultValues, additionalDefaultValueForReset));
       }
     };
 
     updateDefaultFormData();
-  }, [getCustomPropertyById, getWorkItemTypeById, preloadedData, reset, workspaceSlug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preloadedData]);
 
   /**
    * Handle template invalid ids change
@@ -285,12 +304,27 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
   );
 
   /**
+   * Handles the change of sub work item custom property values
+   * @param workItemId - The work item id
+   * @param customPropertyValues - The custom property values
+   */
+  const handleWorkItemListCustomPropertyValuesChange = useCallback(
+    (workItemId: string, customPropertyValues: TIssuePropertyValues) => {
+      setWorkItemListCustomPropertyValues((prev) => ({ ...prev, [workItemId]: customPropertyValues }));
+    },
+    []
+  );
+
+  /**
    * Handle form submit
    * @param data - The form data
    */
-  const onSubmit = async (data: TProjectTemplateForm) => {
-    await handleFormSubmit({ data });
-  };
+  const onSubmit = useCallback(
+    async (data: TProjectTemplateForm) => {
+      await handleFormSubmit({ data, workItemListCustomPropertyValues });
+    },
+    [handleFormSubmit, workItemListCustomPropertyValues]
+  );
 
   /**
    * Handle form keydown
@@ -348,7 +382,22 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
         <form onKeyDown={handleFormKeyDown} onSubmit={handleSubmit(onSubmit)} ref={formRef}>
           {/* Template Section */}
           <div className="space-y-4 w-full max-w-4xl py-page-y">
-            <TemplateDetails />
+            <TemplateDetails
+              fieldPaths={{
+                name: "template.name",
+                shortDescription: "template.short_description",
+              }}
+              validation={{
+                name: {
+                  required: t("templates.settings.form.project.template.name.validation.required"),
+                  maxLength: t("templates.settings.form.project.template.name.validation.maxLength"),
+                },
+              }}
+              placeholders={{
+                name: t("templates.settings.form.project.template.name.placeholder"),
+                shortDescription: t("templates.settings.form.project.template.description.placeholder"),
+              }}
+            />
           </div>
           <div className="border-t border-custom-border-100 size-full">
             <div className="w-full max-w-4xl py-page-y">
@@ -378,13 +427,31 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
                 />
                 {/* Project Work Item Types */}
                 <ProjectWorkItemTypes
+                  {...projectTemplateFormGettersHelpers(watch("project"))}
                   workspaceSlug={workspaceSlug?.toString()}
                   projectTemplateId={preloadedData?.template?.id}
-                  getWorkItemTypeById={getWorkItemTypeById}
-                  getCustomPropertyById={getCustomPropertyById}
                 />
                 {/* Project Epic Work Item Type */}
                 <ProjectEpicWorkItemType />
+                {/* Project Work Items */}
+                <WorkItemBlueprintListRoot<TProjectTemplateForm>
+                  {...projectTemplateFormGettersHelpers(watch("project"))}
+                  borderVariant="strong"
+                  emptyStateDescription={t("templates.empty_state.no_work_items.description")}
+                  getUserDetails={getUserDetails}
+                  handleWorkItemListInvalidIdsChange={(workItemsInvalidIds) =>
+                    handleTemplateInvalidIdsChange("workitems", workItemsInvalidIds)
+                  }
+                  modalTitle={t("add_work_item")}
+                  modalInputBorderVariant="primary"
+                  sectionTitle={t("common.work_items")}
+                  setWorkItemListCustomPropertyValues={handleWorkItemListCustomPropertyValuesChange}
+                  workItemFieldPath="project.workitems"
+                  workItemListCustomPropertyValues={workItemListCustomPropertyValues}
+                  workItemListInvalidIds={templateInvalidIds?.workitems}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  usePropsForAdditionalData
+                />
               </div>
               {/* Form Actions */}
               <div className="flex items-center justify-end gap-2 pt-8">
@@ -394,6 +461,7 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
                   disabled={isSubmitting}
+                  data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_UPDATE_FORM_CANCEL_BUTTON}
                 >
                   {t("common.cancel")}
                 </Button>
@@ -404,6 +472,7 @@ export const ProjectTemplateFormRoot = observer((props: TProjectTemplateFormRoot
                   className={cn("shadow-sm")}
                   loading={isSubmitting}
                   disabled={isSubmitting}
+                  data-ph-element={PROJECT_TEMPLATE_TRACKER_ELEMENTS.CREATE_UPDATE_FORM_SUBMIT_BUTTON}
                 >
                   {isSubmitting
                     ? t("common.confirming")

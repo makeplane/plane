@@ -2372,6 +2372,12 @@
       "no_labels": {
         "description": " Aucune étiquette pour le moment. Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
       },
+      "no_work_items": {
+        "description": "Aucun élément de travail pour le moment. Ajoutez-en un pour structurer votre travail mieux."
+      },
+      "no_sub_work_items": {
+        "description": "Aucun sous-élément de travail pour le moment. Ajoutez-en un pour structurer votre travail mieux."
+      },
       "page": {
         "no_templates": {
           "title": "Il n'y a aucun modèle auquel vous avez accès.",

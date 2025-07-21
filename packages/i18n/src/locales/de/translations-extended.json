@@ -2371,7 +2371,13 @@
         "button": "Erstellen Sie Ihre erste Vorlage"
       },
       "no_labels": {
-        "description": " Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+        "description": "Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+      },
+      "no_work_items": {
+        "description": "Noch keine Arbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
+      },
+      "no_sub_work_items": {
+        "description": "Noch keine Unterarbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."
       },
       "page": {
         "no_templates": {

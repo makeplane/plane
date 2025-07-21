@@ -1,6 +1,8 @@
 // plane imports
 import { ETemplateLevel } from "@plane/constants";
 import { ETemplateType, TBaseTemplateWithData } from "@plane/types";
+// local imports
+import { joinUrlPath } from "../string";
 
 /**
  * Gets the i18n name key for the template type
@@ -59,9 +61,9 @@ export const getTemplateSettingsBasePath = (props: TBaseTemplateSettingsPathProp
   // get the base path
   let basePath = "";
   if (level === ETemplateLevel.WORKSPACE) {
-    basePath = `/${workspaceSlug}/settings/templates`;
+    basePath = joinUrlPath(workspaceSlug, "settings", "templates");
   } else if (level === ETemplateLevel.PROJECT && "projectId" in props) {
-    basePath = `/${workspaceSlug}/settings/projects/${props.projectId}/templates`;
+    basePath = joinUrlPath(workspaceSlug, "settings", "projects", props.projectId, "templates");
   }
 
   return basePath;
@@ -87,11 +89,11 @@ export const getCreateUpdateTemplateSettingsPath = (props: TCreateTemplateSettin
   // get the path for the type
   switch (type) {
     case ETemplateType.PROJECT:
-      return `${basePath}/project`;
+      return joinUrlPath(basePath, "project");
     case ETemplateType.WORK_ITEM:
-      return `${basePath}/work-item`;
+      return joinUrlPath(basePath, "work-item");
     case ETemplateType.PAGE:
-      return `${basePath}/page`;
+      return joinUrlPath(basePath, "page");
   }
 };
 
@@ -110,7 +112,7 @@ export type TPublishTemplateSettingsPathProps = TCreateTemplateSettingsPathProps
  */
 export const getPublishTemplateSettingsPath = (props: TPublishTemplateSettingsPathProps) => {
   const createUpdateSettingsPath = getCreateUpdateTemplateSettingsPath(props);
-  return `${createUpdateSettingsPath}/${props.templateId}/publish`;
+  return joinUrlPath(createUpdateSettingsPath, props.templateId, "publish");
 };
 
 /**

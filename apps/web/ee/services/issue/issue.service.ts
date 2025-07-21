@@ -18,4 +18,26 @@ export class IssueService extends CoreIssueService {
     });
     return response.data;
   }
+
+  /**
+   * Create a sub work item
+   * @param workspaceSlug - Workspace slug
+   * @param projectId - Project ID
+   * @param parentId - Parent work item ID
+   * @param templateId - Template ID
+   */
+  async createSubWorkItemUsingTemplate(
+    workspaceSlug: string,
+    projectId: string,
+    parentId: string,
+    templateId: string
+  ): Promise<TIssue> {
+    const response = await this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/work-items/${parentId}/sub-workitem-template/`,
+      {
+        template_id: templateId,
+      }
+    );
+    return response.data;
+  }
 }

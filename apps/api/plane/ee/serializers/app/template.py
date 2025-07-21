@@ -49,8 +49,18 @@ class WorkitemTemplateSerializer(BaseSerializer):
         fields = "__all__"
 
 
+
 class WorkitemTemplateDataSerializer(BaseSerializer):
     """Serializer for WorkitemTemplate data"""
+
+    sub_workitems = serializers.SerializerMethodField()
+
+    def get_sub_workitems(self, obj):
+        # Get all child workitem templates
+        child_templates = obj.child_workitem_templates.all().order_by("created_at")
+
+        # Recursively serialize each child using the same serializer
+        return WorkitemTemplateDataSerializer(child_templates, many=True).data
 
     class Meta:
         model = WorkitemTemplate
@@ -68,6 +78,7 @@ class WorkitemTemplateDataSerializer(BaseSerializer):
             "properties",
             "workspace",
             "project",
+            "sub_workitems",
         ]
         read_only_fields = fields
 
@@ -104,6 +115,15 @@ class ProjectTemplateSerializer(BaseSerializer):
 
 class ProjectTemplateDataSerializer(BaseSerializer):
     """Serializer for ProjectTemplate data"""
+
+    workitems = serializers.SerializerMethodField()
+
+    def get_workitems(self, obj):
+        # Get all child workitem templates
+        workitem_templates = obj.workitem_templates.all().order_by("created_at")
+
+        # Recursively serialize each child using the same serializer
+        return WorkitemTemplateDataSerializer(workitem_templates, many=True).data
 
     class Meta:
         model = ProjectTemplate
@@ -142,6 +162,7 @@ class ProjectTemplateDataSerializer(BaseSerializer):
             "members",
             "intake_settings",
             "workspace",
+            "workitems",
         ]
         read_only_fields = fields
 

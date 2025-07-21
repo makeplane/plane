@@ -8,7 +8,7 @@ import {
   projectWorkItemTemplateService as projectLevelService,
 } from "@plane/services";
 import { IBaseTemplateActionCallbacks, TWorkItemTemplate, ITemplateService } from "@plane/types";
-import { isValidId } from "@plane/utils";
+import { buildWorkItemTypeBlueprint, isValidId } from "@plane/utils";
 // plane web imports
 import { RootStore } from "@/plane-web/store/root.store";
 import {
@@ -58,6 +58,8 @@ export interface IWorkItemTemplateStore extends IBaseTemplateStore<TWorkItemTemp
   getAllWorkItemTemplateIdsForProjectByTypeId: (workspaceSlug: string, projectId: string, typeId: string) => string[];
   isAnyWorkItemTemplatesAvailable: (workspaceSlug: string) => boolean;
   isAnyWorkItemTemplatesAvailableForProject: (workspaceSlug: string, projectId: string) => boolean;
+  // helper actions
+  updateWorkItemTemplatesWithDefaultType: (workspaceSlug: string, projectId: string) => void;
   // actions
   fetchAllTemplates: (props: TFetchWorkItemTemplatesProps) => Promise<void>;
   fetchTemplateById: (props: TFetchWorkItemTemplateByIdProps) => Promise<void>;
@@ -195,6 +197,41 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
           : workspaceLevelService.destroy.bind(workspaceLevelService, props.workspaceSlug),
     })
   );
+
+  /**
+   * @description Update work item templates with default type
+   * @param workspaceSlug - The slug of the workspace
+   * @param projectId - The id of the project
+   */
+  updateWorkItemTemplatesWithDefaultType = action((workspaceSlug: string, projectId: string) => {
+    const defaultWorkItemType = this.rootStore.issueTypes.getProjectDefaultWorkItemTypeId(projectId);
+    if (!defaultWorkItemType) return;
+
+    const currentProjectWorkItemTemplates = this.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
+    if (currentProjectWorkItemTemplates.length === 0) return;
+
+    const defaultTypeBlueprint = buildWorkItemTypeBlueprint(defaultWorkItemType, this.rootStore.issueTypes.getIssueTypeById);
+
+    for (const template of currentProjectWorkItemTemplates) {
+      const templateData = template.template_data;
+      const hasMainType = Boolean(templateData.type?.id);
+      const subWorkitemsNeedingType = templateData.sub_workitems?.filter((subWorkitem) => !subWorkitem.type?.id) || [];
+
+      if (!hasMainType || subWorkitemsNeedingType.length > 0) {
+        const updatedTemplateData = {
+          ...templateData,
+          type: hasMainType ? templateData.type : defaultTypeBlueprint,
+          sub_workitems:
+            templateData.sub_workitems?.map((subWorkitem) => ({
+              ...subWorkitem,
+              type: subWorkitem.type?.id ? subWorkitem.type : defaultTypeBlueprint,
+            })) || [],
+        };
+
+        template.mutateInstance({ template_data: updatedTemplateData });
+      }
+    }
+  });
 
   // actions
   /**

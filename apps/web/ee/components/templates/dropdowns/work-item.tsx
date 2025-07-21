@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Plus, Shapes } from "lucide-react";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, WORKITEM_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ETemplateType } from "@plane/types";
 import { Button, CustomSearchSelect, Loader, Tooltip, TPosition } from "@plane/ui";
@@ -180,6 +180,7 @@ export const WorkItemTemplateDropdown = observer((props: TWorkItemTemplateDropdo
             variant="link-neutral"
             className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded text-xs text-custom-text-200 font-medium hover:bg-custom-background-80"
             onClick={redirectToCreateTemplatePage}
+            data-ph-element={WORKITEM_TEMPLATE_TRACKER_ELEMENTS.CREATE_WORKITEM_MODAL_CREATE_BUTTON}
           >
             <Plus className="size-3.5" />
             {t("templates.dropdown.add.work_item")}

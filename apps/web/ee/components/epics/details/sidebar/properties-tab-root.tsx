@@ -2,6 +2,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType, EWorkItemTypeEntity } from "@plane/types";
 // ui
 import { DoubleCircleIcon, InitiativeIcon } from "@plane/ui";
@@ -21,13 +22,12 @@ import { useIssueDetail, useMember, useProjectEstimates, useProjectState } from 
 // plane web components
 import { SidebarContentWrapper } from "@/plane-web/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/plane-web/components/initiatives/common/multi-select-modal";
-import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values";
+import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issue-types/values/addition-properties-update";
 // helpers
 import { WorkItemSidebarCustomers } from "@/plane-web/components/issues/issue-details/sidebar/customer-list-root";
 import { useCustomers } from "@/plane-web/hooks/store/customers";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useEpicOperations } from "../helper";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;

@@ -16,7 +16,6 @@ import {
   TLoader,
   TWorkItemTypesPropertiesOptions,
 } from "@plane/types";
-import { buildWorkItemTypeSchema } from "@plane/utils";
 // local db utils
 import { deleteIssueFromLocal } from "@/local-db/utils/load-issues";
 // plane web services
@@ -211,6 +210,16 @@ export class IssueTypes implements IIssueTypesStore {
 
     const defaultIssueType = Object.values(projectIssueTypes).find((issueType) => issueType.is_default);
     return defaultIssueType ?? undefined;
+  });
+
+  /**
+   * @description Get project default work item type id
+   * @param projectId
+   * @returns {string | undefined}
+   */
+  getProjectDefaultWorkItemTypeId = computedFn((projectId: string) => {
+    const defaultWorkItemType = this.getProjectDefaultIssueType(projectId);
+    return defaultWorkItemType?.id;
   });
 
   /**
@@ -433,22 +442,8 @@ export class IssueTypes implements IIssueTypesStore {
         for (const issue of currentProjectIssues) {
           this.rootStore.issue.issues.updateIssue(issue.id, { type_id: issueType.id });
         }
-        // get all work item templates
-        const currentProjectWorkItemTemplates =
-          this.rootStore.templatesRoot.workItemTemplates.getAllWorkItemTemplatesForProject(workspaceSlug, projectId);
-        const workItemTemplatesWithoutType = currentProjectWorkItemTemplates.filter(
-          (template) => !template.template_data.type || !template.template_data.type.id
-        );
-        // attach the new default issue type to all work item templates
-        for (const template of workItemTemplatesWithoutType) {
-          template.mutateInstance({
-            template_data: {
-              ...template.template_data,
-              type: buildWorkItemTypeSchema(issueType.id, this.getIssueTypeById),
-            },
-          });
-        }
-
+        // update work item templates with default type
+        this.rootStore.templatesRoot.workItemTemplates.updateWorkItemTemplatesWithDefaultType(workspaceSlug, projectId);
         this.loader = "loaded";
       });
     } catch (error) {

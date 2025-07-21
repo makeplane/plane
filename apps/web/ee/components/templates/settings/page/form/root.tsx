@@ -5,16 +5,16 @@ import merge from "lodash/merge";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { ETemplateLevel, PAGE_TEMPLATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TPageTemplateForm, PartialDeep } from "@plane/types";
 import { Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // plane web imports
 import { COMMON_BUTTON_CLASS_NAME } from "@/plane-web/components/templates/settings/common";
+import { TemplateDetails } from "@/plane-web/components/templates/settings/common/form/template-details";
 // local imports
 import { PageTemplatePageDetails } from "./page-details";
-import { TemplateDetails } from "./template-details";
 
 export enum EPageFormOperation {
   CREATE = "create",
@@ -76,7 +76,22 @@ export const PageTemplateFormRoot: React.FC<Props> = observer((props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Template Section */}
         <div className="space-y-4 w-full max-w-4xl py-page-y">
-          <TemplateDetails />
+          <TemplateDetails
+            fieldPaths={{
+              name: "template.name",
+              shortDescription: "template.short_description",
+            }}
+            validation={{
+              name: {
+                required: t("templates.settings.form.page.template.name.validation.required"),
+                maxLength: t("templates.settings.form.page.template.name.validation.maxLength"),
+              },
+            }}
+            placeholders={{
+              name: t("templates.settings.form.page.template.name.placeholder"),
+              shortDescription: t("templates.settings.form.page.template.description.placeholder"),
+            }}
+          />
         </div>
         {/* Page Section */}
         <div className="size-full">
@@ -90,10 +105,26 @@ export const PageTemplateFormRoot: React.FC<Props> = observer((props) => {
                   size="sm"
                   className={cn(COMMON_BUTTON_CLASS_NAME)}
                   onClick={handleFormCancel}
+                  data-ph-element={
+                    props.currentLevel === ETemplateLevel.WORKSPACE
+                      ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_CANCEL_BUTTON
+                      : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_CANCEL_BUTTON
+                  }
                 >
                   {t("common.cancel")}
                 </Button>
-                <Button variant="primary" type="submit" size="sm" className={cn("shadow-sm")} loading={isSubmitting}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size="sm"
+                  className={cn("shadow-sm")}
+                  loading={isSubmitting}
+                  data-ph-element={
+                    props.currentLevel === ETemplateLevel.WORKSPACE
+                      ? PAGE_TEMPLATE_TRACKER_ELEMENTS.WORKSPACE_CREATE_UPDATE_FORM_SUBMIT_BUTTON
+                      : PAGE_TEMPLATE_TRACKER_ELEMENTS.PROJECT_CREATE_UPDATE_FORM_SUBMIT_BUTTON
+                  }
+                >
                   {isSubmitting
                     ? t("common.confirming")
                     : operation === EPageFormOperation.CREATE

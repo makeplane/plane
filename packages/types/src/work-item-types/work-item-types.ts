@@ -86,6 +86,7 @@ export interface IIssueTypesStore {
   getProjectEpicId: (projectId: string) => string | undefined;
   getProjectEpicDetails: (projectId: string) => IIssueType | undefined;
   getProjectDefaultIssueType: (projectId: string) => IIssueType | undefined;
+  getProjectDefaultWorkItemTypeId: (projectId: string) => string | undefined;
   getIssueTypeProperties: (issueTypeId: string) => IIssueProperty<EIssuePropertyType>[];
   getIssueTypeIdsWithMandatoryProperties: (projectId: string) => string[];
   isWorkItemTypeEnabledForProject: (workspaceSlug: string, projectId: string) => boolean;

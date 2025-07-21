@@ -1,36 +1,36 @@
 import React from "react";
 import { observer } from "mobx-react";
-// plane web components
-import { TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
-import { PropertyValueSelect } from "@/plane-web/components/issue-types/values";
-// plane web hooks
-import { useIssueType } from "@/plane-web/hooks/store";
 // plane imports
+import { IIssueType, TIssuePropertyValueErrors, TIssuePropertyValues, TPropertyValueVariant } from "@plane/types";
+// plane web components
+import { PropertyValueSelect } from "@/plane-web/components/issue-types/values/value-select";
 
 type TIssueAdditionalPropertyValuesProps = {
-  issueTypeId: string;
-  issuePropertyValues: TIssuePropertyValues;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
+  handlePropertyValueChange: (propertyId: string, value: string[]) => void;
+  isDisabled?: boolean;
+  arePropertyValuesInitializing?: boolean;
   issuePropertyValueErrors?: TIssuePropertyValueErrors;
+  issuePropertyValues: TIssuePropertyValues;
+  issueTypeId: string;
   projectId: string;
   variant: TPropertyValueVariant;
-  isDisabled?: boolean;
-  isPropertyValuesLoading?: boolean;
-  handlePropertyValueChange: (propertyId: string, value: string[]) => void;
 };
 
 export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyValuesProps> = observer((props) => {
   const {
-    issueTypeId,
-    issuePropertyValues,
-    issuePropertyValueErrors,
-    projectId,
-    variant,
-    isPropertyValuesLoading = false,
+    getWorkItemTypeById,
     handlePropertyValueChange,
     isDisabled = false,
+    arePropertyValuesInitializing = false,
+    issuePropertyValueErrors,
+    issuePropertyValues,
+    issueTypeId,
+    projectId,
+    variant,
   } = props;
   // store hooks
-  const issueType = useIssueType(issueTypeId);
+  const issueType = getWorkItemTypeById(issueTypeId);
   // derived values
   const sortedProperties = issueType?.activeProperties;
 
@@ -55,7 +55,7 @@ export const IssueAdditionalPropertyValues: React.FC<TIssueAdditionalPropertyVal
                 propertyValueError={issuePropertyValueErrors?.[property.id] ?? undefined}
                 projectId={projectId}
                 variant={variant}
-                isPropertyValuesLoading={isPropertyValuesLoading}
+                arePropertyValuesInitializing={arePropertyValuesInitializing}
                 isDisabled={isDisabled}
                 onPropertyValueChange={async (value) => onPropertyValueChange(property.id, value)}
                 getPropertyInstanceById={getPropertyInstanceById}

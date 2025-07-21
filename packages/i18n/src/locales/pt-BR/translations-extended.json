@@ -2366,6 +2366,12 @@
       "no_labels": {
         "description": " Ainda não há etiquetas. Crie etiquetas para ajudar a organizar e filtrar itens de trabalho em seu projeto."
       },
+      "no_work_items": {
+        "description": "Não há itens de trabalho ainda. Adicione um para estruturar seu trabalho melhor."
+      },
+      "no_sub_work_items": {
+        "description": "Não há itens de trabalho ainda. Adicione um para estruturar seu trabalho melhor."
+      },
       "page": {
         "no_templates": {
           "title": "Não há modelos aos quais você tem acesso.",

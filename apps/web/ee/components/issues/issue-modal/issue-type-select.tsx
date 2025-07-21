@@ -33,7 +33,7 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
   // router
   const { workspaceSlug } = useParams();
   // plane web store hooks
-  const { isWorkItemTypeEnabledForProject } = useIssueTypes();
+  const { loader: workItemTypeLoader, getProjectIssueTypes, isWorkItemTypeEnabledForProject } = useIssueTypes();
   // context hooks
   const { workItemTemplateId, setWorkItemTemplateId } = useIssueModal();
   const { reset } = useFormContext<TIssue>();
@@ -71,11 +71,8 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
               <div className={cn("h-7", dropDownContainerClassName)}>
                 {projectId && (
                   <IssueTypeDropdown
-                    issueTypeId={value}
-                    projectId={projectId}
                     disabled={disabled}
-                    variant={variant}
-                    placeholder={placeholder}
+                    getWorkItemTypes={getProjectIssueTypes}
                     handleIssueTypeChange={(issueTypeId) => {
                       // If it's not set as required, then allow issue type to be null (unset issue type)
                       const newValue = !isRequired && value === issueTypeId ? null : issueTypeId;
@@ -83,6 +80,11 @@ export const IssueTypeSelect = observer(<T extends Partial<TIssueFields>>(props:
                       handleIssueTypeChange(newValue);
                       handleFormChange?.();
                     }}
+                    isInitializing={workItemTypeLoader === "init-loader"}
+                    issueTypeId={value}
+                    placeholder={placeholder}
+                    projectId={projectId}
+                    variant={variant}
                   />
                 )}
               </div>

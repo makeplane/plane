@@ -29,7 +29,7 @@ const CreateWorkspaceLevelPageTemplatePage = observer(() => {
         <div>
           <h3 className="text-xl font-medium">{t("templates.settings.new_page_template")}</h3>
         </div>
-      </div>{" "}
+      </div>
       <CreateUpdatePageTemplate
         workspaceSlug={workspaceSlug?.toString()}
         currentLevel={ETemplateLevel.WORKSPACE}

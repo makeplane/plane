@@ -197,6 +197,7 @@ export const EpicModalProvider = observer((props: TEpicModalProviderProps) => {
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
         handleConvert,
+        handleCreateSubWorkItem: () => Promise.resolve(),
       }}
     >
       {children}
