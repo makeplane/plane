@@ -56,11 +56,14 @@ def replace_asset_ids(html, tag, duplicated_assets):
         return html
 
 
-def update_description(entity, duplicated_assets, tag):
-    updated_html = replace_asset_ids(entity.description_html, tag, duplicated_assets)
-    entity.description_html = updated_html
+def update_description(entity, duplicated_assets, tags):
+    for tag in tags:
+        updated_html = replace_asset_ids(
+            entity.description_html, tag, duplicated_assets
+        )
+        entity.description_html = updated_html
     entity.save()
-    return updated_html
+    return entity.description_html
 
 
 # Get the description binary and description from the live server
@@ -170,7 +173,15 @@ def copy_s3_objects_of_description_and_assets(
             raise ValueError(f"Unsupported entity_name: {entity_name}")
 
         entity = model_class.objects.get(id=entity_identifier)
+
+        asset_ids = []
         asset_ids = extract_asset_ids(entity.description_html, "image-component")
+
+        # if copy_entity_project is true, extend asset_ids to include attachment-component assets
+        if copy_to_entity_project:
+            asset_ids.extend(
+                extract_asset_ids(entity.description_html, "attachment-component")
+            )
 
         duplicated_assets = copy_assets(
             entity=entity,
@@ -182,14 +193,26 @@ def copy_s3_objects_of_description_and_assets(
         )
 
         if duplicated_assets:
-            updated_html = update_description(
-                entity, duplicated_assets, "image-component"
-            )
+            # update the description_html with the image-component assets
+            if copy_to_entity_project:
+                updated_html = update_description(
+                    entity,
+                    duplicated_assets,
+                    ["image-component", "attachment-component"],
+                )
+            else:
+                updated_html = update_description(
+                    entity, duplicated_assets, ["image-component"]
+                )
+
             external_data = sync_with_external_service(entity_name, updated_html)
 
             if external_data:
                 entity.description = external_data.get("description")
-                entity.description_html = external_data.get("description_html")
+                entity.description_html = external_data.get(
+                    "description_html", "<p></p>"
+                )
+
                 entity.save()
 
         return
