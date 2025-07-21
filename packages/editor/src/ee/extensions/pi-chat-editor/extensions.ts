@@ -22,7 +22,6 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
   const { editorClass, handleSubmit, mentionSuggestions, setEditorCommand } = props;
 
   return [
-    // @ts-expect-error tiptap types are incorrect
     StarterKit.configure({
       bold: false,
       blockquote: false,

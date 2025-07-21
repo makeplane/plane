@@ -1,3 +1,8 @@
+export enum EGanttBlockType {
+  EPIC = "epic",
+  PROJECT = "project",
+  ISSUE = "issue",
+}
 export interface IGanttBlock {
   data: any;
   id: string;
@@ -9,7 +14,7 @@ export interface IGanttBlock {
   sort_order: number | undefined;
   start_date: string | undefined;
   target_date: string | undefined;
-  project_id: string | undefined;
+  meta?: Record<string, any>;
 }
 
 export interface IBlockUpdateData {
@@ -20,13 +25,14 @@ export interface IBlockUpdateData {
   };
   start_date?: string;
   target_date?: string;
+  meta?: Record<string, any>;
 }
 
 export interface IBlockUpdateDependencyData {
   id: string;
   start_date?: string;
   target_date?: string;
-  project_id?: string;
+  meta?: Record<string, any>;
 }
 
 export type TGanttViews = "week" | "month" | "quarter";

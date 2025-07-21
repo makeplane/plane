@@ -1,4 +1,4 @@
-import { Editor, Range } from "@tiptap/core";
+import type { Editor, Range } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
@@ -18,16 +18,12 @@ export const toggleHeading = (editor: Editor, level: 1 | 2 | 3 | 4 | 5 | 6, rang
 };
 
 export const toggleBold = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleBold().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleBold().run();
 };
 
 export const toggleItalic = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleItalic().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleItalic().run();
 };
 
@@ -66,16 +62,12 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleOrderedList().run();
 };
 
 export const toggleBulletList = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleBulletList().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleBulletList().run();
 };
 
@@ -85,9 +77,7 @@ export const toggleTaskList = (editor: Editor, range?: Range) => {
 };
 
 export const toggleStrike = (editor: Editor, range?: Range) => {
-  // @ts-expect-error tiptap types are incorrect
   if (range) editor.chain().focus().deleteRange(range).toggleStrike().run();
-  // @ts-expect-error tiptap types are incorrect
   else editor.chain().focus().toggleStrike().run();
 };
 

@@ -1,7 +1,7 @@
 import { FC } from "react";
 //
 import type { IBlockUpdateDependencyData } from "@plane/types";
-import { GanttChartBlock } from "./block";
+import { GanttChartBlock } from "@/components/gantt-chart/blocks/block";
 
 export type GanttChartBlocksProps = {
   blockIds: string[];

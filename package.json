@@ -34,7 +34,7 @@
     "@babel/runtime": "7.26.10",
     "chokidar": "3.6.0",
     "tar-fs": "3.0.9",
-    "prosemirror-view": "1.38.0",
+    "prosemirror-view": "1.40.0",
     "@octokit/types": "13.8.0",
     "pbkdf2": "3.1.3"
   },

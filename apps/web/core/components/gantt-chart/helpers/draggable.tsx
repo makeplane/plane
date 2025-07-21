@@ -53,7 +53,7 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
         })}
         onMouseDown={(e) => enableBlockMove && handleBlockDrag(e, "move")}
       >
-        {blockToRender(block.data)}
+        {blockToRender({ ...block.data, meta: block.meta })}
       </div>
       {/* right resize drag handle */}
       <RightResizable

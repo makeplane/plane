@@ -5,7 +5,7 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import { TFileHandler, TReadOnlyFileHandler } from "@/types";
 // block
-import { CustomAttachmentNodeView } from "./components/node-view";
+import { CustomAttachmentNodeView, CustomAttachmentNodeViewProps } from "./components/node-view";
 // config
 import { CustomAttachmentExtensionConfig } from "./extension-config";
 // types
@@ -107,7 +107,9 @@ export const CustomAttachmentExtension = (props: Props) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomAttachmentNodeView);
+      return ReactNodeViewRenderer((props) => (
+        <CustomAttachmentNodeView {...props} node={props.node as CustomAttachmentNodeViewProps["node"]} />
+      ));
     },
   });
 };
