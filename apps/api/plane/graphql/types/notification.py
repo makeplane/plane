@@ -121,6 +121,27 @@ class NotificationType:
         return bool(is_intake_issue)
 
     @strawberry.field
+    async def intake_id(self) -> Optional[str]:
+        workspace_slug = await sync_to_async(lambda: self.workspace.slug)()
+        work_item_id = self.entity_identifier
+
+        if not workspace_slug or not work_item_id:
+            return None
+
+        intake_issue = await sync_to_async(list)(
+            Issue.objects.filter(
+                workspace__slug=workspace_slug,
+                pk=work_item_id,
+                issue_intake__status__in=[0, 2, -2],
+            ).values_list("issue_intake", flat=True)
+        )
+
+        if not intake_issue or len(intake_issue) == 0:
+            return None
+
+        return intake_issue[0]
+
+    @strawberry.field
     async def is_mentioned_notification(self) -> bool:
         is_mentioned_notification = (
             True if "mentioned" in self.sender.lower() else False

@@ -27,6 +27,7 @@ def default_work_item_type(workspace_slug: str, project_id: str):
             workspace__slug=workspace_slug,
             project_issue_types__project_id=project_id,
             is_default=True,
+            is_epic=False,
         )
         return issue_type
     except IssueType.DoesNotExist:

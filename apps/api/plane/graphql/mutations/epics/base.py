@@ -163,7 +163,7 @@ class EpicMutation:
         activity_payload = {}
         for key, value in epic_payload.items():
             if key in ("start_date", "target_date") and value is not None:
-                activity_payload["start_date"] = value.strftime("%Y-%m-%d")
+                activity_payload[key] = value.strftime("%Y-%m-%d")
             else:
                 activity_payload[key] = value
         if epic_labels is not None and len(epic_labels) > 0:

@@ -20,6 +20,7 @@ from plane.db.models import Issue
 from plane.graphql.helpers import is_epic_feature_flagged, is_project_epics_enabled
 from plane.graphql.helpers.teamspace import project_member_filter_via_teamspaces_async
 from plane.graphql.permissions.workspace import WorkspaceBasePermission
+from plane.graphql.types.intake.base import IntakeWorkItemStatusType
 from plane.graphql.types.issues.base import IssueLiteType
 from plane.graphql.types.paginator import PaginatorResponse
 from plane.graphql.utils.paginator import paginate
@@ -50,6 +51,7 @@ class IssuesSearchQuery:
         relationType: Optional[bool] = False,
         subIssues: Optional[bool] = False,
         is_epic_related: Optional[bool] = False,
+        is_intake_related: Optional[bool] = False,
     ) -> PaginatorResponse[IssueLiteType]:
         user = info.context.user
         user_id = str(user.id)
@@ -79,6 +81,11 @@ class IssuesSearchQuery:
             # draft filters
             .filter(is_draft=False)
         )
+
+        if is_intake_related:
+            issue_queryset = issue_queryset.exclude(
+                issue_intake__status=IntakeWorkItemStatusType.DUPLICATE.value
+            )
 
         # epic filters
         is_epics_required = False

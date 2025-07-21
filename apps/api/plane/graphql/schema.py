@@ -25,6 +25,13 @@ from .mutations.epics import (
     EpicWorkItemsMutation,
 )
 from .mutations.favorite import UserFavoriteMutation
+from .mutations.intake import (
+    IntakeWorkItemAttachmentMutation,
+    IntakeWorkItemCommentMutation,
+    IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemMutation,
+    IntakeWorkItemStatusMutation,
+)
 from .mutations.issue import (
     IssueMutation,
     IssueSubscriptionMutation,
@@ -48,15 +55,15 @@ from .mutations.module import (
 )
 from .mutations.notification import NotificationMutation
 from .mutations.page import (
-    PageFavoriteMutation,
-    PageMutation,
-    WorkspacePageMutation,
     NestedChildArchivePageMutation,
     NestedChildDeletePageMutation,
     NestedChildRestorePageMutation,
+    PageFavoriteMutation,
+    PageMutation,
     WorkspaceNestedChildArchivePageMutation,
     WorkspaceNestedChildDeletePageMutation,
     WorkspaceNestedChildRestorePageMutation,
+    WorkspacePageMutation,
 )
 from .mutations.project import (
     JoinProjectMutation,
@@ -97,6 +104,14 @@ from .queries.estimate import EstimatePointQuery
 from .queries.external import ProjectCoversQuery, UnsplashImagesQuery
 from .queries.feature_flag import FeatureFlagQuery
 from .queries.instance import InstanceQuery
+from .queries.intake import (
+    IntakeCountQuery,
+    IntakeWorkItemActivityQuery,
+    IntakeWorkItemAttachmentQuery,
+    IntakeWorkItemCommentQuery,
+    IntakeWorkItemCommentReactionQuery,
+    IntakeWorkItemQuery,
+)
 from .queries.issue import (
     IssueCommentActivityQuery,
     IssuePropertiesActivityQuery,
@@ -261,6 +276,13 @@ class Query(
     WorkspaceStickiesQuery,
     # teamspace
     TeamspaceMemberQuery,
+    # intake
+    IntakeCountQuery,
+    IntakeWorkItemQuery,
+    IntakeWorkItemActivityQuery,
+    IntakeWorkItemCommentQuery,
+    IntakeWorkItemCommentReactionQuery,
+    IntakeWorkItemAttachmentQuery,
 ):
     pass
 
@@ -338,6 +360,12 @@ class Mutation(
     EpicCommentReactionMutation,
     # sticky
     WorkspaceStickiesMutation,
+    # intake
+    IntakeWorkItemMutation,
+    IntakeWorkItemCommentMutation,
+    IntakeWorkItemCommentReactionMutation,
+    IntakeWorkItemAttachmentMutation,
+    IntakeWorkItemStatusMutation,
 ):
     pass
 
