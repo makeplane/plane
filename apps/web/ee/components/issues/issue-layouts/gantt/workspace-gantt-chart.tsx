@@ -94,7 +94,7 @@ export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
   // Permission handler
   const checkBlockPermissions = (blockId: string) => {
     const block = getBlockById(blockId);
-    const projectId = block?.project_id;
+    const projectId = block?.meta?.project_id;
 
     return allowPermissions(
       [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

@@ -183,7 +183,7 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
 
         const newBlock: IBlockUpdateDependencyData = {
           id: block.id,
-          project_id: block.data?.project_id,
+          meta: block.meta,
         };
 
         // If shouldUpdateHalfBlock or the start date is available then update start date only for the dragging block

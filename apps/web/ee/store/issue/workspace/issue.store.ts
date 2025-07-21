@@ -41,8 +41,8 @@ export class WorkspaceIssues extends CoreWorkspaceIssues implements IWorkspaceIs
             });
           }
 
-          if (update.project_id) {
-            this.issueUpdate(workspaceSlug, update.project_id, update.id, dates, false);
+          if (update.meta?.project_id) {
+            this.issueUpdate(workspaceSlug, update.meta.project_id, update.id, dates, false);
           }
         }
       });
@@ -55,8 +55,8 @@ export class WorkspaceIssues extends CoreWorkspaceIssues implements IWorkspaceIs
           if (update.start_date) dates.start_date = update.start_date;
           if (update.target_date) dates.target_date = update.target_date;
 
-          if (update.project_id) {
-            this.issueUpdate(workspaceSlug, update.project_id, update.id, dates, false);
+          if (update.meta?.project_id) {
+            this.issueUpdate(workspaceSlug, update.meta.project_id, update.id, dates, false);
           }
         }
       });
