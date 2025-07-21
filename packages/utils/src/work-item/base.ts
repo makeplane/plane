@@ -190,7 +190,9 @@ export const getIssueBlocksStructure = (block: TIssue): IGanttBlock => ({
   sort_order: block?.sort_order,
   start_date: block?.start_date ?? undefined,
   target_date: block?.target_date ?? undefined,
-  project_id: block?.project_id ?? undefined,
+  meta: {
+    project_id: block?.project_id ?? undefined,
+  },
 });
 
 export const formatTextList = (TextArray: string[]): string => {
