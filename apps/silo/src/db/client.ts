@@ -32,7 +32,7 @@ class DB {
 
   private async connect(): Promise<void> {
     if (this.isConnected) return;
-    const dbURI = env.DATABASE_URL;
+    let dbURI = env.DATABASE_URL;
     if (!dbURI) {
       logger.warn("Database URL is not set.. skipping database connection");
       return;
@@ -52,6 +52,17 @@ class DB {
         break;
       } catch (error) {
         logger.error("❌----Error connecting to database----", { error });
+        // this error is thrown for ssl mode verification error
+        // no pg_hba.conf entry
+        if (
+          error instanceof Error &&
+          "code" in error &&
+          error.code === "28000" &&
+          !dbURI.includes("sslmode=no-verify")
+        ) {
+          logger.info("🔄----Retrying connection with SSL Mode no verify----");
+          dbURI = dbURI?.concat("?sslmode=no-verify");
+        }
         if (i < maxAttempts - 1) {
           await new Promise((resolve) => setTimeout(resolve, retryDelay));
         } else {
