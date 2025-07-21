@@ -1,0 +1,1 @@
+from .page import WikiBulkOperationAPIView

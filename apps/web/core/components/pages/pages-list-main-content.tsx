@@ -16,14 +16,15 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
 import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 
+const storeType = EPageStoreType.PROJECT;
+
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
-  storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType, storeType } = props;
+export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => {
+  const { children, pageType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
