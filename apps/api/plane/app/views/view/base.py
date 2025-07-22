@@ -294,13 +294,12 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
         # Validate the order_by_param
         order_by_param = self._validate_order_by_field(order_by_param)
+        issue_queryset = self.get_queryset().filter(**filters)
 
         if request.query_params.get("sub_issue", None) == "false":
-            issue_queryset = self.get_queryset().filter(
+            issue_queryset = issue_queryset.filter(
                 Q(parent__isnull=True) | (Q(parent__type__is_epic=True))
             )
-        else:
-            issue_queryset = self.get_queryset().filter(**filters)
 
         # Get common project permission filters
         permission_filters = self._get_project_permission_filters()
