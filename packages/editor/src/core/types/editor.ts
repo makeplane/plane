@@ -120,7 +120,10 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
       }
     | undefined;
   getCurrentCursorPosition: () => number | undefined;
-  getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => Record<string, any> | undefined;
+  getAttributesWithExtendedMark: (
+    mark: string | MarkType,
+    attribute: string | NodeType | MarkType
+  ) => Record<string, any> | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isEditorReadyToDiscard: () => boolean;

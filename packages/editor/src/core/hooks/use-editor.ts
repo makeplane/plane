@@ -183,12 +183,11 @@ export const useEditor = (props: TEditorHookProps) => {
       focus: ({ position = "start", scrollIntoView = false }) => editor?.commands.focus(position, { scrollIntoView }),
       getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
       getCurrentCursorPosition: () => editor?.state.selection.from,
-      getSelectedNodeAttributes: (attribute) => {
+      getAttributesWithExtendedMark: (mark, attribute) => {
         if (!editor) return;
-        editor.commands.extendMarkRange("link");
+        editor.commands.extendMarkRange(mark);
         return editor.getAttributes(attribute);
       },
-
       getSelectedText: () => {
         if (!editor) return null;
 
