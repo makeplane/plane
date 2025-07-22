@@ -40,10 +40,25 @@ def dispatch_job_completion(job_id, phase="issues", is_last_batch=False):
         )
 
         if response.status_code != 200:
-            print(f"Error updating job batch completion: {response.text}")
+            logger.error(
+                "Error updating job batch completion",
+                extra={
+                    "jobId": job_id,
+                    "phase": phase,
+                    "isLastBatch": is_last_batch,
+                },
+            )
 
     except Exception as e:
-        print(f"Failed to update job batch completion: {str(e)}")
+        logger.error(
+            "Failed to update job batch completion",
+            extra={
+                "jobId": job_id,
+                "phase": phase,
+                "isLastBatch": is_last_batch,
+            },
+        )
+        log_exception(e)
 
 
 def update_job_batch_completion(
@@ -107,16 +122,23 @@ def update_job_batch_completion(
             or is_last_batch
         ):
             """
-                We'll make an api call to silo, such that silo can perform
-                any additional processing along with marking the job as finished
+            We'll make an api call to silo, such that silo can perform
+            any additional processing along with marking the job as finished
             """
             bulk_update_issue_relations_task(job_id, user_id=job.initiator_id)
             dispatch_job_completion(job_id, phase, is_last_batch)
 
     except ImportJob.DoesNotExist:
-        log_exception(f"Job not found with id: {job_id}")
+        logger.error(
+            "Job not found with id",
+            extra={"jobId": job_id},
+        )
     except Exception as e:
-        log_exception(f"Failed to update job batch completion: {str(e)}")
+        logger.error(
+            "Failed to update job batch completion",
+            extra={"jobId": job_id},
+        )
+        log_exception(e)
 
 
 def process_single_issue(slug, project, user_id, issue_data):
@@ -133,7 +155,13 @@ def process_single_issue(slug, project, user_id, issue_data):
             )
 
             if not serializer.is_valid():
-                log_exception(f"Error processing issue: {serializer.errors}")
+                logger.error(
+                    "Error processing issue",
+                    extra={"issueId": issue_data.get("id")},
+                )
+                # Create an exception for serializer.errors
+                exception = Exception(serializer.errors)
+                log_exception(exception)
                 return None
 
             external_id = issue_data.get("external_id")
@@ -182,7 +210,11 @@ def process_single_issue(slug, project, user_id, issue_data):
 
             return issue
     except Exception as e:
-        log_exception(f"Error processing issue: {str(e)}")
+        logger.error(
+            "Error processing issue",
+            extra={"issueId": issue_data.get("id")},
+        )
+        log_exception(e)
         return None
 
 
@@ -691,7 +723,11 @@ def import_data(slug, project_id, user_id, job_id, payload):
         return True
     except Exception as e:
         # Assuming there's error handling in the calling code
-        log_exception(f"Error in import_data: {str(e)}")
+        logger.error(
+            "Error in import_data",
+            extra={"jobId": job_id, "phase": job_phase, "isLastBatch": is_last_batch},
+        )
+        log_exception(e)
         # increase the error batch count and completed batch count
         from plane.ee.models import ImportJob
         from django.db.models import F

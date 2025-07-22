@@ -61,6 +61,19 @@ export const transformIssue = (
 
   issue.fields.labels.push("JIRA IMPORTED");
 
+  let startDate = issue.fields.customfield_10015;
+  const targetDate = issue.fields.duedate;
+
+  try {
+    // if targetDate is less than startDate, then set startDate to null
+    // this can happen as JIRA doesn't enforce the start date to be less than the target date
+    if (targetDate && startDate && new Date(targetDate) < new Date(startDate)) {
+      startDate = null;
+    }
+  } catch (e) {
+    console.log(`Error parsing date: ${e}`);
+  }
+
   return {
     assignees: issue.fields.assignee?.displayName ? [issue.fields.assignee.displayName] : [],
     links,
@@ -69,8 +82,8 @@ export const transformIssue = (
     created_by: issue.fields.creator?.displayName,
     name: issue.fields.summary ?? "Untitled",
     description_html: description,
-    target_date: issue.fields.duedate,
-    start_date: issue.fields.customfield_10015,
+    target_date: targetDate,
+    start_date: startDate,
     created_at: issue.fields.created,
     attachments: attachments,
     state: targetState?.id ?? "",
