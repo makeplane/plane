@@ -1,3 +1,4 @@
+export * from "./extended-app-header";
 export * from "./input";
 export * from "./layout";
 export * from "./pagination-bar";
