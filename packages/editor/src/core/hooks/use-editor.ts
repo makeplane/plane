@@ -38,6 +38,7 @@ export const useEditor = (props: TEditorHookProps) => {
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,
@@ -79,6 +80,7 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
+      onFocus: onEditorFocus,
     },
     [editable]
   );
@@ -131,6 +133,39 @@ export const useEditor = (props: TEditorHookProps) => {
     () => ({
       ...getEditorRefHelpers({ editor, provider }),
       blur: () => editor?.commands.blur(),
+      createSelectionAtCursorPosition: () => {
+        if (!editor) return;
+        const { empty } = editor.state.selection;
+
+        // if (empty) return null;
+        if (empty) {
+          // Get the text content and position info
+          const { $from } = editor.state.selection;
+          const textContent = $from.parent.textContent;
+          const posInNode = $from.parentOffset;
+
+          // Find word boundaries
+          let start = posInNode;
+          let end = posInNode;
+
+          // Move start position backwards until we hit a word boundary
+          while (start > 0 && /\w/.test(textContent[start - 1])) {
+            start--;
+          }
+
+          // Move end position forwards until we hit a word boundary
+          while (end < textContent.length && /\w/.test(textContent[end])) {
+            end++;
+          }
+
+          // If we found a word, select it using editor commands
+          if (start !== end) {
+            const from = $from.start() + start;
+            const to = $from.start() + end;
+            editor.commands.setTextSelection({ from, to });
+          }
+        }
+      },
       emitRealTimeUpdate: (message) => provider?.sendStateless(message),
       executeMenuItemCommand: (props) => {
         const { itemKey } = props;
@@ -145,7 +180,15 @@ export const useEditor = (props: TEditorHookProps) => {
           console.warn(`No command found for item: ${itemKey}`);
         }
       },
+      focus: ({ position = "start", scrollIntoView = false }) => editor?.commands.focus(position, { scrollIntoView }),
+      getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
       getCurrentCursorPosition: () => editor?.state.selection.from,
+      getSelectedNodeAttributes: (attribute) => {
+        if (!editor) return;
+        editor.commands.extendMarkRange("link");
+        return editor.getAttributes(attribute);
+      },
+
       getSelectedText: () => {
         if (!editor) return null;
 
@@ -240,7 +283,8 @@ export const useEditor = (props: TEditorHookProps) => {
           editor?.off("transaction", callback);
         };
       },
-      scrollToNodeViaDOMCoordinates(behavior, pos) {
+      redo: () => editor?.commands.redo(),
+      scrollToNodeViaDOMCoordinates({ pos, behavior = "smooth" }) {
         const resolvedPos = pos ?? editor?.state.selection.from;
         if (!editor || !resolvedPos) return;
         scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
@@ -272,6 +316,7 @@ export const useEditor = (props: TEditorHookProps) => {
         if (!document) return;
         Y.applyUpdate(document, value);
       },
+      undo: () => editor?.commands.undo(),
     }),
     [editor]
   );

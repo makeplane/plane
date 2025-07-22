@@ -36,7 +36,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     ];
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions, isTouchDevice]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>

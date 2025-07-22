@@ -1,5 +1,7 @@
-import { Extensions, JSONContent } from "@tiptap/core";
+import { Extensions, FocusPosition, JSONContent } from "@tiptap/core";
+import { MarkType, NodeType } from "@tiptap/pm/model";
 import { Selection } from "@tiptap/pm/state";
+import { EditorProps } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // helpers
@@ -42,6 +44,7 @@ export type TEditorCommands =
   | "table"
   | "image"
   | "divider"
+  | "link"
   | "issue-embed"
   | "text-color"
   | "background-color"
@@ -59,6 +62,10 @@ export type TCommandExtraProps = {
   };
   "text-color": {
     color: string | undefined;
+  };
+  link: {
+    url: string;
+    text?: string;
   };
   "background-color": {
     color: string | undefined;
@@ -100,9 +107,20 @@ export type EditorReadOnlyRefApi = {
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
+  createSelectionAtCursorPosition: () => void;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
+  focus: ({ position, scrollIntoView }: { position?: FocusPosition; scrollIntoView?: boolean }) => void;
+  getCordsFromPos: (pos?: number) =>
+    | {
+        left: number;
+        right: number;
+        bottom: number;
+        top: number;
+      }
+    | undefined;
   getCurrentCursorPosition: () => number | undefined;
+  getSelectedNodeAttributes: (attribute: string | NodeType | MarkType) => Record<string, any> | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isEditorReadyToDiscard: () => boolean;
@@ -111,11 +129,13 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
+  redo: () => void;
   // eslint-disable-next-line no-undef
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
+  undo: () => void;
 }
 
 // editor props
@@ -126,6 +146,7 @@ export interface IEditorProps {
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
   editorClassName?: string;
+  editorProps?: EditorProps;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
@@ -136,6 +157,7 @@ export interface IEditorProps {
   isTouchDevice?: boolean;
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
+  onEditorFocus?: () => void;
   onChange?: (json: object, html: string) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
@@ -152,8 +174,10 @@ export type IRichTextEditorProps = IEditorProps & {
 };
 
 export interface ICollaborativeDocumentEditorProps
-  extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
+  extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
+  documentLoaderClassName?: string;
+  dragDropEnabled?: boolean;
   editable: boolean;
   embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
@@ -183,7 +207,9 @@ export interface IReadOnlyEditorProps
 
 export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
-export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
+export interface IDocumentReadOnlyEditorProps
+  extends IReadOnlyEditorProps,
+    Pick<ICollaborativeDocumentEditorProps, "documentLoaderClassName"> {
   embedHandler: TEmbedConfig;
 }
 
