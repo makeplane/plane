@@ -13,7 +13,7 @@ const CustomersListPage = () => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <CustomersListRoot />;
+      <CustomersListRoot />
     </>
   );
 };
