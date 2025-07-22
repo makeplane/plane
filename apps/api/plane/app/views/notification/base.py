@@ -1,5 +1,5 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField
+from django.db.models import Exists, OuterRef, Q, Case, When, BooleanField, Subquery
 from django.utils import timezone
 
 # Third party imports
@@ -56,13 +56,13 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
             pk=OuterRef("entity_identifier"),
             issue_intake__status__in=[0, 2, -2],
             workspace__slug=self.kwargs.get("slug"),
-        )
+        ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
 
         notifications = (
             Notification.objects.filter(
                 workspace__slug=slug, receiver_id=request.user.id
             )
-            .filter(entity_name="issue")
+            .filter(entity_name__in=["issue", "epic"])
             .annotate(is_inbox_issue=Exists(intake_issue))
             .annotate(is_intake_issue=Exists(intake_issue))
             .annotate(
@@ -112,8 +112,9 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 .annotate(
                     created=Exists(
                         Issue.objects.filter(
-                            created_by=request.user, pk=OuterRef("issue_id")
-                        )
+                            created_by=request.user,
+                            pk=OuterRef("issue_id"),
+                        ).filter(Q(type__isnull=True) | Q(type__is_epic=False))
                     )
                 )
                 .annotate(
@@ -138,13 +139,21 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         # Created issues
         if "created" in type:
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, role__lt=15, is_active=True
+                workspace__slug=slug,
+                member=request.user,
+                role__lt=15,
+                is_active=True,
             ).exists():
                 notifications = notifications.none()
             else:
-                issue_ids = Issue.objects.filter(
-                    workspace__slug=slug, created_by=request.user
-                ).values_list("pk", flat=True)
+                issue_ids = (
+                    Issue.objects.filter(
+                        workspace__slug=slug,
+                        created_by=request.user,
+                    )
+                    .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                    .values_list("pk", flat=True)
+                )
                 q_filters |= Q(entity_identifier__in=issue_ids)
 
         # Apply the combined Q object filters
@@ -278,7 +287,9 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
 
         notifications = (
             Notification.objects.filter(
-                workspace__slug=slug, receiver_id=request.user.id, read_at__isnull=True
+                workspace__slug=slug,
+                receiver_id=request.user.id,
+                read_at__isnull=True,
             )
             .select_related("workspace", "project", "triggered_by", "receiver")
             .order_by("snoozed_till", "-created_at")
@@ -317,13 +328,21 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
         # Created issues
         if type == "created":
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, role__lt=15, is_active=True
+                workspace__slug=slug,
+                member=request.user,
+                role__lt=15,
+                is_active=True,
             ).exists():
                 notifications = Notification.objects.none()
             else:
-                issue_ids = Issue.objects.filter(
-                    workspace__slug=slug, created_by=request.user
-                ).values_list("pk", flat=True)
+                issue_ids = (
+                    Issue.objects.filter(
+                        workspace__slug=slug,
+                        created_by=request.user,
+                    )
+                    .filter(Q(type__isnull=True) | Q(type__is_epic=False))
+                    .values_list("pk", flat=True)
+                )
                 notifications = notifications.filter(entity_identifier__in=issue_ids)
 
         updated_notifications = []

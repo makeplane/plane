@@ -1,1 +1,1 @@
-export type TAdditionalDocumentTypes = {};
+export type TAdditionalDocumentTypes = string;

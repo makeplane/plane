@@ -1,0 +1,223 @@
+[
+  {
+    "model": "ee.templatecategory",
+    "pk": "353cbde2-7f68-468f-a950-0e7cd3f68531",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Software and Technology",
+      "description": "Templates built for software teams, from sprint planning and bug tracking to release coordination and incident management. Ideal for engineering, DevOps, and SaaS workflows.",
+      "is_active": true,
+      "logo_props": {
+        "icon": {
+          "name": "Code"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "6dc4d667-e372-4c5e-bcb3-29e470e4fd2e",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Marketing and Communications",
+      "description": "Plan and execute campaigns, manage content calendars, track brand assets, and coordinate go-to-market initiatives with templates designed for marketing and comms teams.",
+      "is_active": true,
+      "logo_props": {
+        "icon": {
+          "name": "Megaphone"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "c5a571ac-7445-4178-9b12-34459b7ca283",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Operations",
+      "description": "Stay on top of business operations with workflows for process tracking, service delivery, compliance, procurement, and internal efficiency.",
+      "is_active": true,
+      "logo_props": {
+        "icon": {
+          "name": "Settings"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "b3d5482e-7340-4bee-a87e-4120b4edb548",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Product Management",
+      "description": "From roadmaps and feature planning to user feedback and OKRs, these templates help PMs stay aligned across product development lifecycles.",
+      "is_active": true,
+      "logo_props": {
+        "icon": {
+          "name": "Box"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "ba3a3942-2e2e-4b32-924e-50441b840c3f",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Design",
+      "description": "Templates to manage design projects, from creative briefs and user research to prototyping, reviews, and design system documentation.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "PenTool"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "b11ca0e8-0e81-4bfe-b2b0-d99bf454a7fe",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Client and Customer Management",
+      "description": "Ideal for customer success, onboarding, implementation, account management, and service delivery across B2B and B2C use cases.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "ContactRound"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "8e5e4f75-a7bc-454d-84d5-f5534919c5b1",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Healthcare",
+      "description": "Support clinical, operational, and compliance workflows in healthcare organizations, including care coordination, policy tracking, and quality audits.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "Stethoscope"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "de5be9e1-4bcf-4db5-8226-22e70ef47546",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "HR and People Ops",
+      "description": "Templates for managing hiring pipelines, onboarding, employee engagement, performance tracking, and internal documentation.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "Users"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "e981bfda-1cfc-4cf1-ac97-2e5690444dea",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Manufacturing and Production",
+      "description": "Track production schedules, quality checks, equipment maintenance, and supply chain tasks with templates built for industrial teams.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "Factory"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "89a8e5a6-5647-445a-9fd1-649cfb5a00ad",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Financial Services",
+      "description": "Handle planning, compliance, audits, reporting, and client servicing workflows across banking, insurance, and investment management.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "Banknote"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "5f5e6efa-173b-433a-b4ea-20e9d4f7bcc6",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Retail and E-commerce",
+      "description": "Support merchandising, inventory management, campaign tracking, seasonal planning, and fulfillment processes in retail and DTC commerce.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "ShoppingBag"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "48ae5a64-e917-40d6-a68f-0df48f1d07de",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Startups",
+      "description": "Templates made for fast-moving teams—covering pitch decks, investor updates, growth experiments, MVP planning, and hiring sprints.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "Rocket"
+        },
+        "in_use": "icon"
+      }
+    }
+  },
+  {
+    "model": "ee.templatecategory",
+    "pk": "a50dca26-15ba-423d-ae74-c5ee51973cbe",
+    "fields": {
+      "created_at": "2025-05-28T10:57:09.662429Z",
+      "updated_at": "2025-05-28T10:57:09.662429Z",
+      "name": "Nonprofits",
+      "description": "Plan fundraising campaigns, manage volunteers, coordinate grant applications, and run board meetings with templates tailored for mission-driven organizations.",
+      "is_active": false,
+      "logo_props": {
+        "icon": {
+          "name": "HeartHandshake"
+        },
+        "in_use": "icon"
+      }
+    }
+  }
+]
