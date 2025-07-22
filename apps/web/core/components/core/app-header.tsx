@@ -7,7 +7,6 @@ import { Row } from "@plane/ui";
 // components
 import { ExtendedAppHeader } from "@/plane-web/components/common";
 
-
 export interface AppHeaderProps {
   header: ReactNode;
   mobileHeader?: ReactNode;

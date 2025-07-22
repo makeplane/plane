@@ -75,13 +75,6 @@ export const AdvancedIssuesHeader = observer(() => {
               <CountChip count={issuesCount} />
             </Tooltip>
           ) : null}
-          <Link
-            href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/overview`}
-            className="border border-custom-border-100 rounded px-2.5 py-1.5 flex gap-1 text-custom-text-300 hover:text-custom-text-300"
-          >
-            <RssIcon className="flex h-[14px] w-[14px] my-auto" />
-            <span className="hidden text-xs md:block font-medium">{t("common.overview")}</span>
-          </Link>
         </div>
         {currentProjectDetails?.anchor ? (
           <a

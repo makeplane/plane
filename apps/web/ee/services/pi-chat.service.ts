@@ -2,7 +2,16 @@
 import { PI_BASE_URL } from "@plane/constants";
 // services
 import { APIService } from "@/services/api.service";
-import { TFeedback, TQuery, TSearchQuery, TTemplate, TChatHistory, TUserThreads, TAiModels } from "../types";
+import {
+  TFeedback,
+  TQuery,
+  TSearchQuery,
+  TTemplate,
+  TChatHistory,
+  TUserThreads,
+  TAiModels,
+  TInitPayload,
+} from "../types";
 
 type TTemplateResponse = {
   templates: TTemplate[];
@@ -10,14 +19,15 @@ type TTemplateResponse = {
 type TChatHistoryResponse = {
   results: TChatHistory;
 };
-type TUserThreadsResponse = {
+export type TUserThreadsResponse = {
   results: TUserThreads[];
+  next_cursor: string;
+  prev_cursor: string;
+  next_page_results: boolean;
+  total_pages: number;
 };
 type TTitleResponse = {
   title: string;
-};
-type TPlaceholderResponse = {
-  placeholder: string;
 };
 type TAiModelsResponse = {
   models: TAiModels[];
@@ -27,8 +37,19 @@ export class PiChatService extends APIService {
     super(PI_BASE_URL);
   }
 
+  // initiatialize chat
+  async createChat(data: TInitPayload): Promise<string> {
+    const r = await this.post(`/api/v1/chat/initialize-chat/`, data)
+      .then((response) => response?.data?.chat_id)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+
+    return r;
+  }
+
   // fetch answer
-  async getAnswer(data: TQuery): Promise<string> {
+  async retrieveAnswer(data: TQuery): Promise<string> {
     const r = await this.post(`/api/v1/chat/get-answer/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -39,7 +60,7 @@ export class PiChatService extends APIService {
   }
 
   // fetch templates
-  async getTemplate(): Promise<TTemplateResponse> {
+  async listTemplates(): Promise<TTemplateResponse> {
     return this.get(`/api/v1/chat/get-templates/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -48,7 +69,7 @@ export class PiChatService extends APIService {
   }
 
   // generate title
-  async getTitle(chatId: string): Promise<TTitleResponse> {
+  async retrieveTitle(chatId: string): Promise<TTitleResponse> {
     return this.post(`/api/v1/chat/generate-title/`, { chat_id: chatId })
       .then((response) => response?.data)
       .catch((error) => {
@@ -65,15 +86,6 @@ export class PiChatService extends APIService {
       });
   }
 
-  // get placeholder
-  async getPlaceHolder(data: TTemplate): Promise<TPlaceholderResponse> {
-    return this.post(`/api/v1/chat/get-placeholder/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   // post feedback
   async postFeedback(data: TFeedback): Promise<void> {
     return this.post(`/api/v1/chat/feedback/`, data)
@@ -84,8 +96,12 @@ export class PiChatService extends APIService {
   }
 
   // get chat by id
-  async getChatById(chatId: string): Promise<TChatHistoryResponse> {
-    return this.post(`/api/v1/chat/get-chat-history-object/`, { chat_id: chatId })
+  async retrieveChat(chatId: string): Promise<TChatHistoryResponse> {
+    return this.get(`/api/v1/chat/get-chat-history-object/`, {
+      params: {
+        chat_id: chatId,
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error;
@@ -93,8 +109,28 @@ export class PiChatService extends APIService {
   }
 
   // get user threads
-  async getUserThreads(userId: string, workspaceId: string): Promise<TUserThreadsResponse> {
-    return this.post(`/api/v1/chat/get-user-threads/`, { user_id: userId, workspace_id: workspaceId })
+  async listUserThreads(
+    workspaceId: string,
+    is_project_chat: boolean,
+    cursor: string = "0"
+  ): Promise<TUserThreadsResponse> {
+    return this.get(`/api/v1/chat/get-user-threads/`, {
+      params: {
+        per_page: 100,
+        workspace_id: workspaceId,
+        is_project_chat,
+        cursor,
+      },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get recent chats
+  async listRecentChats(): Promise<TUserThreadsResponse> {
+    return this.get(`/api/v1/chat/get-recent-user-threads/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -102,8 +138,55 @@ export class PiChatService extends APIService {
   }
 
   // get models
-  async getAiModels(): Promise<TAiModelsResponse> {
+  async listAiModels(): Promise<TAiModelsResponse> {
     return this.get(`/api/v1/chat/get-models/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // favorite chat
+  async favoriteChat(chatId: string): Promise<void> {
+    return this.post(`/api/v1/chat/favorite-chat/`, { chat_id: chatId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // unfavorite chat
+  async unfavoriteChat(chatId: string): Promise<void> {
+    return this.post(`/api/v1/chat/unfavorite-chat/`, { chat_id: chatId })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // get favorite chats
+  async listFavoriteChats(workspaceId: string): Promise<TUserThreads[]> {
+    return this.get(`/api/v1/chat/get-favorite-chats/`, {
+      params: { workspace_id: workspaceId },
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // rename chat
+  async renameChat(chatId: string, title: string): Promise<void> {
+    return this.post(`/api/v1/chat/rename-chat/`, { chat_id: chatId, title })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // delete chat
+  async destroyChat(chatId: string, workspaceSlug: string): Promise<void> {
+    return this.delete(`/api/v1/chat/delete-chat/`, { chat_id: chatId, workspace_slug: workspaceSlug })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

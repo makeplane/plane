@@ -77,3 +77,5 @@ export * from "./display-properties";
 export * from "./ai-icon";
 export * from "./plane-icon";
 export * from "./wiki-icon";
+export * from "./chat-icon";
+export * from "./pi";

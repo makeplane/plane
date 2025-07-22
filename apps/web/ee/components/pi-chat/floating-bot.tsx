@@ -1,56 +1,34 @@
-import { useRef, useState } from "react";
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { X } from "lucide-react";
-import { useOutsideClickDetector } from "@plane/hooks";
-import { PiChatLogo } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { WithFeatureFlagHOC } from "../feature-flags";
-import { PiChatBase } from "./base";
+import { PiChatDetail } from "./detail";
+import { PiChatLayout } from "./layout";
 
-export const PiChatFloatingBot = () => {
+export const PiChatFloatingBot = observer(() => {
   // states
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef(null);
+  const { isPiChatDrawerOpen: isOpen } = usePiChat();
 
   // query params
   const pathName = usePathname();
   const { workspaceSlug } = useParams();
 
-  useOutsideClickDetector(ref, () => {
-    setIsOpen(false);
-  });
-
   if (pathName.includes("pi-chat")) return null;
 
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="PI_CHAT" fallback={<></>}>
-      <div ref={ref} className="m-auto">
-        {" "}
-        <button
-          className={cn("bg-gradient-to-br rounded-full w-[40px] h-[40px] shadow-md z-[20]", {
-            "from-pi-500 to-pi-700": !isOpen,
-            "from-pi-200 to-pi-400": isOpen,
-          })}
-          onClick={() => {
-            setIsOpen((state) => !state);
-          }}
-        >
-          {!isOpen ? (
-            <PiChatLogo className="size-6 text-white fill-current m-auto align-center" />
-          ) : (
-            <X className="size-6 text-white fill-current m-auto align-center" />
-          )}
-        </button>
-        <div
-          className={cn(
-            "absolute bottom-16 right-0 z-[20]",
-            "transform transition-all duration-300 ease-in-out",
-            isOpen ? "translate-y-[0%] h-[690px]" : "translate-y-[100%] h-0"
-          )}
-        >
-          {isOpen && <PiChatBase />}{" "}
-        </div>
+      <div
+        className={cn(
+          "transform transition-all duration-300 ease-in-out",
+          "rounded-lg border border-custom-border-200 h-full max-w-[400px]",
+          isOpen ? "translate-x-0 w-[400px]" : "px-0 translate-x-[100%] w-0 border-none"
+        )}
+      >
+        <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
+          <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel />
+        </PiChatLayout>
       </div>
     </WithFeatureFlagHOC>
   );
-};
+});

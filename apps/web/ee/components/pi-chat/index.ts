@@ -1,2 +1,2 @@
-export * from "./root";
 export * from "./floating-bot";
+export * from "./sidebar";

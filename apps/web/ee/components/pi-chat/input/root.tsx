@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ArrowUp, FileText } from "lucide-react";
 import { PiChatEditor } from "@plane/editor";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
-import { cn, generateQueryParams, isCommentEmpty } from "@plane/utils";
-import { useUser } from "@/hooks/store";
+import { cn, isCommentEmpty } from "@plane/utils";
+import { useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-
-import { IFormattedValue, IItem } from "@/plane-web/types";
+import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
 import { FocusFilter } from "./focus-filter";
 
 type TEditCommands = {
@@ -22,51 +21,60 @@ type TProps = {
   className?: string;
   activeChatId?: string;
   shouldRedirect?: boolean;
+  isProjectLevel?: boolean;
 };
 
 export const InputBox = observer((props: TProps) => {
-  const { className, activeChatId, shouldRedirect = false } = props;
-  // router
-  const router = useAppRouter();
+  const { className, activeChatId, shouldRedirect = true, isProjectLevel = false } = props;
+
   // store hooks
-  const { getAnswer, searchCallback, isPiTyping } = usePiChat();
-  const { data: currentUser } = useUser();
-  const { workspaceSlug } = useParams();
+  const { getAnswer, searchCallback, isPiTyping, isLoading: isChatLoading, createNewChat, getChatById } = usePiChat();
+  const { getWorkspaceBySlug } = useWorkspace();
+  // router
+  const { workspaceSlug, projectId } = useParams();
+  const router = useAppRouter();
+  // derived values
+  const chat = activeChatId && getChatById(activeChatId);
+  const workspaceId = getWorkspaceBySlug(workspaceSlug as string)?.id;
+  // state
+  const [focus, setFocus] = useState<TFocus>({
+    isInWorkspaceContext: true,
+    entityType: "workspace_id",
+    entityIdentifier: workspaceId || "",
+  });
+  const [isInitializing, setIsInitializing] = useState<boolean>(false);
   //ref
-  const isPiTypingRef = useRef(false);
-  // query params
-  const searchParams = useSearchParams();
-  const router_chat_id = searchParams.get("chat_id");
-  // states
+  const isLoadingRef = useRef(false);
+  const activeChatIdRef = useRef<string | undefined>(undefined);
+  const focusRef = useRef<TFocus>(focus);
   const editorCommands = useRef<TEditCommands | null>(null);
+
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;
   };
-  // refs
-  const activeChatIdRef = useRef<string | null>(null);
-
-  const handleRedirect = (path: string) => {
-    if (!activeChatIdRef.current) return; // Don't redirect if we don't have an activeChatIdRef.current
-
-    const query = generateQueryParams(searchParams, ["chat_id"]);
-    router.push(`${path}?${query && `${query}&`}chat_id=${activeChatIdRef.current}`);
-  };
 
   const handleSubmit = useCallback(
-    (e?: React.FormEvent) => {
-      if (!currentUser || !activeChatIdRef.current || isPiTypingRef.current) return;
+    async (e?: React.FormEvent) => {
       e?.preventDefault();
-      if (!router_chat_id && shouldRedirect) handleRedirect(`/${workspaceSlug}/pi-chat`);
       const query = editorCommands.current?.getHTML();
-      if (!query || isCommentEmpty(query)) return;
-      getAnswer(activeChatIdRef.current, query, currentUser?.id);
+      if (isLoadingRef.current || !query || isCommentEmpty(query)) return;
+      if (!activeChatIdRef.current) {
+        isLoadingRef.current = true;
+        setIsInitializing(true);
+        const newChatId = await createNewChat(focusRef.current, isProjectLevel, workspaceId || "");
+        activeChatIdRef.current = newChatId;
+        setIsInitializing(false);
+        // Don't redirect if we are in the floating chat window
+        if (shouldRedirect) router.push(`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/${newChatId}`);
+      }
+      getAnswer(activeChatIdRef.current, query, focusRef.current, isProjectLevel);
       editorCommands.current?.clear();
     },
-    [currentUser, editorCommands, getAnswer, activeChatId]
+    [editorCommands, getAnswer, activeChatId]
   );
 
   const getMentionSuggestions = async (query: string) => {
-    const response = await searchCallback(workspaceSlug.toString(), query);
+    const response = await searchCallback(workspaceSlug.toString(), query, focusRef.current);
     return formatSearchQuery(response);
   };
 
@@ -111,20 +119,55 @@ export const InputBox = observer((props: TProps) => {
     return parsedResponse;
   };
 
+  const updateFocus = <K extends keyof TFocus>(key: K, value: TFocus[K]) => {
+    setFocus((prev) => {
+      const updated = { ...prev, [key]: value };
+      focusRef.current = updated; // Sync ref
+      return updated;
+    });
+  };
+
   useEffect(() => {
-    if (!activeChatId) return;
+    if (chat) {
+      const presentFocus = {
+        isInWorkspaceContext: chat.is_focus_enabled,
+        entityType: chat.focus_project_id ? "project_id" : "workspace_id",
+        entityIdentifier: chat.focus_project_id || chat.focus_workspace_id,
+      };
+      setFocus(presentFocus);
+      focusRef.current = presentFocus;
+    }
+  }, [isChatLoading]);
+
+  useEffect(() => {
     activeChatIdRef.current = activeChatId;
+    if (activeChatId === "") {
+      const presentFocus = {
+        isInWorkspaceContext: true,
+        entityType: projectId ? "project_id" : "workspace_id",
+        entityIdentifier: projectId?.toString() || workspaceId?.toString() || "",
+      };
+      setFocus(presentFocus);
+      focusRef.current = presentFocus;
+    }
   }, [activeChatId]);
 
   useEffect(() => {
-    isPiTypingRef.current = isPiTyping;
+    isLoadingRef.current = isPiTyping;
   }, [isPiTyping]);
 
   return (
-    <form className={className}>
-      <div className="bg-custom-background-100 w-full rounded-[28px] p-2 flex gap-3 shadow-sm border-[4px] border-pi-100">
-        {/* Focus */}
-        <FocusFilter />
+    <form
+      className={cn(
+        "bg-custom-background-100 flex flex-col absolute bottom-0 left-0 px-2 pb-3 md:px-0 rounded-lg w-full",
+        className
+      )}
+    >
+      <div
+        className={cn(
+          "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 min-h-[100px] justify-between"
+        )}
+      >
         {/* Input Box */}
         <PiChatEditor
           setEditorCommand={(command) => {
@@ -132,20 +175,26 @@ export const InputBox = observer((props: TProps) => {
           }}
           handleSubmit={handleSubmit}
           mentionSuggestions={(query: string) => getMentionSuggestions(query)}
+          className="flex-1"
         />
-        {/* Submit button */}
-        <button
-          className={cn("p-2 my-auto mb-0 rounded-full bg-pi-700 text-white", {
-            "bg-pi-700/10 cursor-not-allowed": isPiTyping,
-          })}
-          type="submit"
-          onClick={handleSubmit}
-          disabled={isPiTyping}
-        >
-          <ArrowUp size={20} />
-        </button>
+        <div className="flex w-full gap-3 justify-between">
+          {/* Focus */}
+          <FocusFilter focus={focus} setFocus={updateFocus} isLoading={isChatLoading && !!activeChatId} />
+
+          {/* Submit button */}
+          <button
+            className={cn("rounded-full bg-pi-700 text-white size-8 flex items-center justify-center", {
+              "bg-pi-700/10 cursor-not-allowed": isPiTyping || isInitializing,
+            })}
+            type="submit"
+            onClick={handleSubmit}
+            disabled={isPiTyping || isInitializing}
+          >
+            <ArrowUp size={16} />
+          </button>
+        </div>
       </div>
-      <div className="text-xs text-custom-text-350 mt-2 text-center">
+      <div className="text-xs text-custom-text-350 pt-2 text-center">
         Pi can make mistakes, please double-check responses.
       </div>
     </form>

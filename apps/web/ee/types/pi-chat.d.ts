@@ -14,7 +14,6 @@ export enum ESource {
 export type TQuery = {
   query: string;
   is_new: boolean;
-  user_id: string;
   chat_id: string;
   is_temp: boolean;
   workspace_in_context: boolean;
@@ -25,11 +24,11 @@ export type TQuery = {
   context?: {
     [key: string]: string;
   };
+  is_project_chat?: boolean;
 };
-
+export type TInitPayload = Pick<TQuery, "workspace_in_context" | "workspace_id" | "project_id" | "is_project_chat">;
 export type TSearchQuery = {
   query: string;
-  user_id: string;
 };
 
 export type TFeedback = {
@@ -40,6 +39,7 @@ export type TFeedback = {
 };
 
 export type TFocus = {
+  isInWorkspaceContext: boolean;
   entityType: string;
   entityIdentifier: string;
 };
@@ -63,12 +63,19 @@ export type TChatHistory = {
   dialogue: TDialogue[];
   title: string;
   last_modified: string;
+  is_favorite: boolean;
+  is_focus_enabled: boolean;
+  focus_workspace_id: string;
+  focus_project_id: string;
+  workspace_id?: string;
 };
 
 export type TUserThreads = {
   chat_id: string;
   title: string;
   last_modified: string;
+  is_favorite: boolean;
+  workspace_id?: string;
 };
 
 export type TAiModels = {

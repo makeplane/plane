@@ -17,7 +17,7 @@ export const ReasoningBlock = (props: TProps) => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        className="w-fit bg-custom-background-80/50 rounded-full px-4 py-2 transition-all duration-500 ease-in-out"
+        className="w-fit hover:bg-custom-background-90 rounded-full px-4 py-2 transition-all duration-500 ease-in-out border border-custom-border-200 hover:border-transparent"
       >
         <div className="flex gap-2 items-center">
           <div className="text-base text-custom-text-200 font-medium">Show thinking</div>

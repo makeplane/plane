@@ -41,7 +41,6 @@ export default function WorkspacePagesLayout({ children }: { children: React.Rea
               </main>
               {/* <FloatingActionsRoot> */}
               {/* <StickyActionBar / */}
-              {/* <PiChatFloatingBot /> */}
               {/* </FloatingActionsRoot> */}
             </div>
           </WorkspaceAccessWrapper>

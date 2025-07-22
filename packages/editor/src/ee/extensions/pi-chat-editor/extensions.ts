@@ -1,4 +1,5 @@
 import { Extension, type Extensions } from "@tiptap/core";
+import Placeholder from "@tiptap/extension-placeholder";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import StarterKit from "@tiptap/starter-kit";
@@ -76,6 +77,14 @@ export const PiChatEditorExtensions = (props: Props): Extensions => {
       },
     }),
     CustomCodeInlineExtension,
+    Placeholder.configure({
+      placeholder: ({ editor }) => {
+        if (!editor.isEditable) return "";
+
+        const text = editor.getText();
+        return text.trim().length > 0 ? "" : "How can I help you today?";
+      },
+    }),
     Extension.create({
       onUpdate(this) {
         setEditorCommand?.({

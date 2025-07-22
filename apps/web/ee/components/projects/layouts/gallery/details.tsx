@@ -187,7 +187,9 @@ const Details: React.FC<Props> = observer((props) => {
                   }}
                 >
                   <div className="flex items-center justify-start gap-2">
-                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+                    {item.icon && (
+                      <item.icon className={cn("h-3 w-3", item.iconClassName)} iconClassName={item.iconClassName} />
+                    )}
                     <span>{item.title}</span>
                   </div>
                 </CustomMenu.MenuItem>

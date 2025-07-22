@@ -2,38 +2,31 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { PanelRightClose } from "lucide-react";
-import { IUser } from "@plane/types";
 import { Card } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
-import HistoryList from "./list";
+import RecentChats from "./recents";
 import { Toolbar } from "./toolbar";
 
 type TProps = {
   isSidePanelOpen: boolean;
   isMobile?: boolean;
-  isNewChat: boolean;
-  activeChatId?: string;
-  currentUser: IUser | undefined;
   toggleSidePanel: (value: boolean) => void;
-  initPiChat: (chat_id?: string) => void;
 };
-export const History = observer((props: TProps) => {
-  const {
-    isSidePanelOpen,
-    isNewChat,
-    activeChatId,
-    toggleSidePanel,
-    initPiChat,
-    isMobile = false,
-    currentUser,
-  } = props;
+export const RightSidePanel = observer((props: TProps) => {
+  const { isSidePanelOpen, toggleSidePanel, isMobile = false } = props;
   // states
   const [searchQuery, setSearchQuery] = useState("");
+  // router
+  const { workspaceSlug } = useParams();
   // store
-  const { geUserThreads } = usePiChat();
-  const userThreads = currentUser && geUserThreads(currentUser?.id);
+  const { geUserThreadsByWorkspaceId, isLoadingThreads } = usePiChat();
+  const { getWorkspaceBySlug } = useWorkspace();
+  const workspaceId = workspaceSlug && getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
+  const userThreads = geUserThreadsByWorkspaceId(workspaceId?.toString() || "");
 
   // filter user threads
   const filteredUserThread =
@@ -44,7 +37,7 @@ export const History = observer((props: TProps) => {
   return (
     <Card
       className={cn(
-        "h-full text-base",
+        "h-full text-base rounded-none pb-0",
         "transform transition-all duration-300 ease-in-out",
         "shadow-lg z-20",
         isSidePanelOpen ? "translate-x-0 w-[260px]" : "px-0 translate-x-[100%] w-0",
@@ -63,14 +56,11 @@ export const History = observer((props: TProps) => {
       </div>
 
       {/* Toolbar */}
-      <Toolbar
-        initPiChat={initPiChat}
-        searchQuery={searchQuery}
-        updateSearchQuery={updateSearchQuery}
-        isNewChat={isNewChat}
-      />
+      <Toolbar searchQuery={searchQuery} updateSearchQuery={updateSearchQuery} isProjectLevel />
       {/* History */}
-      <HistoryList userThreads={filteredUserThread ?? []} initPiChat={initPiChat} activeChatId={activeChatId} />
+      <div className="flex-1 overflow-y-auto">
+        <RecentChats userThreads={filteredUserThread ?? []} isProjectLevel isLoading={isLoadingThreads} />
+      </div>
     </Card>
   );
 });
