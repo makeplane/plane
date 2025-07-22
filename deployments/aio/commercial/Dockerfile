@@ -1,4 +1,4 @@
-ARG PLANE_VERSION=v1.11.1
+ARG PLANE_VERSION=v1.12.1
 FROM --platform=$BUILDPLATFORM tonistiigi/binfmt AS binfmt
 
 # **************************************************
@@ -44,8 +44,9 @@ COPY --from=monitor-img /usr/local/bin/prime-monitor /usr/local/bin/prime-monito
 RUN mkdir -p /app/monitor && \
     chmod +x /usr/local/bin/prime-monitor
 
-RUN rm -rf /app/web/web/.next/cache && \
-    rm -rf /app/space/space/.next/cache
+RUN rm -rf /app/web/apps/web/.next/cache && \
+    rm -rf /app/space/apps/space/.next/cache && \
+    rm -rf /app/admin/apps/admin/.next/cache
 
 COPY --from=proxy-img /usr/bin/caddy /usr/bin/caddy
 COPY dist/Caddyfile /app/proxy/Caddyfile
