@@ -1245,7 +1245,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
         # EE code
         # Extract issue IDs from cycle_issues
-        issue_ids = [ci.issue_id for ci in cycle_issues]
+        issue_ids = [ci.issue_id for ci in updated_cycles]
 
         # Trigger Celery task for REMOVED
         entity_issue_state_activity_task.delay(
