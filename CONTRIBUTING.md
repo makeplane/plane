@@ -187,7 +187,7 @@ Adding a new language involves several steps to ensure it integrates seamlessly 
     Add the new language to the TLanguage type in the language definitions file:
 
         ```typescript
-        // types/language.ts
+        // packages/i18n/src/types/language.ts
         export type TLanguage = "en" | "fr" | "your-lang";
         ```
 
@@ -195,7 +195,7 @@ Adding a new language involves several steps to ensure it integrates seamlessly 
     Include the new language in the list of supported languages:
 
         ```typescript
-        // constants/language.ts
+        // packages/i18n/src/constants/language.ts
         export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
         { label: "English", value: "en" },
         { label: "Your Language", value: "your-lang" }
