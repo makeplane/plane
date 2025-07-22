@@ -54,7 +54,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
 
     search_fields = []
 
-    use_read_replica = True
+    use_read_replica = False
 
     def get_queryset(self):
         try:
@@ -163,7 +163,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
 
     search_fields = []
 
-    use_read_replica = True
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):

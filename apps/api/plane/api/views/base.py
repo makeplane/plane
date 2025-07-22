@@ -42,7 +42,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
 
     permission_classes = [IsAuthenticated]
 
-    use_read_replica = True
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
