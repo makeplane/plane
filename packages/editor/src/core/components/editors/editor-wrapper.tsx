@@ -51,6 +51,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     flaggedExtensions,
     forwardedRef,
     id,
+    isTouchDevice,
     initialValue,
     mentionHandler,
     onChange,
