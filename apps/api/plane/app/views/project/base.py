@@ -46,6 +46,7 @@ class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
+    use_read_replica = True
 
     def get_queryset(self):
         sort_order = ProjectMember.objects.filter(

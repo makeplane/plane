@@ -24,6 +24,7 @@ from rest_framework.viewsets import ModelViewSet
 from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 class TimezoneMixin:
@@ -40,7 +41,7 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
+class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
     permission_classes = [IsAuthenticated]
@@ -52,6 +53,8 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     filterset_fields = []
 
     search_fields = []
+
+    use_read_replica = True
 
     def get_queryset(self):
         try:
@@ -149,7 +152,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
         return expand if expand else None
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator):
     permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -159,6 +162,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     filterset_fields = []
 
     search_fields = []
+
+    use_read_replica = True
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):

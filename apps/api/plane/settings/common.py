@@ -147,6 +147,29 @@ else:
         }
     }
 
+
+if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
+    if bool(os.environ.get("DATABASE_READ_REPLICA_URL")):
+        # Parse database configuration from $DATABASE_URL
+        DATABASES["replica"] = dj_database_url.parse(
+            os.environ.get("DATABASE_READ_REPLICA_URL")
+        )
+    else:
+        DATABASES["replica"] = {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_READ_REPLICA_DB"),
+            "USER": os.environ.get("POSTGRES_READ_REPLICA_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_READ_REPLICA_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_READ_REPLICA_HOST"),
+            "PORT": os.environ.get("POSTGRES_READ_REPLICA_PORT", "5432"),
+        }
+
+    # Database Routers
+    DATABASE_ROUTERS = ["plane.utils.core.dbrouters.ReadReplicaRouter"]
+    # Add middleware at the end for read replica routing
+    MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
+
+
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
