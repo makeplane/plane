@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { PanelRight } from "lucide-react";
+import { ChartNoAxesColumn, ListFilter, PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -27,7 +27,13 @@ import { cn, isIssueFilterActive } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { SwitcherLabel } from "@/components/common";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+  MobileLayoutSelection,
+} from "@/components/issues";
 // helpers
 import { ModuleQuickActions } from "@/components/modules";
 // hooks
@@ -198,21 +204,31 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         </Header.LeftItem>
         <Header.RightItem className="items-center">
           <div className="hidden gap-2 md:flex">
-            <LayoutSelection
-              layouts={[
-                EIssueLayoutTypes.LIST,
-                EIssueLayoutTypes.KANBAN,
-                EIssueLayoutTypes.CALENDAR,
-                EIssueLayoutTypes.SPREADSHEET,
-                EIssueLayoutTypes.GANTT,
-              ]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
-            />
+            <div className="hidden @4xl:flex">
+              <LayoutSelection
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
+                onChange={(layout) => handleLayoutChange(layout)}
+                selectedLayout={activeLayout}
+              />
+            </div>
+            <div className="flex @4xl:hidden">
+              <MobileLayoutSelection
+                layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
+                onChange={(layout) => handleLayoutChange(layout)}
+                activeLayout={activeLayout}
+              />
+            </div>
             <FiltersDropdown
               title="Filters"
               placement="bottom-end"
               isFiltersApplied={isIssueFilterActive(issueFilters)}
+              miniIcon={<ListFilter className="size-3.5" />}
             >
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
@@ -229,7 +245,11 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title="Display" placement="bottom-end">
+            <FiltersDropdown
+              title="Display"
+              placement="bottom-end"
+              miniIcon={<SlidersHorizontal className="size-3.5" />}
+            >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
@@ -253,7 +273,10 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 variant="neutral-primary"
                 size="sm"
               >
-                Analytics
+                <div className="hidden @4xl:flex">Analytics</div>
+                <div className="flex @4xl:hidden">
+                  <ChartNoAxesColumn className="size-3.5" />
+                </div>
               </Button>
               <Button
                 className="hidden sm:flex"

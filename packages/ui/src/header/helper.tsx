@@ -24,5 +24,5 @@ export const minHeights: IHeaderProperties = {
 export const getHeaderStyle = (variant: THeaderVariant, setMinHeight: boolean, showOnMobile: boolean) => {
   const height = setMinHeight ? minHeights[variant] : "";
   const display = variant === EHeaderVariant.SECONDARY ? (showOnMobile ? "flex" : "hidden md:flex") : "";
-  return " " + headerStyle[variant] + " " + height + " " + display;
+  return " @container " + headerStyle[variant] + " " + height + " " + display;
 };

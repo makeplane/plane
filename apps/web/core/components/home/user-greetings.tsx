@@ -1,20 +1,17 @@
 import { FC } from "react";
-import { Shapes } from "lucide-react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import { IUser } from "@plane/types";
 // plane ui
-import { Button } from "@plane/ui";
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
 
 export interface IUserGreetingsView {
   user: IUser;
-  handleWidgetModal: () => void;
 }
 
 export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
-  const { user, handleWidgetModal } = props;
+  const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
   // store hooks
@@ -44,22 +41,16 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
   const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
 
   return (
-    <div className="flex justify-between">
-      <div>
-        <h3 className="text-xl font-semibold text-center">
-          {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
-        </h3>
-        <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
-          <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
-          <div>
-            {weekDay}, {date} {timeString}
-          </div>
-        </h6>
-      </div>
-      <Button variant="neutral-primary" size="sm" onClick={handleWidgetModal} className="my-auto mb-0">
-        <Shapes size={16} />
-        <div className="text-xs font-medium">{t("home.manage_widgets")}</div>
-      </Button>
+    <div className="flex flex-col items-center my-6">
+      <h3 className="text-xl font-semibold text-center">
+        {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
+      </h3>
+      <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
+        <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+        <div>
+          {weekDay}, {date} {timeString}
+        </div>
+      </h6>
     </div>
   );
 };
