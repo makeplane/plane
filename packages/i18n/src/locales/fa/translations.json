@@ -506,2024 +506,2023 @@
   "bot": "بات",
   "project_view": {
     "sort_by": {
-      "created_at": "Créé le",
-      "updated_at": "Mis à jour le",
-      "name": "Nom"
+      "created_at": "تاریخ ایجاد",
+      "updated_at": "تاریخ به‌روزرسانی",
+      "name": "نام"
     }
   },
   "toast": {
-    "success": "Succès !",
-    "error": "Erreur !"
+    "success": "موفقیت‌آمیز!",
+    "error": "خطا!"
   },
   "links": {
     "toasts": {
       "created": {
-        "title": "Lien créé",
-        "message": "Le lien a été créé avec succès"
+        "title": "لینک ایجاد شد",
+        "message": "لینک با موفقیت ایجاد شد"
       },
       "not_created": {
-        "title": "Lien non créé",
-        "message": "Le lien n'a pas pu être créé"
+        "title": "لینک ایجاد نشد",
+        "message": "ایجاد لینک ناموفق بود"
       },
       "updated": {
-        "title": "Lien mis à jour",
-        "message": "Le lien a été mis à jour avec succès"
+        "title": "لینک به‌روزرسانی شد",
+        "message": "لینک با موفقیت به‌روزرسانی شد"
       },
       "not_updated": {
-        "title": "Lien non mis à jour",
-        "message": "Le lien n'a pas pu être mis à jour"
+        "title": "لینک به‌روزرسانی نشد",
+        "message": "به‌روزرسانی لینک ناموفق بود"
       },
       "removed": {
-        "title": "Lien supprimé",
-        "message": "Le lien a été supprimé avec succès"
+        "title": "لینک حذف شد",
+        "message": "لینک با موفقیت حذف شد"
       },
       "not_removed": {
-        "title": "Lien non supprimé",
-        "message": "Le lien n'a pas pu être supprimé"
+        "title": "لینک حذف نشد",
+        "message": "حذف لینک ناموفق بود"
       }
     }
   },
   "home": {
     "empty": {
-      "quickstart_guide": "Guide de démarrage rapide",
-      "not_right_now": "Pas maintenant",
+      "quickstart_guide": "راهنمای شروع سریع",
+      "not_right_now": "فعلاً نه",
       "create_project": {
-        "title": "Créer un projet",
-        "description": "La plupart des choses commencent par un projet dans Plane.",
-        "cta": "Commencer"
+        "title": "ایجاد یک پروژه",
+        "description": "بیشتر کارها در Plane با یک پروژه شروع می‌شود.",
+        "cta": "شروع کنید"
       },
       "invite_team": {
-        "title": "Inviter votre équipe",
-        "description": "Construisez, déployez et gérez avec vos collègues.",
-        "cta": "Les faire entrer"
+        "title": "تیم خود را دعوت کنید",
+        "description": "با همکاران خود بسازید، مستقر کنید و مدیریت کنید.",
+        "cta": "دعوتشان کنید"
       },
       "configure_workspace": {
-        "title": "Configurez votre espace de travail.",
-        "description": "Activez ou désactivez des fonctionnalités ou allez plus loin.",
-        "cta": "Configurer cet espace de travail"
+        "title": "فضای کاری خود را پیکربندی کنید.",
+        "description": "ویژگی‌ها را فعال یا غیرفعال کنید یا یک قدم فراتر بروید.",
+        "cta": "پیکربندی این فضای کاری"
       },
       "personalize_account": {
-        "title": "Faites de Plane le vôtre.",
-        "description": "Choisissez votre photo, vos couleurs et plus encore.",
-        "cta": "Personnaliser maintenant"
+        "title": "Plane را از آنِ خود کنید.",
+        "description": "عکس، رنگ‌ها و موارد دیگر را انتخاب کنید.",
+        "cta": "اکنون شخصی‌سازی کنید"
       },
       "widgets": {
-        "title": "C'est calme sans widgets, activez-les",
-        "description": "Il semble que tous vos widgets soient désactivés. Activez-les\nmaintenant pour améliorer votre expérience !",
+        "title": "اینجا بدون ویجت‌ها خلوت است، آنها را فعال کنید",
+        "description": "به نظر می‌رسد همه ویجت‌های شما غیرفعال هستند. برای بهبود تجربه‌تان، آنها را فعال کنید!",
         "primary_button": {
-          "text": "Gérer les widgets"
+          "text": "مدیریت ویجت‌ها"
         }
       }
     },
     "quick_links": {
-      "empty": "Enregistrez des liens vers des éléments de travail que vous souhaitez avoir à portée de main.",
-      "add": "Ajouter un lien rapide",
-      "title": "Lien rapide",
-      "title_plural": "Liens rapides"
+      "empty": "لینک‌هایی به آیتم‌های کاری که می‌خواهید در دسترس باشند را ذخیره کنید.",
+      "add": "افزودن لینک سریع",
+      "title": "لینک سریع",
+      "title_plural": "لینک‌های سریع"
     },
     "recents": {
-      "title": "Récents",
+      "title": "اخیر",
       "empty": {
-        "project": "Vos projets récents apparaîtront ici une fois que vous en aurez visité un.",
-        "page": "Vos pages récentes apparaîtront ici une fois que vous en aurez visité une.",
-        "issue": "Vos éléments de travail récents apparaîtront ici une fois que vous en aurez visité un.",
-        "default": "Vous n'avez pas encore d'éléments récents."
+        "project": "پروژه‌های اخیر شما پس از بازدید از یکی از آنها در اینجا ظاهر می‌شوند.",
+        "page": "صفحات اخیر شما پس از بازدید از یکی از آنها در اینجا ظاهر می‌شوند.",
+        "issue": "آیتم‌های کاری اخیر شما پس از بازدید از یکی از آنها در اینجا ظاهر می‌شوند.",
+        "default": "هنوز آیتم اخیری ندارید."
       },
       "filters": {
-        "all": "Tous",
-        "projects": "Projets",
-        "pages": "Pages",
-        "issues": "Éléments de travail"
+        "all": "همه",
+        "projects": "پروژه‌ها",
+        "pages": "صفحات",
+        "issues": "آیتم‌های کاری"
       }
     },
     "new_at_plane": {
-      "title": "Nouveau sur Plane"
+      "title": "جدید در Plane"
     },
     "quick_tutorial": {
-      "title": "Tutoriel rapide"
+      "title": "آموزش سریع"
     },
     "widget": {
-      "reordered_successfully": "Widget réorganisé avec succès.",
-      "reordering_failed": "Une erreur s'est produite lors de la réorganisation du widget."
+      "reordered_successfully": "ویجت با موفقیت مرتب‌سازی شد.",
+      "reordering_failed": "خطایی در هنگام مرتب‌سازی ویجت رخ داد."
     },
-    "manage_widgets": "Gérer les widgets",
-    "title": "Accueil",
-    "star_us_on_github": "Donnez-nous une étoile sur GitHub"
+    "manage_widgets": "مدیریت ویجت‌ها",
+    "title": "خانه",
+    "star_us_on_github": "در گیت‌هاب به ما ستاره بدهید"
   },
   "link": {
     "modal": {
       "url": {
         "text": "URL",
-        "required": "L'URL n'est pas valide",
-        "placeholder": "Tapez ou collez une URL"
+        "required": "URL نامعتبر است",
+        "placeholder": "یک URL تایپ یا الصاق کنید"
       },
       "title": {
-        "text": "Titre d'affichage",
-        "placeholder": "Comment souhaitez-vous voir ce lien"
+        "text": "عنوان نمایشی",
+        "placeholder": "می‌خواهید این لینک چگونه نمایش داده شود"
       }
     }
   },
   "common": {
-    "all": "Tout",
-    "states": "États",
-    "state": "État",
-    "state_groups": "Groupes d'états",
-    "state_group": "Groupe d'état",
-    "priorities": "Priorités",
-    "priority": "Priorité",
-    "team_project": "Projet d'équipe",
-    "project": "Projet",
-    "cycle": "Cycle",
-    "cycles": "Cycles",
-    "module": "Module",
-    "modules": "Modules",
-    "labels": "Étiquettes",
-    "label": "Étiquette",
-    "assignees": "Assignés",
-    "assignee": "Assigné",
-    "created_by": "Créé par",
-    "none": "Aucun",
-    "link": "Lien",
-    "estimates": "Estimations",
-    "estimate": "Estimation",
-    "created_at": "Créé le",
-    "completed_at": "Terminé le",
-    "layout": "Disposition",
-    "filters": "Filtres",
-    "display": "Affichage",
-    "load_more": "Charger plus",
-    "activity": "Activité",
-    "analytics": "Analyses",
-    "dates": "Dates",
-    "success": "Succès !",
-    "something_went_wrong": "Quelque chose s'est mal passé",
+    "all": "همه",
+    "states": "وضعیت‌ها",
+    "state": "وضعیت",
+    "state_groups": "گروه‌های وضعیت",
+    "state_group": "گروه وضعیت",
+    "priorities": "اولویت‌ها",
+    "priority": "اولویت",
+    "team_project": "پروژه تیمی",
+    "project": "پروژه",
+    "cycle": "چرخه",
+    "cycles": "چرخه‌ها",
+    "module": "ماژول",
+    "modules": "ماژول‌ها",
+    "labels": "برچسب‌ها",
+    "label": "برچسب",
+    "assignees": "مسئولین",
+    "assignee": "مسئول",
+    "created_by": "ایجاد شده توسط",
+    "none": "هیچ‌کدام",
+    "link": "لینک",
+    "estimates": "تخمین‌ها",
+    "estimate": "تخمین",
+    "created_at": "تاریخ ایجاد",
+    "completed_at": "تاریخ تکمیل",
+    "layout": "چیدمان",
+    "filters": "فیلترها",
+    "display": "نمایش",
+    "load_more": "بارگذاری بیشتر",
+    "activity": "فعالیت",
+    "analytics": "تجزیه و تحلیل",
+    "dates": "تاریخ‌ها",
+    "success": "موفقیت‌آمیز!",
+    "something_went_wrong": "مشکلی پیش آمد",
     "error": {
-      "label": "Erreur !",
-      "message": "Une erreur s'est produite. Veuillez réessayer."
+      "label": "خطا!",
+      "message": "خطایی رخ داد. لطفا دوباره تلاش کنید."
     },
-    "group_by": "Grouper par",
-    "epic": "Epic",
-    "epics": "Epics",
-    "work_item": "Élément de travail",
-    "work_items": "Éléments de travail",
-    "sub_work_item": "Sous-élément de travail",
-    "add": "Ajouter",
-    "warning": "Avertissement",
-    "updating": "Mise à jour",
-    "adding": "Ajout",
-    "update": "Mettre à jour",
-    "creating": "Création",
-    "create": "Créer",
-    "cancel": "Annuler",
-    "description": "Description",
-    "title": "Titre",
-    "attachment": "Pièce jointe",
-    "general": "Général",
-    "features": "Fonctionnalités",
-    "automation": "Automatisation",
-    "project_name": "Nom du projet",
-    "project_id": "ID du projet",
-    "project_timezone": "Fuseau horaire du projet",
-    "created_on": "Créé le",
-    "update_project": "Mettre à jour le projet",
-    "identifier_already_exists": "L'identifiant existe déjà",
-    "add_more": "Ajouter plus",
-    "defaults": "Par défaut",
-    "add_label": "Ajouter une étiquette",
-    "customize_time_range": "Personnaliser la plage de temps",
-    "loading": "Chargement",
-    "attachments": "Pièces jointes",
-    "property": "Propriété",
-    "properties": "Propriétés",
-    "parent": "Parent",
-    "page": "Pâge",
-    "remove": "Supprimer",
-    "archiving": "Archivage",
-    "archive": "Archiver",
+    "group_by": "گروه‌بندی بر اساس",
+    "epic": "اپیک",
+    "epics": "اپیک‌ها",
+    "work_item": "آیتم کاری",
+    "work_items": "آیتم‌های کاری",
+    "sub_work_item": "زیر-آیتم کاری",
+    "add": "افزودن",
+    "warning": "هشدار",
+    "updating": "در حال به‌روزرسانی",
+    "adding": "در حال افزودن",
+    "update": "به‌روزرسانی",
+    "creating": "در حال ایجاد",
+    "create": "ایجاد",
+    "cancel": "لغو",
+    "description": "توضیحات",
+    "title": "عنوان",
+    "attachment": "پیوست",
+    "general": "عمومی",
+    "features": "ویژگی‌ها",
+    "automation": "اتوماسیون",
+    "project_name": "نام پروژه",
+    "project_id": "شناسه پروژه",
+    "project_timezone": "منطقه زمانی پروژه",
+    "created_on": "ایجاد شده در",
+    "update_project": "به‌روزرسانی پروژه",
+    "identifier_already_exists": "این شناسه قبلاً وجود دارد",
+    "add_more": "افزودن بیشتر",
+    "defaults": "پیش‌فرض‌ها",
+    "add_label": "افزودن برچسب",
+    "customize_time_range": "سفارشی‌سازی بازه زمانی",
+    "loading": "در حال بارگذاری",
+    "attachments": "پیوست‌ها",
+    "property": "خاصیت",
+    "properties": "خواص",
+    "parent": "والد",
+    "page": "صفحه",
+    "remove": "حذف",
+    "archiving": "در حال بایگانی کردن",
+    "archive": "بایگانی",
     "access": {
-      "public": "Public",
-      "private": "Privé"
+      "public": "عمومی",
+      "private": "خصوصی"
     },
-    "done": "Terminé",
-    "sub_work_items": "Sous-éléments de travail",
-    "comment": "Commentaire",
-    "workspace_level": "Niveau espace de travail",
+    "done": "انجام شد",
+    "sub_work_items": "زیر-آیتم‌های کاری",
+    "comment": "نظر",
+    "workspace_level": "سطح فضای کاری",
     "order_by": {
-      "label": "Trier par",
-      "manual": "Manuel",
-      "last_created": "Dernier créé",
-      "last_updated": "Dernière mise à jour",
-      "start_date": "Date de début",
-      "due_date": "Date d'échéance",
-      "asc": "Croissant",
-      "desc": "Décroissant",
-      "updated_on": "Mis à jour le"
+      "label": "مرتب‌سازی بر اساس",
+      "manual": "دستی",
+      "last_created": "آخرین ایجاد شده",
+      "last_updated": "آخرین به‌روزرسانی",
+      "start_date": "تاریخ شروع",
+      "due_date": "تاریخ سررسید",
+      "asc": "صعودی",
+      "desc": "نزولی",
+      "updated_on": "به‌روزرسانی شده در"
     },
     "sort": {
-      "asc": "Croissant",
-      "desc": "Décroissant",
-      "created_on": "Créé le",
-      "updated_on": "Mis à jour le"
+      "asc": "صعودی",
+      "desc": "نزولی",
+      "created_on": "تاریخ ایجاد",
+      "updated_on": "تاریخ به‌روزرسانی"
     },
-    "comments": "Commentaires",
-    "updates": "Mises à jour",
-    "clear_all": "Tout effacer",
-    "copied": "Copié !",
-    "link_copied": "Lien copié !",
-    "link_copied_to_clipboard": "Lien copié dans le presse-papiers",
-    "copied_to_clipboard": "Lien de l'élément de travail copié dans le presse-papiers",
-    "is_copied_to_clipboard": "L'élément de travail est copié dans le presse-papiers",
-    "no_links_added_yet": "Aucun lien ajouté pour l'instant",
-    "add_link": "Ajouter un lien",
-    "links": "Liens",
-    "go_to_workspace": "Aller à l'espace de travail",
-    "progress": "Progression",
-    "optional": "Optionnel",
-    "join": "Rejoindre",
-    "go_back": "Retour",
-    "continue": "Continuer",
-    "resend": "Renvoyer",
-    "relations": "Relations",
+    "comments": "نظرات",
+    "updates": "به‌روزرسانی‌ها",
+    "clear_all": "پاک کردن همه",
+    "copied": "کپی شد!",
+    "link_copied": "لینک کپی شد!",
+    "link_copied_to_clipboard": "لینک در کلیپ‌بورد کپی شد",
+    "copied_to_clipboard": "لینک آیتم کاری در کلیپ‌بورد کپی شد",
+    "is_copied_to_clipboard": "آیتم کاری در کلیپ‌بورد کپی شده است",
+    "no_links_added_yet": "هنوز لینکی اضافه نشده است",
+    "add_link": "افزودن لینک",
+    "links": "لینک‌ها",
+    "go_to_workspace": "رفتن به فضای کاری",
+    "progress": "پیشرفت",
+    "optional": "اختیاری",
+    "join": "پیوستن",
+    "go_back": "بازگشت",
+    "continue": "ادامه",
+    "resend": "ارسال مجدد",
+    "relations": "ارتباطات",
     "errors": {
       "default": {
-        "title": "Erreur !",
-        "message": "Quelque chose s'est mal passé. Veuillez réessayer."
+        "title": "خطا!",
+        "message": "مشکلی پیش آمد. لطفا دوباره تلاش کنید."
       },
-      "required": "Ce champ est obligatoire",
-      "entity_required": "{entity} est requis",
-      "restricted_entity": "{entity} est restreint"
+      "required": "این فیلد الزامی است",
+      "entity_required": "{entity} الزامی است",
+      "restricted_entity": "{entity} محدود شده است"
     },
-    "update_link": "Mettre à jour le lien",
-    "attach": "Joindre",
-    "create_new": "Créer nouveau",
-    "add_existing": "Ajouter existant",
-    "type_or_paste_a_url": "Tapez ou collez une URL",
-    "url_is_invalid": "L'URL n'est pas valide",
-    "display_title": "Titre d'affichage",
-    "link_title_placeholder": "Comment souhaitez-vous voir ce lien",
+    "update_link": "به‌روزرسانی لینک",
+    "attach": "پیوست کردن",
+    "create_new": "ایجاد مورد جدید",
+    "add_existing": "افزودن مورد موجود",
+    "type_or_paste_a_url": "یک URL تایپ یا الصاق کنید",
+    "url_is_invalid": "URL نامعتبر است",
+    "display_title": "عنوان نمایشی",
+    "link_title_placeholder": "می‌خواهید این لینک چگونه نمایش داده شود",
     "url": "URL",
-    "side_peek": "Aperçu latéral",
-    "modal": "Modal",
-    "full_screen": "Plein écran",
-    "close_peek_view": "Fermer l'aperçu",
-    "toggle_peek_view_layout": "Basculer la disposition de l'aperçu",
-    "options": "Options",
-    "duration": "Durée",
-    "today": "Aujourd'hui",
-    "week": "Semaine",
-    "month": "Mois",
-    "quarter": "Trimestre",
-    "press_for_commands": "Appuyez sur '/' pour les commandes",
-    "click_to_add_description": "Cliquez pour ajouter une description",
+    "side_peek": "نمای کناری",
+    "modal": "پنجره مودال",
+    "full_screen": "تمام صفحه",
+    "close_peek_view": "بستن نمای کناری",
+    "toggle_peek_view_layout": "تغییر چیدمان نمای کناری",
+    "options": "گزینه‌ها",
+    "duration": "مدت زمان",
+    "today": "امروز",
+    "week": "هفته",
+    "month": "ماه",
+    "quarter": "سه ماهه",
+    "press_for_commands": "برای دسترسی به دستورات کلید '/' را فشار دهید",
+    "click_to_add_description": "برای افزودن توضیحات کلیک کنید",
     "search": {
-      "label": "Rechercher",
-      "placeholder": "Tapez pour rechercher",
-      "no_matches_found": "Aucune correspondance trouvée",
-      "no_matching_results": "Aucun résultat correspondant"
+      "label": "جستجو",
+      "placeholder": "برای جستجو تایپ کنید",
+      "no_matches_found": "هیچ مورد منطبقی یافت نشد",
+      "no_matching_results": "هیچ نتیجه منطبقی یافت نشد"
     },
     "actions": {
-      "edit": "Modifier",
-      "make_a_copy": "Faire une copie",
-      "open_in_new_tab": "Ouvrir dans un nouvel onglet",
-      "copy_link": "Copier le lien",
-      "archive": "Archiver",
-      "delete": "Supprimer",
-      "remove_relation": "Supprimer la relation",
-      "subscribe": "S'abonner",
-      "unsubscribe": "Se désabonner",
-      "clear_sorting": "Effacer le tri",
-      "show_weekends": "Afficher les week-ends",
-      "enable": "Activer",
-      "disable": "Désactiver"
+      "edit": "ویرایش",
+      "make_a_copy": "ایجاد یک کپی",
+      "open_in_new_tab": "باز کردن در تب جدید",
+      "copy_link": "کپی کردن لینک",
+      "archive": "بایگانی",
+      "delete": "حذف",
+      "remove_relation": "حذف ارتباط",
+      "subscribe": "دنبال کردن",
+      "unsubscribe": "لغو دنبال کردن",
+      "clear_sorting": "پاک کردن مرتب‌سازی",
+      "show_weekends": "نمایش آخر هفته‌ها",
+      "enable": "فعال کردن",
+      "disable": "غیرفعال کردن"
     },
-    "name": "Nom",
-    "discard": "Abandonner",
-    "confirm": "Confirmer",
-    "confirming": "Confirmation",
-    "read_the_docs": "Lire la documentation",
-    "default": "Par défaut",
-    "active": "Actif",
-    "enabled": "Activé",
-    "disabled": "Désactivé",
-    "mandate": "Mandat",
-    "mandatory": "Obligatoire",
-    "yes": "Oui",
-    "no": "Non",
-    "please_wait": "Veuillez patienter",
-    "enabling": "Activation",
-    "disabling": "Désactivation",
-    "beta": "Bêta",
-    "or": "ou",
-    "next": "Suivant",
-    "back": "Retour",
-    "cancelling": "Annulation",
-    "configuring": "Configuration",
-    "clear": "Effacer",
-    "import": "Importer",
-    "connect": "Connecter",
-    "authorizing": "Autorisation",
-    "processing": "Traitement",
-    "no_data_available": "Aucune donnée disponible",
-    "from": "de {name}",
-    "authenticated": "Authentifié",
-    "select": "Sélectionner",
-    "upgrade": "Mettre à niveau",
-    "add_seats": "Ajouter des sièges",
-    "projects": "Projets",
-    "workspace": "Espace de travail",
-    "workspaces": "Espaces de travail",
-    "team": "Équipe",
-    "teams": "Équipes",
-    "entity": "Entité",
-    "entities": "Entités",
-    "task": "Tâche",
-    "tasks": "Tâches",
-    "section": "Section",
-    "sections": "Sections",
-    "edit": "Modifier",
-    "connecting": "Connexion",
-    "connected": "Connecté",
-    "disconnect": "Déconnecter",
-    "disconnecting": "Déconnexion",
-    "installing": "Installation",
-    "install": "Installer",
-    "reset": "Réinitialiser",
-    "live": "En direct",
-    "change_history": "Historique des modifications",
-    "coming_soon": "À venir",
-    "member": "Membre",
-    "members": "Membres",
-    "you": "Vous",
+    "name": "نام",
+    "discard": "صرف‌نظر کردن",
+    "confirm": "تأیید",
+    "confirming": "در حال تأیید",
+    "read_the_docs": "خواندن مستندات",
+    "default": "پیش‌فرض",
+    "active": "فعال",
+    "enabled": "فعال‌شده",
+    "disabled": "غیرفعال‌شده",
+    "mandate": "الزام",
+    "mandatory": "الزامی",
+    "yes": "بله",
+    "no": "خیر",
+    "please_wait": "لطفا صبر کنید",
+    "enabling": "در حال فعال‌سازی",
+    "disabling": "در حال غیرفعال‌سازی",
+    "beta": "بتا",
+    "or": "یا",
+    "next": "بعدی",
+    "back": "بازگشت",
+    "cancelling": "در حال لغو",
+    "configuring": "در حال پیکربندی",
+    "clear": "پاک کردن",
+    "import": "وارد کردن",
+    "connect": "اتصال",
+    "authorizing": "در حال اعطای دسترسی",
+    "processing": "در حال پردازش",
+    "no_data_available": "هیچ داده‌ای موجود نیست",
+    "from": "از {name}",
+    "authenticated": "تأیید هویت شده",
+    "select": "انتخاب",
+    "upgrade": "ارتقا",
+    "add_seats": "افزودن جایگاه",
+    "projects": "پروژه‌ها",
+    "workspace": "فضای کاری",
+    "workspaces": "فضاهای کاری",
+    "team": "تیم",
+    "teams": "تیم‌ها",
+    "entity": "موجودیت",
+    "entities": "موجودیت‌ها",
+    "task": "وظیفه",
+    "tasks": "وظایف",
+    "section": "بخش",
+    "sections": "بخش‌ها",
+    "edit": "ویرایش",
+    "connecting": "در حال اتصال",
+    "connected": "متصل شد",
+    "disconnect": "قطع اتصال",
+    "disconnecting": "در حال قطع اتصال",
+    "installing": "در حال نصب",
+    "install": "نصب",
+    "reset": "بازنشانی",
+    "live": "زنده",
+    "change_history": "تاریخچه تغییرات",
+    "coming_soon": "به زودی",
+    "member": "عضو",
+    "members": "اعضا",
+    "you": "شما",
     "upgrade_cta": {
-      "higher_subscription": "Passer à une abonnement plus élevé",
-      "talk_to_sales": "Parler aux ventes"
+      "higher_subscription": "ارتقاء به اشتراک بالاتر",
+      "talk_to_sales": "صحبت با تیم فروش"
     },
-    "category": "Catégorie",
-    "categories": "Catégories",
-    "saving": "Enregistrement",
-    "save_changes": "Enregistrer les modifications",
-    "delete": "Supprimer",
-    "deleting": "Suppression",
-    "pending": "En attente",
-    "invite": "Inviter",
-    "view": "Afficher",
-    "deactivated_user": "Utilisateur désactivé",
-    "apply": "Appliquer",
-    "applying": "Application",
-    "users": "Utilisateurs",
-    "admins": "Administrateurs",
-    "guests": "Invités",
-    "on_track": "Sur la bonne voie",
-    "off_track": "Hors de la bonne voie",
-    "at_risk": "À risque",
-    "timeline": "Chronologie",
-    "completion": "Achèvement",
-    "upcoming": "À venir",
-    "completed": "Terminé",
-    "in_progress": "En cours",
-    "planned": "Planifié",
-    "paused": "En pause",
-    "no_of": "Nº de {entity}"
+    "category": "دسته",
+    "categories": "دسته‌ها",
+    "saving": "در حال ذخیره",
+    "save_changes": "ذخیره تغییرات",
+    "delete": "حذف",
+    "deleting": "در حال حذف",
+    "pending": "در انتظار",
+    "invite": "دعوت",
+    "view": "مشاهده",
+    "deactivated_user": "کاربر غیرفعال شده",
+    "apply": "اعمال کردن",
+    "applying": "در حال اعمال",
+    "users": "کاربران",
+    "admins": "مدیران",
+    "guests": "مهمانان",
+    "on_track": "طبق برنامه",
+    "off_track": "خارج از برنامه",
+    "at_risk": "در معرض خطر",
+    "timeline": "خط زمانی",
+    "completion": "تکمیل",
+    "upcoming": "آینده",
+    "completed": "تکمیل شده",
+    "in_progress": "در حال انجام",
+    "planned": "برنامه‌ریزی شده",
+    "paused": "متوقف شده",
+    "no_of": "تعداد {entity}"
   },
   "chart": {
-    "x_axis": "Axe X",
-    "y_axis": "Axe Y",
-    "metric": "Métrique"
+    "x_axis": "محور X",
+    "y_axis": "محور Y",
+    "metric": "معیار"
   },
   "form": {
     "title": {
-      "required": "Le titre est requis",
-      "max_length": "Le titre doit contenir moins de {length} caractères"
+      "required": "عنوان الزامی است",
+      "max_length": "عنوان باید کمتر از {length} کاراکتر باشد"
     }
   },
   "entity": {
-    "grouping_title": "Regroupement {entity}",
-    "priority": "Priorité {entity}",
-    "all": "Tous les {entity}",
-    "drop_here_to_move": "Déposez ici pour déplacer le {entity}",
+    "grouping_title": "گروه‌بندی {entity}",
+    "priority": "اولویت {entity}",
+    "all": "همه {entity}ها",
+    "drop_here_to_move": "برای انتقال {entity} اینجا رها کنید",
     "delete": {
-      "label": "Supprimer {entity}",
-      "success": "{entity} supprimé avec succès",
-      "failed": "Échec de la suppression de {entity}"
+      "label": "حذف {entity}",
+      "success": "{entity} با موفقیت حذف شد",
+      "failed": "حذف {entity} ناموفق بود"
     },
     "update": {
-      "failed": "Échec de la mise à jour de {entity}",
-      "success": "{entity} mis à jour avec succès"
+      "failed": "به‌روزرسانی {entity} ناموفق بود",
+      "success": "{entity} با موفقیت به‌روزرسانی شد"
     },
-    "link_copied_to_clipboard": "Lien {entity} copié dans le presse-papiers",
+    "link_copied_to_clipboard": "لینک {entity} در کلیپ‌بورد کپی شد",
     "fetch": {
-      "failed": "Erreur lors de la récupération de {entity}"
+      "failed": "دریافت {entity} ناموفق بود"
     },
     "add": {
-      "success": "{entity} ajouté avec succès",
-      "failed": "Erreur lors de l'ajout de {entity}"
+      "success": "{entity} با موفقیت اضافه شد",
+      "failed": "افزودن {entity} ناموفق بود"
     }
   },
   "epic": {
-    "all": "Tous les Epics",
-    "label": "{count, plural, one {Epic} other {Epics}}",
-    "new": "Nouvel Epic",
-    "adding": "Ajout d'un epic",
+    "all": "همه اپیک‌ها",
+    "label": "{count, plural, one {اپیک} other {اپیک‌ها}}",
+    "new": "اپیک جدید",
+    "adding": "در حال افزودن اپیک",
     "create": {
-      "success": "Epic créé avec succès"
+      "success": "اپیک با موفقیت ایجاد شد"
     },
     "add": {
-      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epic",
-      "label": "Ajouter un Epic"
+      "press_enter": "برای افزودن اپیک دیگر، کلید 'Enter' را فشار دهید",
+      "label": "افزودن اپیک"
     },
     "title": {
-      "label": "Titre de l'Epic",
-      "required": "Le titre de l'Epic est requis."
+      "label": "عنوان اپیک",
+      "required": "عنوان اپیک الزامی است."
     }
   },
   "issue": {
-    "label": "{count, plural, one {Élément de travail} other {Éléments de travail}}",
-    "all": "Tous les éléments de travail",
-    "edit": "Modifier l'élément de travail",
+    "label": "{count, plural, one {آیتم کاری} other {آیتم‌های کاری}}",
+    "all": "همه آیتم‌های کاری",
+    "edit": "ویرایش آیتم کاری",
     "title": {
-      "label": "Titre de l'élément de travail",
-      "required": "Le titre de l'élément de travail est requis."
+      "label": "عنوان آیتم کاری",
+      "required": "عنوان آیتم کاری الزامی است."
     },
     "add": {
-      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre élément de travail",
-      "label": "Ajouter un élément de travail",
+      "press_enter": "برای افزودن آیتم کاری دیگر، کلید 'Enter' را فشار دهید",
+      "label": "افزودن آیتم کاری",
       "cycle": {
-        "failed": "L'élément de travail n'a pas pu être ajouté au cycle. Veuillez réessayer.",
-        "success": "{count, plural, one {Élément de travail} other {Éléments de travail}} ajouté(s) au cycle avec succès.",
-        "loading": "Ajout de {count, plural, one {l'élément de travail} other {éléments de travail}} au cycle"
+        "failed": "افزودن آیتم کاری به چرخه ناموفق بود. لطفا دوباره تلاش کنید.",
+        "success": "{count, plural, one {آیتم کاری} other {آیتم‌های کاری}} با موفقیت به چرخه اضافه شد.",
+        "loading": "در حال افزودن {count, plural, one {آیتم کاری} other {آیتم‌های کاری}} به چرخه"
       },
-      "assignee": "Ajouter des assignés",
-      "start_date": "Ajouter une date de début",
-      "due_date": "Ajouter une date d'échéance",
-      "parent": "Ajouter un élément de travail parent",
-      "sub_issue": "Ajouter un sous-élément de travail",
-      "relation": "Ajouter une relation",
-      "link": "Ajouter un lien",
-      "existing": "Ajouter un élément de travail existant"
+      "assignee": "افزودن مسئولین",
+      "start_date": "افزودن تاریخ شروع",
+      "due_date": "افزودن تاریخ سررسید",
+      "parent": "افزودن آیتم کاری والد",
+      "sub_issue": "افزودن زیر-آیتم کاری",
+      "relation": "افزودن ارتباط",
+      "link": "افزودن لینک",
+      "existing": "افزودن آیتم کاری موجود"
     },
     "remove": {
-      "label": "Supprimer l'élément de travail",
+      "label": "حذف آیتم کاری",
       "cycle": {
-        "loading": "Suppression de l'élément de travail du cycle",
-        "success": "Élément de travail supprimé du cycle avec succès.",
-        "failed": "L'élément de travail n'a pas pu être supprimé du cycle. Veuillez réessayer."
+        "loading": "در حال حذف آیتم کاری از چرخه",
+        "success": "آیتم کاری با موفقیت از چرخه حذف شد.",
+        "failed": "حذف آیتم کاری از چرخه ناموفق بود. لطفا دوباره تلاش کنید."
       },
       "module": {
-        "loading": "Suppression de l'élément de travail du module",
-        "success": "Élément de travail supprimé du module avec succès.",
-        "failed": "L'élément de travail n'a pas pu être supprimé du module. Veuillez réessayer."
+        "loading": "در حال حذف آیتم کاری از ماژول",
+        "success": "آیتم کاری با موفقیت از ماژول حذف شد.",
+        "failed": "حذف آیتم کاری از ماژول ناموفق بود. لطفا دوباره تلاش کنید."
       },
       "parent": {
-        "label": "Supprimer l'élément de travail parent"
+        "label": "حذف آیتم کاری والد"
       }
     },
-    "new": "Nouvel élément de travail",
-    "adding": "Ajout d'un élément de travail",
+    "new": "آیتم کاری جدید",
+    "adding": "در حال افزودن آیتم کاری",
     "create": {
-      "success": "Élément de travail créé avec succès"
+      "success": "آیتم کاری با موفقیت ایجاد شد"
     },
     "priority": {
-      "urgent": "Urgent",
-      "high": "Haute",
-      "medium": "Moyenne",
-      "low": "Basse"
+      "urgent": "فوری",
+      "high": "بالا",
+      "medium": "متوسط",
+      "low": "پایین"
     },
     "display": {
       "properties": {
-        "label": "Propriétés d'affichage",
-        "id": "ID",
-        "issue_type": "Type d'élément de travail",
-        "sub_issue_count": "Nombre de sous-éléments",
-        "attachment_count": "Nombre de pièces jointes",
-        "created_on": "Créé le",
-        "sub_issue": "Sous-élément de travail",
-        "work_item_count": "Nombre d'éléments de travail"
+        "label": "نمایش خصوصیات",
+        "id": "شناسه",
+        "issue_type": "نوع آیتم کاری",
+        "sub_issue_count": "تعداد زیر-آیتم‌ها",
+        "attachment_count": "تعداد پیوست‌ها",
+        "created_on": "تاریخ ایجاد",
+        "sub_issue": "زیر-آیتم کاری",
+        "work_item_count": "تعداد آیتم‌های کاری"
       },
       "extra": {
-        "show_sub_issues": "Afficher les sous-éléments",
-        "show_empty_groups": "Afficher les groupes vides"
+        "show_sub_issues": "نمایش زیر-آیتم‌ها",
+        "show_empty_groups": "نمایش گروه‌های خالی"
       }
     },
     "layouts": {
-      "ordered_by_label": "Cette disposition est triée par",
-      "list": "Liste",
-      "kanban": "Tableau",
-      "calendar": "Calendrier",
-      "spreadsheet": "Tableau",
-      "gantt": "Chronologie",
+      "ordered_by_label": "این چیدمان بر اساس مرتب شده است",
+      "list": "لیست",
+      "kanban": "کانبان",
+      "calendar": "تقویم",
+      "spreadsheet": "جدول",
+      "gantt": "خط زمانی",
       "title": {
-        "list": "Disposition en liste",
-        "kanban": "Disposition en tableau",
-        "calendar": "Disposition en calendrier",
-        "spreadsheet": "Disposition en tableau",
-        "gantt": "Disposition en chronologie"
+        "list": "چیدمان لیستی",
+        "kanban": "چیدمان کانبان",
+        "calendar": "چیدمان تقویمی",
+        "spreadsheet": "چیدمان جدولی",
+        "gantt": "چیدمان خط زمانی"
       }
     },
     "states": {
-      "active": "Actif",
-      "backlog": "Backlog"
+      "active": "فعال",
+      "backlog": "بک‌لاگ"
     },
     "comments": {
-      "placeholder": "Ajouter un commentaire",
+      "placeholder": "افزودن نظر",
       "switch": {
-        "private": "Passer en commentaire privé",
-        "public": "Passer en commentaire public"
+        "private": "تغییر به نظر خصوصی",
+        "public": "تغییر به نظر عمومی"
       },
       "create": {
-        "success": "Commentaire créé avec succès",
-        "error": "Échec de la création du commentaire. Veuillez réessayer plus tard."
+        "success": "نظر با موفقیت ایجاد شد",
+        "error": "ایجاد نظر ناموفق بود. لطفا بعداً دوباره تلاش کنید."
       },
       "update": {
-        "success": "Commentaire mis à jour avec succès",
-        "error": "Échec de la mise à jour du commentaire. Veuillez réessayer plus tard."
+        "success": "نظر با موفقیت به‌روزرسانی شد",
+        "error": "به‌روزرسانی نظر ناموفق بود. لطفا بعداً دوباره تلاش کنید."
       },
       "remove": {
-        "success": "Commentaire supprimé avec succès",
-        "error": "Échec de la suppression du commentaire. Veuillez réessayer plus tard."
+        "success": "نظر با موفقیت حذف شد",
+        "error": "حذف نظر ناموفق بود. لطفا بعداً دوباره تلاش کنید."
       },
       "upload": {
-        "error": "Échec du téléchargement du fichier. Veuillez réessayer plus tard."
+        "error": "بارگذاری فایل ناموفق بود. لطفا بعداً دوباره تلاش کنید."
       },
       "copy_link": {
-        "success": "Lien du commentaire copié dans le presse-papiers",
-        "error": "Erreur lors de la copie du lien du commentaire. Veuillez réessayer plus tard."
+        "success": "لینک نظر در کلیپ‌بورد کپی شد",
+        "error": "خطا در کپی کردن لینک نظر. لطفا بعداً دوباره تلاش کنید."
       }
     },
     "empty_state": {
       "issue_detail": {
-        "title": "L'élément de travail n'existe pas",
-        "description": "L'élément de travail que vous recherchez n'existe pas, a été archivé ou a été supprimé.",
+        "title": "آیتم کاری وجود ندارد",
+        "description": "آیتم کاری که به دنبال آن هستید وجود ندارد، بایگانی شده یا حذف شده است.",
         "primary_button": {
-          "text": "Voir les autres éléments de travail"
+          "text": "مشاهده سایر آیتم‌های کاری"
         }
       }
     },
     "sibling": {
-      "label": "Éléments de travail frères"
+      "label": "آیتم‌های کاری هم‌سطح"
     },
     "archive": {
-      "description": "Seuls les éléments de travail\nterminés ou annulés peuvent être archivés",
-      "label": "Archiver l'élément de travail",
-      "confirm_message": "Êtes-vous sûr de vouloir archiver l'élément de travail ? Tous vos éléments archivés peuvent être restaurés ultérieurement.",
+      "description": "فقط آیتم‌های کاری\nتکمیل شده یا لغو شده می‌توانند بایگانی شوند",
+      "label": "بایگانی آیتم کاری",
+      "confirm_message": "آیا از بایگانی کردن این آیتم کاری مطمئن هستید؟ همه آیتم‌های بایگانی شده شما بعداً قابل بازیابی هستند.",
       "success": {
-        "label": "Archivage réussi",
-        "message": "Vos archives se trouvent dans les archives du projet."
+        "label": "بایگانی موفق",
+        "message": "آرشیو شما در بخش بایگانی پروژه قرار دارد."
       },
       "failed": {
-        "message": "L'élément de travail n'a pas pu être archivé. Veuillez réessayer."
+        "message": "بایگانی آیتم کاری ناموفق بود. لطفا دوباره تلاش کنید."
       }
     },
     "restore": {
       "success": {
-        "title": "Restauration réussie",
-        "message": "Votre élément de travail se trouve dans les éléments de travail du projet."
+        "title": "بازیابی موفق",
+        "message": "آیتم کاری شما در بخش آیتم‌های کاری پروژه قرار دارد."
       },
       "failed": {
-        "message": "L'élément de travail n'a pas pu être restauré. Veuillez réessayer."
+        "message": "بازیابی آیتم کاری ناموفق بود. لطفا دوباره تلاش کنید."
       }
     },
     "relation": {
-      "relates_to": "En relation avec",
-      "duplicate": "Doublon de",
-      "blocked_by": "Bloqué par",
-      "blocking": "Bloque"
+      "relates_to": "مرتبط با",
+      "duplicate": "تکراری از",
+      "blocked_by": "مسدود شده توسط",
+      "blocking": "مسدود کننده"
     },
-    "copy_link": "Copier le lien de l'élément de travail",
+    "copy_link": "کپی کردن لینک آیتم کاری",
     "delete": {
-      "label": "Supprimer l'élément de travail",
-      "error": "Erreur lors de la suppression de l'élément de travail"
+      "label": "حذف آیتم کاری",
+      "error": "خطا در حذف آیتم کاری"
     },
     "subscription": {
       "actions": {
-        "subscribed": "Abonnement à l'élément de travail réussi",
-        "unsubscribed": "Désabonnement de l'élément de travail réussi"
+        "subscribed": "دنبال کردن آیتم کاری با موفقیت انجام شد",
+        "unsubscribed": "لغو دنبال کردن آیتم کاری با موفقیت انجام شد"
       }
     },
     "select": {
-      "error": "Veuillez sélectionner au moins un élément de travail",
-      "empty": "Aucun élément de travail sélectionné",
-      "add_selected": "Ajouter les éléments de travail sélectionnés",
-      "select_all": "Sélectionner tout",
-      "deselect_all": "Tout désélectionner"
+      "error": "لطفا حداقل یک آیتم کاری را انتخاب کنید",
+      "empty": "هیچ آیتم کاری انتخاب نشده است",
+      "add_selected": "افزودن آیتم‌های کاری انتخاب شده",
+      "select_all": "انتخاب همه",
+      "deselect_all": "لغو انتخاب همه"
     },
-    "open_in_full_screen": "Ouvrir l'élément de travail en plein écran"
+    "open_in_full_screen": "باز کردن آیتم کاری در حالت تمام صفحه"
   },
   "attachment": {
-    "error": "Le fichier n'a pas pu être joint. Essayez de le télécharger à nouveau.",
-    "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
-    "file_size_limit": "Le fichier doit faire {size}MB ou moins.",
-    "drag_and_drop": "Glissez-déposez n'importe où pour télécharger",
-    "delete": "Supprimer la pièce jointe"
+    "error": "فایل پیوست نشد. دوباره برای آپلود تلاش کنید.",
+    "only_one_file_allowed": "در هر بار فقط یک فایل می‌توان بارگذاری کرد.",
+    "file_size_limit": "حجم فایل باید {size} مگابایت یا کمتر باشد.",
+    "drag_and_drop": "برای بارگذاری، فایل را به هر نقطه بکشید و رها کنید",
+    "delete": "حذف پیوست"
   },
   "label": {
-    "select": "Sélectionner une étiquette",
+    "select": "انتخاب برچسب",
     "create": {
-      "success": "Étiquette créée avec succès",
-      "failed": "Échec de la création de l'étiquette",
-      "already_exists": "L'étiquette existe déjà",
-      "type": "Tapez pour ajouter une nouvelle étiquette"
+      "success": "برچسب با موفقیت ایجاد شد",
+      "failed": "ایجاد برچسب ناموفق بود",
+      "already_exists": "برچسب از قبل وجود دارد",
+      "type": "برای افزودن برچسب جدید تایپ کنید"
     }
   },
   "sub_work_item": {
     "update": {
-      "success": "Sous-élément de travail mis à jour avec succès",
-      "error": "Erreur lors de la mise à jour du sous-élément de travail"
+      "success": "زیر-آیتم کاری با موفقیت به‌روزرسانی شد",
+      "error": "خطا در به‌روزرسانی زیر-آیتم کاری"
     },
     "remove": {
-      "success": "Sous-élément de travail supprimé avec succès",
-      "error": "Erreur lors de la suppression du sous-élément de travail"
+      "success": "زیر-آیتم کاری با موفقیت حذف شد",
+      "error": "خطا در حذف زیر-آیتم کاری"
     },
     "empty_state": {
       "sub_list_filters": {
-        "title": "Vous n'avez pas de sous-éléments de travail qui correspondent aux filtres que vous avez appliqués.",
-        "description": "Pour voir tous les sous-éléments de travail, effacer tous les filtres appliqués.",
-        "action": "Effacer les filtres"
+        "title": "شما هیچ زیر-آیتم کاری که با فیلترهای اعمال شده مطابقت داشته باشد، ندارید.",
+        "description": "برای مشاهده همه زیر-آیتم‌های کاری، تمام فیلترهای اعمال شده را پاک کنید.",
+        "action": "پاک کردن فیلترها"
       },
       "list_filters": {
-        "title": "Vous n'avez pas d'éléments de travail qui correspondent aux filtres que vous avez appliqués.",
-        "description": "Pour voir tous les éléments de travail, effacer tous les filtres appliqués.",
-        "action": "Effacer les filtres"
+        "title": "شما هیچ آیتم کاری که با فیلترهای اعمال شده مطابقت داشته باشد، ندارید.",
+        "description": "برای مشاهده همه آیتم‌های کاری، تمام فیلترهای اعمال شده را پاک کنید.",
+        "action": "پاک کردن فیلترها"
       }
     }
   },
   "view": {
-    "label": "{count, plural, one {Vue} other {Vues}}",
+    "label": "{count, plural, one {نما} other {نماها}}",
     "create": {
-      "label": "Créer une vue"
+      "label": "ایجاد نما"
     },
     "update": {
-      "label": "Mettre à jour la vue"
+      "label": "به‌روزرسانی نما"
     }
   },
   "inbox_issue": {
     "status": {
       "pending": {
-        "title": "En attente",
-        "description": "En attente"
+        "title": "در انتظار",
+        "description": "در انتظار"
       },
       "declined": {
-        "title": "Refusé",
-        "description": "Refusé"
+        "title": "رد شده",
+        "description": "رد شده"
       },
       "snoozed": {
-        "title": "Reporté",
-        "description": "{days, plural, one{# jour} other{# jours}} restant(s)"
+        "title": "به تعویق افتاده",
+        "description": "{days, plural, one{# روز} other{# روز}} باقی مانده"
       },
       "accepted": {
-        "title": "Accepté",
-        "description": "Accepté"
+        "title": "پذیرفته شده",
+        "description": "پذیرفته شده"
       },
       "duplicate": {
-        "title": "Doublon",
-        "description": "Doublon"
+        "title": "تکراری",
+        "description": "تکراری"
       }
     },
     "modals": {
       "decline": {
-        "title": "Refuser l'élément de travail",
-        "content": "Êtes-vous sûr de vouloir refuser l'élément de travail {value} ?"
+        "title": "رد کردن آیتم کاری",
+        "content": "آیا از رد کردن آیتم کاری {value} مطمئن هستید؟"
       },
       "delete": {
-        "title": "Supprimer l'élément de travail",
-        "content": "Êtes-vous sûr de vouloir supprimer l'élément de travail {value} ?",
-        "success": "Élément de travail supprimé avec succès"
+        "title": "حذف آیتم کاری",
+        "content": "آیا از حذف آیتم کاری {value} مطمئن هستید؟",
+        "success": "آیتم کاری با موفقیت حذف شد"
       }
     },
     "errors": {
-      "snooze_permission": "Seuls les administrateurs du projet peuvent reporter/annuler le report des éléments de travail",
-      "accept_permission": "Seuls les administrateurs du projet peuvent accepter les éléments de travail",
-      "decline_permission": "Seuls les administrateurs du projet peuvent refuser les éléments de travail"
+      "snooze_permission": "فقط مدیران پروژه می‌توانند آیتم‌های کاری را به تعویق بیندازند/از تعویق خارج کنند",
+      "accept_permission": "فقط مدیران پروژه می‌توانند آیتم‌های کاری را بپذیرند",
+      "decline_permission": "فقط مدیران پروژه می‌توانند آیتم‌های کاری را رد کنند"
     },
     "actions": {
-      "accept": "Accepter",
-      "decline": "Refuser",
-      "snooze": "Reporter",
-      "unsnooze": "Annuler le report",
-      "copy": "Copier le lien de l'élément de travail",
-      "delete": "Supprimer",
-      "open": "Ouvrir l'élément de travail",
-      "mark_as_duplicate": "Marquer comme doublon",
-      "move": "Déplacer {value} vers les éléments de travail du projet"
+      "accept": "پذیرفتن",
+      "decline": "رد کردن",
+      "snooze": "به تعویق انداختن",
+      "unsnooze": "لغو تعویق",
+      "copy": "کپی کردن لینک آیتم کاری",
+      "delete": "حذف",
+      "open": "باز کردن آیتم کاری",
+      "mark_as_duplicate": "علامت‌گذاری به عنوان تکراری",
+      "move": "انتقال {value} به آیتم‌های کاری پروژه"
     },
     "source": {
-      "in-app": "in-app"
+      "in-app": "درون‌برنامه‌ای"
     },
     "order_by": {
-      "created_at": "Créé le",
-      "updated_at": "Mis à jour le",
-      "id": "ID"
+      "created_at": "تاریخ ایجاد",
+      "updated_at": "تاریخ به‌روزرسانی",
+      "id": "شناسه"
     },
-    "label": "Intake",
-    "page_label": "{workspace} - Intake",
+    "label": "ورودی",
+    "page_label": "{workspace} - ورودی",
     "modal": {
-      "title": "Créer un élément de travail Intake"
+      "title": "ایجاد آیتم کاری ورودی"
     },
     "tabs": {
-      "open": "Ouvert",
-      "closed": "Fermé"
+      "open": "باز",
+      "closed": "بسته"
     },
     "empty_state": {
       "sidebar_open_tab": {
-        "title": "Aucun élément de travail ouvert",
-        "description": "Trouvez les éléments de travail ouverts ici. Créez un nouvel élément de travail."
+        "title": "هیچ آیتم کاری بازی وجود ندارد",
+        "description": "آیتم‌های کاری باز را اینجا پیدا کنید. یک آیتم کاری جدید ایجاد کنید."
       },
       "sidebar_closed_tab": {
-        "title": "Aucun élément de travail fermé",
-        "description": "Tous les éléments de travail, qu'ils soient acceptés ou refusés, peuvent être trouvés ici."
+        "title": "هیچ آیتم کاری بسته‌ای وجود ندارد",
+        "description": "همه آیتم‌های کاری، چه پذیرفته شده و چه رد شده، در اینجا یافت می‌شوند."
       },
       "sidebar_filter": {
-        "title": "Aucun élément de travail correspondant",
-        "description": "Aucun élément de travail ne correspond au filtre appliqué dans Intake. Créez un nouvel élément de travail."
+        "title": "هیچ آیتم کاری منطبقی وجود ندارد",
+        "description": "هیچ آیتم کاری با فیلتر اعمال شده در ورودی مطابقت ندارد. یک آیتم کاری جدید ایجاد کنید."
       },
       "detail": {
-        "title": "Sélectionnez un élément de travail pour voir ses détails."
+        "title": "برای مشاهده جزئیات، یک آیتم کاری را انتخاب کنید."
       }
     }
   },
   "workspace_creation": {
-    "heading": "Créez votre espace de travail",
-    "subheading": "Pour commencer à utiliser Plane, vous devez créer ou rejoindre un espace de travail.",
+    "heading": "فضای کاری خود را ایجاد کنید",
+    "subheading": "برای شروع استفاده از Plane، باید یک فضای کاری ایجاد کنید یا به آن بپیوندید.",
     "form": {
       "name": {
-        "label": "Nommez votre espace de travail",
-        "placeholder": "Quelque chose de familier et reconnaissable est toujours préférable."
+        "label": "فضای کاری خود را نامگذاری کنید",
+        "placeholder": "یک نام آشنا و قابل تشخیص همیشه بهتر است."
       },
       "url": {
-        "label": "Définissez l'URL de votre espace de travail",
-        "placeholder": "Tapez ou collez une URL",
-        "edit_slug": "Vous ne pouvez modifier que le slug de l'URL"
+        "label": "URL فضای کاری خود را تنظیم کنید",
+        "placeholder": "یک URL تایپ یا الصاق کنید",
+        "edit_slug": "شما فقط می‌توانید اسلاگ URL را ویرایش کنید"
       },
       "organization_size": {
-        "label": "Combien de personnes utiliseront cet espace de travail ?",
-        "placeholder": "Sélectionnez une plage"
+        "label": "چند نفر از این فضای کاری استفاده خواهند کرد؟",
+        "placeholder": "یک بازه را انتخاب کنید"
       }
     },
     "errors": {
       "creation_disabled": {
-        "title": "Seul l'administrateur de votre instance peut créer des espaces de travail",
-        "description": "Si vous connaissez l'adresse e-mail de votre administrateur d'instance, cliquez sur le bouton ci-dessous pour le contacter.",
-        "request_button": "Contacter l'administrateur d'instance"
+        "title": "فقط مدیر نمونه (instance) شما می‌تواند فضای کاری ایجاد کند",
+        "description": "اگر ایمیل مدیر نمونه خود را می‌دانید، برای تماس با او روی دکمه زیر کلیک کنید.",
+        "request_button": "تماس با مدیر نمونه"
       },
       "validation": {
-        "name_alphanumeric": "Les noms d'espaces de travail ne peuvent contenir que (' '), ('-'), ('_') et des caractères alphanumériques.",
-        "name_length": "Limitez votre nom à 80 caractères.",
-        "url_alphanumeric": "Les URL ne peuvent contenir que ('-') et des caractères alphanumériques.",
-        "url_length": "Limitez votre URL à 48 caractères.",
-        "url_already_taken": "L'URL de l'espace de travail est déjà prise !"
+        "name_alphanumeric": "نام فضای کاری فقط می‌تواند شامل (' '), ('-'), ('_') و کاراکترهای الفبایی-عددی باشد.",
+        "name_length": "نام خود را به ۸۰ کاراکتر محدود کنید.",
+        "url_alphanumeric": "URL فقط می‌تواند شامل ('-') و کاراکترهای الفبایی-عددی باشد.",
+        "url_length": "URL خود را به ۴۸ کاراکتر محدود کنید.",
+        "url_already_taken": "URL فضای کاری قبلاً گرفته شده است!"
       }
     },
     "request_email": {
-      "subject": "Demande d'un nouvel espace de travail",
-      "body": "Bonjour administrateur(s) d'instance,\n\nVeuillez créer un nouvel espace de travail avec l'URL [/workspace-name] pour [objectif de création de l'espace de travail].\n\nMerci,\n{firstName} {lastName}\n{email}"
+      "subject": "درخواست فضای کاری جدید",
+      "body": "سلام مدیر(ان) نمونه،\n\nلطفاً یک فضای کاری جدید با URL [/workspace-name] برای [هدف ایجاد فضای کاری] ایجاد کنید.\n\nبا تشکر،\n{firstName} {lastName}\n{email}"
     },
     "button": {
-      "default": "Créer l'espace de travail",
-      "loading": "Création de l'espace de travail"
+      "default": "ایجاد فضای کاری",
+      "loading": "در حال ایجاد فضای کاری"
     },
     "toast": {
       "success": {
-        "title": "Succès",
-        "message": "Espace de travail créé avec succès"
+        "title": "موفقیت",
+        "message": "فضای کاری با موفقیت ایجاد شد"
       },
       "error": {
-        "title": "Erreur",
-        "message": "L'espace de travail n'a pas pu être créé. Veuillez réessayer."
+        "title": "خطا",
+        "message": "ایجاد فضای کاری ناموفق بود. لطفا دوباره تلاش کنید."
       }
     }
   },
   "workspace_dashboard": {
     "empty_state": {
       "general": {
-        "title": "Aperçu de vos projets, activités et métriques",
-        "description": "Bienvenue sur Plane, nous sommes ravis de vous avoir parmi nous. Créez votre premier projet et suivez vos éléments de travail, et cette page se transformera en un espace qui vous aide à progresser. Les administrateurs verront également les éléments qui aident leur équipe à progresser.",
+        "title": "نمای کلی پروژه‌ها، فعالیت‌ها و معیارهای شما",
+        "description": "به Plane خوش آمدید، از حضور شما خوشحالیم. اولین پروژه خود را ایجاد کنید و آیتم‌های کاری خود را پیگیری کنید، و این صفحه به فضایی تبدیل خواهد شد که به شما در پیشرفت کمک می‌کند. مدیران همچنین مواردی را مشاهده خواهند کرد که به پیشرفت تیمشان کمک می‌کند.",
         "primary_button": {
-          "text": "Construisez votre premier projet",
+          "text": "اولین پروژه خود را بسازید",
           "comic": {
-            "title": "Tout commence par un projet dans Plane",
-            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "همه چیز در Plane با یک پروژه شروع می‌شود",
+            "description": "یک پروژه می‌تواند نقشه راه یک محصول، یک کمپین بازاریابی یا عرضه یک خودروی جدید باشد."
           }
         }
       }
     }
   },
   "workspace_analytics": {
-    "label": "Analytique",
-    "page_label": "{workspace} - Analytique",
-    "open_tasks": "Total des tâches ouvertes",
-    "error": "Une erreur s'est produite lors de la récupération des données.",
-    "work_items_closed_in": "Éléments de travail fermés dans",
-    "selected_projects": "Projets sélectionnés",
-    "total_members": "Total des membres",
-    "total_cycles": "Total des Cycles",
-    "total_modules": "Total des Modules",
+    "label": "تجزیه و تحلیل",
+    "page_label": "{workspace} - تجزیه و تحلیل",
+    "open_tasks": "مجموع آیتم‌های کاری باز",
+    "error": "خطایی در هنگام دریافت داده‌ها رخ داد.",
+    "work_items_closed_in": "آیتم‌های کاری بسته‌شده در",
+    "selected_projects": "پروژه‌های انتخاب‌شده",
+    "total_members": "تعداد کل اعضا",
+    "total_cycles": "تعداد کل چرخه‌ها",
+    "total_modules": "تعداد کل ماژول‌ها",
     "pending_work_items": {
-      "title": "Éléments de travail en attente",
-      "empty_state": "L'analyse des éléments de travail en attente par collègues apparaît ici."
+      "title": "آیتم‌های کاری در انتظار",
+      "empty_state": "تجزیه و تحلیل آیتم‌های کاری در انتظار بر اساس همکاران در اینجا نمایش داده می‌شود."
     },
     "work_items_closed_in_a_year": {
-      "title": "Éléments de travail fermés dans l'année",
-      "empty_state": "Fermez des éléments de travail pour voir leur analyse sous forme de graphique."
+      "title": "آیتم‌های کاری بسته‌شده در سال",
+      "empty_state": "برای مشاهده تحلیل آیتم‌های کاری به صورت نمودار، آنها را ببندید."
     },
     "most_work_items_created": {
-      "title": "Plus d'éléments de travail créés",
-      "empty_state": "Les collègues et le nombre d'éléments de travail créés par eux apparaissent ici."
+      "title": "بیشترین آیتم‌های کاری ایجادشده",
+      "empty_state": "همکاران و تعداد آیتم‌های کاری ایجادشده توسط آنها در اینجا نمایش داده می‌شود."
     },
     "most_work_items_closed": {
-      "title": "Plus d'éléments de travail fermés",
-      "empty_state": "Les collègues et le nombre d'éléments de travail fermés par eux apparaissent ici."
+      "title": "بیشترین آیتم‌های کاری بسته‌شده",
+      "empty_state": "همکاران و تعداد آیتم‌های کاری بسته‌شده توسط آنها در اینجا نمایش داده می‌شود."
     },
     "tabs": {
-      "scope_and_demand": "Portée et Demande",
-      "custom": "Analytique Personnalisée"
+      "scope_and_demand": "محدوده و تقاضا",
+      "custom": "تجزیه و تحلیل سفارشی"
     },
     "empty_state": {
       "customized_insights": {
-        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
-        "title": "Pas encore de données"
+        "description": "آیتم‌های کاری تخصیص‌یافته به شما، بر اساس وضعیت، در اینجا نمایش داده خواهند شد.",
+        "title": "هنوز داده‌ای وجود ندارد"
       },
       "created_vs_resolved": {
-        "description": "Les éléments de travail créés et résolus au fil du temps s'afficheront ici.",
-        "title": "Pas encore de données"
+        "description": "آیتم‌های کاری ایجادشده و حل‌شده در طول زمان در اینجا نمایش داده خواهند شد.",
+        "title": "هنوز داده‌ای وجود ندارد"
       },
       "project_insights": {
-        "title": "Pas encore de données",
-        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici."
+        "title": "هنوز داده‌ای وجود ندارد",
+        "description": "آیتم‌های کاری تخصیص‌یافته به شما، بر اساس وضعیت، در اینجا نمایش داده خواهند شد."
       },
       "general": {
-        "title": "Suivez les progrès, les charges de travail et les allocations. Identifiez les tendances, supprimez les blocages et travaillez plus rapidement",
-        "description": "Voyez la portée par rapport à la demande, les estimations et l'évolution du périmètre. Obtenez les performances par les membres de l'équipe et les équipes, et assurez-vous que votre projet se déroule dans les temps.",
+        "title": "پیشرفت، حجم کار و تخصیص‌ها را دنبال کنید. روندها را شناسایی کنید، موانع را برطرف کنید و سریع‌تر کار کنید",
+        "description": "محدوده کار را در برابر تقاضا، تخمین‌ها و تغییرات محدوده مشاهده کنید. عملکرد اعضای تیم و تیم‌ها را دریافت کنید و اطمینان حاصل کنید که پروژه شما طبق برنامه پیش می‌رود.",
         "primary_button": {
-          "text": "Commencez votre premier projet",
+          "text": "اولین پروژه خود را شروع کنید",
           "comic": {
-            "title": "L'analytics fonctionne mieux avec les Cycles + Modules",
-            "description": "D'abord, encadrez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
+            "title": "تجزیه و تحلیل با چرخه‌ها و ماژول‌ها بهتر کار می‌کند",
+            "description": "ابتدا، آیتم‌های کاری خود را در چرخه‌ها قرار دهید و در صورت امکان، آیتم‌هایی را که بیش از یک چرخه را در بر می‌گیرند در ماژول‌ها گروه‌بندی کنید. هر دو را در نوار ناوبری سمت چپ بررسی کنید."
           }
         }
       }
     },
-    "created_vs_resolved": "Créé vs Résolu",
-    "customized_insights": "Informations personnalisées",
-    "backlog_work_items": "{entity} en backlog",
-    "active_projects": "Projets actifs",
-    "trend_on_charts": "Tendance sur les graphiques",
-    "all_projects": "Tous les projets",
-    "summary_of_projects": "Résumé des projets",
-    "project_insights": "Aperçus du projet",
-    "started_work_items": "{entity} commencés",
-    "total_work_items": "Total des {entity}",
-    "total_projects": "Total des projets",
-    "total_admins": "Total des administrateurs",
-    "total_users": "Nombre total d'utilisateurs",
-    "total_intake": "Revenu total",
-    "un_started_work_items": "{entity} non commencés",
-    "total_guests": "Nombre total d'invités",
-    "completed_work_items": "{entity} terminés",
-    "total": "Total des {entity}"
+    "created_vs_resolved": "ایجاد شده در مقابل حل شده",
+    "customized_insights": "آمار سفارشی",
+    "backlog_work_items": "{entity}های موجود در بک‌لاگ",
+    "active_projects": "پروژه‌های فعال",
+    "trend_on_charts": "روند در نمودارها",
+    "all_projects": "همه پروژه‌ها",
+    "summary_of_projects": "خلاصه پروژه‌ها",
+    "project_insights": "آمار پروژه",
+    "started_work_items": "{entity}های شروع‌شده",
+    "total_work_items": "تعداد کل {entity}ها",
+    "total_projects": "تعداد کل پروژه‌ها",
+    "total_admins": "تعداد کل مدیران",
+    "total_users": "تعداد کل کاربران",
+    "total_intake": "مجموع ورودی‌ها",
+    "un_started_work_items": "{entity}های شروع‌نشده",
+    "total_guests": "تعداد کل مهمانان",
+    "completed_work_items": "{entity}های تکمیل‌شده",
+    "total": "مجموع {entity}ها"
   },
   "workspace_projects": {
-    "label": "{count, plural, one {Projet} other {Projets}}",
+    "label": "{count, plural, one {پروژه} other {پروژه‌ها}}",
     "create": {
-      "label": "Ajouter un Projet"
+      "label": "افزودن پروژه"
     },
     "network": {
       "private": {
-        "title": "Privé",
-        "description": "Accessible uniquement sur invitation"
+        "title": "خصوصی",
+        "description": "فقط با دعوت‌نامه قابل دسترسی است"
       },
       "public": {
-        "title": "Public",
-        "description": "Accessible à tous dans l'espace de travail sauf les invités"
+        "title": "عمومی",
+        "description": "برای همه در فضای کاری به جز مهمانان قابل دسترسی است"
       }
     },
     "error": {
-      "permission": "Vous n'avez pas la permission d'effectuer cette action.",
-      "cycle_delete": "Échec de la suppression du cycle",
-      "module_delete": "Échec de la suppression du module",
-      "issue_delete": "Échec de la suppression de l'élément de travail"
+      "permission": "شما اجازه انجام این کار را ندارید.",
+      "cycle_delete": "حذف چرخه ناموفق بود",
+      "module_delete": "حذف ماژول ناموفق بود",
+      "issue_delete": "حذف آیتم کاری ناموفق بود"
     },
     "state": {
-      "backlog": "Backlog",
-      "unstarted": "Non commencé",
-      "started": "Commencé",
-      "completed": "Terminé",
-      "cancelled": "Annulé"
+      "backlog": "بک‌لاگ",
+      "unstarted": "شروع نشده",
+      "started": "شروع شده",
+      "completed": "تکمیل شده",
+      "cancelled": "لغو شده"
     },
     "sort": {
-      "manual": "Manuel",
-      "name": "Nom",
-      "created_at": "Date de création",
-      "members_length": "Nombre de membres"
+      "manual": "دستی",
+      "name": "نام",
+      "created_at": "تاریخ ایجاد",
+      "members_length": "تعداد اعضا"
     },
     "scope": {
-      "my_projects": "Mes projets",
-      "archived_projects": "Archivés"
+      "my_projects": "پروژه‌های من",
+      "archived_projects": "بایگانی شده"
     },
     "common": {
-      "months_count": "{months, plural, one{# mois} other{# mois}}"
+      "months_count": "{months, plural, one{# ماه} other{# ماه}}"
     },
     "empty_state": {
       "general": {
-        "title": "Aucun projet actif",
-        "description": "Considérez chaque projet comme le parent d'un travail orienté objectif. Les projets sont l'endroit où vivent les Tâches, les Cycles et les Modules et, avec vos collègues, vous aident à atteindre cet objectif. Créez un nouveau projet ou filtrez les projets archivés.",
+        "title": "هیچ پروژه فعالی وجود ندارد",
+        "description": "هر پروژه را به عنوان والد یک کار هدف‌گرا در نظر بگیرید. پروژه‌ها جایی هستند که وظایف، چرخه‌ها و ماژول‌ها در آن قرار دارند و همراه با همکاران‌تان به شما کمک می‌کنند تا به آن هدف برسید. یک پروژه جدید ایجاد کنید یا پروژه‌های بایگانی‌شده را فیلتر کنید.",
         "primary_button": {
-          "text": "Commencez votre premier projet",
+          "text": "اولین پروژه خود را شروع کنید",
           "comic": {
-            "title": "Tout commence par un projet dans Plane",
-            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "همه چیز در Plane با یک پروژه شروع می‌شود",
+            "description": "یک پروژه می‌تواند نقشه راه یک محصول، یک کمپین بازاریابی یا عرضه یک خودروی جدید باشد."
           }
         }
       },
       "no_projects": {
-        "title": "Aucun projet",
-        "description": "Pour créer des éléments de travail ou gérer votre travail, vous devez créer un projet ou faire partie d'un projet.",
+        "title": "هیچ پروژه‌ای وجود ندارد",
+        "description": "برای ایجاد آیتم‌های کاری یا مدیریت کار خود، باید یک پروژه ایجاد کنید یا عضو یک پروژه باشید.",
         "primary_button": {
-          "text": "Commencez votre premier projet",
+          "text": "اولین پروژه خود را شروع کنید",
           "comic": {
-            "title": "Tout commence par un projet dans Plane",
-            "description": "Un projet peut être la feuille de route d'un produit, une campagne marketing ou le lancement d'une nouvelle voiture."
+            "title": "همه چیز در Plane با یک پروژه شروع می‌شود",
+            "description": "یک پروژه می‌تواند نقشه راه یک محصول، یک کمپین بازاریابی یا عرضه یک خودروی جدید باشد."
           }
         }
       },
       "filter": {
-        "title": "Aucun projet correspondant",
-        "description": "Aucun projet détecté avec les critères correspondants. \n Créez plutôt un nouveau projet."
+        "title": "هیچ پروژه منطبقی وجود ندارد",
+        "description": "هیچ پروژه‌ای با معیارهای منطبق پیدا نشد. \n به جای آن یک پروژه جدید ایجاد کنید."
       },
       "search": {
-        "description": "Aucun projet détecté avec les critères correspondants.\nCréez plutôt un nouveau projet"
+        "description": "هیچ پروژه‌ای با معیارهای منطبق پیدا نشد.\nبه جای آن یک پروژه جدید ایجاد کنید."
       }
     }
   },
   "workspace_views": {
-    "add_view": "Ajouter une vue",
+    "add_view": "افزودن نما",
     "empty_state": {
       "all-issues": {
-        "title": "Aucun élément de travail dans le projet",
-        "description": "Premier projet terminé ! Maintenant, découpez votre travail en morceaux traçables avec des éléments de travail. Allons-y !",
+        "title": "هیچ آیتم کاری در پروژه وجود ندارد",
+        "description": "اولین پروژه تمام شد! حالا کار خود را به قطعات قابل پیگیری با آیتم‌های کاری تقسیم کنید. بزن بریم!",
         "primary_button": {
-          "text": "Créer un nouvel élément de travail"
+          "text": "ایجاد آیتم کاری جدید"
         }
       },
       "assigned": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici.",
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "آیتم‌های کاری تخصیص‌یافته به شما در اینجا قابل پیگیری هستند.",
         "primary_button": {
-          "text": "Créer un nouvel élément de travail"
+          "text": "ایجاد آیتم کاری جدید"
         }
       },
       "created": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Tous les éléments de travail que vous créez arrivent ici, suivez-les directement ici.",
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "همه آیتم‌های کاری که ایجاد می‌کنید به اینجا می‌آیند، آنها را مستقیماً از اینجا دنبال کنید.",
         "primary_button": {
-          "text": "Créer un nouvel élément de travail"
+          "text": "ایجاد آیتم کاری جدید"
         }
       },
       "subscribed": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "آیتم‌های کاری مورد علاقه خود را دنبال کنید، همه آنها را از اینجا پیگیری کنید."
       },
       "custom-view": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Les éléments de travail qui correspondent aux filtres, suivez-les tous ici."
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "آیتم‌های کاری که با فیلترها مطابقت دارند، همه آنها را از اینجا دنبال کنید."
       }
     }
   },
   "workspace_settings": {
-    "label": "Paramètres de l'espace de travail",
-    "page_label": "{workspace} - Paramètres généraux",
-    "key_created": "Clé créée",
-    "copy_key": "Copiez et sauvegardez cette clé secrète dans Plane Pages. Vous ne pourrez plus voir cette clé après avoir cliqué sur Fermer. Un fichier CSV contenant la clé a été téléchargé.",
-    "token_copied": "Jeton copié dans le presse-papiers.",
+    "label": "تنظیمات فضای کاری",
+    "page_label": "{workspace} - تنظیمات عمومی",
+    "key_created": "کلید ایجاد شد",
+    "copy_key": "این کلید مخفی را کپی کرده و در Plane Pages ذخیره کنید. پس از کلیک بر روی بستن، دیگر نمی‌توانید این کلید را ببینید. یک فایل CSV حاوی کلید دانلود شده است.",
+    "token_copied": "توکن در کلیپ‌بورد کپی شد.",
     "settings": {
       "general": {
-        "title": "Général",
-        "upload_logo": "Télécharger le logo",
-        "edit_logo": "Modifier le logo",
-        "name": "Nom de l'espace de travail",
-        "company_size": "Taille de l'entreprise",
-        "url": "URL de l'espace de travail",
-        "update_workspace": "Mettre à jour l'espace de travail",
-        "delete_workspace": "Supprimer cet espace de travail",
-        "delete_workspace_description": "Lors de la suppression d'un espace de travail, toutes les données et ressources au sein de cet espace seront définitivement supprimées et ne pourront pas être récupérées.",
-        "delete_btn": "Supprimer cet espace de travail",
+        "title": "عمومی",
+        "upload_logo": "آپلود لوگو",
+        "edit_logo": "ویرایش لوگو",
+        "name": "نام فضای کاری",
+        "company_size": "اندازه شرکت",
+        "url": "URL فضای کاری",
+        "update_workspace": "به‌روزرسانی فضای کاری",
+        "delete_workspace": "حذف این فضای کاری",
+        "delete_workspace_description": "با حذف یک فضای کاری، تمام داده‌ها و منابع داخل آن برای همیشه حذف شده و قابل بازیابی نخواهند بود.",
+        "delete_btn": "حذف این فضای کاری",
         "delete_modal": {
-          "title": "Êtes-vous sûr de vouloir supprimer cet espace de travail ?",
-          "description": "Vous avez un essai actif sur l'un de nos forfaits payants. Veuillez d'abord l'annuler pour continuer.",
-          "dismiss": "Fermer",
-          "cancel": "Annuler l'essai",
-          "success_title": "Espace de travail supprimé.",
-          "success_message": "Vous serez bientôt redirigé vers votre page de profil.",
-          "error_title": "Cela n'a pas fonctionné.",
-          "error_message": "Veuillez réessayer."
+          "title": "آیا از حذف این فضای کاری مطمئن هستید؟",
+          "description": "شما یک دوره آزمایشی فعال در یکی از طرح‌های پولی ما دارید. لطفاً ابتدا آن را برای ادامه لغو کنید.",
+          "dismiss": "بستن",
+          "cancel": "لغو دوره آزمایشی",
+          "success_title": "فضای کاری حذف شد.",
+          "success_message": "شما به زودی به صفحه پروفایل خود هدایت خواهید شد.",
+          "error_title": "این کار ناموفق بود.",
+          "error_message": "لطفاً دوباره تلاش کنید."
         },
         "errors": {
           "name": {
-            "required": "Le nom est requis",
-            "max_length": "Le nom de l'espace de travail ne doit pas dépasser 80 caractères"
+            "required": "نام الزامی است",
+            "max_length": "نام فضای کاری نباید از ۸۰ کاراکتر بیشتر باشد"
           },
           "company_size": {
-            "required": "La taille de l'entreprise est requise",
-            "select_a_range": "Sélectionner la taille de l'organisation"
+            "required": "اندازه شرکت الزامی است",
+            "select_a_range": "اندازه سازمان را انتخاب کنید"
           }
         }
       },
       "members": {
-        "title": "Membres",
-        "add_member": "Ajouter un membre",
-        "pending_invites": "Invitations en attente",
-        "invitations_sent_successfully": "Invitations envoyées avec succès",
-        "leave_confirmation": "Êtes-vous sûr de vouloir quitter l'espace de travail ? Vous n'aurez plus accès à cet espace de travail. Cette action ne peut pas être annulée.",
+        "title": "اعضا",
+        "add_member": "افزودن عضو",
+        "pending_invites": "دعوت‌نامه‌های در انتظار",
+        "invitations_sent_successfully": "دعوت‌نامه‌ها با موفقیت ارسال شدند",
+        "leave_confirmation": "آیا از خروج از این فضای کاری مطمئن هستید؟ دیگر به این فضای کاری دسترسی نخواهید داشت. این عمل قابل بازگشت نیست.",
         "details": {
-          "full_name": "Nom complet",
-          "display_name": "Nom d'affichage",
-          "email_address": "Adresse e-mail",
-          "account_type": "Type de compte",
-          "authentication": "Authentification",
-          "joining_date": "Date d'adhésion"
+          "full_name": "نام کامل",
+          "display_name": "نام نمایشی",
+          "email_address": "آدرس ایمیل",
+          "account_type": "نوع حساب",
+          "authentication": "احراز هویت",
+          "joining_date": "تاریخ عضویت"
         },
         "modal": {
-          "title": "Inviter des personnes à collaborer",
-          "description": "Invitez des personnes à collaborer sur votre espace de travail.",
-          "button": "Envoyer les invitations",
-          "button_loading": "Envoi des invitations",
-          "placeholder": "nom@entreprise.com",
+          "title": "دعوت افراد برای همکاری",
+          "description": "افراد را برای همکاری در فضای کاری خود دعوت کنید.",
+          "button": "ارسال دعوت‌نامه‌ها",
+          "button_loading": "در حال ارسال دعوت‌نامه‌ها",
+          "placeholder": "name@company.com",
           "errors": {
-            "required": "Nous avons besoin d'une adresse e-mail pour les inviter.",
-            "invalid": "L'e-mail est invalide"
+            "required": "برای دعوت به آدرس ایمیل نیاز داریم.",
+            "invalid": "ایمیل نامعتبر است"
           }
         }
       },
       "billing_and_plans": {
-        "title": "Facturation & Plans",
-        "current_plan": "Plan actuel",
-        "free_plan": "Vous utilisez actuellement le plan gratuit",
-        "view_plans": "Voir les plans"
+        "title": "صورتحساب و طرح‌ها",
+        "current_plan": "طرح فعلی",
+        "free_plan": "شما در حال حاضر از طرح رایگان استفاده می‌کنید",
+        "view_plans": "مشاهده طرح‌ها"
       },
       "exports": {
-        "title": "Exportations",
-        "exporting": "Exportation",
-        "previous_exports": "Exportations précédentes",
-        "export_separate_files": "Exporter les données dans des fichiers séparés",
+        "title": "خروجی‌ها",
+        "exporting": "در حال خروجی گرفتن",
+        "previous_exports": "خروجی‌های قبلی",
+        "export_separate_files": "خروجی گرفتن داده‌ها در فایل‌های جداگانه",
         "modal": {
-          "title": "Exporter vers",
+          "title": "خروجی گرفتن به",
           "toasts": {
             "success": {
-              "title": "Exportation réussie",
-              "message": "Vous pourrez télécharger les {entity} exportés depuis l'exportation précédente."
+              "title": "خروجی موفق",
+              "message": "شما می‌توانید {entity}های خروجی گرفته شده را از خروجی قبلی دانلود کنید."
             },
             "error": {
-              "title": "Échec de l'exportation",
-              "message": "L'exportation a échoué. Veuillez réessayer."
+              "title": "خروجی ناموفق",
+              "message": "خروجی گرفتن ناموفق بود. لطفاً دوباره تلاش کنید."
             }
           }
         }
       },
       "webhooks": {
-        "title": "Webhooks",
-        "add_webhook": "Ajouter un webhook",
+        "title": "وب‌هوک‌ها",
+        "add_webhook": "افزودن وب‌هوک",
         "modal": {
-          "title": "Créer un webhook",
-          "details": "Détails du webhook",
-          "payload": "URL de la charge utile",
-          "question": "Quels événements souhaitez-vous déclencher avec ce webhook ?",
-          "error": "L'URL est requise"
+          "title": "ایجاد وب‌هوک",
+          "details": "جزئیات وب‌هوک",
+          "payload": "URL بار مفید (Payload)",
+          "question": "چه رویدادهایی را می‌خواهید با این وب‌هوک فعال کنید؟",
+          "error": "URL الزامی است"
         },
         "secret_key": {
-          "title": "Clé secrète",
-          "message": "Générer un jeton pour signer la charge utile du webhook"
+          "title": "کلید مخفی",
+          "message": "یک توکن برای امضای بار مفید وب‌هوک ایجاد کنید"
         },
         "options": {
-          "all": "Envoyez-moi tout",
-          "individual": "Sélectionner des événements individuels"
+          "all": "همه چیز را برای من بفرست",
+          "individual": "رویدادهای جداگانه را انتخاب کنید"
         },
         "toasts": {
           "created": {
-            "title": "Webhook créé",
-            "message": "Le webhook a été créé avec succès"
+            "title": "وب‌هوک ایجاد شد",
+            "message": "وب‌هوک با موفقیت ایجاد شد"
           },
           "not_created": {
-            "title": "Webhook non créé",
-            "message": "Le webhook n'a pas pu être créé"
+            "title": "وب‌هوک ایجاد نشد",
+            "message": "ایجاد وب‌هوک ناموفق بود"
           },
           "updated": {
-            "title": "Webhook mis à jour",
-            "message": "Le webhook a été mis à jour avec succès"
+            "title": "وب‌هوک به‌روزرسانی شد",
+            "message": "وب‌هوک با موفقیت به‌روزرسانی شد"
           },
           "not_updated": {
-            "title": "Webhook non mis à jour",
-            "message": "Le webhook n'a pas pu être mis à jour"
+            "title": "وب‌هوک به‌روزرسانی نشد",
+            "message": "به‌روزرسانی وب‌هوک ناموفق بود"
           },
           "removed": {
-            "title": "Webhook supprimé",
-            "message": "Le webhook a été supprimé avec succès"
+            "title": "وب‌هوک حذف شد",
+            "message": "وب‌هوک با موفقیت حذف شد"
           },
           "not_removed": {
-            "title": "Webhook non supprimé",
-            "message": "Le webhook n'a pas pu être supprimé"
+            "title": "وب‌هوک حذف نشد",
+            "message": "حذف وب‌هوک ناموفق بود"
           },
           "secret_key_copied": {
-            "message": "Clé secrète copiée dans le presse-papiers."
+            "message": "کلید مخفی در کلیپ‌بورد کپی شد."
           },
           "secret_key_not_copied": {
-            "message": "Une erreur s'est produite lors de la copie de la clé secrète."
+            "message": "خطایی در هنگام کپی کردن کلید مخفی رخ داد."
           }
         }
       },
       "api_tokens": {
-        "title": "Jetons API",
-        "add_token": "Ajouter un jeton API",
-        "create_token": "Créer un jeton",
-        "never_expires": "N'expire jamais",
-        "generate_token": "Générer un jeton",
-        "generating": "Génération",
+        "title": "توکن‌های API",
+        "add_token": "افزودن توکن API",
+        "create_token": "ایجاد توکن",
+        "never_expires": "هرگز منقضی نمی‌شود",
+        "generate_token": "ایجاد توکن",
+        "generating": "در حال ایجاد",
         "delete": {
-          "title": "Supprimer le jeton API",
-          "description": "Toute application utilisant ce jeton n'aura plus accès aux données de Plane. Cette action ne peut pas être annulée.",
+          "title": "حذف توکن API",
+          "description": "هر برنامه‌ای که از این توکن استفاده می‌کند دیگر به داده‌های Plane دسترسی نخواهد داشت. این عمل قابل بازگشت نیست.",
           "success": {
-            "title": "Succès !",
-            "message": "Le jeton API a été supprimé avec succès"
+            "title": "موفقیت‌آمیز!",
+            "message": "توکن API با موفقیت حذف شد"
           },
           "error": {
-            "title": "Erreur !",
-            "message": "Le jeton API n'a pas pu être supprimé"
+            "title": "خطا!",
+            "message": "حذف توکن API ناموفق بود"
           }
         }
       }
     },
     "empty_state": {
       "api_tokens": {
-        "title": "Aucun jeton API créé",
-        "description": "Les API Plane peuvent être utilisées pour intégrer vos données dans Plane avec n'importe quel système externe. Créez un jeton pour commencer."
+        "title": "هیچ توکن API ایجاد نشده است",
+        "description": "APIهای Plane می‌توانند برای یکپارچه‌سازی داده‌های شما در Plane با هر سیستم خارجی استفاده شوند. برای شروع یک توکن ایجاد کنید."
       },
       "webhooks": {
-        "title": "Aucun webhook ajouté",
-        "description": "Créez des webhooks pour recevoir des mises à jour en temps réel et automatiser des actions."
+        "title": "هیچ وب‌هوک اضافه نشده است",
+        "description": "برای دریافت به‌روزرسانی‌های لحظه‌ای و خودکارسازی اقدامات، وب‌هوک ایجاد کنید."
       },
       "exports": {
-        "title": "Aucune exportation pour le moment",
-        "description": "Chaque fois que vous exportez, vous aurez également une copie ici pour référence."
+        "title": "فعلا هیچ خروجی وجود ندارد",
+        "description": "هر بار که خروجی می‌گیرید، یک کپی نیز برای مرجع در اینجا خواهید داشت."
       },
       "imports": {
-        "title": "Aucune importation pour le moment",
-        "description": "Trouvez toutes vos importations précédentes ici et téléchargez-les."
+        "title": "فعلا هیچ ورودی وجود ندارد",
+        "description": "تمام ورودی‌های قبلی خود را در اینجا پیدا کرده و دانلود کنید."
       }
     }
   },
   "profile": {
-    "label": "Profil",
-    "page_label": "Votre travail",
-    "work": "Travail",
+    "label": "پروفایل",
+    "page_label": "کارهای شما",
+    "work": "کار",
     "details": {
-      "joined_on": "Inscrit le",
-      "time_zone": "Fuseau horaire"
+      "joined_on": "عضو شده در",
+      "time_zone": "منطقه زمانی"
     },
     "stats": {
-      "workload": "Charge de travail",
-      "overview": "Vue d'ensemble",
-      "created": "Éléments de travail créés",
-      "assigned": "Éléments de travail assignés",
-      "subscribed": "Éléments de travail suivis",
+      "workload": "حجم کار",
+      "overview": "نمای کلی",
+      "created": "آیتم‌های کاری ایجاد شده",
+      "assigned": "آیتم‌های کاری تخصیص‌یافته",
+      "subscribed": "آیتم‌های کاری دنبال‌شده",
       "state_distribution": {
-        "title": "Éléments de travail par état",
-        "empty": "Créez des éléments de travail pour les visualiser par état dans le graphique pour une meilleure analyse."
+        "title": "آیتم‌های کاری بر اساس وضعیت",
+        "empty": "آیتم‌های کاری ایجاد کنید تا آنها را بر اساس وضعیت در نمودار برای تحلیل بهتر مشاهده کنید."
       },
       "priority_distribution": {
-        "title": "Éléments de travail par priorité",
-        "empty": "Créez des éléments de travail pour les visualiser par priorité dans le graphique pour une meilleure analyse."
+        "title": "آیتم‌های کاری بر اساس اولویت",
+        "empty": "آیتم‌های کاری ایجاد کنید تا آنها را بر اساس اولویت در نمودار برای تحلیل بهتر مشاهده کنید."
       },
       "recent_activity": {
-        "title": "Activité récente",
-        "empty": "Nous n'avons pas trouvé de données. Veuillez consulter vos contributions",
-        "button": "Télécharger l'activité du jour",
-        "button_loading": "Téléchargement"
+        "title": "فعالیت اخیر",
+        "empty": "داده‌ای پیدا نکردیم. لطفاً مشارکت‌های خود را بررسی کنید.",
+        "button": "دانلود فعالیت امروز",
+        "button_loading": "در حال دانلود"
       }
     },
     "actions": {
-      "profile": "Profil",
-      "security": "Sécurité",
-      "activity": "Activité",
-      "appearance": "Apparence",
-      "notifications": "Notifications"
+      "profile": "پروفایل",
+      "security": "امنیت",
+      "activity": "فعالیت",
+      "appearance": "ظاهر",
+      "notifications": "اعلان‌ها"
     },
     "tabs": {
-      "summary": "Résumé",
-      "assigned": "Assigné",
-      "created": "Créé",
-      "subscribed": "Suivi",
-      "activity": "Activité"
+      "summary": "خلاصه",
+      "assigned": "تخصیص‌یافته",
+      "created": "ایجادشده",
+      "subscribed": "دنبال‌شده",
+      "activity": "فعالیت"
     },
     "empty_state": {
       "activity": {
-        "title": "Aucune activité pour le moment",
-        "description": "Commencez par créer un nouvel élément de travail ! Ajoutez-y des détails et des propriétés. Explorez davantage Plane pour voir votre activité."
+        "title": "فعلا هیچ فعالیتی وجود ندارد",
+        "description": "با ایجاد یک آیتم کاری جدید شروع کنید! جزئیات و خصوصیات به آن اضافه کنید. برای دیدن فعالیت خود بیشتر در Plane کاوش کنید."
       },
       "assigned": {
-        "title": "Aucun élément de travail ne vous est assigné",
-        "description": "Les éléments de travail qui vous sont assignés peuvent être suivis ici."
+        "title": "هیچ آیتم کاری به شما تخصیص داده نشده است",
+        "description": "آیتم‌های کاری تخصیص‌یافته به شما در اینجا قابل پیگیری هستند."
       },
       "created": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Tous les éléments de travail que vous créez apparaissent ici, suivez-les directement ici."
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "همه آیتم‌های کاری که ایجاد می‌کنید در اینجا ظاهر می‌شوند، آنها را مستقیماً از اینجا دنبال کنید."
       },
       "subscribed": {
-        "title": "Aucun élément de travail pour le moment",
-        "description": "Abonnez-vous aux éléments de travail qui vous intéressent, suivez-les tous ici."
+        "title": "در حال حاضر هیچ آیتم کاری وجود ندارد",
+        "description": "آیتم‌های کاری مورد علاقه خود را دنبال کنید، همه آنها را از اینجا پیگیری کنید."
       }
     }
   },
   "project_settings": {
     "general": {
-      "enter_project_id": "Saisissez l'ID du projet",
-      "please_select_a_timezone": "Veuillez sélectionner un fuseau horaire",
+      "enter_project_id": "شناسه پروژه را وارد کنید",
+      "please_select_a_timezone": "لطفاً یک منطقه زمانی انتخاب کنید",
       "archive_project": {
-        "title": "Archiver le projet",
-        "description": "L'archivage d'un projet le retirera de votre navigation latérale, bien que vous pourrez toujours y accéder depuis votre page de projets. Vous pouvez restaurer le projet ou le supprimer quand vous le souhaitez.",
-        "button": "Archiver le projet"
+        "title": "بایگانی پروژه",
+        "description": "بایگانی کردن یک پروژه آن را از نوار کناری شما حذف می‌کند، اگرچه همچنان می‌توانید از صفحه پروژه‌های خود به آن دسترسی داشته باشید. شما می‌توانید پروژه را هر زمان که بخواهید بازیابی یا حذف کنید.",
+        "button": "بایگانی پروژه"
       },
       "delete_project": {
-        "title": "Supprimer le projet",
-        "description": "Lors de la suppression d'un projet, toutes les données et ressources de ce projet seront définitivement supprimées et ne pourront pas être récupérées.",
-        "button": "Supprimer mon projet"
+        "title": "حذف پروژه",
+        "description": "با حذف یک پروژه، تمام داده‌ها و منابع آن برای همیشه حذف شده و قابل بازیابی نخواهند بود.",
+        "button": "حذف پروژه من"
       },
       "toast": {
-        "success": "Projet mis à jour avec succès",
-        "error": "Le projet n'a pas pu être mis à jour. Veuillez réessayer."
+        "success": "پروژه با موفقیت به‌روزرسانی شد",
+        "error": "به‌روزرسانی پروژه ناموفق بود. لطفاً دوباره تلاش کنید."
       }
     },
     "members": {
-      "label": "Membres",
-      "project_lead": "Chef de projet",
-      "default_assignee": "Assigné par défaut",
+      "label": "اعضا",
+      "project_lead": "سرپرست پروژه",
+      "default_assignee": "مسئول پیش‌فرض",
       "guest_super_permissions": {
-        "title": "Accorder l'accès en lecture à tous les éléments de travail pour les utilisateurs invités :",
-        "sub_heading": "Cela permettra aux invités d'avoir un accès en lecture à tous les éléments de travail du projet."
+        "title": "اعطای دسترسی خواندن به تمام آیتم‌های کاری برای کاربران مهمان:",
+        "sub_heading": "این کار به مهمانان اجازه می‌دهد به تمام آیتم‌های کاری پروژه دسترسی خواندن داشته باشند."
       },
       "invite_members": {
-        "title": "Inviter des membres",
-        "sub_heading": "Invitez des membres à travailler sur votre projet.",
-        "select_co_worker": "Sélectionner un collaborateur"
+        "title": "دعوت اعضا",
+        "sub_heading": "اعضا را برای کار روی پروژه خود دعوت کنید.",
+        "select_co_worker": "انتخاب همکار"
       }
     },
     "states": {
-      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres.",
+      "describe_this_state_for_your_members": "این وضعیت را برای اعضای خود توصیف کنید.",
       "empty_state": {
-        "title": "Aucun état disponible pour le groupe {groupKey}",
-        "description": "Veuillez créer un nouvel état"
+        "title": "هیچ وضعیتی برای گروه {groupKey} موجود نیست",
+        "description": "لطفاً یک وضعیت جدید ایجاد کنید"
       }
     },
     "labels": {
-      "label_title": "Titre de l'étiquette",
-      "label_title_is_required": "Le titre de l'étiquette est requis",
-      "label_max_char": "Le nom de l'étiquette ne doit pas dépasser 255 caractères",
+      "label_title": "عنوان برچسب",
+      "label_title_is_required": "عنوان برچسب الزامی است",
+      "label_max_char": "نام برچسب نباید بیش از ۲۵۵ کاراکتر باشد",
       "toast": {
-        "error": "Erreur lors de la mise à jour de l'étiquette"
+        "error": "خطا در به‌روزرسانی برچسب"
       }
     },
     "estimates": {
-      "label": "Estimations",
-      "title": "Activer les estimations pour mon projet",
-      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l'équipe.",
-      "no_estimate": "Sans estimation",
-      "new": "Nouveau système d'estimation",
+      "label": "تخمین‌ها",
+      "title": "فعال کردن تخمین‌ها برای پروژه من",
+      "description": "این‌ها به شما کمک می‌کنند تا پیچیدگی و حجم کار تیم را مشخص کنید.",
+      "no_estimate": "بدون تخمین",
+      "new": "سیستم تخمین جدید",
       "create": {
-        "custom": "Personnalisé",
-        "start_from_scratch": "Commencer depuis zéro",
-        "choose_template": "Choisir un modèle",
-        "choose_estimate_system": "Choisir un système d'estimation",
-        "enter_estimate_point": "Saisir une estimation",
-        "step": "Étape {step} de {total}",
-        "label": "Créer une estimation"
+        "custom": "سفارشی",
+        "start_from_scratch": "شروع از صفر",
+        "choose_template": "انتخاب یک الگو",
+        "choose_estimate_system": "انتخاب سیستم تخمین",
+        "enter_estimate_point": "وارد کردن تخمین",
+        "step": "مرحله {step} از {total}",
+        "label": "ایجاد تخمین"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Estimation créée",
-            "message": "L'estimation a été créée avec succès"
+            "title": "تخمین ایجاد شد",
+            "message": "تخمین با موفقیت ایجاد شد"
           },
           "error": {
-            "title": "Échec de la création de l'estimation",
-            "message": "Nous n'avons pas pu créer la nouvelle estimation, veuillez réessayer."
+            "title": "ایجاد تخمین ناموفق بود",
+            "message": "ما نتوانستیم تخمین جدید را ایجاد کنیم، لطفاً دوباره تلاش کنید."
           }
         },
         "updated": {
           "success": {
-            "title": "Estimation modifiée",
-            "message": "L'estimation a été mise à jour dans votre projet."
+            "title": "تخمین ویرایش شد",
+            "message": "تخمین در پروژه شما به‌روزرسانی شد."
           },
           "error": {
-            "title": "Échec de la modification de l'estimation",
-            "message": "Nous n'avons pas pu modifier l'estimation, veuillez réessayer"
+            "title": "ویرایش تخمین ناموفق بود",
+            "message": "ما نتوانستیم تخمین را ویرایش کنیم، لطفاً دوباره تلاش کنید."
           }
         },
         "enabled": {
           "success": {
-            "title": "Succès !",
-            "message": "Les estimations ont été activées."
+            "title": "موفقیت‌آمیز!",
+            "message": "تخمین‌ها فعال شدند."
           }
         },
         "disabled": {
           "success": {
-            "title": "Succès !",
-            "message": "Les estimations ont été désactivées."
+            "title": "موفقیت‌آمیز!",
+            "message": "تخمین‌ها غیرفعال شدند."
           },
           "error": {
-            "title": "Erreur !",
-            "message": "L'estimation n'a pas pu être désactivée. Veuillez réessayer"
+            "title": "خطا!",
+            "message": "تخمین غیرفعال نشد. لطفاً دوباره تلاش کنید."
           }
         }
       },
       "validation": {
-        "min_length": "L'estimation doit être supérieure à 0.",
-        "unable_to_process": "Nous ne pouvons pas traiter votre demande, veuillez réessayer.",
-        "numeric": "L'estimation doit être une valeur numérique.",
-        "character": "L'estimation doit être une valeur de caractère.",
-        "empty": "La valeur de l'estimation ne peut pas être vide.",
-        "already_exists": "La valeur de l'estimation existe déjà.",
-        "unsaved_changes": "Vous avez des modifications non enregistrées. Veuillez les enregistrer avant de cliquer sur Terminé",
-        "remove_empty": "L'estimation ne peut pas être vide. Saisissez une valeur dans chaque champ ou supprimez ceux pour lesquels vous n'avez pas de valeurs."
+        "min_length": "تخمین باید بزرگتر از ۰ باشد.",
+        "unable_to_process": "قادر به پردازش درخواست شما نیستیم، لطفاً دوباره تلاش کنید.",
+        "numeric": "تخمین باید یک مقدار عددی باشد.",
+        "character": "تخمین باید یک مقدار کاراکتری باشد.",
+        "empty": "مقدار تخمین نمی‌تواند خالی باشد.",
+        "already_exists": "مقدار تخمین از قبل وجود دارد.",
+        "unsaved_changes": "شما تغییرات ذخیره‌نشده‌ای دارید. لطفاً قبل از کلیک بر روی «انجام شد»، آنها را ذخیره کنید.",
+        "remove_empty": "تخمین نمی‌تواند خالی باشد. در هر فیلد یک مقدار وارد کنید یا فیلدهایی را که مقداری ندارند حذف کنید."
       },
       "systems": {
         "points": {
-          "label": "Points",
-          "fibonacci": "Fibonacci",
-          "linear": "Linéaire",
-          "squares": "Carrés",
-          "custom": "Personnalisé"
+          "label": "امتیازها",
+          "fibonacci": "فیبوناچی",
+          "linear": "خطی",
+          "squares": "توان دو",
+          "custom": "سفارشی"
         },
         "categories": {
-          "label": "Catégories",
-          "t_shirt_sizes": "Tailles de T-Shirt",
-          "easy_to_hard": "Facile à difficile",
-          "custom": "Personnalisé"
+          "label": "دسته‌ها",
+          "t_shirt_sizes": "سایز تی‌شرت",
+          "easy_to_hard": "آسان تا سخت",
+          "custom": "سفارشی"
         },
         "time": {
-          "label": "Temps",
-          "hours": "Heures"
+          "label": "زمان",
+          "hours": "ساعت"
         }
       }
     },
     "automations": {
-      "label": "Automatisations",
+      "label": "اتوماسیون‌ها",
       "auto-archive": {
-        "title": "Archiver automatiquement les éléments de travail fermés",
-        "description": "Plane archivera automatiquement les éléments de travail qui ont été complétés ou annulés.",
-        "duration": "Archiver automatiquement les éléments de travail fermés depuis"
+        "title": "بایگانی خودکار آیتم‌های کاری بسته‌شده",
+        "description": "Plane به‌طور خودکار آیتم‌های کاری را که تکمیل یا لغو شده‌اند، بایگانی می‌کند.",
+        "duration": "بایگانی خودکار آیتم‌های کاری بسته‌شده از"
       },
       "auto-close": {
-        "title": "Fermer automatiquement les éléments de travail",
-        "description": "Plane fermera automatiquement les éléments de travail qui n'ont pas été complétés ou annulés.",
-        "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
-        "auto_close_status": "Statut de fermeture automatique"
+        "title": "بستن خودکار آیتم‌های کاری",
+        "description": "Plane به‌طور خودکار آیتم‌های کاری را که تکمیل یا لغو نشده‌اند، می‌بندد.",
+        "duration": "بستن خودکار آیتم‌های کاری غیرفعال از",
+        "auto_close_status": "وضعیت بستن خودکار"
       }
     },
     "empty_state": {
       "labels": {
-        "title": "Pas encore d'étiquettes",
-        "description": "Créez des étiquettes pour organiser et filtrer les éléments de travail dans votre projet."
+        "title": "هنوز برچسبی وجود ندارد",
+        "description": "برای سازماندهی و فیلتر کردن آیتم‌های کاری در پروژه خود، برچسب ایجاد کنید."
       },
       "estimates": {
-        "title": "Pas encore de systèmes d'estimation",
-        "description": "Créez un ensemble d'estimations pour communiquer le volume de travail par élément de travail.",
-        "primary_button": "Ajouter un système d'estimation"
+        "title": "هنوز سیستم تخمینی وجود ندارد",
+        "description": "مجموعه‌ای از تخمین‌ها را برای اعلام حجم کار برای هر آیتم کاری ایجاد کنید.",
+        "primary_button": "افزودن سیستم تخمین"
       }
     }
   },
   "project_cycles": {
-    "add_cycle": "Ajouter un cycle",
-    "more_details": "Plus de détails",
-    "cycle": "Cycle",
-    "update_cycle": "Mettre à jour le cycle",
-    "create_cycle": "Créer un cycle",
-    "no_matching_cycles": "Aucun cycle correspondant",
-    "remove_filters_to_see_all_cycles": "Supprimez les filtres pour voir tous les cycles",
-    "remove_search_criteria_to_see_all_cycles": "Supprimez les critères de recherche pour voir tous les cycles",
-    "only_completed_cycles_can_be_archived": "Seuls les cycles terminés peuvent être archivés",
-    "start_date": "Date de début",
-    "end_date": "Date de fin",
-    "in_your_timezone": "Dans votre fuseau horaire",
-    "transfer_work_items": "Transférer {count} éléments de travail",
-    "date_range": "Plage de dates",
-    "add_date": "Ajouter une date",
+    "add_cycle": "افزودن چرخه",
+    "more_details": "جزئیات بیشتر",
+    "cycle": "چرخه",
+    "update_cycle": "به‌روزرسانی چرخه",
+    "create_cycle": "ایجاد چرخه",
+    "no_matching_cycles": "هیچ چرخه منطبقی یافت نشد",
+    "remove_filters_to_see_all_cycles": "برای دیدن همه چرخه‌ها، فیلترها را حذف کنید",
+    "remove_search_criteria_to_see_all_cycles": "برای دیدن همه چرخه‌ها، معیارهای جستجو را حذف کنید",
+    "only_completed_cycles_can_be_archived": "فقط چرخه‌های تکمیل‌شده را می‌توان بایگانی کرد",
+    "start_date": "تاریخ شروع",
+    "end_date": "تاریخ پایان",
+    "in_your_timezone": "در منطقه زمانی شما",
+    "transfer_work_items": "انتقال {count} آیتم کاری",
+    "date_range": "بازه زمانی",
+    "add_date": "افزودن تاریخ",
     "active_cycle": {
-      "label": "Cycle actif",
-      "progress": "Progression",
-      "chart": "Graphique d'avancement",
-      "priority_issue": "Éléments de travail prioritaires",
-      "assignees": "Assignés",
-      "issue_burndown": "Graphique d'avancement des éléments",
-      "ideal": "Idéal",
-      "current": "Actuel",
-      "labels": "Étiquettes"
+      "label": "چرخه فعال",
+      "progress": "پیشرفت",
+      "chart": "نمودار پیشرفت",
+      "priority_issue": "آیتم‌های کاری اولویت‌دار",
+      "assignees": "مسئولین",
+      "issue_burndown": "نمودار Burndown آیتم‌ها",
+      "ideal": "ایده‌آل",
+      "current": "فعلی",
+      "labels": "برچسب‌ها"
     },
     "upcoming_cycle": {
-      "label": "Cycle à venir"
+      "label": "چرخه آتی"
     },
     "completed_cycle": {
-      "label": "Cycle terminé"
+      "label": "چرخه تکمیل‌شده"
     },
     "status": {
-      "days_left": "Jours restants",
-      "completed": "Terminé",
-      "yet_to_start": "Pas encore commencé",
-      "in_progress": "En cours",
-      "draft": "Brouillon"
+      "days_left": "روزهای باقی‌مانده",
+      "completed": "تکمیل‌شده",
+      "yet_to_start": "هنوز شروع نشده",
+      "in_progress": "در حال انجام",
+      "draft": "پیش‌نویس"
     },
     "action": {
       "restore": {
-        "title": "Restaurer le cycle",
+        "title": "بازیابی چرخه",
         "success": {
-          "title": "Cycle restauré",
-          "description": "Le cycle a été restauré."
+          "title": "چرخه بازیابی شد",
+          "description": "چرخه بازیابی شد."
         },
         "failed": {
-          "title": "Échec de la restauration du cycle",
-          "description": "Le cycle n'a pas pu être restauré. Veuillez réessayer."
+          "title": "بازیابی چرخه ناموفق بود",
+          "description": "بازیابی چرخه ناموفق بود. لطفاً دوباره تلاش کنید."
         }
       },
       "favorite": {
-        "loading": "Ajout du cycle aux favoris",
+        "loading": "در حال افزودن چرخه به علاقه‌مندی‌ها",
         "success": {
-          "description": "Cycle ajouté aux favoris.",
-          "title": "Succès !"
+          "description": "چرخه به علاقه‌مندی‌ها اضافه شد.",
+          "title": "موفقیت‌آمیز!"
         },
         "failed": {
-          "description": "Impossible d'ajouter le cycle aux favoris. Veuillez réessayer.",
-          "title": "Erreur !"
+          "description": "افزودن چرخه به علاقه‌مندی‌ها ناموفق بود. لطفاً دوباره تلاش کنید.",
+          "title": "خطا!"
         }
       },
       "unfavorite": {
-        "loading": "Suppression du cycle des favoris",
+        "loading": "در حال حذف چرخه از علاقه‌مندی‌ها",
         "success": {
-          "description": "Cycle retiré des favoris.",
-          "title": "Succès !"
+          "description": "چرخه از علاقه‌مندی‌ها حذف شد.",
+          "title": "موفقیت‌آمیز!"
         },
         "failed": {
-          "description": "Impossible de retirer le cycle des favoris. Veuillez réessayer.",
-          "title": "Erreur !"
+          "description": "حذف چرخه از علاقه‌مندی‌ها ناموفق بود. لطفاً دوباره تلاش کنید.",
+          "title": "خطا!"
         }
       },
       "update": {
-        "loading": "Mise à jour du cycle",
+        "loading": "در حال به‌روزرسانی چرخه",
         "success": {
-          "description": "Cycle mis à jour avec succès.",
-          "title": "Succès !"
+          "description": "چرخه با موفقیت به‌روزرسانی شد.",
+          "title": "موفقیت‌آمیز!"
         },
         "failed": {
-          "description": "Erreur lors de la mise à jour du cycle. Veuillez réessayer.",
-          "title": "Erreur !"
+          "description": "خطا در به‌روزرسانی چرخه. لطفاً دوباره تلاش کنید.",
+          "title": "خطا!"
         },
         "error": {
-          "already_exists": "Vous avez déjà un cycle aux dates indiquées. Si vous souhaitez créer un cycle en brouillon, vous pouvez le faire en supprimant les deux dates."
+          "already_exists": "شما قبلاً یک چرخه در تاریخ‌های مشخص شده دارید. اگر می‌خواهید یک چرخه پیش‌نویس ایجاد کنید، می‌توانید این کار را با حذف هر دو تاریخ انجام دهید."
         }
       }
     },
     "empty_state": {
       "general": {
-        "title": "Regroupez et planifiez votre travail en Cycles.",
-        "description": "Découpez le travail en périodes définies, planifiez à rebours depuis la date limite de votre projet pour fixer les dates, et progressez concrètement en équipe.",
+        "title": "کار خود را در چرخه‌ها گروه‌بندی و برنامه‌ریزی کنید.",
+        "description": "کار را به دوره‌های زمانی مشخص تقسیم کنید، از تاریخ سررسید پروژه خود برنامه‌ریزی معکوس انجام دهید تا تاریخ‌ها را تعیین کنید، و به عنوان یک تیم پیشرفت ملموسی داشته باشید.",
         "primary_button": {
-          "text": "Définissez votre premier cycle",
+          "text": "اولین چرخه خود را تعریف کنید",
           "comic": {
-            "title": "Les cycles sont des périodes répétitives.",
-            "description": "Un sprint, une itération, ou tout autre terme que vous utilisez pour le suivi hebdomadaire ou bimensuel du travail est un cycle."
+            "title": "چرخه‌ها دوره‌های زمانی تکرارشونده هستند.",
+            "description": "اسپرینت، تکرار، یا هر اصطلاح دیگری که برای پیگیری هفتگی یا دوهفته‌ای کار استفاده می‌کنید، یک چرخه است."
           }
         }
       },
       "no_issues": {
-        "title": "Aucun élément de travail ajouté au cycle",
-        "description": "Ajoutez ou créez des éléments de travail que vous souhaitez planifier et livrer dans ce cycle",
+        "title": "هیچ آیتم کاری به چرخه اضافه نشده است",
+        "description": "آیتم‌های کاری را که می‌خواهید در این چرخه برنامه‌ریزی و تحویل دهید، اضافه یا ایجاد کنید.",
         "primary_button": {
-          "text": "Créer un nouvel élément de travail"
+          "text": "ایجاد آیتم کاری جدید"
         },
         "secondary_button": {
-          "text": "Ajouter un élément existant"
+          "text": "افزودن آیتم موجود"
         }
       },
       "completed_no_issues": {
-        "title": "Aucun élément de travail dans le cycle",
-        "description": "Aucun élément de travail dans le cycle. Les éléments sont soit transférés soit masqués. Pour voir les éléments masqués s'il y en a, mettez à jour vos propriétés d'affichage en conséquence."
+        "title": "هیچ آیتم کاری در چرخه وجود ندارد",
+        "description": "هیچ آیتم کاری در چرخه وجود ندارد. آیتم‌ها یا منتقل شده‌اند یا پنهان هستند. برای دیدن آیتم‌های پنهان، در صورت وجود، خصوصیات نمایش خود را به‌روزرسانی کنید."
       },
       "active": {
-        "title": "Aucun cycle actif",
-        "description": "Un cycle actif inclut toute période qui englobe la date d'aujourd'hui dans sa plage. Trouvez ici la progression et les détails du cycle actif."
+        "title": "هیچ چرخه فعالی وجود ندارد",
+        "description": "یک چرخه فعال هر دوره‌ای را شامل می‌شود که تاریخ امروز را در بازه خود داشته باشد. پیشرفت و جزئیات چرخه فعال را در اینجا بیابید."
       },
       "archived": {
-        "title": "Aucun cycle archivé pour le moment",
-        "description": "Pour organiser votre projet, archivez les cycles terminés. Retrouvez-les ici une fois archivés."
+        "title": "در حال حاضر هیچ چرخه بایگانی‌شده‌ای وجود ندارد",
+        "description": "برای سازماندهی پروژه خود، چرخه‌های تکمیل‌شده را بایگانی کنید. پس از بایگانی، آنها را در اینجا بیابید."
       }
     }
   },
   "project_issues": {
     "empty_state": {
       "no_issues": {
-        "title": "Créez un élément de travail et assignez-le à quelqu'un, même à vous-même",
-        "description": "Pensez aux éléments de travail comme des tâches, du travail, ou des JTBD (Jobs To Be Done). Un élément de travail et ses sous-éléments sont généralement des actions temporelles assignées aux membres de votre équipe. Votre équipe crée, assigne et complète des éléments de travail pour faire progresser votre projet vers son objectif.",
+        "title": "یک آیتم کاری ایجاد کنید و آن را به کسی، حتی خودتان، تخصیص دهید",
+        "description": "آیتم‌های کاری را مانند وظایف، کارها، یا JTBD (کارهایی که باید انجام شود) در نظر بگیرید. یک آیتم کاری و زیر-آیتم‌های آن معمولاً اقدامات زمان‌بندی‌شده‌ای هستند که به اعضای تیم شما تخصیص داده می‌شوند. تیم شما برای پیشبرد پروژه به سمت هدفش، آیتم‌های کاری را ایجاد، تخصیص و تکمیل می‌کند.",
         "primary_button": {
-          "text": "Créez votre premier élément de travail",
+          "text": "اولین آیتم کاری خود را ایجاد کنید",
           "comic": {
-            "title": "Les éléments de travail sont les blocs de construction dans Plane.",
-            "description": "Refondre l'interface de Plane, Renouveler l'image de marque de l'entreprise, ou Lancer le nouveau système d'injection de carburant sont des exemples d'éléments de travail qui ont probablement des sous-éléments."
+            "title": "آیتم‌های کاری بلوک‌های اصلی سازنده در Plane هستند.",
+            "description": "طراحی مجدد رابط کاربری Plane، بازسازی برند شرکت، یا راه‌اندازی سیستم جدید تزریق سوخت، نمونه‌هایی از آیتم‌های کاری هستند که احتمالاً زیر-آیتم‌هایی دارند."
           }
         }
       },
       "no_archived_issues": {
-        "title": "Aucun élément de travail archivé pour le moment",
-        "description": "Manuellement ou par automatisation, vous pouvez archiver les éléments de travail terminés ou annulés. Retrouvez-les ici une fois archivés.",
+        "title": "در حال حاضر هیچ آیتم کاری بایگانی‌شده‌ای وجود ندارد",
+        "description": "به صورت دستی یا از طریق اتوماسیون، می‌توانید آیتم‌های کاری تکمیل‌شده یا لغوشده را بایگانی کنید. پس از بایگانی، آنها را در اینجا بیابید.",
         "primary_button": {
-          "text": "Configurer l'automatisation"
+          "text": "پیکربندی اتوماسیون"
         }
       },
       "issues_empty_filter": {
-        "title": "Aucun élément de travail trouvé correspondant aux filtres appliqués",
+        "title": "هیچ آیتم کاری منطبق با فیلترهای اعمال‌شده یافت نشد",
         "secondary_button": {
-          "text": "Effacer tous les filtres"
+          "text": "پاک کردن همه فیلترها"
         }
       }
     }
   },
   "project_module": {
-    "add_module": "Ajouter un module",
-    "update_module": "Mettre à jour le module",
-    "create_module": "Créer un module",
-    "archive_module": "Archiver le module",
-    "restore_module": "Restaurer le module",
-    "delete_module": "Supprimer le module",
+    "add_module": "افزودن ماژول",
+    "update_module": "به‌روزرسانی ماژول",
+    "create_module": "ایجاد ماژول",
+    "archive_module": "بایگانی ماژول",
+    "restore_module": "بازیابی ماژول",
+    "delete_module": "حذف ماژول",
     "empty_state": {
       "general": {
-        "title": "Associez vos jalons de projet aux Modules et suivez facilement le travail agrégé.",
-        "description": "Un groupe d'éléments de travail qui appartiennent à un parent logique et hiérarchique forme un module. Considérez-les comme un moyen de suivre le travail par jalons de projet. Ils ont leurs propres périodes et délais ainsi que des analyses pour vous aider à voir à quel point vous êtes proche ou loin d'un jalon.",
+        "title": "نقاط عطف پروژه خود را به ماژول‌ها متصل کنید و به راحتی کارهای تجمیعی را دنبال کنید.",
+        "description": "گروهی از آیتم‌های کاری که به یک والد منطقی و سلسله‌مراتبی تعلق دارند، یک ماژول را تشکیل می‌دهند. آنها را به عنوان راهی برای پیگیری کار بر اساس نقاط عطف پروژه در نظر بگیرید. آنها دوره‌های زمانی و مهلت‌های خاص خود را دارند و همچنین تحلیل‌هایی برای کمک به شما در مشاهده میزان نزدیکی یا دوری از یک نقطه عطف ارائه می‌دهند.",
         "primary_button": {
-          "text": "Construisez votre premier module",
+          "text": "اولین ماژول خود را بسازید",
           "comic": {
-            "title": "Les modules aident à regrouper le travail par hiérarchie.",
-            "description": "Un module panier, un module châssis et un module entrepôt sont tous de bons exemples de ce regroupement."
+            "title": "ماژول‌ها به گروه‌بندی کارها بر اساس سلسله‌مراتب کمک می‌کنند.",
+            "description": "ماژول سبد خرید، ماژول شاسی و ماژول انبار همگی نمونه‌های خوبی از این گروه‌بندی هستند."
           }
         }
       },
       "no_issues": {
-        "title": "Aucun élément de travail dans le module",
-        "description": "Créez ou ajoutez des éléments de travail que vous souhaitez accomplir dans le cadre de ce module",
+        "title": "هیچ آیتم کاری در ماژول وجود ندارد",
+        "description": "آیتم‌های کاری را که می‌خواهید به عنوان بخشی از این ماژول انجام دهید، ایجاد یا اضافه کنید.",
         "primary_button": {
-          "text": "Créer de nouveaux éléments de travail"
+          "text": "ایجاد آیتم‌های کاری جدید"
         },
         "secondary_button": {
-          "text": "Ajouter un élément existant"
+          "text": "افزودن آیتم موجود"
         }
       },
       "archived": {
-        "title": "Aucun module archivé pour le moment",
-        "description": "Pour organiser votre projet, archivez les modules terminés ou annulés. Retrouvez-les ici une fois archivés."
+        "title": "در حال حاضر هیچ ماژول بایگانی‌شده‌ای وجود ندارد",
+        "description": "برای سازماندهی پروژه خود، ماژول‌های تکمیل‌شده یا لغوشده را بایگانی کنید. پس از بایگانی، آنها را در اینجا بیابید."
       },
       "sidebar": {
-        "in_active": "Ce module n'est pas encore actif.",
-        "invalid_date": "Date invalide. Veuillez entrer une date valide."
+        "in_active": "این ماژول هنوز فعال نیست.",
+        "invalid_date": "تاریخ نامعتبر است. لطفاً یک تاریخ معتبر وارد کنید."
       }
     },
     "quick_actions": {
-      "archive_module": "Archiver le module",
-      "archive_module_description": "Seuls les modules terminés ou\nannulés peuvent être archivés.",
-      "delete_module": "Supprimer le module"
+      "archive_module": "بایگانی ماژول",
+      "archive_module_description": "فقط ماژول‌های تکمیل‌شده یا\nلغوشده را می‌توان بایگانی کرد.",
+      "delete_module": "حذف ماژول"
     },
     "toast": {
       "copy": {
-        "success": "Lien du module copié dans le presse-papiers"
+        "success": "لینک ماژول در کلیپ‌بورد کپی شد"
       },
       "delete": {
-        "success": "Module supprimé avec succès",
-        "error": "Échec de la suppression du module"
+        "success": "ماژول با موفقیت حذف شد",
+        "error": "حذف ماژول ناموفق بود"
       }
     }
   },
   "project_views": {
     "empty_state": {
       "general": {
-        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
-        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez avoir un accès facile. Tous vos collègues dans un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins.",
+        "title": "نماهای فیلترشده را برای پروژه خود ذخیره کنید. هر تعداد که نیاز دارید ایجاد کنید.",
+        "description": "نماها مجموعه‌ای از فیلترهای ذخیره‌شده هستند که شما مکرراً از آنها استفاده می‌کنید یا می‌خواهید به راحتی به آنها دسترسی داشته باشید. همه همکاران شما در یک پروژه می‌توانند نماهای یکدیگر را ببینند و یکی را که به بهترین وجه با نیازهایشان مطابقت دارد انتخاب کنند.",
         "primary_button": {
-          "text": "Créez votre première vue",
+          "text": "اولین نمای خود را ایجاد کنید",
           "comic": {
-            "title": "Les vues fonctionnent sur les propriétés des éléments de travail.",
-            "description": "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que vous le jugez approprié."
+            "title": "نماها بر روی خصوصیات آیتم‌های کاری عمل می‌کنند.",
+            "description": "شما می‌توانید در اینجا یک نما با هر تعداد خصوصیتی که مناسب می‌دانید به عنوان فیلتر ایجاد کنید."
           }
         }
       },
       "filter": {
-        "title": "Aucune vue correspondante",
-        "description": "Aucune vue ne correspond aux critères de recherche. \n Créez plutôt une nouvelle vue."
+        "title": "هیچ نمای منطبقی وجود ندارد",
+        "description": "هیچ نمایی با معیارهای جستجو مطابقت ندارد. \n به جای آن یک نمای جدید ایجاد کنید."
       }
     }
   },
-  "project_page": {
+ "project_page": {
     "empty_state": {
       "general": {
-        "title": "Rédigez une note, un document ou une base de connaissances complète. Obtenez l'aide de Galileo, l'assistant IA de Plane, pour commencer",
-        "description": "Les Pages sont un espace de réflexion dans Plane. Prenez des notes de réunion, formatez-les facilement, intégrez des éléments de travail, disposez-les à l'aide d'une bibliothèque de composants, et gardez-les tous dans le contexte de votre projet. Pour faciliter la rédaction de tout document, faites appel à Galileo, l'IA de Plane, avec un raccourci ou un clic sur un bouton.",
+        "title": "یک یادداشت، سند یا یک پایگاه دانش کامل بنویسید. برای شروع از گالیله، دستیار هوش مصنوعی Plane، کمک بگیرید",
+        "description": "صفحات فضایی برای تفکر در Plane هستند. یادداشت‌های جلسه را بردارید، آنها را به راحتی قالب‌بندی کنید، آیتم‌های کاری را جاسازی کنید، با استفاده از کتابخانه‌ای از کامپوننت‌ها آنها را طرح‌بندی کنید و همه را در چارچوب پروژه خود نگه دارید. برای سهولت در نوشتن هر سندی، با یک میانبر یا کلیک یک دکمه از گالیله، هوش مصنوعی Plane، کمک بگیرید.",
         "primary_button": {
-          "text": "Créez votre première page"
+          "text": "اولین صفحه خود را ایجاد کنید"
         }
       },
       "private": {
-        "title": "Pas encore de pages privées",
-        "description": "Gardez vos pensées privées ici. Quand vous serez prêt à partager, l'équipe n'est qu'à un clic.",
+        "title": "هنوز صفحه خصوصی وجود ندارد",
+        "description": "افکار خصوصی خود را در اینجا نگه دارید. هر زمان که برای اشتراک‌گذاری آماده بودید، تیم فقط یک کلیک با شما فاصله دارد.",
         "primary_button": {
-          "text": "Créez votre première page"
+          "text": "اولین صفحه خود را ایجاد کنید"
         }
       },
       "public": {
-        "title": "Pas encore de pages publiques",
-        "description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
+        "title": "هنوز صفحه عمومی وجود ندارد",
+        "description": "صفحات به اشتراک گذاشته شده با همه در پروژه خود را در اینجا مشاهده کنید.",
         "primary_button": {
-          "text": "Créez votre première page"
+          "text": "اولین صفحه خود را ایجاد کنید"
         }
       },
       "archived": {
-        "title": "Pas encore de pages archivées",
-        "description": "Archivez les pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+        "title": "هنوز صفحه بایگانی‌شده وجود ندارد",
+        "description": "صفحاتی را که در دید شما نیستند بایگانی کنید. در صورت نیاز به آنها در اینجا دسترسی پیدا کنید."
       }
     }
   },
   "command_k": {
     "empty_state": {
       "search": {
-        "title": "Aucun résultat trouvé"
+        "title": "هیچ نتیجه‌ای یافت نشد"
       }
     }
   },
   "issue_relation": {
     "empty_state": {
       "search": {
-        "title": "Aucun élément de travail correspondant trouvé"
+        "title": "هیچ آیتم کاری منطبقی یافت نشد"
       },
       "no_issues": {
-        "title": "Aucun élément de travail trouvé"
+        "title": "هیچ آیتم کاری یافت نشد"
       }
     }
   },
   "issue_comment": {
     "empty_state": {
       "general": {
-        "title": "Pas encore de commentaires",
-        "description": "Les commentaires peuvent être utilisés comme espace de discussion et de suivi pour les éléments de travail"
+        "title": "هنوز نظری وجود ندارد",
+        "description": "از نظرات می‌توان به عنوان فضایی برای بحث و پیگیری آیتم‌های کاری استفاده کرد"
       }
     }
   },
   "notification": {
-    "label": "Boîte de réception",
-    "page_label": "{workspace} - Boîte de réception",
+    "label": "صندوق ورودی",
+    "page_label": "{workspace} - صندوق ورودی",
     "options": {
-      "mark_all_as_read": "Tout marquer comme lu",
-      "mark_read": "Marquer comme lu",
-      "mark_unread": "Marquer comme non lu",
-      "refresh": "Actualiser",
-      "filters": "Filtres de la boîte de réception",
-      "show_unread": "Afficher les non lus",
-      "show_snoozed": "Afficher les reportés",
-      "show_archived": "Afficher les archivés",
-      "mark_archive": "Archiver",
-      "mark_unarchive": "Désarchiver",
-      "mark_snooze": "Reporter",
-      "mark_unsnooze": "Annuler le report"
+      "mark_all_as_read": "علامت‌گذاری همه به عنوان خوانده‌شده",
+      "mark_read": "علامت‌گذاری به عنوان خوانده‌شده",
+      "mark_unread": "علامت‌گذاری به عنوان خوانده‌نشده",
+      "refresh": "تازه‌سازی",
+      "filters": "فیلترهای صندوق ورودی",
+      "show_unread": "نمایش خوانده‌نشده‌ها",
+      "show_snoozed": "نمایش به تعویق افتاده‌ها",
+      "show_archived": "نمایش بایگانی‌شده‌ها",
+      "mark_archive": "بایگانی",
+      "mark_unarchive": "لغو بایگانی",
+      "mark_snooze": "به تعویق انداختن",
+      "mark_unsnooze": "لغو تعویق"
     },
     "toasts": {
-      "read": "Notification marquée comme lue",
-      "unread": "Notification marquée comme non lue",
-      "archived": "Notification marquée comme archivée",
-      "unarchived": "Notification marquée comme non archivée",
-      "snoozed": "Notification reportée",
-      "unsnoozed": "Report de la notification annulé"
+      "read": "اعلان به عنوان خوانده‌شده علامت‌گذاری شد",
+      "unread": "اعلان به عنوان خوانده‌نشده علامت‌گذاری شد",
+      "archived": "اعلان به عنوان بایگانی‌شده علامت‌گذاری شد",
+      "unarchived": "اعلان به عنوان لغو بایگانی علامت‌گذاری شد",
+      "snoozed": "اعلان به تعویق افتاد",
+      "unsnoozed": "تعویق اعلان لغو شد"
     },
     "empty_state": {
       "detail": {
-        "title": "Sélectionnez pour voir les détails."
+        "title": "برای مشاهده جزئیات انتخاب کنید."
       },
       "all": {
-        "title": "Aucun élément de travail assigné",
-        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être \n vues ici"
+        "title": "هیچ آیتم کاری تخصیص داده نشده است",
+        "description": "به‌روزرسانی‌های آیتم‌های کاری که به شما تخصیص داده شده‌اند را می‌توان در اینجا مشاهده کرد"
       },
       "mentions": {
-        "title": "Aucun élément de travail assigné",
-        "description": "Les mises à jour des éléments de travail qui vous sont assignés peuvent être \n vues ici"
+        "title": "هیچ آیتم کاری تخصیص داده نشده است",
+        "description": "به‌روزرسانی‌های آیتم‌های کاری که به شما تخصیص داده شده‌اند را می‌توان در اینجا مشاهده کرد"
       }
     },
     "tabs": {
-      "all": "Tout",
-      "mentions": "Mentions"
+      "all": "همه",
+      "mentions": "منشن‌ها"
     },
     "filter": {
-      "assigned": "Assigné à moi",
-      "created": "Créé par moi",
-      "subscribed": "Suivi par moi"
+      "assigned": "تخصیص‌یافته به من",
+      "created": "ایجادشده توسط من",
+      "subscribed": "دنبال‌شده توسط من"
     },
     "snooze": {
-      "1_day": "1 jour",
-      "3_days": "3 jours",
-      "5_days": "5 jours",
-      "1_week": "1 semaine",
-      "2_weeks": "2 semaines",
-      "custom": "Personnalisé"
+      "1_day": "۱ روز",
+      "3_days": "۳ روز",
+      "5_days": "۵ روز",
+      "1_week": "۱ هفته",
+      "2_weeks": "۲ هفته",
+      "custom": "سفارشی"
     }
   },
   "active_cycle": {
     "empty_state": {
       "progress": {
-        "title": "Ajoutez des éléments de travail au cycle pour voir sa progression"
+        "title": "برای مشاهده پیشرفت، آیتم‌های کاری را به چرخه اضافه کنید"
       },
       "chart": {
-        "title": "Ajoutez des éléments de travail au cycle pour voir le graphique d'avancement."
+        "title": "برای مشاهده نمودار پیشرفت، آیتم‌های کاری را به چرخه اضافه کنید."
       },
       "priority_issue": {
-        "title": "Observez en un coup d'œil les éléments de travail prioritaires traités dans le cycle."
+        "title": "با یک نگاه آیتم‌های کاری اولویت‌دار در حال انجام در چرخه را مشاهده کنید."
       },
       "assignee": {
-        "title": "Ajoutez des assignés aux éléments de travail pour voir une répartition du travail par assigné."
+        "title": "برای مشاهده تفکیک کار بر اساس مسئول، به آیتم‌های کاری مسئول تخصیص دهید."
       },
       "label": {
-        "title": "Ajoutez des étiquettes aux éléments de travail pour voir la répartition du travail par étiquette."
+        "title": "برای مشاهده تفکیک کار بر اساس برچسب، به آیتم‌های کاری برچسب اضافه کنید."
       }
     }
   },
   "disabled_project": {
     "empty_state": {
       "inbox": {
-        "title": "L'Intake n'est pas activé pour le projet.",
-        "description": "L'Intake vous aide à gérer les demandes entrantes dans votre projet et à les ajouter comme éléments de travail dans votre flux. Activez l'Intake depuis les paramètres du projet pour gérer les demandes.",
+        "title": "ورودی برای این پروژه فعال نیست.",
+        "description": "ورودی به شما کمک می‌کند درخواست‌های ورودی به پروژه خود را مدیریت کرده و آنها را به عنوان آیتم‌های کاری به جریان کاری خود اضافه کنید. برای مدیریت درخواست‌ها، ورودی را از تنظیمات پروژه فعال کنید.",
         "primary_button": {
-          "text": "Gérer les fonctionnalités"
+          "text": "مدیریت ویژگی‌ها"
         }
       },
       "cycle": {
-        "title": "Les Cycles ne sont pas activés pour ce projet.",
-        "description": "Découpez le travail en segments temporels, planifiez à rebours depuis la date limite de votre projet pour définir les dates, et progressez concrètement en équipe. Activez la fonctionnalité Cycles pour votre projet pour commencer à les utiliser.",
+        "title": "چرخه‌ها برای این پروژه فعال نیستند.",
+        "description": "کار را به بخش‌های زمانی تقسیم کنید، از تاریخ سررسید پروژه خود برنامه‌ریزی معکوس انجام دهید تا تاریخ‌ها را تعیین کنید، و به عنوان یک تیم پیشرفت ملموسی داشته باشید. برای شروع استفاده، ویژگی چرخه‌ها را برای پروژه خود فعال کنید.",
         "primary_button": {
-          "text": "Gérer les fonctionnalités"
+          "text": "مدیریت ویژگی‌ها"
         }
       },
       "module": {
-        "title": "Les Modules ne sont pas activés pour le projet.",
-        "description": "Les Modules sont les éléments constitutifs de votre projet. Activez les modules depuis les paramètres du projet pour commencer à les utiliser.",
+        "title": "ماژول‌ها برای این پروژه فعال نیستند.",
+        "description": "ماژول‌ها بلوک‌های سازنده پروژه شما هستند. برای شروع استفاده، ماژول‌ها را از تنظیمات پروژه فعال کنید.",
         "primary_button": {
-          "text": "Gérer les fonctionnalités"
+          "text": "مدیریت ویژگی‌ها"
         }
       },
       "page": {
-        "title": "Les Pages ne sont pas activées pour le projet.",
-        "description": "Les Pages sont les éléments constitutifs de votre projet. Activez les pages depuis les paramètres du projet pour commencer à les utiliser.",
+        "title": "صفحات برای این پروژه فعال نیستند.",
+        "description": "صفحات بلوک‌های سازنده پروژه شما هستند. برای شروع استفاده، صفحات را از تنظیمات پروژه فعال کنید.",
         "primary_button": {
-          "text": "Gérer les fonctionnalités"
+          "text": "مدیریت ویژگی‌ها"
         }
       },
       "view": {
-        "title": "Les Vues ne sont pas activées pour le projet.",
-        "description": "Les Vues sont les éléments constitutifs de votre projet. Activez les vues depuis les paramètres du projet pour commencer à les utiliser.",
+        "title": "نماها برای این پروژه فعال نیستند.",
+        "description": "نماها بلوک‌های سازنده پروژه شما هستند. برای شروع استفاده، نماها را از تنظیمات پروژه فعال کنید.",
         "primary_button": {
-          "text": "Gérer les fonctionnalités"
+          "text": "مدیریت ویژگی‌ها"
         }
       }
     }
   },
   "workspace_draft_issues": {
-    "draft_an_issue": "Créer un brouillon d'élément de travail",
+    "draft_an_issue": "ایجاد پیش‌نویس آیتم کاری",
     "empty_state": {
-      "title": "Les éléments de travail partiellement rédigés, et bientôt les commentaires, apparaîtront ici.",
-      "description": "Pour essayer cela, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
+      "title": "آیتم‌های کاری نیمه‌تمام، و به زودی نظرات، در اینجا ظاهر می‌شوند.",
+      "description": "برای امتحان کردن این قابلیت، شروع به افزودن یک آیتم کاری کنید و آن را نیمه‌کاره رها کنید یا اولین پیش‌نویس خود را در زیر ایجاد کنید. 😉",
       "primary_button": {
-        "text": "Créez votre premier brouillon"
+        "text": "اولین پیش‌نویس خود را ایجاد کنید"
       }
     },
     "delete_modal": {
-      "title": "Supprimer le brouillon",
-      "description": "Êtes-vous sûr de vouloir supprimer ce brouillon ? Cette action ne peut pas être annulée."
+      "title": "حذف پیش‌نویس",
+      "description": "آیا از حذف این پیش‌نویس مطمئن هستید؟ این عمل قابل بازگشت نیست."
     },
     "toasts": {
       "created": {
-        "success": "Brouillon créé",
-        "error": "L'élément de travail n'a pas pu être créé. Veuillez réessayer."
+        "success": "پیش‌نویس ایجاد شد",
+        "error": "ایجاد آیتم کاری ناموفق بود. لطفاً دوباره تلاش کنید."
       },
       "deleted": {
-        "success": "Brouillon supprimé"
+        "success": "پیش‌نویس حذف شد"
       }
     }
   },
   "stickies": {
-    "title": "Vos notes adhésives",
-    "placeholder": "cliquez pour écrire ici",
-    "all": "Toutes les notes adhésives",
-    "no-data": "Notez une idée, capturez une révélation ou enregistrez une inspiration. Ajoutez une note adhésive pour commencer.",
-    "add": "Ajouter une note adhésive",
-    "search_placeholder": "Rechercher par titre",
-    "delete": "Supprimer la note adhésive",
-    "delete_confirmation": "Êtes-vous sûr de vouloir supprimer cette note adhésive ?",
+    "title": "یادداشت‌های چسبان شما",
+    "placeholder": "برای نوشتن اینجا کلیک کنید",
+    "all": "همه یادداشت‌های چسبان",
+    "no-data": "یک ایده را یادداشت کنید، یک درک ناگهانی را ثبت کنید یا یک الهام را ذخیره کنید. برای شروع یک یادداشت چسبان اضافه کنید.",
+    "add": "افزودن یادداشت چسبان",
+    "search_placeholder": "جستجو بر اساس عنوان",
+    "delete": "حذف یادداشت چسبان",
+    "delete_confirmation": "آیا از حذف این یادداشت چسبان مطمئن هستید؟",
     "empty_state": {
-      "simple": "Notez une idée, capturez une révélation ou enregistrez une inspiration. Ajoutez une note adhésive pour commencer.",
+      "simple": "یک ایده را یادداشت کنید، یک درک ناگهانی را ثبت کنید یا یک الهام را ذخیره کنید. برای شروع یک یادداشت چسبان اضافه کنید.",
       "general": {
-        "title": "Les notes adhésives sont des notes rapides et des tâches que vous prenez à la volée.",
-        "description": "Capturez vos pensées et idées facilement en créant des notes adhésives que vous pouvez consulter à tout moment et de n'importe où.",
+        "title": "یادداشت‌های چسبان یادداشت‌ها و وظایف سریعی هستند که در لحظه ثبت می‌کنید.",
+        "description": "افکار و ایده‌های خود را به راحتی با ایجاد یادداشت‌های چسبانی که می‌توانید در هر زمان و از هر مکانی به آنها مراجعه کنید، ثبت کنید.",
         "primary_button": {
-          "text": "Ajouter une note adhésive"
+          "text": "افزودن یادداشت چسبان"
         }
       },
       "search": {
-        "title": "Cela ne correspond à aucune de vos notes adhésives.",
-        "description": "Essayez un terme différent ou faites-nous savoir\nsi vous êtes sûr que votre recherche est correcte.",
+        "title": "این با هیچ‌کدام از یادداشت‌های چسبان شما مطابقت ندارد.",
+        "description": "یک عبارت دیگر را امتحان کنید یا اگر مطمئن هستید جستجوی شما صحیح است به ما اطلاع دهید.",
         "primary_button": {
-          "text": "Ajouter une note adhésive"
+          "text": "افزودن یادداشت چسبان"
         }
       }
     },
     "toasts": {
       "errors": {
-        "wrong_name": "Le nom de la note adhésive ne peut pas dépasser 100 caractères.",
-        "already_exists": "Il existe déjà une note adhésive sans description"
+        "wrong_name": "نام یادداشت چسبان نمی‌تواند بیش از ۱۰۰ کاراکتر باشد.",
+        "already_exists": "یک یادداشت چسبان بدون توضیحات از قبل وجود دارد"
       },
       "created": {
-        "title": "Note adhésive créée",
-        "message": "La note adhésive a été créée avec succès"
+        "title": "یادداشت چسبان ایجاد شد",
+        "message": "یادداشت چسبان با موفقیت ایجاد شد"
       },
       "not_created": {
-        "title": "Note adhésive non créée",
-        "message": "La note adhésive n'a pas pu être créée"
+        "title": "یادداشت چسبان ایجاد نشد",
+        "message": "ایجاد یادداشت چسبان ناموفق بود"
       },
       "updated": {
-        "title": "Note adhésive mise à jour",
-        "message": "La note adhésive a été mise à jour avec succès"
+        "title": "یادداشت چسبان به‌روزرسانی شد",
+        "message": "یادداشت چسبان با موفقیت به‌روزرسانی شد"
       },
       "not_updated": {
-        "title": "Note adhésive non mise à jour",
-        "message": "La note adhésive n'a pas pu être mise à jour"
+        "title": "یادداشت چسبان به‌روزرسانی نشد",
+        "message": "به‌روزرسانی یادداشت چسبان ناموفق بود"
       },
       "removed": {
-        "title": "Note adhésive supprimée",
-        "message": "La note adhésive a été supprimée avec succès"
+        "title": "یادداشت چسبان حذف شد",
+        "message": "یادداشت چسبان با موفقیت حذف شد"
       },
       "not_removed": {
-        "title": "Note adhésive non supprimée",
-        "message": "La note adhésive n'a pas pu être supprimée"
+        "title": "یادداشت چسبان حذف نشد",
+        "message": "حذف یادداشت چسبان ناموفق بود"
       }
     }
   },
   "role_details": {
     "guest": {
-      "title": "Invité",
-      "description": "Les membres externes des organisations peuvent être invités en tant qu'invités."
+      "title": "مهمان",
+      "description": "اعضای خارجی سازمان‌ها می‌توانند به عنوان مهمان دعوت شوند."
     },
     "member": {
-      "title": "Membre",
-      "description": "Capacité à lire, écrire, modifier et supprimer des entités dans les projets, cycles et modules"
+      "title": "عضو",
+      "description": "توانایی خواندن، نوشتن، ویرایش و حذف موجودیت‌ها در پروژه‌ها، چرخه‌ها و ماژول‌ها"
     },
     "admin": {
-      "title": "Administrateur",
-      "description": "Toutes les permissions sont activées dans l'espace de travail."
+      "title": "مدیر",
+      "description": "تمام مجوزها در فضای کاری فعال هستند."
     }
   },
   "user_roles": {
-    "product_or_project_manager": "Chef de produit / Chef de projet",
-    "development_or_engineering": "Développement / Ingénierie",
-    "founder_or_executive": "Fondateur / Dirigeant",
-    "freelancer_or_consultant": "Freelance / Consultant",
-    "marketing_or_growth": "Marketing / Croissance",
-    "sales_or_business_development": "Ventes / Développement commercial",
-    "support_or_operations": "Support / Opérations",
-    "student_or_professor": "Étudiant / Professeur",
-    "human_resources": "Ressources Humaines",
-    "other": "Autre"
+    "product_or_project_manager": "مدیر محصول / مدیر پروژه",
+    "development_or_engineering": "توسعه / مهندسی",
+    "founder_or_executive": "بنیان‌گذار / مدیر اجرایی",
+    "freelancer_or_consultant": "فریلنسر / مشاور",
+    "marketing_or_growth": "بازاریابی / رشد",
+    "sales_or_business_development": "فروش / توسعه کسب‌وکار",
+    "support_or_operations": "پشتیبانی / عملیات",
+    "student_or_professor": "دانشجو / استاد",
+    "human_resources": "منابع انسانی",
+    "other": "دیگر"
   },
   "importer": {
     "github": {
-      "title": "GitHub",
-      "description": "Importez des éléments de travail depuis les dépôts GitHub et synchronisez-les."
+      "title": "گیت‌هاب",
+      "description": "آیتم‌های کاری را از مخازن گیت‌هاب وارد کرده و آنها را همگام‌سازی کنید."
     },
     "jira": {
-      "title": "Jira",
-      "description": "Importez des éléments de travail et des epics depuis les projets et epics Jira."
+      "title": "جیرا",
+      "description": "آیتم‌های کاری و اپیک‌ها را از پروژه‌ها و اپیک‌های جیرا وارد کنید."
     }
   },
   "exporter": {
     "csv": {
       "title": "CSV",
-      "description": "Exportez les éléments de travail vers un fichier CSV.",
-      "short_description": "Exporter en csv"
+      "description": "آیتم‌های کاری را به یک فایل CSV خروجی بگیرید.",
+      "short_description": "خروجی گرفتن به csv"
     },
     "excel": {
       "title": "Excel",
-      "description": "Exportez les éléments de travail vers un fichier Excel.",
-      "short_description": "Exporter en excel"
+      "description": "آیتم‌های کاری را به یک فایل Excel خروجی بگیرید.",
+      "short_description": "خروجی گرفتن به excel"
     },
     "xlsx": {
       "title": "Excel",
-      "description": "Exportez les éléments de travail vers un fichier Excel.",
-      "short_description": "Exporter en excel"
+      "description": "آیتم‌های کاری را به یک فایل Excel خروجی بگیرید.",
+      "short_description": "خروجی گرفتن به excel"
     },
     "json": {
       "title": "JSON",
-      "description": "Exportez les éléments de travail vers un fichier JSON.",
-      "short_description": "Exporter en json"
+      "description": "آیتم‌های کاری را به یک فایل JSON خروجی بگیرید.",
+      "short_description": "خروجی گرفتن به json"
     }
   },
   "default_global_view": {
-    "all_issues": "Tous les éléments de travail",
-    "assigned": "Assignés",
-    "created": "Créés",
-    "subscribed": "Suivis"
+    "all_issues": "همه آیتم‌های کاری",
+    "assigned": "تخصیص‌یافته",
+    "created": "ایجادشده",
+    "subscribed": "دنبال‌شده"
   },
   "themes": {
     "theme_options": {
       "system_preference": {
-        "label": "Préférence système"
+        "label": "تنظیمات سیستم"
       },
       "light": {
-        "label": "Clair"
+        "label": "روشن"
       },
       "dark": {
-        "label": "Sombre"
+        "label": "تاریک"
       },
       "light_contrast": {
-        "label": "Contraste clair élevé"
+        "label": "کنتراست بالای روشن"
       },
       "dark_contrast": {
-        "label": "Contraste sombre élevé"
+        "label": "کنتراست بالای تاریک"
       },
       "custom": {
-        "label": "Thème personnalisé"
+        "label": "پوسته سفارشی"
       }
     }
   },
   "project_modules": {
     "status": {
-      "backlog": "Backlog",
-      "planned": "Planifié",
-      "in_progress": "En cours",
-      "paused": "En pause",
-      "completed": "Terminé",
-      "cancelled": "Annulé"
+      "backlog": "بک‌لاگ",
+      "planned": "برنامه‌ریزی شده",
+      "in_progress": "در حال انجام",
+      "paused": "متوقف شده",
+      "completed": "تکمیل شده",
+      "cancelled": "لغو شده"
     },
     "layout": {
-      "list": "Vue liste",
-      "board": "Vue galerie",
-      "timeline": "Vue chronologique"
+      "list": "نمای لیستی",
+      "board": "نمای گالری",
+      "timeline": "نمای خط زمانی"
     },
     "order_by": {
-      "name": "Nom",
-      "progress": "Progression",
-      "issues": "Nombre d'éléments de travail",
-      "due_date": "Date d'échéance",
-      "created_at": "Date de création",
-      "manual": "Manuel"
+      "name": "نام",
+      "progress": "پیشرفت",
+      "issues": "تعداد آیتم‌های کاری",
+      "due_date": "تاریخ سررسید",
+      "created_at": "تاریخ ایجاد",
+      "manual": "دستی"
     }
   },
   "cycle": {
-    "label": "{count, plural, one {Cycle} other {Cycles}}",
-    "no_cycle": "Pas de cycle"
+    "label": "{count, plural, one {چرخه} other {چرخه‌ها}}",
+    "no_cycle": "بدون چرخه"
   },
   "module": {
-    "label": "{count, plural, one {Module} other {Modules}}",
-    "no_module": "Pas de module"
+    "label": "{count, plural, one {ماژول} other {ماژول‌ها}}",
+    "no_module": "بدون ماژول"
   },
   "description_versions": {
-    "last_edited_by": "Dernière modification par",
-    "previously_edited_by": "Précédemment modifié par",
-    "edited_by": "Modifié par"
+    "last_edited_by": "آخرین ویرایش توسط",
+    "previously_edited_by": "قبلاً ویرایش شده توسط",
+    "edited_by": "ویرایش شده توسط"
   },
   "self_hosted_maintenance_message": {
-    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
-    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane راه‌اندازی نشد. این ممکن است به دلیل عدم موفقیت در راه‌اندازی یک یا چند سرویس Plane باشد.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "برای اطمینان، مشاهده لاگ‌ها را از setup.sh و لاگ‌های Docker انتخاب کنید."
   },
-
   "page_navigation_pane": {
     "tabs": {
       "outline": {
-        "label": "Plan",
+        "label": "طرح کلی",
         "empty_state": {
-          "title": "Titres manquants",
-          "description": "Ajoutons quelques titres à cette page pour les voir ici."
+          "title": "عناوین موجود نیستند",
+          "description": "بیایید چند عنوان به این صفحه اضافه کنیم تا آنها را در اینجا ببینیم."
         }
       },
       "info": {
-        "label": "Info",
+        "label": "اطلاعات",
         "document_info": {
-          "words": "Mots",
-          "characters": "Caractères",
-          "paragraphs": "Paragraphes",
-          "read_time": "Temps de lecture"
+          "words": "کلمات",
+          "characters": "کاراکترها",
+          "paragraphs": "پاراگراف‌ها",
+          "read_time": "زمان مطالعه"
         },
         "actors_info": {
-          "edited_by": "Modifié par",
-          "created_by": "Créé par"
+          "edited_by": "ویرایش شده توسط",
+          "created_by": "ایجاد شده توسط"
         },
         "version_history": {
-          "label": "Historique des versions",
-          "current_version": "Version actuelle"
+          "label": "تاریخچه نسخه‌ها",
+          "current_version": "نسخه فعلی"
         }
       },
       "assets": {
-        "label": "Ressources",
-        "download_button": "Télécharger",
+        "label": "منابع",
+        "download_button": "دانلود",
         "empty_state": {
-          "title": "Images manquantes",
-          "description": "Ajoutez des images pour les voir ici."
+          "title": "تصاویر موجود نیستند",
+          "description": "برای مشاهده تصاویر در اینجا، آنها را اضافه کنید."
         }
       }
     },
-    "open_button": "Ouvrir le panneau de navigation",
-    "close_button": "Fermer le panneau de navigation",
-    "outline_floating_button": "Ouvrir le plan"
+    "open_button": "باز کردن پنل ناوبری",
+    "close_button": "بستن پنل ناوبری",
+    "outline_floating_button": "باز کردن طرح کلی"
   }
 }
