@@ -42,15 +42,15 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
 
   return (
     <div className="flex flex-col items-center my-6">
-      <h3 className="text-xl font-semibold text-center">
+      <h2 className="text-xl font-semibold text-center">
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
-      </h3>
-      <h6 className="flex items-center gap-2 font-medium text-custom-text-400">
+      </h2>
+      <h5 className="flex items-center gap-2 font-medium text-custom-text-400">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}
         </div>
-      </h6>
+      </h5>
     </div>
   );
 };
