@@ -10,7 +10,7 @@ type Props = {
     workspaceSlug: string;
     projectId: string;
   };
-  searchParams: Record<"board" | "peekId", string | undefined>;
+  searchParams: Record<"board" | "peekId", string | string[] | undefined>;
 };
 
 export default async function IssuesPage(props: Props) {
@@ -31,8 +31,8 @@ export default async function IssuesPage(props: Props) {
   if (response?.entity_name === "project") {
     url = `/issues/${response?.anchor}`;
     const params = new URLSearchParams();
-    if (board) params.append("board", board);
-    if (peekId) params.append("peekId", peekId);
+    if (board) params.append("board", String(board));
+    if (peekId) params.append("peekId", String(peekId));
     if (params.toString()) url += `?${params.toString()}`;
     redirect(url);
   } else {

@@ -1,5 +1,3 @@
-import { type ReactNode } from "react";
-
 export enum E_PASSWORD_STRENGTH {
   EMPTY = "empty",
   LENGTH_NOT_VALID = "length_not_valid",
@@ -72,7 +70,7 @@ export type TAuthErrorInfo = {
   type: EErrorAlertType;
   code: EAuthErrorCodes;
   title: string;
-  message: string | ReactNode;
+  message: string | React.ReactNode;
 };
 
 export enum EAdminAuthErrorCodes {
@@ -92,7 +90,7 @@ export type TAdminAuthErrorInfo = {
   type: EErrorAlertType;
   code: EAdminAuthErrorCodes;
   title: string;
-  message: string | ReactNode;
+  message: string | React.ReactNode;
 };
 
 export enum EAuthErrorCodes {

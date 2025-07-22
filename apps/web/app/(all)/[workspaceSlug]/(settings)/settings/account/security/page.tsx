@@ -88,9 +88,13 @@ const SecurityPage = observer(() => {
         message: t("auth.common.password.toast.change_password.success.message"),
       });
     } catch (error: unknown) {
-      const err = error as Error & { error_code?: string };
-      const code = err.error_code?.toString();
-      const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
+      let errorInfo = undefined;
+      if (error instanceof Error) {
+        const err = error as Error & { error_code?: string };
+        const code = err.error_code?.toString();
+        errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
+      }
+
       setToast({
         type: TOAST_TYPE.ERROR,
         title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),
