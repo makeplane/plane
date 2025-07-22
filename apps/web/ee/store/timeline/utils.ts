@@ -204,12 +204,12 @@ export function getNewRelationsMap(
 
         const startPosition = {
           x: startX,
-          y: (originBlockIndex + 0.5) * BLOCK_HEIGHT,
+          y: (originBlockIndex + 0.5) * BLOCK_HEIGHT + (originBlock.meta?.index ?? 0) * BLOCK_HEIGHT,
         };
 
         const endPosition = {
           x: endX,
-          y: (destinationBlockIndex + 0.5) * BLOCK_HEIGHT,
+          y: (destinationBlockIndex + 0.5) * BLOCK_HEIGHT + (destinationBlock.meta?.index ?? 0) * BLOCK_HEIGHT,
         };
 
         const relationObject: Relation = {
@@ -526,11 +526,13 @@ export const getPositionOfBlock = (
   const blockedByBlock = blocksMap[blockId];
   const blockedByIndex = blockIds?.indexOf(blockId);
 
+  const positionIndex = blockedByBlock.meta?.index ?? 0;
+
   if (!blockedByBlock || isNil(blockedByIndex) || blockedByIndex < 0) return undefined;
 
   const position = {
     x: blockedByBlock.position?.marginLeft ?? 0,
-    y: (blockedByIndex + 0.5) * BLOCK_HEIGHT,
+    y: (blockedByIndex + 0.5) * BLOCK_HEIGHT + positionIndex * BLOCK_HEIGHT,
   };
 
   if (dependencyPosition === EDependencyPosition.END) {

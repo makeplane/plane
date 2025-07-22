@@ -1,6 +1,6 @@
 import { EUpdateStatus } from "@plane/types";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/ui";
-import { cn, generateIconColors } from "@plane/utils";
+import { capitalizeFirstLetter, cn, generateIconColors } from "@plane/utils";
 
 export const StatusOptions = {
   [EUpdateStatus.ON_TRACK]: {
@@ -22,6 +22,8 @@ type TUpdateStatusIcons = {
   statusType?: EUpdateStatus;
   showBackground?: boolean;
   size?: "sm" | "md";
+  showText?: boolean;
+  className?: string;
 };
 
 const sizes = {
@@ -35,7 +37,13 @@ const sizes = {
   },
 };
 
-export const UpdateStatusIcons = ({ statusType, showBackground = true, size = "sm" }: TUpdateStatusIcons) => {
+export const UpdateStatusIcons = ({
+  statusType,
+  showBackground = true,
+  size = "sm",
+  showText = false,
+  className = "",
+}: TUpdateStatusIcons) => {
   const status = statusType ? StatusOptions[statusType] : null;
   const color = status?.color ? generateIconColors(status?.color) : null;
   const iconColor = color ? color.foreground : "transparent";
@@ -46,15 +54,17 @@ export const UpdateStatusIcons = ({ statusType, showBackground = true, size = "s
   return (
     <>
       {showBackground ? (
-        <span
+        <div
           style={{
             backgroundColor: backgroundColor,
           }}
           className={cn(
             sizes[size].container,
-            "flex-shrink-0 grid place-items-center rounded-full bg-custom-background-80",
+            "flex-shrink-0 place-items-center rounded-full bg-custom-background-80 flex gap-1 p-1 justify-center",
+            className,
             {
               "border border-dashed border-custom-border-300": !status,
+              "px-2 w-auto": showText,
             }
           )}
         >
@@ -65,9 +75,15 @@ export const UpdateStatusIcons = ({ statusType, showBackground = true, size = "s
               style={{
                 color: iconColor ?? "#ffffff", // fallback color
               }}
+              className="flex-shrink-0"
             />
           )}
-        </span>
+          {showText && (
+            <span className="text-xs font-semibold" style={{ color: iconColor }}>
+              {statusType && capitalizeFirstLetter(statusType.replaceAll("-", " ").toLowerCase())}
+            </span>
+          )}
+        </div>
       ) : (
         status && (
           <status.icon

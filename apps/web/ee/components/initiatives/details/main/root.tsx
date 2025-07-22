@@ -11,6 +11,7 @@ import { InitiativeCollapsibleSection } from "./collapsible-section-root";
 import { InitiativeInfoSection } from "./info-section-root";
 import { InitiativeModalsRoot } from "./modals";
 import { InitiativeProgressSection } from "./progress-section-root";
+import { ScopeBreakdown } from "./scope-breakdown";
 
 type Props = {
   workspaceSlug: string;
@@ -27,7 +28,20 @@ export const InitiativeMainContentRoot: FC<Props> = observer((props) => {
 
   return (
     <MainWrapper isSidebarOpen={!initiativesSidebarCollapsed}>
-      <InitiativeInfoSection workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+      <InitiativeInfoSection
+        workspaceSlug={workspaceSlug}
+        initiativeId={initiativeId}
+        disabled={disabled}
+        toggleProjectModal={toggleProjectModal}
+        toggleEpicModal={toggleEpicModal}
+      />
+      <ScopeBreakdown
+        workspaceSlug={workspaceSlug}
+        initiativeId={initiativeId}
+        toggleProjectModal={toggleProjectModal}
+        toggleEpicModal={toggleEpicModal}
+        disabled={disabled}
+      />
       <InitiativeProgressSection initiativeId={initiativeId} />
       <InitiativeCollapsibleSection
         workspaceSlug={workspaceSlug}

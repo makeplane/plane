@@ -52,9 +52,9 @@ export const InitiativeCollapsibleSection: FC<Props> = observer((props) => {
   const projectCount = projectsIds?.length ?? 0;
 
   const sectionOrder = useMemo(() => {
-    const defaultOrder = ["epics", "projects", "links", "attachments"];
+    const defaultOrder = ["links", "attachments"];
     if (epicCount === 0 && projectCount > 0) {
-      return ["projects", "epics", "links", "attachments"];
+      return ["links", "attachments"];
     }
     return defaultOrder;
   }, [epicCount, projectCount]);

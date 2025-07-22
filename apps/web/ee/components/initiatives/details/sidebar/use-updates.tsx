@@ -13,6 +13,14 @@ export const useInitiativeUpdates = (workspaceSlug: string, initiativeId: string
         const response = await initiativeUpdateService.getUpdates(workspaceSlug, initiativeId, params);
         return response;
       },
+      fetchProjectUpdates: async (params?: { search: EUpdateStatus }) => {
+        const response = await initiativeUpdateService.getUpdates(workspaceSlug, initiativeId, params);
+        return response.project_updates;
+      },
+      fetchEpicUpdates: async (params?: { search: EUpdateStatus }) => {
+        const response = await initiativeUpdateService.getUpdates(workspaceSlug, initiativeId, params);
+        return response.epic_updates;
+      },
     };
     return ops;
   }, [workspaceSlug, initiativeId]);

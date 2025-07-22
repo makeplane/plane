@@ -97,7 +97,7 @@ export const ProjectItem = observer((props: Props) => {
       itemClassName="overflow-visible"
       isMobile={isMobile}
       parentRef={parentRef}
-      className="last:pb-0 last:border-b-0"
+      className="last:pb-0"
     />
   );
 });

@@ -67,6 +67,7 @@ export const InitiativeBlock = observer((props: Props) => {
             workspaceSlug={workspaceSlug.toString()}
             initiativeId={initiativeId}
             analytics={initiativeStats}
+            showTabs
           />
           <ControlLink
             className="relative flex w-full items-center gap-3 overflow-hidden"

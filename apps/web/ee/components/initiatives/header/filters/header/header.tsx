@@ -1,13 +1,21 @@
 "use client";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { PanelRight } from "lucide-react";
+import { LayersIcon, PanelRight, Rss } from "lucide-react";
+import { EInitiativeNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // plane imports
 import { ICustomSearchSelectOption } from "@plane/types";
-import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, InitiativeIcon } from "@plane/ui";
+import {
+  BreadcrumbNavigationDropdown,
+  BreadcrumbNavigationSearchDropdown,
+  Breadcrumbs,
+  Header,
+  InitiativeIcon,
+  TContextMenuItem,
+} from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink, SwitcherLabel } from "@/components/common";
@@ -19,7 +27,12 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { InitiativeQuickActions } from "@/plane-web/components/initiatives/components/quick-actions";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
-export const InitiativesDetailsHeader = observer(() => {
+type TProps = {
+  selectedNavigationKey: EInitiativeNavigationItem;
+};
+
+export const InitiativesDetailsHeader = observer((props: TProps) => {
+  const { selectedNavigationKey } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug, initiativeId } = useParams();
@@ -35,6 +48,23 @@ export const InitiativesDetailsHeader = observer(() => {
   // derived values
   const initiativesDetails = initiativeId ? getInitiativeById(initiativeId.toString()) : undefined;
 
+  const TEAM_NAVIGATION_ITEMS: TContextMenuItem[] = useMemo(
+    () => [
+      {
+        key: EInitiativeNavigationItem.OVERVIEW,
+        title: EInitiativeNavigationItem.OVERVIEW,
+        icon: Rss,
+        action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}`),
+      },
+      {
+        key: EInitiativeNavigationItem.SCOPE,
+        title: EInitiativeNavigationItem.SCOPE,
+        icon: LayersIcon,
+        action: () => router.push(`/${workspaceSlug}/initiatives/${initiativeId}/scope`),
+      },
+    ],
+    [workspaceSlug, initiativeId, router]
+  );
   const switcherOptions = initiativeIds
     ?.map((id) => {
       const _initiative = getInitiativeById(id);
@@ -79,6 +109,14 @@ export const InitiativesDetailsHeader = observer(() => {
                   </Breadcrumbs.Icon>
                 }
                 isLast
+              />
+            }
+          />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbNavigationDropdown
+                selectedItemKey={selectedNavigationKey}
+                navigationItems={TEAM_NAVIGATION_ITEMS}
               />
             }
           />

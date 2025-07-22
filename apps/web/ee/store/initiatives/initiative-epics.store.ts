@@ -14,6 +14,7 @@ export interface IInitiativeEpicStore {
 
   // actions
   fetchInitiativeEpics: (workspaceSlug: string, initiativeId: string) => string[] | undefined;
+  fetchInitiativeEpicsDetail: (workspaceSlug: string, initiativeId: string) => string[] | undefined;
   getInitiativeEpicsById: (initiativeId: string) => string[] | undefined;
   removeEpicFromInitiative: (workspaceSlug: string, initiativeId: string, epicId: string) => Promise<void>;
   addEpicsToInitiative: (workspaceSlug: string, initiativeId: string, epicIds: string[]) => Promise<void>;
@@ -43,6 +44,7 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
       fetchInitiativeEpics: action,
       removeEpicFromInitiative: action,
       addEpicsToInitiative: action,
+      fetchInitiativeEpicsDetail: action,
     });
 
     this.initiativeService = service;
@@ -144,12 +146,29 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
   };
 
   /**
+   * Fetch the initiative epics detail
+   * @param workspaceSlug - The workspace slug
+   * @param initiativeId - The initiative id
+   * @returns The initiative epics
+   */
+  fetchInitiativeEpicsDetail = (workspaceSlug: string, initiativeId: string): string[] | undefined => {
+    // Start the async operation
+    this.fetchInitiativeEpicsAsync(workspaceSlug, initiativeId, true);
+    // Return the current value synchronously
+    return this.initiativeEpicsMap[initiativeId];
+  };
+
+  /**
    * Fetch the initiative epics asynchronously
    * @param workspaceSlug - The workspace slug
    * @param initiativeId - The initiative id
    * @returns The initiative epics
    */
-  private fetchInitiativeEpicsAsync = async (workspaceSlug: string, initiativeId: string) => {
+  private fetchInitiativeEpicsAsync = async (
+    workspaceSlug: string,
+    initiativeId: string,
+    fetchDetail: boolean = false
+  ) => {
     try {
       runInAction(() => {
         this.initiativeEpicLoader = {
@@ -159,7 +178,15 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
       });
 
       // fetch the initiative epics
-      const response = await this.initiativeService.fetchInitiativeEpics(workspaceSlug, initiativeId);
+      let response;
+      if (fetchDetail) {
+        const detailResponse = await this.initiativeService.fetchInitiativeEpicsDetail(workspaceSlug, initiativeId, {
+          expand: "issue_relation,issue_related",
+        });
+        response = detailResponse.results;
+      } else {
+        response = await this.initiativeService.fetchInitiativeEpics(workspaceSlug, initiativeId);
+      }
 
       const transformedResponse = response.map((epic) => ({
         ...epic,
@@ -179,6 +206,8 @@ export class InitiativeEpicStore implements IInitiativeEpicStore {
           [initiativeId]: "loaded",
         };
       });
+
+      if (fetchDetail) this.rootStore.issue.issueDetail.relation.extractRelationsFromIssues(transformedResponse);
 
       this.fetchInitiativeEpicStats(workspaceSlug, initiativeId);
       return responseIds;

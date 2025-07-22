@@ -356,20 +356,110 @@ class InitiativeLabelEndpoint(BaseAPIView):
 
 
 class InitiativeAnalyticsEndpoint(BaseAPIView):
+    def issues_counts(self, project_ids, initiative_epics, related_issues_ids):
+        # Annotate the counts for different states in one query
+        issues_counts = Issue.objects.filter(
+            Q(issue_intake__status__in=[-1, 1, 2])
+            | Q(issue_intake__status__isnull=True),
+            deleted_at__isnull=True,
+            archived_at__isnull=True,
+            project__archived_at__isnull=True,
+            is_draft=False,
+            workspace__slug=self.kwargs.get("slug"),
+        ).aggregate(
+            # Project counts with single filter
+            **{
+                f"{state}_issues": Count(
+                    "id",
+                    filter=Q(
+                        Q(project_id__in=project_ids),
+                        state__group=state,
+                    ),
+                )
+                for state in [
+                    "backlog",
+                    "unstarted",
+                    "started",
+                    "completed",
+                    "cancelled",
+                ]
+            },
+            # Epic counts with single filter
+            **{
+                f"epic_{state}_issues": Count(
+                    "id",
+                    filter=Q(
+                        Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
+                        state__group=state,
+                    ),
+                )
+                for state in [
+                    "backlog",
+                    "unstarted",
+                    "started",
+                    "completed",
+                    "cancelled",
+                ]
+            },
+        )
+        return issues_counts
+
+    def updates_counts(self, project_ids, initiative_epics):
+        updates_counts = (
+            EntityUpdates.objects.filter(
+                Q(
+                    Q(project_id__in=project_ids, entity_type="PROJECT")
+                    | Q(epic_id__in=initiative_epics, entity_type="EPIC")
+                ),
+                workspace__slug=self.kwargs.get("slug"),
+            )
+            .order_by("project_id", "epic_id", "-created_at")
+            .distinct("project_id", "epic_id")
+            .values("entity_type", "status")
+        )
+
+        # Count in Python
+        project_counts = {"ON-TRACK": 0, "OFF-TRACK": 0, "AT-RISK": 0}
+        epic_counts = {"ON-TRACK": 0, "OFF-TRACK": 0, "AT-RISK": 0}
+
+        for update in updates_counts:
+            if update["entity_type"] == "PROJECT":
+                project_counts[update["status"]] += 1
+            else:  # EPIC
+                epic_counts[update["status"]] += 1
+
+        updates_counts = {
+            "project": {
+                "on_track_updates": project_counts["ON-TRACK"],
+                "off_track_updates": project_counts["OFF-TRACK"],
+                "at_risk_updates": project_counts["AT-RISK"],
+            },
+            "epic": {
+                "on_track_updates": epic_counts["ON-TRACK"],
+                "off_track_updates": epic_counts["OFF-TRACK"],
+                "at_risk_updates": epic_counts["AT-RISK"],
+            },
+        }
+
+        return updates_counts
+
     @check_feature_flag(FeatureFlag.INITIATIVES)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, initiative_id):
-        # Get all project IDs linked to the initiative in the workspace
-        project_ids = InitiativeProject.objects.filter(
-            workspace__slug=slug, initiative_id=initiative_id
-        ).values_list("project_id", flat=True)
-
-        # also get the epics which are part of the initiative
-        initiative_epics = list(
-            InitiativeEpic.objects.filter(
-                workspace__slug=slug, initiative_id=initiative_id
-            ).values_list("epic_id", flat=True)
+        initiative = (
+            Initiative.objects.filter(id=initiative_id, workspace__slug=slug)
+            .prefetch_related("projects", "initiative_epics")
+            .first()
         )
+
+        if not initiative:
+            return Response(
+                {"error": "Initiative not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Now we can get the IDs from the prefetched relations
+        project_ids = [p.project_id for p in initiative.projects.all()]
+        initiative_epics = [e.epic_id for e in initiative.initiative_epics.all()]
 
         related_issues_ids = [
             issue_id
@@ -377,56 +467,49 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             for issue_id in get_all_related_issues(epic_id)
         ]
 
-        # Annotate the counts for different states in one query
-        issues = Issue.objects.filter(
-            Q(
-                Q(type__is_epic=False) | Q(type__isnull=True),
-                Q(issue_intake__status__in=[-1, 1, 2])
-                | Q(issue_intake__status__isnull=True),
-                project_id__in=project_ids,
-                deleted_at__isnull=True,
-                archived_at__isnull=True,
-                project__archived_at__isnull=True,
-                is_draft=False,
-            )
-            | Q(id__in=initiative_epics)
-            | Q(id__in=related_issues_ids),
-            workspace__slug=slug,
-        ).aggregate(
-            backlog_issues=Count("id", filter=Q(state__group="backlog")),
-            unstarted_issues=Count("id", filter=Q(state__group="unstarted")),
-            started_issues=Count("id", filter=Q(state__group="started")),
-            completed_issues=Count("id", filter=Q(state__group="completed")),
-            cancelled_issues=Count("id", filter=Q(state__group="cancelled")),
+        issues_counts = self.issues_counts(
+            project_ids, initiative_epics, related_issues_ids
         )
-        latest_updates = EntityUpdates.objects.filter(
-            Q(project_id__in=project_ids, entity_type="PROJECT")
-            | Q(epic_id__in=initiative_epics, entity_type="EPIC"),
-            workspace__slug=slug,
-        ).order_by("project_id", "epic_id", "-created_at")
 
-        # Get the latest update for each project/epic combination
-        seen_combinations = set()
-        status_counts = defaultdict(int)
+        updates_counts = self.updates_counts(project_ids, initiative_epics)
 
-        for update in latest_updates:
-            key = (update.project_id, update.epic_id)
-            if key not in seen_combinations:
-                seen_combinations.add(key)
-                status_counts[update.status] += 1
-
-        # Get counts from the status_counts dictionary
-        on_track_updates_count = status_counts.get("ON-TRACK", 0)
-        off_track_updates_count = status_counts.get("OFF-TRACK", 0)
-        at_risk_updates_count = status_counts.get("AT-RISK", 0)
+        result = {
+            "epic": {
+                "on_track_updates": updates_counts.get("epic", {}).get(
+                    "on_track_updates", 0
+                ),
+                "off_track_updates": updates_counts.get("epic", {}).get(
+                    "off_track_updates", 0
+                ),
+                "at_risk_updates": updates_counts.get("epic", {}).get(
+                    "at_risk_updates", 0
+                ),
+                "backlog_issues": issues_counts.get("epic_backlog_issues", 0),
+                "unstarted_issues": issues_counts.get("epic_unstarted_issues", 0),
+                "started_issues": issues_counts.get("epic_started_issues", 0),
+                "completed_issues": issues_counts.get("epic_completed_issues", 0),
+                "cancelled_issues": issues_counts.get("epic_cancelled_issues", 0),
+            },
+            "project": {
+                "on_track_updates": updates_counts.get("project", {}).get(
+                    "on_track_updates", 0
+                ),
+                "off_track_updates": updates_counts.get("project", {}).get(
+                    "off_track_updates", 0
+                ),
+                "at_risk_updates": updates_counts.get("project", {}).get(
+                    "at_risk_updates", 0
+                ),
+                "backlog_issues": issues_counts.get("backlog_issues", 0),
+                "unstarted_issues": issues_counts.get("unstarted_issues", 0),
+                "started_issues": issues_counts.get("started_issues", 0),
+                "completed_issues": issues_counts.get("completed_issues", 0),
+                "cancelled_issues": issues_counts.get("cancelled_issues", 0),
+            },
+        }
 
         return Response(
-            {
-                **issues,
-                "on_track_updates_count": on_track_updates_count,
-                "off_track_updates_count": off_track_updates_count,
-                "at_risk_updates_count": at_risk_updates_count,
-            },
+            result,
             status=status.HTTP_200_OK,
         )
 
@@ -489,9 +572,9 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
             result.append(
                 {
                     "initiative_id": initiative.id,
-                    "on_track_updates_count": on_track_updates_count,
-                    "off_track_updates_count": off_track_updates_count,
-                    "at_risk_updates_count": at_risk_updates_count,
+                    "on_track_updates": on_track_updates_count,
+                    "off_track_updates": off_track_updates_count,
+                    "at_risk_updates": at_risk_updates_count,
                 }
             )
 

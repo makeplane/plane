@@ -1,4 +1,10 @@
 import { TFileSignedURLResponse } from "../file";
+import { EIssueLayoutTypes } from "../issues/base";
+
+export enum EInitiativeNavigationItem {
+  OVERVIEW = "overview",
+  SCOPE = "scope",
+}
 
 export type TCreateUpdateInitiativeModal = {
   isOpen: boolean;
@@ -31,3 +37,7 @@ export type TInitiativeAttachmentMap = {
 export type TInitiativeAttachmentIdMap = {
   [initiative_id: string]: string[];
 };
+
+export interface IInitiativeScopeDisplayFiltersOptions {
+  activeLayout: EIssueLayoutTypes;
+}

@@ -22,12 +22,12 @@ export const InitiativeProgressSection: FC<Props> = observer((props) => {
 
   // derived values
   const initiative = getInitiativeById(initiativeId);
-  const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
+  const initiativeProjectAnalytics = getInitiativeAnalyticsById(initiativeId)?.project;
 
   const projectsIds = initiative?.project_ids ?? [];
   const initiativeEpics = initiative?.epic_ids ?? [];
-  const totalIssues = initiativeAnalytics
-    ? Object.values(omit(initiativeAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
+  const totalIssues = initiativeProjectAnalytics
+    ? Object.values(omit(initiativeProjectAnalytics, "overdue_issues")).reduce((acc, val) => acc + val, 0)
     : 0;
 
   const shouldRenderProgressSection = (projectsIds.length ?? 0) > 0 || initiativeEpics.length > 0 || totalIssues > 0;
@@ -36,7 +36,7 @@ export const InitiativeProgressSection: FC<Props> = observer((props) => {
 
   return (
     <ProgressSection
-      data={initiativeAnalytics as TStateAnalytics}
+      data={initiativeProjectAnalytics as TStateAnalytics}
       indicatorElement={
         <>
           <Tooltip

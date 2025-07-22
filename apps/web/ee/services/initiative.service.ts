@@ -317,6 +317,21 @@ export class InitiativeService extends APIService {
       });
   }
 
+  // detail list
+  async fetchInitiativeEpicsDetail(
+    workspaceSlug: string,
+    initiativeId: string,
+    queries?: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<{ results: TIssue[] }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics-detail/`, {
+      params: queries,
+    })
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
   // add
   async addEpicsToInitiative(workspaceSlug: string, initiativeId: string, epics: string[]): Promise<TIssue[]> {
     return this.post(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/epics/`, {

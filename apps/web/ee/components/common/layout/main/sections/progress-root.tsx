@@ -40,13 +40,13 @@ export const ProgressSection: FC<TProgressSectionProps> = (props) => {
     name: group.title,
     value: data ? data[group.key] : 0,
     color: group.color,
-    percentage: data ? (data[group.key] / totalIssues) * 100 : 0,
+    percentage: data && totalIssues > 0 ? (data[group.key] / totalIssues) * 100 : 0,
   }));
 
   return (
     <SectionWrapper>
       <div className="flex items-center gap-2">
-        <h3 className="text-base text-custom-text-300 font-medium">{t("common.progress")}</h3>
+        <h3 className="text-base text-custom-text-300 font-semibold">{t("common.progress")}</h3>
         {indicatorElement && <>{indicatorElement}</>}
       </div>
 

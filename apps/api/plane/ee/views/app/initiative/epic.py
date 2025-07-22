@@ -1,20 +1,25 @@
 # Python imports
 import json
+from uuid import UUID
+from collections import defaultdict
 
 # Django imports
 from django.db import models
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.fields import ArrayField
-from django.db.models import OuterRef, Subquery, Q, UUIDField, Value
-from uuid import UUID
-
+from django.utils import timezone
 from django.db.models.functions import Coalesce
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import OuterRef, Subquery, Q, UUIDField, Value, Prefetch
 
 # Third party imports
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.response import Response
 
 # Module imports
+from plane.app.serializers import (
+    IssueListDetailSerializer,
+)
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers.app.initiative import (
     InitiativeEpicSerializer,
@@ -26,10 +31,9 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
+
 from plane.utils.order_queryset import order_issue_queryset
-from collections import defaultdict
+from plane.db.models import IssueRelation
 
 
 class InitiativeEpicViewSet(BaseViewSet):
@@ -292,3 +296,72 @@ class InitiativeEpicViewSet(BaseViewSet):
         initiative_epics.filter(epic_id=epic_id).delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InitiativeEpicIssueViewSet(BaseViewSet):
+    serializer_class = IssueListDetailSerializer
+    model = Issue
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    def list(self, request, slug, initiative_id):
+        initiative_epics = InitiativeEpic.objects.filter(
+            workspace__slug=slug, initiative_id=initiative_id
+        ).values_list("epic_id", flat=True)
+
+        epics = (
+            Issue.objects.filter(
+                workspace__slug=slug,
+                id__in=initiative_epics,
+            )
+            .filter(Q(project__deleted_at__isnull=True))
+            .filter(Q(type__isnull=False) & Q(type__is_epic=True))
+            .filter(project__project_projectfeature__is_epic_enabled=True)
+            .annotate(
+                update_status=Subquery(
+                    EntityUpdates.objects.filter(
+                        workspace__slug=slug,
+                        epic_id=OuterRef("id"),
+                        entity_type="EPIC",
+                        parent__isnull=True,
+                    ).values("status")[:1]
+                )
+            )
+            .accessible_to(request.user.id, slug)
+        )
+
+        # Add additional prefetch based on expand parameter
+        if self.expand:
+            if "issue_relation" in self.expand:
+                epics = epics.prefetch_related(
+                    Prefetch(
+                        "issue_relation",
+                        queryset=IssueRelation.objects.select_related("related_issue"),
+                    )
+                )
+            if "issue_related" in self.expand:
+                epics = epics.prefetch_related(
+                    Prefetch(
+                        "issue_related",
+                        queryset=IssueRelation.objects.select_related("issue"),
+                    )
+                )
+
+        # Ordering
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        if order_by_param:
+            epics, order_by_param = order_issue_queryset(epics, order_by_param)
+
+        # Issue queryset
+        epics, order_by_param = order_issue_queryset(
+            issue_queryset=epics, order_by_param=order_by_param
+        )
+
+        return self.paginate(
+            request=request,
+            order_by=order_by_param,
+            queryset=(epics),
+            on_results=lambda epics: IssueListDetailSerializer(
+                epics, many=True, fields=self.fields, expand=self.expand
+            ).data,
+        )

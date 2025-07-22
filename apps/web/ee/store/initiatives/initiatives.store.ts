@@ -23,6 +23,7 @@ import { IUpdateStore, UpdateStore } from "../updates/base.store";
 import { IInitiativeAttachmentStore, InitiativeAttachmentStore } from "./initiative-attachment.store";
 import { InitiativeEpicStore } from "./initiative-epics.store";
 import { IInitiativeLinkStore, InitiativeLinkStore } from "./initiative-links.store";
+import { InitiativeScopeStore } from "./initiative-scope-filters.store";
 import { IInitiativeCommentActivityStore, InitiativeCommentActivityStore } from "./initiatives-comment-activity.store";
 import { IInitiativeFilterStore } from "./initiatives-filter.store";
 
@@ -80,6 +81,7 @@ export interface IInitiativeStore {
 
   // store
   epics: InitiativeEpicStore;
+  scope: InitiativeScopeStore;
 }
 
 export class InitiativeStore implements IInitiativeStore {
@@ -102,6 +104,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeFilterStore: IInitiativeFilterStore;
   updatesStore: IUpdateStore;
   epics: InitiativeEpicStore;
+  scope: InitiativeScopeStore;
 
   constructor(_rootStore: RootStore, initiativeFilterStore: IInitiativeFilterStore) {
     makeObservable(this, {
@@ -142,6 +145,7 @@ export class InitiativeStore implements IInitiativeStore {
     this.initiativeService = new InitiativeService();
 
     this.epics = new InitiativeEpicStore(this, this.initiativeService);
+    this.scope = new InitiativeScopeStore();
   }
 
   get currentGroupedInitiativeIds() {

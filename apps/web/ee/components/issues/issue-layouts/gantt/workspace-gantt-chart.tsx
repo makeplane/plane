@@ -3,7 +3,13 @@ import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IBlockUpdateData, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import {
+  TIssue,
+  IBlockUpdateData,
+  EIssuesStoreType,
+  EIssueLayoutTypes,
+  IBlockUpdateDependencyData,
+} from "@plane/types";
 import { setToast, TOAST_TYPE } from "@plane/ui";
 // components
 import { GanttChartRoot, IssueGanttSidebar } from "@/components/gantt-chart";
@@ -65,16 +71,15 @@ export const WorkspaceGanttChart: React.FC<Props> = observer((props: Props) => {
 
   // Date update handler
   const updateBlockDates = useCallback(
-    async (
-      updates: {
-        id: string;
-        start_date?: string;
-        target_date?: string;
-        project_id?: string;
-      }[]
-    ): Promise<void> => {
+    async (updates: IBlockUpdateDependencyData[]): Promise<void> => {
       try {
-        return await updateIssueDates(workspaceSlug.toString(), updates);
+        const payload = updates.map((update) => ({
+          id: update.id,
+          start_date: update.start_date,
+          target_date: update.target_date,
+          project_id: update.meta?.project_id,
+        }));
+        return await updateIssueDates(workspaceSlug.toString(), payload);
       } catch {
         setToast({
           type: TOAST_TYPE.ERROR,

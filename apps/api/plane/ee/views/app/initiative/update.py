@@ -29,7 +29,6 @@ class InitiativeUpdateViewSet(BaseAPIView):
         update_status = request.query_params.get("search", None)
 
         if update_status not in EntityUpdates.UpdatesEnum.values:
-            print(update_status)
             return Response(
                 {"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -80,10 +79,22 @@ class InitiativeUpdateViewSet(BaseAPIView):
             )
             .distinct("project_id", "epic_id")
         )
+        latest_epic_updates = []
+        latest_project_updates = []
 
-        latest_updates = [u for u in latest_updates if u["status"] == update_status]
+        for update in latest_updates:
+            if update["status"] != update_status:
+                continue
+            if update["type"] == "EPIC":
+                latest_epic_updates.append(update)
+            elif update["type"] == "PROJECT":
+                latest_project_updates.append(update)
 
-        return Response(latest_updates, status=status.HTTP_200_OK)
+        result = {
+            "epic_updates": latest_epic_updates,
+            "project_updates": latest_project_updates,
+        }
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class InitiativeUpdateCommentsViewSet(BaseAPIView):

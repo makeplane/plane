@@ -5,7 +5,11 @@ import { EUpdateStatus, TUpdate } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export interface IInitiativeUpdateService {
-  getUpdates: (workspaceSlug: string, initiativeId: string, params?: { search: EUpdateStatus }) => Promise<TUpdate[]>;
+  getUpdates: (
+    workspaceSlug: string,
+    initiativeId: string,
+    params?: { search: EUpdateStatus }
+  ) => Promise<{ project_updates: TUpdate[]; epic_updates: TUpdate[] }>;
 }
 export class InitiativesUpdateService extends APIService implements IInitiativeUpdateService {
   constructor() {
@@ -16,7 +20,10 @@ export class InitiativesUpdateService extends APIService implements IInitiativeU
     workspaceSlug: string,
     initiativeId: string,
     params?: { search: EUpdateStatus }
-  ): Promise<TUpdate[]> {
+  ): Promise<{
+    project_updates: TUpdate[];
+    epic_updates: TUpdate[];
+  }> {
     return this.get(`/api/workspaces/${workspaceSlug}/initiatives/${initiativeId}/updates/`, { params })
       .then((response) => response?.data)
       .catch((error) => {

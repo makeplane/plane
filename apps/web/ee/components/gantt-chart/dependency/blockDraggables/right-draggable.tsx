@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
+import { BLOCK_HEIGHT, HEADER_HEIGHT, SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // Plane-web
@@ -75,7 +75,8 @@ export const RightDependencyDraggable = observer((props: RightDependencyDraggabl
             const { top: containerTop, left: containerLeft } = ganttContainerElement.getBoundingClientRect();
 
             const offsetX = containerLeft + SIDEBAR_WIDTH - ganttContainerElement.scrollLeft;
-            const offsetY = containerTop + HEADER_HEIGHT - ganttContainerElement.scrollTop;
+            const offsetY =
+              containerTop + HEADER_HEIGHT - ganttContainerElement.scrollTop + (block.meta?.index ?? 0) * BLOCK_HEIGHT;
 
             onDrag({ x: clientX - offsetX, y: clientY - offsetY });
           },

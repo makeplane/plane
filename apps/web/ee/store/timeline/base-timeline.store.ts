@@ -5,7 +5,7 @@ import uniq from "lodash/uniq";
 import { action, autorun, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 //
-import { IBlockUpdateDependencyData } from "@plane/types";
+import { EGanttBlockType, IBlockUpdateDependencyData, TGanttBlockGroup } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 import {
   BaseTimeLineStore as ExtendableTimelineStore,
@@ -23,6 +23,7 @@ import { buildDependencyTree, getBlockUpdates, getNewRelationsMap, getPositionOf
 export interface IBaseTimelineStore extends IExtendableTimelineStore {
   relationsMap: Record<string, Relation>;
   dependencyDraggingDetails: DependencyDraggingDetails | undefined;
+  isGroupingEnabled: boolean;
   // computed
   relations: Relation[];
   // computed functions
@@ -34,11 +35,18 @@ export interface IBaseTimelineStore extends IExtendableTimelineStore {
   onDragOver: (blockId: string, dependencyPosition: EDependencyPosition) => void;
   onDragLeave: () => void;
   onDrop: () => void;
+  getGroupedBlockIds: () => TGanttBlockGroup[];
+  setBlockGroups: (blockGroups: TGanttBlockGroup[]) => void;
+  setGrouping: (value: boolean) => void;
+  toggleGroup: (type: EGanttBlockType, open?: boolean) => void;
+  getBlockIds: () => string[];
 }
 
 export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseTimelineStore {
   relationsMap: Record<string, Relation> = {};
   dependencyDraggingDetails: DependencyDraggingDetails | undefined = undefined;
+  isGroupingEnabled: boolean = false;
+  collapsedGroups: EGanttBlockType[] = [];
 
   constructor(rootStore: RootStore) {
     super(rootStore);
@@ -46,6 +54,8 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
       relationsMap: observable,
       dependencyDraggingDetails: observable,
       isDependencyEnabled: observable.ref,
+      isGroupingEnabled: observable.ref,
+      collapsedGroups: observable,
       // computed
       relations: computed,
       // actions
@@ -375,4 +385,61 @@ export class BaseTimeLineStore extends ExtendableTimelineStore implements IBaseT
       this.dependencyDraggingDetails = undefined;
     });
   };
+
+  setGrouping = (value: boolean) => {
+    this.isGroupingEnabled = value;
+  };
+
+  private expandGroup = (type: EGanttBlockType) => {
+    // Remove from collapsed groups
+    this.collapsedGroups = this.collapsedGroups.filter((group) => group !== type);
+
+    // Add blocks of this type back to the visible block ids
+    const blocksOfType =
+      this.blockIds?.filter((blockId) => {
+        const block = this.blocksMap[blockId];
+        return block?.meta?.type === type;
+      }) ?? [];
+
+    const updatedBlockIds = [...blocksOfType, ...(this.blockIds ?? [])];
+    this.setBlockIds(updatedBlockIds);
+  };
+
+  private collapseGroup = (type: EGanttBlockType) => {
+    // Add to collapsed groups
+    this.collapsedGroups.push(type);
+
+    // Remove blocks of this type from visible block ids
+    const blocksExceptType =
+      this.blockIds?.filter((blockId) => {
+        const block = this.blocksMap[blockId];
+        return block?.meta?.type !== type;
+      }) ?? [];
+
+    this.setBlockIds(blocksExceptType);
+  };
+
+  toggleGroup = (type: EGanttBlockType, open: boolean = false) => {
+    const isCurrentlyCollapsed = this.collapsedGroups.includes(type);
+
+    if (open) {
+      // Force expand if explicitly requested and currently collapsed
+      if (isCurrentlyCollapsed) {
+        this.expandGroup(type);
+      }
+    } else {
+      // Normal toggle behavior
+      if (isCurrentlyCollapsed) {
+        this.expandGroup(type);
+      } else {
+        this.collapseGroup(type);
+      }
+    }
+  };
+
+  getBlockIds = () => this.blockIds ?? [];
+
+  /** Placeholder functions */
+  setBlockGroups = (groupData: TGanttBlockGroup[]) => {};
+  getGroupedBlockIds = () => [] as TGanttBlockGroup[];
 }

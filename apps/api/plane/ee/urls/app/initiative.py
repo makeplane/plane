@@ -19,6 +19,7 @@ from plane.ee.views.app.initiative import (
     InitiativeUpdateViewSet,
     InitiativeUpdateCommentsViewSet,
     InitiativeUpdatesReactionViewSet,
+    InitiativeEpicIssueViewSet,
 )
 
 urlpatterns = [
@@ -171,6 +172,11 @@ urlpatterns = [
         "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/updates/<uuid:update_id>/reactions/<str:reaction_code>/",
         InitiativeUpdatesReactionViewSet.as_view(),
         name="initiative-update-comments",
+    ),
+    path(
+        "workspaces/<str:slug>/initiatives/<uuid:initiative_id>/epics-detail/",
+        InitiativeEpicIssueViewSet.as_view({"get": "list"}),
+        name="initiative-epic-issues-detail",
     ),
     # End InitIative Update Reactions
 ]

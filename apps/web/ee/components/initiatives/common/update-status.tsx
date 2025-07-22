@@ -4,24 +4,31 @@ import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { EUpdateEntityType, EUpdateStatus, TUpdate } from "@plane/types";
-import { EpicIcon } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { EpicIcon, Tooltip } from "@plane/ui";
+import { capitalizeFirstLetter, cn } from "@plane/utils";
 // plane web components
 import { UpdateStatusIcons } from "@/plane-web/components/updates/status-icons";
 // local components
 import { UpdateList } from "../../updates/read-only-list";
 
 type TStatusPills = {
+  showTabs?: boolean;
+  defaultTab?: "project" | "epic";
   handleUpdateOperations: {
-    fetchUpdates: (params?: { search: EUpdateStatus }) => Promise<TUpdate[]> | undefined;
+    fetchUpdates: (params?: { search: EUpdateStatus }) => Promise<{
+      project_updates: TUpdate[];
+      epic_updates: TUpdate[];
+    }>;
+    fetchProjectUpdates: (params?: { search: EUpdateStatus }) => Promise<TUpdate[]>;
+    fetchEpicUpdates: (params?: { search: EUpdateStatus }) => Promise<TUpdate[]>;
   };
   workspaceSlug: string;
   initiativeId: string;
   analytics:
     | {
-        on_track_updates_count: number;
-        at_risk_updates_count: number;
-        off_track_updates_count: number;
+        on_track_updates: number;
+        at_risk_updates: number;
+        off_track_updates: number;
       }
     | undefined;
 };
@@ -35,14 +42,15 @@ interface IInitiativeUpdate extends TUpdate {
 }
 
 export const UpdateStatusPills = (props: TStatusPills) => {
-  const { handleUpdateOperations, workspaceSlug, initiativeId, analytics } = props;
+  const { handleUpdateOperations, workspaceSlug, initiativeId, analytics, defaultTab = "project", showTabs } = props;
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [selectedTab, setSelectedTab] = useState<"project" | "epic">(defaultTab);
 
   const statusCounts = {
-    [EUpdateStatus.ON_TRACK]: analytics?.on_track_updates_count ?? 0,
-    [EUpdateStatus.AT_RISK]: analytics?.at_risk_updates_count ?? 0,
-    [EUpdateStatus.OFF_TRACK]: analytics?.off_track_updates_count ?? 0,
+    [EUpdateStatus.ON_TRACK]: analytics?.on_track_updates ?? 0,
+    [EUpdateStatus.AT_RISK]: analytics?.at_risk_updates ?? 0,
+    [EUpdateStatus.OFF_TRACK]: analytics?.off_track_updates ?? 0,
   };
   // react-popper derived values
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -64,10 +72,12 @@ export const UpdateStatusPills = (props: TStatusPills) => {
         .map(([status, count]) => (
           <Popover className={cn("relative flex h-full items-center justify-center")} key={status}>
             <Popover.Button ref={setReferenceElement} className={cn("my-auto outline-none text-custom-text-300")}>
-              <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 bg-custom-background-100 hover:shadow-sm">
-                <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
-                <span className="text-xs font-medium text-custom-text-300">{count}</span>
-              </button>
+              <Tooltip tooltipContent={status && capitalizeFirstLetter(status.replaceAll("-", " ").toLowerCase())}>
+                <button className="flex items-center gap-1 border border-custom-border-300 rounded-full px-2 py-1 bg-custom-background-100 hover:shadow-sm">
+                  <UpdateStatusIcons statusType={status as EUpdateStatus} showBackground={false} />
+                  <span className="text-xs font-medium text-custom-text-300">{count}</span>
+                </button>
+              </Tooltip>
             </Popover.Button>
 
             <Popover.Panel
@@ -79,11 +89,13 @@ export const UpdateStatusPills = (props: TStatusPills) => {
               {...attributes.popper}
             >
               <UpdateList
+                handleTabChange={setSelectedTab}
                 count={count}
                 workspaceSlug={workspaceSlug}
                 entityId={initiativeId}
+                showTabs={showTabs}
                 getUpdates={handleUpdateOperations.fetchUpdates}
-                entityType={EUpdateEntityType.INITIATIVE}
+                entityType={selectedTab === "project" ? EUpdateEntityType.PROJECT : EUpdateEntityType.EPIC}
                 status={status as EUpdateStatus}
                 customTitle={(updateData) => {
                   const initiativeUpdate = updateData as IInitiativeUpdate;
@@ -101,9 +113,15 @@ export const UpdateStatusPills = (props: TStatusPills) => {
                           </div>
                         </div>
                       )}
-                      <span className="truncate font-semibold min-w-[0] text-sm text-custom-text-300">
+                      <span className="truncate font-semibold min-w-[0] text-sm text-custom-text-300 my-auto flex-1">
                         {initiativeUpdate.epic__name || initiativeUpdate.project__name}
                       </span>
+                      <UpdateStatusIcons
+                        statusType={initiativeUpdate.status}
+                        size="sm"
+                        showText
+                        className="justify-end"
+                      />
                     </Link>
                   );
                 }}

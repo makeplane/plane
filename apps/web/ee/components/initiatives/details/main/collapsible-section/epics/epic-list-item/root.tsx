@@ -140,7 +140,7 @@ export const EpicListItem: React.FC<Props> = observer((props) => {
       itemClassName="overflow-visible"
       isMobile={isMobile}
       parentRef={parentRef}
-      className="last:pb-0 last:border-b-0"
+      className="last:pb-0"
       onItemClick={() => setPeekIssue({ workspaceSlug, projectId: issue.project_id ?? "", issueId: issue.id })}
       preventDefaultNProgress
     />

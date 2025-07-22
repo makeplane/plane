@@ -886,14 +886,23 @@ class IssueListDetailSerializer(serializers.Serializer):
             "updated_by": instance.updated_by_id,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
-            # Computed fields
-            "cycle_id": instance.cycle_id,
+            "cycle_id": instance.cycle_id if hasattr(instance, "cycle_id") else None,
             "module_ids": self.get_module_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "assignee_ids": self.get_assignee_ids(instance),
-            "sub_issues_count": instance.sub_issues_count,
-            "attachment_count": instance.attachment_count,
-            "link_count": instance.link_count,
+            "sub_issues_count": (
+                instance.sub_issues_count
+                if hasattr(instance, "sub_issues_count")
+                else None
+            ),
+            "attachment_count": (
+                instance.attachment_count
+                if hasattr(instance, "attachment_count")
+                else None
+            ),
+            "link_count": (
+                instance.link_count if hasattr(instance, "link_count") else None
+            ),
         }
 
         # Handle expanded fields only when requested - using direct field access

@@ -62,9 +62,9 @@ export const InfoSection: FC<TInfoSectionProps> = (props) => {
       <div className="flex w-full">
         <div className="flex flex-col gap-2 flex-1">
           {identifierElement && <>{identifierElement}</>}
+          {iconElement && <>{iconElement}</>}
           <div className="flex justify-between gap-2 w-full">
             <div className="flex flex-grow gap-3">
-              {iconElement && <>{iconElement}</>}
               <div className="flex flex-col flex-grow gap-1">
                 <TitleInput
                   isSubmitting={isSubmitting}
