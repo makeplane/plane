@@ -65,8 +65,7 @@
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2",
-    "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -80,7 +79,6 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^8.3.4",
-    "@types/zxcvbn": "^4.4.4",
     "prettier": "^3.2.5",
     "typescript": "5.8.3"
   }
