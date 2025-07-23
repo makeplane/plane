@@ -29,16 +29,16 @@ export const InitiativeScopeHeaderActions = observer(({ workspaceSlug, initiativ
 
   return (
     <div className="flex items-center gap-2">
+      <LayoutSelection
+        layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.GANTT]}
+        onChange={(layout) => handleLayoutChange(layout)}
+        selectedLayout={activeLayout}
+      />
       <AddScopeButton
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
         disabled={disabled}
         customButton={<Button>Add scope</Button>}
-      />
-      <LayoutSelection
-        layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.GANTT]}
-        onChange={(layout) => handleLayoutChange(layout)}
-        selectedLayout={activeLayout}
       />
     </div>
   );

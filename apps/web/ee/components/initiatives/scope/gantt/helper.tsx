@@ -139,7 +139,7 @@ export const useGanttOperations = (workspaceSlug: string) => {
 const blockRenderMap: Record<EGanttBlockType, (data: any) => React.ReactNode> = {
   [EGanttBlockType.EPIC]: (data: TIssue) => <IssueGanttBlock issueId={data.id} isEpic />,
   [EGanttBlockType.PROJECT]: (data: TProject) => <ProjectGanttBlock projectId={data.id} />,
-  [EGanttBlockType.ISSUE]: (data: TIssue) => <IssueGanttBlock issueId={data.id} />,
+  [EGanttBlockType.WORK_ITEM]: (data: TIssue) => <IssueGanttBlock issueId={data.id} />,
 };
 
 /**

@@ -1,12 +1,14 @@
 import { observer } from "mobx-react";
+import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, Collapsible } from "@plane/ui";
+import { Button, Collapsible, EpicIcon } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { AddScopeButton } from "@/plane-web/components/initiatives/common/add-scope-button";
 import { EpicListItem } from "@/plane-web/components/initiatives/details/main/collapsible-section/epics/epic-list-item/root";
 import { ProjectList } from "@/plane-web/components/initiatives/details/main/collapsible-section/projects/project-list";
-import { AddScopeButton } from "../../common/add-scope-button";
 import { ListHeader } from "./header";
+
 type Props = {
   epicIds: string[];
   projectIds: string[];
@@ -47,7 +49,14 @@ export const InitiativeScopeListView = observer((props: Props) => {
     <div className="h-full w-full overflow-y-auto">
       {/**Epics List */}
       <Collapsible
-        title={<ListHeader count={epicIds.length} label={t("common.epics")} handleAdd={handleAddEpic} />}
+        title={
+          <ListHeader
+            count={epicIds.length}
+            label={t("common.epics")}
+            handleAdd={handleAddEpic}
+            icon={<EpicIcon className="size-4" />}
+          />
+        }
         buttonClassName="w-full"
         defaultOpen
       >
@@ -63,7 +72,14 @@ export const InitiativeScopeListView = observer((props: Props) => {
       </Collapsible>
       {/**Projects List */}
       <Collapsible
-        title={<ListHeader count={projectIds.length} label={t("common.projects")} handleAdd={handleAddProject} />}
+        title={
+          <ListHeader
+            count={projectIds.length}
+            label={t("common.projects")}
+            handleAdd={handleAddProject}
+            icon={<Briefcase className="size-4" />}
+          />
+        }
         buttonClassName="w-full"
         defaultOpen
       >

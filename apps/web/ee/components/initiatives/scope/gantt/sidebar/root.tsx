@@ -1,8 +1,10 @@
-import { RefObject, useEffect, useMemo, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane
+import { Briefcase } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EGanttBlockType } from "@plane/types";
+import { EpicIcon } from "@plane/ui";
 // hooks
 import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -41,16 +43,24 @@ export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
     }
   }, [ganttContainerRef]);
 
-  const getListTitle = (type: EGanttBlockType) => {
-    switch (type) {
-      case EGanttBlockType.EPIC:
-        return t("common.epics");
-      case EGanttBlockType.PROJECT:
-        return t("common.projects");
-      default:
-        return "";
-    }
+  const blockTypeConfig: Record<EGanttBlockType, { title: string; icon: JSX.Element }> = {
+    [EGanttBlockType.EPIC]: {
+      title: t("common.epics"),
+      icon: <EpicIcon className="size-4" />,
+    },
+    [EGanttBlockType.PROJECT]: {
+      title: t("common.projects"),
+      icon: <Briefcase className="size-4" />,
+    },
+    [EGanttBlockType.WORK_ITEM]: {
+      title: t("common.issues"),
+      icon: <Briefcase className="size-4" />,
+    },
   };
+
+  const getListTitle = (type: EGanttBlockType) => blockTypeConfig[type]?.title ?? "";
+
+  const getListIcon = (type: EGanttBlockType) => blockTypeConfig[type]?.icon;
 
   return groupedBlockIds.map((group) => {
     const type = group.type;
@@ -66,6 +76,7 @@ export const GroupedGanttSidebar: React.FC<Props> = observer((props) => {
           onClick={() => toggleGroup(type)}
           style={{ width: ganttContainerWidth, height: BLOCK_HEIGHT }}
           customClassName="border-[1px]"
+          icon={getListIcon(type)}
         />
         <>
           {blockIds.map((blockId) => {
