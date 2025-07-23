@@ -33,8 +33,12 @@ export const NewConversation = observer((props: TProps) => {
         "mt-[40%]": !isFullScreen,
       })}
     >
-      <div className="text-center text-3xl font-bold text-custom-text-200">Hey, {currentUser?.display_name}! </div>
-      <div className="text-center text-2xl font-semibold text-custom-text-400">How can I help you today?</div>
+      <div className={cn("text-center text-3xl font-bold text-custom-text-200", { "text-2xl": !isFullScreen })}>
+        Hey, {currentUser?.display_name}!
+      </div>
+      <div className={cn("text-center text-2xl font-semibold text-custom-text-400", { "text-lg": !isFullScreen })}>
+        How can I help you today?
+      </div>
       {/* Templates */}
       {isLoading ? (
         <div className="flex gap-4 flex-wrap m-auto justify-center mt-6">

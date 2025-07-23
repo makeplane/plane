@@ -27,7 +27,14 @@ export const PiChatDetail = observer((props: TProps) => {
   return (
     <>
       {isAuthorized ? (
-        <div className="px-page-x relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[780px] md:m-auto w-full">
+        <div
+          className={cn(
+            "px-page-x relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full",
+            {
+              "max-w-[780px]": isFullScreen,
+            }
+          )}
+        >
           <div className={cn("flex-1 my-auto flex flex-co h-full relative")}>
             {isLoading ? (
               <Loading isLoading={isLoading} isFullScreen={isFullScreen} currentUser={currentUser} /> // loading

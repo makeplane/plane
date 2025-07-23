@@ -46,7 +46,7 @@ export const WorkspaceDashboardHeader = observer(() => {
             className="my-auto mb-0"
           >
             <Shapes size={16} />
-            <div className="text-xs font-medium">{t("home.manage_widgets")}</div>
+            <div className="hidden text-xs font-medium sm:hidden md:block">{t("home.manage_widgets")}</div>
           </Button>
           <a
             onClick={() =>

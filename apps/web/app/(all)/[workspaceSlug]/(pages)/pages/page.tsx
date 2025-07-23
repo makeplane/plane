@@ -10,6 +10,8 @@ import { UserGreetingsView } from "@/components/user";
 import { useUser } from "@/hooks/store";
 // plane web components
 import { PagesAppDashboardHeader } from "./header";
+import { cn } from "@plane/utils";
+import { ContentWrapper } from "@plane/ui";
 
 export default function WorkspacePagesPage() {
   // navigation
@@ -20,7 +22,9 @@ export default function WorkspacePagesPage() {
   return (
     <>
       <AppHeader header={<PagesAppDashboardHeader />} />
-      <div className="space-y-7 md:p-7 p-3 bg-custom-background-90/20 size-full flex flex-col overflow-y-auto">
+      <ContentWrapper
+        className={cn("gap-6 bg-custom-background-100 max-w-[800px] mx-auto scrollbar-hide px-page-x lg:px-0")}
+      >
         {currentUser && <UserGreetingsView user={currentUser} />}
         {workspaceSlug && (
           <div className="size-full divide-y-[1px] divide-custom-border-100">
@@ -36,7 +40,7 @@ export default function WorkspacePagesPage() {
             </div>
           </div>
         )}
-      </div>
+      </ContentWrapper>
     </>
   );
 }
