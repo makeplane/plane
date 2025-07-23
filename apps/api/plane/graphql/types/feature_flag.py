@@ -105,6 +105,9 @@ class FeatureFlagsTypesEnum(Enum):
     PI_CHAT_MOBILE = "PI_CHAT_MOBILE"
     PI_DEDUPE_MOBILE = "PI_DEDUPE_MOBILE"
 
+    # advanced search
+    ADVANCED_SEARCH = "ADVANCED_SEARCH"
+
     def __str__(self) -> str:
         return self.value
 
@@ -207,3 +210,6 @@ class FeatureFlagType:
     # Mobile specific flags
     pi_chat_mobile: bool
     pi_dedupe_mobile: bool
+
+    # advanced search
+    advanced_search: bool

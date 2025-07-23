@@ -241,4 +241,8 @@ class FeatureFlagQuery:
             pi_dedupe_mobile=feature_flags.get(
                 FeatureFlagsTypesEnum.PI_DEDUPE_MOBILE.value, False
             ),
+            # advanced search
+            advanced_search=feature_flags.get(
+                FeatureFlagsTypesEnum.ADVANCED_SEARCH.value, False
+            ),
         )
