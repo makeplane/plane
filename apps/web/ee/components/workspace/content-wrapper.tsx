@@ -33,7 +33,7 @@ export const WorkspaceContentWrapper = observer(({ children }: { children: React
         </FloatingActionsRoot>
       </div>
       {shouldRenderPiChat && (
-        <div className="py-2 mr-2">
+        <div className="py-2">
           <PiChatFloatingBot />
         </div>
       )}

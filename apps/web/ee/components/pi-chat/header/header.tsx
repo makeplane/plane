@@ -12,6 +12,7 @@ import { AppSidebarToggleButton } from "@/components/sidebar";
 import { useAppTheme } from "@/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { isSidebarToggleVisible } from "../../desktop";
+import { ModelsDropdown } from "./models-dropdown";
 
 type THeaderProps = {
   isProjectLevel?: boolean;
@@ -28,7 +29,7 @@ export const Header = observer((props: THeaderProps) => {
   const { workspaceSlug } = useParams();
   const { isProjectLevel = false, shouldRenderSidebarToggle, isFullScreen, toggleSidePanel, isSidePanelOpen } = props;
   const { sidebarCollapsed } = useAppTheme();
-  const { initPiChat } = usePiChat();
+  const { initPiChat, activeModel, models, setActiveModel } = usePiChat();
   const { t } = useTranslation();
   return (
     <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100 rounded-tl-lg rounded-tr-lg">
@@ -51,7 +52,11 @@ export const Header = observer((props: THeaderProps) => {
               component={
                 <div className="flex rounded gap-2 items-center">
                   <PiIcon className="size-4 text-custom-text-350 fill-current m-auto align-center" />
-                  <span className="font-medium text-sm my-auto"> Pi Chat (GPT-4.1)</span>
+                  {models?.length > 1 ? (
+                    <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
+                  ) : (
+                    <span className="font-medium text-sm my-auto">Pi Chat {`(${activeModel?.name || "GPT-4.1"})`}</span>
+                  )}
                   <BetaBadge />
                 </div>
               }

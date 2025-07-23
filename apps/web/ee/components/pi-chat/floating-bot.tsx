@@ -22,7 +22,7 @@ export const PiChatFloatingBot = observer(() => {
         className={cn(
           "transform transition-all duration-300 ease-in-out overflow-x-hidden",
           "rounded-lg border border-custom-border-200 h-full max-w-[400px]",
-          isOpen ? "translate-x-0 w-[400px]" : "px-0 translate-x-[100%] w-0 border-none"
+          isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
         )}
       >
         <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>

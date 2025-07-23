@@ -11,6 +11,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { IFormattedValue, IItem, TFocus } from "@/plane-web/types";
 import { FocusFilter } from "./focus-filter";
+import useSWR from "swr";
 
 type TEditCommands = {
   getHTML: () => string;
@@ -28,7 +29,15 @@ export const InputBox = observer((props: TProps) => {
   const { className, activeChatId, shouldRedirect = true, isProjectLevel = false } = props;
 
   // store hooks
-  const { getAnswer, searchCallback, isPiTyping, isLoading: isChatLoading, createNewChat, getChatById } = usePiChat();
+  const {
+    getAnswer,
+    searchCallback,
+    isPiTyping,
+    isLoading: isChatLoading,
+    createNewChat,
+    getChatById,
+    fetchModels,
+  } = usePiChat();
   const { getWorkspaceBySlug } = useWorkspace();
   // router
   const { workspaceSlug, projectId } = useParams();
@@ -48,6 +57,12 @@ export const InputBox = observer((props: TProps) => {
   const activeChatIdRef = useRef<string | undefined>(undefined);
   const focusRef = useRef<TFocus>(focus);
   const editorCommands = useRef<TEditCommands | null>(null);
+
+  useSWR(`PI_MODELS`, () => fetchModels(), {
+    revalidateOnFocus: true,
+    revalidateIfStale: true,
+    errorRetryCount: 0,
+  });
 
   const setEditorCommands = (command: TEditCommands) => {
     editorCommands.current = command;

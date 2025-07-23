@@ -261,7 +261,7 @@ export class PiChatStore implements IPiChatStore {
         is_temp: false,
         workspace_in_context: focus.isInWorkspaceContext,
         source: ESource.WEB,
-        llm: this.activeModel?.id,
+        llm: this.activeModel?.id || "gpt-4.1",
         context: this.userStore.data
           ? {
               first_name: this.userStore.data.first_name,
