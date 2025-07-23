@@ -1,5 +1,5 @@
 x-plane: &plane
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.10.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.13.0}
   APP_DOMAIN: ${DOMAIN_NAME:-localhost}
   MACHINE_SIGNATURE: ${MACHINE_SIGNATURE}
   DEPLOY_PLATFORM: docker_compose
@@ -127,7 +127,6 @@ x-live-env: &live-env
 services:
   admin:
     image: artifacts.plane.so/makeplane/admin-commercial:${APP_RELEASE_VERSION}
-    command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -138,7 +137,6 @@ services:
 
   web:
     image: artifacts.plane.so/makeplane/web-commercial:${APP_RELEASE_VERSION}
-    command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -149,7 +147,6 @@ services:
 
   space:
     image: artifacts.plane.so/makeplane/space-commercial:${APP_RELEASE_VERSION}
-    command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -160,7 +157,6 @@ services:
 
   live:
     image: artifacts.plane.so/makeplane/live-commercial:${APP_RELEASE_VERSION}
-    command: node live/dist/start.js live
     environment:
       <<: [ *live-env, *redis-env ]
     deploy:
@@ -294,7 +290,6 @@ services:
   silo:
     image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION}
     restart: unless-stopped
-    command: node silo/start.cjs
     environment:
       <<: [ *silo-env, *pg-env, *rabbitmq-env, *redis-env ]
     deploy:

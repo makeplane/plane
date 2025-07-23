@@ -4,7 +4,7 @@
 # logo: svgs/plane.svg
 
 x-plane-commercial: &plane-commercial
-  APP_VERSION: ${APP_RELEASE_VERSION:-v1.10.0}
+  APP_VERSION: ${APP_RELEASE_VERSION:-v1.13.0}
   APP_DOMAIN: ${SERVICE_URL_PLANE}
   MACHINE_SIGNATURE: ${SERVICE_PASSWORD_64_MACHINESIGNATURE}
   DEPLOY_PLATFORM: coolify
@@ -64,8 +64,9 @@ x-docstore-env: &docstore-env
   BUCKET_NAME: ${BUCKET_NAME:-uploads}
   AWS_S3_BUCKET_NAME: ${BUCKET_NAME:-uploads}
 
-x-silo-env: &silo-env
+x-silo-env:
   # App Envs
+  &silo-env
   PORT: 3000
   BATCH_SIZE: ${BATCH_SIZE:-60}
   DEDUP_INTERVAL: ${DEDUP_INTERVAL:-3}
@@ -132,7 +133,6 @@ x-live-env: &live-env
 services:
   admin:
     image: artifacts.plane.so/makeplane/admin-commercial:${APP_RELEASE_VERSION:-v1.x.x}
-    command: node admin/server.js admin
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
@@ -143,7 +143,6 @@ services:
 
   web:
     image: artifacts.plane.so/makeplane/web-commercial:${APP_RELEASE_VERSION:-v1.x.x}
-    command: node web/server.js web
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -154,7 +153,6 @@ services:
 
   space:
     image: artifacts.plane.so/makeplane/space-commercial:${APP_RELEASE_VERSION:-v1.x.x}
-    command: node space/server.js space
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
@@ -165,7 +163,6 @@ services:
 
   live:
     image: artifacts.plane.so/makeplane/live-commercial:${APP_RELEASE_VERSION:-v1.x.x}
-    command: node live/dist/start.js live
     environment:
       <<: [ *live-env, *redis-env ]
     deploy:
@@ -301,7 +298,6 @@ services:
   silo:
     image: artifacts.plane.so/makeplane/silo-commercial:${APP_RELEASE_VERSION:-v1.x.x}
     restart: unless-stopped
-    command: node silo/start.cjs
     environment:
       <<: [ *silo-env, *pg-env, *rabbitmq-env, *redis-env ]
     deploy:
