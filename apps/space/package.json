@@ -28,7 +28,7 @@
     "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "axios": "^1.8.3",
+    "axios": "^1.11.0",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.0.11",

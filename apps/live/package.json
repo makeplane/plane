@@ -28,7 +28,7 @@
     "@plane/types": "*",
     "@tiptap/core": "^2.22.3",
     "@tiptap/html": "^2.22.3",
-    "axios": "^1.8.3",
+    "axios": "^1.11.0",
     "compression": "1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
