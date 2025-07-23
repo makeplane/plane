@@ -21,6 +21,7 @@ from plane.db.models import (
     ProjectMember,
     EstimatePoint,
 )
+from plane.app.permissions import ROLE
 
 
 class DraftIssueCreateSerializer(BaseSerializer):
@@ -82,7 +83,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
         if attrs.get("assignee_ids", []):
             attrs["assignee_ids"] = ProjectMember.objects.filter(
                 project_id=self.context["project_id"],
-                role__gte=15,
+                role__gte=ROLE.MEMBER.value,
                 is_active=True,
                 member_id__in=attrs["assignee_ids"],
             ).values_list("member_id", flat=True)
