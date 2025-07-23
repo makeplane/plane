@@ -365,11 +365,48 @@ function startServices() {
     fi
 
     local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
+
+    # Verify container exists
+    if [ -z "$api_container_id" ]; then
+        echo "   Error: API container not found. Please check if services are running."
+        exit 1
+    fi
+
     local idx2=0
-    while ! docker exec $api_container_id python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/')" > /dev/null 2>&1;
-    do
-        local message=">> Waiting for API Service to Start"
-        local dots=$(printf '%*s' $idx2 | tr ' ' '.')    
+    local max_wait_time=300  # 5 minutes timeout
+    local start_time=$(date +%s)
+
+    echo "   Waiting for API Service to be ready..."
+    while ! docker exec "$api_container_id" python3 -c "
+        import urllib.request
+        import urllib.error
+
+        try:
+            response = urllib.request.urlopen('http://localhost:8000/', timeout=3)
+            exit(0)
+        except urllib.error.URLError:
+            exit(1)
+        except Exception:
+            exit(1)
+    " > /dev/null 2>&1; do
+        local current_time=$(date +%s)
+        local elapsed_time=$((current_time - start_time))
+
+        if [ $elapsed_time -gt $max_wait_time ]; then
+            echo ""
+            echo "   API Service health check timed out after 5 minutes"
+            echo "   Checking if API container is still running..."
+            if docker ps | grep -q "$SERVICE_FOLDER-api"; then
+                echo "   API container is running. Proceeding anyway..."
+                break
+            else
+                echo "   API container is not running. Please check logs."
+                exit 1
+            fi
+        fi
+
+        local message=">> Waiting for API Service to Start (${elapsed_time}s)"
+        local dots=$(printf '%*s' $idx2 | tr ' ' '.')
         echo -ne "\r$message$dots"
         ((idx2++))
         sleep 1
