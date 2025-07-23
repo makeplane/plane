@@ -7,10 +7,9 @@ import { Eye, EyeOff } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { PasswordStrengthMeter } from "@/components/account";
 import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader } from "@/components/profile";
 // helpers
@@ -108,7 +107,7 @@ const SecurityPage = observer(() => {
 
   const passwordSupport = password.length > 0 &&
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
-      <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
+      <PasswordStrengthIndicator password={password} isFocused={isPasswordInputFocused} />
     );
 
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;

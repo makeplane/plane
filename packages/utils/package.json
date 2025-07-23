@@ -29,8 +29,7 @@
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "tailwind-merge": "^2.5.5",
-    "uuid": "^10.0.0",
-    "zxcvbn": "^4.4.2"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -38,7 +37,6 @@
     "@types/node": "^22.5.4",
     "@types/react": "^18.3.11",
     "@types/uuid": "^9.0.8",
-    "@types/zxcvbn": "^4.4.5",
     "tsup": "8.4.0",
     "typescript": "5.8.3"
   }
