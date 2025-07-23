@@ -1,3 +1,5 @@
+from lxml import html
+
 # Django imports
 from django.utils import timezone
 
@@ -16,6 +18,8 @@ from plane.db.models import (
     DraftIssueLabel,
     DraftIssueCycle,
     DraftIssueModule,
+    ProjectMember,
+    EstimatePoint,
 )
 
 
@@ -57,14 +61,77 @@ class DraftIssueCreateSerializer(BaseSerializer):
         data["label_ids"] = label_ids if label_ids else []
         return data
 
-    def validate(self, data):
+    def validate(self, attrs):
         if (
-            data.get("start_date", None) is not None
-            and data.get("target_date", None) is not None
-            and data.get("start_date", None) > data.get("target_date", None)
+            attrs.get("start_date", None) is not None
+            and attrs.get("target_date", None) is not None
+            and attrs.get("start_date", None) > attrs.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
-        return data
+
+        try:
+            if attrs.get("description_html", None) is not None:
+                parsed = html.fromstring(attrs["description_html"])
+                parsed_str = html.tostring(parsed, encoding="unicode")
+                attrs["description_html"] = parsed_str
+
+        except Exception:
+            raise serializers.ValidationError("Invalid HTML passed")
+
+        # Validate assignees are from project
+        if attrs.get("assignee_ids", []):
+            attrs["assignee_ids"] = ProjectMember.objects.filter(
+                project_id=self.context["project_id"],
+                role__gte=15,
+                is_active=True,
+                member_id__in=attrs["assignee_ids"],
+            ).values_list("member_id", flat=True)
+
+        # Validate labels are from project
+        if attrs.get("label_ids"):
+            label_ids = [label.id for label in attrs["label_ids"]]
+            attrs["label_ids"] = list(
+                Label.objects.filter(
+                    project_id=self.context.get("project_id"), id__in=label_ids
+                ).values_list("id", flat=True)
+            )
+
+        # # Check state is from the project only else raise validation error
+        if (
+            attrs.get("state")
+            and not State.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("state").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "State is not valid please pass a valid state_id"
+            )
+
+        # # Check parent issue is from workspace as it can be cross workspace
+        if (
+            attrs.get("parent")
+            and not Issue.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("parent").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
+        if (
+            attrs.get("estimate_point")
+            and not EstimatePoint.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("estimate_point").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Estimate point is not valid please pass a valid estimate_point_id"
+            )
+
+        return attrs
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -89,14 +156,14 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         draft_issue=issue,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
@@ -105,14 +172,14 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
-                        label=label,
+                        label_id=label_id,
                         draft_issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for label in labels
+                    for label_id in labels
                 ],
                 batch_size=10,
             )
@@ -163,14 +230,14 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueAssignee.objects.bulk_create(
                 [
                     DraftIssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         draft_issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
