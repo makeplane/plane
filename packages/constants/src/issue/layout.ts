@@ -62,4 +62,5 @@ export const ISSUE_LAYOUT_MAP: TIssueLayoutMap = {
 export const ISSUE_LAYOUTS: {
   key: EIssueLayoutTypes;
   i18n_title: string;
+  i18n_label: string;
 }[] = Object.values(ISSUE_LAYOUT_MAP);

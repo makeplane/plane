@@ -228,7 +228,13 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             </div>
             <div className="flex @4xl:hidden">
               <MobileLayoutSelection
-                layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
                 onChange={(layout) => handleLayoutChange(layout)}
                 activeLayout={activeLayout}
               />
