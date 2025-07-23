@@ -11,10 +11,10 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-import { AuthBanner, PasswordStrengthMeter } from "@/components/account";
+import { AuthBanner } from "@/components/account";
 // helpers
 import {
   EAuthenticationErrorCodes,
@@ -192,7 +192,7 @@ const ResetPasswordPage = observer(() => {
                       />
                     )}
                   </div>
-                  <PasswordStrengthMeter password={resetFormData.password} isFocused={isPasswordInputFocused} />
+                  <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
