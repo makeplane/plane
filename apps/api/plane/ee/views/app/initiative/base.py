@@ -401,6 +401,25 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
                     "cancelled",
                 ]
             },
+            # Total issue count
+            **{
+                f"total_{state}_issues": Count(
+                    "id",
+                    filter=Q(
+                        Q(project_id__in=project_ids)
+                        | Q(id__in=initiative_epics)
+                        | Q(id__in=related_issues_ids),
+                    )
+                    & Q(state__group=state),
+                )
+                for state in [
+                    "backlog",
+                    "unstarted",
+                    "started",
+                    "completed",
+                    "cancelled",
+                ]
+            },
         )
         return issues_counts
 
@@ -505,6 +524,13 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
                 "started_issues": issues_counts.get("started_issues", 0),
                 "completed_issues": issues_counts.get("completed_issues", 0),
                 "cancelled_issues": issues_counts.get("cancelled_issues", 0),
+            },
+            "total_count": {
+                "backlog_issues": issues_counts.get("total_backlog_issues", 0),
+                "unstarted_issues": issues_counts.get("total_unstarted_issues", 0),
+                "started_issues": issues_counts.get("total_started_issues", 0),
+                "completed_issues": issues_counts.get("total_completed_issues", 0),
+                "cancelled_issues": issues_counts.get("total_cancelled_issues", 0),
             },
         }
 

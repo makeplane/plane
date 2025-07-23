@@ -169,21 +169,29 @@ export type TInitiativeAnalyticsGroup =
   | "cancelled_issues"
   | "overdue_issues";
 
-export type TInitiativeAnalyticData = {
+export type TInitiativeIssueAnalytics = {
   backlog_issues: number;
   unstarted_issues: number;
   started_issues: number;
   completed_issues: number;
   cancelled_issues: number;
   overdue_issues: number;
+};
 
+export type TInitiativeUpdateAnalytics = {
   on_track_updates: number;
   at_risk_updates: number;
   off_track_updates: number;
 };
+
+export type TInitiativeAnalyticData = TInitiativeIssueAnalytics & TInitiativeUpdateAnalytics;
+
+export type TInitiativeAnalyticDataWithCumulated = TInitiativeIssueAnalytics;
+
 export type TInitiativeAnalytics = TInitiativeAnalyticData & {
   project: TInitiativeAnalyticData;
   epic: TInitiativeAnalyticData;
+  total_count: TInitiativeAnalyticDataWithCumulated;
 };
 
 export type TInitiativeStats = {

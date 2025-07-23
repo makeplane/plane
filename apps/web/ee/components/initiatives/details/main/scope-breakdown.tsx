@@ -87,14 +87,19 @@ type Props = {
 export const ScopeBreakdown = observer((props: Props) => {
   const { workspaceSlug, initiativeId, toggleProjectModal, toggleEpicModal, disabled } = props;
   const {
-    initiative: { getInitiativeAnalyticsById, getInitiativeById },
+    initiative: {
+      getInitiativeAnalyticsById,
+      getInitiativeById,
+      epics: { getInitiativeEpicsById },
+    },
   } = useInitiatives();
 
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
+  const initiativeEpics = getInitiativeEpicsById(initiativeId);
 
-  const epicsCount = initiative?.epic_ids?.length ?? 0;
+  const epicsCount = initiativeEpics?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
 
   return (
@@ -119,7 +124,7 @@ export const ScopeBreakdown = observer((props: Props) => {
         </div>
       </div>
       {/* content */}
-      {!projectsCount && !epicsCount ? (
+      {projectsCount === 0 && epicsCount === 0 ? (
         <SectionEmptyState
           heading="No scope added to this initiative yet"
           subHeading="Link projects and epics and track that work in this space."
