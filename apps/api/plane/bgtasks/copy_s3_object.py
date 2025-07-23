@@ -200,20 +200,23 @@ def copy_s3_objects_of_description_and_assets(
                     duplicated_assets,
                     ["image-component", "attachment-component"],
                 )
+
+                entity.save()
+
             else:
                 updated_html = update_description(
                     entity, duplicated_assets, ["image-component"]
                 )
 
-            external_data = sync_with_external_service(entity_name, updated_html)
+                external_data = sync_with_external_service(entity_name, updated_html)
 
-            if external_data:
-                entity.description = external_data.get("description")
-                entity.description_html = external_data.get(
-                    "description_html", "<p></p>"
-                )
+                if external_data:
+                    entity.description = external_data.get("description")
+                    entity.description_html = external_data.get(
+                        "description_html", "<p></p>"
+                    )
 
-                entity.save()
+                    entity.save()
 
         return
     except Exception as e:
