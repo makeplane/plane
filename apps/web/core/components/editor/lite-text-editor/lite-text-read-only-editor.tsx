@@ -12,8 +12,8 @@ import { useEditorConfig } from "@/hooks/editor";
 // store hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 type LiteTextReadOnlyEditorWrapperProps = MakeOptional<
   Omit<ILiteTextReadOnlyEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,

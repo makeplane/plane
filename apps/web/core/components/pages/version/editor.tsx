@@ -1,6 +1,6 @@
+import { NodeViewProps } from "@tiptap/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { NodeViewProps } from "@tiptap/react";
 // plane imports
 import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
 import { TPageVersion } from "@plane/types";
@@ -12,9 +12,9 @@ import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;

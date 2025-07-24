@@ -16,10 +16,10 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 const workspaceService = new WorkspaceService();
 
 interface LiteTextEditorWrapperProps

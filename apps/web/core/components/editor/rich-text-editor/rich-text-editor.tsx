@@ -12,15 +12,9 @@ import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks
 import { useMember } from "@/hooks/store";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { EmbedHandler } from "@/plane-web/components/pages/editor/external-embed/embed-handler";
 
-// interface RichTextEditorWrapperProps
-//   extends MakeOptional<
-//     Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "flaggedExtensions">,
-//     "disabledExtensions"
-//   > {
-//   searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
   "disabledExtensions" | "editable" | "flaggedExtensions"

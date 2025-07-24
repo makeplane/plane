@@ -35,7 +35,10 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image) {
+.ProseMirror:not(.dragging)
+  .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(.table-wrapper):not(
+    .node-externalEmbedComponent
+  ) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -61,7 +64,9 @@
   }
 
   &.node-imageComponent,
-  &.node-image {
+  &.node-image,
+  &.table-wrapper,
+  &.node-externalEmbedComponent {
     --horizontal-offset: 0px;
 
     &::after {
