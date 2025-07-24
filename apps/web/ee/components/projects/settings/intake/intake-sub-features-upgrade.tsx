@@ -3,10 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
-import { ToggleSwitch, Tooltip } from "@plane/ui";
+import { ToggleSwitch, Tooltip, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 import { TProperties } from "@/ce/constants";
-import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 import { useUserPermissions } from "@/hooks/store";
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
 

@@ -6,10 +6,15 @@ import { useParams } from "next/navigation";
 import { CheckCircle } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { EModalWidth, ModalCore, PlaneIcon, PlaneOneIcon } from "@plane/ui";
+import {
+  EModalWidth,
+  ModalCore,
+  PlaneIcon,
+  PlaneOneIcon,
+  getSubscriptionTextColor,
+  getSuccessModalVariantStyle,
+} from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
-// helpers
-import { getSubscriptionTextColor, getSuccessModalVariantStyle } from "@/components/workspace/billing/subscription";
 // plane web constants
 import {
   BUSINESS_PLAN_FEATURES_MAP,

@@ -3,11 +3,10 @@ import { observer } from "mobx-react";
 import { EWidgetGridBreakpoints } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum } from "@plane/types";
+import { getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { SimpleEmptyState } from "@/components/empty-state";
-// helpers
-import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // hooks
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks

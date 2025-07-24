@@ -6,10 +6,8 @@ import { Lock } from "lucide-react";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum, EWidgetChartModels, EWidgetChartTypes } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
-// plane web helpers
-import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // plane web hooks
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports

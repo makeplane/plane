@@ -4,10 +4,9 @@ import { observer } from "mobx-react";
 import { EProductSubscriptionTier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EProductSubscriptionEnum, IPaymentProduct } from "@plane/types";
-import { Button, getButtonStyling, Loader } from "@plane/ui";
+import { Button, getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 const COMMON_BUTTON_STYLE =

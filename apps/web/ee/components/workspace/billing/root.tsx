@@ -13,11 +13,10 @@ import {
   TProductBillingFrequency,
   TUpgradeParams,
 } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { Loader, setToast, TOAST_TYPE, getBillingAndPlansCardVariantStyle } from "@plane/ui";
 import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/utils";
 // helpers
 import { SettingsHeading } from "@/components/settings";
-import { getBillingAndPlansCardVariantStyle } from "@/components/workspace/billing/subscription";
 // plane web imports
 import {
   CloudFreePlanCard,

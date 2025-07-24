@@ -5,10 +5,8 @@ import { observer } from "mobx-react";
 import { Loader as LoaderIcon } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
-import { Button, getButtonStyling, Loader } from "@plane/ui";
+import { Button, getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
-// helpers
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // plane web components
 import { PlanCard } from "@/plane-web/components/license";
 // plane web hooks

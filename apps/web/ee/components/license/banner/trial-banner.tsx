@@ -5,10 +5,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling, getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
-// components
-import { getSubscriptionBackgroundColor, getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // hooks
 import { useInstance, useUserPermissions, useWorkspace } from "@/hooks/store";
 // plane web imports

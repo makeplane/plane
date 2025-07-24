@@ -3,9 +3,9 @@
 import { observer } from "mobx-react";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
+import { getSubscriptionTextColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // plane web imports
-import { getSubscriptionTextColor } from "@/components/workspace/billing/subscription";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 type TPlanCard = {

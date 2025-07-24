@@ -13,12 +13,11 @@ import {
   SUBSCRIPTION_WITH_TRIAL,
 } from "@plane/constants";
 import { EProductSubscriptionEnum, IPaymentProduct } from "@plane/types";
-import { EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalWidth, ModalCore, TOAST_TYPE, setToast, getSubscriptionTextAndBackgroundColor } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
 import { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
-import { getSubscriptionTextAndBackgroundColor } from "@/components/workspace/billing/subscription";
 // plane web imports
 import { useSelfHostedSubscription, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { PaymentService } from "@/plane-web/services/payment.service";
