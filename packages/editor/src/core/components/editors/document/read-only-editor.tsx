@@ -18,7 +18,6 @@ import { EditorReadOnlyRefApi, IDocumentReadOnlyEditorProps } from "@/types";
 const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) => {
   const {
     containerClassName,
-    disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editorClassName = "",
     embedHandler,
@@ -29,6 +28,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     handleEditorReady,
     initialValue,
     mentionHandler,
+    disabledExtensions,
   } = props;
   const extensions: Extensions = [];
   if (embedHandler?.issue) {

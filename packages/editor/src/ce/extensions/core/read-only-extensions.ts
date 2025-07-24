@@ -4,7 +4,7 @@ import type { IReadOnlyEditorProps } from "@/types";
 
 export type TCoreReadOnlyEditorAdditionalExtensionsProps = Pick<
   IReadOnlyEditorProps,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "embedHandler"
 >;
 
 export const CoreReadOnlyEditorAdditionalExtensions = (

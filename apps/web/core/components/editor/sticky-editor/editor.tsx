@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 // plane constants
+import { NodeViewProps } from "@tiptap/react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
 import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
@@ -10,11 +11,15 @@ import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 // plane web hooks
+import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
-  extends Omit<ILiteTextEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler"> {
+  extends Omit<
+    ILiteTextEditorProps,
+    "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "embedHandler"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -56,7 +61,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-
+  const embedHandlerConfig = {
+    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
+  };
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -78,6 +85,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
+        embedHandler={embedHandlerConfig}
       />
       {showToolbar && (
         <div

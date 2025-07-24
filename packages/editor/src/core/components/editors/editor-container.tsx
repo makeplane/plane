@@ -3,12 +3,12 @@ import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
-import { LinkViewContainer } from "./link-view-container";
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import { TDisplayConfig } from "@/types";
 // components
+import { LinkViewContainer } from "./link-view-container";
 
 interface EditorContainerProps {
   children: ReactNode;

@@ -35,11 +35,11 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type Props = Pick<
   IReadOnlyEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "embedHandler"
+  "disabledExtensions" | "fileHandler" | "mentionHandler" | "embedHandler" | "flaggedExtensions"
 >;
 
 export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
-  const { disabledExtensions, fileHandler, flaggedExtensions, mentionHandler } = props;
+  const { disabledExtensions, fileHandler, flaggedExtensions, mentionHandler, embedHandler } = props;
 
   const extensions = [
     CustomStarterKitExtension({
@@ -86,6 +86,7 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
+      embedHandler,
     }),
   ];
 

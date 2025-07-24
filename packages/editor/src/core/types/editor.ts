@@ -48,7 +48,8 @@ export type TEditorCommands =
   | "text-align"
   | "callout"
   | "attachment"
-  | "emoji";
+  | "emoji"
+  | "external-embed";
 
 export type TCommandExtraProps = {
   image: {
@@ -144,13 +145,10 @@ export interface IEditorProps {
   value?: string | null;
 }
 
-export type ILiteTextEditorProps = IEditorProps & {
-  embedHandler?: TEmbedConfig;
-};
+export type ILiteTextEditorProps = IEditorProps;
 
 export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
-  embedHandler?: TEmbedConfig;
   editable: boolean;
 };
 
@@ -158,6 +156,7 @@ export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   editable: boolean;
+  embedHandler?: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;

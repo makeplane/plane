@@ -113,8 +113,8 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
-      fileHandler,
       flaggedExtensions,
+      fileHandler,
       embedHandler,
     }),
   ];

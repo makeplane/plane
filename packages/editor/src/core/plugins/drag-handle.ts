@@ -111,10 +111,6 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
       continue;
     }
 
-    // Skip elements inside .editor-embed-component
-    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
-      continue;
-    }
     // apply general selector
     if (elem.matches(generalSelectors)) {
       return elem;

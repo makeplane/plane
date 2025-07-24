@@ -65,8 +65,8 @@
 
   &.node-imageComponent,
   &.node-image,
-  &.table-wrapper,
-  &.node-externalEmbedComponent {
+  &.node-externalEmbedComponent,
+  &.table-wrapper {
     --horizontal-offset: 0px;
 
     &::after {
