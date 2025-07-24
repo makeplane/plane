@@ -6,8 +6,8 @@ import uniqBy from "lodash/uniqBy";
 // plane imports
 import { ICycle, TCycleFilters } from "@plane/types";
 // local imports
-import { findTotalDaysInRange, generateDateArray, getDate  } from "./datetime";
-import { satisfiesDateFilter  } from "./filter";
+import { findTotalDaysInRange, generateDateArray, getDate } from "./datetime";
+import { satisfiesDateFilter } from "./filter";
 
 /**
  * Orders cycles based on their status

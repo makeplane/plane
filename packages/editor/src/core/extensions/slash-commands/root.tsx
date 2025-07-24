@@ -7,7 +7,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { CommandListInstance } from "@/helpers/tippy";
 // types
-import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
+import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
@@ -37,10 +37,6 @@ const Command = Extension.create<SlashCommandOptions>({
           const blockType = parentNode.type.name;
 
           if (blockType === CORE_EXTENSIONS.CODE_BLOCK) {
-            return false;
-          }
-
-          if (editor.isActive(CORE_EXTENSIONS.TABLE)) {
             return false;
           }
 
@@ -106,9 +102,8 @@ const renderItems = () => {
   };
 };
 
-export type TExtensionProps = {
+export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions"> & {
   additionalOptions?: TSlashCommandAdditionalOption[];
-  disabledExtensions?: TExtensions[];
 };
 
 export const SlashCommands = (props: TExtensionProps) =>

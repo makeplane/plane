@@ -1,24 +1,25 @@
 import { Extensions, JSONContent } from "@tiptap/core";
 import { Selection } from "@tiptap/pm/state";
-// plane types
-import { TWebhookConnectionQueryParams } from "@plane/types";
 // extension types
-import { TTextAlign } from "@/extensions";
+import type { TTextAlign } from "@/extensions";
 // helpers
-import { IMarking } from "@/helpers/scroll-to-node";
+import type { IMarking } from "@/helpers/scroll-to-node";
 // types
-import {
+import type {
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
   TDocumentEventsServer,
+  TEditorAsset,
   TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
   TReadOnlyFileHandler,
   TReadOnlyMentionHandler,
+  TRealtimeConfig,
   TServerHandler,
+  TUserDetails,
 } from "@/types";
 
 export type TEditorCommands =
@@ -46,7 +47,8 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
-  | "attachment";
+  | "attachment"
+  | "emoji";
 
 export type TCommandExtraProps = {
   image: {
@@ -75,128 +77,113 @@ type TCommandWithPropsWithItemKey<T extends TEditorCommands> = T extends keyof T
   ? { itemKey: T } & TCommandExtraProps[T]
   : { itemKey: T };
 
+export type TDocumentInfo = {
+  characters: number;
+  paragraphs: number;
+  words: number;
+};
+
 // editor refs
 export type EditorReadOnlyRefApi = {
-  getMarkDown: () => string;
+  clearEditor: (emitUpdate?: boolean) => void;
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
     json: JSONContent | null;
   };
-  clearEditor: (emitUpdate?: boolean) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
+  getDocumentInfo: () => TDocumentInfo;
+  getHeadings: () => IMarking[];
+  getMarkDown: () => string;
   scrollSummary: (marking: IMarking) => void;
-  getDocumentInfo: () => {
-    characters: number;
-    paragraphs: number;
-    words: number;
-  };
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
 };
 
 export interface EditorRefApi extends EditorReadOnlyRefApi {
   blur: () => void;
-  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
-  getCurrentCursorPosition: () => number | undefined;
-  setEditorValueAtCursorPosition: (content: string) => void;
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
-  onStateChange: (callback: () => void) => () => void;
-  setFocusAtPosition: (position: number) => void;
-  isEditorReadyToDiscard: () => boolean;
+  getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
-  setProviderDocument: (value: Uint8Array) => void;
-  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
-  getHeadings: () => IMarking[];
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  isEditorReadyToDiscard: () => boolean;
+  isMenuItemActive: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => boolean;
   listenToRealTimeUpdate: () => TDocumentEventEmitter | undefined;
+  onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
+  onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
+  onStateChange: (callback: () => void) => () => void;
+  // eslint-disable-next-line no-undef
+  scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValueAtCursorPosition: (content: string) => void;
+  setFocusAtPosition: (position: number) => void;
+  setProviderDocument: (value: Uint8Array) => void;
 }
 
 // editor props
 export interface IEditorProps {
+  autofocus?: boolean;
+  bubbleMenuEnabled?: boolean;
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
   editorClassName?: string;
+  extensions?: Extensions;
+  flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  handleEditorReady?: (value: boolean) => void;
   id: string;
   initialValue: string;
   mentionHandler: TMentionHandler;
+  onAssetChange?: (assets: TEditorAsset[]) => void;
   onChange?: (json: object, html: string) => void;
-  onTransaction?: () => void;
-  handleEditorReady?: (value: boolean) => void;
-  autofocus?: boolean;
   onEnterKeyPress?: (e?: any) => void;
+  onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-  bubbleMenuEnabled?: boolean;
-}
-export interface ILiteTextEditor extends IEditorProps {
-  extensions?: Extensions;
-}
-export interface IRichTextEditor extends IEditorProps {
-  extensions?: Extensions;
-  dragDropEnabled?: boolean;
 }
 
-export interface ICollaborativeDocumentEditor
-  extends Omit<IEditorProps, "initialValue" | "onChange" | "onEnterKeyPress" | "value"> {
+export type ILiteTextEditorProps = IEditorProps;
+
+export type IRichTextEditorProps = IEditorProps & {
+  dragDropEnabled?: boolean;
+  editable: boolean;
+};
+
+export interface ICollaborativeDocumentEditorProps
+  extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
-  bubbleMenuEnabled?: boolean;
   editable: boolean;
   embedHandler: TEmbedConfig;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
 }
 
 // read only editor props
-export interface IReadOnlyEditorProps {
-  containerClassName?: string;
-  disabledExtensions: TExtensions[];
-  displayConfig?: TDisplayConfig;
-  editorClassName?: string;
-  extensions?: Extensions;
+export interface IReadOnlyEditorProps
+  extends Pick<
+    IEditorProps,
+    | "containerClassName"
+    | "disabledExtensions"
+    | "flaggedExtensions"
+    | "displayConfig"
+    | "editorClassName"
+    | "extensions"
+    | "handleEditorReady"
+    | "id"
+    | "initialValue"
+  > {
   fileHandler: TReadOnlyFileHandler;
   forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-  id: string;
-  initialValue: string;
   mentionHandler: TReadOnlyMentionHandler;
 }
 
-export type ILiteTextReadOnlyEditor = IReadOnlyEditorProps;
+export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
-export type IRichTextReadOnlyEditor = IReadOnlyEditorProps;
-
-export interface ICollaborativeDocumentReadOnlyEditor extends Omit<IReadOnlyEditorProps, "initialValue"> {
+export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
   embedHandler: TEmbedConfig;
-  handleEditorReady?: (value: boolean) => void;
-  id: string;
-  realtimeConfig: TRealtimeConfig;
-  serverHandler?: TServerHandler;
-  user: TUserDetails;
 }
-
-export interface IDocumentReadOnlyEditor extends IReadOnlyEditorProps {
-  embedHandler: TEmbedConfig;
-  handleEditorReady?: (value: boolean) => void;
-}
-
-export type TUserDetails = {
-  color: string;
-  id: string;
-  name: string;
-  cookie?: string;
-};
-
-export type TRealtimeConfig = {
-  url: string;
-  queryParams: TWebhookConnectionQueryParams;
-};
 
 export interface EditorEvents {
   beforeCreate: never;
