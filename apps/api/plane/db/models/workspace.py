@@ -1,9 +1,6 @@
 # Python imports
-from django.db.models.functions import Ln
 import pytz
-import time
-from django.utils import timezone
-from typing import Optional, Any, Tuple, Dict
+from typing import Optional, Any
 
 # Django imports
 from django.conf import settings
@@ -115,7 +112,7 @@ def slug_validator(value):
 
 
 class Workspace(BaseModel):
-    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
 
     name = models.CharField(max_length=80, verbose_name="Workspace Name")
     logo = models.TextField(verbose_name="Logo", blank=True, null=True)
