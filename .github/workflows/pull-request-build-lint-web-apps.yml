@@ -14,6 +14,7 @@ on:
 
 jobs:
   build-and-lint:
+    name: Build and lint web apps
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: |

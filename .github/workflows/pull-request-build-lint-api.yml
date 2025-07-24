@@ -10,6 +10,7 @@ on:
 
 jobs:
   lint-api:
+    name: Lint API
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: |
