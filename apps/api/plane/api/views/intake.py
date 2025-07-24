@@ -12,7 +12,7 @@ from django.contrib.postgres.fields import ArrayField
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import (
@@ -204,7 +204,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
         serializer = IntakeIssueSerializer(intake_issue)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class IntakeIssueDetailAPIEndpoint(BaseAPIView):

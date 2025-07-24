@@ -22,9 +22,7 @@ class ModuleCreateSerializer(BaseSerializer):
     """
 
     members = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=User.objects.values_list("id", flat=True)
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
     )
@@ -162,9 +160,7 @@ class ModuleSerializer(BaseSerializer):
     """
 
     members = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(
-            queryset=User.objects.values_list("id", flat=True)
-        ),
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
     )

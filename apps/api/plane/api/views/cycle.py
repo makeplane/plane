@@ -23,7 +23,7 @@ from django.db import models
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 # Module imports
 from plane.api.serializers import (
@@ -51,7 +51,6 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
-from drf_spectacular.utils import OpenApiResponse
 from plane.utils.openapi.decorators import cycle_docs
 from plane.utils.openapi import (
     CURSOR_PARAMETER,
