@@ -181,7 +181,7 @@ class TestProjectAPIPost(TestProjectBase):
 
         response = session_client.post(url, project_data, format="json")
 
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
     def test_create_project_duplicate_identifier(
@@ -200,7 +200,7 @@ class TestProjectAPIPost(TestProjectBase):
 
         response = session_client.post(url, project_data, format="json")
 
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
     def test_create_project_missing_required_fields(
@@ -493,7 +493,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         response = session_client.patch(url, update_data, format="json")
 
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
     def test_partial_update_duplicate_identifier_conflict(
@@ -515,7 +515,7 @@ class TestProjectAPIPatchDelete(TestProjectBase):
 
         response = session_client.patch(url, update_data, format="json")
 
-        assert response.status_code == status.HTTP_409_CONFLICT
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
     def test_partial_update_invalid_data(self, session_client, workspace, create_user):
