@@ -47,6 +47,7 @@ class ModuleAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     serializer_class = ModuleSerializer
     webhook_event = "module"
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -306,6 +307,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
     bulk = True
 
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -483,6 +485,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (

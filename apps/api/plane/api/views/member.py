@@ -21,6 +21,7 @@ from plane.app.permissions import ProjectMemberPermission
 # API endpoint to get and insert users inside the workspace
 class ProjectMemberAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectMemberPermission]
+    use_read_replica = True
 
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):

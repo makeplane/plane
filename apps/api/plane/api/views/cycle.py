@@ -55,6 +55,7 @@ class CycleAPIEndpoint(BaseAPIView):
     model = Cycle
     webhook_event = "cycle"
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -404,6 +405,7 @@ class CycleAPIEndpoint(BaseAPIView):
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -558,6 +560,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
     webhook_event = "cycle_issue"
     bulk = True
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -763,6 +766,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     """
 
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)

@@ -36,6 +36,7 @@ class IntakeIssueAPIEndpoint(BaseAPIView):
     model = IntakeIssue
 
     filterset_fields = ["status"]
+    use_read_replica = True
 
     def get_queryset(self):
         intake = Intake.objects.filter(

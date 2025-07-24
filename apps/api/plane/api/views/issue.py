@@ -71,6 +71,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
+    use_read_replica = True
 
     @property
     def project__identifier(self):
@@ -124,6 +125,7 @@ class IssueAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -536,6 +538,7 @@ class LabelAPIEndpoint(BaseAPIView):
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [ProjectMemberPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -655,6 +658,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -769,6 +773,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
     model = IssueComment
     webhook_event = "issue_comment"
     permission_classes = [ProjectLitePermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -950,6 +955,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
 class IssueActivityAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get(self, request, slug, project_id, issue_id, pk=None):
         issue_activities = (
@@ -983,6 +989,7 @@ class IssueAttachmentEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     permission_classes = [ProjectEntityPermission]
     model = FileAsset
+    use_read_replica = True
 
     def post(self, request, slug, project_id, issue_id):
         name = request.data.get("name")
