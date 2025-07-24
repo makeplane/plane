@@ -7,9 +7,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsup --watch --onSuccess 'node --env-file=.env dist/server.js'",
+    "dev": "tsup --watch --onSuccess \"dotenv -e .env -- node dist/server.js\"",
     "build": "tsc --noEmit && tsup",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "dotenv -e .env -- node dist/server.js",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -43,6 +43,7 @@
     "uuid": "^10.0.0",
     "y-prosemirror": "^1.2.15",
     "y-protocols": "^1.0.6",
+    "dotenv-cli": "^8.0.0",
     "yjs": "^13.6.20"
   },
   "devDependencies": {
