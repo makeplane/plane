@@ -12,7 +12,7 @@ jobs:
   lint-api:
     name: Lint API
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     if: |
       github.event.pull_request.draft == false &&
       github.event.pull_request.requested_reviewers != null
