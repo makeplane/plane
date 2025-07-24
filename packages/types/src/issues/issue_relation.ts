@@ -1,4 +1,5 @@
 import { TIssue } from "./issue";
+import { TIssueRelationTypesExtended } from "./issue_relation_extended";
 
 export type TIssueRelation = Record<TIssueRelationTypes, TIssue[]>;
 
@@ -8,4 +9,4 @@ export type TIssueRelationMap = {
 
 export type TIssueRelationIdMap = Record<TIssueRelationTypes, string[]>;
 
-export type TIssueRelationTypes = "blocking" | "blocked_by" | "duplicate" | "relates_to";
+export type TIssueRelationTypes = "blocking" | "blocked_by" | "duplicate" | "relates_to" | TIssueRelationTypesExtended;
