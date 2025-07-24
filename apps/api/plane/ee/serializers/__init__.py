@@ -121,8 +121,7 @@ from .api.job import ImportReportAPISerializer, ImportJobAPISerializer
 from .api.workspace.credential import WorkspaceCredentialAPISerializer
 from .api.workspace.connection import WorkspaceConnectionAPISerializer
 from .api.workspace.entity_connection import WorkspaceEntityConnectionAPISerializer
-from .api.worklog import IssueWorkLogAPISerializer
-
+from .api.worklog import IssueWorkLogAPISerializer, ProjectWorklogSummarySerializer
 
 # mobile app endpoints serializers
 from .app.mobile import (

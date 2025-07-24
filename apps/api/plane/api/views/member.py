@@ -2,29 +2,83 @@
 import uuid
 
 # Django imports
-from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
+from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
+
 
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiResponse,
+)
 
 # Module imports
 from .base import BaseAPIView
 from plane.api.serializers import UserLiteSerializer
-from plane.db.models import User, Workspace, Project, WorkspaceMember, ProjectMember
-
+from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember, Project
 from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
+from plane.utils.openapi import (
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    WORKSPACE_MEMBER_EXAMPLE,
+    PROJECT_MEMBER_EXAMPLE,
+)
 
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
 
+    @extend_schema(
+        operation_id="get_workspace_members",
+        summary="List workspace members",
+        description="Retrieve all users who are members of the specified workspace.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="List of workspace members with their roles",
+                response={
+                    "type": "array",
+                    "items": {
+                        "allOf": [
+                            {"$ref": "#/components/schemas/UserLite"},
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "role": {
+                                        "type": "integer",
+                                        "description": "Member role in the workspace",
+                                    }
+                                },
+                            },
+                        ]
+                    },
+                },
+                examples=[WORKSPACE_MEMBER_EXAMPLE],
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
     # Get all the users that are present inside the workspace
     def get(self, request, slug):
+        """List workspace members
+
+        Retrieve all users who are members of the specified workspace.
+        Returns user profiles with their respective workspace roles and permissions.
+        """
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(
@@ -50,8 +104,30 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
 class ProjectMemberAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectMemberPermission]
 
+    @extend_schema(
+        operation_id="get_project_members",
+        summary="List project members",
+        description="Retrieve all users who are members of the specified project.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={
+            200: OpenApiResponse(
+                description="List of project members with their roles",
+                response=UserLiteSerializer,
+                examples=[PROJECT_MEMBER_EXAMPLE],
+            ),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
+        """List project members
+
+        Retrieve all users who are members of the specified project.
+        Returns user profiles with their project-specific roles and access levels.
+        """
         # Check if the workspace exists
         if not Workspace.objects.filter(slug=slug).exists():
             return Response(

@@ -13,7 +13,14 @@ from plane.db.models import (
 )
 
 
-class ModuleSerializer(BaseSerializer):
+class ModuleCreateSerializer(BaseSerializer):
+    """
+    Serializer for creating modules with member validation and date checking.
+
+    Handles module creation including member assignment validation, date range verification,
+    and duplicate name prevention for feature-based project organization setup.
+    """
+
     members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(
             queryset=User.objects.values_list("id", flat=True)
@@ -21,16 +28,20 @@ class ModuleSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    total_issues = serializers.IntegerField(read_only=True)
-    cancelled_issues = serializers.IntegerField(read_only=True)
-    completed_issues = serializers.IntegerField(read_only=True)
-    started_issues = serializers.IntegerField(read_only=True)
-    unstarted_issues = serializers.IntegerField(read_only=True)
-    backlog_issues = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Module
-        fields = "__all__"
+        fields = [
+            "name",
+            "description",
+            "start_date",
+            "target_date",
+            "status",
+            "lead",
+            "members",
+            "external_source",
+            "external_id",
+        ]
         read_only_fields = [
             "id",
             "workspace",
@@ -41,11 +52,6 @@ class ModuleSerializer(BaseSerializer):
             "updated_at",
             "deleted_at",
         ]
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["members"] = [str(member.id) for member in instance.members.all()]
-        return data
 
     def validate(self, data):
         if (
@@ -103,6 +109,22 @@ class ModuleSerializer(BaseSerializer):
 
         return module
 
+
+class ModuleUpdateSerializer(ModuleCreateSerializer):
+    """
+    Serializer for updating modules with enhanced validation and member management.
+
+    Extends module creation with update-specific validations including member reassignment,
+    name conflict checking, and relationship management for module modifications.
+    """
+
+    class Meta(ModuleCreateSerializer.Meta):
+        model = Module
+        fields = ModuleCreateSerializer.Meta.fields + [
+            "members",
+        ]
+        read_only_fields = ModuleCreateSerializer.Meta.read_only_fields
+
     def update(self, instance, validated_data):
         members = validated_data.pop("members", None)
         module_name = validated_data.get("name")
@@ -138,7 +160,56 @@ class ModuleSerializer(BaseSerializer):
         return super().update(instance, validated_data)
 
 
+class ModuleSerializer(BaseSerializer):
+    """
+    Comprehensive module serializer with work item metrics and member management.
+
+    Provides complete module data including work item counts by status, member relationships,
+    and progress tracking for feature-based project organization.
+    """
+
+    members = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
+        write_only=True,
+        required=False,
+    )
+    total_issues = serializers.IntegerField(read_only=True)
+    cancelled_issues = serializers.IntegerField(read_only=True)
+    completed_issues = serializers.IntegerField(read_only=True)
+    started_issues = serializers.IntegerField(read_only=True)
+    unstarted_issues = serializers.IntegerField(read_only=True)
+    backlog_issues = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Module
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["members"] = [str(member.id) for member in instance.members.all()]
+        return data
+
+
 class ModuleIssueSerializer(BaseSerializer):
+    """
+    Serializer for module-work item relationships with sub-item counting.
+
+    Manages the association between modules and work items, including
+    hierarchical issue tracking for nested work item structures.
+    """
+
     sub_issues_count = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -156,6 +227,13 @@ class ModuleIssueSerializer(BaseSerializer):
 
 
 class ModuleLinkSerializer(BaseSerializer):
+    """
+    Serializer for module external links with URL validation.
+
+    Handles external resource associations with modules including
+    URL validation and duplicate prevention for reference management.
+    """
+
     class Meta:
         model = ModuleLink
         fields = "__all__"
@@ -181,6 +259,27 @@ class ModuleLinkSerializer(BaseSerializer):
 
 
 class ModuleLiteSerializer(BaseSerializer):
+    """
+    Lightweight module serializer for minimal data transfer.
+
+    Provides essential module information without computed metrics,
+    optimized for list views and reference lookups.
+    """
+
     class Meta:
         model = Module
         fields = "__all__"
+
+
+class ModuleIssueRequestSerializer(serializers.Serializer):
+    """
+    Serializer for bulk work item assignment to modules.
+
+    Validates work item ID lists for batch operations including
+    module assignment and work item organization workflows.
+    """
+
+    issues = serializers.ListField(
+        child=serializers.UUIDField(),
+        help_text="List of issue IDs to add to the module",
+    )

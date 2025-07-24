@@ -27,3 +27,12 @@ class IssueWorkLogAPISerializer(BaseSerializer):
         if data.get("duration", None) is not None and data.get("duration") < 0:
             raise serializers.ValidationError("Duration cannot be negative")
         return data
+
+
+class ProjectWorklogSummarySerializer(serializers.Serializer):
+    """Serializer for project worklog summary with aggregated duration per issue"""
+
+    issue_id = serializers.UUIDField(help_text="ID of the work item")
+    duration = serializers.IntegerField(
+        help_text="Total duration logged for this work item in seconds"
+    )

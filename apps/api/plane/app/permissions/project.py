@@ -148,12 +148,12 @@ class ProjectEntityPermission(BasePermission):
             return False
 
         # Handle requests based on project__identifier
-        if hasattr(view, "project__identifier") and view.project__identifier:
+        if hasattr(view, "project_identifier") and view.project_identifier:
             if request.method in SAFE_METHODS:
                 is_project_member = ProjectMember.objects.filter(
                     workspace__slug=view.workspace_slug,
                     member=request.user,
-                    project__identifier=view.project__identifier,
+                    project__identifier=view.project_identifier,
                     is_active=True,
                 ).exists()
 

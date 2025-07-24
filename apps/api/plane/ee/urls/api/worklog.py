@@ -7,17 +7,17 @@ from plane.ee.views import IssueWorklogAPIEndpoint, ProjectWorklogAPIEndpoint
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/",
-        IssueWorklogAPIEndpoint.as_view(),
+        IssueWorklogAPIEndpoint.as_view(http_method_names=["post", "get"]),
         name="worklogs",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/worklogs/<uuid:pk>/",
-        IssueWorklogAPIEndpoint.as_view(),
+        IssueWorklogAPIEndpoint.as_view(http_method_names=["patch", "delete"]),
         name="worklogs",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/total-worklogs/",
-        ProjectWorklogAPIEndpoint.as_view(),
+        ProjectWorklogAPIEndpoint.as_view(http_method_names=["get"]),
         name="project-worklogs",
     ),
 ]

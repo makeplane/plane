@@ -19,6 +19,7 @@ from oauth2_provider.contrib.rest_framework import (
     IsAuthenticatedOrTokenHasScope,
 )
 
+from rest_framework.generics import GenericAPIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
@@ -43,7 +44,7 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, GenericAPIView, BasePaginator):
     authentication_classes = [APIKeyAuthentication, OAuth2Authentication]
     permission_classes = [
         IsAuthenticated,

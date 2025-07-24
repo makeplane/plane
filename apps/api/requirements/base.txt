@@ -88,6 +88,9 @@ pydantic==2.10.6
 # rate limiting
 django-ratelimit==4.1.0
 
+# OpenAPI Specification
+drf-spectacular==0.28.0
+
 # OpenSearch Integration
 opensearch-py==2.8.0
 django-opensearch-dsl==0.7.0

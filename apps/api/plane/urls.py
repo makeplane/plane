@@ -6,6 +6,11 @@ from django.contrib import admin
 
 from django.conf import settings
 from django.urls import include, path, re_path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 # Module imports
 from plane.ee.views.space.intake import (
@@ -31,6 +36,20 @@ urlpatterns = [
     path("marketplace/", include("plane.marketplace.urls")),
 ]
 
+if settings.ENABLE_DRF_SPECTACULAR:
+    urlpatterns += [
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path(
+            "api/schema/swagger-ui/",
+            SpectacularSwaggerView.as_view(url_name="schema"),
+            name="swagger-ui",
+        ),
+        path(
+            "api/schema/redoc/",
+            SpectacularRedocView.as_view(url_name="schema"),
+            name="redoc",
+        ),
+    ]
 
 if settings.DEBUG:
     try:

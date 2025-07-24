@@ -113,7 +113,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     # timezone
-    USER_TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    USER_TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     user_timezone = models.CharField(
         max_length=255, default="UTC", choices=USER_TIMEZONE_CHOICES
     )

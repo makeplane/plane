@@ -12,17 +12,43 @@ from plane.db.models import Issue, Project
 from plane.ee.models import IssueWorkLog
 from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
-from plane.ee.serializers import IssueWorkLogAPISerializer
+from plane.ee.serializers import (
+    IssueWorkLogAPISerializer,
+    ProjectWorklogSummarySerializer,
+)
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.app.permissions import allow_permission, ROLE
+
+# OpenAPI imports
+from plane.utils.openapi import issue_worklog_docs
+from drf_spectacular.utils import OpenApiResponse
 
 
 class IssueWorklogAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
 
+    @issue_worklog_docs(
+        operation_id="create_issue_worklog",
+        summary="Create a new worklog entry",
+        description="Create a new worklog entry",
+        request=IssueWorkLogAPISerializer,
+        responses={
+            201: OpenApiResponse(
+                description="Worklog created successfully",
+                response=IssueWorkLogAPISerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            404: OpenApiResponse(description="Worklog is not enabled for the project"),
+        },
+    )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, issue_id):
+        """Create worklog entry
+
+        Log time spent on a work item with description and duration.
+        Requires time tracking to be enabled on the project.
+        """
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()
@@ -44,9 +70,26 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @issue_worklog_docs(
+        operation_id="list_issue_worklogs",
+        summary="List worklog entries",
+        description="List worklog entries",
+        responses={
+            200: OpenApiResponse(
+                description="List of worklog entries",
+                response=IssueWorkLogAPISerializer(many=True),
+            ),
+            404: OpenApiResponse(description="Worklog is not enabled for the project"),
+        },
+    )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id, issue_id):
+        """List issue worklogs
+
+        Retrieve all worklog entries for a specific work item.
+        Returns time tracking history with descriptions and durations.
+        """
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()
@@ -66,9 +109,30 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
         serializer = IssueWorkLogAPISerializer(worklogs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @issue_worklog_docs(
+        operation_id="update_issue_worklog",
+        summary="Update a worklog entry",
+        description="Update a worklog entry",
+        request=IssueWorkLogAPISerializer,
+        responses={
+            200: OpenApiResponse(
+                description="Worklog updated successfully",
+                response=IssueWorkLogAPISerializer,
+            ),
+            400: OpenApiResponse(description="Invalid request data"),
+            404: OpenApiResponse(
+                description="Worklog not found or time tracking disabled"
+            ),
+        },
+    )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def patch(self, request, slug, project_id, issue_id, pk):
+        """Update worklog entry
+
+        Modify an existing worklog entry's description or duration.
+        Only updates specified fields (partial update).
+        """
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()
@@ -92,9 +156,25 @@ class IssueWorklogAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @issue_worklog_docs(
+        operation_id="delete_issue_worklog",
+        summary="Delete a worklog entry",
+        description="Delete a worklog entry",
+        responses={
+            204: OpenApiResponse(description="Worklog deleted successfully"),
+            404: OpenApiResponse(
+                description="Worklog not found or time tracking disabled"
+            ),
+        },
+    )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id, issue_id, pk):
+        """Delete worklog entry
+
+        Permanently remove a worklog entry from a work item.
+        This action cannot be undone.
+        """
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()
@@ -121,9 +201,26 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
     ViewSet to fetch total worklog duration for each unique issue.
     """
 
+    @issue_worklog_docs(
+        operation_id="get_project_worklog_summary",
+        summary="Get project worklog summary",
+        description="Get project worklog summary",
+        responses={
+            200: OpenApiResponse(
+                description="Project worklog summary by issue",
+                response=ProjectWorklogSummarySerializer(many=True),
+            ),
+            404: OpenApiResponse(description="Worklog is not enabled for the project"),
+        },
+    )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):
+        """Get project worklog summary
+
+        Retrieve aggregated worklog duration for each work item in the project.
+        Returns total time logged per issue for project time tracking analytics.
+        """
         project_feature = Project.objects.filter(
             workspace__slug=slug, pk=project_id
         ).first()

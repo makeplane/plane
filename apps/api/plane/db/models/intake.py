@@ -37,6 +37,14 @@ class SourceType(models.TextChoices):
     FORMS = "FORMS"
 
 
+class IntakeIssueStatus(models.IntegerChoices):
+    PENDING = -2
+    REJECTED = -1
+    SNOOZED = 0
+    ACCEPTED = 1
+    DUPLICATE = 2
+
+
 class IntakeIssue(ProjectBaseModel):
     intake = models.ForeignKey(
         "db.Intake", related_name="issue_intake", on_delete=models.CASCADE

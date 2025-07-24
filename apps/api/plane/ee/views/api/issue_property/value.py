@@ -7,6 +7,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
 from plane.app.permissions import ProjectEntityPermission
@@ -20,6 +21,7 @@ from plane.ee.utils.external_issue_property_validator import (
 from plane.api.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.openapi.decorators import issue_property_value_docs
 
 
 class IssuePropertyValueAPIEndpoint(BaseAPIView):
@@ -102,6 +104,17 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
     # list issue property options and get issue property option by id
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="list_issue_property_values",
+        summary="List issue property values",
+        description="List issue property values",
+        responses={
+            200: OpenApiResponse(
+                description="Issue property values",
+                response=IssuePropertyValueAPISerializer,
+            ),
+        },
+    )
     def get(self, request, slug, project_id, issue_id, property_id):
         if (
             self.workspace_slug
@@ -124,6 +137,39 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
     # create issue property option
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @issue_property_value_docs(
+        operation_id="create_issue_property_value",
+        summary="Create/update an issue property value",
+        description="Create/update an issue property value",
+        request=OpenApiRequest(
+            request=IssuePropertyValueAPISerializer,
+            examples=[
+                OpenApiExample(
+                    "IssuePropertyValueAPISerializer",
+                    value={
+                        "values": [
+                            {
+                                "value": "1234567890",
+                                "external_id": "1234567890",
+                                "external_source": "github",
+                            }
+                        ]
+                    },
+                    description="Example request for creating an issue property value",
+                ),
+            ],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Issue property value created",
+                response=IssuePropertyValueAPISerializer,
+            ),
+            400: OpenApiResponse(
+                description="Value is required",
+            ),
+            404: OpenApiResponse(description="Issue property not found"),
+        },
+    )
     def post(self, request, slug, project_id, issue_id, property_id):
         if (
             self.workspace_slug

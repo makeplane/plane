@@ -1,14 +1,20 @@
 # Module imports
+from rest_framework import serializers
 from plane.ee.serializers import BaseSerializer
 from plane.ee.models import (
     IssueProperty,
     IssuePropertyOption,
     IssuePropertyValue,
     IssuePropertyActivity,
+    RelationTypeEnum,
 )
 
 
 class IssuePropertyAPISerializer(BaseSerializer):
+    relation_type = serializers.ChoiceField(
+        choices=RelationTypeEnum.choices, required=False
+    )
+
     class Meta:
         model = IssueProperty
         fields = "__all__"

@@ -13,6 +13,7 @@ from .issue_type import urlpatterns as issue_type_patterns
 from plane.ee.urls.api import urlpatterns as ee_api_urls
 
 urlpatterns = [
+    *asset_patterns,
     *project_patterns,
     *state_patterns,
     *issue_patterns,

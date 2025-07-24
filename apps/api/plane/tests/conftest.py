@@ -1,8 +1,7 @@
 import pytest
-from django.conf import settings
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
-from unittest.mock import patch, MagicMock
+
 from uuid import uuid4
 
 from plane.db.models import User, Workspace, FileAsset, Project, WorkspaceMember
@@ -11,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 @pytest.fixture(scope="session")
-def django_db_setup(django_db_setup):
+def django_db_setup(django_db_setup):  # noqa: F811
     """Set up the Django database for the test session"""
     pass
 

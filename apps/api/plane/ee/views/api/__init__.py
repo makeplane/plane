@@ -1,6 +1,8 @@
 from .issue_property import (
-    IssuePropertyAPIEndpoint,
-    IssuePropertyOptionAPIEndpoint,
+    IssuePropertyListCreateAPIEndpoint,
+    IssuePropertyDetailAPIEndpoint,
+    IssuePropertyOptionListCreateAPIEndpoint,
+    IssuePropertyOptionDetailAPIEndpoint,
     IssuePropertyValueAPIEndpoint,
 )
 
