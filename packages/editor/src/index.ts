@@ -13,10 +13,9 @@ export {
   LiteTextEditorWithRef,
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
-  RichTextReadOnlyEditorWithRef,
 } from "@/components/editors";
 
-export { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
+export { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 
 // constants
 export * from "@/constants/common";
@@ -34,6 +33,9 @@ export * from "@/components/menus";
 export { useEditor } from "@/hooks/use-editor";
 export { type IMarking, useEditorMarkings } from "@/hooks/use-editor-markings";
 export { useReadOnlyEditor } from "@/hooks/use-read-only-editor";
+
+export { CORE_EXTENSIONS } from "@/constants/extension";
+export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 // types
 export * from "@/types";

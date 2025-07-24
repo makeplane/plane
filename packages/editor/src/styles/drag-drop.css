@@ -35,8 +35,7 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging)
-  .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(.node-externalEmbedComponent) {
+.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -62,8 +61,7 @@
   }
 
   &.node-imageComponent,
-  &.node-image,
-  &.node-externalEmbedComponent {
+  &.node-image {
     --horizontal-offset: 0px;
 
     &::after {

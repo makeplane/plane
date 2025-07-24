@@ -2,8 +2,8 @@ import sortBy from "lodash/sortBy";
 // plane imports
 import { IModule, TModuleDisplayFilters, TModuleFilters, TModuleOrderByOptions } from "@plane/types";
 // local imports
-import { getDate  } from "./datetime";
-import { satisfiesDateFilter  } from "./filter";
+import { getDate } from "./datetime";
+import { satisfiesDateFilter } from "./filter";
 
 /**
  * @description orders modules based on their status

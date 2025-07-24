@@ -6,7 +6,7 @@ on:
     types: ["opened", "synchronize", "ready_for_review"]
 
 jobs:
-  lint-apiserver:
+  lint-server:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
@@ -17,10 +17,10 @@ jobs:
           python-version: "3.x" # Specify the Python version you need
       - name: Install Pylint
         run: python -m pip install ruff
-      - name: Install Apiserver Dependencies
-        run: cd apiserver && pip install -r requirements.txt
-      - name: Lint apiserver
-        run: ruff check --fix apiserver
+      - name: Install Server Dependencies
+        run: cd apps/server && pip install -r requirements.txt
+      - name: Lint apps/server
+        run: ruff check --fix apps/server
 
   lint-admin:
     if: github.event.pull_request.draft == false

@@ -1043,6 +1043,10 @@
       },
       "upload": {
         "error": "资源上传失败。请稍后重试。"
+      },
+      "copy_link": {
+        "success": "评论链接已复制到剪贴板",
+        "error": "复制评论链接时出错。请稍后再试。"
       }
     },
     "empty_state": {
@@ -1344,6 +1348,17 @@
       "project_insights": {
         "title": "暂无数据",
         "description": "分配给您的工作项将按状态分类显示在此处。"
+      },
+      "general": {
+        "title": "跟踪进度、工作量和分配。发现趋势，消除障碍，加速工作进展",
+        "description": "查看范围与需求、估算和范围蔓延。获取团队成员和团队的性能，确保您的项目按时运行。",
+        "primary_button": {
+          "text": "开始您的第一个项目",
+          "comic": {
+            "title": "分析功能在周期 + 模块中效果最佳",
+            "description": "首先，将您的问题在周期中进行时间限制，如果可能的话，将跨越多个周期的问题分组到模块中。在左侧导航中查看这两个功能。"
+          }
+        }
       }
     },
     "created_vs_resolved": "已创建 vs 已解决",
@@ -2451,5 +2466,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。"
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大纲",
+        "empty_state": {
+          "title": "缺少标题",
+          "description": "让我们在这个页面添加一些标题来在这里查看它们。"
+        }
+      },
+      "info": {
+        "label": "信息",
+        "document_info": {
+          "words": "字数",
+          "characters": "字符数",
+          "paragraphs": "段落数",
+          "read_time": "阅读时间"
+        },
+        "actors_info": {
+          "edited_by": "编辑者",
+          "created_by": "创建者"
+        },
+        "version_history": {
+          "label": "版本历史",
+          "current_version": "当前版本"
+        }
+      },
+      "assets": {
+        "label": "资源",
+        "download_button": "下载",
+        "empty_state": {
+          "title": "缺少图片",
+          "description": "添加图片以在这里查看它们。"
+        }
+      }
+    },
+    "open_button": "打开导航面板",
+    "close_button": "关闭导航面板",
+    "outline_floating_button": "打开大纲"
   }
 }

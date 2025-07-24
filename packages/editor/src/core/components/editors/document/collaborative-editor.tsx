@@ -3,7 +3,7 @@ import React from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
-import { DocumentContentLoader, PageRenderer } from "@/components/editors";
+import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
@@ -17,8 +17,6 @@ import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
-    onChange,
-    onTransaction,
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
@@ -33,6 +31,9 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
+    onChange,
+    onTransaction,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -63,6 +64,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     handleEditorReady,
     id,
     mentionHandler,
+    onAssetChange,
     onChange,
     onTransaction,
     placeholder,
@@ -80,12 +82,6 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
   if (!editor) return null;
 
-  const blockWidthClassName = cn("w-full max-w-[720px] mx-auto transition-all duration-200 ease-in-out", {
-    "max-w-[1152px]": displayConfig.wideLayout,
-  });
-
-  if (!hasServerSynced && !hasServerConnectionFailed) return <DocumentContentLoader className={blockWidthClassName} />;
-
   return (
     <PageRenderer
       aiHandler={aiHandler}
@@ -94,6 +90,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       editor={editor}
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}
+      isLoading={!hasServerSynced && !hasServerConnectionFailed}
       tabIndex={tabIndex}
       disabledExtensions={disabledExtensions}
     />

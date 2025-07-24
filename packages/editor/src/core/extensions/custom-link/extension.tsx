@@ -3,6 +3,8 @@ import { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
 // local imports
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
@@ -113,13 +115,14 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
       linkOnPaste: true,
       autolink: true,
       inclusive: false,
-      protocols: [],
+      protocols: ["http", "https"],
       HTMLAttributes: {
         target: "_blank",
         rel: "noopener noreferrer nofollow",
-        class: null,
+        class:
+          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
-      validate: undefined,
+      validate: (url: string) => isValidHttpUrl(url).isValid,
     };
   },
 

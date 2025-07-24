@@ -12,6 +12,7 @@ import { EditorContentWrapper } from "./editor-content";
 
 type Props = IEditorProps & {
   children?: (editor: Editor) => React.ReactNode;
+  editable: boolean;
   extensions: Extensions;
 };
 
@@ -21,6 +22,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    editable,
     editorClassName = "",
     extensions,
     id,
@@ -40,7 +42,7 @@ export const EditorWrapper: React.FC<Props> = (props) => {
   } = props;
 
   const editor = useEditor({
-    editable: true,
+    editable,
     disabledExtensions,
     editorClassName,
     enableHistory: true,

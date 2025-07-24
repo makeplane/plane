@@ -131,7 +131,7 @@ const SideMenu = (options: SideMenuPluginProps) => {
             }
           }
 
-          if (node.matches(".table-wrapper")) {
+          if (node.matches("table")) {
             rect.top += 8;
             rect.left -= 8;
           }
