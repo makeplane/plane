@@ -766,7 +766,6 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     """
 
     permission_classes = [ProjectEntityPermission]
-    use_read_replica = True
 
     def post(self, request, slug, project_id, cycle_id):
         new_cycle_id = request.data.get("new_cycle_id", False)

@@ -344,7 +344,6 @@ class ProjectAPIEndpoint(BaseAPIView):
 
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectBasePermission]
-    use_read_replica = True
 
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
