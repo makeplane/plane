@@ -544,127 +544,15 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        external_id = request.GET.get("external_id")
-        external_source = request.GET.get("external_source")
-
-        if external_id and external_source:
-            issue = Issue.objects.get(
-                external_id=external_id,
-                external_source=external_source,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
-            )
-
-        if pk:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-            return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
-            )
-
-        # Custom ordering for priority and state
-        priority_order = ["urgent", "high", "medium", "low", "none"]
-        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
-
-        order_by_param = request.GET.get("order_by", "-created_at")
-
-        issue_queryset = (
-            self.get_queryset()
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
-                )
-            )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-        )
-
-        # Priority Ordering
-        if order_by_param == "priority" or order_by_param == "-priority":
-            priority_order = (
-                priority_order if order_by_param == "priority" else priority_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                priority_order=Case(
-                    *[
-                        When(priority=p, then=Value(i))
-                        for i, p in enumerate(priority_order)
-                    ],
-                    output_field=CharField(),
-                )
-            ).order_by("priority_order")
-
-        # State Ordering
-        elif order_by_param in [
-            "state__name",
-            "state__group",
-            "-state__name",
-            "-state__group",
-        ]:
-            state_order = (
-                state_order
-                if order_by_param in ["state__name", "state__group"]
-                else state_order[::-1]
-            )
-            issue_queryset = issue_queryset.annotate(
-                state_order=Case(
-                    *[
-                        When(state__group=state_group, then=Value(i))
-                        for i, state_group in enumerate(state_order)
-                    ],
-                    default=Value(len(state_order)),
-                    output_field=CharField(),
-                )
-            ).order_by("state_order")
-        # assignee and label ordering
-        elif order_by_param in [
-            "labels__name",
-            "-labels__name",
-            "assignees__first_name",
-            "-assignees__first_name",
-        ]:
-            issue_queryset = issue_queryset.annotate(
-                max_values=Max(
-                    order_by_param[1::]
-                    if order_by_param.startswith("-")
-                    else order_by_param
-                )
-            ).order_by(
-                "-max_values" if order_by_param.startswith("-") else "max_values"
-            )
-        else:
-            issue_queryset = issue_queryset.order_by(order_by_param)
-
-        return self.paginate(
-            request=request,
-            queryset=(issue_queryset),
-            on_results=lambda issues: IssueSerializer(
-                issues, many=True, fields=self.fields, expand=self.expand
-            ).data,
+        issue = Issue.issue_objects.annotate(
+            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+            .order_by()
+            .annotate(count=Func(F("id"), function="Count"))
+            .values("count")
+        ).get(workspace__slug=slug, project_id=project_id, pk=pk)
+        return Response(
+            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
         )
 
     @work_item_docs(
