@@ -77,6 +77,74 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 
 from plane.bgtasks.webhook_task import model_activity
+
+from plane.utils.openapi import (
+    work_item_docs,
+    label_docs,
+    issue_link_docs,
+    issue_comment_docs,
+    issue_activity_docs,
+    issue_attachment_docs,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_IDENTIFIER_PARAMETER,
+    ISSUE_IDENTIFIER_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    ISSUE_ID_PARAMETER,
+    LABEL_ID_PARAMETER,
+    COMMENT_ID_PARAMETER,
+    LINK_ID_PARAMETER,
+    ATTACHMENT_ID_PARAMETER,
+    ACTIVITY_ID_PARAMETER,
+    PROJECT_ID_QUERY_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    EXTERNAL_ID_PARAMETER,
+    EXTERNAL_SOURCE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    SEARCH_PARAMETER,
+    SEARCH_PARAMETER_REQUIRED,
+    LIMIT_PARAMETER,
+    WORKSPACE_SEARCH_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    ISSUE_CREATE_EXAMPLE,
+    ISSUE_UPDATE_EXAMPLE,
+    ISSUE_UPSERT_EXAMPLE,
+    LABEL_CREATE_EXAMPLE,
+    LABEL_UPDATE_EXAMPLE,
+    ISSUE_LINK_CREATE_EXAMPLE,
+    ISSUE_LINK_UPDATE_EXAMPLE,
+    ISSUE_COMMENT_CREATE_EXAMPLE,
+    ISSUE_COMMENT_UPDATE_EXAMPLE,
+    ISSUE_ATTACHMENT_UPLOAD_EXAMPLE,
+    ATTACHMENT_UPLOAD_CONFIRM_EXAMPLE,
+    # Response Examples
+    ISSUE_EXAMPLE,
+    LABEL_EXAMPLE,
+    ISSUE_LINK_EXAMPLE,
+    ISSUE_COMMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE,
+    ISSUE_SEARCH_EXAMPLE,
+    WORK_ITEM_NOT_FOUND_RESPONSE,
+    ISSUE_NOT_FOUND_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
+    DELETED_RESPONSE,
+    ADMIN_ONLY_RESPONSE,
+    LABEL_NOT_FOUND_RESPONSE,
+    LABEL_NAME_EXISTS_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
+    LINK_NOT_FOUND_RESPONSE,
+    COMMENT_NOT_FOUND_RESPONSE,
+    ATTACHMENT_NOT_FOUND_RESPONSE,
+    BAD_SEARCH_REQUEST_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+)
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -573,18 +641,6 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-                status=status.HTTP_200_OK,
-            )
-
-        if pk:
-            issue = Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            ).get(workspace__slug=slug, project_id=project_id, pk=pk)
             return Response(
                 IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
                 status=status.HTTP_200_OK,
@@ -2530,34 +2586,27 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
                 id=pk, workspace__slug=slug, project_id=project_id
             )
 
-            # Check if the asset is uploaded
-            if not asset.is_uploaded:
-                return Response(
-                    {"error": "The asset is not uploaded.", "status": False},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            storage = S3Storage(request=request)
-            presigned_url = storage.generate_presigned_url(
-                object_name=asset.asset.name,
-                disposition="attachment",
-                filename=asset.attributes.get("name"),
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The asset is not uploaded.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-            return HttpResponseRedirect(presigned_url)
 
-        # Get all the attachments
-        issue_attachments = FileAsset.objects.filter(
-            issue_id=issue_id,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-            workspace__slug=slug,
-            project_id=project_id,
-            is_uploaded=True,
+        storage = S3Storage(request=request)
+        presigned_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
         )
-        # Serialize the attachments
-        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return HttpResponseRedirect(presigned_url)
 
     def patch(self, request, slug, project_id, issue_id, pk):
+        """Confirm attachment upload
+
+        Mark an attachment as uploaded after successful file transfer to storage.
+        Triggers activity logging and metadata extraction.
+        """
         issue_attachment = FileAsset.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
         )

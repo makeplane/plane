@@ -62,6 +62,7 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* User profile images, project file uploads, secure direct-to-cloud uploads."
             ),
         },
+        # System Features
         {
             "name": "Intake",
             "description": (

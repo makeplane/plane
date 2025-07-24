@@ -491,7 +491,6 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
 
         Retrieve details of a specific module.
         """
-
         queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
         data = ModuleSerializer(queryset, fields=self.fields, expand=self.expand).data
         return Response(data, status=status.HTTP_200_OK)

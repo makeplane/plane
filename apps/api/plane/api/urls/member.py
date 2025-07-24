@@ -6,11 +6,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<str:project_id>/members/",
         ProjectMemberAPIEndpoint.as_view(http_method_names=["get"]),
-        name="users",
+        name="project-members",
     ),
     path(
         "workspaces/<str:slug>/members/",
         WorkspaceMemberAPIEndpoint.as_view(http_method_names=["get"]),
-        name="users",
+        name="workspace-members",
     ),
 ]

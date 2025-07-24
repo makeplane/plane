@@ -23,7 +23,7 @@ from django.db import models
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiExample, OpenApiRequest
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 # Module imports
 from plane.api.serializers import (
@@ -54,7 +54,6 @@ from plane.bgtasks.webhook_task import model_activity
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
 )
-from drf_spectacular.utils import OpenApiResponse
 from plane.utils.openapi.decorators import cycle_docs
 from plane.utils.openapi import (
     CURSOR_PARAMETER,
