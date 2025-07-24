@@ -38,6 +38,7 @@ from plane.utils.openapi import (
     UNAUTHORIZED_RESPONSE,
     asset_docs,
 )
+from plane.utils.exception_logger import log_exception
 
 
 class UserAssetEndpoint(BaseAPIView):
@@ -462,8 +463,10 @@ class GenericAssetEndpoint(BaseAPIView):
                 {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
+            log_exception(e)
             return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": "Internal server error"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     @asset_docs(
