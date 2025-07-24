@@ -55,7 +55,7 @@ export const Header = observer((props: THeaderProps) => {
                   {models?.length > 1 ? (
                     <ModelsDropdown models={models} activeModel={activeModel} setActiveModel={setActiveModel} />
                   ) : (
-                    <span className="font-medium text-sm my-auto">Pi Chat {`(${activeModel?.name || "GPT-4.1"})`}</span>
+                    <span className="font-medium text-sm my-auto">Pi</span>
                   )}
                   <BetaBadge />
                 </div>

@@ -37,7 +37,7 @@ export const ReasoningBlock = (props: TProps) => {
           )}
         >
           <div className="pl-4 ml-4 overflow-hidden border-l border-custom-border-200 text-custom-text-300">
-            <Markdown className="pi-chat-root italic text-sm">{reasoning}</Markdown>
+            <Markdown className="pi-chat-root text-sm">{reasoning}</Markdown>
           </div>
         </div>
       )}

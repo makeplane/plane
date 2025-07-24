@@ -32,6 +32,7 @@ export const Messages = observer((props: TProps) => {
     //Always scroll to the latest message
     if (!activeChat?.dialogue) return;
     scrollIntoViewHelper((activeChat?.dialogue.length - 1).toString());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 
   if (!activeChat?.dialogue || activeChat?.dialogue.length === 0)

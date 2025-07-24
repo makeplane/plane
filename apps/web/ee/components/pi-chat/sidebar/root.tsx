@@ -33,7 +33,7 @@ export const PiSidebar = observer(() => {
 
         {isAppRailEnabled && (
           <div className="flex items-center justify-between gap-2">
-            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Pi chat</span>
+            <span className="text-md text-custom-text-200 font-medium px-1 pt-1">Pi Chat</span>
             <div className="flex items-center gap-2">
               <AppSidebarToggleButton />
             </div>

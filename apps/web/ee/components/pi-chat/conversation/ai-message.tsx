@@ -9,7 +9,6 @@ import { EFeedback } from "@/plane-web/types";
 import { FeedbackModal } from "../input/feedback-modal";
 import { ReasoningBlock } from "./reasoning";
 import { Thinking } from "./thinking";
-import Link from "next/link";
 
 type TProps = {
   id: string;
