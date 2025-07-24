@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { ETemplateLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // store hooks
 import { IWorkspaceAuthWrapper } from "@/ce/layouts/workspace-wrapper";
 import { useWorkspace } from "@/hooks/store";
@@ -31,6 +31,7 @@ import {
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import { EWorkspaceFeatures } from "@/plane-web/types/workspace-feature";
 import { useInitiatives } from "../hooks/store/use-initiatives";
+import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   // props
   const { children } = props;
@@ -55,6 +56,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   const { initiative } = useInitiatives();
+  const { initPiChat } = usePiChat();
   // derived values
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
@@ -68,6 +70,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const isPageTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PAGE_TEMPLATES");
   const isInitiativesFeatureEnabled = initiative.isInitiativesFeatureEnabled;
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug.toString());
+  const isPiEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.PI_CHAT);
 
   // fetching feature flags
   const { isLoading: flagsLoader, error: flagsError } = useSWR(
@@ -189,6 +192,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // loading state
   const isLoading = flagsLoader && !flagsError;
+
+  useEffect(() => {
+    if (isPiEnabled) {
+      initPiChat();
+    }
+  }, [isPiEnabled]);
 
   // if workspace has exceeded the free member count
   if (isFreeMemberCountExceeded && !isWorkspaceSettingsRoute) {

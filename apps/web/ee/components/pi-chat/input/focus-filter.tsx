@@ -50,26 +50,19 @@ export const FocusFilter = observer((props: TProps) => {
             <span className="text-sm font-medium text-custom-text-300 my-auto">
               Focus{!isEmpty(focus) && focus.isInWorkspaceContext && ": "}
             </span>
-            <span className="text-sm my-auto capitalize truncate">
-              {!isEmpty(focus) && focus.isInWorkspaceContext ? `${selectedFocus}` : ""}
-            </span>
-            {!focus.isInWorkspaceContext && (
-              <ToggleSwitch
-                value={focus.isInWorkspaceContext ?? false}
-                onChange={() => {
-                  setFocus("isInWorkspaceContext", !focus.isInWorkspaceContext);
-                }}
-                size="sm"
-                className="ml-2"
-              />
+            {!isEmpty(focus) && focus.isInWorkspaceContext && (
+              <span className="text-sm my-auto capitalize truncate">{selectedFocus}</span>
             )}
           </div>
         </Tooltip>
       }
-      noChevron={!focus || !focus.isInWorkspaceContext}
+      noChevron={false}
       onChange={(val: string) => {
         setFocus("entityType", val.split("%")[0]);
         setFocus("entityIdentifier", val.split("%")[1]);
+        if (!focus.isInWorkspaceContext) {
+          setFocus("isInWorkspaceContext", true);
+        }
       }}
       maxHeight="lg"
       className="flex flex-col-reverse"

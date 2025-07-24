@@ -10,6 +10,7 @@ import { cn, joinUrlPath } from "@plane/utils";
 // hooks
 // plane-web
 import { TUserThreads } from "@/plane-web/types";
+import { SidebarNavItem } from "@/components/sidebar";
 
 type TProps = {
   userThreads: TUserThreads[];
@@ -24,7 +25,7 @@ const RecentChats = observer((props: TProps) => {
   return (
     <div className="flex flex-col space-y-2">
       <div className="text-sm font-semibold text-custom-text-300">Recents</div>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col gap-0.5">
         {userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => (
             <Link
@@ -35,20 +36,11 @@ const RecentChats = observer((props: TProps) => {
                 "pi-chat",
                 thread.chat_id
               )}
-              className={cn(
-                "flex text-sm font-medium p-2 text-custom-text-200 truncate rounded-lg hover:text-custom-text-200 hover:bg-custom-background-90 pointer items-center gap-2",
-                {
-                  "hover:bg-custom-primary-100/10 bg-custom-primary-100/10 !text-custom-primary-200":
-                    chatId === thread.chat_id,
-                }
-              )}
+              className="py-0.5"
             >
-              <ChatIcon
-                className={cn("text-custom-text-400 flex-shrink-0", {
-                  "text-custom-primary-200": chatId === thread.chat_id,
-                })}
-              />
-              <div className="truncate"> {thread.title || "No title"}</div>
+              <SidebarNavItem isActive={chatId === thread.chat_id}>
+                <div className="text-sm leading-5 font-medium truncate"> {thread.title || "No title"}</div>
+              </SidebarNavItem>
             </Link>
           ))
         ) : isLoading ? (

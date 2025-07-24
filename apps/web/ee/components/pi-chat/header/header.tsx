@@ -66,17 +66,7 @@ export const Header = observer((props: THeaderProps) => {
         <HeaderUI.RightItem>
           {isProjectLevel && (
             <div className="flex gap-2">
-              {isFullScreen ? (
-                <Tooltip tooltipContent="Start a new chat" position="bottom">
-                  <Link
-                    href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
-                    tabIndex={-1}
-                    className={cn(buttonClass)}
-                  >
-                    <SquarePen className="flex-shrink-0 size-3.5" />
-                  </Link>
-                </Tooltip>
-              ) : (
+              {!isFullScreen && (
                 <Tooltip tooltipContent="Start a new chat" position="left">
                   <button className={cn(buttonClass)} onClick={() => initPiChat()}>
                     <SquarePen className="flex-shrink-0 size-3.5" />
@@ -84,11 +74,22 @@ export const Header = observer((props: THeaderProps) => {
                 </Tooltip>
               )}
               {isFullScreen && !isSidePanelOpen && (
-                <Tooltip tooltipContent="History" position="bottom">
-                  <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
-                    <PanelLeft className="size-3.5" />
-                  </button>
-                </Tooltip>
+                <>
+                  <Tooltip tooltipContent="Start a new chat" position="bottom">
+                    <Link
+                      href={`/${workspaceSlug}/${isProjectLevel ? "projects/" : ""}pi-chat/new`}
+                      tabIndex={-1}
+                      className={cn(buttonClass)}
+                    >
+                      <SquarePen className="flex-shrink-0 size-3.5" />
+                    </Link>
+                  </Tooltip>
+                  <Tooltip tooltipContent="History" position="bottom">
+                    <button type="button" className={cn(buttonClass)} onClick={() => toggleSidePanel(true)}>
+                      <PanelLeft className="size-3.5" />
+                    </button>
+                  </Tooltip>
+                </>
               )}
             </div>
           )}

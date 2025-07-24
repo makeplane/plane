@@ -50,8 +50,8 @@ export const PiChatLayout = observer((props: TProps) => {
     activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
     activeChatId ? () => fetchChatById(activeChatId) : null,
     {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
+      revalidateOnFocus: true,
+      revalidateIfStale: true,
       errorRetryCount: 0,
     }
   );

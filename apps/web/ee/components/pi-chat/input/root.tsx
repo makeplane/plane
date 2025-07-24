@@ -180,7 +180,7 @@ export const InputBox = observer((props: TProps) => {
     >
       <div
         className={cn(
-          "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 min-h-[100px] justify-between"
+          "bg-custom-background-100 rounded-xl p-3 flex flex-col gap-1 shadow-sm border-[0.5px] border-custom-border-200 min-h-[120px] justify-between"
         )}
       >
         {/* Input Box */}
