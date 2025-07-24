@@ -82,14 +82,16 @@ export class Server {
         });
       } catch (error) {
         manualLogger.error("Error in /convert-document endpoint:", error);
-        res.status(500).send({
+        res.status(500).json({
           message: `Internal server error. ${error}`,
         });
       }
     });
 
     this.app.use((_req: Request, res: Response) => {
-      res.status(404).send("Not Found");
+      res.status(404).json({
+        message: "Not Found",
+      });
     });
   }
 
