@@ -147,7 +147,7 @@ extract_and_move_files() {
         sed -i "s|^DOMAIN_NAME=.*|DOMAIN_NAME=${domain}|g" "$backup_file"
         sed -i "s|^APP_DOMAIN=.*|APP_DOMAIN=${domain}|g" "$backup_file"
         sed -i "s|^MACHINE_SIGNATURE=.*|MACHINE_SIGNATURE=${machine_signature}|g" "$backup_file"
-        sed -i "s|^WEB_URL=.*|WEB_URL=http://${domain}|g" "$backup_file"
+        sed -i "s|^WEB_URL=.*|WEB_URL=http://${domain}:8080|g" "$backup_file"
         sed -i "s|^CORS_ALLOWED_ORIGINS=.*|CORS_ALLOWED_ORIGINS=http://${domain}|g" "$backup_file"
         cp "${backup_file}" "${env_file}"
         rm "${backup_file}"
