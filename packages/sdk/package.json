@@ -18,7 +18,7 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
-    "axios": "^1.8.3"
+    "axios": "1.11.0"
   },
   "devDependencies": {
     "@plane/types": "*",

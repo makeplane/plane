@@ -32,7 +32,7 @@
     "@types/pg": "^8.11.14",
     "@types/turndown": "^5.0.5",
     "amqplib": "^0.10.4",
-    "axios": "^1.8.3",
+    "axios": "1.11.0",
     "bluebird": "^3.7.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
