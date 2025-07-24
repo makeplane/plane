@@ -111,10 +111,10 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
                 </div>
                 <div className="mb-2 flex items-center justify-end gap-2 p-4 sm:px-6">
                   <Button variant="neutral-primary" onClick={onClose}>
-                    {t("cancel")}
+                    {t("common.cancel")}
                   </Button>
                   <Button variant="danger" onClick={handleDeleteAccount}>
-                    {isDeactivating ? t("deactivating") : t("confirm")}
+                    {isDeactivating ? t("deactivating") : t("common.confirm")}
                   </Button>
                 </div>
               </Dialog.Panel>

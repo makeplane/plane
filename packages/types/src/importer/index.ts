@@ -56,3 +56,8 @@ export interface IExportServiceResponse {
   results: IExportData[];
   total_pages: number;
 }
+
+export type IAdditionalUsersResponse = {
+  additionalUserCount: number;
+  occupiedUserCount: number;
+};
