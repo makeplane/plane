@@ -1380,7 +1380,8 @@
       "title_map_priorities": "Mapează Prioritățile",
       "description_map_priorities": "Te rugăm să selectezi prioritățile ClickUp pe care dorești să le mapezi la prioritățile proiectului Plane.",
       "title_summary": "Sumar",
-      "description_summary": "Iată un sumar al datelor care vor fi migrate de la ClickUp la Plane."
+      "description_summary": "Iată un sumar al datelor care vor fi migrate de la ClickUp la Plane.",
+      "pull_additional_data_title": "Importă comentarii și atașamente"
     }
   },
 

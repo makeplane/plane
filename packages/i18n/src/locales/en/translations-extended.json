@@ -1492,7 +1492,8 @@
       "title_map_priorities": "Map Priorities",
       "description_map_priorities": "Please select the ClickUp priorities which you want to map to Plane project priorities.",
       "title_summary": "Summary",
-      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane."
+      "description_summary": "Here is a summary of the data that will be migrated from ClickUp to Plane.",
+      "pull_additional_data_title": "Import comments and attachments"
     }
   },
 

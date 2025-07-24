@@ -41,41 +41,43 @@ export class ClickupAPIService {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        console.error("Error in ClickUp API", { status: error?.response?.status });
-        if (error.response?.status === 429) {
-          const headers = error.response.headers as RawAxiosResponseHeaders;
-          if (headers && headers["x-ratelimit-reset"]) {
-            let waitTime = getWaitTimeInMs(headers["x-ratelimit-reset"] as string);
-            console.log("Rate limit exceeded ======> waiting for", waitTime, "ms");
-            // add a random jitter of 20% to the wait time
-            const jitter = Math.random() * 0.2;
-            waitTime = waitTime * (1 + jitter);
-            await new Promise((resolve) => setTimeout(resolve, waitTime));
-            return this.client.request(error.config);
-          }
-        } else {
-          // retry 2 times with fixed delay
-          const MAX_RETRIES = 1;
-          const RETRY_DELAY = 1000;
+        const config = error.config;
+        if (!config) return Promise.reject(error);
 
-          for (let i = 0; i < MAX_RETRIES; i++) {
-            console.log("Retrying ClickUp API", {
-              status: error?.response?.status,
-              retry: i + 1,
-              max_retries: MAX_RETRIES,
-              retry_delay: RETRY_DELAY,
-            });
-            try {
-              return await this.client.request(error.config);
-            } catch (retryError: any) {
-              // If this is the last retry, reject the promise
-              if (i === MAX_RETRIES - 1) {
-                throw retryError;
-              }
-              await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-            }
-          }
+        const status = error?.response?.status;
+        const headers = error?.response?.headers as RawAxiosResponseHeaders;
+        config._retryCount = config._retryCount || 0;
+
+        const MAX_RETRIES = 1;
+        const RETRY_DELAY = 1000;
+
+        console.error("Error in ClickUp API", { status });
+
+        // Handle rate limit (429) — only wait and retry once
+        if (status === 429 && headers?.["x-ratelimit-reset"]) {
+          let waitTime = getWaitTimeInMs(headers["x-ratelimit-reset"] as string);
+          const jitter = Math.random() * 0.2;
+          waitTime = waitTime * (1 + jitter);
+
+          console.log("Rate limit exceeded ======> waiting for", waitTime, "ms");
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          return this.client.request(config);
         }
+
+        // Handle other errors — retry max once
+        if (config._retryCount < MAX_RETRIES) {
+          config._retryCount++;
+          console.log("Retrying ClickUp API", {
+            status,
+            retry: config._retryCount,
+            max_retries: MAX_RETRIES,
+            retry_delay: RETRY_DELAY,
+          });
+
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+          return this.client.request(config);
+        }
+
         return Promise.reject(error);
       }
     );

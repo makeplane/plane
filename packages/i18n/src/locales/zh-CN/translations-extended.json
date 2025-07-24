@@ -1381,7 +1381,8 @@
       "title_map_priorities": "映射优先级",
       "description_map_priorities": "请选择您要映射到 Plane 项目优先级的 ClickUp 优先级。",
       "title_summary": "摘要",
-      "description_summary": "以下是将从 ClickUp 迁移到 Plane 的数据摘要。"
+      "description_summary": "以下是将从 ClickUp 迁移到 Plane 的数据摘要。",
+      "pull_additional_data_title": "导入评论和附件"
     }
   },
 

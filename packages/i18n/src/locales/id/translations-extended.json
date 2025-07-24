@@ -1381,7 +1381,8 @@
       "title_map_priorities": "Petakan Prioritas",
       "description_map_priorities": "Silakan pilih prioritas ClickUp yang ingin Anda petakan ke prioritas projek Plane.",
       "title_summary": "Ringkasan",
-      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari ClickUp ke Plane."
+      "description_summary": "Berikut adalah ringkasan data yang akan dimigrasikan dari ClickUp ke Plane.",
+      "pull_additional_data_title": "Impor komentar dan lampiran"
     }
   },
 

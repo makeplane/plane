@@ -1381,7 +1381,8 @@
       "title_map_priorities": "Prioritäten zuordnen",
       "description_map_priorities": "Bitte wählen Sie die ClickUp-Prioritäten aus, die Sie den Plane-Projektprioritäten zuordnen möchten.",
       "title_summary": "Zusammenfassung",
-      "description_summary": "Hier ist eine Zusammenfassung der Daten, die von ClickUp zu Plane migriert werden."
+      "description_summary": "Hier ist eine Zusammenfassung der Daten, die von ClickUp zu Plane migriert werden.",
+      "pull_additional_data_title": "Kommentare und Anhänge importieren"
     }
   },
 

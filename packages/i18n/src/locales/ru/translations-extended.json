@@ -1372,7 +1372,8 @@
       "title_map_priorities": "Сопоставить приоритеты",
       "description_map_priorities": "Пожалуйста, выберите приоритеты ClickUp, которые вы хотите сопоставить с приоритетами проектов Plane.",
       "title_summary": "Резюме",
-      "description_summary": "Вот резюме данных, которые будут мигрированы из ClickUp в Plane."
+      "description_summary": "Вот резюме данных, которые будут мигрированы из ClickUp в Plane.",
+      "pull_additional_data_title": "Получить комментарии и вложения"
     }
   },
 

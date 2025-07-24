@@ -1381,7 +1381,8 @@
       "title_map_priorities": "Mapuj priorytety",
       "description_map_priorities": "Wybierz priorytety ClickUp, które chcesz zmapować do priorytetów projektu Plane.",
       "title_summary": "Podsumowanie",
-      "description_summary": "Oto podsumowanie danych, które zostaną zmigrowane z ClickUp do Plane."
+      "description_summary": "Oto podsumowanie danych, które zostaną zmigrowane z ClickUp do Plane.",
+      "pull_additional_data_title": "Importuj komentarze i załączniki"
     }
   },
 

@@ -16,6 +16,32 @@ export class ProjectService extends APIService {
       });
   }
 
+  async listProjects(slug: string, cursor?: string): Promise<Paginated<ExProject>> {
+    return this.get(`/api/v1/workspaces/${slug}/projects/`, {
+      params: {
+        ...(cursor && { cursor }),
+        per_page: 20,
+      },
+    })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async listAllProjects(slug: string): Promise<ExProject[]> {
+    let cursor: string | undefined;
+    const projects: ExProject[] = [];
+    let hasMore = true;
+    while (hasMore) {
+      const response = await this.listProjects(slug, cursor);
+      projects.push(...response.results);
+      hasMore = response.next_page_results;
+      cursor = response.next_cursor;
+    }
+    return projects;
+  }
+
   async getProject(slug: string, id: string): Promise<ExProject> {
     return this.get(`/api/v1/workspaces/${slug}/projects/${id}`)
       .then((response) => response.data)

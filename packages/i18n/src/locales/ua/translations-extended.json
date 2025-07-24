@@ -1381,7 +1381,8 @@
       "title_map_priorities": "Мапування Пріоритетів",
       "description_map_priorities": "Будь ласка, виберіть пріоритети ClickUp, які ви хочете мапити до пріоритетів проджекту Плейн.",
       "title_summary": "Підсумок",
-      "description_summary": "Ось підсумок даних, які будуть мігровані з ClickUp до Плейн."
+      "description_summary": "Ось підсумок даних, які будуть мігровані з ClickUp до Плейн.",
+      "pull_additional_data_title": "Імпортувати коментарі та прикріплення"
     }
   },
 

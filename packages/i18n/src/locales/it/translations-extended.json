@@ -1380,7 +1380,8 @@
       "title_map_priorities": "Mappa priorità",
       "description_map_priorities": "Per favore seleziona le priorità ClickUp che desideri mappare ai priorità del progetto Plane.",
       "title_summary": "Sommario",
-      "description_summary": "Questo è un sommario dei dati che verranno migrati da ClickUp a Plane."
+      "description_summary": "Questo è un sommario dei dati che verranno migrati da ClickUp a Plane.",
+      "pull_additional_data_title": "Importa commenti e allegati"
     }
   },
 

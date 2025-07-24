@@ -1381,7 +1381,8 @@
       "title_map_priorities": "優先度をマッピング",
       "description_map_priorities": "ClickUpの優先度をPlaneの優先度にマッピングしてください。",
       "title_summary": "サマリー",
-      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。"
+      "description_summary": "ClickUpからPlaneに移行されるデータのサマリーです。",
+      "pull_additional_data_title": "コメントと添付ファイルをインポート"
     }
   },
 

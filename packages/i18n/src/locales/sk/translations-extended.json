@@ -1329,7 +1329,8 @@
       "title_map_priorities": "Mapovať priority",
       "description_map_priorities": "Vyberte ClickUp priority, ktoré chcete mapovať na priority projektu Plane.",
       "title_summary": "Súhrn",
-      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane."
+      "description_summary": "Tu je súhrn dát, ktoré budú migrované z ClickUp do Plane.",
+      "pull_additional_data_title": "Importovať komentáre a prílohy"
     }
   },
 

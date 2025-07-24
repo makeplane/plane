@@ -106,13 +106,13 @@ export class ClickUpBulkTransformer {
     if (!planeProject) {
       // we create the project and update the job config
       const transformedProject = transformProject(this.job.config.space, this.job.config.folder);
-      const existingProjects = await this.planeClient.project.list(this.job.workspace_slug);
+      const existingProjects = await this.planeClient.project.listAllProjects(this.job.workspace_slug);
       const createdProjects = await createProjects(
         this.job.id,
         [transformedProject],
         this.planeClient,
         this.job.workspace_slug,
-        existingProjects.results
+        existingProjects
       );
       planeProject = createdProjects[0];
       // enable issue type for the project

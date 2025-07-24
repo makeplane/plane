@@ -1397,7 +1397,8 @@
       "title_map_priorities": "Öncelikleri Eşleştir",
       "description_map_priorities": "Lütfen ClickUp önceliklerini Plane proje önceliklerine eşlemek istediğinizi seçin.",
       "title_summary": "Özet",
-      "description_summary": "İşte ClickUp'dan Plane'e taşınacak verilerin bir özeti."
+      "description_summary": "İşte ClickUp'dan Plane'e taşınacak verilerin bir özeti.",
+      "pull_additional_data_title": "Yorumları ve Ekleri İmport Et"
     }
   },
 
