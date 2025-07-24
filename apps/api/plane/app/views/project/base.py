@@ -222,6 +222,11 @@ class ProjectViewSet(BaseViewSet):
             .prefetch_related("project_projectmember")
         ).first()
 
+        if project is None:
+            return Response(
+                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         project_member_ids = ProjectMember.objects.filter(
             project_id=pk, is_active=True
         ).values_list("member_id", flat=True)
@@ -233,11 +238,6 @@ class ProjectViewSet(BaseViewSet):
 
         if project.default_assignee_id not in members_ids:
             project.default_assignee = None
-
-        if project is None:
-            return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
 
         recent_visited_task.delay(
             slug=slug,
