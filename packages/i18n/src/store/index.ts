@@ -137,7 +137,7 @@ export class TranslationStore {
    * @param files - Array of file names to import (without .json extension)
    * @returns Promise that resolves to merged translations
    */
-  private async importAndMergeFiles(language: TLanguage, files: string[]): Promise<any> {
+  private async importAndMergeFiles(language: TLanguage, files: string[]) {
     try {
       const importPromises = files.map((file) => import(`../locales/${language}/${file}.json`));
 
@@ -154,7 +154,7 @@ export class TranslationStore {
    * @param language - The language to import the translations for
    * @returns {Promise<any>}
    */
-  private async importLanguageFile(language: TLanguage): Promise<any> {
+  private async importLanguageFile(language: TLanguage) {
     const files = Object.values(ETranslationFiles);
     return this.importAndMergeFiles(language, files);
   }
@@ -177,7 +177,6 @@ export class TranslationStore {
   /**
    * Gets the IntlMessageFormat instance for the given key and locale
    * Returns cached instance if available
-   * Throws an error if the key is not found in the translations
    */
   private getMessageInstance(key: string, locale: TLanguage): IntlMessageFormat | null {
     const cacheKey = this.getCacheKey(key, locale);
@@ -189,10 +188,10 @@ export class TranslationStore {
 
     // Get the message from the translations
     const message = get(this.translations[locale], key);
-    if (!message) return null;
+    if (typeof message !== "string") return null;
 
     try {
-      const formatter = new IntlMessageFormat(message as any, locale);
+      const formatter = new IntlMessageFormat(message, locale);
       this.messageCache.set(cacheKey, formatter);
       return formatter;
     } catch (error) {
@@ -209,7 +208,7 @@ export class TranslationStore {
    * @param params - The params to format the translation with
    * @returns The translated string
    */
-  t(key: string, params?: Record<string, any>): string {
+  t(key: string, params?: Record<string, unknown>): string {
     try {
       // Try current locale
       let formatter = this.getMessageInstance(key, this.currentLocale);

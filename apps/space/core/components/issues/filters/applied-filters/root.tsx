@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 // hooks
 import { useIssueFilter } from "@/hooks/store";
 // store
-import { TIssueQueryFilters } from "@/types/issue";
+import type { TIssueLayout, TIssueQueryFilters } from "@/types/issue";
 // components
 import { AppliedFiltersList } from "./filters-list";
 
@@ -39,13 +39,21 @@ export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) =>
       const priority = key === "priority" ? value : (issueFilters?.filters?.priority ?? []);
       const labels = key === "labels" ? value : (issueFilters?.filters?.labels ?? []);
 
-      let params: any = { board: activeLayout || "list" };
-      if (priority.length > 0) params = { ...params, priority: priority.join(",") };
-      if (state.length > 0) params = { ...params, states: state.join(",") };
-      if (labels.length > 0) params = { ...params, labels: labels.join(",") };
-      params = new URLSearchParams(params).toString();
+      const params: {
+        board: TIssueLayout | string;
+        priority?: string;
+        states?: string;
+        labels?: string;
+      } = {
+        board: activeLayout || "list",
+      };
 
-      router.push(`/issues/${anchor}?${params}`);
+      if (priority.length > 0) params.priority = priority.join(",");
+      if (state.length > 0) params.states = state.join(",");
+      if (labels.length > 0) params.labels = labels.join(",");
+
+      const qs = new URLSearchParams(params).toString();
+      router.push(`/issues/${anchor}?${qs}`);
     },
     [activeLayout, anchor, issueFilters, router]
   );

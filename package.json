@@ -15,12 +15,13 @@
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
-    "check": "turbo run check"
+    "check": "turbo run check",
+    "ci:lint": "turbo run check:lint"
   },
   "devDependencies": {
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "turbo": "^2.5.4"
+    "turbo": "^2.5.5"
   },
   "resolutions": {
     "brace-expansion": "2.0.2",
@@ -35,6 +36,7 @@
     "chokidar": "3.6.0",
     "tar-fs": "3.0.9",
     "prosemirror-view": "1.40.0",
+    "@types/express": "4.17.23",
     "@octokit/types": "13.8.0",
     "pbkdf2": "3.1.3"
   },
