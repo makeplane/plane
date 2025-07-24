@@ -83,7 +83,7 @@ export class Server {
       } catch (error) {
         manualLogger.error("Error in /convert-document endpoint:", error);
         res.status(500).json({
-          message: `Internal server error. ${error}`,
+          message: `Internal server error.`,
         });
       }
     });
