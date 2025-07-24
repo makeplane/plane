@@ -1,9 +1,9 @@
 import { ErrorRequestHandler } from "express";
-import { manualLogger } from "@/core/helpers/logger.js";
+import { logger } from "@plane/logger";
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
   // Log the error
-  manualLogger.error(err);
+  logger.error(err);
 
   // Set the response status
   res.status(err.status || 500);

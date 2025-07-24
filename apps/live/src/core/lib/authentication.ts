@@ -1,7 +1,7 @@
 // services
 import { UserService } from "@/core/services/user.service.js";
 // core helpers
-import { manualLogger } from "@/core/helpers/logger.js";
+import { logger } from "@plane/logger";
 
 const userService = new UserService();
 
@@ -17,7 +17,7 @@ export const handleAuthentication = async (props: Props) => {
   try {
     response = await userService.currentUser(cookie);
   } catch (error) {
-    manualLogger.error("Failed to fetch current user:", error);
+    logger.error("Failed to fetch current user:", error);
     throw error;
   }
   if (response.id !== userId) {

@@ -3,13 +3,14 @@ import cors from "cors";
 import expressWs from "express-ws";
 import express, { Request, Response } from "express";
 import helmet from "helmet";
+import { logger } from "@plane/logger";
 // hocuspocus server
-import { getHocusPocusServer } from "@/core/hocuspocus-server.js";
+import { getHocusPocusServer } from "@/core/hocuspocus-server";
 // helpers
-import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document.js";
-import { logger, manualLogger } from "@/core/helpers/logger.js";
+import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
+import { logger as loggerMiddleware } from "@/middlewares/logger";
 // types
-import { TConvertDocumentRequestBody } from "@/core/types/common.js";
+import { TConvertDocumentRequestBody } from "@/core/types/common";
 
 export class Server {
   private app: any;
@@ -33,7 +34,7 @@ export class Server {
     // Middleware for response compression
     this.app.use(compression({ level: 6, threshold: 5 * 1000 }));
     // Logging middleware
-    this.app.use(logger);
+    this.app.use(loggerMiddleware);
     // Body parsing middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
@@ -44,7 +45,7 @@ export class Server {
 
   private async setupHocusPocus() {
     this.hocuspocusServer = await getHocusPocusServer().catch((err) => {
-      manualLogger.error("Failed to initialize HocusPocusServer:", err);
+      logger.error("Failed to initialize HocusPocusServer:", err);
       process.exit(1);
     });
   }
@@ -58,7 +59,7 @@ export class Server {
       try {
         this.hocuspocusServer.handleConnection(ws, req);
       } catch (err) {
-        manualLogger.error("WebSocket connection error:", err);
+        logger.error("WebSocket connection error:", err);
         ws.close();
       }
     });
@@ -81,7 +82,7 @@ export class Server {
           description_binary,
         });
       } catch (error) {
-        manualLogger.error("Error in /convert-document endpoint:", error);
+        logger.error("Error in /convert-document endpoint:", error);
         res.status(500).json({
           message: `Internal server error.`,
         });
@@ -97,35 +98,18 @@ export class Server {
 
   public listen() {
     this.serverInstance = this.app.listen(this.app.get("port"), () => {
-      manualLogger.info(`Plane Live server has started at port ${this.app.get("port")}`);
+      logger.info(`Plane Live server has started at port ${this.app.get("port")}`);
     });
   }
 
   public async destroy() {
     // Close the HocusPocus server WebSocket connections
     await this.hocuspocusServer.destroy();
-    manualLogger.info("HocusPocus server WebSocket connections closed gracefully.");
+    logger.info("HocusPocus server WebSocket connections closed gracefully.");
     // Close the Express server
     this.serverInstance.close(() => {
-      manualLogger.info("Express server closed gracefully.");
+      logger.info("Express server closed gracefully.");
       process.exit(1);
     });
   }
 }
-
-const server = new Server();
-server.listen();
-
-// Graceful shutdown on unhandled rejection
-process.on("unhandledRejection", async (err: any) => {
-  manualLogger.info("Unhandled Rejection: ", err);
-  manualLogger.info(`UNHANDLED REJECTION! 💥 Shutting down...`);
-  await server.destroy();
-});
-
-// Graceful shutdown on uncaught exception
-process.on("uncaughtException", async (err: any) => {
-  manualLogger.info("Uncaught Exception: ", err);
-  manualLogger.info(`UNCAUGHT EXCEPTION! 💥 Shutting down...`);
-  await server.destroy();
-});

@@ -5,8 +5,8 @@ import { Database } from "@hocuspocus/extension-database";
 import { Extension } from "@hocuspocus/server";
 import { Logger } from "@hocuspocus/extension-logger";
 import { Redis as HocusPocusRedis } from "@hocuspocus/extension-redis";
+import { logger } from "@plane/logger";
 // core helpers and utilities
-import { manualLogger } from "@/core/helpers/logger.js";
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 // core libraries
 import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page.js";
@@ -21,7 +21,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
     new Logger({
       onChange: false,
       log: (message) => {
-        manualLogger.info(message);
+        logger.info(message);
       },
     }),
     new Database({
@@ -47,7 +47,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
             }
             resolve(fetchedData);
           } catch (error) {
-            manualLogger.error("Error in fetching document", error);
+            logger.error("Error in fetching document", error);
           }
         });
       },
@@ -73,7 +73,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
               });
             }
           } catch (error) {
-            manualLogger.error("Error in updating document:", error);
+            logger.error("Error in updating document:", error);
           }
         });
       },
@@ -91,7 +91,7 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
           if (error?.code === "ENOTFOUND" || error.message.includes("WRONGPASS") || error.message.includes("NOAUTH")) {
             redisClient.disconnect();
           }
-          manualLogger.warn(
+          logger.warn(
             `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
             error
           );
@@ -100,18 +100,18 @@ export const getExtensions: () => Promise<Extension[]> = async () => {
 
         redisClient.on("ready", () => {
           extensions.push(new HocusPocusRedis({ redis: redisClient }));
-          manualLogger.info("Redis Client connected ✅");
+          logger.info("Redis Client connected ✅");
           resolve();
         });
       });
     } catch (error) {
-      manualLogger.warn(
+      logger.warn(
         `Redis Client wasn't able to connect, continuing without Redis (you won't be able to sync data between multiple plane live servers)`,
         error
       );
     }
   } else {
-    manualLogger.warn(
+    logger.warn(
       "Redis URL is not set, continuing without Redis (you won't be able to sync data between multiple plane live servers)"
     );
   }
