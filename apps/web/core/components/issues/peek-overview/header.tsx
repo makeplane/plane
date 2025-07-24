@@ -88,8 +88,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
-  // router
-  const router = useAppRouter();
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
@@ -98,6 +96,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     setPeekIssue,
     removeIssue,
     archiveIssue,
+    getIsIssuePeeked,
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
@@ -157,9 +156,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
 
   const handleArchiveIssue = async () => {
     try {
-      await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issueDetails?.id}`);
-      });
+      await archiveIssue(workspaceSlug, projectId, issueId);
+      // check and remove if issue is peeked
+      if (getIsIssuePeeked(issueId)) {
+        removeRoutePeekId();
+      }
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId },
