@@ -194,7 +194,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.updateComment(anchor, issueID, commentID, data);
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -222,7 +222,7 @@ export class IssueDetailStore implements IIssueDetailStore {
           },
         };
       });
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
     }
   };
@@ -288,7 +288,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       await this.issueService.addCommentReaction(anchor, commentID, {
         reaction: reactionHex,
       });
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -322,7 +322,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeCommentReaction(anchor, commentID, reactionHex);
-    } catch (error) {
+    } catch (_error) {
       const issueComments = await this.issueService.listComments(anchor, issueID);
 
       runInAction(() => {
@@ -356,7 +356,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       await this.issueService.addReaction(anchor, issueID, {
         reaction: reactionHex,
       });
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
       const issueReactions = await this.issueService.listReactions(anchor, issueID);
       runInAction(() => {
@@ -376,7 +376,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeReaction(anchor, issueID, reactionHex);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to remove issue reaction");
       const reactions = await this.issueService.listReactions(anchor, issueID);
       runInAction(() => {
@@ -408,7 +408,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.addVote(anchor, issueID, data);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to add issue vote");
       const issueVotes = await this.issueService.listVotes(anchor, issueID);
 
@@ -429,7 +429,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       await this.issueService.removeVote(anchor, issueID);
-    } catch (error) {
+    } catch (_error) {
       console.log("Failed to remove issue vote");
       const issueVotes = await this.issueService.listVotes(anchor, issueID);
 

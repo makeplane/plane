@@ -6,7 +6,9 @@ export interface IInsightField {
   i18nProps?: {
     entity?: string;
     entityPlural?: string;
-    [key: string]: any;
+    prefix?: string;
+    suffix?: string;
+    [key: string]: unknown;
   };
 }
 
