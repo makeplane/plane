@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 // editor
 import { EditorRefApi } from "@plane/editor";
 // ui
@@ -16,7 +17,6 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // types
 import { Comment } from "@/types/issue";
-import { useTranslation } from "@plane/i18n";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
