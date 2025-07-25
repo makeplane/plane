@@ -32,11 +32,8 @@ function scrollToNode(editor: Editor, pos: number): void {
   }
 }
 
-export function scrollToNodeViaDOMCoordinates(
-  editor: Editor,
-  pos: number,
-  behavior?: "auto" | "smooth" | "instant"
-): void {
+// eslint-disable-next-line no-undef
+export function scrollToNodeViaDOMCoordinates(editor: Editor, pos: number, behavior?: ScrollBehavior): void {
   const view = editor.view;
 
   // Get the coordinates of the position
