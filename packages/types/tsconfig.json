@@ -1,12 +1,8 @@
 {
   "extends": "@plane/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": "./src",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "target": "ESNext",
+    "outDir": "dist",
+    "rootDir": "src",
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true
   },

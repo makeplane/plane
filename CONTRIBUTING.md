@@ -186,41 +186,39 @@ Adding a new language involves several steps to ensure it integrates seamlessly 
 1.  **Update type definitions**
     Add the new language to the TLanguage type in the language definitions file:
 
-        ```typescript
-        // types/language.ts
-        export type TLanguage = "en" | "fr" | "your-lang";
-        ```
+```ts
+      // packages/i18n/src/types/language.ts
+      export type TLanguage = "en" | "fr" | "your-lang";
+```
 
-2.  **Add language configuration**
+1.  **Add language configuration**
     Include the new language in the list of supported languages:
+```ts
+      // packages/i18n/src/constants/language.ts
+      export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
+      { label: "English", value: "en" },
+      { label: "Your Language", value: "your-lang" }
+      ];
+```
 
-        ```typescript
-        // constants/language.ts
-        export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
-        { label: "English", value: "en" },
-        { label: "Your Language", value: "your-lang" }
-        ];
-        ```
-
-3.  **Create translation files**
+2.  **Create translation files**
     1. Create a new folder for your language under locales (e.g., `locales/your-lang/`).
 
     2. Add a `translations.json` file inside the folder.
 
     3. Copy the structure from an existing translation file and translate all keys.
 
-4.  **Update import logic**
+3.  **Update import logic**
     Modify the language import logic to include your new language:
-
-        ```typescript
-        private importLanguageFile(language: TLanguage): Promise<any> {
-        switch (language) {
-            case "your-lang":
-            return import("../locales/your-lang/translations.json");
-            // ...
-        }
-        }
-        ```
+```ts
+      private importLanguageFile(language: TLanguage): Promise<any> {
+      switch (language) {
+          case "your-lang":
+          return import("../locales/your-lang/translations.json");
+          // ...
+      }
+      }
+```
 
 ### Quality checklist
 

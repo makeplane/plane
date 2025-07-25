@@ -46,7 +46,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
             }}
             multiple={false}
             buttonVariant="border-with-text"
-            renderCondition={(project) => allowedProjectIds.includes(project.id)}
+            renderCondition={(projectId) => allowedProjectIds.includes(projectId)}
             tabIndex={getIndex("project_id")}
             disabled={disabled}
           />

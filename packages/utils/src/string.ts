@@ -103,26 +103,6 @@ export const getNumberCount = (number: number): string => {
 };
 
 /**
- * @description Converts object to URL query parameters string
- * @param {Object} obj - Object to convert
- * @returns {string} URL query parameters string
- * @example
- * objToQueryParams({ page: 1, search: "test" }) // returns "page=1&search=test"
- * objToQueryParams({ a: null, b: "test" }) // returns "b=test"
- */
-export const objToQueryParams = (obj: any) => {
-  const params = new URLSearchParams();
-
-  if (!obj) return params.toString();
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined && value !== null) params.append(key, value as string);
-  }
-
-  return params.toString();
-};
-
-/**
  * @description: This function will capitalize the first letter of a string
  * @param str String
  * @returns String
@@ -268,7 +248,7 @@ export const substringMatch = (text: string, searchQuery: string): boolean => {
 
     // Not all characters of searchQuery found in order
     return false;
-  } catch (error) {
+  } catch (_err) {
     return false;
   }
 };
@@ -297,7 +277,7 @@ const fallbackCopyTextToClipboard = (text: string) => {
     // FIXME: Even though we are using this as a fallback, execCommand is deprecated 👎. We should find a better way to do this.
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
     document.execCommand("copy");
-  } catch (err) {
+  } catch (_err) {
     // catch fallback error
   }
 
@@ -337,21 +317,17 @@ export const joinUrlPath = (...segments: string[]): string => {
   if (validSegments.length === 0) return "";
 
   // Process segments to normalize slashes
-  const processedSegments = validSegments.map((segment, index) => {
+  const processedSegments = validSegments.map((segment) => {
     let processed = segment;
 
     // Remove leading slashes from all segments except the first
-    if (index > 0) {
-      while (processed.startsWith("/")) {
-        processed = processed.substring(1);
-      }
+    while (processed.startsWith("/")) {
+      processed = processed.substring(1);
     }
 
     // Remove trailing slashes from all segments except the last
-    if (index < validSegments.length - 1) {
-      while (processed.endsWith("/")) {
-        processed = processed.substring(0, processed.length - 1);
-      }
+    while (processed.endsWith("/")) {
+      processed = processed.substring(0, processed.length - 1);
     }
 
     return processed;

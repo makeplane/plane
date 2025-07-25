@@ -44,6 +44,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
         handleConvert: () => Promise.resolve(),
+        handleCreateSubWorkItem: () => Promise.resolve(),
       }}
     >
       {children}

@@ -3,10 +3,10 @@ import { FC } from "react";
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // hooks
+import { BlockRow } from "@/components/gantt-chart/blocks/block-row";
+import { BLOCK_HEIGHT } from "@/components/gantt-chart/constants";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
-import { BLOCK_HEIGHT } from "../constants";
-import { BlockRow } from "./block-row";
 
 export type GanttChartBlocksProps = {
   blockIds: string[];

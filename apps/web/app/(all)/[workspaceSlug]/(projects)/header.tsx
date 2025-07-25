@@ -3,24 +3,25 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Home } from "lucide-react";
+import { Home, Shapes } from "lucide-react";
 // images
 import githubBlackImage from "/public/logos/github-black.png";
 import githubWhiteImage from "/public/logos/github-white.png";
 // ui
 import { GITHUB_REDIRECTED_TRACKER_EVENT, HEADER_GITHUB_ICON } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
 // constants
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useHome } from "@/hooks/store/use-home";
 
 export const WorkspaceDashboardHeader = observer(() => {
   // hooks
   const { resolvedTheme } = useTheme();
-
+  const { toggleWidgetSettings } = useHome();
   const { t } = useTranslation();
 
   return (
@@ -38,6 +39,15 @@ export const WorkspaceDashboardHeader = observer(() => {
           </div>
         </Header.LeftItem>
         <Header.RightItem>
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            onClick={() => toggleWidgetSettings(true)}
+            className="my-auto mb-0"
+          >
+            <Shapes size={16} />
+            <div className="hidden text-xs font-medium sm:hidden md:block">{t("home.manage_widgets")}</div>
+          </Button>
           <a
             onClick={() =>
               captureElementAndEvent({

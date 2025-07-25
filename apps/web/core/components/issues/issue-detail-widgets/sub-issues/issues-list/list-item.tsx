@@ -11,7 +11,7 @@ import { cn, generateWorkItemLink } from "@plane/utils";
 import { useSubIssueOperations } from "@/components/issues/issue-detail-widgets/sub-issues/helper";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail, useProject } from "@/hooks/store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -65,16 +65,12 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
   const { fetchSubIssues } = useSubIssueOperations(EIssueServiceType.ISSUES);
   const { toggleCreateIssueModal, toggleDeleteIssueModal } = useIssueDetail(issueServiceType);
   const project = useProject();
-  const { getProjectStates } = useProjectState();
   const { handleRedirection } = useIssuePeekOverviewRedirection();
   const { isMobile } = usePlatformOS();
   const issue = getIssueById(issueId);
 
   // derived values
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
-  const currentIssueStateDetail =
-    (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
-    undefined;
 
   const subIssueHelpers = subIssueHelpersByIssueId(parentIssueId);
   const subIssueCount = issue?.sub_issues_count ?? 0;
@@ -147,12 +143,6 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
             </div>
 
             <div className="flex w-full truncate cursor-pointer items-center gap-3">
-              <div
-                className="h-2 w-2 flex-shrink-0 rounded-full"
-                style={{
-                  backgroundColor: currentIssueStateDetail?.color ?? "#737373",
-                }}
-              />
               <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
                 <div className="flex-shrink-0">
                   {projectDetail && (

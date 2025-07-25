@@ -8,7 +8,7 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import type { TFileHandler, TReadOnlyFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView } from "./components/node-view";
+import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
 import { getImageComponentImageFileMap } from "./utils";
 
@@ -116,7 +116,9 @@ export const CustomImageExtension = (props: Props) => {
     },
 
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNodeView);
+      return ReactNodeViewRenderer((props) => (
+        <CustomImageNodeView {...props} node={props.node as CustomImageNodeViewProps["node"]} />
+      ));
     },
   });
 };

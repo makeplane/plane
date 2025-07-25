@@ -65,6 +65,7 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
               if (handleOnClick) handleOnClick();
               else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
             }}
+            shouldTruncate
           />
         }
         showSeparator={false}
