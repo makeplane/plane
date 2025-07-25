@@ -80,6 +80,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     model = Module
     webhook_event = "module"
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -771,6 +772,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     model = ModuleIssue
     webhook_event = "module_issue"
     bulk = True
+    use_read_replica = True
 
     permission_classes = [ProjectEntityPermission]
 

@@ -497,6 +497,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
     webhook_event = "issue"
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -952,6 +953,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
     serializer_class = LabelSerializer
     model = Label
     permission_classes = [ProjectMemberPermission]
+    use_read_replica = True
 
     @label_docs(
         operation_id="get_labels",
@@ -1060,6 +1062,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
     serializer_class = IssueLinkSerializer
     model = IssueLink
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -1166,6 +1169,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     model = IssueLink
     serializer_class = IssueLinkSerializer
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -1481,6 +1485,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
     model = IssueComment
     webhook_event = "issue_comment"
     permission_classes = [ProjectLitePermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -1717,6 +1722,7 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
     """Issue Activity Detail Endpoint"""
 
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     @issue_activity_docs(
         operation_id="retrieve_work_item_activity",
@@ -1983,6 +1989,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
     serializer_class = IssueAttachmentSerializer
     permission_classes = [ProjectEntityPermission]
     model = FileAsset
+    use_read_replica = True
 
     @issue_attachment_docs(
         operation_id="delete_work_item_attachment",
@@ -2151,6 +2158,8 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
 
 class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
+
+    use_read_replica = True
 
     @extend_schema(
         operation_id="search_work_items",

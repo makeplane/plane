@@ -24,9 +24,8 @@ from plane.utils.openapi import (
 
 
 class WorkspaceMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
+    permission_classes = [WorkSpaceAdminPermission]
+    use_read_replica = True
 
     @extend_schema(
         operation_id="get_workspace_members",

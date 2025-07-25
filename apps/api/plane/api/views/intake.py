@@ -216,6 +216,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
+    use_read_replica = True
 
     filterset_fields = ["status"]
 
