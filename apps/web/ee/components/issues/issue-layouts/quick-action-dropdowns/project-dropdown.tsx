@@ -91,14 +91,14 @@ export const ProjectDropdown: React.FC<Props> = observer((props) => {
       options={options}
       disabled={disabled}
       label={
-        <div className="flex items-center gap-2">
+        <div className="w-full truncate text-left">
           {selectedProject ? (
-            <>
+            <div className="flex items-center gap-2 truncate">
               <span className="grid place-items-center flex-shrink-0 h-4 w-4">
                 <Logo logo={selectedProject.logo_props} size={12} />
               </span>
               <span className="truncate">{selectedProject.name}</span>
-            </>
+            </div>
           ) : (
             <span className="text-custom-text-400">{placeholder}</span>
           )}
