@@ -24,11 +24,20 @@ class OAuthApplicationInstalledWorkspacesEndpoint(BaseAPIView):
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         application: Application = request.auth.application
 
-        filters = {**request.query_params.dict()}
+        filters = {}
+        if request.query_params.get("id"):
+            filters["id"] = request.query_params.get("id")
 
         workspace_applications = WorkspaceAppInstallation.objects.filter(
             application=application, **filters
         )
+        
+        # Always filter those workspaces where user is a member
+        if request.auth.grant_type == "authorization_code":
+          workspace_applications = workspace_applications.filter(
+              workspace__workspace_member__member=request.auth.user
+          )
+        
         workspace_applications_serializer = WorkspaceAppInstallationSerializer(
             workspace_applications, many=True
         )

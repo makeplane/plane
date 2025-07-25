@@ -102,6 +102,7 @@ class ApplicationFactory(factory.django.DjangoModelFactory):
     client_secret = factory.Sequence(lambda n: f"test-client-secret-{n}")
     client_type = Application.CLIENT_CONFIDENTIAL
     authorization_grant_type = Application.GRANT_AUTHORIZATION_CODE
+    webhook_url = factory.Sequence(lambda n: f"https://test-webhook-url-{n}")
 
 
 class ApplicationOwnerFactory(factory.django.DjangoModelFactory):

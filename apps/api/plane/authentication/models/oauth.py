@@ -16,7 +16,7 @@ from oauth2_provider.models import (
 from plane.app.permissions.base import ROLE
 from plane.authentication.bgtasks.app_webhook_url_updates import app_webhook_url_updates
 from plane.db.mixins import SoftDeleteModel, UserAuditModel
-from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember
+from plane.db.models import BaseModel, Project, ProjectMember, User, WorkspaceMember, Webhook
 from plane.db.models.user import BotTypeEnum
 from plane.authentication.bgtasks.send_app_uninstall_webhook import (
     send_app_uninstall_webhook,
@@ -274,6 +274,8 @@ class WorkspaceAppInstallation(BaseModel):
               ],
               ignore_conflicts=True,
           )
+          # create the webhook for the app installation
+          self._create_webhook()
         super(WorkspaceAppInstallation, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -328,6 +330,29 @@ class WorkspaceAppInstallation(BaseModel):
             # Call the parent delete method
             super().delete(*args, **kwargs)
 
+    def _create_webhook(self):
+          if self.application.webhook_url:
+              is_new_webhook = True
+              webhook = Webhook()
+              if self.webhook:
+                  webhook = self.webhook
+                  is_new_webhook = False
+
+              webhook.url = self.application.webhook_url
+              webhook.is_active = True
+              # In future, below config comes from the app installation screen
+              webhook.project = True
+              webhook.issue = True
+              webhook.module = True
+              webhook.cycle = True
+              webhook.issue_comment = True
+              webhook.workspace_id = self.workspace_id
+              webhook.created_by_id = self.installed_by_id
+              webhook.updated_by_id = self.installed_by_id
+              webhook.save(disable_auto_set_user=True)
+
+              if is_new_webhook:
+                  self.webhook = webhook
 
 class ApplicationAttachment(BaseModel):
     application = models.ForeignKey(

@@ -176,7 +176,8 @@ class OAuthApplicationEndpoint(BaseAPIView):
             # Single application case
             application = (
                 Application.objects.filter(
-                    id=pk, application_owners__workspace__slug=slug
+                    Q(id=pk, application_owners__workspace__slug=slug)
+                    | Q(published_at__isnull=False, id=pk)
                 )
                 .select_related(
                     "logo_asset",
@@ -279,6 +280,12 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
             return Response(
                 {"error": "App ID is required"}, status=status.HTTP_400_BAD_REQUEST
             )
+        
+        application = Application.objects.filter(id=pk).first()
+        if not application:
+            return Response(
+                {"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         # create or update workspace installation
         workspace_application = WorkspaceAppInstallation.objects.filter(
@@ -290,6 +297,7 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
                     "workspace": workspace.id,
                     "application": pk,
                     "installed_by": request.user.id,
+                    "status": WorkspaceAppInstallation.Status.INSTALLED,
                 }
             )
         else:
@@ -297,7 +305,7 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
                 workspace_application,
                 data={
                     "installed_by": request.user.id,
-                    "status": WorkspaceAppInstallation.Status.PENDING,
+                    "status": WorkspaceAppInstallation.Status.INSTALLED,
                 },
                 partial=True,
             )
@@ -309,7 +317,6 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
                 workspace_application_serialiser.errors,
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         return Response(
             workspace_application_serialiser.data, status=status.HTTP_200_OK
         )

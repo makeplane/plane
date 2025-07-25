@@ -76,6 +76,7 @@ export const ApplicationInstallationDetails: React.FC<ApplicationInstallationDet
         redirect_uri: redirectUri,
         response_type: "code",
         scope: "read write",
+        workspace_slug: currentWorkspace?.slug,
       });
       window.location.assign(authorizationUrl);
     } else {

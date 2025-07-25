@@ -73,9 +73,17 @@ export const AppConsent = observer(({ application, consentParams, workspaceSlug 
     router.back();
   };
 
+  const fetchCsrfToken = async () => {
+    const data = await authService.requestCSRFToken();
+    if (data?.csrf_token) {
+      setCsrfToken(data.csrf_token);
+    }
+  };
+
   useEffect(() => {
-    if (csrfToken === undefined)
-      authService.requestCSRFToken().then((data) => data?.csrf_token && setCsrfToken(data.csrf_token));
+    if (csrfToken === undefined) {
+      fetchCsrfToken();
+    }
   }, [csrfToken]);
 
   return (

@@ -61,66 +61,38 @@ class OAuthTokenEndpoint(TokenView):
         # Set the bot user on the token
         access_token = token_data.get("access_token")
         if access_token:
+            # get the token
             token = AccessToken.objects.get(token=access_token)
             application_id = token.application_id
             app_installation_id = request.POST.get("app_installation_id")
             grant_type = request.POST.get("grant_type")
 
-            if app_installation_id:
-                workspace_app_installation = WorkspaceAppInstallation.objects.filter(
-                    id=app_installation_id, application_id=application_id
-                ).first()
-
-                if not workspace_app_installation:
+            # if grant type is client credentials, we need to set the bot user
+            if grant_type == "client_credentials":
+                # app installation id is required for client credentials
+                if not app_installation_id:
                     token.delete()
-                    raise exceptions.ValidationError("Workspace application not found")
+                    raise exceptions.ValidationError("App installation ID is required")
+                else:
+                    # get the workspace app installation
+                    workspace_app_installation = WorkspaceAppInstallation.objects.filter(
+                        id=app_installation_id,
+                        application_id=application_id,
+                        status=WorkspaceAppInstallation.Status.INSTALLED,
+                    ).first()
+                    # if the workspace app installation is not found, delete the token
+                    if not workspace_app_installation:
+                        token.delete()
+                        raise exceptions.ValidationError("Workspace application not found")
 
-                if (
-                    workspace_app_installation.status
-                    == WorkspaceAppInstallation.Status.PENDING
-                ):
-                    workspace_app_installation.status = (
-                        WorkspaceAppInstallation.Status.INSTALLED
-                    )
-                    workspace_app_installation.save()
-                    self._create_webhook(workspace_app_installation)
-
-                if grant_type == "client_credentials":
+                    # set the bot user on the token
                     token.user = workspace_app_installation.app_bot
 
+            # set the grant type on the token
             token.grant_type = grant_type
             token.save()
 
         return token_response
-
-    def _create_webhook(self, workspace_app_installation: WorkspaceAppInstallation):
-        try:
-            if workspace_app_installation.application.webhook_url:
-                is_new_webhook = True
-                webhook = Webhook()
-                if workspace_app_installation.webhook:
-                    webhook = workspace_app_installation.webhook
-                    is_new_webhook = False
-
-                webhook.url = workspace_app_installation.application.webhook_url
-                webhook.is_active = True
-                # In future, below config comes from the app installation screen
-                webhook.project = True
-                webhook.issue = True
-                webhook.module = True
-                webhook.cycle = True
-                webhook.issue_comment = True
-                webhook.workspace_id = workspace_app_installation.workspace_id
-                webhook.created_by_id = workspace_app_installation.installed_by_id
-                webhook.updated_by_id = workspace_app_installation.installed_by_id
-                webhook.save(disable_auto_set_user=True)
-
-                if is_new_webhook:
-                    workspace_app_installation.webhook = webhook
-                    workspace_app_installation.save()
-        except Exception as e:
-            log_exception(e)
-
 
 AUTHORIZE_RATE_LIMIT = "10/m"
 
