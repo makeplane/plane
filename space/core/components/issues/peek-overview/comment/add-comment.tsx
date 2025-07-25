@@ -3,9 +3,9 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
-import { useTranslation } from "@plane/i18n";
 // editor
 import { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
