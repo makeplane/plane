@@ -20,6 +20,7 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    EstimatePoint,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -126,11 +127,25 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError(
                 "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
+        if (
+            data.get("estimate_point")
+            and not EstimatePoint.objects.filter(
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("estimate_point").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Estimate point is not valid please pass a valid estimate_point_id"
             )
 
         return data

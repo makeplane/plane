@@ -37,6 +37,7 @@ from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
     ProjectMember,
+    EstimatePoint,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -124,14 +125,6 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
-        if attrs.get("assignee_ids", []):
-            attrs["assignee_ids"] = ProjectMember.objects.filter(
-                project_id=self.context["project_id"],
-                role__gte=15,
-                is_active=True,
-                member_id__in=attrs["assignee_ids"],
-            ).values_list("member_id", flat=True)
-
         # Validate description content for security
         if "description" in attrs and attrs["description"]:
             is_valid, error_msg = validate_json_content(attrs["description"])
@@ -147,6 +140,60 @@ class IssueCreateSerializer(BaseSerializer):
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])
             if not is_valid:
                 raise serializers.ValidationError({"description_binary": error_msg})
+
+        # Validate assignees are from project
+        if attrs.get("assignee_ids", []):
+            attrs["assignee_ids"] = ProjectMember.objects.filter(
+                project_id=self.context["project_id"],
+                role__gte=15,
+                is_active=True,
+                member_id__in=attrs["assignee_ids"],
+            ).values_list("member_id", flat=True)
+
+        # Validate labels are from project
+        if attrs.get("label_ids"):
+            label_ids = [label.id for label in attrs["label_ids"]]
+            attrs["label_ids"] = list(
+                Label.objects.filter(
+                    project_id=self.context.get("project_id"),
+                    id__in=label_ids,
+                ).values_list("id", flat=True)
+            )
+
+        # Check state is from the project only else raise validation error
+        if (
+            attrs.get("state")
+            and not State.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("state").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "State is not valid please pass a valid state_id"
+            )
+
+        # Check parent issue is from workspace as it can be cross workspace
+        if (
+            attrs.get("parent")
+            and not Issue.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("parent").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
+        if (
+            attrs.get("estimate_point")
+            and not EstimatePoint.objects.filter(
+                project_id=self.context.get("project_id"),
+                pk=attrs.get("estimate_point").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Estimate point is not valid please pass a valid estimate_point_id"
+            )
 
         return attrs
 
@@ -211,14 +258,14 @@ class IssueCreateSerializer(BaseSerializer):
                 IssueLabel.objects.bulk_create(
                     [
                         IssueLabel(
-                            label=label,
+                            label_id=label_id,
                             issue=issue,
                             project_id=project_id,
                             workspace_id=workspace_id,
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label in labels
+                        for label_id in labels
                     ],
                     batch_size=10,
                 )
@@ -264,14 +311,14 @@ class IssueCreateSerializer(BaseSerializer):
                 IssueLabel.objects.bulk_create(
                     [
                         IssueLabel(
-                            label=label,
+                            label_id=label_id,
                             issue=instance,
                             project_id=project_id,
                             workspace_id=workspace_id,
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label in labels
+                        for label_id in labels
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
