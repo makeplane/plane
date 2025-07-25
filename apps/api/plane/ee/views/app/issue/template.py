@@ -13,11 +13,14 @@ from rest_framework.request import Request
 from plane.app.views.base import BaseAPIView
 from plane.ee.models import WorkitemTemplate
 from plane.ee.bgtasks.template_task import create_subworkitems
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class SubWorkitemTemplateEndpoint(BaseAPIView):
     """Subworkitem template endpoint"""
 
+    @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
     def post(
         self, request: Request, slug: str, project_id: uuid.UUID, workitem_id: uuid.UUID
     ):

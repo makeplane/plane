@@ -246,7 +246,36 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
 class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
-    def get(self, request, slug, project_id):
+    def get(self, request, slug, project_id, pk=None):
+
+        if pk:
+            templates = (
+                Template.objects.filter(
+                    workspace__slug=slug,
+                    template_type=Template.TemplateType.WORKITEM,
+                    project_id=project_id,
+                    pk=pk,
+                )
+                .prefetch_related(
+                    Prefetch(
+                        "workitem_templates",
+                        queryset=WorkitemTemplate.objects.filter(
+                            workspace__slug=slug, project_id=project_id
+                        ).select_related("parent_workitem_template"),
+                        to_attr="template_data",
+                    )
+                )
+                .first()
+            )
+            if not templates:
+                return Response(
+                    {"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            serializer = TemplateDataSerializer(templates)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # get all the templates for the project
         templates = (
             Template.objects.filter(
                 workspace__slug=slug,
