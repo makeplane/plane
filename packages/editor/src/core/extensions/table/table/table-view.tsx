@@ -3,9 +3,9 @@ import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
 import { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
-import { icons } from "src/core/extensions/table/table/icons";
 import tippy, { Instance, Props } from "tippy.js";
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { icons } from "./icons";
 import { isCellSelection } from "./utilities/helpers";
 
 type ToolboxItem = {
