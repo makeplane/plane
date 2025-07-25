@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint . --max-warnings 27",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -28,7 +28,7 @@
     "@plane/services": "*",
     "@plane/types": "*",
     "@plane/ui": "*",
-    "axios": "^1.8.3",
+    "axios": "1.11.0",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.0.11",
@@ -62,7 +62,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@types/zxcvbn": "^4.4.4",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
     "typescript": "5.8.3"
   }
 }

@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 # Third party imports
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
@@ -36,7 +36,7 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, GenericAPIView, BasePaginator):
     authentication_classes = [APIKeyAuthentication]
 
     permission_classes = [IsAuthenticated]

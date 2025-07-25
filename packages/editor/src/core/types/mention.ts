@@ -1,5 +1,5 @@
 // plane types
-import { IUserLite, TSearchEntities } from "@plane/types";
+import { TSearchEntities } from "@plane/types";
 
 export type TMentionSuggestion = {
   entity_identifier: string;

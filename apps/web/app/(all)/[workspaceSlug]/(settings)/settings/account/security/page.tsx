@@ -13,7 +13,7 @@ import { getPasswordStrength } from "@plane/utils";
 import { PageHead } from "@/components/core";
 import { ProfileSettingContentHeader } from "@/components/profile";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
+import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // services
@@ -86,8 +86,14 @@ const SecurityPage = observer(() => {
         title: t("auth.common.password.toast.change_password.success.title"),
         message: t("auth.common.password.toast.change_password.success.message"),
       });
-    } catch (err: any) {
-      const errorInfo = authErrorHandler(err.error_code?.toString());
+    } catch (error: unknown) {
+      let errorInfo = undefined;
+      if (error instanceof Error) {
+        const err = error as Error & { error_code?: string };
+        const code = err.error_code?.toString();
+        errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
+      }
+
       setToast({
         type: TOAST_TYPE.ERROR,
         title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),

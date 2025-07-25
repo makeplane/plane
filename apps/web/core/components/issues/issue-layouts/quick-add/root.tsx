@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { useForm, UseFormRegister } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane constants
-import {  WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";

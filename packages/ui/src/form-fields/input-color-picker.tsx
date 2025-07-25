@@ -1,12 +1,12 @@
-import * as React from "react";
 import { Popover, Transition } from "@headlessui/react";
+import * as React from "react";
 import { ColorResult, SketchPicker } from "react-color";
-// components
-import { Input } from "./input";
 import { usePopper } from "react-popper";
-import { Button } from "../button";
 // helpers
 import { cn } from "../../helpers";
+// components
+import { Button } from "../button";
+import { Input } from "./input";
 
 export interface InputColorPickerProps {
   hasError: boolean;
@@ -71,9 +71,9 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     className="lucide lucide-palette"
                   >
                     <circle cx="13.5" cy="6.5" r=".5" />
