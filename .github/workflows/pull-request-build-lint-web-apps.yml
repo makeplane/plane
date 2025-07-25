@@ -34,10 +34,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build web apps
-        run: yarn run build
-
       - name: Lint web apps
         run: yarn run ci:lint
+
+      - name: Build web apps
+        run: yarn run build
 
 
