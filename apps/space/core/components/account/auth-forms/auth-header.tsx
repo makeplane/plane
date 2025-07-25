@@ -38,7 +38,7 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
     }
 
     return {
-      header: "Comment or react to work itemss",
+      header: "Comment or react to work items",
       subHeader: "Use plane to add your valuable inputs to features.",
     };
   };
