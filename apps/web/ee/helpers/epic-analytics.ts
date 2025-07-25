@@ -1,1 +1,3 @@
-export * from "ce/helpers/epic-analytics";
+import { store } from "@/lib/store-context";
+
+export const updateEpicAnalytics = () => ({ updateAnalytics: store.epicAnalytics.updateEpicAnalytics });

@@ -30,6 +30,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     flaggedExtensions,
     forwardedRef,
     id,
+    isSmoothCursorEnabled,
     handleEditorReady,
     mentionHandler,
     onChange,
@@ -79,6 +80,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     handleEditorReady,
     id,
     initialValue: value,
+    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
   });

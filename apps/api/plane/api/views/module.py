@@ -266,6 +266,21 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         Retrieve all modules in a project or get details of a specific module.
         Returns paginated results with module statistics and member information.
         """
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            module = Module.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                ModuleSerializer(module, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
         return self.paginate(
             request=request,
             queryset=(self.get_queryset().filter(archived_at__isnull=True)),
