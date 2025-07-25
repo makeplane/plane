@@ -469,5 +469,9 @@
   "assigned_to": "Atribuído a",
   "due_by": "Devido até",
   "blocked_by": "Bloqueado por",
-  "sub_issues": "Subproblemas"
+  "sub_issues": "Subproblemas",
+  "1 week from now": "1 semana atrás",
+  "2 weeks from now": "2 semanas atrás",
+  "1 month from now": "1 mês atrás",
+  "2 months from now": "2 mês atrás"
 }
