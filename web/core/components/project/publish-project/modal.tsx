@@ -8,13 +8,13 @@ import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { IProject, TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProjectPublish } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;

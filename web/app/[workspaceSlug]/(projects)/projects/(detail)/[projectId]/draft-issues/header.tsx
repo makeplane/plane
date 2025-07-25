@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, LayersIcon, Tooltip } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
@@ -22,7 +23,6 @@ import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useTranslation } from "@plane/i18n";
 
 export const ProjectDraftIssueHeader: FC = observer(() => {
   const { t } = useTranslation();

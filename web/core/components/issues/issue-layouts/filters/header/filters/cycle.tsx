@@ -6,12 +6,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { TCycleGroups } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Loader, CycleGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 import { useCycle } from "@/hooks/store";
 // ui
 // types
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;

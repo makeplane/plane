@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
-import { PopoverMenu, Tooltip } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
+import { PopoverMenu, Tooltip } from "@plane/ui";
 // components
 import { NotificationFilterOptionItem } from "@/components/workspace-notifications";
 // constants

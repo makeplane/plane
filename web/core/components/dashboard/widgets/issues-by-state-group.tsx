@@ -4,6 +4,7 @@ import Link from "next/link";
 // types
 import { TIssuesByStateGroupsWidgetFilters, TIssuesByStateGroupsWidgetResponse, TStateGroups } from "@plane/types";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
@@ -20,7 +21,6 @@ import { getCustomDates } from "@/helpers/dashboard.helper";
 // hooks
 import { useDashboard } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "issues_by_state_groups";
 

@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common";
@@ -18,7 +19,6 @@ import { EIssueFilterType, EIssuesStoreType, ISSUE_DISPLAY_FILTERS_BY_LAYOUT } f
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useLabel, useMember, useIssues, useGlobalView } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const GlobalIssuesHeader = observer(() => {
   const { t } = useTranslation();

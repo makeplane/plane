@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, IWorkspaceView } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button, Input, TextArea } from "@plane/ui";
 // components
 import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
@@ -17,7 +18,6 @@ import { getComputedDisplayFilters, getComputedDisplayProperties } from "@/helpe
 // hooks
 import { useLabel, useMember } from "@/hooks/store";
 import { AccessController } from "@/plane-web/components/views/access-controller";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   handleFormSubmit: (values: Partial<IWorkspaceView>) => Promise<void>;

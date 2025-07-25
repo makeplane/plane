@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 import { TQuickAddIssueButton } from "../root";
-import { useTranslation } from "@plane/i18n";
 
 export const ListQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
   const { onClick } = props;

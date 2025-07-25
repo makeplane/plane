@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // components
+import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // icons
 import { STATE_GROUPS } from "@/constants/state";
 // constants
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
