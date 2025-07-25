@@ -32,7 +32,7 @@ const defaultImporterData: TImporterClickUpDataPayload = {
     teamId: undefined,
     spaceId: undefined,
     folderIds: [],
-    pullAdditionalData: false,
+    skipAdditionalDataImport: true,
   },
   [E_CLICKUP_IMPORTER_STEPS.MAP_STATES]: {},
   [E_CLICKUP_IMPORTER_STEPS.MAP_PRIORITIES]: {},

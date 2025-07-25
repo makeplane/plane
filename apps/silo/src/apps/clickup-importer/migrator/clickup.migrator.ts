@@ -180,7 +180,7 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
     // since phase we are taking from meta and meta is getting passed in each batch
     // we don't know which batch is the last one, so we check by job completion
     const job = await this.getJobData(jobId);
-    const pullAdditionalData = job.config?.pullAdditionalData || true;
+    const skipAdditionalDataImport = job.config?.skipAdditionalDataImport;
     const report = await integrationConnectionHelper.getImportReport({ report_id: job.report_id });
     logger.info(`Marking job as finished for ${jobId}`, {
       data,
@@ -194,8 +194,8 @@ export class ClickUpDataMigrator extends BaseDataMigrator<TClickUpConfig, TClick
       // check if the job is completed
       if (isLastBatch) {
         // Dispatch clickup additional data importer job
-        if (!pullAdditionalData) {
-          logger.info(`Skipping additional data migration for ${jobId}`, { jobId, pullAdditionalData });
+        if (skipAdditionalDataImport) {
+          logger.info(`Skipping additional data migration for ${jobId}`, { jobId, skipAdditionalDataImport });
           await super.markJobAsFinished(jobId, data);
         } else {
           await importTaskManger.registerTask(

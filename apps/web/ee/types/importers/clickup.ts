@@ -34,7 +34,7 @@ export type TImporterClickUpDataPayload = {
     teamId: string | undefined;
     spaceId: string | undefined;
     folderIds: string[];
-    pullAdditionalData: boolean;
+    skipAdditionalDataImport: boolean;
   };
   [E_CLICKUP_IMPORTER_STEPS.MAP_STATES]: {
     [key: string]: string | undefined;
