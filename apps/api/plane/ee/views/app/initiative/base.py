@@ -32,6 +32,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
+from plane.db.models import State
 
 
 class InitiativeEndpoint(BaseAPIView):
@@ -356,6 +357,31 @@ class InitiativeLabelEndpoint(BaseAPIView):
 
 
 class InitiativeAnalyticsEndpoint(BaseAPIView):
+    def projects_issues_count(self, state, project_ids):
+        return Count("id", filter=Q(state__group=state, project_id__in=project_ids))
+
+    def epic_issues_count(self, state, initiative_epics, related_issues_ids):
+        return Count(
+            "id",
+            filter=Q(
+                Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
+                state__group=state,
+            ),
+        )
+
+    def total_issues_count(
+        self, state, initiative_epics, related_issues_ids, project_ids
+    ):
+        return Count(
+            "id",
+            filter=Q(
+                Q(project_id__in=project_ids)
+                | Q(id__in=initiative_epics)
+                | Q(id__in=related_issues_ids),
+            )
+            & Q(state__group=state),
+        )
+
     def issues_counts(self, project_ids, initiative_epics, related_issues_ids):
         # Annotate the counts for different states in one query
         issues_counts = Issue.objects.filter(
@@ -367,59 +393,41 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
             is_draft=False,
             workspace__slug=self.kwargs.get("slug"),
         ).aggregate(
-            # Project counts with single filter
-            **{
-                f"{state}_issues": Count(
-                    "id",
-                    filter=Q(
-                        Q(project_id__in=project_ids),
-                        state__group=state,
-                    ),
-                )
-                for state in [
-                    "backlog",
-                    "unstarted",
-                    "started",
-                    "completed",
-                    "cancelled",
-                ]
-            },
-            # Epic counts with single filter
-            **{
-                f"epic_{state}_issues": Count(
-                    "id",
-                    filter=Q(
-                        Q(id__in=initiative_epics) | Q(id__in=related_issues_ids),
-                        state__group=state,
-                    ),
-                )
-                for state in [
-                    "backlog",
-                    "unstarted",
-                    "started",
-                    "completed",
-                    "cancelled",
-                ]
-            },
-            # Total issue count
-            **{
-                f"total_{state}_issues": Count(
-                    "id",
-                    filter=Q(
-                        Q(project_id__in=project_ids)
-                        | Q(id__in=initiative_epics)
-                        | Q(id__in=related_issues_ids),
-                    )
-                    & Q(state__group=state),
-                )
-                for state in [
-                    "backlog",
-                    "unstarted",
-                    "started",
-                    "completed",
-                    "cancelled",
-                ]
-            },
+            backlog_issues=self.projects_issues_count(State.BACKLOG, project_ids),
+            unstarted_issues=self.projects_issues_count(State.UNSTARTED, project_ids),
+            started_issues=self.projects_issues_count(State.STARTED, project_ids),
+            completed_issues=self.projects_issues_count(State.COMPLETED, project_ids),
+            cancelled_issues=self.projects_issues_count(State.CANCELLED, project_ids),
+            epic_backlog_issues=self.epic_issues_count(
+                State.BACKLOG, initiative_epics, related_issues_ids
+            ),
+            epic_unstarted_issues=self.epic_issues_count(
+                State.UNSTARTED, initiative_epics, related_issues_ids
+            ),
+            epic_started_issues=self.epic_issues_count(
+                State.STARTED, initiative_epics, related_issues_ids
+            ),
+            epic_completed_issues=self.epic_issues_count(
+                State.COMPLETED, initiative_epics, related_issues_ids
+            ),
+            epic_cancelled_issues=self.epic_issues_count(
+                State.CANCELLED, initiative_epics, related_issues_ids
+            ),
+            total_backlog_issues=self.total_issues_count(
+                State.BACKLOG, initiative_epics, related_issues_ids, project_ids
+            ),
+            total_unstarted_issues=self.total_issues_count(
+                State.UNSTARTED, initiative_epics, related_issues_ids, project_ids
+            ),
+            total_started_issues=self.total_issues_count(
+                State.STARTED, initiative_epics, related_issues_ids, project_ids
+            ),
+            total_completed_issues=self.total_issues_count(
+                State.COMPLETED, initiative_epics, related_issues_ids, project_ids
+            ),
+            total_cancelled_issues=self.total_issues_count(
+                State.CANCELLED, initiative_epics, related_issues_ids, project_ids
+            ),
         )
         return issues_counts
 
