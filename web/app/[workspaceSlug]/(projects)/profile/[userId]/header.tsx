@@ -88,7 +88,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                   href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
                   className="w-full text-custom-text-300"
                 >
-                  {t(tab.key)}
+                  {tab.key ? t(tab.key) : null}
                 </Link>
               </CustomMenu.MenuItem>
             ))}
