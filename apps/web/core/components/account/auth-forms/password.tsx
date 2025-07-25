@@ -8,10 +8,10 @@ import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
-import { ForgotPasswordPopover, PasswordStrengthMeter } from "@/components/account";
+import { ForgotPasswordPopover } from "@/components/account";
 // constants
 // helpers
 import { EAuthModes, EAuthSteps } from "@/helpers/authentication.helper";
@@ -95,7 +95,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
     ) : (
       passwordFormData.password.length > 0 &&
       getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
-        <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
+        <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
       )
     );
 
