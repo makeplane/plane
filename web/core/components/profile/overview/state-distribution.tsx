@@ -2,6 +2,7 @@
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
 import { Card } from "@plane/ui";
 import { ProfileEmptyState, PieGraph } from "@/components/ui";
+import { useTranslation } from "@plane/i18n";
 
 // image
 import { STATE_GROUPS } from "@/constants/state";
@@ -15,11 +16,12 @@ type Props = {
 };
 
 export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
+  const { t } = useTranslation();
   if (!userProfile) return null;
 
   return (
     <div className="flex flex-col space-y-2">
-      <h3 className="text-lg font-medium">Issues by state</h3>
+      <h3 className="text-lg font-medium">{t("Issues by state")}</h3>
       <Card className="h-full">
         {userProfile.state_distribution.length > 0 ? (
           <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">

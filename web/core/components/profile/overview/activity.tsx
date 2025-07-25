@@ -3,6 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Loader, Card } from "@plane/ui";
 // components
@@ -23,6 +24,7 @@ import { UserService } from "@/services/user.service";
 const userService = new UserService();
 
 export const ProfileActivity = observer(() => {
+  const { t } = useTranslation();
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();
@@ -39,7 +41,7 @@ export const ProfileActivity = observer(() => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">Recent activity</h3>
+      <h3 className="text-lg font-medium">{t("Recent activity")}</h3>
       <Card>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (

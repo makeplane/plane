@@ -15,6 +15,7 @@ import { PROFILE_ADMINS_TAB, PROFILE_VIEWER_TAB } from "@/constants/profile";
 import { cn } from "@/helpers/common.helper";
 import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -24,6 +25,7 @@ type TUserProfileHeader = {
 
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
+  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hooks
@@ -86,7 +88,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                   href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
                   className="w-full text-custom-text-300"
                 >
-                  {tab.label}
+                  {t(tab.key)}
                 </Link>
               </CustomMenu.MenuItem>
             ))}
