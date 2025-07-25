@@ -14,6 +14,7 @@ import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useProjectPublish } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
+  const { t } = useTranslation();
   // derived values
   const projectPublishSettings = getPublishSettingsByProjectID(project.id);
   // form info
@@ -230,7 +232,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">Views</div>
+                <div className="text-sm">{t("views")}</div>
                 <Controller
                   control={control}
                   name="view_props"

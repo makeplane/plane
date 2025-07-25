@@ -21,7 +21,7 @@ const WorkspaceViewsPage = observer(() => {
   // store
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All ${t("views")}` : undefined;
 
   return (
     <>
