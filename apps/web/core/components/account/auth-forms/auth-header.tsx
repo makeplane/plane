@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -17,36 +17,36 @@ type TAuthHeader = {
   invitationEmail: string | undefined;
   authMode: EAuthModes;
   currentAuthStep: EAuthSteps;
-  children: ReactNode;
 };
 
+// TODO: UX need to be updated
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
-      header: "auth.sign_in.header.step.email.header",
-      subHeader: "",
+      header: "Work in all dimensions.",
+      subHeader: "Welcome back to Plane.",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "auth.sign_in.header.step.password.header",
-      subHeader: "auth.sign_in.header.step.password.sub_header",
+      header: "Work in all dimensions.",
+      subHeader: "Welcome back to Plane.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "auth.sign_in.header.step.unique_code.header",
-      subHeader: "auth.sign_in.header.step.unique_code.sub_header",
+      header: "Work in all dimensions.",
+      subHeader: "Welcome back to Plane.",
     },
   },
   [EAuthModes.SIGN_UP]: {
     [EAuthSteps.EMAIL]: {
-      header: "auth.sign_up.header.step.email.header",
-      subHeader: "",
+      header: "Work in all dimensions.",
+      subHeader: "Create your Plane account.",
     },
     [EAuthSteps.PASSWORD]: {
-      header: "auth.sign_up.header.step.password.header",
-      subHeader: "auth.sign_up.header.step.password.sub_header",
+      header: "Work in all dimensions.",
+      subHeader: "Create your Plane account.",
     },
     [EAuthSteps.UNIQUE_CODE]: {
-      header: "auth.sign_up.header.step.unique_code.header",
-      subHeader: "auth.sign_up.header.step.unique_code.sub_header",
+      header: "Work in all dimensions.",
+      subHeader: "Create your Plane account.",
     },
   },
 };
@@ -54,7 +54,7 @@ const Titles = {
 const workSpaceService = new WorkspaceService();
 
 export const AuthHeader: FC<TAuthHeader> = observer((props) => {
-  const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep, children } = props;
+  const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep } = props;
   // plane imports
   const { t } = useTranslation();
 
@@ -92,6 +92,7 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
 
   const { header, subHeader } = getHeaderSubHeader(currentAuthStep, authMode, invitation || undefined, invitationEmail);
 
+  // TODO: Remove this once we have a proper loading state
   if (isLoading)
     return (
       <div className="flex h-full w-full items-center justify-center">
@@ -100,14 +101,11 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
     );
 
   return (
-    <>
-      <div className="space-y-1 text-center">
-        <h1 className="text-3xl font-bold text-onboarding-text-100">
-          {typeof header === "string" ? t(header) : header}
-        </h1>
-        <p className="font-medium text-onboarding-text-400">{t(subHeader)}</p>
-      </div>
-      {children}
-    </>
+    <div className="flex flex-col gap-1">
+      <span className="text-2xl font-semibold text-onboarding-text-100">
+        {typeof header === "string" ? t(header) : header}
+      </span>
+      <span className="text-2xl font-semibold text-onboarding-text-400">{subHeader}</span>
+    </div>
   );
 });
