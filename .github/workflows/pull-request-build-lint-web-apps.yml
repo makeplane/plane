@@ -37,7 +37,7 @@ jobs:
       - name: Lint web apps
         run: yarn run ci:lint
 
-      - name: Build web apps
-        run: yarn run build
+      - name: Build apps
+        run: yarn run ci:build
 
 

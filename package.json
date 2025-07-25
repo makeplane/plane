@@ -16,7 +16,8 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "check": "turbo run check",
-    "ci:lint": "turbo run check:lint"
+    "ci:lint": "turbo run check:lint",
+    "ci:build": "turbo run build --filter=!web"
   },
   "devDependencies": {
     "prettier": "latest",
