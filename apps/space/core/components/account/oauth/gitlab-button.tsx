@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
 // images

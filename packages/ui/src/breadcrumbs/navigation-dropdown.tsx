@@ -45,8 +45,11 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
           }
         )}
       >
-        {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
-        <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
+        <div className="flex @4xl:hidden text-custom-text-300">...</div>
+        <div className="hidden @4xl:flex gap-2">
+          {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
+          <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
+        </div>
       </button>
     </Tooltip>
   );

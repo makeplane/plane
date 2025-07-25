@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { PanelRight } from "lucide-react";
+import { ChartNoAxesColumn, ListFilter, PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -30,7 +30,13 @@ import { cn, isIssueFilterActive } from "@plane/utils";
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import { SwitcherLabel } from "@/components/common";
 import { CycleQuickActions } from "@/components/cycles";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  LayoutSelection,
+  MobileLayoutSelection,
+} from "@/components/issues";
 // hooks
 import {
   useCommandPalette,
@@ -207,21 +213,37 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         </Header.LeftItem>
         <Header.RightItem className="items-center">
           <div className="hidden items-center gap-2 md:flex ">
-            <LayoutSelection
-              layouts={[
-                EIssueLayoutTypes.LIST,
-                EIssueLayoutTypes.KANBAN,
-                EIssueLayoutTypes.CALENDAR,
-                EIssueLayoutTypes.SPREADSHEET,
-                EIssueLayoutTypes.GANTT,
-              ]}
-              onChange={(layout) => handleLayoutChange(layout)}
-              selectedLayout={activeLayout}
-            />
+            <div className="hidden @4xl:flex">
+              <LayoutSelection
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
+                onChange={(layout) => handleLayoutChange(layout)}
+                selectedLayout={activeLayout}
+              />
+            </div>
+            <div className="flex @4xl:hidden">
+              <MobileLayoutSelection
+                layouts={[
+                  EIssueLayoutTypes.LIST,
+                  EIssueLayoutTypes.KANBAN,
+                  EIssueLayoutTypes.CALENDAR,
+                  EIssueLayoutTypes.SPREADSHEET,
+                  EIssueLayoutTypes.GANTT,
+                ]}
+                onChange={(layout) => handleLayoutChange(layout)}
+                activeLayout={activeLayout}
+              />
+            </div>
             <FiltersDropdown
               title={t("common.filters")}
               placement="bottom-end"
               isFiltersApplied={isIssueFilterActive(issueFilters)}
+              miniIcon={<ListFilter className="size-3.5" />}
             >
               <FilterSelection
                 filters={issueFilters?.filters ?? {}}
@@ -238,7 +260,11 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-            <FiltersDropdown title={t("common.display")} placement="bottom-end">
+            <FiltersDropdown
+              title={t("common.display")}
+              placement="bottom-end"
+              miniIcon={<SlidersHorizontal className="size-3.5" />}
+            >
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
@@ -256,7 +282,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             {canUserCreateIssue && (
               <>
                 <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-                  {t("common.analytics")}
+                  <div className="hidden @4xl:flex">Analytics</div>
+                  <div className="flex @4xl:hidden">
+                    <ChartNoAxesColumn className="size-3.5" />
+                  </div>
                 </Button>
                 {!isCompletedCycle && (
                   <Button

@@ -64,7 +64,7 @@ export class InstanceStore implements IInstanceStore {
         this.instance = instanceInfo.instance;
         this.config = instanceInfo.config;
       });
-    } catch (error) {
+    } catch (_error) {
       runInAction(() => {
         this.isLoading = false;
         this.error = {

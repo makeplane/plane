@@ -6,23 +6,18 @@ import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBloc
 import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core";
-import {
-  GanttChartBlocksList,
-  GanttChartSidebar,
-  MonthChartView,
-  QuarterChartView,
-  WeekChartView,
-} from "@/components/gantt-chart";
+import { GanttChartSidebar, MonthChartView, QuarterChartView, WeekChartView } from "@/components/gantt-chart";
 // helpers
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // plane web components
 import { TimelineDependencyPaths, TimelineDraggablePath } from "@/plane-web/components/gantt-chart";
+import { GanttChartRowList } from "@/plane-web/components/gantt-chart/blocks/block-row-list";
+import { GanttChartBlocksList } from "@/plane-web/components/gantt-chart/blocks/blocks-list";
 import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 //
-import { GanttChartRowList } from "../blocks/block-row-list";
 import { DEFAULT_BLOCK_WIDTH, GANTT_SELECT_GROUP, HEADER_HEIGHT } from "../constants";
 import { getItemPositionWidth } from "../views";
 import { TimelineDragHelper } from "./timeline-drag-helper";

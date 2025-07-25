@@ -37,7 +37,7 @@ export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) =>
         fetchNextPublicIssues(anchor, groupId, subgroupId);
       }
     },
-    [fetchNextPublicIssues]
+    [anchor, getIssueLoader, fetchNextPublicIssues]
   );
 
   const debouncedFetchMoreIssues = debounce(

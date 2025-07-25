@@ -16,7 +16,7 @@ export const PlaneNewIcon: React.FC<ISvgIcons> = ({
     xmlns="http://www.w3.org/2000/svg"
     className={className}
   >
-    <g clip-path="url(#clip0_888_35560)">
+    <g clipPath="url(#clip0_888_35560)">
       <path
         d="M5.15383 9.50566V5.15381H1.34152C0.601228 5.15381 0 5.75399 0 6.49533V14.6595C0 15.3998 0.600183 16.001 1.34152 16.001H9.50568C10.246 16.001 10.8472 15.4008 10.8472 14.6595V10.8461H6.49536C5.75506 10.8461 5.15383 10.246 5.15383 9.50461V9.50566Z"
         fill={color}

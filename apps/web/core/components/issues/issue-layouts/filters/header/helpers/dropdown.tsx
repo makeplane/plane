@@ -13,6 +13,7 @@ import { Button } from "@plane/ui";
 type Props = {
   children: React.ReactNode;
   icon?: React.ReactNode;
+  miniIcon?: React.ReactNode;
   title?: string;
   placement?: Placement;
   disabled?: boolean;
@@ -24,6 +25,7 @@ type Props = {
 export const FiltersDropdown: React.FC<Props> = (props) => {
   const {
     children,
+    miniIcon,
     icon,
     title = "Dropdown",
     placement,
@@ -33,7 +35,7 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
     isFiltersApplied = false,
   } = props;
 
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -53,27 +55,42 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                   {menuButton}
                 </button>
               ) : (
-                <Button
-                  disabled={disabled}
-                  ref={setReferenceElement}
-                  variant="neutral-primary"
-                  size="sm"
-                  prependIcon={icon}
-                  appendIcon={
-                    <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
-                  }
-                  tabIndex={tabIndex}
-                  className="relative"
-                >
-                  <>
-                    <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
-                      <span>{title}</span>
-                    </div>
-                    {isFiltersApplied && (
-                      <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
-                    )}
-                  </>
-                </Button>
+                <div ref={setReferenceElement}>
+                  <div className="hidden @4xl:flex">
+                    <Button
+                      disabled={disabled}
+                      variant="neutral-primary"
+                      size="sm"
+                      prependIcon={icon}
+                      appendIcon={
+                        <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
+                      }
+                      tabIndex={tabIndex}
+                      className="relative"
+                    >
+                      <>
+                        <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                          <span>{title}</span>
+                        </div>
+                        {isFiltersApplied && (
+                          <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                        )}
+                      </>
+                    </Button>
+                  </div>
+                  <div className="flex @4xl:hidden">
+                    <Button
+                      disabled={disabled}
+                      ref={setReferenceElement}
+                      variant="neutral-primary"
+                      size="sm"
+                      tabIndex={tabIndex}
+                      className="relative px-2"
+                    >
+                      {miniIcon || title}
+                    </Button>
+                  </div>
+                </div>
               )}
             </Popover.Button>
             <Transition

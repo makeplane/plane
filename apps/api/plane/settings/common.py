@@ -75,6 +75,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
+    # Preserve original Django URL parameter names (pk) instead of converting to 'id'
+    "SCHEMA_COERCE_PATH_PK": False,
 }
 
 # Django Auth Backend
@@ -462,3 +464,10 @@ ATTACHMENT_MIME_TYPES = [
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+
+if ENABLE_DRF_SPECTACULAR:
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+    INSTALLED_APPS.append("drf_spectacular")
+    from .openapi import SPECTACULAR_SETTINGS  # noqa: F401

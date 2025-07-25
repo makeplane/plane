@@ -16,7 +16,7 @@ interface ControllerInstance {
 }
 
 interface ControllerConstructor {
-  new (...args: any[]): ControllerInstance;
+  new (...args: unknown[]): ControllerInstance;
   prototype: ControllerInstance;
 }
 

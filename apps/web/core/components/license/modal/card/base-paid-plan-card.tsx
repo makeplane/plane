@@ -7,12 +7,8 @@ import { Tab } from "@headlessui/react";
 // plane imports
 // helpers
 import { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
+import { getSubscriptionBackgroundColor, getUpgradeCardVariantStyle } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
-// components
-import {
-  getSubscriptionBackgroundColor,
-  getUpgradeCardVariantStyle,
-} from "@/components/workspace/billing/subscription";
 
 export type TBasePaidPlanCardProps = {
   planVariant: EProductSubscriptionEnum;

@@ -185,7 +185,7 @@ export const StickiesLayout = (props: TStickiesLayout) => {
     if (width === null) return 4;
 
     if (width < 640) return 2; // sm
-    if (width < 768) return 3; // md
+    if (width < 850) return 3; // md
     if (width < 1024) return 4; // lg
     if (width < 1280) return 5; // xl
     return 6; // 2xl and above
