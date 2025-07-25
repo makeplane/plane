@@ -2,14 +2,13 @@ import { useRef } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
-// editor
-import { DocumentReadOnlyEditorWithRef, EditorRefApi } from "@plane/editor";
-// ui
+// plane imports
+import { DocumentEditorWithRef, EditorRefApi } from "@plane/editor";
 import { ERowVariant, Logo, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
 // helpers
-import { getReadOnlyEditorFileHandlers } from "@/helpers/editor.helper";
+import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // hooks
 import { usePublish } from "@/hooks/store";
 // plane web components
@@ -66,16 +65,18 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
           </div>
         </div>
         <div className="size-full">
-          <DocumentReadOnlyEditorWithRef
+          <DocumentEditorWithRef
+            editable={false}
             ref={editorRef}
             id={pageDetails.id}
             disabledExtensions={[]}
             flaggedExtensions={[]}
-            initialValue={pageDetails.description_html ?? "<p></p>"}
+            value={pageDetails.description_html ?? "<p></p>"}
             containerClassName="p-0 pb-64 border-none"
-            fileHandler={getReadOnlyEditorFileHandlers({
+            fileHandler={getEditorFileHandlers({
               anchor,
               workspaceId: publishSettings.workspace ?? "",
+              uploadFile: async () => "",
             })}
             mentionHandler={{
               renderComponent: (props) => <EditorMentionsRoot {...props} />,
@@ -89,6 +90,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
                 workspaceSlug: "",
               },
             }}
+            isSmoothCursorEnabled={false}
           />
         </div>
       </div>

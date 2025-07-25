@@ -1,23 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane editor
-import { DocumentReadOnlyEditorWithRef } from "@plane/editor";
-// plane types
+// plane imports
 import { TPage } from "@plane/types";
 import { Avatar, Loader } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
-// helpers
+import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
-// plane web components
+// plane web imports
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";
-// plane web store
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
@@ -163,9 +158,10 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
               )}
             >
               <div className="h-full overflow-hidden" id={`content-container-${id}`}>
-                <DocumentReadOnlyEditorWithRef
+                <DocumentEditor
+                  editable={false}
                   id={id ?? ""}
-                  initialValue={description_html ?? "<p></p>"}
+                  value={description_html ?? "<p></p>"}
                   containerClassName="p-0 pl-3 border-none"
                   editorClassName="p-2.5 text-xs"
                   disabledExtensions={documentEditorExtensions.disabled}
@@ -173,18 +169,7 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                   displayConfig={{
                     fontSize: "small-font",
                   }}
-                  fileHandler={getReadOnlyEditorFileHandlers({
-                    projectId: projectId?.toString() ?? "",
-                    workspaceSlug: workspaceSlug?.toString() ?? "",
-                    workspaceId: workspaceDetails?.id?.toString() ?? "",
-                  })}
-                  mentionHandler={{
-                    renderComponent: (props) => <EditorMentionsRoot {...props} />,
-                  }}
                   embedHandler={{
-                    issue: {
-                      widgetCallback: issueEmbedProps.widgetCallback,
-                    },
                     page: {
                       widgetCallback: ({ pageId: pageIdFromNode }) => (
                         <PageEmbedCardRoot
@@ -197,6 +182,9 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
                       workspaceSlug: workspaceSlug.toString(),
                     },
                   }}
+                  projectId={projectId?.toString() ?? ""}
+                  workspaceId={workspaceDetails?.id ?? ""}
+                  workspaceSlug={workspaceSlug?.toString() ?? ""}
                 />
               </div>
 

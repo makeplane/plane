@@ -1,40 +1,39 @@
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane editor
-import { DocumentReadOnlyEditorWithRef, TDisplayConfig } from "@plane/editor";
+import type { TDisplayConfig } from "@plane/editor";
 // plane ui
 import { Loader } from "@plane/ui";
 // components
-import { EditorMentionsRoot } from "@/components/editor";
+import { DocumentEditor } from "@/components/editor/document/editor";
 import { TVersionEditorProps } from "@/components/pages";
 // hooks
-import { useEditorConfig } from "@/hooks/editor";
 import { useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web components
-import { IssueEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
   const { activeVersion, versionDetails } = props;
-  // params
+  // navigation
   const { workspaceSlug } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug?.toString() ?? "");
-  // editor config
-  const { getReadOnlyEditorFileHandlers } = useEditorConfig();
   // editor flagging
   const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
   // page filters
   const { fontSize, fontStyle } = usePageFilters();
 
-  const displayConfig: TDisplayConfig = {
-    fontSize,
-    fontStyle,
-  };
+  const displayConfig: TDisplayConfig = useMemo(
+    () => ({
+      fontSize,
+      fontStyle,
+    }),
+    [fontSize, fontStyle]
+  );
 
   if (!versionDetails)
     return (
@@ -78,36 +77,21 @@ export const WorkspacePagesVersionEditor: React.FC<TVersionEditorProps> = observ
       </div>
     );
 
-  const description = versionDetails?.description_html;
-  if (description === undefined || description?.trim() === "") return null;
+  const description = versionDetails?.description_json;
+  if (!description) return null;
 
   return (
-    <DocumentReadOnlyEditorWithRef
+    <DocumentEditor
+      editable={false}
       id={activeVersion ?? ""}
-      initialValue={description ?? "<p></p>"}
+      value={description}
       containerClassName="p-0 pb-64 border-none"
       disabledExtensions={documentEditorExtensions.disabled}
       flaggedExtensions={documentEditorExtensions.flagged}
       displayConfig={displayConfig}
       editorClassName="pl-10"
-      fileHandler={getReadOnlyEditorFileHandlers({
-        workspaceId: workspaceDetails?.id ?? "",
-        workspaceSlug: workspaceSlug?.toString() ?? "",
-      })}
-      mentionHandler={{
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
-      }}
-      embedHandler={{
-        issue: {
-          widgetCallback: ({ issueId, projectId: projectIdFromEmbed, workspaceSlug: workspaceSlugFromEmbed }) => {
-            const resolvedProjectId = projectIdFromEmbed ?? "";
-            const resolvedWorkspaceSlug = workspaceSlugFromEmbed ?? workspaceSlug?.toString() ?? "";
-            return (
-              <IssueEmbedCard issueId={issueId} projectId={resolvedProjectId} workspaceSlug={resolvedWorkspaceSlug} />
-            );
-          },
-        },
-      }}
+      workspaceId={workspaceDetails?.id ?? ""}
+      workspaceSlug={workspaceSlug?.toString() ?? ""}
     />
   );
 });

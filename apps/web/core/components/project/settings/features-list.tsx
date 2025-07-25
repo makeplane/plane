@@ -43,11 +43,9 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
-
     if (featureProperty === "is_time_tracking_enabled") {
       toggleProjectFeatures(workspaceSlug, projectId, settingsPayload, false);
     }
-
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {

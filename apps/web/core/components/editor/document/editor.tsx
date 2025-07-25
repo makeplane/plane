@@ -13,8 +13,8 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 type DocumentEditorWrapperProps = MakeOptional<
-  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "isSmoothCursorEnabled" | "user">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
 > & {
   embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
   workspaceSlug: string;

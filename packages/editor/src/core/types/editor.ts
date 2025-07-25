@@ -188,10 +188,12 @@ export interface ICollaborativeDocumentEditorProps
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
 }
 
-export interface IDocumentEditor extends Omit<IEditorProps, "onEnterKeyPress" | "value"> {
+export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
+  editable: boolean;
   embedHandler: TEmbedConfig;
-  user: TUserDetails;
+  user?: TUserDetails;
+  value: Content;
 }
 
 export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
