@@ -393,6 +393,7 @@
     }
   },
   "initiatives": {
+    "overview": "Vue d'ensemble",
     "label": "Initiatives",
     "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Ajouter une initiative",
@@ -440,6 +441,19 @@
         "title": "Vous n'avez pas d'Epics qui correspondent aux filtres que vous avez appliqués.",
         "subHeading": "Pour voir tous les Epics, effacez tous les filtres appliqués.",
         "action": "Effacer les filtres"
+      }
+    },
+    "scope": {
+      "view_scope": "Voir le périmètre",
+      "breakdown": "Décomposition du périmètre",
+      "add_scope": "Ajouter un périmètre",
+      "label": "Périmètre",
+      "empty_state": {
+        "title": "Aucun périmètre ajouté à cette initiative",
+        "description": "Connectez des projets et des épiques et suivez ce travail dans cet espace.",
+        "primary_button": {
+          "text": "Ajouter un périmètre"
+        }
       }
     }
   },

@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Übersicht",
     "label": "Initiativen",
     "placeholder": "{count, plural, one{# Initiative} other{# Initiativen}}",
     "add_initiative": "Initiative Hinzufügen",
@@ -441,6 +442,19 @@
         "title": "Sie haben keine Epics, die den von Ihnen angewendeten Filtern entsprechen.",
         "subHeading": "Um alle Epics zu sehen, löschen Sie alle angewendeten Filter.",
         "action": "Alle Filter löschen"
+      }
+    },
+    "scope": {
+      "view_scope": "Umfang anzeigen",
+      "breakdown": "Umfangaufschlagung",
+      "add_scope": "Umfang hinzufügen",
+      "label": "Umfang",
+      "empty_state": {
+        "title": "Noch kein Umfang zu dieser Initiative hinzugefügt",
+        "description": "Verknüpfen Sie Projekte und Epics und verfolgen Sie diese Arbeit in diesem Raum.",
+        "primary_button": {
+          "text": "Umfang hinzufügen"
+        }
       }
     }
   },

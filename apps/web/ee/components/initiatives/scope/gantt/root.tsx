@@ -1,3 +1,4 @@
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state";
 import { TimeLineTypeContext, ETimeLineTypeType } from "@/components/gantt-chart/contexts";
@@ -17,6 +18,8 @@ type Props = {
 export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
   const { epicIds, projectIds, workspaceSlug, handleAddEpic, handleAddProject, initiativeId, disabled } = props;
 
+  const { t } = useTranslation();
+
   const isEmpty = epicIds.length === 0 && projectIds.length === 0;
 
   const resolvedAssetPath = useResolvedAssetPath({ basePath: "/empty-state/initiatives/scope/initiatives-gantt" });
@@ -25,14 +28,14 @@ export const InitiativeScopeGanttView: React.FC<Props> = (props) => {
     return (
       <DetailedEmptyState
         assetPath={resolvedAssetPath}
-        title={"No scope added yet."}
-        description={"Add projects or epics to this initiative to get started."}
+        title={t("initiatives.scope.empty_state.title")}
+        description={t("initiatives.scope.empty_state.description")}
         customPrimaryButton={
           <AddScopeButton
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
             disabled={disabled}
-            customButton={<Button>Add scope</Button>}
+            customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
           />
         }
       />

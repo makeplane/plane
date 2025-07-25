@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Visão geral",
     "label": "Iniciativas",
     "placeholder": "{count, plural, one{# iniciativa} other{# iniciativas}}",
     "add_initiative": "Adicionar Iniciativa",
@@ -441,6 +442,19 @@
         "title": "Não há iniciativas que correspondem aos filtros que você aplicou.",
         "subHeading": "Para ver todas as iniciativas, limpe todos os filtros aplicados.",
         "action": "Limpar filtros"
+      }
+    },
+    "scope": {
+      "view_scope": "Ver escopo",
+      "breakdown": "Desmembrar escopo",
+      "add_scope": "Adicionar escopo",
+      "label": "Escopo",
+      "empty_state": {
+        "title": "Nenhum escopo adicionado à iniciativa",
+        "description": "Conecte projetos e épicos à iniciativa para começar.",
+        "primary_button": {
+          "text": "Adicionar escopo"
+        }
       }
     }
   },

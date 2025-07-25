@@ -384,6 +384,7 @@
     }
   },
   "initiatives": {
+    "overview": "Tổng quan",
     "label": "Sáng kiến",
     "placeholder": "{count, plural, one{# sáng kiến} other{# sáng kiến}}",
     "add_initiative": "Thêm Sáng kiến",
@@ -431,6 +432,19 @@
         "title": "Không có sáng kiến phù hợp",
         "subHeading": "Tạo một sáng kiến mới thay thế.",
         "action": "Tạo sáng kiến"
+      }
+    },
+    "scope": {
+      "view_scope": "Xem phạm vi",
+      "breakdown": "Phân tích phạm vi",
+      "add_scope": "Thêm phạm vi",
+      "label": "Phạm vi",
+      "empty_state": {
+        "title": "Chưa thêm phạm vi nào đến sáng kiến này",
+        "description": "Kết nối dự án và epic với sáng kiến này để bắt đầu.",
+        "primary_button": {
+          "text": "Thêm phạm vi"
+        }
       }
     }
   },

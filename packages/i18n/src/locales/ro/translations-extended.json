@@ -393,6 +393,7 @@
     }
   },
   "initiatives": {
+    "overview": "Prezentare generală",
     "label": "Inițiative",
     "placeholder": "{count, plural, one{# inițiativă} other{# inițiative}}",
     "add_initiative": "Adaugă Inițiativă",
@@ -440,6 +441,19 @@
         "title": "Nu ai epice care să se potrivească cu filtrele pe care le-ai aplicat.",
         "subHeading": "Pentru a vedea toate epicele, șterge toate filtrele aplicate.",
         "action": "Șterge filtrele"
+      }
+    },
+    "scope": {
+      "view_scope": "Vezi domeniu",
+      "breakdown": "Descompune domeniu",
+      "add_scope": "Adaugă domeniu",
+      "label": "Domeniu",
+      "empty_state": {
+        "title": "Nu a fost adăugat încă niciun domeniu la această inițiativă",
+        "description": "Conectează proiecte și epice la inițiativă pentru a începe.",
+        "primary_button": {
+          "text": "Adaugă domeniu"
+        }
       }
     }
   },

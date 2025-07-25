@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Ikhtisar",
     "label": "Inisiatif",
     "placeholder": "{count, plural, one{# inisiatif} other{# inisiatif}}",
     "add_initiative": "Tambah Inisiatif",
@@ -441,6 +442,19 @@
         "title": "Anda tidak memiliki epik yang cocok dengan filter yang Anda terapkan.",
         "subHeading": "Untuk melihat semua epik, hapus semua filter yang diterapkan.",
         "action": "Hapus filter"
+      }
+    },
+    "scope": {
+      "view_scope": "Lihat ruang lingkup",
+      "breakdown": "Pecahkan ruang lingkup",
+      "add_scope": "Tambah ruang lingkup",
+      "label": "Ruang lingkup",
+      "empty_state": {
+        "title": "Belum ada ruang lingkup yang ditambahkan ke inisiatif ini",
+        "description": "Hubungkan proyek dan epik ke inisiatif ini untuk memulai.",
+        "primary_button": {
+          "text": "Tambah ruang lingkup"
+        }
       }
     }
   },

@@ -32,14 +32,14 @@ export const InitiativeScopeListView = observer((props: Props) => {
     return (
       <DetailedEmptyState
         assetPath={resolvedAssetPath}
-        title={"No scope added yet."}
-        description={"Add projects or epics to this initiative to get started."}
+        title={t("initiatives.scope.empty_state.title")}
+        description={t("initiatives.scope.empty_state.description")}
         customPrimaryButton={
           <AddScopeButton
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
             disabled={disabled}
-            customButton={<Button>Add scope</Button>}
+            customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
           />
         }
       />

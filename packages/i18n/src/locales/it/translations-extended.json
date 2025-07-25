@@ -392,6 +392,7 @@
     }
   },
   "initiatives": {
+    "overview": "Panoramica",
     "label": "Iniziative",
     "placeholder": "{count, plural, one{# iniziativa} other{# iniziative}}",
     "add_initiative": "Aggiungi Iniziativa",
@@ -439,6 +440,19 @@
         "title": "Non hai epiche che corrispondono ai filtri che hai applicato.",
         "subHeading": "Per vedere tutte le epiche, cancella tutti i filtri applicati.",
         "action": "Cancella filtri"
+      }
+    },
+    "scope": {
+      "view_scope": "Visualizza ambito",
+      "breakdown": "Scomposizione ambito",
+      "add_scope": "Aggiungi ambito",
+      "label": "Ambito",
+      "empty_state": {
+        "title": "Nessun ambito aggiunto a questa iniziativa",
+        "description": "Collega progetti e epiche e traccia quel lavoro in questo spazio.",
+        "primary_button": {
+          "text": "Aggiungi ambito"
+        }
       }
     }
   },

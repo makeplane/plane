@@ -409,6 +409,7 @@
     }
   },
   "initiatives": {
+    "overview": "Genel Bakış",
     "label": "İnisiyatifler",
     "placeholder": "{count, plural, one{# inisiyatif} other{# inisiyatif}}",
     "add_initiative": "İnisiyatif Ekle",
@@ -456,6 +457,19 @@
         "title": "Eşleşen epik yok",
         "subHeading": "Tüm epikleri görmek için tüm uygulanan filtreleri temizleyin.",
         "action": "Filtreleri temizle"
+      }
+    },
+    "scope": {
+      "view_scope": "Kapsamı görüntüle",
+      "breakdown": "Kapsamı çözümle",
+      "add_scope": "Kapsam ekle",
+      "label": "Kapsam",
+      "empty_state": {
+        "title": "Henüz kapsam eklenmedi",
+        "description": "Projeleri ve epikleri inisiyatife bağlayın ve bu alanda çalışmayı takip edin.",
+        "primary_button": {
+          "text": "Kapsam ekle"
+        }
       }
     }
   },

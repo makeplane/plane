@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "개요",
     "label": "이니셔티브",
     "placeholder": "{count, plural, one{# 이니셔티브} other{# 이니셔티브}}",
     "add_initiative": "이니셔티브 추가",
@@ -441,6 +442,19 @@
         "title": "이니셔티브가 존재하지 않습니다",
         "subHeading": "모든 이니셔티브를 보려면 모든 적용된 필터를 지우세요.",
         "action": "필터 지우기"
+      }
+    },
+    "scope": {
+      "view_scope": "범위 보기",
+      "breakdown": "범위 분해",
+      "add_scope": "범위 추가",
+      "label": "범위",
+      "empty_state": {
+        "title": "아직 이니셔티브에 범위가 추가되지 않았습니다",
+        "description": "이 이니셔티브에 프로젝트와 에픽을 연결하고 그 작업을 이 공간에서 추적하세요.",
+        "primary_button": {
+          "text": "범위 추가"
+        }
       }
     }
   },

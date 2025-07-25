@@ -393,6 +393,7 @@
     }
   },
   "initiatives": {
+    "overview": "概览",
     "label": "计划",
     "placeholder": "{count, plural, one{# 计划} other{# 计划}}",
     "add_initiative": "添加计划",
@@ -440,6 +441,19 @@
         "title": "没有匹配的史诗",
         "subHeading": "要查看所有史诗，请清除所有应用的筛选器。",
         "action": "清除筛选器"
+      }
+    },
+    "scope": {
+      "view_scope": "查看范围",
+      "breakdown": "范围分解",
+      "add_scope": "添加范围",
+      "label": "范围",
+      "empty_state": {
+        "title": "尚未添加范围",
+        "description": "将项目或史诗添加到此计划以开始。",
+        "primary_button": {
+          "text": "添加范围"
+        }
       }
     }
   },

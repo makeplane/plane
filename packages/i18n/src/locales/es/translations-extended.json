@@ -393,6 +393,7 @@
     }
   },
   "initiatives": {
+    "overview": "Resumen",
     "label": "Iniciativas",
     "placeholder": "{count, plural, one{# iniciativa} other{# iniciativas}}",
     "add_initiative": "Agregar Iniciativa",
@@ -440,6 +441,19 @@
         "title": "No tienes Epics que coincidan con los filtros que has aplicado.",
         "subHeading": "Para ver todos los Epics, elimina todos los filtros aplicados.",
         "action": "Eliminar filtros"
+      }
+    },
+    "scope": {
+      "view_scope": "Ver alcance",
+      "breakdown": "Desglose de alcance",
+      "add_scope": "Agregar alcance",
+      "label": "Alcance",
+      "empty_state": {
+        "title": "Aún no se ha agregado alcance a esta iniciativa",
+        "description": "Conecta proyectos y épicas y sigue esa obra en este espacio.",
+        "primary_button": {
+          "text": "Agregar alcance"
+        }
       }
     }
   },

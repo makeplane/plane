@@ -401,6 +401,7 @@
     }
   },
   "initiatives": {
+    "overview": "Prehľad",
     "label": "Iniciatívy",
     "placeholder": "{count, plural, one{# iniciativa} other{# iniciatívy}}",
     "add_initiative": "Pridať Iniciatívu",
@@ -448,6 +449,19 @@
         "title": "Nemáte žiadne epiky, ktoré by zodpovedali filtrom, ktoré ste použili.",
         "subHeading": "Aby ste videli všetky epiky, vymažte všetky použité filtre.",
         "action": "Vymazať filtre"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobraziť rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Pridať rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatiaľ nebol pridaný žiadny rozsah do tejto iniciatívy",
+        "description": "Prepojte projekty a epiky s iniciatívou, aby ste mohli začať.",
+        "primary_button": {
+          "text": "Pridať rozsah"
+        }
       }
     }
   },

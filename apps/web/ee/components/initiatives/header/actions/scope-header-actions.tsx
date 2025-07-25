@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Button } from "@plane/ui";
 import { LayoutSelection } from "@/components/issues";
@@ -12,6 +13,8 @@ type Props = {
 };
 
 export const InitiativeScopeHeaderActions = observer(({ workspaceSlug, initiativeId, disabled }: Props) => {
+  const { t } = useTranslation();
+
   const {
     initiative: {
       scope: { getDisplayFilters, updateDisplayFilters },
@@ -38,7 +41,7 @@ export const InitiativeScopeHeaderActions = observer(({ workspaceSlug, initiativ
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
         disabled={disabled}
-        customButton={<Button>Add scope</Button>}
+        customButton={<Button>{t("initiatives.scope.add_scope")}</Button>}
       />
     </div>
   );

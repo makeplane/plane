@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Przegląd",
     "label": "Inicjatywy",
     "placeholder": "{count, plural, one{# inicjatywa} other{# inicjatywy}}",
     "add_initiative": "Dodaj Inicjatywę",
@@ -441,6 +442,19 @@
         "title": "Nie masz inicjatyw, które pasują do filtrów, które zastosowałeś.",
         "subHeading": "Aby zobaczyć wszystkie inicjatywy, usuń wszystkie zastosowane filtry.",
         "action": "Usuń filtry"
+      }
+    },
+    "scope": {
+      "add_scope": "Dodaj zakres",
+      "view_scope": "Zobacz zakres",
+      "breakdown": "Rozbij zakres",
+      "label": "Zakres",
+      "empty_state": {
+        "title": "Nie dodano jeszcze zakresu do tej inicjatywy",
+        "description": "Połącz projekty i epiki z inicjatywą, aby rozpocząć.",
+        "primary_button": {
+          "text": "Dodaj zakres"
+        }
       }
     }
   },

@@ -394,6 +394,7 @@
     }
   },
   "initiatives": {
+    "overview": "Přehled",
     "label": "Iniciativy",
     "placeholder": "{count, plural, one{# iniciativa} other{# iniciativy}}",
     "add_initiative": "Přidat iniciativu",
@@ -441,6 +442,19 @@
         "title": "You don't have epics that match the filters you have applied.",
         "subHeading": "To see all epics, clear all applied filters.",
         "action": "Clear filters"
+      }
+    },
+    "scope": {
+      "view_scope": "Zobrazit rozsah",
+      "breakdown": "Rozklad rozsahu",
+      "add_scope": "Přidat rozsah",
+      "label": "Rozsah",
+      "empty_state": {
+        "title": "Zatím nebyl přidán žádný rozsah do této iniciativy",
+        "description": "Propojte projekty a epiky a sledujte práci v tomto prostoru.",
+        "primary_button": {
+          "text": "Přidat rozsah"
+        }
       }
     }
   },

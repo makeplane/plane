@@ -82,12 +82,12 @@ export const AddScopeButton = observer((props: Props) => {
   // options
   const optionItems = [
     {
-      label: "Epics",
+      i18n_label: "common.epics",
       icon: <EpicIcon className="h-3 w-3" />,
       onClick: () => setIsEpicModalOpen(true),
     },
     {
-      label: "Projects",
+      i18n_label: "common.projects",
       icon: <BriefcaseIcon className="h-3 w-3" />,
       onClick: () => setIsProjectsOpen(true),
     },
@@ -98,7 +98,7 @@ export const AddScopeButton = observer((props: Props) => {
   ) : (
     <Button variant="neutral-primary" size="sm">
       <PlusIcon className="size-4" />
-      Add scope
+      {t("initiatives.scope.add_scope")}
     </Button>
   );
 
@@ -116,7 +116,7 @@ export const AddScopeButton = observer((props: Props) => {
           >
             <div className="flex items-center gap-2">
               {item.icon}
-              <span>{item.label}</span>
+              <span>{t(item.i18n_label)}</span>
             </div>
           </CustomMenu.MenuItem>
         ))}

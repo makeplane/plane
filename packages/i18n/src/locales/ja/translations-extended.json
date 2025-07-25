@@ -393,6 +393,7 @@
     }
   },
   "initiatives": {
+    "overview": "概要",
     "label": "イニシアチブ",
     "placeholder": "{count, plural, one{# イニシアチブ} other{# イニシアチブ}}",
     "add_initiative": "イニシアチブを追加",
@@ -440,6 +441,19 @@
         "title": "イニシアチブが存在しません",
         "subHeading": "すべてのイニシアチブを表示するには、すべての適用されたフィルターを削除してください。",
         "action": "フィルターを削除"
+      }
+    },
+    "scope": {
+      "view_scope": "スコープを表示",
+      "breakdown": "スコープの分解",
+      "add_scope": "スコープを追加",
+      "label": "スコープ",
+      "empty_state": {
+        "title": "まだスコープが追加されていません",
+        "description": "このイニシアチブにプロジェクトとエピックをリンクし、その作業をこのスペースで追跡します。",
+        "primary_button": {
+          "text": "スコープを追加"
+        }
       }
     }
   },

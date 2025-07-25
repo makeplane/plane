@@ -432,6 +432,7 @@
     }
   },
   "initiatives": {
+    "overview": "Overview",
     "label": "Initiatives",
     "placeholder": "{count, plural, one{# initiative} other{# initiatives}}",
     "add_initiative": "Add Initiative",
@@ -479,6 +480,19 @@
         "title": "You don't have epics that match the filters you have applied.",
         "subHeading": "To see all epics, clear all applied filters.",
         "action": "Clear filters"
+      }
+    },
+    "scope": {
+      "view_scope": "View scope",
+      "breakdown": "Scope breakdown",
+      "add_scope": "Add scope",
+      "label": "Scope",
+      "empty_state": {
+        "title": "No scope added to this initiative yet",
+        "description": "Link projects and epics and track that work in this space.",
+        "primary_button": {
+          "text": "Add scope"
+        }
       }
     }
   },

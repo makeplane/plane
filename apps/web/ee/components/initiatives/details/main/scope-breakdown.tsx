@@ -8,6 +8,7 @@ import { UpdateStatusPills } from "@/plane-web/components/initiatives/common/upd
 import { useInitiativeUpdates } from "@/plane-web/components/initiatives/details/sidebar/use-updates";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { TInitiativeAnalyticData } from "@/plane-web/types/initiative";
+import { useTranslation } from "@plane/i18n";
 
 type TDataCardProps = {
   workspaceSlug: string;
@@ -94,6 +95,8 @@ export const ScopeBreakdown = observer((props: Props) => {
     },
   } = useInitiatives();
 
+  const { t } = useTranslation();
+
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
@@ -106,14 +109,14 @@ export const ScopeBreakdown = observer((props: Props) => {
     <SectionWrapper className="flex-col gap-4 @container">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div className="text-custom-text-300 font-semibold text-base">Scope breakdown</div>
+        <div className="text-custom-text-300 font-semibold text-base">{t("initiatives.scope.breakdown")}</div>
         {/* button */}
         <div className="flex gap-2">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
             className="text-custom-primary-100 font-medium text-sm"
           >
-            View scope
+            {t("initiatives.scope.view_scope")}
           </Link>
           <AddScopeButton
             disabled={disabled}
@@ -126,8 +129,8 @@ export const ScopeBreakdown = observer((props: Props) => {
       {/* content */}
       {projectsCount === 0 && epicsCount === 0 ? (
         <SectionEmptyState
-          heading="No scope added to this initiative yet"
-          subHeading="Link projects and epics and track that work in this space."
+          heading={t("initiatives.scope.empty_state.title")}
+          subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
           actionElement={
             <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
