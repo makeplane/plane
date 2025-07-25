@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CollaborativeDocumentEditorWithRef,
   EditorRefApi,
@@ -6,13 +7,12 @@ import {
   TRealtimeConfig,
   TServerHandler,
 } from "@plane/editor";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { callNative, generateRandomColor, getEditorFileHandlers } from "@/helpers";
-import { TDocumentEditorParams } from "@/types/editor";
-import { useMentions, useMobileEditor, useToolbar, useEditorFlagging, useDisableZoom } from "@/hooks";
+import type { TWebhookConnectionQueryParams } from "@plane/types";
 import { IssueEmbedCard, IssueEmbedUpgradeCard, PageContentLoader } from "@/components";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
-import { TWebhookConnectionQueryParams } from "@plane/types";
+import { callNative, generateRandomColor, getEditorFileHandlers } from "@/helpers";
+import { useMentions, useMobileEditor, useToolbar, useEditorFlagging, useDisableZoom } from "@/hooks";
+import type { TDocumentEditorParams } from "@/types/editor";
 
 export const MobileDocumentEditor = () => {
   const [hasConnectionFailed, setHasConnectionFailed] = useState(false);

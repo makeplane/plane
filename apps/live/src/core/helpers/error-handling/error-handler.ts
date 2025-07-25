@@ -221,8 +221,10 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   }
 };
 
-export const asyncHandler = (fn: Function) => {
-  return (req: any, res: any, next: any) => {
+type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<unknown>;
+
+export const asyncHandler = (fn: AsyncRequestHandler) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch((error) => {
       // Convert to AppError if needed and pass to Express error middleware
       const appError = handleError(error, {
@@ -282,9 +284,6 @@ export const catchAsync = <T, E = Error>(
       }
 
       reportError(error, context);
-      if (error instanceof AppError) {
-        error.context;
-      }
 
       if (rethrow) {
         // Use handleError to ensure consistent error handling when rethrowing

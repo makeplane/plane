@@ -1,7 +1,7 @@
 // services
 import { BasePageService, IBasePageParams } from "@/core/services/base-page.service";
 
-export interface ServerAgentConfig {}
+export type ServerAgentConfig = Record<string, unknown>;
 
 export class ServerAgentService extends BasePageService {
   /**

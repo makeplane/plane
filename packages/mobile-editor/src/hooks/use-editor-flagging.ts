@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
+import type { TExtensions } from "@plane/editor";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
 import { callNative } from "@/helpers/flutter-callback.helper";
-import { TFeatureFlagsResponse } from "@/types/feature-flag";
-import { TExtensions } from "@plane/editor";
-import { useEffect, useState } from "react";
+import type { TFeatureFlagsResponse } from "@/types/feature-flag";
 
 /**
  * @description extensions disabled in various editors

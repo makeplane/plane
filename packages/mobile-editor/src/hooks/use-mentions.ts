@@ -1,8 +1,8 @@
 "use client";
 import { useCallback, useEffect, useRef } from "react";
-import { transformMentionSuggestions } from "@/helpers/mentions.helper";
-import { callNative } from "@/helpers/flutter-callback.helper";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { callNative } from "@/helpers/flutter-callback.helper";
+import { transformMentionSuggestions } from "@/helpers/mentions.helper";
 
 export const useMentions = () => {
   // Mention suggestions and highlights are stored in refs, so they can be updated without re-initializing the editor.

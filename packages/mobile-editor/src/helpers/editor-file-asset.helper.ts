@@ -1,6 +1,6 @@
-import { TFileHandler } from "@plane/editor";
-import { checkURLValidity, callNative } from "@/helpers";
+import type { TFileHandler } from "@plane/editor";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { checkURLValidity, callNative } from "@/helpers";
 
 type TEditorSrcArgs = {
   assetId: string;
@@ -63,13 +63,13 @@ export const getEditorAssetSrc = async (args: TEditorSrcArgs) => {
  */
 export const getRestoreURL = (args: TURLArgs) => {
   const { baseApi, src, workspaceId, workspaceSlug } = args;
-  let url: string | undefined;
+
   if (checkURLValidity(src)) {
     const assetKey = src.split("/").pop();
     return `${baseApi}/api/workspaces/file-assets/${workspaceId}/${assetKey}`;
   }
-  url = `${args.baseApi}/api/assets/v2/workspaces/${workspaceSlug}/restore/${src}/`;
 
+  const url = `${args.baseApi}/api/assets/v2/workspaces/${workspaceSlug}/restore/${src}/`;
   return url;
 };
 
@@ -115,7 +115,7 @@ export const getEditorFileHandlers = (args: TEditorFileHandlerArgs): TFileHandle
         );
       }
     },
-    upload: async (_, file: File) => Promise.resolve(""),
+    upload: async (_, _file: File) => Promise.resolve(""),
     delete: async (src: string) => {
       const url = getDeleteURL({
         src,

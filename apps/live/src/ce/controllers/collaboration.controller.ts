@@ -73,7 +73,7 @@ export class CollaborationController {
           })
         );
       }
-    } catch (sendError) {
+    } catch (_sendError) {
       // Ignore send errors at this point
     }
 

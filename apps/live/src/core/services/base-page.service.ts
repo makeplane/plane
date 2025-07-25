@@ -133,7 +133,7 @@ export abstract class BasePageService extends APIService {
   /**
    * Updates the description of a page
    */
-  async updateDescription<TConfig extends Record<string, any>>(params: IUpdateDescriptionParams<TConfig>) {
+  async updateDescription<TConfig extends Record<string, unknown>>(params: IUpdateDescriptionParams<TConfig>) {
     const { pageId, data, cookie, config } = params;
 
     return this.patch(`${this.getBasePath({ pageId, cookie, config })}/description/`, data, {

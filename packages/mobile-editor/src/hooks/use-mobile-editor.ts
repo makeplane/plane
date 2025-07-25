@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { EditorRefApi, TEditorCommands } from "@plane/editor";
-import { callNative } from "@/helpers/flutter-callback.helper";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { callNative } from "@/helpers/flutter-callback.helper";
 
 export const useMobileEditor = (editorRef: React.MutableRefObject<EditorRefApi | null>) => {
   /**

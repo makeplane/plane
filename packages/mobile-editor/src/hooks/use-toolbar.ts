@@ -1,9 +1,9 @@
 "use client";
 import { useCallback } from "react";
-import { TOOLBAR_ITEMS } from "@/constants/editor";
 import { EditorRefApi } from "@plane/editor";
-import { callNative } from "@/helpers/flutter-callback.helper";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { TOOLBAR_ITEMS } from "@/constants/editor";
+import { callNative } from "@/helpers/flutter-callback.helper";
 
 export const useToolbar = (editorRef: React.MutableRefObject<EditorRefApi | null>) => {
   // Notifies the native code to with active toolbar state.

@@ -295,7 +295,7 @@ export class PiChatStore implements IPiChatStore {
       let isReasoning = false;
 
       while (true) {
-        const { done, value } = await (reader?.read() as Promise<ReadableStreamReadResult<string>>);
+        const { done, value } = await (reader?.read() as Promise<{ done: boolean; value: string }>);
         if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
         if (done) break;
         if (value.startsWith("title: ")) continue; // Use this title value and remove the api call to get title in the future

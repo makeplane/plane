@@ -1,18 +1,10 @@
 import { FC, useState, useEffect } from "react";
 import useSWR from "swr";
-import { useTranslation } from "@plane/i18n";
-
-// Plane components
-import { ModalCore, Loader, Button, TOAST_TYPE, setToast } from "@plane/ui";
-
-// Hooks
-import { useSlackIntegration } from "@/plane-web/hooks/store";
-
-// Types
 import { SlackConversation, TSlackProjectUpdatesConfig } from "@plane/etl/slack";
-import { TWorkspaceEntityConnection } from "@plane/types";
-
-// Assets
+import { useTranslation } from "@plane/i18n";
+import type { TWorkspaceEntityConnection } from "@plane/types";
+import { ModalCore, Loader, Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { useSlackIntegration } from "@/plane-web/hooks/store";
 import { SlackProjectChannelForm } from "./channel-map";
 
 /**
@@ -80,25 +72,11 @@ const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
     }
   }, [modal, projectConnection]);
 
-  // If no app connection available, we can't continue
-  if (!appConnectionIds || appConnectionIds.length === 0) {
-    return null;
-  }
+  const appConnection = appConnectionIds && appConnectionIds.length > 0
+    ? getAppByConnectionId(appConnectionIds[0])
+    : undefined;
 
-  const appConnection = getAppByConnectionId(appConnectionIds[0]);
-
-  // Handle form field changes
-  const handleFormChange = <T extends keyof SlackProjectNotificationMap>(
-    key: T,
-    value: SlackProjectNotificationMap[T]
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  // Fetch Slack channels data
+  // Fetch Slack channels data (useSWR must be called unconditionally)
   const {
     data: channels,
     isLoading: isChannelsLoading,
@@ -112,6 +90,21 @@ const ProjectUpdatesForm: FC<ProjectUpdatesFormProps> = ({
       revalidateIfStale: false,
     }
   );
+
+  if (!appConnection) {
+    return null;
+  }
+
+  // Handle form field changes
+  const handleFormChange = <T extends keyof SlackProjectNotificationMap>(
+    key: T,
+    value: SlackProjectNotificationMap[T]
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   // Handle form submission
   const handleSubmit = async () => {

@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
 import { AlertTriangle } from "lucide-react";
-// types
+import { useEffect, useState } from "react";
 import { IIssueDisplayProperties } from "@plane/types";
-// ui
 import { Loader } from "@plane/ui";
-// constants
-import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
-// components
 import { IssueIdentifier } from "@/components/issue-embed/issue-identifier";
-import { TIssue } from "@/types/issue";
-import { callNative } from "@/helpers";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { ISSUE_DISPLAY_PROPERTIES } from "@/constants/issue";
+import { callNative } from "@/helpers";
+import type { TIssue } from "@/types/issue";
 
 type Props = {
   issueId: string;

@@ -48,7 +48,6 @@ module.exports = {
             DEFAULT: convertToRGB("--color-primary-100"),
           },
           background: {
-         
             100: convertToRGB("--color-background-100"),
             200: convertToRGB("--color-background-200"),
             300: convertToRGB("--color-background-300"),

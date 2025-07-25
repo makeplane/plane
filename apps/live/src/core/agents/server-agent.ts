@@ -225,7 +225,7 @@ export class ServerAgentManager {
    * @private
    * @param {string} documentId - The document ID
    */
-  public notifyTransactionSuccess(documentId: string, res?: Response): void {
+  public notifyTransactionSuccess(documentId: string, _res?: Response): void {
     if (!this.hocuspocusServer) return;
 
     const document = this.hocuspocusServer.documents.get(documentId);
@@ -245,7 +245,7 @@ export class ServerAgentManager {
    * @param {string} documentId - The document ID
    * @param {string} errorMessage - The error message
    */
-  private notifyTransactionFailure(documentId: string, errorMessage: string, res?: Response): void {
+  private notifyTransactionFailure(documentId: string, _errorMessage: string, _res?: Response): void {
     if (!this.hocuspocusServer) return;
 
     const document = this.hocuspocusServer.documents.get(documentId);

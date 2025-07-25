@@ -1,7 +1,7 @@
-import { Loader } from "@plane/ui";
 import React, { useEffect, useState } from "react";
-import { callNative } from "@/helpers/flutter-callback.helper";
+import { Loader } from "@plane/ui";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { callNative } from "@/helpers/flutter-callback.helper";
 
 type Props = {
   issueIdentifier: string;
@@ -11,7 +11,7 @@ type Props = {
 
 export const IssueIdentifier: React.FC<Props> = (props) => {
   const { projectId, workspaceSlug, issueIdentifier } = props;
-  const [projectIdentifier, setProjectIdentifier] = useState<String | undefined>(undefined);
+  const [projectIdentifier, setProjectIdentifier] = useState<string | undefined>(undefined);
 
   // get the project identifier from the native code.
   useEffect(() => {

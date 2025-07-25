@@ -10,7 +10,7 @@ interface EditorContentProps {
 }
 
 export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
-  const { editor, children, tabIndex, className } = props;
+  const { editor, children, tabIndex, className, id } = props;
 
   return (
     <div
@@ -18,7 +18,7 @@ export const EditorContentWrapper: FC<EditorContentProps> = (props) => {
       onFocus={() => editor?.chain().focus(undefined, { scrollIntoView: false }).run()}
       className={className}
     >
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} id={id} />
       {children}
     </div>
   );

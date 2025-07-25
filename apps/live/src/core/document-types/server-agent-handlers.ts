@@ -2,7 +2,7 @@ import { BasePageHandler } from "@/core/document-types/base-page/handlers";
 import { ServerAgentService } from "@/core/services/server-agent.service";
 import { HocusPocusServerContext } from "@/core/types/common";
 
-interface ServerAgentConfig {}
+type ServerAgentConfig = Record<string, unknown>;
 
 const serverAgentService = new ServerAgentService();
 
@@ -13,7 +13,7 @@ export class ServerAgentHandler extends BasePageHandler<ServerAgentService, Serv
     super(serverAgentService);
   }
 
-  protected getConfig(context: HocusPocusServerContext): ServerAgentConfig {
+  protected getConfig(_context: HocusPocusServerContext): ServerAgentConfig {
     return {};
   }
 }

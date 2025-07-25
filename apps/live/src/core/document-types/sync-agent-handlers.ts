@@ -2,7 +2,7 @@ import { BasePageHandler } from "@/core/document-types/base-page/handlers";
 import { HocusPocusServerContext } from "@/core/types/common";
 import { SyncAgentService } from "@/core/services/sync-agent.service";
 
-interface SyncAgentConfig {}
+type SyncAgentConfig = Record<string, unknown>;
 
 const syncAgentService = new SyncAgentService();
 
@@ -13,7 +13,7 @@ export class SyncAgentHandler extends BasePageHandler<SyncAgentService, SyncAgen
     super(syncAgentService);
   }
 
-  protected getConfig(context: HocusPocusServerContext): SyncAgentConfig {
+  protected getConfig(_context: HocusPocusServerContext): SyncAgentConfig {
     return {};
   }
 }

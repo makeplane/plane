@@ -29,7 +29,7 @@ const removeNodeAction: DocumentAction = {
 
 const addPageEmbedAction: DocumentAction = {
   name: "addPageEmbed",
-  execute: (xmlFragment, page, context) => {
+  execute: (xmlFragment, page, _context) => {
     if (!page.id) return;
 
     const newEmbed = new Y.XmlElement("pageEmbedComponent");

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EditorRefApi, LiteTextEditorWithRef, RichTextEditorWithRef, TExtensions } from "@plane/editor";
-import { useDisableZoom, useToolbar, useMentions, useMobileEditor } from "@/hooks";
-import { getEditorFileHandlers } from "@/helpers/editor-file-asset.helper";
-import { TEditorParams, TEditorVariant } from "@/types/editor";
-import { callNative } from "@/helpers";
-import { TrailingNode } from "@/extensions/trailing-node";
 import { CallbackHandlerStrings } from "@/constants/callback-handler-strings";
+import { TrailingNode } from "@/extensions/trailing-node";
+import { callNative } from "@/helpers";
+import { getEditorFileHandlers } from "@/helpers/editor-file-asset.helper";
+import { useDisableZoom, useToolbar, useMentions, useMobileEditor } from "@/hooks";
+import { TEditorParams, TEditorVariant } from "@/types/editor";
 
 export const EditorWrapper = ({ variant }: { variant: TEditorVariant }) => {
   const editorRef = useRef<EditorRefApi>(null);

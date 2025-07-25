@@ -42,7 +42,6 @@ type PageDisplayState = {
 };
 
 export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
   const { pageId } = props;
@@ -96,16 +95,6 @@ export const PageEmbedCardRoot: React.FC<Props> = observer((props) => {
     }
     return <FileText size={16} type="lucide" />;
   };
-
-  // Clean up the timer when the component unmounts
-  useEffect(
-    () => () => {
-      if (hoverTimerRef.current) {
-        clearTimeout(hoverTimerRef.current);
-      }
-    },
-    []
-  );
 
   if (page?.name === null) {
     return (

@@ -4,8 +4,7 @@ import {
   EPICS_DISPLAY_PROPERTIES_KEYS,
   SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
 } from "./common";
-import { TActivityFilters, TFiltersByLayout } from "./filter";
-import { EActivityFilterType } from "./filter";
+import { EActivityFilterType, TActivityFilters, TFiltersByLayout } from "./filter";
 
 export const ADDITIONAL_ISSUE_DISPLAY_FILTERS_BY_PAGE: {
   [pageType: string]: { [layoutType: string]: ILayoutDisplayFiltersOptions };
