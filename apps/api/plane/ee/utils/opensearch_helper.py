@@ -33,6 +33,7 @@ class OpenSearchHelper:
     - Field-specific boosts
     - Automatic pagination
     - Source field filtering
+    - Custom filter Q objects for complex logic
     """
 
     _FIELD_CACHE: dict[Type[Document], dict[str, dict]] = {}
@@ -57,6 +58,7 @@ class OpenSearchHelper:
         self,
         document_cls: Type[Document],
         filters: Optional[List[Dict[str, Any]]] = None,
+        custom_filter_q: Optional[Q] = None,
         query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         source_fields: Optional[List[str]] = None,
@@ -74,6 +76,7 @@ class OpenSearchHelper:
         Args:
             document_cls: Document class to search
             filters: List of filter dictionaries to apply
+            custom_filter_q: Custom Q object for complex filter logic (overrides filters if provided)
             query: The search query string
             search_fields: Fields to search within
             source_fields: Fields to return in the result
@@ -87,6 +90,7 @@ class OpenSearchHelper:
         """
         self.document_cls = document_cls
         self.filters = filters or []
+        self.custom_filter_q = custom_filter_q
         self.query = query
         self.search_fields = search_fields or self._get_default_search_fields()
         self.source_fields = source_fields
@@ -121,13 +125,29 @@ class OpenSearchHelper:
         """
         Combine default and provided filters into a bool filter.
 
+        If custom_filter_q is provided, it will be used instead of filters.
+
         Returns:
             Q object with combined filters
         """
-        # Always filter out deleted items unless explicitly requested otherwise
-        has_deleted_filter = any("is_deleted" in f for f in self.filters)
+        # If a custom filter Q object is provided, use it instead of building from filters
+        has_deleted_filter = False
+        if self.custom_filter_q:
+            filter_q = self.custom_filter_q
+            # Check if custom filter already handles is_deleted
+            has_deleted_filter = "is_deleted" in str(self.custom_filter_q)
+        else:
+            # Always filter out deleted items unless explicitly requested otherwise
+            has_deleted_filter = any("is_deleted" in f for f in self.filters)
 
-        filter_q = Q("bool", must=[Q("term", **f) for f in self.filters])
+            # Build filter queries from the provided filters using AND logic
+            filter_queries = [Q("term", **f) for f in self.filters]
+
+            if filter_queries:
+                filter_q = Q("bool", must=filter_queries)
+            else:
+                # No filters provided, create empty bool query
+                filter_q = Q("bool")
 
         # Add default filters
         if not has_deleted_filter:
@@ -274,117 +294,51 @@ class OpenSearchHelper:
             log_exception(f"OpenSearch error: {str(e)}")
             raise
 
-    def execute_and_serialize(self) -> List[Dict[str, Any]]:
+    @staticmethod
+    def execute_multi_search(helpers: List["OpenSearchHelper"]) -> Dict[str, List]:
         """
-        Run the search and serialize the hits using the configured serializer_class.
-
-        Returns:
-            List of serialized data dictionaries
-        """
-        if not self.serializer_class:
-            logger.warning("Cannot serialize results: no serializer_class configured")
-            raise ValueError("Cannot serialize results: no serializer_class configured")
-
-        try:
-            hits = self.execute()
-            serialized_data = self.serialize_hits(hits, self.serializer_class)
-            logger.debug(f"Serialized {len(serialized_data)} results")
-            return serialized_data
-        except (ConnectionError, RequestError, NotFoundError, TransportError):
-            # These exceptions are already handled and logged in execute()
-            raise
-        except Exception as e:
-            log_exception(f"Error serializing search results: {str(e)}")
-            raise
-
-    @classmethod
-    def multi_search(cls, helpers: List["OpenSearchHelper"]) -> MultiSearch:
-        """
-        Combine multiple helpers into a MultiSearch instance.
+        Execute multiple searches at once using MultiSearch.
 
         Args:
             helpers: List of OpenSearchHelper instances
 
         Returns:
-            MultiSearch object ready for execution
+            Dictionary mapping result_key to list of serialized results
         """
-        ms = MultiSearch()
-
-        for helper in helpers:
-            ms = ms.add(helper.to_search())
-
-        return ms
-
-    @classmethod
-    def execute_multi_search(
-        cls, helpers: List["OpenSearchHelper"]
-    ) -> Dict[str, List[Dict[str, Any]]]:
-        """
-        Execute a multi-search query and organize results by each helper's result_key.
-
-        Args:
-            helpers: List of OpenSearchHelper instances with result_key and serializer_class set
-
-        Returns:
-            Dictionary mapping result_keys to lists of serialized results
-        """
-        # Validate helpers
-        for i, helper in enumerate(helpers):
-            if not helper.result_key:
-                logger.warning(f"Helper at index {i} is missing result_key")
-                raise ValueError(f"Helper at index {i} is missing result_key")
-            if not helper.serializer_class:
-                logger.warning(f"Helper at index {i} is missing serializer_class")
-                raise ValueError(f"Helper at index {i} is missing serializer_class")
-
         try:
-            # Create and execute multi-search
-            ms = cls.multi_search(helpers)
-            logger.debug(f"Executing multi-search with {len(helpers)} queries")
-            responses = ms.execute()
+            # Create a MultiSearch instance
+            multi_search = MultiSearch()
 
-            # Map results by result_key
+            # Add each helper's search to the multi-search
+            for helper in helpers:
+                search = helper.to_search()
+                multi_search = multi_search.add(search)
+
+            # Execute the multi-search
+            responses = multi_search.execute()
+
+            # Process results
             results = {}
-            for helper, response in zip(helpers, responses):
-                key = helper.result_key
-                if key not in results:
-                    results[key] = []
+            for i, helper in enumerate(helpers):
+                response = responses[i]
+                hits = response.hits if response.success else []
 
-                # Only add results if there are any
-                if response:
-                    serialized = cls.serialize_hits(response, helper.serializer_class)
-                    results[key].extend(serialized)
-                    logger.debug(f"Added {len(serialized)} results to '{key}'")
+                # Serialize the hits if a serializer class is provided
+                if helper.serializer_class and hits:
+                    # Convert hits to dictionaries for serialization
+                    hit_dicts = [hit.to_dict() for hit in hits]
+                    serializer = helper.serializer_class(hit_dicts, many=True)
+                    serialized_data = serializer.data
+                else:
+                    # Return raw hit dictionaries
+                    serialized_data = [hit.to_dict() for hit in hits] if hits else []
+
+                # Use result_key or index as the key
+                key = helper.result_key or f"search_{i}"
+                results[key] = serialized_data
 
             return results
+
         except (ConnectionError, RequestError, NotFoundError, TransportError) as e:
-            log_exception(f"OpenSearch error during multi-search: {str(e)}")
-            raise
-        except Exception as e:
-            log_exception(f"Error during multi-search execution: {str(e)}")
-            raise
-
-    @staticmethod
-    def serialize_hits(
-        hits: Sequence, serializer_class: Type[Serializer]
-    ) -> List[Dict[str, Any]]:
-        """
-        Serialize raw hits with DRF serializers.
-
-        Args:
-            hits: Search hits to serialize
-            serializer_class: DRF serializer class to use
-
-        Returns:
-            List of serialized data dictionaries
-        """
-        try:
-            # If there are no hits, return an empty list
-            if not hits:
-                return []
-
-            serializer = serializer_class(hits, many=True)
-            return serializer.data
-        except Exception as e:
-            log_exception(f"Error serializing hits: {str(e)}")
+            log_exception(f"OpenSearch multi-search error: {str(e)}")
             raise
