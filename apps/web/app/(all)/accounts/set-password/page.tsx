@@ -142,7 +142,7 @@ const SetPasswordPage = observer(() => {
                 </h3>
                 <p className="font-medium text-onboarding-text-400">{t("auth.set_password.description")}</p>
               </div>
-              <form className="mt-5 space-y-4" onSubmit={(e) => handleSubmit(e)}>
+              <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
                     {t("auth.common.email.label")}

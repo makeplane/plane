@@ -139,7 +139,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       )}
       <form
         ref={formRef}
-        className="mt-5 space-y-4"
+        className="space-y-4"
         method="POST"
         action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "sign-in" : "sign-up"}/`}
         onSubmit={async (event) => {

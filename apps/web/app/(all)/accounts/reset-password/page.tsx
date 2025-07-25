@@ -138,7 +138,7 @@ const ResetPasswordPage = observer(() => {
                 <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
               )}
               <form
-                className="mt-5 space-y-4"
+                className="space-y-4"
                 method="POST"
                 action={`${API_BASE_URL}/auth/reset-password/${uidb64?.toString()}/${token?.toString()}/`}
               >

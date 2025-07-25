@@ -141,7 +141,7 @@ const ForgotPasswordPage = observer(() => {
                 </h3>
                 <p className="font-medium text-onboarding-text-400">{t("auth.forgot_password.description")}</p>
               </div>
-              <form onSubmit={handleSubmit(handleForgotPassword)} className="mt-5 space-y-4">
+              <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
                 <div className="space-y-1">
                   <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
                     {t("auth.common.email.label")}

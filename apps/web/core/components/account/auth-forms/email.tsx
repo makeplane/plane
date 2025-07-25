@@ -43,7 +43,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
+    <form onSubmit={handleFormSubmit} className="space-y-4">
       <div className="space-y-1">
         <label htmlFor="email" className="text-sm text-onboarding-text-300 font-medium">
           {t("auth.common.email.label")}

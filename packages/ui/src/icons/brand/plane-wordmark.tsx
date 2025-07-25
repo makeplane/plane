@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "../type";
 
-export const PlaneWorkmark: React.FC<ISvgIcons> = ({
+export const PlaneWordmark: React.FC<ISvgIcons> = ({
   width = "146",
   height = "44",
   className,
