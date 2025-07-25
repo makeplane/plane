@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { Ban } from "lucide-react";
 import { IState } from "@plane/types";
 import { StateGroupIcon } from "@plane/ui";
 // plane web components
@@ -38,11 +39,20 @@ export const StateFormSelection: FC<TStateFormSelection> = observer((props) => {
               handleValue(state || undefined);
             } else handleValue(undefined);
           }}
-          iconExtractor={(option) => (
-            <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
-              <StateGroupIcon stateGroup={option?.group || "backlog"} />
-            </div>
-          )}
+          iconExtractor={(option) => {
+            if (!option.id) {
+              return (
+                <div className="w-2.5 h-2.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
+                  <Ban />
+                </div>
+              );
+            }
+            return (
+              <div className="w-4.5 h-4.5 flex-shrink-0 overflow-hidden relative flex justify-center items-center">
+                <StateGroupIcon stateGroup={option?.group || "backlog"} />
+              </div>
+            );
+          }}
           queryExtractor={(option) => option.name}
         />
       </div>

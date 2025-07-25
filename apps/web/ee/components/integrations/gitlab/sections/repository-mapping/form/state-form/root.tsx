@@ -2,6 +2,7 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
+import { EMPTY_PLANE_STATE } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 // plane web components
@@ -67,7 +68,7 @@ export const StateForm: FC<TStateForm> = observer((props) => {
             key={gitState.key}
             value={value?.[gitState.key]?.id || undefined}
             handleValue={(value: IState | undefined) => handleChange(gitState.key, value)}
-            planeStates={planeProjectStates}
+            planeStates={[EMPTY_PLANE_STATE, ...planeProjectStates]}
           />
         ))}
     </div>
