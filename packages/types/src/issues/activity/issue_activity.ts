@@ -1,11 +1,11 @@
 // local imports
+import { EInboxIssueSource } from "../../inbox";
 import {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
-import { EInboxIssueSource } from "../../inbox";
 
 export type TIssueActivity = {
   id: string;

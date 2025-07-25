@@ -42,7 +42,7 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
 
   return (
     <div className="flex flex-col items-center my-6">
-      <h2 className="text-xl font-semibold text-center">
+      <h2 className="text-2xl font-semibold text-center">
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h2>
       <h5 className="flex items-center gap-2 font-medium text-custom-text-400">

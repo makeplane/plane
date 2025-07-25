@@ -1,1 +1,1 @@
-export type TPageExtended = {};
+export type TPageExtended = object;

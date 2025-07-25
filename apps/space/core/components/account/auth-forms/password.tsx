@@ -106,7 +106,9 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       onSubmit={async (event) => {
         event.preventDefault();
         await handleCSRFToken();
-        formRef.current && formRef.current.submit();
+        if (formRef.current) {
+          formRef.current.submit();
+        }
         setIsSubmitting(true);
       }}
       onError={() => setIsSubmitting(false)}

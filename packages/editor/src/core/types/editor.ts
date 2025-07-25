@@ -1,5 +1,5 @@
-import { Extensions, JSONContent } from "@tiptap/core";
-import { Selection } from "@tiptap/pm/state";
+import type { Content, Extensions, JSONContent } from "@tiptap/core";
+import type { Selection } from "@tiptap/pm/state";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // helpers
@@ -160,6 +160,14 @@ export interface ICollaborativeDocumentEditorProps
   user: TUserDetails;
 }
 
+export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  editable: boolean;
+  embedHandler: TEmbedConfig;
+  user?: TUserDetails;
+  value: Content;
+}
+
 // read only editor props
 export interface IReadOnlyEditorProps
   extends Pick<
@@ -180,10 +188,6 @@ export interface IReadOnlyEditorProps
 }
 
 export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
-
-export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
-  embedHandler: TEmbedConfig;
-}
 
 export interface EditorEvents {
   beforeCreate: never;

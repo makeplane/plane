@@ -106,9 +106,8 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
 
   const handleArchiveIssue = async () => {
     try {
-      await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issue.id}`);
-      });
+      await archiveIssue(workspaceSlug, projectId, issueId);
+      router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId },
