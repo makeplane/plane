@@ -49,8 +49,7 @@
     "react-popper": "^2.3.0",
     "swr": "^2.2.2",
     "tailwind-merge": "^2.0.0",
-    "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -63,7 +62,6 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.1",
-    "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "typescript": "5.8.3"
   }
