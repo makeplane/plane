@@ -24,9 +24,6 @@ from plane.db.models import (
     IssueAssignee,
     IssueLabel,
     ModuleIssue,
-    CycleIssue,
-    IssueLink,
-    FileAsset,
     Issue,
     IssueRelation,
 )
@@ -124,34 +121,6 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
                     "issue_module",
                     queryset=ModuleIssue.objects.all(),
                 )
-            )
-            .annotate(
-                cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
-                )
-            )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=FileAsset.objects.filter(
-                    issue_id=OuterRef("id"),
-                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
-                )
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
             )
             .accessible_to(self.request.user.id, self.kwargs.get("slug"))
         )
