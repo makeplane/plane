@@ -1,0 +1,51 @@
+[cmdk-group]:not(:first-child) {
+  margin-top: 0.5rem;
+}
+
+[cmdk-group-heading] {
+  color: rgb(var(--color-text-secondary));
+  font-size: 0.75rem;
+  margin: 0 0 0.25rem 0.25rem;
+}
+
+[cmdk-item] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  font-size: 0.825rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+}
+
+[cmdk-item] kbd {
+  height: 1.25rem;
+  width: 1.25rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  border-radius: 0.25rem;
+  background-color: rgba(var(--color-background-100));
+}
+
+[cmdk-item]:focus {
+  background-color: rgba(var(--color-background-80));
+}
+
+[cmdk-item][aria-selected="true"] {
+  background-color: rgba(var(--color-background-80));
+}
+
+[cmdk-item][aria-disabled="true"],
+[cmdk-item][data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: transparent;
+}
+
+[cmdk-item][aria-disabled="true"]:focus,
+[cmdk-item][data-disabled="true"]:focus {
+  background-color: rgba(var(--color-background-80), 0.7);
+}

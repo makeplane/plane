@@ -149,6 +149,21 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         Retrieve all workflow states for a project.
         Returns paginated results when listing all states.
         """
+
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            state = State.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                StateSerializer(state, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
