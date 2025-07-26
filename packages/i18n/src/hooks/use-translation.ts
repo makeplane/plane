@@ -5,7 +5,7 @@ import { TranslationContext } from "../context";
 import { ILanguageOption, TLanguage } from "../types";
 
 export type TTranslationStore = {
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: Record<string, unknown>) => string;
   currentLocale: TLanguage;
   changeLanguage: (lng: TLanguage) => void;
   languages: ILanguageOption[];

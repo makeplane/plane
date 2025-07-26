@@ -29,7 +29,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
+  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size">>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;

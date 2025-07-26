@@ -1,13 +1,13 @@
+import { EIssueCommentAccessSpecifier } from "../../enums";
+import { TFileSignedURLResponse } from "../../file";
+import { IUserLite } from "../../users";
+import { IWorkspaceLite } from "../../workspace";
 import {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
-import { EIssueCommentAccessSpecifier } from "../../enums";
-import { TFileSignedURLResponse } from "../../file";
-import { IUserLite } from "../../users";
-import { IWorkspaceLite } from "../../workspace";
 
 export type TCommentReaction = {
   id: string;

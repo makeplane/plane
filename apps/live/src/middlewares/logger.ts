@@ -8,6 +8,7 @@ const transport = {
 };
 
 const hooks = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   logMethod(inputArgs: any, method: any): any {
     if (inputArgs.length >= 2) {
       const arg1 = inputArgs.shift();

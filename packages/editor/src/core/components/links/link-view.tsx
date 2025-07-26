@@ -28,7 +28,7 @@ export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
       setCurrentView("LinkPreview");
       setPrevFrom(props.from);
     }
-  }, []);
+  }, [prevFrom, props.from]);
 
   return (
     <>

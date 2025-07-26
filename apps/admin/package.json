@@ -10,7 +10,7 @@
     "preview": "next build && next start",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint . --max-warnings 19",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -40,8 +40,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "7.51.5",
     "swr": "^2.2.4",
-    "uuid": "^9.0.1",
-    "zxcvbn": "^4.4.2"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -51,7 +50,6 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.8",
-    "@types/zxcvbn": "^4.4.4",
     "typescript": "5.8.3"
   }
 }

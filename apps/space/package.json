@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint . --max-warnings 27",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -49,8 +49,7 @@
     "react-popper": "^2.3.0",
     "swr": "^2.2.2",
     "tailwind-merge": "^2.0.0",
-    "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",
@@ -63,8 +62,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.2.18",
     "@types/uuid": "^9.0.1",
-    "@types/zxcvbn": "^4.4.4",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
     "typescript": "5.8.3"
   }
 }

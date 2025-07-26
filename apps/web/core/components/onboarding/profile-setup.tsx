@@ -11,10 +11,9 @@ import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS }
 import { useTranslation } from "@plane/i18n";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
-import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
@@ -454,7 +453,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       />
-                      <PasswordStrengthMeter password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
+                      <PasswordStrengthIndicator
+                        password={watch("password") ?? ""}
+                        isFocused={isPasswordInputFocused}
+                      />
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">

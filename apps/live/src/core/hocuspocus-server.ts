@@ -52,7 +52,7 @@ export const getHocusPocusServer = async () => {
           cookie,
           userId,
         });
-      } catch (error) {
+      } catch (_error) {
         throw Error("Authentication unsuccessful!");
       }
     },

@@ -11,10 +11,9 @@ import { Eye, EyeOff } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-import { PasswordStrengthMeter } from "@/components/account/password-strength-meter";
 // helpers
 import { EPageTypes } from "@/helpers/authentication.helper";
 // hooks
@@ -95,11 +94,17 @@ const SetPasswordPage = observer(() => {
       if (!csrfToken) throw new Error("csrf token not found");
       await handleSetPassword(csrfToken, { password: passwordFormData.password });
       router.push("/");
-    } catch (err: any) {
+    } catch (error: unknown) {
+      let message = undefined;
+      if (error instanceof Error) {
+        const err = error as Error & { error?: string };
+        message = err.error;
+      }
+
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("common.errors.default.title"),
-        message: err?.error ?? t("common.errors.default.message"),
+        message: message ?? t("common.errors.default.message"),
       });
     }
   };
@@ -187,7 +192,7 @@ const SetPasswordPage = observer(() => {
                       />
                     )}
                   </div>
-                  <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
+                  <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
