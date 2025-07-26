@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, MoveRight, Trash2 } from "lucide-react";
 // plane imports
+import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Collapsible, setToast, TOAST_TYPE, ApproverIcon, AlertModalCore, Button } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { MemberDropdown, StateDropdown } from "@/components/dropdowns";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store";
 //
 import { StateTransitionApprovers } from "./state-transition-approvers";
@@ -56,7 +58,18 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
   const handleTransitionStateChange = async (val: string) => {
     try {
       await changeStateTransition(workspaceSlug, projectId, parentStateId, transitionId, val);
-    } catch {
+      captureSuccess({
+        eventName: WORKFLOW_TRACKER_EVENTS.STATE_UPDATED,
+        payload: {
+          project_id: projectId,
+          parent_state_id: parentStateId,
+        },
+      });
+    } catch (error) {
+      captureError({
+        eventName: WORKFLOW_TRACKER_EVENTS.STATE_UPDATED,
+        error: error as Error,
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.modify_state_change_rule.error.title"),
@@ -68,8 +81,19 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
   const handleApproversUpdate = async (memberIds: string[]) => {
     try {
       modifyStateTransitionMemberPermission(workspaceSlug, projectId, parentStateId, transitionId, memberIds);
+      captureSuccess({
+        eventName: WORKFLOW_TRACKER_EVENTS.APPROVERS_UPDATED,
+        payload: {
+          project_id: projectId,
+          parent_state_id: parentStateId,
+        },
+      });
       if (!isOpen) setIsOpen(true);
-    } catch {
+    } catch (error) {
+      captureError({
+        eventName: WORKFLOW_TRACKER_EVENTS.APPROVERS_UPDATED,
+        error: error as Error,
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.modify_state_change_rule_movers.error.title"),
@@ -82,7 +106,18 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
     try {
       setRemovingTransition(true);
       await removeStateTransition(workspaceSlug, projectId, parentStateId, transitionId);
-    } catch {
+      captureSuccess({
+        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_DELETED,
+        payload: {
+          project_id: projectId,
+          parent_state_id: parentStateId,
+        },
+      });
+    } catch (error) {
+      captureError({
+        eventName: WORKFLOW_TRACKER_EVENTS.TRANSITION_DELETED,
+        error: error as Error,
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("workflows.toasts.remove_state_change_rule.error.title"),
@@ -171,6 +206,7 @@ export const StateTransitionItem = observer((props: StateTransitionItemProps) =>
                       e.stopPropagation();
                       setIsDeleteModalOpen(true);
                     }}
+                    data-ph-element={WORKFLOW_TRACKER_ELEMENTS.DELETE_TRANSITION_BUTTON}
                   />
                   <ChevronDown
                     strokeWidth={2}

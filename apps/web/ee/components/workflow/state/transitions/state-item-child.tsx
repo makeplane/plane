@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Info } from "lucide-react";
 // plane imports
+import { WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IState } from "@plane/types";
 import { Collapsible, ToggleSwitch, Tooltip } from "@plane/ui";
@@ -9,6 +10,7 @@ import { cn } from "@plane/utils";
 // components
 import { StateItemTitle } from "@/components/project-states/state-item-title";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState } from "@/hooks/store";
 // local imports
 import { StateItemContent } from "./state-item-content";
@@ -40,6 +42,24 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
   const currentTransitionMap = stateTransitionMap[state.id];
   const shouldEnableAddition = !!getNextAvailableTransitionStateId(projectId, state.id);
   const currentTransitionIds = Object.keys(currentTransitionMap ?? {});
+
+  const handleToggleAllowWorkItemCreation = async () => {
+    await toggleAllowWorkItemCreationLogic(workspaceSlug, state.id)
+      .then(() => {
+        captureSuccess({
+          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
+          payload: {
+            project_id: projectId,
+          },
+        });
+      })
+      .catch((error) => {
+        captureError({
+          eventName: WORKFLOW_TRACKER_EVENTS.TOGGLE_WORK_ITEM_CREATION,
+          error: error as Error,
+        });
+      });
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -76,9 +96,10 @@ export const StateItemChild = observer((props: StateItemChildProps) => {
                     <ToggleSwitch
                       size="sm"
                       value={isIssueCreationAllowedForState}
-                      onChange={() => toggleAllowWorkItemCreationLogic(workspaceSlug, state.id)}
+                      onChange={() => handleToggleAllowWorkItemCreation()}
                       label={t("workflows.workflow_states.work_item_creation")}
                       disabled={isDefaultState}
+                      data-ph-element={WORKFLOW_TRACKER_ELEMENTS.ADD_NEW_WORK_ITEMS_TOGGLE_BUTTON}
                     />
                   )}
                 </div>

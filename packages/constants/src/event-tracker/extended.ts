@@ -167,8 +167,25 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
-// Project Template Tracker Start
+export const WORKFLOW_TRACKER_EVENTS = {
+  TRANSITION_CREATED: "workflow_transition_created",
+  TRANSITION_DELETED: "workflow_transition_deleted",
+  WORKFLOW_ENABLED_DISABLED: "workflow_enabled_disabled",
+  WORKFLOW_RESET: "workflow_reset",
+  APPROVERS_UPDATED: "workflow_approvers_updated",
+  TOGGLE_WORK_ITEM_CREATION: "workflow_toggle_work_item_creation",
+  STATE_UPDATED: "workflow_state_updated",
+};
 
+export const WORKFLOW_TRACKER_ELEMENTS = {
+  WORK_FLOW_ENABLE_DISABLE_BUTTON: "workflow_enable_disable_button",
+  WORKFLOW_RESET_BUTTON: "workflow_reset_button",
+  CREATE_TRANSITION_BUTTON: "workflow_create_transition_button",
+  DELETE_TRANSITION_BUTTON: "workflow_delete_transition_button",
+  ADD_NEW_WORK_ITEMS_TOGGLE_BUTTON: "workflow_add_new_work_items_toggle_button",
+};
+
+// Project Template Tracker Start
 export const PROJECT_TEMPLATE_TRACKER_EVENTS = {
   CREATE: "project_template_created",
   UPDATE: "project_template_updated",

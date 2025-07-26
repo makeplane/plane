@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 import { setPromiseToast, ToggleSwitch } from "@plane/ui";
@@ -13,6 +13,7 @@ import { NotAuthorizedView } from "@/components/auth-screens";
 import { PageHead } from "@/components/core";
 // hook
 import { SettingsContentWrapper, SettingsHeading } from "@/components/settings";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/plane-web/components/feature-flags";
@@ -65,7 +66,27 @@ const WorkflowsSettingsPage = observer(() => {
     const featureState = !isWorkflowEnabled;
     const featureTogglePromise = toggleProjectFeatures(workspaceSlug?.toString(), projectId?.toString(), {
       is_workflow_enabled: featureState,
-    });
+    })
+      .then(() => {
+        captureSuccess({
+          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
+          payload: {
+            project_id: projectId,
+            is_workflow_enabled: featureState,
+          },
+        });
+      })
+      .catch((error) => {
+        captureError({
+          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_ENABLED_DISABLED,
+          payload: {
+            project_id: projectId,
+            is_workflow_enabled: featureState,
+          },
+          error: error as Error,
+        });
+        throw error;
+      });
     setPromiseToast(featureTogglePromise, {
       loading: t("workflows.toasts.enable_disable.loading", {
         action: featureState ? t("common.enabling") : t("common.disabling"),
@@ -103,6 +124,7 @@ const WorkflowsSettingsPage = observer(() => {
                     value={!!isWorkflowEnabled}
                     onChange={handleEnableDisableWorkflow}
                     disabled={isLoading}
+                    data-ph-element={WORKFLOW_TRACKER_ELEMENTS.WORK_FLOW_ENABLE_DISABLE_BUTTON}
                   />
                   <WorkflowSettingsQuickActions
                     projectId={projectId?.toString()}

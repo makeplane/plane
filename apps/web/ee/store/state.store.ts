@@ -53,14 +53,14 @@ export interface IStateStore extends ICoreStateStore {
   // actions
   fetchWorkflowStates: (workspaceSlug: string, projectId?: string) => void;
   fetchWorkflowChangeHistory: (workspaceSlug: string, projectId: string) => Promise<void>;
-  toggleAllowWorkItemCreationLogic: (workspaceSlug: string, stateId: string) => void;
+  toggleAllowWorkItemCreationLogic: (workspaceSlug: string, stateId: string) => Promise<void>;
   addStateTransition: (
     workspaceSlug: string,
     projectId: string,
     parentStateId: string,
     transitionStateId?: string,
     memberIds?: string[]
-  ) => void;
+  ) => Promise<void>;
   removeStateTransition: (
     workspaceSlug: string,
     projectId: string,

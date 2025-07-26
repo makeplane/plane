@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, WORKFLOW_TRACKER_ELEMENTS, WORKFLOW_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // ui
@@ -11,6 +11,7 @@ import { AlertModalCore, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } fr
 // helpers
 import { cn } from "@plane/utils";
 // hooks
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectState, useUserPermissions } from "@/hooks/store";
 import { WorkflowChangeHistory } from "./change-history";
 
@@ -47,12 +48,25 @@ export const WorkflowSettingsQuickActions: React.FC<Props> = observer((props) =>
           title: t("workflows.toasts.reset.success.title"),
           message: t("workflows.toasts.reset.success.message"),
         });
+        captureSuccess({
+          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_RESET,
+          payload: {
+            project_id: projectId,
+          },
+        });
       })
-      .catch(() => {
+      .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("workflows.toasts.reset.error.title"),
           message: t("workflows.toasts.reset.error.message"),
+        });
+        captureError({
+          eventName: WORKFLOW_TRACKER_EVENTS.WORKFLOW_RESET,
+          payload: {
+            project_id: projectId,
+          },
+          error: error as Error,
         });
       })
       .finally(() => {
@@ -65,7 +79,10 @@ export const WorkflowSettingsQuickActions: React.FC<Props> = observer((props) =>
     {
       key: "reset-workflow",
       title: t("workflows.quick_actions.reset_workflow"),
-      action: () => setIsResetWorkflowModalOpen(true),
+      action: () => {
+        setIsResetWorkflowModalOpen(true);
+        captureClick({ elementName: WORKFLOW_TRACKER_ELEMENTS.WORKFLOW_RESET_BUTTON });
+      },
       shouldRender: hasAdminPermission,
     },
     {
