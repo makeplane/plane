@@ -1,5 +1,6 @@
 "use client";
 
+import { IMPORTER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // helpers
@@ -96,6 +97,7 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
         size="sm"
         onClick={() => handleStep("previous")}
         disabled={currentStep?.prevStep === undefined}
+        data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_BACK_BUTTON}
       >
         {t("common.back")}
       </Button>
@@ -107,6 +109,7 @@ export const StepperNavigation = <T,>(props: TStepperNavigation<T>) => {
           size="sm"
           onClick={() => handleStep("next")}
           disabled={currentStep?.nextStep === undefined}
+          data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_CONFIRGURE_NEXT_BUTTON}
         >
           {t("common.next")}
         </Button>

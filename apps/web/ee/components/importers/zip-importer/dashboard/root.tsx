@@ -5,11 +5,13 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
 import { Briefcase, Loader, RefreshCcw } from "lucide-react";
+import { IMPORTER_TRACKER_ELEMENTS, IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { TJobStatus } from "@plane/etl/core";
 
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
 import { DashboardLoaderTable, SyncJobStatus } from "../../common/dashboard";
@@ -33,8 +35,15 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
   const handleJobsRefresh = async () => {
     try {
       await fetchJobs();
+      captureSuccess({
+        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
+      });
     } catch (error) {
       console.error(`Error while refreshing ${serviceName} jobs`, error);
+      captureError({
+        eventName: IMPORTER_TRACKER_EVENTS.REFRESH,
+        error: error as Error,
+      });
     }
   };
 
@@ -50,7 +59,11 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
           <div className="text-sm text-custom-text-200">{t("importers.import_message", { serviceName })}</div>
         </div>
         <div className="flex-shrink-0 relative flex items-center gap-4">
-          <Button size="sm" onClick={handleDashboardView}>
+          <Button
+            size="sm"
+            onClick={handleDashboardView}
+            data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_IMPORT_BUTTON}
+          >
             {t("importers.import")}
           </Button>
         </div>
@@ -69,6 +82,7 @@ export const ZipImporterDashboard: FC<TZipImporterProps> = observer(({ driverTyp
                 className="whitespace-nowrap border-none !px-1"
                 onClick={handleJobsRefresh}
                 disabled={loader === "re-fetch"}
+                data-ph-element={IMPORTER_TRACKER_ELEMENTS.IMPORTER_DASHBOARD_REFRESH_BUTTON}
               >
                 <div className="relative flex items-center gap-1.5 text-xs">
                   {loader === "re-fetch" ? <Loader size={12} className="animate-spin" /> : <RefreshCcw size={12} />}

@@ -3,9 +3,11 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
+import { WORKSPACE_WORKLOG_TRACKER_ELEMENTS, WORKSPACE_WORKLOG_TRACKER_EVENTS } from "@plane/constants";
 import { PopoverMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspaceWorklogDownloads, useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 import { TWorklogDownload } from "@/plane-web/types";
 
@@ -46,8 +48,18 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
       const payload: Partial<TWorklogDownload> = { provider: format, filters: filters };
       await createWorklogDownload(workspaceSlug, payload);
       setButtonLoader(false);
+      captureSuccess({
+        eventName: WORKSPACE_WORKLOG_TRACKER_EVENTS.CREATE_WORKLOG_DOWNLOAD,
+        payload: {
+          format,
+        },
+      });
     } catch (error) {
       setButtonLoader(false);
+      captureError({
+        eventName: WORKSPACE_WORKLOG_TRACKER_EVENTS.CREATE_WORKLOG_DOWNLOAD,
+        error: error as Error,
+      });
     }
   };
 
@@ -82,6 +94,7 @@ export const WorkspaceWorklogDownloadButton: FC<TWorkspaceWorklogDownloadButton>
             className="px-1.5 py-1 text-left rounded text-xs font-medium cursor-pointer hover:bg-custom-background-80 text-custom-text-200 hover:text-custom-text-100 transition-all"
             onClick={() => downloadWorklogs(option.value)}
             disabled={buttonLoader}
+            data-ph-element={WORKSPACE_WORKLOG_TRACKER_ELEMENTS.HEADER_DOWNLOAD_CONTEXT_MENU}
           >
             {option.label}
           </button>

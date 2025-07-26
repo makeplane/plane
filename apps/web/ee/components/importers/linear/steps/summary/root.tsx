@@ -4,12 +4,14 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { LinearConfig } from "@plane/etl/linear";
 import { useTranslation } from "@plane/i18n";
 import { TImportJob } from "@plane/types";
 import { Button, Loader } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useLinearImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
@@ -70,8 +72,20 @@ export const SummaryRoot: FC = observer(() => {
           };
 
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
+          captureSuccess({
+            eventName: IMPORTER_TRACKER_EVENTS.CREATE_LINEAR_JOB,
+            payload: {
+              jobId: importerCreateJob?.id,
+            },
+          });
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
+            captureSuccess({
+              eventName: IMPORTER_TRACKER_EVENTS.START_LINEAR_JOB,
+              payload: {
+                jobId: importerCreateJob?.id,
+              },
+            });
             handleDashboardView();
             // clearing the existing data in the context
             resetImporterData();
@@ -81,6 +95,10 @@ export const SummaryRoot: FC = observer(() => {
         }
       } catch (error) {
         console.error("error", error);
+        captureError({
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_LINEAR_JOB,
+          error: error as Error,
+        });
       } finally {
         setCreateConfigLoader(false);
       }

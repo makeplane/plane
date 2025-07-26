@@ -3,12 +3,14 @@
 import { FC, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { E_IMPORTER_KEYS, E_JOB_STATUS, TJobStatus } from "@plane/etl/core";
 import { JiraConfig } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { TImportJob } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { StepperNavigation } from "@/plane-web/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
@@ -73,9 +75,21 @@ export const SummaryRoot: FC = observer(() => {
             status: E_JOB_STATUS.CREATED as TJobStatus,
           };
           const importerCreateJob = await createJob(planeProjectId, syncJobPayload);
+          captureSuccess({
+            eventName: IMPORTER_TRACKER_EVENTS.CREATE_JIRA_JOB,
+            payload: {
+              jobId: importerCreateJob?.id,
+            },
+          });
           console.log(importerCreateJob);
           if (importerCreateJob && importerCreateJob?.id) {
             await startJob(importerCreateJob?.id);
+            captureSuccess({
+              eventName: IMPORTER_TRACKER_EVENTS.START_JIRA_JOB,
+              payload: {
+                jobId: importerCreateJob?.id,
+              },
+            });
             handleDashboardView();
             // clearing the existing data in the context
             resetImporterData();
@@ -85,6 +99,10 @@ export const SummaryRoot: FC = observer(() => {
         }
       } catch (error) {
         console.error("error", error);
+        captureError({
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_JIRA_JOB,
+          error: error as Error,
+        });
       } finally {
         setCreateConfigLoader(false);
       }

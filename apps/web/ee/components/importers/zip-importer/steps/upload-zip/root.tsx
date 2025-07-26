@@ -2,8 +2,10 @@ import { FC, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
 import { Upload, File, X, AlertTriangle, CircleCheck, CircleAlert } from "lucide-react";
+import { IMPORTER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, CircularProgressIndicator, setToast, TOAST_TYPE } from "@plane/ui";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
 import { UploadState } from "@/plane-web/store/importers/zip-importer/root.store";
 import { E_IMPORTER_STEPS, TZipImporterProps } from "@/plane-web/types/importers/zip-importer";
@@ -89,6 +91,12 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
     // If we haven't uploaded yet or we're retrying after an error
     if ((uploadState === UploadState.IDLE || uploadState === UploadState.ERROR) && workspace?.slug) {
       uploadZipFile(workspace.slug, uploadedFile.file);
+      captureSuccess({
+        eventName: IMPORTER_TRACKER_EVENTS.UPLOAD_ZIP_FILE,
+        payload: {
+          serviceName,
+        },
+      });
       return;
     }
 
@@ -99,6 +107,9 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
         // Pass the file name when confirming the upload
         await confirmAndStartImport({
           fileName: uploadedFile.file.name,
+        });
+        captureSuccess({
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_START_NOTION_JOB,
         });
         // Show success toast
         setToast({
@@ -111,6 +122,10 @@ export const UploadZip: FC<TZipImporterProps> = observer(({ driverType, serviceN
       } catch (error) {
         console.error(`Failed to confirm upload: ${error}`);
         // Show error toast
+        captureError({
+          eventName: IMPORTER_TRACKER_EVENTS.CREATE_START_NOTION_JOB,
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Import failed",

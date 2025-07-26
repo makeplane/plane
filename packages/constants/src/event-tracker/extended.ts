@@ -167,6 +167,56 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
+export const WORKSPACE_WORKLOG_TRACKER_ELEMENTS = {
+  HEADER_DOWNLOAD_CONTEXT_MENU: "workspace_worklog_header_download_context_menu",
+  TABLE_DOWNLOAD_BUTTON: "workspace_worklog_table_download_button",
+};
+
+export const WORKSPACE_WORKLOG_TRACKER_EVENTS = {
+  CREATE_WORKLOG_DOWNLOAD: "workspace_worklog_created_worklog_download",
+  DOWNLOAD_WORKLOG: "workspace_worklog_worklog_downloaded",
+};
+
+export const INITIATIVES_TRACKER_ELEMENTS = {
+  SETTINGS_PAGE_ENABLE_DISABLE_BUTTON: "initiatives_settings_page_enable_disable_button",
+};
+export const INITIATIVE_TRACKER_EVENTS = {
+  TOGGLE: "initiatives_toggled",
+};
+
+export const IMPORTER_TRACKER_ELEMENTS = {
+  IMPORTER_DASHBOARD_RE_RUN_BUTTON: "importer_dashboard_re_run_button",
+  IMPORTER_DASHBOARD_CANCEL_BUTTON: "importer_dashboard_cancel_button",
+  IMPORTER_DASHBOARD_DEACTIVATE_BUTTON: "importer_dashboard_deactivate_button",
+  IMPORTER_DASHBOARD_REFRESH_BUTTON: "importer_dashboard_refresh_button",
+  IMPORTER_DASHBOARD_IMPORT_BUTTON: "importer_dashboard_import_button",
+  IMPORTER_CONFIRGURE_NEXT_BUTTON: "importer_configure_next_button",
+  IMPORTER_CONFIRGURE_BACK_BUTTON: "importer_configure_back_button",
+};
+
+export const IMPORTER_TRACKER_EVENTS = {
+  RE_RUN: "importer_re_run_job",
+  CANCEL: "importer_cancel_job",
+  REFRESH: "importer_refresh_jobs",
+  DEACTIVATE: "importer_auth_deactivated",
+  CREATE_ASANA_JOB: "importer_asana_job_created",
+  START_ASANA_JOB: "importer_asana_job_started",
+  CREATE_CLICKUP_JOB: "importer_clickup_job_created",
+  START_CLICKUP_JOB: "importer_clickup_job_started",
+  CREATE_CONFLUENCE_JOB: "importer_confluence_job_created",
+  START_CONFLUENCE_JOB: "importer_confluence_job_started",
+  CREATE_JIRA_JOB: "importer_jira_job_created",
+  START_JIRA_JOB: "importer_jira_job_started",
+  CREATE_JIRA_SERVER_JOB: "importer_jira_server_job_created",
+  START_JIRA_SERVER_JOB: "importer_jira_server_job_started",
+  CREATE_LINEAR_JOB: "importer_linear_job_created",
+  START_LINEAR_JOB: "importer_linear_job_started",
+  CREATE_START_NOTION_JOB: "importer_notion_job_created_started",
+  UPLOAD_ZIP_FILE: "importer_upload_zip_file",
+  CREATE_FLATFILE_JOB: "importer_flatfile_job_created",
+  START_FLATFILE_JOB: "importer_flatfile_job_started",
+};
+
 export const WORKFLOW_TRACKER_EVENTS = {
   TRANSITION_CREATED: "workflow_transition_created",
   TRANSITION_DELETED: "workflow_transition_deleted",
