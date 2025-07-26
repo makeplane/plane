@@ -4,6 +4,7 @@ import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
+import { GITHUB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web components
@@ -104,6 +105,7 @@ export const RepositoryMappingRoot: FC<IRepositoryMappingRootProps> = observer((
           size="sm"
           className="h-8 w-8 rounded p-0"
           onClick={() => setModalCreateOpen(true)}
+          data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.REPOSITORY_MAPPING_HEADER_ADD_BUTTON}
         >
           <Plus className="h-5 w-5" />
         </Button>

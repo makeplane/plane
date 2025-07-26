@@ -167,6 +167,63 @@ export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   CONTEXT_MENU: "teamspace_view_context_menu",
 };
 
+export const INTEGRATION_TRACKER_ELEMENTS = {
+  INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON: "integrations_mapping_entity_item_button",
+};
+
+export const SLACK_INTEGRATION_TRACKER_EVENTS = {
+  disconnect_app: "slack_app_disconnected",
+  disconnect_user: "slack_user_disconnected",
+  create_project_connection: "slack_project_connection_created",
+  update_project_connection: "slack_project_connection_updated",
+  delete_project_connection: "slack_project_connection_deleted",
+  connect_app: "slack_app_connected",
+  connect_user: "slack_user_connected",
+};
+export const SLACK_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU: "slack_connect_disconnect_personal_account_context_menu",
+  CONNECT_DISCONNECT_WORKSPACE_CONTEXT_MENU: "slack_connect_disconnect_workspace_context_menu",
+  CONNECT_DISCONNECT_APP_BUTTON: "slack_connect_disconnect_app_button",
+  CHANNEL_MAPPING_HEADER_ADD_BUTTON: "slack_channel_mapping_header_add_button",
+};
+
+export const GITHUB_INTEGRATION_TRACKER_EVENTS = {
+  disconnect_user: "github_user_disconnected",
+  connect_user: "github_user_connected",
+  disconnect_organization: "github_organization_disconnected",
+  connect_organization: "github_organization_connected",
+  create_entity_connection: "github_entity_connection_created",
+  update_entity_connection: "github_entity_connection_updated",
+  delete_entity_connection: "github_entity_connection_deleted",
+};
+export const GITHUB_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_ORGANIZATION_BUTTON: "github_connect_disconnect_organization_button",
+  CONNECT_DISCONNECT_PERSONAL_ACCOUNT_BUTTON: "github_connect_disconnect_personal_account_button",
+  REPOSITORY_MAPPING_HEADER_ADD_BUTTON: "github_repository_mapping_header_add_button",
+};
+
+export const GITLAB_INTEGRATION_TRACKER_EVENTS = {
+  connect_organization: "gitlab_organization_connected",
+  disconnect_organization: "gitlab_organization_disconnected",
+  create_entity_connection: "gitlab_entity_connection_created",
+  update_entity_connection: "gitlab_entity_connection_updated",
+  delete_entity_connection: "gitlab_entity_connection_deleted",
+  create_project_entity_connection: "gitlab_project_entity_connection_created",
+  add_gitlab_project: "gitlab_project_added",
+  add_plane_project: "plane_project_added",
+};
+export const GITLAB_INTEGRATION_TRACKER_ELEMENTS = {
+  CONNECT_DISCONNECT_ORGANIZATION_BUTTON: "gitlab_connect_disconnect_organization_button",
+  REPOSITORY_MAPPING_HEADER_ADD_BUTTON: "gitlab_repository_mapping_header_add_button",
+  GITLAB_ADD_PROJECT_BUTTON: "gitlab_add_project_button",
+  PLANE_ADD_PROJECT_BUTTON: "plane_add_project_button",
+  GITLAB_MAPPING_ENTITY_ITEM_BUTTON: "gitlab_mapping_entity_item_button",
+  PLANE_MAPPING_ENTITY_ITEM_BUTTON: "plane_mapping_entity_item_button",
+};
+export const USER_CONNECTIONS_VIEW_TRACKER_ELEMENTS = {
+  CONNECTION_CONNECT_DISCONNECT_BUTTON: "connections_view_connection_connect_disconnect_button",
+};
+
 export const WORKSPACE_WORKLOG_TRACKER_ELEMENTS = {
   HEADER_DOWNLOAD_CONTEXT_MENU: "workspace_worklog_header_download_context_menu",
   TABLE_DOWNLOAD_BUTTON: "workspace_worklog_table_download_button",

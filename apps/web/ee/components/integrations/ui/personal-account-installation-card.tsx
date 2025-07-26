@@ -2,6 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Unplug, ChevronRight } from "lucide-react";
 // ui
+import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, CustomMenu, Loader } from "@plane/ui";
 // helpers
@@ -42,7 +43,12 @@ export const PersonalAccountInstallationCard = observer((props: TPersonalAccount
             placement="bottom"
             closeOnSelect
             customButton={
-              <Button size="sm" variant="link-neutral" loading={isLoading}>
+              <Button
+                size="sm"
+                variant="link-neutral"
+                loading={isLoading}
+                data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_PERSONAL_ACCOUNT_CONTEXT_MENU}
+              >
                 {isLoading ? t("common.disconnecting") : t("common.connected")}
                 <ChevronDown size={12} />
               </Button>

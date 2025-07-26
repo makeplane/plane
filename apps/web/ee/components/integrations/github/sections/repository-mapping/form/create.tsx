@@ -2,9 +2,11 @@
 
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { observer } from "mobx-react";
+import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
@@ -68,6 +70,12 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
         },
       };
       await createEntity(payload);
+      captureSuccess({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.create_entity_connection,
+        payload: {
+          workspaceId: workspace?.id,
+        },
+      });
 
       setProjectMap(projectMapInit);
       setStateMap(stateMapInit);
@@ -75,6 +83,12 @@ export const FormCreate: FC<TFormCreate> = observer((props) => {
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
+      captureError({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.create_entity_connection,
+        payload: {
+          workspaceId: workspace?.id,
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -2,8 +2,10 @@
 
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ProjectForm, StateForm } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
@@ -67,10 +69,22 @@ export const FormEdit: FC<TFormEdit> = observer((props) => {
         },
       };
       await updateEntity(data.id, payload);
+      captureSuccess({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
+        payload: {
+          id: data.id,
+        },
+      });
 
       handleModal(false);
     } catch (error) {
       console.error("handleSubmit", error);
+      captureError({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.update_entity_connection,
+        payload: {
+          id: data.id,
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }

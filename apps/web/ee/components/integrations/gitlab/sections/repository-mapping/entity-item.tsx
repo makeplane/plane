@@ -4,10 +4,12 @@ import { FC, ReactElement, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 // plane web components
+import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { EConnectionType } from "@plane/etl/gitlab";
 import { useTranslation } from "@plane/i18n";
 import { Button, ModalCore } from "@plane/ui";
 import { Logo } from "@/components/common";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/gitlab";
 // plane web hooks
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
@@ -48,8 +50,18 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
       setDeleteLoader(true);
       await deleteEntityConnection(entityConnection.id);
       setDeleteModal(false);
+      captureSuccess({
+        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
+        payload: {
+          entityConnectionId: entityConnection.id,
+        },
+      });
     } catch (error) {
       console.error("handleDeleteModalSubmit", error);
+      captureError({
+        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
+        error: error as Error,
+      });
     } finally {
       setDeleteLoader(false);
     }
@@ -113,11 +125,21 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
         </div>
         <div className="relative flex items-center gap-2">
           {entityConnection.type === EConnectionType.PLANE_PROJECT && (
-            <Button variant="neutral-primary" size="sm" onClick={handleEditOpen}>
+            <Button
+              variant="neutral-primary"
+              size="sm"
+              onClick={handleEditOpen}
+              data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_MAPPING_ENTITY_ITEM_BUTTON}
+            >
               {t("common.edit")}
             </Button>
           )}
-          <Button variant="link-danger" size="sm" onClick={handleDeleteOpen}>
+          <Button
+            variant="link-danger"
+            size="sm"
+            onClick={handleDeleteOpen}
+            data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_MAPPING_ENTITY_ITEM_BUTTON}
+          >
             {t("remove")}
           </Button>
         </div>

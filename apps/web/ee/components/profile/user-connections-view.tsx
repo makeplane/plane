@@ -6,7 +6,12 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Grid2x2X } from "lucide-react";
 // plane internal packages
-import { TUserConnection, USER_CONNECTION_PROVIDERS } from "@plane/constants";
+import {
+  GITHUB_INTEGRATION_TRACKER_EVENTS,
+  SLACK_INTEGRATION_TRACKER_EVENTS,
+  TUserConnection,
+  USER_CONNECTION_PROVIDERS,
+} from "@plane/constants";
 import { E_INTEGRATION_KEYS } from "@plane/etl/core";
 import { IWorkspace, TWorkspaceUserConnection } from "@plane/types";
 // services
@@ -16,6 +21,7 @@ import { useConnections } from "@/plane-web/hooks/store/integrations/use-connect
 import { useSlackIntegration } from "@/plane-web/hooks/store/integrations/use-slack";
 import { ConnectionLoader } from "./loader";
 import { PersonalAccountConnectView } from "./personal-account-view";
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 
 export const UserConnectionsView = observer(() => {
   // route params
@@ -90,7 +96,6 @@ export const ConnectionMapper = observer(
       },
     } = useGithubIntegration(true);
     const user = useUser();
-
     const { isLoading: isLoadingExternalApiTokens } = useSWR(
       selectedWorkspace ? `SLACK_EXTERNAL_API_TOKEN_${selectedWorkspace.slug}` : null,
       selectedWorkspace
@@ -112,9 +117,21 @@ export const ConnectionMapper = observer(
           user.data?.id,
           true
         );
+        captureSuccess({
+          eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_user,
+          payload: {
+            workspaceId: selectedWorkspace.id,
+          },
+        });
         if (response) window.open(response, "_self");
       } else if (source === E_INTEGRATION_KEYS.SLACK) {
         const response = await connectUser(selectedWorkspace.id, selectedWorkspace.slug, true);
+        captureSuccess({
+          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.connect_user,
+          payload: {
+            workspaceId: selectedWorkspace.id,
+          },
+        });
         if (response) window.open(response, "_self");
       } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
         const response = await connectGithubEnterpriseUserCredential(
@@ -130,8 +147,20 @@ export const ConnectionMapper = observer(
     const handleDisconnection = async (source: TUserConnection) => {
       if (source === E_INTEGRATION_KEYS.GITHUB) {
         await disconnectGithubUserCredential(selectedWorkspace.id, user.data?.id);
+        captureSuccess({
+          eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+          payload: {
+            workspaceId: selectedWorkspace.id,
+          },
+        });
       } else if (source === E_INTEGRATION_KEYS.SLACK) {
         await disconnectUser(selectedWorkspace.id);
+        captureSuccess({
+          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+          payload: {
+            workspaceId: selectedWorkspace.id,
+          },
+        });
       } else if (source === E_INTEGRATION_KEYS.GITHUB_ENTERPRISE) {
         await disconnectGithubEnterpriseUserCredential(selectedWorkspace.id, user.data?.id);
       }

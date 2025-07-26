@@ -4,6 +4,7 @@ import Image, { StaticImageData } from "next/image";
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
+import { SLACK_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 
 type TInstallationCardProps = {
   providerName: string;
@@ -44,7 +45,11 @@ export const InstallationCard = observer((props: TInstallationCardProps) => {
             <Loader.Item width="70px" height="30px" />
           </Loader>
         ) : (
-          <Button onClick={handleInstall} loading={isAppInstalling}>
+          <Button
+            onClick={handleInstall}
+            loading={isAppInstalling}
+            data-ph-element={SLACK_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_APP_BUTTON}
+          >
             {isAppInstalling ? t("common.installing") : t("common.install")}
           </Button>
         )}

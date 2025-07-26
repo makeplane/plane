@@ -2,9 +2,11 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { SLACK_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { ConnectedAppCard } from "@/plane-web/components/integrations/slack";
 import { InstallationCard, PersonalAccountInstallationCard } from "@/plane-web/components/integrations/ui";
 // hooks
@@ -49,8 +51,16 @@ export const SlackIntegrationRoot = observer(() => {
   const handleAppInstall = async () => {
     try {
       const response = await connectApp();
+      captureSuccess({
+        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.connect_app,
+        payload: {},
+      });
       if (response) window.open(response, "_self");
     } catch (error) {
+      captureError({
+        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.connect_app,
+        payload: {},
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -61,12 +71,27 @@ export const SlackIntegrationRoot = observer(() => {
 
   const handlePersonalAccountConnect = async () => {
     try {
-      if (isUserConnected) await disconnectUser();
-      else {
+      if (isUserConnected) {
+        await disconnectUser();
+        captureSuccess({
+          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+          payload: {},
+        });
+      } else {
         const response = await connectUser();
+        captureSuccess({
+          eventName: SLACK_INTEGRATION_TRACKER_EVENTS.connect_user,
+          payload: {},
+        });
         if (response) window.open(response, "_self");
       }
     } catch (error) {
+      captureError({
+        eventName: isUserConnected
+          ? SLACK_INTEGRATION_TRACKER_EVENTS.disconnect_user
+          : SLACK_INTEGRATION_TRACKER_EVENTS.connect_user,
+        payload: {},
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -80,7 +105,19 @@ export const SlackIntegrationRoot = observer(() => {
   const handleAppDisconnect = async (connectionId: string) => {
     try {
       await disconnectApp(connectionId);
+      captureSuccess({
+        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.disconnect_app,
+        payload: {
+          connection_id: connectionId,
+        },
+      });
     } catch (error) {
+      captureError({
+        eventName: SLACK_INTEGRATION_TRACKER_EVENTS.disconnect_app,
+        payload: {
+          connection_id: connectionId,
+        },
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",

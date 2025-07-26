@@ -3,10 +3,12 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
+import { GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IProject } from "@plane/types";
 import { Button, ModalCore } from "@plane/ui";
 // plane web components
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { FormEdit } from "@/plane-web/components/integrations/github";
 // plane web hooks
 import { useGithubIntegration } from "@/plane-web/hooks/store";
@@ -53,9 +55,21 @@ export const EntityConnectionItem: FC<TEntityConnectionItem> = observer((props) 
     try {
       setDeleteLoader(true);
       await deleteEntity(entityConnection.id);
+      captureSuccess({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
+        payload: {
+          id: entityConnection.id,
+        },
+      });
       setDeleteModal(false);
     } catch (error) {
       console.error("handleDeleteModalSubmit", error);
+      captureError({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.delete_entity_connection,
+        payload: {
+          id: entityConnection.id,
+        },
+      });
     } finally {
       setDeleteLoader(false);
     }

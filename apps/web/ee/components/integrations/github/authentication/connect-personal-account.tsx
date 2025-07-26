@@ -3,9 +3,11 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { GITHUB_INTEGRATION_TRACKER_ELEMENTS, GITHUB_INTEGRATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 // plane web hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 
 interface IConnectPersonalAccountProps {
@@ -39,10 +41,22 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
     try {
       setIsConnectionSetup(true);
       const response = await connectGithubUserCredential();
+      captureSuccess({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_user,
+        payload: {
+          workspaceId,
+        },
+      });
 
       if (response) window.open(response, "_self");
     } catch (error) {
       console.error("connectGithubUserCredential", error);
+      captureError({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.connect_user,
+        payload: {
+          workspaceId,
+        },
+      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -52,8 +66,20 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
     try {
       setIsConnectionSetup(true);
       await disconnectGithubUserCredential();
+      captureSuccess({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+        payload: {
+          workspaceId,
+        },
+      });
     } catch (error) {
       console.error("disconnectGithubUserCredential", error);
+      captureError({
+        eventName: GITHUB_INTEGRATION_TRACKER_EVENTS.disconnect_user,
+        payload: {
+          workspaceId,
+        },
+      });
     } finally {
       setIsConnectionSetup(false);
     }
@@ -101,6 +127,7 @@ export const ConnectPersonalAccount: FC<IConnectPersonalAccountProps> = observer
         className="flex-shrink-0"
         onClick={handleGithubUserAuth}
         disabled={(isLoading && githubUserCredential) || isConnectionSetup || error}
+        data-ph-element={GITHUB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_PERSONAL_ACCOUNT_BUTTON}
       >
         {(isLoading && githubUserCredential) || error
           ? "..."

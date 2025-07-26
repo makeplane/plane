@@ -3,9 +3,11 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
+import { GITLAB_INTEGRATION_TRACKER_EVENTS, GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, Loader } from "@plane/ui";
 // plane web hooks
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useGitlabIntegration } from "@/plane-web/hooks/store/integrations";
 
 export const ConnectOrganization: FC = observer(() => {
@@ -36,6 +38,12 @@ export const ConnectOrganization: FC = observer(() => {
       setIsConnectionSetup(true);
       const response = await connectWorkspaceConnection();
       if (response) window.open(response, "_self");
+      captureSuccess({
+        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.connect_organization,
+        payload: {
+          workspaceConnectionId,
+        },
+      });
     } catch (error) {
       console.error("connectWorkspaceConnection", error);
     } finally {
@@ -47,6 +55,12 @@ export const ConnectOrganization: FC = observer(() => {
     try {
       setIsConnectionSetup(true);
       await disconnectWorkspaceConnection();
+      captureSuccess({
+        eventName: GITLAB_INTEGRATION_TRACKER_EVENTS.disconnect_organization,
+        payload: {
+          workspaceConnectionId,
+        },
+      });
     } catch (error) {
       console.error("disconnectWorkspaceConnection", error);
     } finally {
@@ -106,6 +120,7 @@ export const ConnectOrganization: FC = observer(() => {
           className="flex-shrink-0"
           onClick={handleGitlabAuth}
           disabled={(isLoading && workspaceConnectionId) || isConnectionSetup || error}
+          data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.CONNECT_DISCONNECT_ORGANIZATION_BUTTON}
         >
           {(isLoading && workspaceConnectionId) || error
             ? "..."

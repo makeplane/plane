@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Image, { StaticImageData } from "next/image";
 import { ArrowRight, Pencil, Trash2 } from "lucide-react";
+import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { IProject } from "@plane/types";
 import { Button, Logo } from "@plane/ui";
 import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
@@ -58,6 +59,7 @@ export const IntegrationsMapping = (props: TIntegrationsMappingProps) => {
             size="sm"
             className="h-7 w-7 rounded-md p-0 hover:bg-custom-primary-100/10 hover:text-custom-primary-100 transition-colors"
             onClick={handleEditOpen}
+            data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -66,6 +68,7 @@ export const IntegrationsMapping = (props: TIntegrationsMappingProps) => {
             size="sm"
             className="h-7 w-7 rounded-md p-0 hover:bg-red-100/10 hover:text-red-500 transition-colors"
             onClick={handleDeleteOpen}
+            data-ph-element={INTEGRATION_TRACKER_ELEMENTS.INTEGRATIONS_MAPPING_ENTITY_ITEM_BUTTON}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>

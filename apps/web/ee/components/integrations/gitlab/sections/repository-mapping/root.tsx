@@ -16,6 +16,7 @@ import {
 import { useGitlabIntegration } from "@/plane-web/hooks/store";
 // plane web types
 import { E_STATE_MAP_KEYS, TProjectMap, TStateMap } from "@/plane-web/types/integrations/gitlab";
+import { GITLAB_INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 
 export const projectMapInit: TProjectMap = {
   entityId: undefined,
@@ -98,7 +99,12 @@ export const RepositoryMappingRoot: FC = observer(() => {
               {t("gitlab_integration.project_connections_description")}
             </div>
           </div>
-          <Button variant="neutral-primary" size="sm" onClick={() => setModalCreateOpen(true)}>
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            onClick={() => setModalCreateOpen(true)}
+            data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.GITLAB_ADD_PROJECT_BUTTON}
+          >
             {t("common.add")}
           </Button>
         </div>
@@ -140,7 +146,12 @@ export const RepositoryMappingRoot: FC = observer(() => {
               {t("gitlab_integration.plane_project_connection_description")}
             </div>
           </div>
-          <Button variant="neutral-primary" size="sm" onClick={() => setModalProjectCreateOpen(true)}>
+          <Button
+            variant="neutral-primary"
+            size="sm"
+            onClick={() => setModalProjectCreateOpen(true)}
+            data-ph-element={GITLAB_INTEGRATION_TRACKER_ELEMENTS.PLANE_ADD_PROJECT_BUTTON}
+          >
             {t("common.add")}
           </Button>
         </div>
