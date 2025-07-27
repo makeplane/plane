@@ -11,6 +11,7 @@ import { SidebarHamburgerToggle } from "@/components/core";
 import { NotificationSidebarHeaderOptions } from "@/components/workspace-notifications";
 // hooks
 import { useAppTheme } from "@/hooks/store";
+import { isSidebarToggleVisible } from "@/plane-web/components/desktop";
 
 type TNotificationSidebarHeader = {
   workspaceSlug: string;
@@ -25,8 +26,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
   return (
     <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
-        {sidebarCollapsed && <SidebarHamburgerToggle />}
-
+        {isSidebarToggleVisible() && sidebarCollapsed && <SidebarHamburgerToggle />}
         <Breadcrumbs>
           <Breadcrumbs.Item
             component={

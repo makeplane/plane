@@ -64,7 +64,7 @@ class IssueSerializer(BaseSerializer):
     class Meta:
         model = Issue
         read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
-        exclude = ["description", "description_stripped"]
+        exclude = ["description"]
 
     def validate(self, data):
         if (
@@ -565,7 +565,7 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
-        exclude = ["comment_stripped", "comment_json"]
+        exclude = ["comment_json"]
 
     def validate(self, data):
         try:
