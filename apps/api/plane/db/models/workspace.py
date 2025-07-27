@@ -12,7 +12,9 @@ from django.db.models import Q
 # Module imports
 from .base import BaseModel
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
+from plane.utils.color import get_random_color
 from plane.db.mixins import SoftDeletionQuerySet, SoftDeletionManager
+
 
 ROLE_CHOICES = ((20, "Admin"), (15, "Member"), (5, "Guest"))
 
@@ -136,6 +138,7 @@ class Workspace(BaseModel):
     )
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    background_color = models.CharField(max_length=255, default=get_random_color)
 
     def __str__(self):
         """Return name of the Workspace"""
