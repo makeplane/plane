@@ -7,6 +7,7 @@ import { CircleDashed, Plus } from "lucide-react";
 // types
 import { TIssue, ISearchIssueResponse } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal, MultipleSelectGroupAction } from "@/components/core";
@@ -45,6 +46,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
     selectionHelpers,
     handleCollapsedGroups
   } = props;
+  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   const [openExistingIssueListModal, setOpenExistingIssueListModal] = useState(false);
@@ -110,7 +112,7 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
           className="relative flex w-full flex-row items-center gap-1 overflow-hidden cursor-pointer"
           onClick={() => handleCollapsedGroups(groupID)}
         >
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
+          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{["urgent","high","medium","low","none"].includes(groupID) ? t(groupID) : title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
         </div>
 
