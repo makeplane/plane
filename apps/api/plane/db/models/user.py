@@ -15,6 +15,7 @@ from django.utils import timezone
 # Module imports
 from plane.db.models import FileAsset
 from ..mixins import TimeAuditModel
+from plane.utils.color import get_random_color
 
 
 def get_default_onboarding():
@@ -221,6 +222,8 @@ class Profile(TimeAuditModel):
     start_of_the_week = models.PositiveSmallIntegerField(
         choices=START_OF_THE_WEEK_CHOICES, default=SUNDAY
     )
+    goals = models.JSONField(default=dict)
+    background_color = models.CharField(max_length=255, default=get_random_color)
 
     class Meta:
         verbose_name = "Profile"
