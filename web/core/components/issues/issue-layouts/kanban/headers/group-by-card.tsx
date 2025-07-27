@@ -7,7 +7,6 @@ import { useParams, usePathname } from "next/navigation";
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
@@ -45,7 +44,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     disableIssueCreation,
     addIssuesToView,
   } = props;
-  const { t } = useTranslation();
   const verticalAlignPosition = sub_group_by ? false : collapsedGroups?.group_by.includes(column_id);
   // states
   const [isOpen, setIsOpen] = React.useState(false);
@@ -123,7 +121,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
               verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
             }`}
           >
-            {(group_by === "priority" || sub_group_by === "priority") ? t(column_id) : title}
+            {title}
           </div>
           <div
             className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
