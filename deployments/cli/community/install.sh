@@ -377,18 +377,7 @@ function startServices() {
     local start_time=$(date +%s)
 
     echo "   Waiting for API Service to be ready..."
-    while ! docker exec "$api_container_id" python3 -c "
-        import urllib.request
-        import urllib.error
-
-        try:
-            response = urllib.request.urlopen('http://localhost:8000/', timeout=3)
-            exit(0)
-        except urllib.error.URLError:
-            exit(1)
-        except Exception:
-            exit(1)
-    " > /dev/null 2>&1; do
+    while ! docker exec "$api_container_id" python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)" > /dev/null 2>&1; do
         local current_time=$(date +%s)
         local elapsed_time=$((current_time - start_time))
 
