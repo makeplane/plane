@@ -373,6 +373,7 @@ function startServices() {
     fi
 
     local idx2=0
+    local api_ready=true        # assume success, flip on timeout
     local max_wait_time=300  # 5 minutes timeout
     local start_time=$(date +%s)
 
@@ -386,7 +387,8 @@ function startServices() {
             echo "   API Service health check timed out after 5 minutes"
             echo "   Checking if API container is still running..."
             if docker ps | grep -q "$SERVICE_FOLDER-api"; then
-                echo "   API container is running. Proceeding anyway..."
+                echo "   API container is running but did not pass the health-check. Continuing without marking it ready."
+                api_ready=false
                 break
             else
                 echo "   API container is not running. Please check logs."
@@ -401,7 +403,11 @@ function startServices() {
         sleep 1
     done
     printf "\r\033[K"
-    echo "   API Service started successfully ✅"
+    if [ "$api_ready" = true ]; then
+        echo "   API Service started successfully ✅"
+    else
+        echo "   ⚠️  API Service did not respond to health-check – please verify manually."
+    fi
     source "${DOCKER_ENV_PATH}"
     echo "   Plane Server started successfully ✅"
     echo ""
