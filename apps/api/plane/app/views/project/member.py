@@ -312,6 +312,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
 
 class UserProjectRolesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
 
     def get(self, request, slug):
         project_members = ProjectMember.objects.filter(

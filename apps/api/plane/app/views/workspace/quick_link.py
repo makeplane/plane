@@ -11,6 +11,7 @@ from plane.app.permissions import allow_permission, ROLE
 
 class QuickLinkViewSet(BaseViewSet):
     model = WorkspaceUserLink
+    use_read_replica = True
 
     def get_serializer_class(self):
         return WorkspaceUserLinkSerializer

@@ -67,6 +67,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
     model = Project
     webhook_event = "project"
     permission_classes = [ProjectBasePermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -331,6 +332,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
     webhook_event = "project"
 
     permission_classes = [ProjectBasePermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (

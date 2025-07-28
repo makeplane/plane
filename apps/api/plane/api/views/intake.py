@@ -51,8 +51,10 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
     """Intake Work Item List and Create Endpoint"""
 
     serializer_class = IntakeIssueSerializer
+
     model = Intake
     permission_classes = [ProjectLitePermission]
+    use_read_replica = True
 
     def get_queryset(self):
         intake = Intake.objects.filter(
@@ -214,6 +216,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
     serializer_class = IntakeIssueSerializer
     model = IntakeIssue
+    use_read_replica = True
 
     filterset_fields = ["status"]
 
