@@ -8,7 +8,7 @@ import plane.utils.color
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0097_project_external_id_project_external_source"),
+        ("db", "0098_profile_is_app_rail_docked_and_more"),
     ]
 
     operations = [
