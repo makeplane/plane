@@ -1,6 +1,6 @@
 {
   "name": "live",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./src/server.ts",
