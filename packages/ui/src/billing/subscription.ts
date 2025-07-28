@@ -2,10 +2,6 @@
 import { EProductSubscriptionEnum } from "@plane/types";
 import { cn } from "@plane/utils";
 
-// --------------- NOTE ----------------
-// This has to be in web application as tailwind won't be able to resolve the colors
-// ------------------------------------
-
 export const getSubscriptionTextColor = (
   planVariant: EProductSubscriptionEnum,
   shade: "200" | "400" = "200"

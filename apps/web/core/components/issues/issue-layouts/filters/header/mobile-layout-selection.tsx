@@ -46,7 +46,7 @@ export const MobileLayoutSelection = ({
           className="flex items-center gap-2"
         >
           <IssueLayoutIcon layout={layout.key} className="h-3 w-3" />
-          <div className="text-custom-text-300">{t(layout.i18n_title)}</div>
+          <div className="text-custom-text-300">{t(layout.i18n_label)}</div>
         </CustomMenu.MenuItem>
       ))}
     </CustomMenu>

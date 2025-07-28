@@ -41,7 +41,7 @@ export const IssuesListLayoutRoot = observer((props: Props) => {
     (groupId?: string) => {
       fetchNextPublicIssues(anchor, groupId);
     },
-    [fetchNextPublicIssues]
+    [anchor, fetchNextPublicIssues]
   );
 
   return (

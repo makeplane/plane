@@ -13,6 +13,7 @@ from collections import defaultdict
 
 class WorkspaceStatesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
+    use_read_replica = True
 
     @cache_response(60 * 60 * 2)
     def get(self, request, slug):

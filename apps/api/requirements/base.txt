@@ -65,3 +65,5 @@ opentelemetry-api==1.28.1
 opentelemetry-sdk==1.28.1
 opentelemetry-instrumentation-django==0.49b1
 opentelemetry-exporter-otlp==1.28.1
+# OpenAPI Specification
+drf-spectacular==0.28.0

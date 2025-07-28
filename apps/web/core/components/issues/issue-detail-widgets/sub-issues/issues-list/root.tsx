@@ -12,7 +12,7 @@ import {
   TSubIssueOperations,
 } from "@plane/types";
 // hooks
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 import { SectionEmptyState } from "@/components/empty-state";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";
 import { useIssueDetail } from "@/hooks/store";
@@ -53,7 +53,6 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   const {
     subIssues: {
       subIssuesByIssueId,
-      loader,
       filters: { getSubIssueFilters, getGroupedSubWorkItems, getFilteredSubWorkItems, resetFilters },
     },
   } = useIssueDetail(issueServiceType);
@@ -85,16 +84,6 @@ export const SubIssuesListRoot: React.FC<Props> = observer((props) => {
   );
 
   const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;
-
-  if (loader === "init-loader") {
-    return (
-      <Loader className="space-y-2">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Loader.Item key={index} height="35px" width="100%" />
-        ))}
-      </Loader>
-    );
-  }
 
   return (
     <div className="relative">

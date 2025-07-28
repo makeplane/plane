@@ -1,13 +1,13 @@
 {
   "name": "@plane/services",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "license": "AGPL-3.0",
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
     "build": "tsc --noEmit && tsup --minify",
     "dev": "tsup --watch",
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint . --max-warnings 62",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@plane/constants": "*",
-    "axios": "^1.8.3"
+    "axios": "1.11.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "*",

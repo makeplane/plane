@@ -177,6 +177,7 @@ class WorkSpaceViewSet(BaseViewSet):
 class UserWorkSpacesEndpoint(BaseAPIView):
     search_fields = ["name"]
     filterset_fields = ["owner"]
+    use_read_replica = True
 
     def get(self, request):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]

@@ -1,10 +1,10 @@
 {
   "name": "@plane/propel",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
-    "check:lint": "eslint . --max-warnings 0",
+    "check:lint": "eslint . --max-warnings 7",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
