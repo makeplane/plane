@@ -1,4 +1,3 @@
-import { ONBOARDING_STEPS } from "@plane/constants";
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
 import { TUserPermissions } from "./enums";
@@ -253,7 +252,7 @@ export enum EOnboardingSteps {
   INVITE_MEMBERS = "INVITE_MEMBERS",
 }
 
-export type TOnboardingStep = (typeof ONBOARDING_STEPS)[number];
+export type TOnboardingStep = EOnboardingSteps;
 
 export enum ECreateOrJoinWorkspaceViews {
   WORKSPACE_CREATE = "WORKSPACE_CREATE",
