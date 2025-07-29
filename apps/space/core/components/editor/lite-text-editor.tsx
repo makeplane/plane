@@ -1,7 +1,7 @@
 import React from "react";
 // plane imports
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
+import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";

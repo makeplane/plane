@@ -81,7 +81,7 @@ export type TDocumentInfo = {
   words: number;
 };
 
-export interface EditorRefApi {
+export type EditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
@@ -110,7 +110,7 @@ export interface EditorRefApi {
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
-}
+};
 
 // editor props
 export interface IEditorProps {
