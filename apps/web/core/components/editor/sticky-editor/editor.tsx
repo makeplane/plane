@@ -14,7 +14,10 @@ import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
 interface StickyEditorWrapperProps
-  extends Omit<ILiteTextEditorProps, "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler"> {
+  extends Omit<
+    ILiteTextEditorProps,
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
+  > {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
@@ -67,6 +70,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
         flaggedExtensions={liteTextEditorExtensions.flagged}
+        editable
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

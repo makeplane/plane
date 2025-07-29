@@ -10,7 +10,7 @@ import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 
-import type { IEditorProps, TEditorAsset, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
@@ -39,7 +39,7 @@ export interface UtilityExtensionStorage {
 }
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
   isEditable: boolean;
   isTouchDevice: boolean;
 };

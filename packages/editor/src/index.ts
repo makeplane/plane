@@ -11,7 +11,6 @@ export {
   CollaborativeDocumentEditorWithRef,
   DocumentEditorWithRef,
   LiteTextEditorWithRef,
-  LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
 } from "@/components/editors";
 

@@ -1,7 +1,7 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Content } from "@tiptap/core";
 // local imports
-import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorProps } from "./editor";
+import type { ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
 
 type TCoreHookProps = Pick<
   IEditorProps,
@@ -54,7 +54,3 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     ICollaborativeDocumentEditorProps,
     "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user"
   >;
-
-export type TReadOnlyEditorHookProps = TCoreHookProps &
-  Pick<TEditorHookProps, "initialValue" | "provider"> &
-  Pick<IReadOnlyEditorProps, "fileHandler" | "forwardedRef" | "mentionHandler">;

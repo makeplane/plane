@@ -1,6 +1,6 @@
 import { findParentNodeClosestToPos, Predicate, ReactNodeViewRenderer } from "@tiptap/react";
 // extensions
-import { CustomCalloutBlock, CustomCalloutNodeViewProps } from "@/extensions/callout";
+import { CustomCalloutBlock, CustomCalloutNodeViewProps } from "@/extensions/callout/block";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // config
