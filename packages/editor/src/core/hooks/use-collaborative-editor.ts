@@ -89,7 +89,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: dragDropEnabled,
+        dragDropEnabled,
       }),
       HeadingListExtension,
       Collaboration.configure({

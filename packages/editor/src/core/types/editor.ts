@@ -1,7 +1,7 @@
-import { Extensions, FocusPosition, JSONContent } from "@tiptap/core";
-import { MarkType, NodeType } from "@tiptap/pm/model";
-import { Selection } from "@tiptap/pm/state";
-import { EditorProps } from "@tiptap/pm/view";
+import type { Extensions, JSONContent, RawCommands } from "@tiptap/core";
+import type { MarkType, NodeType } from "@tiptap/pm/model";
+import type { Selection } from "@tiptap/pm/state";
+import type { EditorProps, EditorView } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // helpers
@@ -110,20 +110,13 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   createSelectionAtCursorPosition: () => void;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  focus: ({ position, scrollIntoView }: { position?: FocusPosition; scrollIntoView?: boolean }) => void;
-  getCordsFromPos: (pos?: number) =>
-    | {
-        left: number;
-        right: number;
-        bottom: number;
-        top: number;
-      }
-    | undefined;
-  getCurrentCursorPosition: () => number | undefined;
+  focus: (args: Parameters<RawCommands["focus"]>[0]) => void;
   getAttributesWithExtendedMark: (
     mark: string | MarkType,
     attribute: string | NodeType | MarkType
   ) => Record<string, any> | undefined;
+  getCoordsFromPos: (pos?: number) => ReturnType<EditorView["coordsAtPos"]> | undefined;
+  getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isEditorReadyToDiscard: () => boolean;

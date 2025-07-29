@@ -1,4 +1,4 @@
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -13,7 +13,7 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
+import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {

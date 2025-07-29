@@ -180,8 +180,8 @@ export const useEditor = (props: TEditorHookProps) => {
           console.warn(`No command found for item: ${itemKey}`);
         }
       },
-      focus: ({ position = "start", scrollIntoView = false }) => editor?.commands.focus(position, { scrollIntoView }),
-      getCordsFromPos: (pos?: number) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
+      focus: (args) => editor?.commands.focus(args),
+      getCoordsFromPos: (pos) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
       getCurrentCursorPosition: () => editor?.state.selection.from,
       getAttributesWithExtendedMark: (mark, attribute) => {
         if (!editor) return;
