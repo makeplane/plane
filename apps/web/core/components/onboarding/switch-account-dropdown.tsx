@@ -31,7 +31,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
       : user?.email;
 
   return (
-    <div className="flex w-full shrink-0 justify-end">
+    <>
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <div className="flex items-center gap-x-2 pr-4 z-10">
         {user?.avatar_url && (
@@ -74,6 +74,6 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
           </Transition>
         </Menu>
       </div>
-    </div>
+    </>
   );
 });
