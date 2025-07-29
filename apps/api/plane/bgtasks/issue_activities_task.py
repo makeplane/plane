@@ -14,6 +14,7 @@ from django.db.models import Q
 # Module imports
 from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
+from plane.bgtasks.webhook_task import webhook_activity
 from plane.db.models import (
     CommentReaction,
     Cycle,

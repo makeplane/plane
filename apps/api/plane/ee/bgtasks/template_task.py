@@ -555,15 +555,17 @@ def create_workitems(
             [
                 IssueAssignee(
                     issue_id=new_issue_id,
-                    assignee_id=assignee,
+                    assignee_id=member_id,
                     project_id=project_id,
                     workspace_id=workspace_id,
                     created_by_id=user_id,
                 )
-                for assignee in ProjectMember.objects.filter(
+                for member_id in ProjectMember.objects.filter(
                     project_id=project_id,
                     workspace_id=workspace_id,
-                    member_id__in=blueprint.assignees,
+                    member_id__in=[
+                        str(assignee.get("id")) for assignee in blueprint.assignees
+                    ],
                 ).values_list("member_id", flat=True)
             ],
             batch_size=BULK_CREATE_BATCH_SIZE,
