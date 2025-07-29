@@ -2,7 +2,7 @@
 
 import React, { FC, useEffect, useState } from "react";
 // plane imports
-import { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { EFileAssetType } from "@plane/types";
 // hooks
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";

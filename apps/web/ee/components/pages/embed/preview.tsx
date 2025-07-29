@@ -8,13 +8,11 @@ import { calculateTimeAgo, cn, getFileURL, getPageName } from "@plane/utils";
 // components
 import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
-import { useEditorConfig } from "@/hooks/editor";
 import { useMember, useWorkspace } from "@/hooks/store";
 // plane web imports
 import { PageEmbedCardRoot } from "@/plane-web/components/pages";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 type Props = {
   page: TPage;
@@ -29,16 +27,10 @@ export const PageEmbedPreview: React.FC<Props> = observer((props) => {
   const { fetchPageDetails } = usePageStore(storeType);
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging(workspaceSlug?.toString() ?? "");
-  // issue-embed
-  const { issueEmbedProps } = useIssueEmbed({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
-    projectId: projectId?.toString() ?? "",
-  });
 
   const { description_html, id, name, is_description_empty } = page;
 
   const { getUserDetails } = useMember();
-  const { getReadOnlyEditorFileHandlers } = useEditorConfig();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
