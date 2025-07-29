@@ -215,6 +215,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             "project_identifiers",
             "logo_props",
             "workspace_slug",
+            "is_global",
         ]
         boosts = {"name": 2.0, "description": 1.0}
 
@@ -303,12 +304,16 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
 
         fields_to_retrieve = [
             "id",
-            "comment",
             "project_identifier",
             "project_id",
             "workspace_slug",
             "actor_id",
             "issue_id",
+            "issue_sequence_id",
+            "issue_type_id",
+            "issue_name",
+            # Keep comment field for fallback
+            "comment",
         ]
 
         result_key = "work_item_comment"
@@ -326,6 +331,19 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
             result_key=result_key,
             serializer_class=IssueCommentSearchSerializer,
         )
+
+        # Add highlighting directly to the search object
+        if query:
+            search = helper.to_search()
+            search = search.highlight(
+                "comment",
+                fragment_size=100,
+                number_of_fragments=2,
+                pre_tags=["<mark>"],
+                post_tags=["</mark>"],
+            )
+            # Replace the helper's search object with our highlighted version
+            helper.search = search
 
         return helper
 

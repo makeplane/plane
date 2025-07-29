@@ -325,13 +325,43 @@ class OpenSearchHelper:
 
                 # Serialize the hits if a serializer class is provided
                 if helper.serializer_class and hits:
-                    # Convert hits to dictionaries for serialization
-                    hit_dicts = [hit.to_dict() for hit in hits]
+                    # Convert hits to dictionaries for serialization, preserving highlights
+                    hit_dicts = []
+                    for j, hit in enumerate(hits):
+                        hit_dict = hit.to_dict()
+
+                        # Preserve highlight information from the raw response
+                        if (
+                            hasattr(response, "hits")
+                            and hasattr(response.hits, "hits")
+                            and j < len(response.hits.hits)
+                        ):
+                            raw_hit = response.hits.hits[j]
+                            if "highlight" in raw_hit:
+                                # Add highlight as a special metadata field
+                                hit_dict["_highlight"] = raw_hit["highlight"]
+
+                        hit_dicts.append(hit_dict)
+
                     serializer = helper.serializer_class(hit_dicts, many=True)
                     serialized_data = serializer.data
                 else:
-                    # Return raw hit dictionaries
-                    serialized_data = [hit.to_dict() for hit in hits] if hits else []
+                    # Return raw hit dictionaries with highlights
+                    serialized_data = []
+                    for j, hit in enumerate(hits):
+                        hit_dict = hit.to_dict()
+
+                        # Preserve highlight information from the raw response
+                        if (
+                            hasattr(response, "hits")
+                            and hasattr(response.hits, "hits")
+                            and j < len(response.hits.hits)
+                        ):
+                            raw_hit = response.hits.hits[j]
+                            if "highlight" in raw_hit:
+                                hit_dict["_highlight"] = raw_hit["highlight"]
+
+                        serialized_data.append(hit_dict)
 
                 # Use result_key or index as the key
                 key = helper.result_key or f"search_{i}"

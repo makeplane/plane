@@ -251,7 +251,12 @@ class IssueDocument(BaseDocument):
 
 @registry.register_document
 class IssueCommentDocument(BaseDocument):
-    comment = fields.TextField(attr="comment_stripped")
+    comment = fields.TextField(
+        attr="comment_stripped",
+        analyzer=edge_ngram_analyzer,
+        search_analyzer="standard",
+        search_quote_analyzer="standard",
+    )
     project_id = fields.KeywordField(attr="project_id")
     project_identifier = fields.TextField(
         analyzer=edge_ngram_analyzer,
@@ -266,6 +271,9 @@ class IssueCommentDocument(BaseDocument):
     issue_id = fields.KeywordField(attr="issue_id")
     is_deleted = fields.BooleanField()
     active_project_member_user_ids = fields.ListField(fields.KeywordField())
+    issue_name = fields.KeywordField(ignore_above=1024)
+    issue_sequence_id = fields.IntegerField()
+    issue_type_id = fields.KeywordField()
 
     class Index(BaseDocument.Index):
         name = (
@@ -344,3 +352,21 @@ class IssueCommentDocument(BaseDocument):
         Data preparation method for is_deleted field
         """
         return bool(instance.deleted_at)
+
+    def prepare_issue_name(self, instance):
+        """
+        Data preparation method for issue_name field
+        """
+        return instance.issue.name if instance.issue else None
+
+    def prepare_issue_sequence_id(self, instance):
+        """
+        Data preparation method for issue_sequence_id field
+        """
+        return instance.issue.sequence_id if instance.issue else None
+
+    def prepare_issue_type_id(self, instance):
+        """
+        Data preparation method for issue_type_id field
+        """
+        return instance.issue.type_id if instance.issue else None

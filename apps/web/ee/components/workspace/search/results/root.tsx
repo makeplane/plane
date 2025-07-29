@@ -184,11 +184,11 @@ export const SearchResults: React.FC<TProps> = observer((props) => {
             <Link
               key={entity.id}
               href={SearchItems[entity.entity_type || searchFilter]?.path(entity) ?? "/"}
-              className="group rounded-md flex items-center gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
+              className="group rounded-md flex gap-2 p-3 text-sm text-custom-text-100 transition-all duration-300 ease-in-out hover:bg-custom-background-90 hover:px-3"
             >
               <span className="flex-shrink-0">{SearchItems[entity.entity_type || searchFilter]?.icon(entity)}</span>
               <span className="flex-1 line-clamp-2">
-                {SearchItems[entity.entity_type || searchFilter]?.itemName(entity)}
+                {SearchItems[entity.entity_type || searchFilter]?.itemName({ ...entity, query })}
               </span>
             </Link>
           ))}

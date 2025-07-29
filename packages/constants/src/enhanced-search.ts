@@ -10,6 +10,7 @@ export enum ESearchFilterKeys {
   PAGE = "page",
   EPIC = "epic",
   TEAMSPACE = "teamspace",
+  WORK_ITEM_COMMENT = "work_item_comment",
 }
 
 export type TSearchFilterKeys = `${ESearchFilterKeys}`;
@@ -95,4 +96,17 @@ export interface IWorkspaceEnhancedSearchResults {
     page: IWorkspacePageEnhancedSearchResult[];
     epic: IWorkspaceIssueEnhancedSearchResult[];
   };
+}
+
+export interface IWorkspaceCommentEnhancedSearchResult {
+  actor_id: string;
+  comment: string;
+  id: string;
+  issue_id: string;
+  project_id: string;
+  project_identifier: string;
+  workspace_slug: string;
+  issue_sequence_id: string;
+  issue_name: string;
+  issue_type_id: string;
 }
