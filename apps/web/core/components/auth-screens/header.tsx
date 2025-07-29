@@ -43,7 +43,7 @@ export const AuthHeader = observer(({ type }: AuthHeaderProps) => {
           <PlaneLockup height={20} width={95} className="text-custom-text-100" />
         </Link>
         {enableSignUpConfig && (
-          <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-onboarding-text-300">
+          <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-custom-text-300">
             {t(authContentMap[type].text)}
             <Link
               data-ph-element={AUTH_TRACKER_ELEMENTS.NAVIGATE_TO_SIGN_UP}

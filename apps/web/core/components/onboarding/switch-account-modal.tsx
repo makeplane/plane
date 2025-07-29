@@ -90,7 +90,7 @@ export const SwitchAccountModal: React.FC<Props> = (props) => {
                         Switch account
                       </Dialog.Title>
                       {userData?.email && (
-                        <div className="text-base font-normal text-onboarding-text-200">
+                        <div className="text-base font-normal text-custom-text-200">
                           If you have signed up via <span className="text-custom-primary-100">{userData.email}</span>{" "}
                           un-intentionally, you can switch your account to a different one from here.
                         </div>

@@ -121,7 +121,7 @@ const ForgotPasswordPage = observer(() => {
               </Link>
             </div>
             {enableSignUpConfig && (
-              <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-onboarding-text-300">
+              <div className="flex flex-col items-end text-sm font-medium text-center sm:items-center sm:gap-2 sm:flex-row text-custom-text-300">
                 {t("auth.common.new_to_plane")}
                 <Link
                   href="/"
@@ -139,11 +139,11 @@ const ForgotPasswordPage = observer(() => {
                 <h3 className="flex justify-center gap-4 text-3xl font-bold text-onboarding-text-100">
                   {t("auth.forgot_password.title")}
                 </h3>
-                <p className="font-medium text-onboarding-text-400">{t("auth.forgot_password.description")}</p>
+                <p className="font-medium text-custom-text-400">{t("auth.forgot_password.description")}</p>
               </div>
               <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+                  <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
                     {t("auth.common.email.label")}
                   </label>
                   <Controller
@@ -163,7 +163,7 @@ const ForgotPasswordPage = observer(() => {
                         ref={ref}
                         hasError={Boolean(errors.email)}
                         placeholder={t("auth.common.email.placeholder")}
-                        className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                        className="h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
                         autoComplete="on"
                         disabled={resendTimerCode > 0}
                       />

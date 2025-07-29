@@ -132,7 +132,7 @@ const ResetPasswordPage = observer(() => {
                 <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
                   {t("auth.reset_password.title")}
                 </h3>
-                <p className="font-medium text-onboarding-text-400">{t("auth.reset_password.description")}</p>
+                <p className="font-medium text-custom-text-400">{t("auth.reset_password.description")}</p>
               </div>
               {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
                 <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
@@ -144,7 +144,7 @@ const ResetPasswordPage = observer(() => {
               >
                 <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+                  <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
                     {t("auth.common.email.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
@@ -155,14 +155,14 @@ const ResetPasswordPage = observer(() => {
                       value={resetFormData.email}
                       //hasError={Boolean(errors.email)}
                       placeholder={t("auth.common.email.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400 cursor-not-allowed"
+                      className="h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 text-custom-text-400 cursor-not-allowed"
                       autoComplete="on"
                       disabled
                     />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+                  <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
                     {t("auth.common.password.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
@@ -173,7 +173,7 @@ const ResetPasswordPage = observer(() => {
                       onChange={(e) => handleFormChange("password", e.target.value)}
                       //hasError={Boolean(errors.password)}
                       placeholder={t("auth.common.password.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      className="h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
                       minLength={8}
                       onFocus={() => setIsPasswordInputFocused(true)}
                       onBlur={() => setIsPasswordInputFocused(false)}
@@ -195,7 +195,7 @@ const ResetPasswordPage = observer(() => {
                   <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+                  <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
                     {t("auth.common.password.confirm_password.label")}
                   </label>
                   <div className="relative flex items-center rounded-md bg-onboarding-background-200">
@@ -205,7 +205,7 @@ const ResetPasswordPage = observer(() => {
                       value={resetFormData.confirm_password}
                       onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                       placeholder={t("auth.common.password.confirm_password.placeholder")}
-                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                      className="h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
                       onFocus={() => setIsRetryPasswordInputFocused(true)}
                       onBlur={() => setIsRetryPasswordInputFocused(false)}
                     />

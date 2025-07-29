@@ -105,7 +105,7 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
       <span className="text-2xl font-semibold text-onboarding-text-100">
         {typeof header === "string" ? t(header) : header}
       </span>
-      <span className="text-2xl font-semibold text-onboarding-text-400">{subHeader}</span>
+      <span className="text-2xl font-semibold text-custom-text-400">{subHeader}</span>
     </div>
   );
 });

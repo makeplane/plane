@@ -51,7 +51,7 @@ export const ForgotPasswordPopover = () => {
               onClick={() => close()}
               aria-label={t("aria_labels.auth_forms.close_popover")}
             >
-              <X className="size-3 text-onboarding-text-200" />
+              <X className="size-3 text-custom-text-200" />
             </button>
           </div>
         )}

@@ -182,11 +182,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-onboarding-text-300">
+          <label htmlFor="email" className="text-sm font-medium text-custom-text-300">
             {t("auth.common.email.label")}
           </label>
           <div
-            className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+            className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-custom-border-300`}
           >
             <Input
               id="email"
@@ -195,7 +195,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+              className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 border-0`}
               disabled
             />
             {passwordFormData.email.length > 0 && (
@@ -212,7 +212,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-sm text-onboarding-text-300 font-medium">
+          <label htmlFor="password" className="text-sm text-custom-text-300 font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
           <div className="relative flex items-center rounded-md bg-onboarding-background-200">
@@ -223,7 +223,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -249,7 +249,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label htmlFor="confirm-password" className="text-sm text-onboarding-text-300 font-medium">
+            <label htmlFor="confirm-password" className="text-sm text-custom-text-300 font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
             <div className="relative flex items-center rounded-md bg-onboarding-background-200">
@@ -260,7 +260,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
