@@ -3,12 +3,12 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Globe2, Lock } from "lucide-react";
 // plane imports
-import type { EditorReadOnlyRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
 import { EIssueCommentAccessSpecifier, type TCommentsOperations, type TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { LiteTextReadOnlyEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
 import { CommentReactions } from "../comment-reaction";
 
@@ -17,7 +17,7 @@ type Props = {
   comment: TIssueComment;
   disabled: boolean;
   projectId?: string;
-  readOnlyEditorRef: React.RefObject<EditorReadOnlyRefApi>;
+  readOnlyEditorRef: React.RefObject<EditorRefApi>;
   showAccessSpecifier: boolean;
   workspaceId: string;
   workspaceSlug: string;
@@ -67,7 +67,8 @@ export const CommentCardDisplay: React.FC<Props> = observer((props) => {
           )}
         </div>
       )}
-      <LiteTextReadOnlyEditor
+      <LiteTextEditor
+        editable={false}
         ref={readOnlyEditorRef}
         id={comment.id}
         initialValue={comment.comment_html ?? ""}
