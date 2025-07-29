@@ -82,11 +82,11 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: false,
+      isTouchDevice,
     }),
     ...CoreReadOnlyEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
-      isTouchDevice,
     }),
   ];
 
@@ -94,14 +94,10 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     extensions.push(
       ImageExtension({
         fileHandler,
-      }).configure({
-        isTouchDevice,
       }),
       CustomImageExtension({
         fileHandler,
         isEditable: false,
-      }).configure({
-        isTouchDevice,
       })
     );
   }

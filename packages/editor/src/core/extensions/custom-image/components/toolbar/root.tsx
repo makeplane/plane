@@ -2,7 +2,7 @@ import { useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
-import type { CustomImageExtensionOptions, TCustomImageAlignment } from "../../types";
+import type { TCustomImageAlignment } from "../../types";
 import { ImageAlignmentAction } from "./alignment";
 import { ImageDownloadAction } from "./download";
 import { ImageFullScreenActionRoot } from "./full-screen";
@@ -11,19 +11,17 @@ type Props = {
   alignment: TCustomImageAlignment;
   aspectRatio: number;
   downloadSrc: string;
-  extensionOptions: CustomImageExtensionOptions;
   handleAlignmentChange: (alignment: TCustomImageAlignment) => void;
   height: string;
+  isTouchDevice: boolean;
   src: string;
   width: string;
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {
-  const { alignment, downloadSrc, extensionOptions, handleAlignmentChange } = props;
+  const { alignment, downloadSrc, handleAlignmentChange, isTouchDevice } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
-  // derived values
-  const { isTouchDevice } = extensionOptions;
 
   return (
     <>
@@ -42,8 +40,8 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           toggleToolbarViewStatus={setShouldShowToolbar}
         />
         <ImageFullScreenActionRoot
-          extensionOptions={extensionOptions}
           image={props}
+          isTouchDevice={isTouchDevice}
           toggleToolbarViewStatus={setShouldShowToolbar}
         />
       </div>

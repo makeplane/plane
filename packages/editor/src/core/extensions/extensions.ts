@@ -109,12 +109,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: editable,
+      isTouchDevice,
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
-      isTouchDevice,
     }),
   ];
 
@@ -122,14 +122,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     extensions.push(
       ImageExtension({
         fileHandler,
-      }).configure({
-        isTouchDevice,
       }),
       CustomImageExtension({
         fileHandler,
         isEditable: editable,
-      }).configure({
-        isTouchDevice,
       })
     );
   }

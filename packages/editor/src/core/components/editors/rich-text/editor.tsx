@@ -17,7 +17,6 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     extensions: externalExtensions = [],
     fileHandler,
     flaggedExtensions,
-    isTouchDevice = false,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -31,7 +30,6 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
         disabledExtensions,
         fileHandler,
         flaggedExtensions,
-        isTouchDevice,
       }),
     ];
 

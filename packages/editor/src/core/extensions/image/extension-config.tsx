@@ -4,7 +4,7 @@ import { CustomImageExtensionOptions } from "../custom-image/types";
 import { ImageExtensionStorage } from "./extension";
 
 export const ImageExtensionConfig = BaseImageExtension.extend<
-  Pick<CustomImageExtensionOptions, "getImageSource" | "isTouchDevice">,
+  Pick<CustomImageExtensionOptions, "getImageSource">,
   ImageExtensionStorage
 >({
   addAttributes() {

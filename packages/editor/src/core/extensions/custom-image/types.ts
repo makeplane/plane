@@ -43,7 +43,6 @@ export type InsertImageComponentProps = {
 export type CustomImageExtensionOptions = {
   getImageDownloadSource: TFileHandler["getAssetDownloadSrc"];
   getImageSource: TFileHandler["getAssetSrc"];
-  isTouchDevice: boolean;
   restoreImage: TFileHandler["restore"];
   uploadImage?: TFileHandler["upload"];
 };
