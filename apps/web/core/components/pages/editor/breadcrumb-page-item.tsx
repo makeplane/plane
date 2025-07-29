@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { observer } from "mobx-react";
 import { FileText } from "lucide-react";
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 import { getPageName } from "@plane/utils";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
@@ -22,10 +21,7 @@ export interface IPageBreadcrumbProps {
 }
 
 export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
-  ({ pageId, storeType, href, showLogo = true, isEditable }) => {
-    // states
-    const [isOpen, setIsOpen] = useState(false);
-
+  ({ pageId, storeType, href, showLogo = true }) => {
     // hooks
     const { isMobile } = usePlatformOS();
     const page = usePage({
@@ -33,7 +29,7 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
       storeType: storeType,
     });
 
-    const { name, logo_props, updatePageLogo, isContentEditable } = page ?? {};
+    const { name, logo_props } = page ?? {};
 
     // Show loading state when the page data isn't available yet
     if (!page) {
@@ -85,33 +81,13 @@ export const PageBreadcrumbItem: React.FC<IPageBreadcrumbProps> = observer(
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
             {showLogo && (
-              <div className="flex h-5 w-5 items-center justify-center overflow-hidden">
-                <EmojiIconPicker
-                  isOpen={isOpen}
-                  handleToggle={(val: boolean) => setIsOpen(val)}
-                  className="flex items-center justify-center"
-                  buttonClassName="flex items-center justify-center"
-                  label={
-                    <>
-                      {logo_props?.in_use ? (
-                        <Logo logo={logo_props} size={16} type="lucide" />
-                      ) : (
-                        <FileText className="size-4 text-custom-text-300" />
-                      )}
-                    </>
-                  }
-                  onChange={(val) => updatePageLogo?.(val)}
-                  defaultIconColor={
-                    logo_props?.in_use && logo_props.in_use === "icon" ? logo_props?.icon?.color : undefined
-                  }
-                  defaultOpen={
-                    logo_props?.in_use && logo_props?.in_use === "emoji"
-                      ? EmojiIconPickerTypes.EMOJI
-                      : EmojiIconPickerTypes.ICON
-                  }
-                  disabled={!isEditable && !isContentEditable}
-                />
-              </div>
+              <>
+                {logo_props?.in_use ? (
+                  <Logo logo={logo_props} size={16} type="lucide" />
+                ) : (
+                  <FileText className="size-4 text-custom-text-300" />
+                )}
+              </>
             )}
             <Tooltip tooltipContent={getPageName(name)} position="bottom" isMobile={isMobile}>
               <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">
