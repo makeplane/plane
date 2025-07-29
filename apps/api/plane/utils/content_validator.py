@@ -1,23 +1,34 @@
 # Python imports
+import base64
 import json
 import re
 
+MAX_SIZE = 10 * 1024 * 1024
 
-def validate_binary_data(binary_data):
+
+def validate_binary_data(data):
     """
     Validate that binary data appears to be valid document format and doesn't contain malicious content.
 
     Args:
-        binary_data (bytes): The binary data to validate
+        data (bytes or str): The binary data to validate, or base64-encoded string
 
     Returns:
         tuple: (is_valid: bool, error_message: str or None)
     """
-    if not binary_data:
+    if not data:
         return True, None  # Empty is OK
 
+    # Handle base64-encoded strings by decoding them first
+    if isinstance(data, str):
+        try:
+            binary_data = base64.b64decode(data)
+        except Exception:
+            return False, "Invalid base64 encoding"
+    else:
+        binary_data = data
+
     # Size check - 10MB limit
-    MAX_SIZE = 10 * 1024 * 1024
     if len(binary_data) > MAX_SIZE:
         return False, "Binary data exceeds maximum size limit (10MB)"
 
@@ -38,7 +49,7 @@ def validate_binary_data(binary_data):
         ]
         if any(pattern in decoded_text.lower() for pattern in suspicious_patterns):
             return False, "Binary data contains suspicious content patterns"
-    except:
+    except Exception:
         pass  # Binary data might not be decodable as text, which is fine
 
     return True, None
@@ -58,7 +69,6 @@ def validate_html_content(html_content):
         return True, None  # Empty is OK
 
     # Size check - 10MB limit (consistent with binary validation)
-    MAX_SIZE = 10 * 1024 * 1024
     if len(html_content.encode("utf-8")) > MAX_SIZE:
         return False, "HTML content exceeds maximum size limit (10MB)"
 
@@ -90,6 +100,8 @@ def validate_html_content(html_content):
         r"<style[^>]*>.*?@import.*?(?:https?://|//)",
         # Link tags with dangerous rel types
         r'<link[^>]*rel\s*=\s*["\']?(?:import|preload|prefetch|dns-prefetch|preconnect)["\']?',
+        # Forms with action attributes
+        r"<form[^>]*action\s*=",
     ]
 
     for pattern in malicious_patterns:
@@ -125,24 +137,6 @@ def validate_html_content(html_content):
                     False,
                     f"HTML content contains dangerous JavaScript in event handler: {handler_content[:100]}",
                 )
-    # Check for suspicious script patterns for XSS prevention
-    suspicious_patterns = [
-        r"<script[^>]*>.*?</script>",
-        r"javascript:",
-        r"data:text/html",
-        r"on\w+\s*=",  # Event handlers like onclick, onload, etc.
-        r'<iframe[^>]*src\s*=\s*["\'](?!https?://)',  # Suspicious iframe sources
-        r"<object[^>]*>",
-        r"<embed[^>]*>",
-        r"<form[^>]*action\s*=",  # Forms with action attributes
-    ]
-
-    for pattern in suspicious_patterns:
-        if re.search(pattern, html_content, re.IGNORECASE | re.DOTALL):
-            return (
-                False,
-                "HTML content contains suspicious patterns that may pose security risks",
-            )
 
     # Basic HTML structure validation - check for common malformed tags
     try:
@@ -198,7 +192,6 @@ def validate_json_content(json_content):
 
     try:
         # Size check - 10MB limit (consistent with other validations)
-        MAX_SIZE = 10 * 1024 * 1024
         json_str = json.dumps(json_content)
         if len(json_str.encode("utf-8")) > MAX_SIZE:
             return False, "JSON content exceeds maximum size limit (10MB)"
