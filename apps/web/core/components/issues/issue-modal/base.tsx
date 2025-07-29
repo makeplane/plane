@@ -68,7 +68,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
-  const { allowedProjectIds, handleCreateUpdatePropertyValues } = useIssueModal();
+  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
@@ -221,6 +221,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           projectId: response.project_id,
           workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
+        });
+
+        // create sub work item
+        await handleCreateSubWorkItem({
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: response.project_id,
+          parentId: response.id,
         });
       }
 

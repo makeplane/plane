@@ -130,6 +130,5 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     );
   }
 
-  // @ts-expect-error tiptap types are incorrect
   return extensions;
 };

@@ -5,9 +5,7 @@ import { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
 import { icons } from "src/core/extensions/table/table/icons";
 import tippy, { Instance, Props } from "tippy.js";
-// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// local imports
 import { isCellSelection } from "./utilities/helpers";
 
 type ToolboxItem = {
@@ -148,7 +146,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -176,7 +174,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",
@@ -217,7 +215,7 @@ function createToolbox({
             h(
               "div",
               { className: "grid grid-cols-6 gap-x-1 gap-y-2.5 mt-2" },
-              Object.entries(colors).map(([colorName, colorValue]) =>
+              Object.entries(colors).map(([_, colorValue]) =>
                 h("div", {
                   className: "grid place-items-center size-6 rounded cursor-pointer",
                   style: `background-color: ${colorValue.backgroundColor};color: ${colorValue.textColor || "inherit"};`,

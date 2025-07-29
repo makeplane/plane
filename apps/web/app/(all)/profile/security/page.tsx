@@ -7,14 +7,13 @@ import { Eye, EyeOff } from "lucide-react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-import { PasswordStrengthMeter } from "@/components/account/password-strength-meter";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
+import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store";
 // services
@@ -87,8 +86,10 @@ const SecurityPage = observer(() => {
         title: t("auth.common.password.toast.change_password.success.title"),
         message: t("auth.common.password.toast.change_password.success.message"),
       });
-    } catch (err: any) {
-      const errorInfo = authErrorHandler(err.error_code?.toString());
+    } catch (error: unknown) {
+      const err = error as Error & { error_code?: string };
+      const code = err.error_code?.toString();
+      const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
       setToast({
         type: TOAST_TYPE.ERROR,
         title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),
@@ -108,7 +109,7 @@ const SecurityPage = observer(() => {
 
   const passwordSupport = password.length > 0 &&
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
-      <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
+      <PasswordStrengthIndicator password={password} isFocused={isPasswordInputFocused} />
     );
 
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;

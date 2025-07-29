@@ -1,4 +1,5 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Content } from "@tiptap/core";
 // local imports
 import type { ICollaborativeDocumentEditorProps, IEditorProps, IReadOnlyEditorProps } from "./editor";
 
@@ -31,7 +32,7 @@ export type TEditorHookProps = TCoreHookProps &
   > & {
     editable: boolean;
     enableHistory: boolean;
-    initialValue?: string;
+    initialValue?: Content;
     provider?: HocuspocusProvider;
   };
 
@@ -49,7 +50,10 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "placeholder"
     | "tabIndex"
   > &
-  Pick<ICollaborativeDocumentEditorProps, "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user">;
+  Pick<
+    ICollaborativeDocumentEditorProps,
+    "dragDropEnabled" | "embedHandler" | "realtimeConfig" | "serverHandler" | "user"
+  >;
 
 export type TReadOnlyEditorHookProps = TCoreHookProps &
   Pick<TEditorHookProps, "initialValue" | "provider"> &

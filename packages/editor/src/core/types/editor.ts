@@ -1,4 +1,4 @@
-import type { Extensions, JSONContent, RawCommands } from "@tiptap/core";
+import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core";
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
@@ -181,6 +181,14 @@ export interface ICollaborativeDocumentEditorProps
   user: TUserDetails;
 }
 
+export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
+  aiHandler?: TAIHandler;
+  editable: boolean;
+  embedHandler: TEmbedConfig;
+  user?: TUserDetails;
+  value: Content;
+}
+
 // read only editor props
 export interface IReadOnlyEditorProps
   extends Pick<
@@ -202,12 +210,6 @@ export interface IReadOnlyEditorProps
 }
 
 export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
-
-export interface IDocumentReadOnlyEditorProps
-  extends IReadOnlyEditorProps,
-    Pick<ICollaborativeDocumentEditorProps, "documentLoaderClassName"> {
-  embedHandler: TEmbedConfig;
-}
 
 export interface EditorEvents {
   beforeCreate: never;

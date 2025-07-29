@@ -75,6 +75,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "EXCEPTION_HANDLER": "plane.authentication.adapter.exception.auth_exception_handler",
+    # Preserve original Django URL parameter names (pk) instead of converting to 'id'
+    "SCHEMA_COERCE_PATH_PK": False,
 }
 
 # Django Auth Backend
@@ -146,6 +148,29 @@ else:
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         }
     }
+
+
+if os.environ.get("ENABLE_READ_REPLICA", "0") == "1":
+    if bool(os.environ.get("DATABASE_READ_REPLICA_URL")):
+        # Parse database configuration from $DATABASE_URL
+        DATABASES["replica"] = dj_database_url.parse(
+            os.environ.get("DATABASE_READ_REPLICA_URL")
+        )
+    else:
+        DATABASES["replica"] = {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_READ_REPLICA_DB"),
+            "USER": os.environ.get("POSTGRES_READ_REPLICA_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_READ_REPLICA_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_READ_REPLICA_HOST"),
+            "PORT": os.environ.get("POSTGRES_READ_REPLICA_PORT", "5432"),
+        }
+
+    # Database Routers
+    DATABASE_ROUTERS = ["plane.utils.core.dbrouters.ReadReplicaRouter"]
+    # Add middleware at the end for read replica routing
+    MIDDLEWARE.append("plane.middleware.db_routing.ReadReplicaRoutingMiddleware")
+
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
@@ -439,3 +464,10 @@ ATTACHMENT_MIME_TYPES = [
 
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
+
+ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+
+if ENABLE_DRF_SPECTACULAR:
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+    INSTALLED_APPS.append("drf_spectacular")
+    from .openapi import SPECTACULAR_SETTINGS  # noqa: F401

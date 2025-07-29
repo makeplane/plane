@@ -52,7 +52,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [uploadStatus]);
+  }, [displayStatus, uploadStatus]);
 
   if (uploadStatus === undefined) return null;
 

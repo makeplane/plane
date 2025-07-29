@@ -3,13 +3,13 @@ import { ReactRenderer } from "@tiptap/react";
 import { SuggestionOptions } from "@tiptap/suggestion";
 import tippy, { Instance } from "tippy.js";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { TMentionHandler } from "@/types";
 // local components
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
-import { CORE_EXTENSIONS } from "@/constants/extension";
 
 export const renderMentionsDropdown =
   (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>

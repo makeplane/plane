@@ -102,6 +102,5 @@ export const CoreReadOnlyEditorExtensions = (props: Props): Extensions => {
     );
   }
 
-  // @ts-expect-error tiptap types are incorrect
   return extensions;
 };

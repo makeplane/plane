@@ -18,7 +18,7 @@ export function tableControls() {
       },
     },
     props: {
-      handleTripleClickOn(view, pos, node, nodePos, event, direct) {
+      handleTripleClickOn(view, pos, node, nodePos, event) {
         if (node.type.name === CORE_EXTENSIONS.TABLE_CELL) {
           event.preventDefault();
           const $pos = view.state.doc.resolve(pos);

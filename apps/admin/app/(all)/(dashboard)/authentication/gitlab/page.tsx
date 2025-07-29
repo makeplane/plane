@@ -66,9 +66,11 @@ const InstanceGitlabAuthenticationPage = observer(() => {
               <ToggleSwitch
                 value={Boolean(parseInt(enableGitlabConfig))}
                 onChange={() => {
-                  Boolean(parseInt(enableGitlabConfig)) === true
-                    ? updateConfig("IS_GITLAB_ENABLED", "0")
-                    : updateConfig("IS_GITLAB_ENABLED", "1");
+                  if (Boolean(parseInt(enableGitlabConfig)) === true) {
+                    updateConfig("IS_GITLAB_ENABLED", "0");
+                  } else {
+                    updateConfig("IS_GITLAB_ENABLED", "1");
+                  }
                 }}
                 size="sm"
                 disabled={isSubmitting || !formattedConfig}
