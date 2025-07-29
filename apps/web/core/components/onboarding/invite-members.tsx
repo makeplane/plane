@@ -31,7 +31,6 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // components
-import { OnboardingHeader } from "./header";
 import { SwitchAccountDropdown } from "./switch-account-dropdown";
 
 type Props = {
@@ -351,13 +350,6 @@ export const InviteMembers: React.FC<Props> = (props) => {
   return (
     <div className="flex w-full h-full">
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <div className="flex items-center justify-between">
-          {/* Since this will always be the last step */}
-          <OnboardingHeader currentStep={totalSteps} totalSteps={totalSteps} />
-          <div className="shrink-0 lg:hidden">
-            <SwitchAccountDropdown />
-          </div>
-        </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
             <h3 className="text-3xl font-bold text-onboarding-text-100">Invite your teammates</h3>

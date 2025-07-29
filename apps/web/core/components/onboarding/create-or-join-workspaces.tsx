@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { OctagonAlert } from "lucide-react";
 import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
-import { Invitations, OnboardingHeader, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
+import { Invitations, SwitchAccountDropdown, CreateWorkspace } from "@/components/onboarding";
 // hooks
 import { useUser } from "@/hooks/store";
 // plane web helpers
@@ -51,12 +51,6 @@ export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
   return (
     <div className="flex h-full w-full">
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
-        <div className="flex items-center justify-between">
-          <OnboardingHeader currentStep={totalSteps - 1} totalSteps={totalSteps} />
-          <div className="shrink-0 lg:hidden">
-            <SwitchAccountDropdown />
-          </div>
-        </div>
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
           {currentView === ECreateOrJoinWorkspaceViews.WORKSPACE_JOIN ? (
             <Invitations

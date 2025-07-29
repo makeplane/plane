@@ -20,6 +20,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUserProfile, useUserSettings, useWorkspace } from "@/hooks/store";
 // plane-web imports
+import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 import { WorkspaceService } from "@/plane-web/services";
 // local components
 import { CommonOnboardingHeader } from "../common";
@@ -44,6 +45,9 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
     const { updateUserProfile } = useUserProfile();
     const { fetchCurrentUserSettings } = useUserSettings();
     const { createWorkspace, fetchWorkspaces } = useWorkspace();
+
+    const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
+
     // form info
     const {
       handleSubmit,
@@ -58,7 +62,6 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
       },
       mode: "onChange",
     });
-
 
     const handleCreateWorkspace = async (formData: IWorkspace) => {
       if (isSubmitting) return;
@@ -117,6 +120,17 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
 
     const isButtonDisabled = !isValid || invalidSlug || isSubmitting;
 
+    if (!isWorkspaceCreationEnabled) {
+      return (
+        <div className="flex flex-col gap-10">
+          <span className="text-center text-base text-custom-text-300">
+            You don&apos;t seem to have any invites to a workspace and your instance admin has restricted creation of
+            new workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to
+            this screen to join.
+          </span>
+        </div>
+      );
+    }
     return (
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <CommonOnboardingHeader title="Create your workspace" description="All your work — unified." />
