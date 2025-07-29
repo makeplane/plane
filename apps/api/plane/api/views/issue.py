@@ -1,5 +1,6 @@
 # Python imports
 import json
+import re
 import uuid
 import re
 
@@ -74,6 +75,7 @@ from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
+
 from plane.bgtasks.webhook_task import model_activity
 
 from plane.utils.openapi import (
@@ -144,6 +146,80 @@ from plane.utils.openapi import (
     WORKSPACE_NOT_FOUND_RESPONSE,
 )
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag import FeatureFlag
+from plane.ee.utils.workflow import WorkflowStateManager
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
+
+from plane.utils.openapi import (
+    work_item_docs,
+    label_docs,
+    issue_link_docs,
+    issue_comment_docs,
+    issue_activity_docs,
+    issue_attachment_docs,
+    WORKSPACE_SLUG_PARAMETER,
+    PROJECT_IDENTIFIER_PARAMETER,
+    ISSUE_IDENTIFIER_PARAMETER,
+    PROJECT_ID_PARAMETER,
+    ISSUE_ID_PARAMETER,
+    LABEL_ID_PARAMETER,
+    COMMENT_ID_PARAMETER,
+    LINK_ID_PARAMETER,
+    ATTACHMENT_ID_PARAMETER,
+    ACTIVITY_ID_PARAMETER,
+    PROJECT_ID_QUERY_PARAMETER,
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    EXTERNAL_ID_PARAMETER,
+    EXTERNAL_SOURCE_PARAMETER,
+    ORDER_BY_PARAMETER,
+    SEARCH_PARAMETER,
+    SEARCH_PARAMETER_REQUIRED,
+    LIMIT_PARAMETER,
+    WORKSPACE_SEARCH_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    ISSUE_CREATE_EXAMPLE,
+    ISSUE_UPDATE_EXAMPLE,
+    ISSUE_UPSERT_EXAMPLE,
+    LABEL_CREATE_EXAMPLE,
+    LABEL_UPDATE_EXAMPLE,
+    ISSUE_LINK_CREATE_EXAMPLE,
+    ISSUE_LINK_UPDATE_EXAMPLE,
+    ISSUE_COMMENT_CREATE_EXAMPLE,
+    ISSUE_COMMENT_UPDATE_EXAMPLE,
+    ISSUE_ATTACHMENT_UPLOAD_EXAMPLE,
+    ATTACHMENT_UPLOAD_CONFIRM_EXAMPLE,
+    # Response Examples
+    ISSUE_EXAMPLE,
+    LABEL_EXAMPLE,
+    ISSUE_LINK_EXAMPLE,
+    ISSUE_COMMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_EXAMPLE,
+    ISSUE_ATTACHMENT_NOT_UPLOADED_EXAMPLE,
+    ISSUE_SEARCH_EXAMPLE,
+    WORK_ITEM_NOT_FOUND_RESPONSE,
+    ISSUE_NOT_FOUND_RESPONSE,
+    PROJECT_NOT_FOUND_RESPONSE,
+    EXTERNAL_ID_EXISTS_RESPONSE,
+    DELETED_RESPONSE,
+    ADMIN_ONLY_RESPONSE,
+    LABEL_NOT_FOUND_RESPONSE,
+    LABEL_NAME_EXISTS_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
+    LINK_NOT_FOUND_RESPONSE,
+    COMMENT_NOT_FOUND_RESPONSE,
+    ATTACHMENT_NOT_FOUND_RESPONSE,
+    BAD_SEARCH_REQUEST_RESPONSE,
+    UNAUTHORIZED_RESPONSE,
+    FORBIDDEN_RESPONSE,
+    WORKSPACE_NOT_FOUND_RESPONSE,
+)
 
 
 class WorkspaceIssueAPIEndpoint(BaseAPIView):
@@ -430,6 +506,17 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 "default_assignee_id": project.default_assignee_id,
             },
         )
+        if request.data.get("state_id"):
+            workflow_state_manager = WorkflowStateManager(
+                project_id=project_id, slug=slug
+            )
+            if workflow_state_manager.validate_issue_creation(
+                state_id=request.data.get("state_id"), user_id=request.user.id
+            ):
+                return Response(
+                    {"error": "You cannot create a work item in this state"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         if serializer.is_valid():
             if (
@@ -547,15 +634,115 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Supports filtering, ordering, and field selection through query parameters.
         """
 
-        issue = Issue.issue_objects.annotate(
-            sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-        return Response(
-            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
-            status=status.HTTP_200_OK,
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            issue = Issue.objects.get(
+                external_id=external_id,
+                external_source=external_source,
+                workspace__slug=slug,
+                project_id=project_id,
+            )
+            return Response(
+                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                status=status.HTTP_200_OK,
+            )
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = (
+            self.get_queryset()
+            .annotate(
+                cycle_id=Subquery(
+                    CycleIssue.objects.filter(
+                        issue=OuterRef("id"), deleted_at__isnull=True
+                    ).values("cycle_id")[:1]
+                )
+            )
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=FileAsset.objects.filter(
+                    issue_id=OuterRef("id"),
+                    entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+                )
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        # Priority Ordering
+        if order_by_param == "priority" or order_by_param == "-priority":
+            priority_order = (
+                priority_order if order_by_param == "priority" else priority_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                priority_order=Case(
+                    *[
+                        When(priority=p, then=Value(i))
+                        for i, p in enumerate(priority_order)
+                    ],
+                    output_field=CharField(),
+                )
+            ).order_by("priority_order")
+
+        # State Ordering
+        elif order_by_param in [
+            "state__name",
+            "state__group",
+            "-state__name",
+            "-state__group",
+        ]:
+            state_order = (
+                state_order
+                if order_by_param in ["state__name", "state__group"]
+                else state_order[::-1]
+            )
+            issue_queryset = issue_queryset.annotate(
+                state_order=Case(
+                    *[
+                        When(state__group=state_group, then=Value(i))
+                        for i, state_group in enumerate(state_order)
+                    ],
+                    default=Value(len(state_order)),
+                    output_field=CharField(),
+                )
+            ).order_by("state_order")
+        # assignee and label ordering
+        elif order_by_param in [
+            "labels__name",
+            "-labels__name",
+            "assignees__first_name",
+            "-assignees__first_name",
+        ]:
+            issue_queryset = issue_queryset.annotate(
+                max_values=Max(
+                    order_by_param[1::]
+                    if order_by_param.startswith("-")
+                    else order_by_param
+                )
+            ).order_by(
+                "-max_values" if order_by_param.startswith("-") else "max_values"
+            )
+        else:
+            issue_queryset = issue_queryset.order_by(order_by_param)
+
+        return self.paginate(
+            request=request,
+            queryset=(issue_queryset),
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand
+            ).data,
         )
 
     @work_item_docs(
@@ -623,6 +810,23 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     },
                     partial=True,
                 )
+
+                # Check if state is updated then is the transition allowed
+                workflow_state_manager = WorkflowStateManager(
+                    project_id=project_id, slug=slug
+                )
+                if request.data.get(
+                    "state_id"
+                ) and not workflow_state_manager.validate_state_transition(
+                    issue=issue,
+                    new_state_id=request.data.get("state_id"),
+                    user_id=request.user.id,
+                ):
+                    return Response(
+                        {"error": "State transition is not allowed"},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+
                 if serializer.is_valid():
                     # If the serializer is valid, save the issue and dispatch
                     # the update issue activity worker event.
@@ -636,6 +840,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         current_instance=current_instance,
                         epoch=int(timezone.now().timestamp()),
                     )
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
                     return Response(serializer.data, status=status.HTTP_200_OK)
                 return Response(
                     # If the serializer is not valid, respond with 400 bad
@@ -676,6 +896,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         "created_by", request.user.id
                     )
                     issue.save(update_fields=["created_at", "created_by"])
+                    cycle_issue = CycleIssue.objects.filter(issue_id=issue.id).first()
+                    if cycle_issue and (
+                        request.data.get("state_id")
+                        or request.data.get("estimate_point")
+                    ):
+                        entity_issue_state_activity_task.delay(
+                            issue_cycle_data=[
+                                {
+                                    "issue_id": str(issue.id),
+                                    "cycle_id": str(cycle_issue.cycle_id),
+                                }
+                            ],
+                            user_id=str(request.user.id),
+                            slug=slug,
+                            action="UPDATED",
+                        )
 
                     issue_activity.delay(
                         type="issue.activity.created",
@@ -736,6 +972,21 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             context={"project_id": project_id, "workspace_id": project.workspace_id},
             partial=True,
         )
+
+        # Check if state is updated then is the transition allowed
+        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        if request.data.get(
+            "state_id"
+        ) and not workflow_state_manager.validate_state_transition(
+            issue=issue,
+            new_state_id=request.data.get("state_id"),
+            user_id=request.user.id,
+        ):
+            return Response(
+                {"error": "State transition is not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -767,6 +1018,21 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+            cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+            if cycle_issue and (
+                request.data.get("state_id") or request.data.get("estimate_point")
+            ):
+                entity_issue_state_activity_task.delay(
+                    issue_cycle_data=[
+                        {
+                            "issue_id": str(issue.id),
+                            "cycle_id": str(cycle_issue.cycle_id),
+                        }
+                    ],
+                    user_id=str(request.user.id),
+                    slug=slug,
+                    action="UPDATED",
+                )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -806,6 +1072,18 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        cycle_issue = CycleIssue.objects.filter(issue_id=pk).first()
+        if cycle_issue:
+            # added a entry to remove from the entity issue state activity
+            entity_issue_state_activity_task.delay(
+                issue_cycle_data=[
+                    {"issue_id": str(issue.id), "cycle_id": str(cycle_issue.cycle_id)}
+                ],
+                user_id=str(request.user.id),
+                slug=slug,
+                action="REMOVED",
+            )
+        # EE code end here
         issue.delete()
         issue_activity.delay(
             type="issue.activity.deleted",
@@ -981,6 +1259,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="update_label",
+        summary="Update a label",
         description="Partially update an existing label's properties like name, color, or description.",
         parameters=[
             LABEL_ID_PARAMETER,
@@ -1036,6 +1315,7 @@ class LabelDetailAPIEndpoint(BaseAPIView):
 
     @label_docs(
         operation_id="delete_label",
+        summary="Delete a label",
         description="Permanently remove a label from the project. This action cannot be undone.",
         parameters=[
             LABEL_ID_PARAMETER,
@@ -1231,6 +1511,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
 
     @issue_link_docs(
         operation_id="update_issue_link",
+        summary="Update an issue link",
         description="Modify the URL, title, or metadata of an existing issue link.",
         parameters=[
             ISSUE_ID_PARAMETER,
@@ -1379,6 +1660,27 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
         Retrieve all comments for a work item.
         """
+
+        external_id = request.GET.get("external_id")
+        external_source = request.GET.get("external_source")
+
+        if external_id and external_source:
+            try:
+                issue_comment = IssueComment.objects.get(
+                    external_id=external_id,
+                    external_source=external_source,
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    issue_id=issue_id,
+                )
+                serializer = IssueCommentSerializer(
+                    issue_comment, fields=self.fields, expand=self.expand
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IssueComment.DoesNotExist:
+                return Response(
+                    {"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -1450,7 +1752,8 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment.created_by_id = request.data.get(
                 "created_by", request.user.id
             )
-            issue_comment.save(update_fields=["created_at", "created_by"])
+            issue_comment.actor_id = request.data.get("created_by", request.user.id)
+            issue_comment.save(update_fields=["created_at", "created_by", "actor"])
 
             issue_activity.delay(
                 type="comment.activity.created",
@@ -1472,7 +1775,6 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1611,6 +1913,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
+
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
@@ -1621,7 +1924,6 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
-
             issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
             serializer = IssueCommentSerializer(issue_comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -1876,7 +2178,15 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        size_limit = min(size, settings.FILE_SIZE_LIMIT)
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
@@ -2156,6 +2466,190 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class IssueAttachmentServerEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [ProjectEntityPermission]
+    model = FileAsset
+
+    def post(self, request, slug, project_id, issue_id):
+        name = request.data.get("name")
+        type = request.data.get("type", False)
+        size = request.data.get("size")
+        external_id = request.data.get("external_id")
+        external_source = request.data.get("external_source")
+
+        # Check if the request is valid
+        if not name or not size:
+            return Response(
+                {"error": "Invalid request.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the file size is greater than the limit
+        if check_workspace_feature_flag(
+            feature_key=FeatureFlag.FILE_SIZE_LIMIT_PRO,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            size_limit = min(size, settings.PRO_FILE_SIZE_LIMIT)
+        else:
+            size_limit = min(size, settings.FILE_SIZE_LIMIT)
+
+        if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            return Response(
+                {"error": "Invalid file type.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace
+        workspace = Workspace.objects.get(slug=slug)
+
+        # asset key
+        asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
+
+        if (
+            request.data.get("external_id")
+            and request.data.get("external_source")
+            and FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).exists()
+        ):
+            asset = FileAsset.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                external_source=request.data.get("external_source"),
+                external_id=request.data.get("external_id"),
+                issue_id=issue_id,
+                entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            ).first()
+            return Response(
+                {
+                    "error": "Issue with the same external id and external source already exists",
+                    "id": str(asset.id),
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        # Create a File Asset
+        asset = FileAsset.objects.create(
+            attributes={"name": name, "type": type, "size": size_limit},
+            asset=asset_key,
+            size=size_limit,
+            workspace_id=workspace.id,
+            created_by=request.user,
+            issue_id=issue_id,
+            project_id=project_id,
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
+            external_id=external_id,
+            external_source=external_source,
+        )
+
+        # Get the presigned URL
+        storage = S3Storage(request=request, is_server=True)
+        # Generate a presigned URL to share an S3 object
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
+        # Return the presigned URL
+        return Response(
+            {
+                "upload_data": presigned_url,
+                "asset_id": str(asset.id),
+                "attachment": IssueAttachmentSerializer(asset).data,
+                "asset_url": asset.asset_url,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        issue_attachment.is_deleted = True
+        issue_attachment.deleted_at = timezone.now()
+        issue_attachment.save()
+
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+            notification=True,
+            origin=request.META.get("HTTP_ORIGIN"),
+        )
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            # Get the asset
+            asset = FileAsset.objects.get(
+                id=pk, workspace__slug=slug, project_id=project_id
+            )
+
+        # Check if the asset is uploaded
+        if not asset.is_uploaded:
+            return Response(
+                {"error": "The asset is not uploaded.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        storage = S3Storage(request=request)
+        presigned_url = storage.generate_presigned_url(
+            object_name=asset.asset.name,
+            disposition="attachment",
+            filename=asset.attributes.get("name"),
+        )
+        return HttpResponseRedirect(presigned_url)
+
+    def patch(self, request, slug, project_id, issue_id, pk):
+        """Confirm attachment upload
+
+        Mark an attachment as uploaded after successful file transfer to storage.
+        Triggers activity logging and metadata extraction.
+        """
+        issue_attachment = FileAsset.objects.get(
+            pk=pk, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachment)
+
+        # Send this activity only if the attachment is not uploaded before
+        if not issue_attachment.is_uploaded:
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                epoch=int(timezone.now().timestamp()),
+                notification=True,
+                origin=request.META.get("HTTP_ORIGIN"),
+            )
+
+            # Update the attachment
+            issue_attachment.is_uploaded = True
+            issue_attachment.created_by = request.user
+
+        # Get the storage metadata
+        if not issue_attachment.storage_metadata:
+            get_asset_object_metadata.delay(str(issue_attachment.id))
+        issue_attachment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class IssueSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the issues"""
 
@@ -2231,6 +2725,7 @@ class IssueSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
+            "type_id",
         )[: int(limit)]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)

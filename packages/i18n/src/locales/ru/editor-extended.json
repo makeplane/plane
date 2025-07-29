@@ -1,0 +1,27 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Перетащите для загрузки внешних файлов"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "Файл слишком большой.",
+        "description": "Максимальный размер файла {maxFileSize} МБ"
+      },
+      "unsupported_file_type": {
+        "title": "Неподдерживаемый тип файла.",
+        "description": "Посмотреть поддерживаемые форматы"
+      },
+      "default": {
+        "title": "Загрузка не удалась.",
+        "description": "Что-то пошло не так. Попробуйте еще раз."
+      }
+    },
+    "upgrade": {
+      "description": "Обновите план для просмотра этого вложения."
+    },
+    "aria": {
+      "click_to_upload": "Нажмите для загрузки вложения"
+    }
+  }
+}

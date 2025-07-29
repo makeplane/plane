@@ -5,6 +5,7 @@ import "./styles/editor.css";
 import "./styles/table.css";
 import "./styles/github-dark.css";
 import "./styles/drag-drop.css";
+import "./styles/title-editor.css";
 
 // editors
 export {
@@ -14,6 +15,7 @@ export {
   LiteTextReadOnlyEditorWithRef,
   RichTextEditorWithRef,
 } from "@/components/editors";
+export { PiChatEditor } from "./ee/components/editors";
 
 // constants
 export * from "@/constants/common";
@@ -21,6 +23,7 @@ export * from "@/constants/common";
 // helpers
 export * from "@/helpers/common";
 export * from "@/helpers/yjs-utils";
+export * from "@/helpers/parser";
 
 export { CORE_EXTENSIONS } from "@/constants/extension";
 export { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
