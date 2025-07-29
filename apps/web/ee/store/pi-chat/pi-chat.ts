@@ -179,6 +179,7 @@ export class PiChatStore implements IPiChatStore {
     // Existing chat
     if (chatId) {
       this.activeChatId = chatId;
+      this.isNewChat = false;
     } else {
       this.activeChatId = "";
     }
@@ -360,13 +361,11 @@ export class PiChatStore implements IPiChatStore {
           ...response.results,
         }));
         this.isLoadingMap[chatId] = false;
-        this.isNewChat = response.results.dialogue.length === 0;
       });
     } catch (e: any) {
       runInAction(() => {
         if (e?.status === 403) {
           this.isAuthorized = false;
-          this.isNewChat = false;
         } else {
           this.isNewChat = true;
         }
