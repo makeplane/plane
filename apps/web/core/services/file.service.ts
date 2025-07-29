@@ -2,7 +2,6 @@ import { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
-// helpers
 import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
@@ -138,6 +137,38 @@ export class FileService extends APIService {
       });
   }
 
+  async updateBulkInitiativeAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/attachments/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateBulkInitiativeCommentAssetsUploadStatus(
+    workspaceSlug: string,
+    initiativeId: string,
+    commentId: string,
+    data: {
+      asset_ids: string[];
+    }
+  ): Promise<void> {
+    return this.post(
+      `/api/assets/v2/workspaces/${workspaceSlug}/initiatives/${initiativeId}/comments/${commentId}/attachments/`,
+      data
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async uploadProjectAsset(
     workspaceSlug: string,
     projectId: string,
@@ -211,6 +242,15 @@ export class FileService extends APIService {
   async deleteOldWorkspaceAsset(workspaceId: string, src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteOldWorkspaceAssetV2(workspaceSlug: string, src: string): Promise<any> {
+    const assetKey = getAssetIdFromUrl(src);
+    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;

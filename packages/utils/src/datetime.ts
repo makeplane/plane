@@ -24,7 +24,7 @@ export const renderFormattedDate = (
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
     formattedDate = format(parsedDate, formatToken);
-  } catch (e) {
+  } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
     formattedDate = format(parsedDate, "MMM dd, yyyy");
   }
@@ -287,7 +287,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
 
     return new Date(year, month - 1, day);
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 };

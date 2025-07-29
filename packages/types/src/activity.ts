@@ -1,3 +1,5 @@
+import { TBaseActivityVerbsExtended } from "./activity-extended";
+
 export type TBaseActivity<TFieldKey extends string = string, TVerbKey extends string = string> = {
   id: string;
   field: TFieldKey | undefined;
@@ -27,4 +29,4 @@ export type TProjectBaseActivity<K extends string = string, V extends string = s
   project: string;
 };
 
-export type TBaseActivityVerbs = "created" | "updated" | "deleted";
+export type TBaseActivityVerbs = "created" | "updated" | "deleted" | TBaseActivityVerbsExtended;

@@ -1,0 +1,27 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Drop files here or click to upload"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "File too large.",
+        "description": "Maximum size per file is {maxFileSize}MB"
+      },
+      "unsupported_file_type": {
+        "title": "Unsupported file type.",
+        "description": "See supported formats"
+      },
+      "default": {
+        "title": "Upload failed.",
+        "description": "Something went wrong. Please try again."
+      }
+    },
+    "upgrade": {
+      "description": "Upgrade your plan to view this attachment."
+    },
+    "aria": {
+      "click_to_upload": "Click to upload attachment"
+    }
+  }
+}

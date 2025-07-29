@@ -27,6 +27,7 @@ export const useEditor = (props: TEditorHookProps) => {
     handleEditorReady,
     id = "",
     initialValue,
+    isSmoothCursorEnabled = false,
     mentionHandler,
     onAssetChange,
     onChange,
@@ -52,6 +53,7 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
+          isSmoothCursorEnabled,
           editable,
           disabledExtensions,
           enableHistory,
