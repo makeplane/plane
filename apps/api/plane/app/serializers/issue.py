@@ -38,6 +38,11 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
+)
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -126,6 +131,22 @@ class IssueCreateSerializer(BaseSerializer):
                 is_active=True,
                 member_id__in=attrs["assignee_ids"],
             ).values_list("member_id", flat=True)
+
+        # Validate description content for security
+        if "description" in attrs and attrs["description"]:
+            is_valid, error_msg = validate_json_content(attrs["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
+
+        if "description_html" in attrs and attrs["description_html"]:
+            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if "description_binary" in attrs and attrs["description_binary"]:
+            is_valid, error_msg = validate_binary_data(attrs["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
 
         return attrs
 

@@ -4,7 +4,11 @@ import base64
 
 # Module imports
 from .base import BaseSerializer
-from plane.utils.binary_validator import validate_binary_data
+from plane.utils.content_validator import (
+    validate_binary_data,
+    validate_html_content,
+    validate_json_content,
+)
 from plane.db.models import (
     Page,
     PageLog,
@@ -218,6 +222,30 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
             if isinstance(e, serializers.ValidationError):
                 raise
             raise serializers.ValidationError("Failed to decode base64 data")
+
+    def validate_description_html(self, value):
+        """Validate the HTML content"""
+        if not value:
+            return value
+
+        # Use the validation function from utils
+        is_valid, error_message = validate_html_content(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
+
+        return value
+
+    def validate_description(self, value):
+        """Validate the JSON description"""
+        if not value:
+            return value
+
+        # Use the validation function from utils
+        is_valid, error_message = validate_json_content(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
+
+        return value
 
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""

@@ -96,6 +96,7 @@ from .page import (
     SubPageSerializer,
     PageDetailSerializer,
     PageVersionSerializer,
+    PageBinaryUpdateSerializer,
     PageVersionDetailSerializer,
 )
 
