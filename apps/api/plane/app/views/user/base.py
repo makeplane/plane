@@ -47,6 +47,7 @@ from plane.payment.bgtasks.member_sync_task import member_sync_task
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
     model = User
+    use_read_replica = True
 
     def get_object(self):
         return self.request.user

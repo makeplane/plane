@@ -64,6 +64,7 @@ class ProjectViewSet(BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
+    use_read_replica = True
 
     def get_teamspace_project_ids(self, request, slug):
         # Check if user is part of any teamspace and that teamspace has projects

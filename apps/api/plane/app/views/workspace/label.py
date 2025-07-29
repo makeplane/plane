@@ -16,6 +16,7 @@ from django.db import IntegrityError
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
+    use_read_replica = True
 
     @cache_response(60 * 60 * 2)
     def get(self, request, slug):

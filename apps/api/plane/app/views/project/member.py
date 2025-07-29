@@ -519,6 +519,7 @@ class ProjectMemberUserEndpoint(BaseAPIView):
 
 class UserProjectRolesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceUserPermission]
+    use_read_replica = True
 
     def get_teamspace_project_ids(self, slug: str, user_id: UUID):
         """

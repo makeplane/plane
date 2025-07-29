@@ -12,6 +12,7 @@ from plane.app.permissions import allow_permission, ROLE
 
 class UserRecentVisitViewSet(BaseViewSet):
     model = UserRecentVisit
+    use_read_replica = True
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):

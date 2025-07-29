@@ -241,6 +241,8 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
 
 
 class UnreadNotificationEndpoint(BaseAPIView):
+    use_read_replica = True
+
     @allow_permission(
         allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
     )
