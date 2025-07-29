@@ -1,5 +1,5 @@
-import { Extensions } from "@tiptap/core";
-import React from "react";
+import type { Extensions } from "@tiptap/core";
+import React, { useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -13,27 +13,32 @@ import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
-import { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
+import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
+    documentLoaderClassName,
+    extensions: externalExtensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
+    editorProps,
     embedHandler,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled = true,
     isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     realtimeConfig,
@@ -42,21 +47,26 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     user,
   } = props;
 
-  const extensions: Extensions = [];
+  const extensions: Extensions = useMemo(() => {
+    const allExtensions = externalExtensions;
 
-  if (embedHandler?.issue) {
-    extensions.push(
-      WorkItemEmbedExtension({
-        widgetCallback: embedHandler.issue.widgetCallback,
-      })
-    );
-  }
+    if (embedHandler?.issue) {
+      allExtensions.push(
+        WorkItemEmbedExtension({
+          widgetCallback: embedHandler.issue.widgetCallback,
+        })
+      );
+    }
+
+    return allExtensions;
+  }, [externalExtensions, embedHandler.issue]);
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced } = useCollaborativeEditor({
     disabledExtensions,
     editable,
     editorClassName,
+    editorProps,
     embedHandler,
     extensions,
     fileHandler,
@@ -64,10 +74,12 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled,
     isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     realtimeConfig,
@@ -89,6 +101,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       aiHandler={aiHandler}
       bubbleMenuEnabled={bubbleMenuEnabled}
       displayConfig={displayConfig}
+      documentLoaderClassName={documentLoaderClassName}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
       id={id}

@@ -11,6 +11,7 @@ type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
@@ -24,6 +25,7 @@ export const PageRenderer = (props: Props) => {
     aiHandler,
     bubbleMenuEnabled,
     displayConfig,
+    documentLoaderClassName,
     editor,
     editorContainerClassName,
     id,
@@ -39,7 +41,7 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <EditorContainer
           displayConfig={displayConfig}

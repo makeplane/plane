@@ -20,6 +20,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     containerClassName,
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
+    documentLoaderClassName,
     editorClassName = "",
     embedHandler,
     fileHandler,
@@ -62,6 +63,7 @@ const DocumentReadOnlyEditor: React.FC<IDocumentReadOnlyEditorProps> = (props) =
     <PageRenderer
       bubbleMenuEnabled={false}
       displayConfig={displayConfig}
+      documentLoaderClassName={documentLoaderClassName}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
