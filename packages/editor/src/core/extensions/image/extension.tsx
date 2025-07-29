@@ -25,7 +25,6 @@ export const ImageExtension = (props: Props) => {
       return {
         ...this.parent?.(),
         getImageSource: getAssetSrc,
-        isTouchDevice: false,
       };
     },
 

@@ -2,13 +2,10 @@ import { Maximize } from "lucide-react";
 import { useEffect, useState } from "react";
 // plane imports
 import { Tooltip } from "@plane/ui";
-// extensions
-import { CustomImageExtensionOptions } from "@/extensions/custom-image/types";
 // local imports
 import { ImageFullScreenModal } from "./modal";
 
 type Props = {
-  extensionOptions: CustomImageExtensionOptions;
   image: {
     aspectRatio: number;
     downloadSrc: string;
@@ -16,16 +13,16 @@ type Props = {
     src: string;
     width: string;
   };
+  isTouchDevice: boolean;
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
 export const ImageFullScreenActionRoot: React.FC<Props> = (props) => {
-  const { extensionOptions, image, toggleToolbarViewStatus } = props;
+  const { image, isTouchDevice, toggleToolbarViewStatus } = props;
   // states
   const [isFullScreenEnabled, setIsFullScreenEnabled] = useState(false);
   // derived values
   const { downloadSrc, src, width, aspectRatio } = image;
-  const { isTouchDevice } = extensionOptions;
 
   useEffect(() => {
     toggleToolbarViewStatus(isFullScreenEnabled);

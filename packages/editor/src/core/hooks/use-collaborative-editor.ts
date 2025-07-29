@@ -101,7 +101,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         embedConfig: embedHandler,
         fileHandler,
         flaggedExtensions,
-        isTouchDevice,
         provider,
         userDetails: user,
       }),
