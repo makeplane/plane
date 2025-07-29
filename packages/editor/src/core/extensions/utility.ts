@@ -10,7 +10,7 @@ import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // prosemirror plugins
 import { codemark } from "./code-mark";
 
-import type { IEditorProps, TEditorAsset, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
@@ -38,7 +38,7 @@ export interface UtilityExtensionStorage {
 }
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
   isEditable: boolean;
 };
 

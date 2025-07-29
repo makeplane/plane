@@ -4,15 +4,12 @@ import { EditorProps } from "@tiptap/pm/view";
 import { TEmbedConfig } from "@/plane-editor/types";
 // types
 import {
-  EditorReadOnlyRefApi,
   EditorRefApi,
   EditorTitleRefApi,
   ICollaborativeDocumentEditorProps,
   TExtensions,
   TFileHandler,
   TMentionHandler,
-  TReadOnlyFileHandler,
-  TReadOnlyMentionHandler,
   TRealtimeConfig,
   TUserDetails,
 } from "@/types";
@@ -48,10 +45,4 @@ export type TCollaborativeEditorProps = TCollaborativeEditorHookProps & {
   tabIndex?: number;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   updatePageProperties: ICollaborativeDocumentEditorProps["updatePageProperties"];
-};
-
-export type TReadOnlyCollaborativeEditorProps = TCollaborativeEditorHookProps & {
-  fileHandler: TReadOnlyFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-  mentionHandler: TReadOnlyMentionHandler;
 };

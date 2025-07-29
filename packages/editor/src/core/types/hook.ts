@@ -2,12 +2,7 @@ import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { Content } from "@tiptap/core";
 import type { EditorProps } from "@tiptap/pm/view";
 // local imports
-import type {
-  EditorTitleRefApi,
-  ICollaborativeDocumentEditorProps,
-  IEditorProps,
-  IReadOnlyEditorProps,
-} from "./editor";
+import type { EditorTitleRefApi, ICollaborativeDocumentEditorProps, IEditorProps } from "./editor";
 
 type TCoreHookProps = Pick<
   IEditorProps,
@@ -60,7 +55,3 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
     updatePageProperties?: (pageId: string, messageType: string, payload?: any, performAction?: boolean) => void;
   };
-
-export type TReadOnlyEditorHookProps = Omit<TCoreHookProps, "isSmoothCursorEnabled"> &
-  Pick<TEditorHookProps, "initialValue" | "provider"> &
-  Pick<IReadOnlyEditorProps, "fileHandler" | "forwardedRef" | "mentionHandler">;

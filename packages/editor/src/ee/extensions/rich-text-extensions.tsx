@@ -4,14 +4,14 @@ import { Paperclip } from "lucide-react";
 import {
   TRichTextEditorAdditionalExtensionsProps,
   TRichTextEditorAdditionalExtensionsRegistry,
-} from "src/ce/extensions/rich-text/extensions";
+} from "src/ce/extensions/rich-text-extensions";
 // extensions
 import { SlashCommands, TSlashCommandAdditionalOption } from "@/extensions/slash-commands/root";
 // types
 import { TExtensions } from "@/types";
 // local imports
-import { insertAttachment } from "../../helpers/editor-commands";
-import { CustomAttachmentExtension } from "../attachments/extension";
+import { insertAttachment } from "../helpers/editor-commands";
+import { CustomAttachmentExtension } from "./attachments/extension";
 
 /**
  * Registry for slash commands

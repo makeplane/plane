@@ -16,8 +16,6 @@ import type {
   TExtensions,
   TFileHandler,
   TMentionHandler,
-  TReadOnlyFileHandler,
-  TReadOnlyMentionHandler,
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
@@ -86,28 +84,9 @@ export type TDocumentInfo = {
   words: number;
 };
 
-// editor refs
-export type EditorReadOnlyRefApi = {
-  clearEditor: (emitUpdate?: boolean) => void;
-  getDocument: () => {
-    binary: Uint8Array | null;
-    html: string;
-    json: JSONContent | null;
-  };
-  getDocumentInfo: () => TDocumentInfo;
-  getHeadings: () => IMarking[];
-  getMarkDown: () => string;
-  scrollSummary: (marking: IMarking) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
-};
-
-// title ref api
-export interface EditorTitleRefApi extends EditorReadOnlyRefApi {
-  setEditorValue: EditorReadOnlyRefApi["setEditorValue"];
-}
-
-export interface EditorRefApi extends EditorReadOnlyRefApi {
+export type EditorRefApi = {
   blur: () => void;
+  clearEditor: (emitUpdate?: boolean) => void;
   editorHasSynced: () => boolean;
   emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
   executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
@@ -122,6 +101,14 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
     nodeName: string
   ) => void;
   getCurrentCursorPosition: () => number | undefined;
+  getDocument: () => {
+    binary: Uint8Array | null;
+    html: string;
+    json: JSONContent | null;
+  };
+  getDocumentInfo: () => TDocumentInfo;
+  getHeadings: () => IMarking[];
+  getMarkDown: () => string;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isEditorReadyToDiscard: () => boolean;
@@ -130,12 +117,16 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
+  scrollSummary: (marking: IMarking) => void;
   // eslint-disable-next-line no-undef
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
-}
+};
+
+export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
 export interface IEditorProps {
@@ -144,6 +135,7 @@ export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
+  editable: boolean;
   editorClassName?: string;
   extensions?: Extensions;
   flaggedExtensions: TExtensions[];
@@ -167,13 +159,11 @@ export type ILiteTextEditorProps = IEditorProps;
 
 export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
-  editable: boolean;
 };
 
 export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
-  editable: boolean;
   embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
@@ -198,32 +188,10 @@ export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" 
 
 export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
-  editable: boolean;
   embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
 }
-
-// read only editor props
-export interface IReadOnlyEditorProps
-  extends Pick<
-    IEditorProps,
-    | "containerClassName"
-    | "disabledExtensions"
-    | "flaggedExtensions"
-    | "displayConfig"
-    | "editorClassName"
-    | "extensions"
-    | "handleEditorReady"
-    | "id"
-    | "initialValue"
-  > {
-  fileHandler: TReadOnlyFileHandler;
-  forwardedRef?: React.MutableRefObject<EditorReadOnlyRefApi | null>;
-  mentionHandler: TReadOnlyMentionHandler;
-}
-
-export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export interface EditorEvents {
   beforeCreate: never;

@@ -17,7 +17,7 @@ import { StickyEditorToolbar } from "./toolbar";
 interface StickyEditorWrapperProps
   extends Omit<
     ILiteTextEditorProps,
-    "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "isSmoothCursorEnabled" | "mentionHandler"
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "isSmoothCursorEnabled"
   > {
   workspaceSlug: string;
   workspaceId: string;
@@ -75,6 +75,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, "enter-key"]}
         flaggedExtensions={liteTextEditorExtensions.flagged}
+        editable
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,

@@ -1,11 +1,10 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
-// components
+import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
+// components
 import { EditorMentionsRoot } from "@/components/editor";
-// helpers
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 // store hooks
@@ -38,7 +37,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
     workspaceSlug,
     workspaceId,
     projectId,
-    disabledExtensions: additionalDisabledExtensions,
+    disabledExtensions: additionalDisabledExtensions = [],
     ...rest
   } = props;
   // store hooks
@@ -74,8 +73,10 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
           if (!res) throw new Error("Failed in fetching mentions");
           return res;
         },
-        renderComponent: (props) => <EditorMentionsRoot {...props} />,
-        getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
+        renderComponent: EditorMentionsRoot,
+        getMentionedEntityDetails: (id) => ({
+          display_name: getUserDetails(id)?.display_name ?? "",
+        }),
       }}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}

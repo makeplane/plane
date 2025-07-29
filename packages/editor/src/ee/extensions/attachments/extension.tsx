@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
-import { TFileHandler, TReadOnlyFileHandler } from "@/types";
+import { TFileHandler } from "@/types";
 // block
 import { CustomAttachmentNodeView, CustomAttachmentNodeViewProps } from "./components/node-view";
 // config
@@ -14,7 +14,7 @@ import { TAttachmentBlockAttributes } from "./types";
 import { DEFAULT_ATTACHMENT_BLOCK_ATTRIBUTES, getAttachmentExtensionFileMap } from "./utils";
 
 type Props = {
-  fileHandler: TReadOnlyFileHandler | TFileHandler;
+  fileHandler: TFileHandler;
   isEditable: boolean;
   isFlagged: boolean;
 };
