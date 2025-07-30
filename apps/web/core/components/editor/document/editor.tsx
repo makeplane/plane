@@ -7,14 +7,14 @@ import { cn } from "@plane/utils";
 import { EditorMentionsRoot } from "@/components/editor";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
-import { useMember } from "@/hooks/store";
+import { useMember, useUserProfile } from "@/hooks/store";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 type DocumentEditorWrapperProps = MakeOptional<
   Omit<IDocumentEditorProps, "fileHandler" | "mentionHandler" | "embedHandler" | "user">,
-  "disabledExtensions" | "editable" | "flaggedExtensions"
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "isSmoothCursorEnabled"
 > & {
   embedHandler?: Partial<IDocumentEditorProps["embedHandler"]>;
   workspaceSlug: string;
@@ -57,6 +57,9 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
     projectId,
     workspaceSlug,
   });
+  const {
+    data: { is_smooth_cursor_enabled },
+  } = useUserProfile();
 
   return (
     <DocumentEditorWithRef
@@ -83,6 +86,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
         issue: issueEmbedProps,
         ...embedHandler,
       }}
+      isSmoothCursorEnabled={is_smooth_cursor_enabled}
       {...rest}
       containerClassName={cn("relative pl-3 pb-3", containerClassName)}
     />

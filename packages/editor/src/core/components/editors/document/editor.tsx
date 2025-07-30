@@ -31,6 +31,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     forwardedRef,
     id,
     handleEditorReady,
+    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
     user,
@@ -79,6 +80,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     handleEditorReady,
     id,
     initialValue: value,
+    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
   });
