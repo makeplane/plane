@@ -18,7 +18,7 @@ export const WorkItemEmbedExtension = (props: Props) =>
   WorkItemEmbedExtensionConfig.extend({
     addNodeView() {
       return ReactNodeViewRenderer((issueProps: any) => (
-        <NodeViewWrapper>
+        <NodeViewWrapper key={`work-item-embed-node-view-${issueProps.node.attrs.entity_identifier}`}>
           {props.widgetCallback({
             issueId: issueProps.node.attrs.entity_identifier,
             projectId: issueProps.node.attrs.project_identifier,

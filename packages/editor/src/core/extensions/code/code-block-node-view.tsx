@@ -5,7 +5,8 @@ import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
 import { CopyIcon, CheckIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 // ui
 import { Tooltip } from "@plane/ui";
 // plane utils
@@ -22,6 +23,8 @@ interface CodeBlockComponentProps {
 export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) => {
   const [copied, setCopied] = useState(false);
 
+  const uniqueId = useMemo(() => uuidv4(), []);
+
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       await navigator.clipboard.writeText(node.textContent);
@@ -35,7 +38,7 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
   };
 
   return (
-    <NodeViewWrapper className="code-block relative group/code">
+    <NodeViewWrapper className="code-block relative group/code" key={`code-block-${uniqueId}`}>
       <Tooltip tooltipContent="Copy code">
         <button
           type="button"

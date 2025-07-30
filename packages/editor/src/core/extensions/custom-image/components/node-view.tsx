@@ -22,7 +22,7 @@ export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "update
 
 export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
   const { editor, extension, node } = props;
-  const { src: imgNodeSrc } = node.attrs;
+  const { src: imgNodeSrc, id: imageEntityId } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(false);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
@@ -68,7 +68,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   }, [imgNodeSrc, extension.options]);
 
   return (
-    <NodeViewWrapper>
+    <NodeViewWrapper key={`custom-image-node-view-${imageEntityId}`}>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {(isUploaded || imageFromFileSystem) && !failedToLoadImage ? (
           <CustomImageBlock
