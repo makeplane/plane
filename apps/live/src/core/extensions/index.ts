@@ -9,7 +9,7 @@ import { logger } from "@plane/logger";
 // core helpers and utilities
 import { getRedisUrl } from "@/core/lib/utils/redis-url.js";
 // core libraries
-import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page.js";
+import { fetchPageDescriptionBinary, updatePageDescription } from "@/core/lib/page";
 // plane live libraries
 import { fetchDocument } from "@/plane-live/lib/fetch-document.js";
 import { updateDocument } from "@/plane-live/lib/update-document.js";

@@ -1,5 +1,5 @@
 // services
-import { UserService } from "@/core/services/user.service.js";
+import { UserService } from "@/core/services/user.service";
 // core helpers
 import { logger } from "@plane/logger";
 

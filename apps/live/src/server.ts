@@ -5,12 +5,14 @@ import express, { Request, Response } from "express";
 import helmet from "helmet";
 import { logger } from "@plane/logger";
 // hocuspocus server
-import { getHocusPocusServer } from "@/core/hocuspocus-server";
+import { HocusPocusServerManager } from "@/hocuspocus";
 // helpers
 import { convertHTMLDocumentToAllFormats } from "@/core/helpers/convert-document";
 import { logger as loggerMiddleware } from "@/middlewares/logger";
 // types
 import { TConvertDocumentRequestBody } from "@/core/types/common";
+// redis
+import { redisManager } from "@/redis";
 
 export class Server {
   private app: any;
@@ -24,8 +26,24 @@ export class Server {
     expressWs(this.app);
     this.app.set("port", process.env.PORT || 3000);
     this.setupMiddleware();
-    this.setupHocusPocus();
     this.setupRoutes();
+  }
+
+  public async initialize(): Promise<void> {
+    return redisManager
+      .initialize()
+      .then(() => {
+        logger.info("Redis setup completed");
+        const manager = HocusPocusServerManager.getInstance();
+        manager.initialize().catch(() => {
+          logger.error("Failed to initialize HocusPocusServer:");
+          process.exit(1);
+        });
+      })
+      .catch((error) => {
+        logger.error("Failed to setup Redis:", error);
+        process.exit(1);
+      });
   }
 
   private setupMiddleware() {
@@ -41,13 +59,6 @@ export class Server {
     // cors middleware
     this.app.use(cors());
     this.app.use(process.env.LIVE_BASE_PATH || "/live", this.router);
-  }
-
-  private async setupHocusPocus() {
-    this.hocuspocusServer = await getHocusPocusServer().catch((err) => {
-      logger.error("Failed to initialize HocusPocusServer:", err);
-      process.exit(1);
-    });
   }
 
   private setupRoutes() {
@@ -106,6 +117,11 @@ export class Server {
     // Close the HocusPocus server WebSocket connections
     await this.hocuspocusServer.destroy();
     logger.info("HocusPocus server WebSocket connections closed gracefully.");
+
+    // Disconnect Redis
+    await redisManager.disconnect();
+    logger.info("Redis connection closed gracefully.");
+
     // Close the Express server
     this.serverInstance.close(() => {
       logger.info("Express server closed gracefully.");
