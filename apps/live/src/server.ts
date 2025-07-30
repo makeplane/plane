@@ -35,14 +35,14 @@ export class Server {
       .then(() => {
         logger.info("Redis setup completed");
         const manager = HocusPocusServerManager.getInstance();
-        manager.initialize().catch(() => {
+        manager.initialize().catch((error) => {
           logger.error("Failed to initialize HocusPocusServer:");
-          process.exit(1);
+          throw error;
         });
       })
       .catch((error) => {
         logger.error("Failed to setup Redis:", error);
-        process.exit(1);
+        throw error;
       });
   }
 

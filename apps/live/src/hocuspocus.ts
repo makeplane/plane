@@ -198,9 +198,3 @@ export class HocusPocusServerManager {
     HocusPocusServerManager.instance = null;
   }
 }
-
-// Legacy function for backward compatibility
-export const getHocusPocusServer = async (): Promise<Hocuspocus> => {
-  const manager = HocusPocusServerManager.getInstance();
-  return await manager.initialize();
-};
