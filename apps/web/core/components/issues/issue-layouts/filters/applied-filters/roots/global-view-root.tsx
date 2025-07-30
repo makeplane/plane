@@ -11,6 +11,7 @@ import {
   EIssueFilterType,
   EUserPermissions,
   EUserPermissionsLevel,
+  GLOBAL_VIEW_TRACKER_ELEMENTS,
   GLOBAL_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
 import { EIssuesStoreType, EViewAccess, IIssueFilterOptions, TStaticViewTypes } from "@plane/types";
@@ -189,6 +190,7 @@ export const GlobalViewsAppliedFiltersRoot = observer((props: Props) => {
           isAuthorizedUser={isAuthorizedUser}
           setIsModalOpen={setIsModalOpen}
           handleUpdateView={handleUpdateView}
+          trackerElement={GLOBAL_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON}
         />
       ) : (
         <></>

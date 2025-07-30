@@ -303,6 +303,29 @@ export const GLOBAL_VIEW_TRACKER_ELEMENTS = {
 
 /**
  * ===========================================================================
+ * Project View Events and Elements
+ * ===========================================================================
+ */
+export const PROJECT_VIEW_TRACKER_EVENTS = {
+  create: "project_view_created",
+  update: "project_view_updated",
+  delete: "project_view_deleted",
+};
+
+export const PROJECT_VIEW_TRACKER_ELEMENTS = {
+  RIGHT_HEADER_ADD_BUTTON: "project_view_right_header_add_button",
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_project_view_item",
+  EMPTY_STATE_CREATE_BUTTON: "project_view_empty_state_create_button",
+  HEADER_SAVE_VIEW_BUTTON: "project_view_header_save_view_button",
+  PROJECT_HEADER_SAVE_AS_VIEW_BUTTON: "project_view_header_save_as_view_button",
+  CYCLE_HEADER_SAVE_AS_VIEW_BUTTON: "cycle_header_save_as_view_button",
+  MODULE_HEADER_SAVE_AS_VIEW_BUTTON: "module_header_save_as_view_button",
+  QUICK_ACTIONS: "project_view_quick_actions",
+  LIST_ITEM_CONTEXT_MENU: "project_view_list_item_context_menu",
+};
+
+/**
+ * ===========================================================================
  * Product Tour Events and Elements
  * ===========================================================================
  */
