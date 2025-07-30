@@ -136,7 +136,7 @@ const ForgotPasswordPage = observer(() => {
           <div className="container flex-grow max-w-lg px-10 py-10 mx-auto transition-all lg:max-w-md lg:px-5 lg:pt-28">
             <div className="relative flex flex-col space-y-6">
               <div className="py-4 space-y-1 text-center">
-                <h3 className="flex justify-center gap-4 text-3xl font-bold text-onboarding-text-100">
+                <h3 className="flex justify-center gap-4 text-3xl font-bold text-custom-text-100">
                   {t("auth.forgot_password.title")}
                 </h3>
                 <p className="font-medium text-custom-text-400">{t("auth.forgot_password.description")}</p>

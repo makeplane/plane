@@ -142,7 +142,7 @@ export const CreateWorkspace: React.FC<Props> = observer((props) => {
         </>
       )}
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">{t("workspace_creation.heading")}</h3>
+        <h3 className="text-3xl font-bold text-custom-text-100">{t("workspace_creation.heading")}</h3>
         <p className="font-medium text-custom-text-400">{t("workspace_creation.subheading")}</p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>

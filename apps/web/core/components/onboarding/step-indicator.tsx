@@ -22,7 +22,7 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
           key={`line-${i}`}
           className={cn("h-1.5 -ml-0.5 w-full", {
             "bg-green-700": isCompleted,
-            "bg-onboarding-background-100": !isCompleted,
+            "bg-custom-background-100": !isCompleted,
             "rounded-l-full": isFirstStep,
             "rounded-r-full": isLastStep || isActive,
             "z-10": isActive,

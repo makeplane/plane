@@ -191,7 +191,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                 >
                   <span
                     className={`text-sm ${
-                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-onboarding-text-100"
+                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
                     } sm:text-sm`}
                   >
                     {ROLE[value]}
@@ -221,7 +221,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ selected }) => (
@@ -352,7 +352,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
-            <h3 className="text-3xl font-bold text-onboarding-text-100">Invite your teammates</h3>
+            <h3 className="text-3xl font-bold text-custom-text-100">Invite your teammates</h3>
             <p className="font-medium text-custom-text-400">
               Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>

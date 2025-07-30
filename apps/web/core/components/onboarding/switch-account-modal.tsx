@@ -86,7 +86,7 @@ export const SwitchAccountModal: React.FC<Props> = (props) => {
                       </div>
                     </div>
                     <div className="flex flex-col py-3 gap-y-6">
-                      <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-onboarding-text-100">
+                      <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-custom-text-100">
                         Switch account
                       </Dialog.Title>
                       {userData?.email && (

@@ -190,7 +190,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                 >
                   <span
                     className={`text-sm ${
-                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-onboarding-text-100"
+                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
                     } sm:text-sm`}
                   >
                     {ROLE[value]}
@@ -220,7 +220,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ selected }) => (
