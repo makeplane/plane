@@ -182,7 +182,9 @@ export const AppProgressBar = React.memo(
             !href.startsWith("tel:") &&
             !href.startsWith("mailto:") &&
             !href.startsWith("blob:") &&
-            !href.startsWith("javascript:");
+            !href.startsWith("javascript:") &&
+            !href.startsWith("data:") &&
+            !href.startsWith("vbscript:");
 
           return !isNProgressDisabled && isNotTelOrMailto && getAnchorProperty(anchor, "target") !== "_blank";
         });
