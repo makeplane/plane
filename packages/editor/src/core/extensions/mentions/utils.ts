@@ -3,6 +3,8 @@ import { ReactRenderer } from "@tiptap/react";
 import { SuggestionOptions } from "@tiptap/suggestion";
 import tippy, { Instance } from "tippy.js";
 // helpers
+import { CORE_EXTENSIONS } from "@/constants/extension";
+import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { CommandListInstance } from "@/helpers/tippy";
 // types
 import { TMentionHandler } from "@/types";
@@ -28,7 +30,9 @@ export const renderMentionsDropdown =
           },
           editor: props.editor,
         });
-        props.editor.storage.mentionsOpen = true;
+        getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY).activeDropbarExtensions.push(
+          CORE_EXTENSIONS.MENTION
+        );
         // @ts-expect-error - Tippy types are incorrect
         popup = tippy("body", {
           getReferenceClientRect: props.clientRect,
@@ -64,7 +68,11 @@ export const renderMentionsDropdown =
         return false;
       },
       onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
-        props.editor.storage.mentionsOpen = false;
+        const utilityStorage = getExtensionStorage(props.editor, CORE_EXTENSIONS.UTILITY);
+        const index = utilityStorage.activeDropbarExtensions.indexOf(CORE_EXTENSIONS.MENTION);
+        if (index > -1) {
+          utilityStorage.activeDropbarExtensions.splice(index, 1);
+        }
         popup?.[0]?.destroy();
         component?.destroy();
       },

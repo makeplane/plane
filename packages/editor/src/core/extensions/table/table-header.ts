@@ -1,6 +1,9 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// local imports
+import { DEFAULT_COLUMN_WIDTH } from "./table";
+
 export interface TableHeaderOptions {
   HTMLAttributes: Record<string, any>;
 }
@@ -25,7 +28,7 @@ export const TableHeader = Node.create<TableHeaderOptions>({
         default: 1,
       },
       colwidth: {
-        default: null,
+        default: [DEFAULT_COLUMN_WIDTH],
         parseHTML: (element) => {
           const colwidth = element.getAttribute("colwidth");
           const value = colwidth ? [parseInt(colwidth, 10)] : null;

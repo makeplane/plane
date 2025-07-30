@@ -1,0 +1,43 @@
+name: Build and lint web apps
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["preview"]
+    types: ["opened", "synchronize", "ready_for_review", "review_requested", "reopened"]
+    paths:
+      - "**.tsx?"
+      - "**.jsx?"
+      - "**.css"
+      - "**.json"
+      - "!apps/api/**"
+
+jobs:
+  build-and-lint:
+    name: Build and lint web apps
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.requested_reviewers != null
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build web apps
+        run: yarn run build
+
+      - name: Lint web apps
+        run: yarn run ci:lint
+
+

@@ -1,0 +1,69 @@
+# base requirements
+
+# django
+Django==4.2.22
+# rest framework
+djangorestframework==3.15.2
+# postgres
+psycopg==3.1.18
+psycopg-binary==3.1.18
+psycopg-c==3.1.18
+dj-database-url==2.1.0
+# redis
+redis==5.0.4
+django-redis==5.4.0
+# cors
+django-cors-headers==4.3.1
+# celery
+celery==5.4.0
+django_celery_beat==2.6.0
+django-celery-results==2.5.1
+# file serve
+whitenoise==6.6.0
+# fake data
+faker==25.0.0
+# filters
+django-filter==24.2
+# json model
+jsonmodels==2.7.0
+# storage
+django-storages==1.14.2
+# user management
+django-crum==0.7.9
+# web server
+uvicorn==0.29.0
+# sockets
+channels==4.1.0
+# ai
+openai==1.63.2
+# slack
+slack-sdk==3.27.1
+# apm
+scout-apm==3.1.0
+# xlsx generation
+openpyxl==3.1.2
+# logging
+python-json-logger==3.3.0
+# html parser
+beautifulsoup4==4.12.3
+# analytics
+posthog==3.5.0
+# crypto
+cryptography==44.0.1
+# html validator
+lxml==5.2.1
+# s3
+boto3==1.34.96
+# password validator
+zxcvbn==4.4.28
+# timezone
+pytz==2024.1
+# jwt
+PyJWT==2.8.0
+# OpenTelemetry
+opentelemetry-api==1.28.1
+opentelemetry-sdk==1.28.1
+opentelemetry-instrumentation-django==0.49b1
+opentelemetry-exporter-otlp==1.28.1
+# OpenAPI Specification
+drf-spectacular==0.28.0

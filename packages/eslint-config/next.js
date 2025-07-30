@@ -39,7 +39,14 @@ module.exports = {
     "react/jsx-no-duplicate-props": "error",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-expressions": "warn",
-    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
@@ -52,7 +59,7 @@ module.exports = {
       },
     ],
     "import/order": [
-      "error",
+      "warn",
       {
         groups: ["builtin", "external", "internal", "parent", "sibling"],
         pathGroups: [
@@ -79,6 +86,11 @@ module.exports = {
           {
             pattern: "@/**",
             group: "internal",
+          },
+          {
+            pattern: "public/**",
+            group: "internal",
+            position: "after",
           },
         ],
         pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
