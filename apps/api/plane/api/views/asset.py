@@ -405,6 +405,8 @@ class UserServerAssetEndpoint(BaseAPIView):
 class GenericAssetEndpoint(BaseAPIView):
     """This endpoint is used to upload generic assets that can be later bound to entities."""
 
+    use_read_replica = True
+
     @asset_docs(
         operation_id="get_generic_asset",
         summary="Get presigned URL for asset download",

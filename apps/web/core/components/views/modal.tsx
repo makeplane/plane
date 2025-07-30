@@ -3,12 +3,14 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // types
+import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { ProjectViewForm } from "@/components/views";
 // hooks
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProjectView } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useKeypress from "@/hooks/use-keypress";
@@ -43,26 +45,49 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
           title: "Success!",
           message: "View created successfully.",
         });
+        captureSuccess({
+          eventName: PROJECT_VIEW_TRACKER_EVENTS.create,
+          payload: {
+            view_id: res.id,
+          },
+        });
       })
-      .catch(() =>
+      .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "Something went wrong. Please try again.",
-        })
-      );
+        });
+        captureError({
+          eventName: PROJECT_VIEW_TRACKER_EVENTS.create,
+        });
+      });
   };
 
   const handleUpdateView = async (payload: IProjectView) => {
     await updateView(workspaceSlug, projectId, data?.id as string, payload)
-      .then(() => handleClose())
-      .catch((err) =>
+      .then(() => {
+        handleClose();
+        captureSuccess({
+          eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
+          payload: {
+            view_id: data?.id,
+          },
+        });
+      })
+      .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.detail ?? "Something went wrong. Please try again.",
-        })
-      );
+        });
+        captureError({
+          eventName: PROJECT_VIEW_TRACKER_EVENTS.update,
+          payload: {
+            view_id: data?.id,
+          },
+        });
+      });
   };
 
   const handleFormSubmit = async (formData: IProjectView) => {

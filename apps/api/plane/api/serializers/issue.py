@@ -20,6 +20,12 @@ from plane.db.models import (
     ProjectMember,
     State,
     User,
+    EstimatePoint,
+)
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
 )
 
 from .base import BaseSerializer
@@ -82,6 +88,22 @@ class IssueSerializer(BaseSerializer):
         except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
 
+        # Validate description content for security
+        if data.get("description"):
+            is_valid, error_msg = validate_json_content(data["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
+
+        if data.get("description_html"):
+            is_valid, error_msg = validate_html_content(data["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if data.get("description_binary"):
+            is_valid, error_msg = validate_binary_data(data["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
+
         # Validate assignees are from project
         if data.get("assignees", []):
             data["assignees"] = ProjectMember.objects.filter(
@@ -112,11 +134,25 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspace_id=self.context.get("workspace_id"), pk=data.get("parent").id
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError(
                 "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
+        if (
+            data.get("estimate_point")
+            and not EstimatePoint.objects.filter(
+                workspace_id=self.context.get("workspace_id"),
+                project_id=self.context.get("project_id"),
+                pk=data.get("estimate_point").id,
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Estimate point is not valid please pass a valid estimate_point_id"
             )
 
         return data
@@ -633,7 +669,6 @@ class IssueExpandSerializer(BaseSerializer):
     assignees = serializers.SerializerMethodField()
     state = StateLiteSerializer(read_only=True)
 
-
     def get_labels(self, obj):
         expand = self.context.get("expand", [])
         if "labels" in expand:
@@ -650,7 +685,6 @@ class IssueExpandSerializer(BaseSerializer):
                 [ia.assignee for ia in obj.issue_assignee.all()], many=True
             ).data
         return [ia.assignee_id for ia in obj.issue_assignee.all()]
-
 
     class Meta:
         model = Issue

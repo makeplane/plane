@@ -80,6 +80,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
     model = Module
     webhook_event = "module"
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -282,6 +283,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     serializer_class = ModuleSerializer
     webhook_event = "module"
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -550,6 +552,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
     model = ModuleIssue
     webhook_event = "module_issue"
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -769,6 +772,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     model = ModuleIssue
     webhook_event = "module_issue"
     bulk = True
+    use_read_replica = True
 
     permission_classes = [ProjectEntityPermission]
 
@@ -916,6 +920,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
 
 class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
