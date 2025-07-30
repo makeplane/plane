@@ -907,7 +907,7 @@
         },
         "can_disable_warning": "Doriți să dezactivați tipul în schimb?"
       },
-      "cant_delete_linked_message": "Nu se poate șterge acest tip de element de lucru deoarece este legat de elemente de lucru existente."
+      "cant_delete_default_message": "Nu se poate șterge acest tip de element de lucru deoarece este setat ca tip implicit pentru acest proiect."
     },
     "create": {
       "title": "Creează tip de element de lucru",

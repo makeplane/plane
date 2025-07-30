@@ -142,7 +142,7 @@ export const IssuePropertiesRoot = observer((props: TIssuePropertiesRoot) => {
             customPropertyOperations={customPropertyOperations}
             containerRef={containerRef}
             lastElementRef={lastElementRef}
-            isUpdateAllowed={issueType?.issue_exists === false}
+            isUpdateAllowed={!issueType?.id}
           />
         </>
       ) : (

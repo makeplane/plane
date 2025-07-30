@@ -36,7 +36,6 @@ const defaultIssueTypeData: Partial<TIssueType> = {
   description: "",
   is_active: true,
   is_default: false,
-  issue_exists: false,
   level: 0,
   is_epic: false,
 };

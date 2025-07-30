@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "대신 유형을 비활성화하시겠습니까?"
       },
-      "cant_delete_linked_message": "기존 작업 항목에 연결되어 있어 이 작업 항목 유형을 삭제할 수 없습니다."
+      "cant_delete_default_message": "이 작업 항목 유형은 삭제할 수 없습니다. 이 프로젝트의 기본 작업 항목 유형으로 설정되어 있기 때문입니다."
     },
     "create": {
       "title": "워크 아이템 타입 생성",

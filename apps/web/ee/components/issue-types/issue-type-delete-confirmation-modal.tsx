@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button, EModalPosition, EModalWidth, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { useIssueTypes } from "@/plane-web/hooks/store";
@@ -28,10 +28,20 @@ export const IssueTypeDeleteConfirmationModal: FC<TProps> = observer((props) => 
   const handleDelete = async () => {
     if (!issueTypeId) return;
     setIsDeleting(true);
-    await deleteType(issueTypeId).finally(() => {
-      handleModalClose();
-      setIsDeleting(false);
-    });
+    await deleteType(issueTypeId)
+      .then(() => {
+        handleModalClose();
+      })
+      .catch((error) => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("work_item_types.settings.item_delete_confirmation.toast.error.title"),
+          message: error?.error ?? t("work_item_types.settings.item_delete_confirmation.toast.error.message"),
+        });
+      })
+      .finally(() => {
+        setIsDeleting(false);
+      });
   };
 
   return (

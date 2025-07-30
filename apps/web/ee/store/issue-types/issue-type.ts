@@ -34,7 +34,6 @@ export class IssueType implements IIssueType {
   logo_props: TLogoProps | undefined = undefined;
   is_active: boolean | undefined = undefined;
   is_default: boolean | undefined = undefined;
-  issue_exists: boolean | undefined = undefined;
   level: number | undefined = undefined;
   is_epic: boolean | undefined = undefined;
   project_ids: string[] | undefined = undefined;
@@ -59,7 +58,6 @@ export class IssueType implements IIssueType {
       logo_props: observable,
       is_active: observable.ref,
       is_default: observable.ref,
-      issue_exists: observable.ref,
       level: observable.ref,
       is_epic: observable.ref,
       project_ids: observable.ref,
@@ -89,7 +87,6 @@ export class IssueType implements IIssueType {
     this.logo_props = issueTypeData.logo_props;
     this.is_active = issueTypeData.is_active;
     this.is_default = issueTypeData.is_default;
-    this.issue_exists = issueTypeData.issue_exists;
     this.level = issueTypeData.level;
     this.is_epic = issueTypeData.is_epic;
     this.project_ids = issueTypeData.project_ids;
@@ -116,7 +113,6 @@ export class IssueType implements IIssueType {
       logo_props: this.logo_props,
       is_active: this.is_active,
       is_default: this.is_default,
-      issue_exists: this.issue_exists,
       level: this.level,
       is_epic: this.is_epic,
       project_ids: this.project_ids,

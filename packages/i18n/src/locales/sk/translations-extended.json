@@ -915,7 +915,7 @@
         },
         "can_disable_warning": "Chcete namiesto toho zakázať tento typ?"
       },
-      "cant_delete_linked_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je prepojený s existujúcimi pracovnými položkami."
+      "cant_delete_default_message": "Tento typ pracovnej položky nie je možné odstrániť, pretože je nastavený ako predvolený pre tento projekt."
     },
     "create": {
       "title": "Vytvoriť typ pracovnej položky",

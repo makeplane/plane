@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?"
       },
-      "cant_delete_linked_message": "Jenis item kerja ini tidak dapat dihapus karena terhubung dengan item kerja yang ada."
+      "cant_delete_default_message": "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini."
     },
     "create": {
       "title": "Buat tipe item kerja",

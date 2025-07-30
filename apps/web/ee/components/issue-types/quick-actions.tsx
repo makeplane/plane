@@ -46,11 +46,11 @@ export const IssueTypeQuickActions: React.FC<Props> = observer((props) => {
       key: "delete",
       action: () => onDeleteIssueTypeIdChange(issueTypeId),
       title: t("common.actions.delete"),
-      tooltipContent: issueTypeDetail?.issue_exists
-        ? t("work_item_types.settings.cant_delete_linked_message")
+      tooltipContent: issueTypeDetail?.is_default
+        ? t("work_item_types.settings.cant_delete_default_message")
         : undefined,
       icon: Trash2,
-      disabled: issueTypeDetail?.issue_exists,
+      disabled: issueTypeDetail?.is_default,
     },
   ];
 

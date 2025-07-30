@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "Chcete místo toho zakázat tento typ?"
       },
-      "cant_delete_linked_message": "Tento typ pracovního položky nelze odstranit, protože je propojen s existujícími pracovními položkami."
+      "cant_delete_default_message": "Tento typ pracovního položky nelze odstranit, protože je nastaven jako výchozí pro tento projekt."
     },
     "create": {
       "title": "Vytvořit typ pracovních položek",

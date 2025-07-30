@@ -12,7 +12,6 @@ from plane.utils.constants import (
 
 
 class IssueTypeSerializer(BaseSerializer):
-    issue_exists = serializers.BooleanField(read_only=True)
     project_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     class Meta:

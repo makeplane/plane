@@ -817,7 +817,7 @@
     "label_lowercase": "work item types",
     "settings": {
       "title": "Work item Types",
-      "cant_delete_linked_message": "Cannot delete this work item type as it is linked to existing work items.",
+      "cant_delete_default_message": "This work item type cannot be deleted because it's set as the default for this project",
       "properties": {
         "title": "Custom properties",
         "tooltip": "Each work item type comes with a default set of properties like Title, Description, Assignee, State, Priority, Start date, Due date, Module, Cycle etc. You can also customize and add your own properties to tailor it to your team's needs.",

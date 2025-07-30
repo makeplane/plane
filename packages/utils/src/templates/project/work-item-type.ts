@@ -38,7 +38,6 @@ export const mockCreateWorkItemType = async ({
     logo_props: data.logo_props,
     is_active: data.is_active,
     is_default: data.is_default,
-    issue_exists: false,
     level: data.level,
     is_epic: data.is_epic,
     project_ids: [projectId],
@@ -376,7 +375,6 @@ export const mockCreateDefaultWorkItemTypeInstance = async (
       is_default: true,
       is_active: true,
       is_epic: false,
-      issue_exists: false,
       level: 0,
       description: "Default work item type with the option to add new properties",
       logo_props: {
@@ -409,7 +407,6 @@ export const mockCreateProjectEpicWorkItemTypeInstance = async (
       is_default: false,
       is_active: true,
       is_epic: true,
-      issue_exists: false,
       level: 1,
     },
   });

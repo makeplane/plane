@@ -898,7 +898,7 @@
         },
         "can_disable_warning": "Bạn có muốn tắt loại này thay thế không?"
       },
-      "cant_delete_linked_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
+      "cant_delete_default_message": "Không thể xóa loại hạng mục công việc này vì nó đang được liên kết với các hạng mục công việc hiện có."
     },
     "create": {
       "title": "Tạo loại mục công việc",

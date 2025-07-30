@@ -1,7 +1,7 @@
 // types
-import { EIssuePropertyType, TIssueProperty, IIssueProperty, TIssuePropertyPayload } from "./work-item-properties";
-import { TLoader } from "../issues/base";
 import { TLogoProps } from "../common";
+import { TLoader } from "../issues/base";
+import { EIssuePropertyType, TIssueProperty, IIssueProperty, TIssuePropertyPayload } from "./work-item-properties";
 import { TIssuePropertyOption, TIssuePropertyOptionsPayload } from "./work-item-property-option";
 
 export enum EWorkItemTypeEntity {
@@ -22,7 +22,6 @@ export type TIssueType = {
   logo_props: TLogoProps | undefined;
   is_active: boolean | undefined;
   is_default: boolean | undefined;
-  issue_exists: boolean | undefined;
   level: number | undefined;
   is_epic: boolean | undefined;
   project_ids: string[] | undefined;

@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "Deseja desativar o tipo em vez disso?"
       },
-      "cant_delete_linked_message": "Não é possível excluir este tipo de item de trabalho, pois ele está vinculado a itens de trabalho existentes."
+      "cant_delete_default_message": "Não é possível excluir este tipo de item de trabalho, pois ele está definido como o tipo padrão para este projeto."
     },
     "create": {
       "title": "Criar tipo de item de trabalho",

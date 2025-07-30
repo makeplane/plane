@@ -907,7 +907,7 @@
         },
         "can_disable_warning": "Voulez-vous désactiver le type à la place ?"
       },
-      "cant_delete_linked_message": "Impossible de supprimer ce type d’élément de travail car il est lié à des éléments de travail existants."
+      "cant_delete_default_message": "Ce type d'élément de travail ne peut pas être supprimé car il est défini comme le type par défaut pour ce projet."
     },
     "create": {
       "title": "Créer un type d'élément de travail",

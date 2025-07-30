@@ -907,7 +907,7 @@
         },
         "can_disable_warning": "¿Desea desactivar el tipo en su lugar?"
       },
-      "cant_delete_linked_message": "No se puede eliminar este tipo de elemento de trabajo porque está vinculado a elementos de trabajo existentes."
+      "cant_delete_default_message": "No se puede eliminar este tipo de elemento de trabajo porque está establecido como el tipo predeterminado para este proyecto."
     },
     "create": {
       "title": "Crear tipo de elemento de trabajo",

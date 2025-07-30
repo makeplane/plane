@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "Czy chcesz zamiast tego wyłączyć ten typ?"
       },
-      "cant_delete_linked_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on powiązany z istniejącymi elementami pracy."
+      "cant_delete_default_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on ustawiony jako domyślny dla tego projektu."
     },
     "create": {
       "title": "Utwórz typ elementu pracy",

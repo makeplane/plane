@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "您想改為停用此類型嗎？"
       },
-      "cant_delete_linked_message": "無法刪除此工作項目類型，因為它已連結到現有的工作項目。"
+      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。"
     },
     "create": {
       "title": "創建工作項目類型",

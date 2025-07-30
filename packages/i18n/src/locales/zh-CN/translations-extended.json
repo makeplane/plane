@@ -907,7 +907,7 @@
         },
         "can_disable_warning": "您想改为禁用该类型吗？"
       },
-      "cant_delete_linked_message": "无法删除此工作项类型，因为它已链接到现有的工作项。"
+      "cant_delete_default_message": "无法删除此工作项类型，因为它已设置为该项目的默认类型。"
     },
     "create": {
       "title": "创建工作项类型",

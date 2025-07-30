@@ -908,7 +908,7 @@
         },
         "can_disable_warning": "Möchten Sie stattdessen den Typ deaktivieren?"
       },
-      "cant_delete_linked_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er mit bestehenden Arbeitselementen verknüpft ist."
+      "cant_delete_default_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist."
     },
     "create": {
       "title": "Arbeitsaufgabentyp erstellen",

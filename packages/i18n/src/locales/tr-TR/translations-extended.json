@@ -923,7 +923,7 @@
         },
         "can_disable_warning": "Bunun yerine türü devre dışı bırakmak ister misiniz?"
       },
-      "cant_delete_linked_message": "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez."
+      "cant_delete_default_message": "Bu iş öğesi türü mevcut iş öğeleriyle bağlantılı olduğundan silinemez."
     },
     "create": {
       "title": "İş öğesi tipi oluştur",

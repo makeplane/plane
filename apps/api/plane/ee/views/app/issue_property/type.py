@@ -1,7 +1,8 @@
 # Django imports
-from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 # Third party imports
 from rest_framework import status
@@ -30,19 +31,10 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
             )
             .accessible_to(request.user.id, slug)
             .annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(workspace__slug=slug, type_id=OuterRef("pk"))
-                )
-            )
-            .annotate(
                 project_ids=Coalesce(
-                    Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .values("issue_type")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
+                    ArrayAgg(
+                        "project_issue_types__project_id",
+                        filter=Q(project_issue_types__deleted_at__isnull=True),
                     ),
                     [],
                 )
@@ -59,11 +51,7 @@ class IssueTypeEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         # Get a single issue type
         if pk:
-            issue_type = IssueType.objects.annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(project_id=project_id, type_id=pk)
-                )
-            ).get(
+            issue_type = IssueType.objects.get(
                 workspace__slug=slug, project_issue_types__project_id=project_id, pk=pk
             )
             serializer = IssueTypeSerializer(issue_type)
@@ -75,13 +63,7 @@ class IssueTypeEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_issue_types__project_id=project_id,
                 is_epic=False,
-            )
-            .annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
-                )
-            )
-            .annotate(
+            ).annotate(
                 project_ids=Coalesce(
                     Subquery(
                         ProjectIssueType.objects.filter(
@@ -140,13 +122,7 @@ class IssueTypeEndpoint(BaseAPIView):
                 project_issue_types__project_id=project_id,
                 is_epic=False,
                 pk=serializer.data["id"],
-            )
-            .annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
-                )
-            )
-            .annotate(
+            ).annotate(
                 project_ids=Coalesce(
                     Subquery(
                         ProjectIssueType.objects.filter(
@@ -211,30 +187,22 @@ class IssueTypeEndpoint(BaseAPIView):
         serializer.save()
 
         # Refetch the data
-        issue_type = (
-            IssueType.objects.filter(
-                workspace__slug=slug,
-                project_issue_types__project_id=project_id,
-                is_epic=False,
-                pk=serializer.data["id"],
-            )
-            .annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
-                )
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .values("issue_type")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
-                )
+        issue_type = IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+            pk=serializer.data["id"],
+        ).annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    ProjectIssueType.objects.filter(
+                        issue_type=OuterRef("pk"), workspace__slug=slug
+                    )
+                    .values("issue_type")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")
+                ),
+                [],
             )
         )
 
@@ -256,7 +224,7 @@ class IssueTypeEndpoint(BaseAPIView):
         # Check if there are any issues using this issue type
         if Issue.objects.filter(project_id=project_id, type_id=pk).exists():
             return Response(
-                {"error": "Cannot delete work item type with associated issues"},
+                {"error": "Cannot delete work item type with associated work items."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -287,32 +255,22 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
             is_default=True,
         ).exists():
             # Refetch the data
-            issue_type = (
-                IssueType.objects.filter(
-                    workspace__slug=slug,
-                    project_issue_types__project_id=project_id,
-                    is_epic=False,
-                    is_default=True,
-                )
-                .annotate(
-                    issue_exists=Exists(
-                        Issue.objects.filter(
-                            project_id=project_id, type_id=OuterRef("pk")
+            issue_type = IssueType.objects.filter(
+                workspace__slug=slug,
+                project_issue_types__project_id=project_id,
+                is_epic=False,
+                is_default=True,
+            ).annotate(
+                project_ids=Coalesce(
+                    Subquery(
+                        ProjectIssueType.objects.filter(
+                            issue_type=OuterRef("pk"), workspace__slug=slug
                         )
-                    )
-                )
-                .annotate(
-                    project_ids=Coalesce(
-                        Subquery(
-                            ProjectIssueType.objects.filter(
-                                issue_type=OuterRef("pk"), workspace__slug=slug
-                            )
-                            .values("issue_type")
-                            .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                            .values("project_ids")
-                        ),
-                        [],
-                    )
+                        .values("issue_type")
+                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                        .values("project_ids")
+                    ),
+                    [],
                 )
             )
 
@@ -373,30 +331,22 @@ class DefaultIssueTypeEndpoint(BaseAPIView):
         )
 
         # Refetch the data
-        issue_type = (
-            IssueType.objects.filter(
-                workspace__slug=slug,
-                project_issue_types__project_id=project_id,
-                is_epic=False,
-                pk=issue_type.id,
-            )
-            .annotate(
-                issue_exists=Exists(
-                    Issue.objects.filter(project_id=project_id, type_id=OuterRef("pk"))
-                )
-            )
-            .annotate(
-                project_ids=Coalesce(
-                    Subquery(
-                        ProjectIssueType.objects.filter(
-                            issue_type=OuterRef("pk"), workspace__slug=slug
-                        )
-                        .values("issue_type")
-                        .annotate(project_ids=ArrayAgg("project_id", distinct=True))
-                        .values("project_ids")
-                    ),
-                    [],
-                )
+        issue_type = IssueType.objects.filter(
+            workspace__slug=slug,
+            project_issue_types__project_id=project_id,
+            is_epic=False,
+            pk=issue_type.id,
+        ).annotate(
+            project_ids=Coalesce(
+                Subquery(
+                    ProjectIssueType.objects.filter(
+                        issue_type=OuterRef("pk"), workspace__slug=slug
+                    )
+                    .values("issue_type")
+                    .annotate(project_ids=ArrayAgg("project_id", distinct=True))
+                    .values("project_ids")
+                ),
+                [],
             )
         )
 
