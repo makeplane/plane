@@ -3,7 +3,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
+import {
+  DEFAULT_PRODUCT_BILLING_FREQUENCY,
+  LICENSE_TRACKER_ELEMENTS,
+  LICENSE_TRACKER_EVENTS,
+  SUBSCRIPTION_WITH_BILLING_FREQUENCY,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   EProductSubscriptionEnum,
@@ -18,6 +23,7 @@ import { cn, getSubscriptionProduct, getSubscriptionProductPrice } from "@plane/
 // helpers
 import { SettingsHeading } from "@/components/settings";
 // plane web imports
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import {
   CloudFreePlanCard,
   OnePlanCard,
@@ -92,6 +98,12 @@ export const BillingRoot = observer(() => {
         price_id: selectedPriceId,
       });
       handleSuccessModalToggle(true);
+      captureSuccess({
+        eventName: LICENSE_TRACKER_EVENTS.trial_started,
+        payload: {
+          plan: selectedSubscriptionType,
+        },
+      });
     } catch (error) {
       const currentError = error as unknown as { error: string; detail: string };
       console.error("Error in freeTrialSubscription", error);
@@ -99,6 +111,12 @@ export const BillingRoot = observer(() => {
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: currentError?.detail ?? currentError?.error ?? "Something went wrong. Please try again.",
+      });
+      captureError({
+        eventName: LICENSE_TRACKER_EVENTS.trial_started,
+        payload: {
+          plan: selectedSubscriptionType,
+        },
       });
     } finally {
       setTrialLoader(null);
@@ -126,6 +144,9 @@ export const BillingRoot = observer(() => {
     }
     if (!selectedProductId || !selectedPriceId) {
       setToast({ type: TOAST_TYPE.ERROR, title: "Error!", message: "Missing product or price ID" });
+      captureError({
+        eventName: LICENSE_TRACKER_EVENTS.upgrade_product_or_price_not_found,
+      });
       return;
     }
     setUpgradeLoader(selectedSubscriptionType);
@@ -136,12 +157,18 @@ export const BillingRoot = observer(() => {
       })
       .then((response) => {
         if (response.url) window.open(response.url, isSelfManaged ? "_blank" : "_self");
+        captureSuccess({
+          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
+        });
       })
       .catch((error) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Failed to generate payment link",
+        });
+        captureError({
+          eventName: LICENSE_TRACKER_EVENTS.upgrade_url_received,
         });
       })
       .finally(() => setUpgradeLoader(null));
@@ -191,6 +218,9 @@ export const BillingRoot = observer(() => {
    */
   const handleSelectedPlanUpgrade = (selectedSubscriptionType: EProductSubscriptionEnum): Promise<void> => {
     const { selectedProduct, selectedPrice } = getSelectedProductAndPrice(selectedSubscriptionType);
+    captureClick({
+      elementName: LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_PLAN_CARD_UPGRADE_BUTTON,
+    });
     return handleUpgradeSubscription({
       selectedSubscriptionType,
       selectedProductId: selectedProduct?.id,

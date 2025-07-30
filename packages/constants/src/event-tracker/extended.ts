@@ -12,6 +12,22 @@ export const EPIC_TRACKER_ELEMENTS = {
 export const LICENSE_TRACKER_EVENTS = {
   purchase_modal_opened: "purchase_modal_opened",
   success_modal_opened: "success_modal_opened",
+  trial_started: "trial_started",
+  upgrade_url_received: "upgrade_url_received",
+  upgrade_product_or_price_not_found: "upgrade_product_or_price_not_found",
+};
+
+export const LICENSE_TRACKER_ELEMENTS = {
+  MODAL_TRIAL_BUTTON: "modal_trial_button",
+  BILLING_PAGE_TRIAL_BUTTON: "billing_page_trial_button",
+  MODAL_UPGRADE_BUTTON: "modal_upgrade_button",
+  BILLING_PAGE_COMPARISON_SECTION_UPGRADE_BUTTON: "billing_page_comparison_section_upgrade_button",
+  BILLING_PAGE_PLAN_CARD_UPGRADE_BUTTON: "billing_page_plan_card_upgrade_button",
+};
+
+export const PROJECT_GROUPING_TRACKER_EVENTS = {
+  ENABLE: "project_grouping_enabled",
+  DISABLE: "project_grouping_disabled",
 };
 
 export const PROJECT_OVERVIEW_TRACKER_EVENTS = {

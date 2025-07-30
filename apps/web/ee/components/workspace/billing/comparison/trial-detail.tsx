@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { LoaderIcon } from "lucide-react";
+import { LICENSE_TRACKER_ELEMENTS } from "@plane/constants";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { Button } from "@plane/ui";
@@ -35,6 +36,7 @@ export const TrialDetails: FC<TTrialDetailsProps> = observer((props) => {
   if (isTrialAllowed) {
     return (
       <Button
+        data-ph-element={LICENSE_TRACKER_ELEMENTS.BILLING_PAGE_TRIAL_BUTTON}
         variant="link-neutral"
         size="sm"
         onClick={() => handleTrial(subscriptionType)}
