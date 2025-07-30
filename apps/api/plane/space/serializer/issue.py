@@ -29,6 +29,11 @@ from plane.db.models import (
     IssueRelation,
     IssueType,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
+)
 
 
 class IssueStateFlatSerializer(BaseSerializer):
@@ -284,6 +289,23 @@ class IssueCreateSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        # Validate description content for security
+        if "description" in data and data["description"]:
+            is_valid, error_msg = validate_json_content(data["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
+
+        if "description_html" in data and data["description_html"]:
+            is_valid, error_msg = validate_html_content(data["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if "description_binary" in data and data["description_binary"]:
+            is_valid, error_msg = validate_binary_data(data["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
+
         return data
 
     def create(self, validated_data):

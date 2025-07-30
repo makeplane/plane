@@ -1,5 +1,3 @@
-from lxml import html
-
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
@@ -41,6 +39,11 @@ from plane.db.models import (
     ProjectMember,
     EstimatePoint,
     IssueType,
+)
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
 )
 from plane.ee.models import Customer, TeamspaceProject, TeamspaceMember
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -130,14 +133,21 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
-        try:
-            if attrs.get("description_html", None) is not None:
-                parsed = html.fromstring(attrs["description_html"])
-                parsed_str = html.tostring(parsed, encoding="unicode")
-                attrs["description_html"] = parsed_str
+        # Validate description content for security
+        if "description" in attrs and attrs["description"]:
+            is_valid, error_msg = validate_json_content(attrs["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
 
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+        if "description_html" in attrs and attrs["description_html"]:
+            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if "description_binary" in attrs and attrs["description_binary"]:
+            is_valid, error_msg = validate_binary_data(attrs["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -232,7 +242,7 @@ class IssueCreateSerializer(BaseSerializer):
         """
         Check if an assignee is valid for the project.
         Returns True if the assignee is either a project member or teamspace member (if enabled).
-        """
+        """  # noqa: E501
         # Check if assignee is a valid project member
         is_project_member = ProjectMember.objects.filter(
             member_id=assignee_id,
@@ -397,7 +407,7 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
-        # Time updation occues even when other related models are updated
+        # Time related updates occurs even when other related models are updated
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
 

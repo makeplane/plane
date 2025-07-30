@@ -1,7 +1,12 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  EIssueFilterType,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  PROJECT_VIEW_TRACKER_ELEMENTS,
+} from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // ui
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -94,6 +99,7 @@ export const ProjectAppliedFiltersRoot: React.FC<TProjectAppliedFiltersRootProps
               display_filters: issueFilters?.displayFilters,
               display_properties: issueFilters?.displayProperties,
             }}
+            trackerElement={PROJECT_VIEW_TRACKER_ELEMENTS.PROJECT_HEADER_SAVE_AS_VIEW_BUTTON}
           />
         )}
       </Header.RightItem>

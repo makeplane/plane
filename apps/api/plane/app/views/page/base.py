@@ -1,6 +1,5 @@
 # Python imports
 import json
-import base64
 from datetime import datetime
 
 # Django imports
@@ -15,9 +14,6 @@ from django.db.models import (
     F,
     Count,
     Subquery,
-    Case,
-    When,
-    BooleanField,
 )
 from django.http import StreamingHttpResponse
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -37,6 +33,7 @@ from plane.app.serializers import (
     PageSerializer,
     PageLiteSerializer,
     PageDetailSerializer,
+    PageBinaryUpdateSerializer,
 )
 from plane.db.models import (
     Page,
@@ -731,33 +728,27 @@ class PagesDescriptionViewSet(BaseViewSet):
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
-        # Get the base64 data from the request
-        base64_data = request.data.get("description_binary")
-
-        # If base64 data is provided
-        if base64_data:
-            # Decode the base64 data to bytes
-            new_binary_data = base64.b64decode(base64_data)
-            # capture the page transaction
+        # Use serializer for validation and update
+        serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
+        if serializer.is_valid():
+            # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
-            # Store the updated binary data
-            page.name = request.data.get("name", page.name)
-            page.description_binary = new_binary_data
-            page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
-            page.save()
-            # Return a success response
+
+            # Update the page using serializer
+            updated_page = serializer.save()
+
+            # Run background tasks
             page_version.delay(
-                page_id=page.id,
+                page_id=updated_page.id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
             return Response({"message": "Updated successfully"})
         else:
-            return Response({"error": "No binary data provided"})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PageDuplicateEndpoint(BaseAPIView):

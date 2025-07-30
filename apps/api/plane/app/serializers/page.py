@@ -1,8 +1,14 @@
 # Third party imports
 from rest_framework import serializers
+import base64
 
 # Module imports
 from .base import BaseSerializer
+from plane.utils.content_validator import (
+    validate_binary_data,
+    validate_html_content,
+    validate_json_content,
+)
 from plane.db.models import (
     Page,
     PageLog,
@@ -216,6 +222,74 @@ class PageVersionDetailSerializer(BaseSerializer):
             "sub_pages_data",
         ]
         read_only_fields = ["workspace", "page"]
+
+
+class PageBinaryUpdateSerializer(serializers.Serializer):
+    """Serializer for updating page binary description with validation"""
+
+    description_binary = serializers.CharField(required=False, allow_blank=True)
+    description_html = serializers.CharField(required=False, allow_blank=True)
+    description = serializers.JSONField(required=False, allow_null=True)
+
+    def validate_description_binary(self, value):
+        """Validate the base64-encoded binary data"""
+        if not value:
+            return value
+
+        try:
+            # Decode the base64 data
+            binary_data = base64.b64decode(value)
+
+            # Validate the binary data
+            is_valid, error_message = validate_binary_data(binary_data)
+            if not is_valid:
+                raise serializers.ValidationError(
+                    f"Invalid binary data: {error_message}"
+                )
+
+            return binary_data
+        except Exception as e:
+            if isinstance(e, serializers.ValidationError):
+                raise
+            raise serializers.ValidationError("Failed to decode base64 data")
+
+    def validate_description_html(self, value):
+        """Validate the HTML content"""
+        if not value:
+            return value
+
+        # Use the validation function from utils
+        is_valid, error_message = validate_html_content(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
+
+        return value
+
+    def validate_description(self, value):
+        """Validate the JSON description"""
+        if not value:
+            return value
+
+        # Use the validation function from utils
+        is_valid, error_message = validate_json_content(value)
+        if not is_valid:
+            raise serializers.ValidationError(error_message)
+
+        return value
+
+    def update(self, instance, validated_data):
+        """Update the page instance with validated data"""
+        if "description_binary" in validated_data:
+            instance.description_binary = validated_data.get("description_binary")
+
+        if "description_html" in validated_data:
+            instance.description_html = validated_data.get("description_html")
+
+        if "description" in validated_data:
+            instance.description = validated_data.get("description")
+
+        instance.save()
+        return instance
 
 
 class PageUserSerializer(BaseSerializer):

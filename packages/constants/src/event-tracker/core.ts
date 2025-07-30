@@ -270,6 +270,7 @@ export const AUTH_TRACKER_EVENTS = {
   sign_in_with_password: "sign_in_with_password",
   forgot_password: "forgot_password_clicked",
   new_code_requested: "new_code_requested",
+  password_created: "password_created",
 };
 
 export const AUTH_TRACKER_ELEMENTS = {
@@ -280,6 +281,7 @@ export const AUTH_TRACKER_ELEMENTS = {
   SIGN_IN_WITH_UNIQUE_CODE: "sign_in_with_unique_code",
   REQUEST_NEW_CODE: "request_new_code",
   VERIFY_CODE: "verify_code",
+  SET_PASSWORD_FORM: "set_password_form",
 };
 
 /**
@@ -299,6 +301,29 @@ export const GLOBAL_VIEW_TRACKER_ELEMENTS = {
   HEADER_SAVE_VIEW_BUTTON: "global_view_header_save_view_button",
   QUICK_ACTIONS: "global_view_quick_actions",
   LIST_ITEM: "global_view_list_item",
+};
+
+/**
+ * ===========================================================================
+ * Project View Events and Elements
+ * ===========================================================================
+ */
+export const PROJECT_VIEW_TRACKER_EVENTS = {
+  create: "project_view_created",
+  update: "project_view_updated",
+  delete: "project_view_deleted",
+};
+
+export const PROJECT_VIEW_TRACKER_ELEMENTS = {
+  RIGHT_HEADER_ADD_BUTTON: "project_view_right_header_add_button",
+  COMMAND_PALETTE_ADD_ITEM: "command_palette_add_project_view_item",
+  EMPTY_STATE_CREATE_BUTTON: "project_view_empty_state_create_button",
+  HEADER_SAVE_VIEW_BUTTON: "project_view_header_save_view_button",
+  PROJECT_HEADER_SAVE_AS_VIEW_BUTTON: "project_view_header_save_as_view_button",
+  CYCLE_HEADER_SAVE_AS_VIEW_BUTTON: "cycle_header_save_as_view_button",
+  MODULE_HEADER_SAVE_AS_VIEW_BUTTON: "module_header_save_as_view_button",
+  QUICK_ACTIONS: "project_view_quick_actions",
+  LIST_ITEM_CONTEXT_MENU: "project_view_list_item_context_menu",
 };
 
 /**
@@ -345,6 +370,11 @@ export const USER_TRACKER_EVENTS = {
   onboarding_complete: "user_onboarding_completed",
 };
 
+export const USER_TRACKER_ELEMENTS = {
+  PRODUCT_CHANGELOG_MODAL: "product_changelog_modal",
+  CHANGELOG_REDIRECTED: "changelog_redirected",
+};
+
 /**
  * ===========================================================================
  * Onboarding Events and Elements
@@ -352,6 +382,8 @@ export const USER_TRACKER_EVENTS = {
  */
 export const ONBOARDING_TRACKER_ELEMENTS = {
   PROFILE_SETUP_FORM: "onboarding_profile_setup_form",
+  PASSWORD_CREATION_SELECTED: "onboarding_password_creation_selected",
+  PASSWORD_CREATION_SKIPPED: "onboarding_password_creation_skipped",
 };
 
 /**
