@@ -217,7 +217,7 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
                     f"Invalid binary data: {error_message}"
                 )
 
-            return value
+            return binary_data
         except Exception as e:
             if isinstance(e, serializers.ValidationError):
                 raise
@@ -250,18 +250,13 @@ class PageBinaryUpdateSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         """Update the page instance with validated data"""
         if "description_binary" in validated_data:
-            if validated_data["description_binary"]:
-                instance.description_binary = base64.b64decode(
-                    validated_data["description_binary"]
-                )
-            else:
-                instance.description_binary = None
+            instance.description_binary = validated_data.get("description_binary")
 
         if "description_html" in validated_data:
-            instance.description_html = validated_data["description_html"]
+            instance.description_html = validated_data.get("description_html")
 
         if "description" in validated_data:
-            instance.description = validated_data["description"]
+            instance.description = validated_data.get("description")
 
         instance.save()
         return instance
