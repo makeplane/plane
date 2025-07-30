@@ -32,7 +32,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!editor) return;
       const { empty } = editor.state.selection;
 
-      // if (empty) return null;
       if (empty) {
         // Get the text content and position info
         const { $from } = editor.state.selection;

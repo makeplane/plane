@@ -48,7 +48,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   } = props;
 
   const extensions: Extensions = useMemo(() => {
-    const allExtensions = externalExtensions;
+    const allExtensions = [...externalExtensions];
 
     if (embedHandler?.issue) {
       allExtensions.push(
