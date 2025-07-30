@@ -226,6 +226,9 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # marketing
+    has_marketing_email_consent = models.BooleanField(default=False)
+
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
