@@ -8,7 +8,7 @@ import { EditorRefApi } from "@plane/editor";
 import { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
-import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor";
 import { CommentReactions } from "@/components/issues/peek-overview";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
@@ -102,6 +102,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditor
+                    editable
                     anchor={anchor}
                     workspaceId={workspaceID?.toString() ?? ""}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
@@ -138,7 +139,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextReadOnlyEditor
+            <LiteTextEditor
+              editable={false}
               anchor={anchor}
               workspaceId={workspaceID?.toString() ?? ""}
               ref={showEditorRef}
