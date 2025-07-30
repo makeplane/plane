@@ -268,6 +268,7 @@ export const AUTH_TRACKER_EVENTS = {
   sign_in_with_password: "sign_in_with_password",
   forgot_password: "forgot_password_clicked",
   new_code_requested: "new_code_requested",
+  password_created: "password_created",
 };
 
 export const AUTH_TRACKER_ELEMENTS = {
@@ -278,6 +279,7 @@ export const AUTH_TRACKER_ELEMENTS = {
   SIGN_IN_WITH_UNIQUE_CODE: "sign_in_with_unique_code",
   REQUEST_NEW_CODE: "request_new_code",
   VERIFY_CODE: "verify_code",
+  SET_PASSWORD_FORM: "set_password_form",
 };
 
 /**
@@ -350,6 +352,8 @@ export const USER_TRACKER_EVENTS = {
  */
 export const ONBOARDING_TRACKER_ELEMENTS = {
   PROFILE_SETUP_FORM: "onboarding_profile_setup_form",
+  PASSWORD_CREATION_SELECTED: "onboarding_password_creation_selected",
+  PASSWORD_CREATION_SKIPPED: "onboarding_password_creation_skipped",
 };
 
 /**
