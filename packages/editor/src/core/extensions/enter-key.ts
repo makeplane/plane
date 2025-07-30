@@ -11,11 +11,13 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
     addKeyboardShortcuts(this) {
       return {
         Enter: () => {
-          const isMentionOpen = getExtensionStorage(this.editor, CORE_EXTENSIONS.MENTION)?.mentionsOpen;
-          if (!isMentionOpen) {
+          const { activeDropbarExtensions } = getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY);
+
+          if (activeDropbarExtensions.length === 0) {
             onEnterKeyPress?.();
             return true;
           }
+
           return false;
         },
         "Shift-Enter": ({ editor }) =>

@@ -1044,6 +1044,10 @@
       },
       "upload": {
         "error": "Не вдалося завантажити вкладення. Спробуйте пізніше."
+      },
+      "copy_link": {
+        "success": "Посилання на коментар скопійовано в буфер обміну",
+        "error": "Помилка при копіюванні посилання на коментар. Спробуйте пізніше."
       }
     },
     "empty_state": {
@@ -2482,5 +2486,45 @@
   "self_hosted_maintenance_message": {
     "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустився. Це може бути через те, що один або декілька сервісів Plane не змогли запуститися.",
     "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Виберіть View Logs з setup.sh та логів Docker, щоб переконатися."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Відсутні заголовки",
+          "description": "Давайте додамо кілька заголовків на цю сторінку, щоб побачити їх тут."
+        }
+      },
+      "info": {
+        "label": "Інформація",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символи",
+          "paragraphs": "Абзаци",
+          "read_time": "Час читання"
+        },
+        "actors_info": {
+          "edited_by": "Відредаговано",
+          "created_by": "Створено"
+        },
+        "version_history": {
+          "label": "Історія версій",
+          "current_version": "Поточна версія"
+        }
+      },
+      "assets": {
+        "label": "Ресурси",
+        "download_button": "Завантажити",
+        "empty_state": {
+          "title": "Відсутні зображення",
+          "description": "Додайте зображення, щоб побачити їх тут."
+        }
+      }
+    },
+    "open_button": "Відкрити панель навігації",
+    "close_button": "Закрити панель навігації",
+    "outline_floating_button": "Відкрити структуру"
   }
 }

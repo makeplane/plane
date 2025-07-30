@@ -57,6 +57,10 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
           if (!nodeFileSetDetails || !src) return;
           try {
             editor.storage[nodeType][nodeFileSetDetails.fileSetName]?.set(src, true);
+            // update assets list storage value
+            editor.commands.updateAssetsList?.({
+              idToRemove: node.attrs.id,
+            });
             await deleteHandler(src);
           } catch (error) {
             console.error("Error deleting file via delete utility plugin:", error);

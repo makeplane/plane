@@ -1,17 +1,6 @@
-export type TIssueLayout =
-  | "list"
-  | "kanban"
-  | "calendar"
-  | "spreadsheet"
-  | "gantt";
+import { EIssueLayoutTypes } from "@plane/types";
 
-export enum EIssueLayoutTypes {
-  LIST = "list",
-  KANBAN = "kanban",
-  CALENDAR = "calendar",
-  GANTT = "gantt_chart",
-  SPREADSHEET = "spreadsheet",
-}
+export type TIssueLayout = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt";
 
 export type TIssueLayoutMap = Record<
   EIssueLayoutTypes,
@@ -73,4 +62,5 @@ export const ISSUE_LAYOUT_MAP: TIssueLayoutMap = {
 export const ISSUE_LAYOUTS: {
   key: EIssueLayoutTypes;
   i18n_title: string;
+  i18n_label: string;
 }[] = Object.values(ISSUE_LAYOUT_MAP);
