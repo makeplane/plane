@@ -124,7 +124,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
       />
-      {showToolbar && (
+      {showToolbar && editable && (
         <div
           className={cn(
             "transition-all duration-300 ease-out origin-top overflow-hidden",
