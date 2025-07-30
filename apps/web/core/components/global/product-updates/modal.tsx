@@ -1,6 +1,6 @@
 import { FC, useEffect } from "react";
 import { observer } from "mobx-react";
-import { USER_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
+import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
@@ -41,7 +41,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
             <div className="text-sm text-custom-text-200">
               {t("please_visit")}
               <a
-                data-ph-element={USER_TRACKER_EVENTS.changelog_redirected}
+                data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
                 href="https://go.plane.so/p-changelog"
                 target="_blank"
                 className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
