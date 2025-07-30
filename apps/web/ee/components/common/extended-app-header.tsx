@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { Tooltip, PiIcon } from "@plane/ui";
@@ -10,7 +11,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { isSidebarToggleVisible } from "../desktop/helper";
 
-export const ExtendedAppHeader = (props: { header: ReactNode }) => {
+export const ExtendedAppHeader = observer((props: { header: ReactNode }) => {
   const { header } = props;
   // router
   const pathname = usePathname();
@@ -43,8 +44,8 @@ export const ExtendedAppHeader = (props: { header: ReactNode }) => {
               </button>
             </Tooltip>
           </div>
-        )}{" "}
+        )}
       </div>
     </>
   );
-};
+});
