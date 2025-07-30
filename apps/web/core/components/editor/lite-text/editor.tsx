@@ -89,7 +89,13 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
 
   return (
     <div
-      className={cn("relative border border-custom-border-200 rounded p-3", parentClassName)}
+      className={cn(
+        "relative border border-custom-border-200 rounded",
+        {
+          "p-3": editable,
+        },
+        parentClassName
+      )}
       onFocus={() => !showToolbarInitially && setIsFocused(true)}
       onBlur={() => !showToolbarInitially && setIsFocused(false)}
     >
@@ -116,7 +122,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           }),
         }}
         placeholder={placeholder}
-        containerClassName={cn(containerClassName, "relative")}
+        containerClassName={cn(containerClassName, "relative", {
+          "p-2": !editable,
+        })}
         {...rest}
       />
       {showToolbar && editable && (
