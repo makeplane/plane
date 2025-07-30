@@ -3,6 +3,11 @@ from rest_framework import serializers
 
 # Module imports
 from plane.db.models import Project, ProjectIdentifier, WorkspaceMember
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
+)
 
 from .base import BaseSerializer
 
@@ -56,6 +61,29 @@ class ProjectSerializer(BaseSerializer):
             raise serializers.ValidationError(
                 "Default assignee should be a user in the workspace"
             )
+
+        # Validate description content for security
+        if "description" in data and data["description"]:
+            # For Project, description might be text field, not JSON
+            if isinstance(data["description"], dict):
+                is_valid, error_msg = validate_json_content(data["description"])
+                if not is_valid:
+                    raise serializers.ValidationError({"description": error_msg})
+
+        if "description_text" in data and data["description_text"]:
+            is_valid, error_msg = validate_json_content(data["description_text"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_text": error_msg})
+
+        if "description_html" in data and data["description_html"]:
+            if isinstance(data["description_html"], dict):
+                is_valid, error_msg = validate_json_content(data["description_html"])
+            else:
+                is_valid, error_msg = validate_html_content(
+                    str(data["description_html"])
+                )
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
 
         return data
 

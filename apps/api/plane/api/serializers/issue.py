@@ -21,6 +21,11 @@ from plane.db.models import (
     State,
     User,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
+)
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -74,6 +79,22 @@ class IssueSerializer(BaseSerializer):
 
         except Exception:
             raise serializers.ValidationError("Invalid HTML passed")
+
+        # Validate description content for security
+        if data.get("description"):
+            is_valid, error_msg = validate_json_content(data["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
+
+        if data.get("description_html"):
+            is_valid, error_msg = validate_html_content(data["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if data.get("description_binary"):
+            is_valid, error_msg = validate_binary_data(data["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
 
         # Validate assignees are from project
         if data.get("assignees", []):
