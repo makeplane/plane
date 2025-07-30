@@ -14,11 +14,11 @@ export const MarketingConsent: FC<Props> = ({ isChecked, handleChange }) => (
       type="button"
       onClick={() => handleChange(!isChecked)}
       className={`size-4 rounded border-2 flex items-center justify-center ${
-        isChecked ? "bg-blue-500 border-blue-500" : "border-gray-300"
+        isChecked ? "bg-blue-500 border-blue-500" : "border-custom-border-300"
       }`}
     >
       {isChecked && <Check className="w-3 h-3 text-white" />}
     </button>
-    <span className="text-sm text-gray-600">I agree to Plane marketing communications</span>
+    <span className="text-sm text-custom-text-300">I agree to Plane marketing communications</span>
   </div>
 );

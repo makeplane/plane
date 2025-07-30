@@ -3,23 +3,25 @@
 import { FC, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Eye, EyeOff, ImageIcon } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EOnboardingSteps, IUser } from "@plane/types";
-import { Button, Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
-import { getFileURL, getPasswordStrength } from "@plane/utils";
+import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 // components
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store";
 // services
 import { AuthService } from "@/services/auth.service";
 // local components
 import { CommonOnboardingHeader } from "../common";
+import { MarketingConsent } from "./consent";
+import { SetPasswordRoot } from "./set-password";
 
 type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
@@ -33,6 +35,7 @@ export type TProfileSetupFormValues = {
   confirm_password?: string;
   role?: string;
   use_case?: string;
+  has_marketing_email_consent?: boolean;
 };
 
 const authService = new AuthService();
@@ -48,15 +51,11 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
 export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
-  const [showPassword, setShowPassword] = useState({
-    password: false,
-    retypePassword: false,
-  });
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
+  const { data: profile, updateUserProfile } = useUserProfile();
   // form info
   const {
     getValues,
@@ -71,14 +70,12 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
       first_name: user?.first_name,
       last_name: user?.last_name,
       avatar_url: user?.avatar_url,
+      has_marketing_email_consent: profile?.has_marketing_email_consent,
     },
     mode: "onChange",
   });
   // derived values
   const userAvatar = watch("avatar_url");
-
-  const handleShowPassword = (key: keyof typeof showPassword) =>
-    setShowPassword((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
@@ -112,6 +109,9 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
     if (!user) return;
     captureView({
       elementName: ONBOARDING_TRACKER_ELEMENTS.PROFILE_SETUP_FORM,
+    });
+    updateUserProfile({
+      has_marketing_email_consent: formData.has_marketing_email_consent,
     });
     await handleSubmitUserDetail(formData).then(() => {
       handleStepChange(EOnboardingSteps.PROFILE_SETUP);
@@ -194,138 +194,69 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         </button>
       </div>
 
-      {/* Name Input */}
-      <div className="space-y-2">
-        <label
-          className="block text-sm font-medium text-custom-text-300 after:content-['*'] after:ml-0.5 after:text-red-500"
-          htmlFor="first_name"
-        >
-          Name
-        </label>
-        <Controller
-          control={control}
-          name="first_name"
-          rules={{
-            required: "First name is required",
-            maxLength: {
-              value: 24,
-              message: "First name must be within 24 characters.",
-            },
-          }}
-          render={({ field: { value, onChange, ref } }) => (
-            <Input
-              id="first_name"
-              name="first_name"
-              type="text"
-              value={value}
-              autoFocus
-              onChange={onChange}
-              ref={ref}
-              hasError={Boolean(errors.first_name)}
-              placeholder="Wilbur"
-              className="w-full border-custom-border-300"
-              autoComplete="on"
-            />
-          )}
-        />
-        {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+      <div className="flex flex-col gap-6 w-full">
+        {/* Name Input */}
+        <div className="flex flex-col gap-2">
+          <label
+            className="block text-sm font-medium text-custom-text-300 after:content-['*'] after:ml-0.5 after:text-red-500"
+            htmlFor="first_name"
+          >
+            Name
+          </label>
+          <Controller
+            control={control}
+            name="first_name"
+            rules={{
+              required: "Name is required",
+              maxLength: {
+                value: 24,
+                message: "First name must be within 24 characters.",
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <input
+                ref={ref}
+                id="first_name"
+                name="first_name"
+                type="text"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                autoFocus
+                className={cn(
+                  "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                  {
+                    "border-custom-border-300": !errors.first_name,
+                    "border-red-500": errors.first_name,
+                  }
+                )}
+                placeholder="Enter your full name"
+                autoComplete="on"
+              />
+            )}
+          />
+          {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+        </div>
+
+        {/* setting up password for the first time */}
+        {!isPasswordAlreadySetup && (
+          <SetPasswordRoot
+            onPasswordChange={(password) => setValue("password", password)}
+            onConfirmPasswordChange={(confirm_password) => setValue("confirm_password", confirm_password)}
+          />
+        )}
       </div>
-
-      {/* setting up password for the first time */}
-      {!isPasswordAlreadySetup && (
-        <>
-          <div className="space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
-              Set a password ({t("common.optional")})
-            </label>
-            <Controller
-              control={control}
-              name="password"
-              rules={{
-                required: false,
-              }}
-              render={({ field: { value, onChange, ref } }) => (
-                <div className="relative flex items-center rounded-md">
-                  <Input
-                    type={showPassword.password ? "text" : "password"}
-                    name="password"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.password)}
-                    placeholder="New password..."
-                    className="w-full border-[0.5px] border-custom-border-300 pr-12 placeholder:text-custom-text-400"
-                    onFocus={() => setIsPasswordInputFocused(true)}
-                    onBlur={() => setIsPasswordInputFocused(false)}
-                    autoComplete="on"
-                  />
-                  {showPassword.password ? (
-                    <EyeOff
-                      className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => handleShowPassword("password")}
-                    />
-                  ) : (
-                    <Eye
-                      className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => handleShowPassword("password")}
-                    />
-                  )}
-                </div>
-              )}
-            />
-            <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
-          </div>
-          <div className="space-y-1">
-            <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
-              {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
-            </label>
-            <Controller
-              control={control}
-              name="confirm_password"
-              rules={{
-                required: watch("password") ? true : false,
-                validate: (value) =>
-                  watch("password") ? (value === watch("password") ? true : "Passwords don't match") : true,
-              }}
-              render={({ field: { value, onChange, ref } }) => (
-                <div className="relative flex items-center rounded-md">
-                  <Input
-                    type={showPassword.retypePassword ? "text" : "password"}
-                    name="confirm_password"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.confirm_password)}
-                    placeholder={t("auth.common.password.confirm_password.placeholder")}
-                    className="w-full border-custom-border-300 pr-12 placeholder:text-custom-text-400"
-                  />
-                  {showPassword.retypePassword ? (
-                    <EyeOff
-                      className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => handleShowPassword("retypePassword")}
-                    />
-                  ) : (
-                    <Eye
-                      className="absolute right-3 h-4 w-4 stroke-custom-text-400 hover:cursor-pointer"
-                      onClick={() => handleShowPassword("retypePassword")}
-                    />
-                  )}
-                </div>
-              )}
-            />
-            {errors.confirm_password && <span className="text-sm text-red-500">{errors.confirm_password.message}</span>}
-          </div>
-        </>
-      )}
-
       {/* Continue Button */}
       <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
         Continue
       </Button>
 
-      {/* TODO: To be added later */}
       {/* Marketing Consent */}
-      {/* <MarketingConsent isChecked={formData.marketingConsent} handleChange={handleMarketingConsentChange} /> */}
+      <MarketingConsent
+        isChecked={!!watch("has_marketing_email_consent")}
+        handleChange={(has_marketing_email_consent) =>
+          setValue("has_marketing_email_consent", has_marketing_email_consent)
+        }
+      />
     </form>
   );
 });
