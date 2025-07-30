@@ -1,0 +1,44 @@
+import { set } from "lodash";
+import { action, makeObservable, observable, runInAction } from "mobx";
+import { computedFn } from "mobx-utils";
+import { E_FEATURE_FLAGS } from "@plane/constants";
+// services
+import { SitesFeatureFlagService } from "@plane/services";
+// init services
+const featureFlagService = new SitesFeatureFlagService();
+
+type TFeatureFlagsMaps = Record<E_FEATURE_FLAGS, boolean>; // feature flag -> boolean
+
+export interface IFeatureFlagsStore {
+  flags: Record<string, TFeatureFlagsMaps>; // anchor -> feature flag map
+  fetchFeatureFlag: (anchor: string, flag: keyof typeof E_FEATURE_FLAGS) => Promise<{ value: boolean }>;
+  getFeatureFlag: (anchor: string, flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
+}
+
+export class FeatureFlagsStore implements IFeatureFlagsStore {
+  flags: IFeatureFlagsStore["flags"] = {};
+
+  constructor() {
+    makeObservable(this, {
+      flags: observable,
+      fetchFeatureFlag: action,
+    });
+  }
+
+  fetchFeatureFlag: IFeatureFlagsStore["fetchFeatureFlag"] = async (anchor, flag) => {
+    try {
+      const response = await featureFlagService.retrieve(anchor, flag);
+      runInAction(() => {
+        set(this.flags, [anchor, flag], response.value);
+      });
+      return response;
+    } catch (error) {
+      console.error("Error fetching feature flags", error);
+      throw error;
+    }
+  };
+
+  getFeatureFlag: IFeatureFlagsStore["getFeatureFlag"] = computedFn(
+    (anchor, flag, defaultValue) => this.flags[anchor]?.[E_FEATURE_FLAGS[flag]] ?? defaultValue
+  );
+}

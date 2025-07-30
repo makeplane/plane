@@ -4,6 +4,8 @@ import { TIssueAttachment } from "./issue_attachment";
 import { TIssueLink } from "./issue_link";
 import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
 import { TIssueRelationTypes } from "./issue_relation";
+import { TWorkItemExtended, TWorkItemWidgetsExtended } from "./issue-extended";
+import { EUpdateStatus } from "../enums";
 
 export enum EIssueLayoutTypes {
   LIST = "list",
@@ -79,21 +81,23 @@ export type IssueRelation = {
   sequence_id: number;
 };
 
-export type TIssue = TBaseIssue & {
-  description_html?: string;
-  is_subscribed?: boolean;
-  parent?: Partial<TBaseIssue>;
-  issue_reactions?: TIssueReaction[];
-  issue_attachments?: TIssueAttachment[];
-  issue_link?: TIssueLink[];
-  issue_relation?: IssueRelation[];
-  issue_related?: IssueRelation[];
-  // tempId is used for optimistic updates. It is not a part of the API response.
-  tempId?: string;
-  // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
-  sourceIssueId?: string;
-  state__group?: string | null;
-};
+export type TIssue = TBaseIssue &
+  TWorkItemExtended & {
+    description_html?: string;
+    is_subscribed?: boolean;
+    parent?: Partial<TBaseIssue>;
+    issue_reactions?: TIssueReaction[];
+    issue_attachments?: TIssueAttachment[];
+    issue_link?: TIssueLink[];
+    issue_relation?: IssueRelation[];
+    issue_related?: IssueRelation[];
+    // tempId is used for optimistic updates. It is not a part of the API response.
+    tempId?: string;
+    // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
+    sourceIssueId?: string;
+    state__group?: string | null;
+    update_status?: EUpdateStatus | undefined;
+  };
 
 export type TIssueMap = {
   [issue_id: string]: TIssue;
@@ -140,6 +144,7 @@ export type TBulkIssueProperties = Pick<
   | "module_ids"
   | "cycle_id"
   | "estimate_point"
+  | "type_id"
 >;
 
 export type TBulkOperationsPayload = {
@@ -147,7 +152,7 @@ export type TBulkOperationsPayload = {
   properties: Partial<TBulkIssueProperties>;
 };
 
-export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
+export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments" | TWorkItemWidgetsExtended;
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
 
