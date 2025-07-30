@@ -1,3 +1,4 @@
+import type { Editor } from "@tiptap/core";
 import { useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -9,6 +10,7 @@ import { ImageFullScreenActionRoot } from "./full-screen";
 
 type Props = {
   alignment: TCustomImageAlignment;
+  editor: Editor;
   width: string;
   height: string;
   aspectRatio: number;
@@ -18,9 +20,11 @@ type Props = {
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {
-  const { alignment, downloadSrc, handleAlignmentChange } = props;
+  const { alignment, editor, downloadSrc, handleAlignmentChange } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
+  // derived values
+  const isEditable = editor.isEditable;
 
   return (
     <>
@@ -33,11 +37,13 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
         )}
       >
         <ImageDownloadAction src={downloadSrc} />
-        <ImageAlignmentAction
-          activeAlignment={alignment}
-          handleChange={handleAlignmentChange}
-          toggleToolbarViewStatus={setShouldShowToolbar}
-        />
+        {isEditable && (
+          <ImageAlignmentAction
+            activeAlignment={alignment}
+            handleChange={handleAlignmentChange}
+            toggleToolbarViewStatus={setShouldShowToolbar}
+          />
+        )}
         <ImageFullScreenActionRoot image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
       </div>
     </>

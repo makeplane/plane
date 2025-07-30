@@ -280,6 +280,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
         {showImageToolbar && (
           <ImageToolbarRoot
             alignment={nodeAlignment ?? "left"}
+            editor={editor}
             width={size.width}
             height={size.height}
             aspectRatio={size.aspectRatio === null ? 1 : size.aspectRatio}
