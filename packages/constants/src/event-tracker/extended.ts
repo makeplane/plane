@@ -177,6 +177,7 @@ export const TEAMSPACE_VIEW_TRACKER_EVENTS = {
 };
 export const TEAMSPACE_VIEW_TRACKER_ELEMENTS = {
   HEADER_CREATE_VIEW_BUTTON: "teamspace_header_create_view_button",
+  HEADER_SAVE_VIEW_BUTTON: "teamspace_header_save_view_button",
   EMPTY_STATE_ADD_WORK_ITEM_BUTTON: "teamspace_empty_state_add_work_item_button",
   LIST_ITEM_QUICK_ACTIONS: "teamspace_view_list_item_quick_actions",
   LIST_ITEM_FAVORITE_BUTTON: "teamspace_view_list_item_favorite_button",

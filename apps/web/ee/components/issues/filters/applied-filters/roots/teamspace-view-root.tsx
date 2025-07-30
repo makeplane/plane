@@ -6,7 +6,7 @@ import isEmpty from "lodash/isEmpty";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType, EUserPermissionsLevel, TEAMSPACE_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, IIssueFilterOptions, IProjectView } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -147,6 +147,7 @@ export const TeamspaceViewAppliedFiltersRoot: React.FC = observer(() => {
           isAuthorizedUser={isAuthorizedUser}
           setIsModalOpen={setIsModalOpen}
           handleUpdateView={handleUpdateView}
+          trackerElement={TEAMSPACE_VIEW_TRACKER_ELEMENTS.HEADER_SAVE_VIEW_BUTTON}
         />
       </Header.RightItem>
     </Header>
