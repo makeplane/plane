@@ -3,17 +3,9 @@ import {
   EXTENDED_WORKSPACE_RESULT_ENTITIES,
   EXTENDED_WORKSPACE_SETTINGS,
   EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS,
-  EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS,
 } from "./workspace-extended";
 
-export const ORGANIZATION_SIZE = [
-  "Just myself", // TODO: translate
-  "2-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "500+",
-];
+export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
 export const RESTRICTED_URLS = [
   "404",
@@ -359,3 +351,11 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
   },
 };
+
+export const USE_CASES = [
+  "Plan and track product roadmaps",
+  "Manage engineering sprints",
+  "Coordinate cross-functional projects",
+  "Replace our current tool",
+  "Just exploring",
+];

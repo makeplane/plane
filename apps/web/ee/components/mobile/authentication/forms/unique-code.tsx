@@ -101,11 +101,11 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
       <input type="hidden" value={formData.email} name="email" />
       <input type="hidden" value={invitationId} name="invitation_id" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
           Email
         </label>
         <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
         >
           <Input
             id="email"
@@ -114,7 +114,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
             value={formData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 border-0`}
             disabled
           />
           {formData.email.length > 0 && (
@@ -127,17 +127,17 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="code">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="code">
           Unique code
         </label>
-        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+        <div className="relative flex items-center rounded-md bg-custom-background-100">
           <Input
             type={"text"}
             name="code"
             value={formData.code}
             onChange={(e) => handleFormChange("code", e.target.value)}
             placeholder="gets-sets-flys"
-            className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+            className="disable-autofill-style h-[46px] w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
             autoComplete="on"
             autoFocus
           />
@@ -152,7 +152,7 @@ export const MobileAuthUniqueCodeForm: FC<TMobileAuthUniqueCodeForm> = (props) =
             onClick={() => generateNewEmailUniqueCode(email)}
             className={`${
               isRequestNewCodeDisabled
-                ? "text-onboarding-text-400"
+                ? "text-custom-text-400"
                 : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
             }`}
             disabled={isRequestNewCodeDisabled}

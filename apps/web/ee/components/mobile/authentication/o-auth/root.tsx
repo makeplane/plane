@@ -21,9 +21,9 @@ export const OAuthRoot: FC<TOAuthRoot> = (props) => {
   return (
     <div className="relative space-y-6">
       <div className="mt-4 flex items-center pt-2">
-        <hr className="w-full border-onboarding-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">or</p>
-        <hr className="w-full border-onboarding-border-100" />
+        <hr className="w-full border-custom-border-100" />
+        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+        <hr className="w-full border-custom-border-100" />
       </div>
 
       <div className="space-y-2">

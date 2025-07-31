@@ -77,6 +77,7 @@ export type TUserProfile = {
   billing_address_country: string | undefined;
   billing_address: string | undefined;
   has_billing_address: boolean;
+  has_marketing_email_consent: boolean;
   language: string;
   is_smooth_cursor_enabled: boolean;
   created_at: Date | string;

@@ -89,7 +89,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
 
   return (
     <form
-      className="mt-5 space-y-4"
+      className="space-y-4"
       method="POST"
       action={`${API_BASE_URL}/auth/${mode === EAuthModes.SIGN_IN ? "magic-sign-in" : "magic-sign-up"}/`}
       onSubmit={() => {
@@ -116,11 +116,11 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm font-medium text-onboarding-text-300">
+        <label htmlFor="email" className="text-sm font-medium text-custom-text-300">
           {t("auth.common.email.label")}
         </label>
         <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
         >
           <Input
             id="email"
@@ -129,7 +129,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className="disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0"
+            className="disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 border-0"
             autoComplete="on"
             disabled
           />
@@ -147,7 +147,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="unique-code" className="text-sm font-medium text-onboarding-text-300">
+        <label htmlFor="unique-code" className="text-sm font-medium text-custom-text-300">
           {t("auth.common.unique_code.label")}
         </label>
         <Input
@@ -156,7 +156,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
-          className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+          className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
@@ -170,7 +170,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
-                ? "text-onboarding-text-400"
+                ? "text-custom-text-400"
                 : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
             }
             disabled={isRequestNewCodeDisabled}
