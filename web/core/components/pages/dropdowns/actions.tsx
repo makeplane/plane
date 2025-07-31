@@ -14,15 +14,14 @@ import {
   LockKeyhole,
   LockKeyholeOpen,
   Trash2,
+  FolderPlus,
+  Archive,
 } from "lucide-react";
 // constants
 import { EPageAccess } from "@plane/constants";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane ui
-import { ArchiveIcon, ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
 // components
 import { DeletePageModal } from "@/components/pages";
+import { AddToFolderModal } from "@/components/pages/folder/add-to-folder-modal";
 // helpers
 import { cn } from "@/helpers/common.helper";
 // hooks
@@ -48,11 +47,11 @@ export type TPageActions =
   | "delete"
   | "version-history"
   | "export"
-  | "move";
+  | "move"
+  | "add-to-folder";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
-  extraOptions?: (TContextMenuItem & { key: TPageActions })[];
+  extraOptions?: (any & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
   parentRef?: React.RefObject<HTMLElement>;
@@ -60,10 +59,11 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
+  const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
+  const [addToFolderModal, setAddToFolderModal] = useState(false);
   // params
   const { workspaceSlug } = useParams();
   // page flag
@@ -72,7 +72,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
   });
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
   // derived values
@@ -88,8 +87,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
-    const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
+  const MENU_ITEMS: (any & { key: TPageActions })[] = useMemo(() => {
+    const menuItems: (any & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
         action: pageOperations.toggleLock,
@@ -103,6 +102,13 @@ export const PageActions: React.FC<Props> = observer((props) => {
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
         icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
+      },
+      {
+        key: "add-to-folder",
+        action: () => setAddToFolderModal(true),
+        title: "Add to folder",
+        icon: FolderPlus,
+        shouldRender: !archived_at,
       },
       {
         key: "open-in-new-tab",
@@ -129,7 +135,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
         key: "archive-restore",
         action: pageOperations.toggleArchive,
         title: archived_at ? "Restore" : "Archive",
-        icon: archived_at ? ArchiveRestoreIcon : ArchiveIcon,
+        icon: archived_at ? ArchiveRestoreIcon : Archive,
         shouldRender: canCurrentUserArchivePage,
       },
       {
@@ -168,9 +174,9 @@ export const PageActions: React.FC<Props> = observer((props) => {
   // arrange options
   const arrangedOptions = useMemo(
     () =>
-      optionsOrder
-        .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
+      optionsOrder.map((key) => MENU_ITEMS.find((item) => item.key === key)).filter((item) => !!item) as (any & {
+        key: TPageActions;
+      })[],
     [optionsOrder, MENU_ITEMS]
   );
 
@@ -183,31 +189,8 @@ export const PageActions: React.FC<Props> = observer((props) => {
         page={page}
         storeType={storeType}
       />
-      {parentRef && <ContextMenu parentRef={parentRef} items={arrangedOptions} />}
-      <CustomMenu placement="bottom-end" optionsClassName="max-h-[90vh]" ellipsis closeOnSelect>
-        {arrangedOptions.map((item) => {
-          if (item.shouldRender === false) return null;
-          return (
-            <CustomMenu.MenuItem
-              key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                item.action?.();
-              }}
-              className={cn("flex items-center gap-2", item.className)}
-              disabled={item.disabled}
-            >
-              {item.customContent ?? (
-                <>
-                  {item.icon && <item.icon className="size-3" />}
-                  {item.title}
-                </>
-              )}
-            </CustomMenu.MenuItem>
-          );
-        })}
-      </CustomMenu>
+      <AddToFolderModal isOpen={addToFolderModal} onClose={() => setAddToFolderModal(false)} pageId={page.id || ""} />
+      {/* Context menu and custom menu would be implemented here */}
     </>
   );
 });
