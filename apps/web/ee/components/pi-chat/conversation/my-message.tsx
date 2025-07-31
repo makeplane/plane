@@ -28,7 +28,7 @@ export const MyMessage = observer((props: TProps) => {
         </Loader>
       )}
       {/* Avatar */}
-      <Avatar name={currentUser?.display_name} src={currentUser?.avatar} size={36} className="text-base" />
+      <Avatar name={currentUser?.display_name} src={currentUser?.avatar} size={28} className="text-sm" />
     </div>
   );
 });

@@ -41,8 +41,8 @@ export const PiChatLayout = observer((props: TProps) => {
       ? () => fetchUserThreads(getWorkspaceBySlug(workspaceSlug as string)?.id || "", isProjectLevel)
       : null,
     {
-      revalidateOnFocus: true,
-      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
       errorRetryCount: 0,
     }
   );
@@ -50,8 +50,8 @@ export const PiChatLayout = observer((props: TProps) => {
     activeChatId ? `PI_ACTIVE_CHAT_${activeChatId}` : null,
     activeChatId ? () => fetchChatById(activeChatId) : null,
     {
-      revalidateOnFocus: true,
-      revalidateIfStale: true,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
       errorRetryCount: 0,
     }
   );

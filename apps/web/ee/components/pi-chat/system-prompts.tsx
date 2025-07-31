@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { BriefcaseIcon, FileText, Loader as Spinner } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon, PiChatLogo } from "@plane/ui";
+import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -39,7 +39,7 @@ const SystemPrompts = (props: TSystemPrompt) => {
       case "issues":
         return LayersIcon;
       default:
-        return PiChatLogo;
+        return LayersIcon;
     }
   };
 
