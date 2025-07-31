@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { EOnboardingSteps, IUser } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
@@ -46,16 +45,15 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   avatar_url: "",
   password: undefined,
   confirm_password: undefined,
+  has_marketing_email_consent: true,
 };
 
 export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  // plane hooks
-  const { t } = useTranslation();
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
-  const { data: profile, updateUserProfile } = useUserProfile();
+  const { updateUserProfile } = useUserProfile();
   // form info
   const {
     getValues,
@@ -70,7 +68,6 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
       first_name: user?.first_name,
       last_name: user?.last_name,
       avatar_url: user?.avatar_url,
-      has_marketing_email_consent: profile?.has_marketing_email_consent,
     },
     mode: "onChange",
   });
