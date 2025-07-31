@@ -59,7 +59,7 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
   const userName = user?.display_name ?? `${user?.first_name} ${user?.last_name}` ?? user?.email;
 
   return (
-    <div className="flex flex-col gap-6 sticky top-0 z-10">
+    <div className="flex flex-col gap-4 sticky top-0 z-10">
       <div className="h-1.5 rounded-t-lg w-full bg-custom-background-100 overflow-hidden cursor-pointer">
         <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-right">
           <div

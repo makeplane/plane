@@ -128,7 +128,7 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                   >
                     <span
                       className={cn(`size-4 rounded border-2 flex items-center justify-center`, {
-                        "bg-blue-500 border-blue-500": isSelected,
+                        "bg-custom-primary-100 border-custom-primary-100": isSelected,
                         "border-custom-border-300": !isSelected,
                       })}
                     >

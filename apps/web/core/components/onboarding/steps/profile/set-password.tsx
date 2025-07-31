@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Lock, ChevronDown } from "lucide-react";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
+import { cn } from "@plane/utils";
 
 interface PasswordState {
   password: string;
@@ -79,24 +80,26 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
       className={`flex flex-col rounded-lg overflow-hidden transition-all duration-300 ease-in-out bg-custom-background-90`}
     >
       <div
-        className={`flex items-center justify-between transition-colors duration-200 px-3 py-2 ${
-          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-        }`}
+        className={cn(
+          "flex items-center justify-between transition-colors duration-200 px-3 py-2 text-sm",
+          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+          isExpanded && "pb-1"
+        )}
         onClick={handleToggleExpand}
       >
         <div className="flex items-center gap-1 text-custom-text-300">
-          <Lock className="size-4" />
+          <Lock className="size-3" />
           <span className="font-medium">Set a password</span>
+          <span>{`(Optional)`}</span>
         </div>
         <div className="flex items-center gap-2 text-custom-text-400">
-          <span className="text-sm">Optional</span>
           <ChevronDown className={chevronIconClasses} />
         </div>
       </div>
 
       <div className={expandedContentClasses}>
         {/* Password input */}
-        <div className="flex flex-col gap-2 transform transition-all duration-300 ease-in-out pt-2">
+        <div className="flex flex-col gap-2 transform transition-all duration-300 ease-in-out pt-1">
           <PasswordInput
             id="password"
             value={passwordState.password}
@@ -109,7 +112,7 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
 
         <div className="flex flex-col gap-2 pb-2">
           {/* Confirm password label */}
-          <div className="text-custom-text-300 font-medium transform transition-all duration-300 ease-in-out delay-75">
+          <div className="text-custom-text-300 font-medium transform transition-all duration-300 ease-in-out delay-75 text-sm">
             Confirm password
           </div>
 

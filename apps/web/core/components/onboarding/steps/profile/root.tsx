@@ -207,7 +207,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
               required: "Name is required",
               maxLength: {
                 value: 24,
-                message: "First name must be within 24 characters.",
+                message: "Name must be within 24 characters.",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
