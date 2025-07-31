@@ -105,25 +105,6 @@
   [data-theme="light-contrast"] {
     color-scheme: light !important;
 
-    --color-primary-10: 229, 243, 250;
-    --color-primary-20: 216, 237, 248;
-    --color-primary-30: 199, 229, 244;
-    --color-primary-40: 169, 214, 239;
-    --color-primary-50: 144, 202, 234;
-    --color-primary-60: 109, 186, 227;
-    --color-primary-70: 75, 170, 221;
-    --color-primary-80: 41, 154, 214;
-    --color-primary-90: 34, 129, 180;
-    --color-primary-100: 0, 99, 153;
-    --color-primary-200: 0, 92, 143;
-    --color-primary-300: 0, 86, 133;
-    --color-primary-400: 0, 77, 117;
-    --color-primary-500: 0, 66, 102;
-    --color-primary-600: 0, 53, 82;
-    --color-primary-700: 0, 43, 66;
-    --color-primary-800: 0, 33, 51;
-    --color-primary-900: 0, 23, 36;
-
     --color-background-100: 255, 255, 255; /* primary bg */
     --color-background-90: 247, 247, 247; /* secondary bg */
     --color-background-80: 232, 232, 232; /* tertiary bg */
