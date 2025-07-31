@@ -113,6 +113,7 @@ export const AppProgressBar = React.memo(
 
     useEffect(() => {
       if (progressDoneTimer) clearTimeout(progressDoneTimer);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       progressDoneTimer = setTimeout(() => {
         NProgress.done();
       }, stopDelay);
@@ -141,6 +142,7 @@ export const AppProgressBar = React.memo(
         }, stopDelay);
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const handleAnchorClick: any = (event: MouseEvent) => {
         // Skip preventDefault
         if (event.defaultPrevented) return;
@@ -182,7 +184,9 @@ export const AppProgressBar = React.memo(
             !href.startsWith("tel:") &&
             !href.startsWith("mailto:") &&
             !href.startsWith("blob:") &&
-            !href.startsWith("javascript:");
+            !href.startsWith("javascript:") &&
+            !href.startsWith("data:") &&
+            !href.startsWith("vbscript:");
 
           return !isNProgressDisabled && isNotTelOrMailto && getAnchorProperty(anchor, "target") !== "_blank";
         });
@@ -211,6 +215,7 @@ export const AppProgressBar = React.memo(
         elementsWithAttachedHandlers.current = [];
         window.history.pushState = originalWindowHistoryPushState;
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return styles;
@@ -250,6 +255,7 @@ export function useRouter() {
       if (startPosition && startPosition > 0) NProgress.set(startPosition);
       NProgress.start();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router]
   );
 
@@ -267,6 +273,7 @@ export function useRouter() {
 
       startProgress(NProgressOptions?.startPosition);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router]
   );
 
@@ -275,6 +282,7 @@ export function useRouter() {
       progress(href, options, NProgressOptions);
       return router.push(href, options);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router, startProgress]
   );
 
@@ -283,6 +291,7 @@ export function useRouter() {
       progress(href, options, NProgressOptions);
       return router.replace(href, options);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router, startProgress]
   );
 
@@ -294,6 +303,7 @@ export function useRouter() {
 
       return router.back();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router]
   );
 

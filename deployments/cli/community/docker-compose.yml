@@ -216,15 +216,6 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     image: artifacts.plane.so/makeplane/plane-proxy:${APP_RELEASE:-stable}
-    command:
-      [
-        "caddy",
-        "run",
-        "--config",
-        "/etc/caddy/Caddyfile",
-        "--adapter",
-        "caddyfile",
-      ]
     deploy:
       replicas: 1
       restart_policy:
