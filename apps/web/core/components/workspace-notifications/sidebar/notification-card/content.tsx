@@ -1,9 +1,5 @@
 import { FC } from "react";
-import {
-  renderAdditionalAction,
-  renderAdditionalValue,
-  shouldShowConnector,
-} from "ee/components/workspace-notifications";
+
 import { TNotification } from "@plane/types";
 import {
   convertMinutesToHoursMinutesString,
@@ -14,6 +10,12 @@ import {
 } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+import {
+  renderAdditionalAction,
+  renderAdditionalValue,
+  shouldShowConnector,
+  shouldRender,
+} from "@/plane-web/components/workspace-notifications";
 
 export const NotificationContent: FC<{
   notification: TNotification;
@@ -86,7 +88,7 @@ export const NotificationContent: FC<{
     <>
       {renderTriggerName()}
       <span className="text-custom-text-300">{renderAction()} </span>
-      {verb !== "deleted" && (
+      {shouldRender(notificationField, verb) && (
         <>
           {shouldShowConnector(notificationField) && <span className="text-custom-text-300">to </span>}
           <span className="text-custom-text-100 font-medium">{renderValue()}</span>

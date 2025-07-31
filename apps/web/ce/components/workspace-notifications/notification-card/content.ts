@@ -15,3 +15,5 @@ export const shouldShowConnector = (notificationField: string | undefined) =>
   !["comment", "archived_at", "None", "assignees", "labels", "start_date", "target_date", "parent"].includes(
     notificationField || ""
   );
+
+export const shouldRender = (notificationField: string | undefined, verb: string | undefined) => verb !== "deleted";
