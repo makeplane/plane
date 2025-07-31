@@ -278,7 +278,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
-                        label=label,
+                        label_id=label,
                         draft_issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,
