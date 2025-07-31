@@ -73,7 +73,11 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                           <span>{title}</span>
                         </div>
                         {isFiltersApplied && (
-                          <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
+                          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-custom-primary-100 text-[10px] font-medium text-white">
+                            <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+                            </svg>
+                          </span>
                         )}
                       </>
                     </Button>
