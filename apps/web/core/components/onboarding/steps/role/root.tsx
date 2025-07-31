@@ -137,7 +137,15 @@ export const RoleSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                       <Icon className="size-3.5" />
                       <span className="font-medium">{role.label}</span>
                     </div>
-                    {isSelected && <Check className="size-4 text-custom-primary-100" />}
+                    {isSelected && (
+                      <>
+                        <button
+                          className={`size-4 rounded border-2 flex items-center justify-center bg-blue-500 border-blue-500`}
+                        >
+                          <Check className="w-3 h-3 text-white" />
+                        </button>
+                      </>
+                    )}
                   </button>
                 );
               })}

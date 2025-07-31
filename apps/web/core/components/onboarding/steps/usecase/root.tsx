@@ -8,6 +8,7 @@ import { Check } from "lucide-react";
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS, USE_CASES } from "@plane/constants";
 import { EOnboardingSteps, TUserProfile } from "@plane/types";
 import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
 // hooks
@@ -119,14 +120,27 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                       e.stopPropagation();
                       onChange(useCase);
                     }}
-                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center justify-between ${
+                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
                         ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
                         : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
                     }`}
                   >
+                    <span
+                      className={cn(`size-4 rounded border-2 flex items-center justify-center`, {
+                        "bg-blue-500 border-blue-500": isSelected,
+                        "border-custom-border-300": !isSelected,
+                      })}
+                    >
+                      <Check
+                        className={cn("w-3 h-3 text-white", {
+                          "opacity-100": isSelected,
+                          "opacity-0": !isSelected,
+                        })}
+                      />
+                    </span>
+
                     <span className="font-medium">{useCase}</span>
-                    {isSelected && <Check className="size-4 text-custom-primary-100" />}
                   </button>
                 );
               })}

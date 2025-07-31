@@ -72,7 +72,7 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
         <div className="flex items-center gap-2">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="size-5 text-custom-text-400" />
             </button>
           )}
           <PlaneLockup height={20} width={95} className="text-custom-text-100" />

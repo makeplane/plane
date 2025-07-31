@@ -13,7 +13,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IUser, IWorkspace } from "@plane/types";
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -135,7 +135,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
       <form className="flex flex-col gap-10" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <CommonOnboardingHeader title="Create your workspace" description="All your work — unified." />
 
-        <div className="space-y-1">
+        <div className="flex flex-col gap-2">
           <label
             className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
@@ -156,7 +156,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
             }}
             render={({ field: { value, ref, onChange } }) => (
               <div className="relative flex items-center rounded-md">
-                <Input
+                <input
                   id="name"
                   name="name"
                   type="text"
@@ -168,10 +168,15 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
                       shouldValidate: true,
                     });
                   }}
-                  placeholder={t("workspace_creation.form.name.placeholder")}
+                  placeholder="Enter workspace name"
                   ref={ref}
-                  hasError={Boolean(errors.name)}
-                  className="w-full border-custom-border-300 placeholder:text-custom-text-400"
+                  className={cn(
+                    "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                    {
+                      "border-custom-border-300": !errors.name,
+                      "border-red-500": errors.name,
+                    }
+                  )}
                   autoFocus
                 />
               </div>
@@ -179,7 +184,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
           />
           {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
         </div>
-        <div className="space-y-1">
+        <div className="flex flex-col gap-2">
           <label
             className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
@@ -198,12 +203,20 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
             }}
             render={({ field: { value, ref, onChange } }) => (
               <div
-                className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
-                  invalidSlug ? "border-red-500" : "border-custom-border-300"
-                }`}
+                className={cn(
+                  "flex items-center w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
+                  {
+                    "border-custom-border-300": !errors.name,
+                    "border-red-500": errors.name,
+                  }
+                )}
               >
-                <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
-                <Input
+                <span
+                  className={cn("pr-0 text-custom-text-200 rounded-md whitespace-nowrap")}
+                >
+                  {window && window.location.host}/
+                </span>
+                <input
                   id="slug"
                   name="slug"
                   type="text"
@@ -214,9 +227,10 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
                     onChange(e.target.value.toLowerCase());
                   }}
                   ref={ref}
-                  hasError={Boolean(errors.slug)}
                   placeholder={t("workspace_creation.form.url.placeholder")}
-                  className="w-full border-none !px-0"
+                  className={cn(
+                    "w-full px-3 py-0 pl-0 text-custom-text-200 border-none ring-none outline-none rounded-md bg-custom-background-100 placeholder:text-custom-text-400"
+                  )}
                 />
               </div>
             )}
@@ -230,7 +244,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
           )}
           {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
-        <div className="space-y-1">
+        <div className="flex flex-col gap-2">
           <label
             className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
