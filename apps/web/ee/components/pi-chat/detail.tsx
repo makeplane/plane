@@ -1,6 +1,8 @@
 "use client";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@plane/utils";
 import { NotAuthorizedView } from "@/components/auth-screens";
 import { useUser } from "@/hooks/store";
@@ -8,6 +10,7 @@ import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { Messages } from "./conversation";
 import { Loading } from "./conversation/loading";
 
+import { scrollIntoViewHelper } from "./helper";
 import { InputBox } from "./input";
 
 type TProps = {
@@ -17,6 +20,7 @@ type TProps = {
 };
 export const PiChatDetail = observer((props: TProps) => {
   const { isFullScreen: isFullScreenProp = false, shouldRedirect = true, isProjectLevel = false } = props;
+  const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(false);
   // router
   const pathName = usePathname();
   // store hooks
@@ -45,9 +49,22 @@ export const PiChatDetail = observer((props: TProps) => {
                 isFullScreen={isFullScreen}
                 shouldRedirect={shouldRedirect}
                 isProjectLevel={isProjectLevel}
+                setHasMoreMessages={setHasMoreMessages}
               />
             )}
 
+            {/* Scroll to bottom button */}
+            <button
+              onClick={() => scrollIntoViewHelper("observer-element")}
+              className={cn(
+                "absolute bottom-[164px] left-1/2 -translate-x-1/2 bg-custom-background-100 p-1 rounded-full shadow z-10 transition-all duration-300 opacity-0 text-custom-text-200 border border-custom-border-100",
+                {
+                  "opacity-100": hasMoreMessages,
+                }
+              )}
+            >
+              <ChevronDown size={20} />
+            </button>
             {/* Chat Input */}
             <InputBox
               isProjectLevel
