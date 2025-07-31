@@ -207,13 +207,12 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
         },
     )
     def get(self, request, slug, project_id, property_id, option_id):
-
         # getting issue property by id
         issue_property = self.model.objects.get(
-            workspace__slug=self.workspace_slug,
-            project_id=self.project_id,
-            property_id=self.property_id,
-            pk=self.option_id,
+            workspace__slug=slug,
+            project_id=project_id,
+            property_id=property_id,
+            pk=option_id,
             property__issue_type__is_epic=False,
         )
         serializer = self.serializer_class(issue_property)
