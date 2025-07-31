@@ -8,6 +8,7 @@ import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
@@ -45,13 +46,14 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+  const { liteText } = useEditorFlagging(anchor);
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={disabledExtensions ?? []}
-        flaggedExtensions={flaggedExtensions ?? []}
+        flaggedExtensions={liteText.flagged}
         editable={editable}
         fileHandler={getEditorFileHandlers({
           anchor,

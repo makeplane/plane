@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
+import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
 import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 // components
@@ -26,8 +27,10 @@ type RichTextEditorWrapperProps = MakeOptional<
   );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
+  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, ...rest } = props;
   const { getMemberById } = useMember();
+  const { richText } = useEditorFlagging(anchor);
+
   return (
     <RichTextEditorWithRef
       mentionHandler={{
@@ -44,7 +47,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
-      flaggedExtensions={flaggedExtensions ?? []}
+      flaggedExtensions={richText.flagged}
       {...rest}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
