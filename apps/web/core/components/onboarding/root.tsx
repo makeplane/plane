@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { USER_TRACKER_EVENTS } from "@plane/constants";
@@ -94,7 +94,7 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
           if (skipInvites) finishOnboarding();
           else {
             setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
-            stepChange({ workspace_invite: true });
+            stepChange({ workspace_create: true });
           }
           break;
         case EOnboardingSteps.INVITE_MEMBERS:
@@ -107,6 +107,28 @@ export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
   );
 
   const updateCurrentStep = (step: EOnboardingSteps) => setCurrentStep(step);
+
+  useEffect(() => {
+    const handleInitialStep = () => {
+      if (
+        userProfile?.onboarding_step?.profile_complete &&
+        !userProfile?.onboarding_step?.workspace_create &&
+        !userProfile?.onboarding_step?.workspace_join
+      ) {
+        setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
+      }
+      if (
+        userProfile?.onboarding_step?.profile_complete &&
+        userProfile?.onboarding_step?.workspace_create &&
+        !userProfile?.onboarding_step?.workspace_invite
+      ) {
+        setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
+      }
+    };
+
+    handleInitialStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
