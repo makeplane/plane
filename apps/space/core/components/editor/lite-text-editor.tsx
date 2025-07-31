@@ -34,7 +34,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     containerClassName,
     disabledExtensions,
     editable,
-    flaggedExtensions,
     isSubmitting = false,
     showSubmitButton = true,
     workspaceId,
