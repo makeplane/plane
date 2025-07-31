@@ -57,7 +57,7 @@ function spinner() {
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local latest_release=$(curl -fsSL https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
@@ -247,7 +247,7 @@ function download() {
         mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
     fi
 
-    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
+    RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
     BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -255,7 +255,7 @@ function download() {
         echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
     else
         # Fallback to download from the raw github url
-        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
+        RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
         BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -269,7 +269,7 @@ function download() {
         fi
     fi
 
-    RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
+    RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
     BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
     STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
@@ -277,7 +277,7 @@ function download() {
         echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
     else
         # Fallback to download from the raw github url
-        RESPONSE=$(curl -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
+        RESPONSE=$(curl -fsSL -H 'Cache-Control: no-cache, no-store' -s -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
         BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
         STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 
