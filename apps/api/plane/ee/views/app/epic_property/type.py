@@ -33,6 +33,7 @@ class WorkspaceEpicTypeEndpoint(BaseAPIView):
                 project_ids=Coalesce(
                     ArrayAgg(
                         "project_issue_types__project_id",
+                        distinct=True,
                         filter=Q(project_issue_types__deleted_at__isnull=True),
                     ),
                     [],
