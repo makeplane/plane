@@ -32,7 +32,9 @@ export const FilterOption: React.FC<Props> = (props) => {
         <div className="flex-grow truncate text-xs text-custom-text-200">{title}</div>
       </div>
       {activePulse && (
-        <div className="flex-shrink-0 text-xs w-2 h-2 rounded-full bg-custom-primary-100 animate-pulse ml-auto" />
+        <div className="flex-shrink-0 text-xs px-1.5 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 font-medium text-[10px] ml-auto">
+          LIVE
+        </div>
       )}
     </button>
   );
