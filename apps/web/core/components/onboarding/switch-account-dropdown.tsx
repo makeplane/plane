@@ -35,7 +35,7 @@ export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <Menu as="div" className="relative">
         <Menu.Button className="flex items-center gap-x-2.5 px-2 py-1.5 rounded-lg bg-custom-background-90 z-10">
-          <div className="size-6 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-sm">
+          <div className="size-6 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-sm capitalize">
             {user?.avatar_url ? (
               <img
                 src={getFileURL(user?.avatar_url)}

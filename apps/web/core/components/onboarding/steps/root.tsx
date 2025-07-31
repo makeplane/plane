@@ -34,7 +34,7 @@ export const OnboardingStepRoot: FC<Props> = (props) => {
 
   return (
     <div className="flex-1 flex items-center justify-center p-8">
-      <div className="w-full max-w-md">{stepComponents[currentStep]} </div>
+      <div className="w-full max-w-[24rem]">{stepComponents[currentStep]} </div>
     </div>
   );
 };

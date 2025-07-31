@@ -19,7 +19,6 @@ type TAuthHeader = {
   currentAuthStep: EAuthSteps;
 };
 
-// TODO: UX need to be updated
 const Titles = {
   [EAuthModes.SIGN_IN]: {
     [EAuthSteps.EMAIL]: {
@@ -83,7 +82,10 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
             {workspace.name}
           </div>
         ),
-        subHeader: mode == EAuthModes.SIGN_UP ? "auth.sign_up.header.label" : "auth.sign_in.header.label",
+        subHeader:
+          mode == EAuthModes.SIGN_UP
+            ? "Create an account to start managing work with your team."
+            : "Log in to start managing work with your team.",
       };
     }
 
@@ -92,7 +94,6 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
 
   const { header, subHeader } = getHeaderSubHeader(currentAuthStep, authMode, invitation || undefined, invitationEmail);
 
-  // TODO: Remove this once we have a proper loading state
   if (isLoading)
     return (
       <div className="flex h-full w-full items-center justify-center">
