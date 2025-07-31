@@ -1,6 +1,20 @@
 import { TLogoProps } from "./common";
 import { EPageAccess } from "./enums";
 
+export type TPageFolder = {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+  project_ids?: string[];
+  workspace: string;
+  created_by: string;
+  updated_by: string;
+  created_at: Date;
+  updated_at: Date;
+  page_ids?: string[];
+};
+
 export type TPage = {
   access: EPageAccess | undefined;
   anchor?: string | null | undefined;
@@ -21,6 +35,7 @@ export type TPage = {
   updated_by: string | undefined;
   workspace: string | undefined;
   logo_props: TLogoProps | undefined;
+  folder_id?: string | undefined;
 };
 
 // page filters
