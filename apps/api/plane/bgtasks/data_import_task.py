@@ -141,10 +141,21 @@ def update_job_batch_completion(
         log_exception(e)
 
 
+def sanitize_issue_data(issue_data):
+    """
+    Sanitize the issue data
+    """
+    # limit the name to 255 characters
+    issue_data["name"] = issue_data["name"][:255]
+
+    return issue_data
+
+
 def process_single_issue(slug, project, user_id, issue_data):
     try:
         with transaction.atomic():
             # Process the main issue
+            issue_data = sanitize_issue_data(issue_data)
             serializer = IssueSerializer(
                 data=issue_data,
                 context={
