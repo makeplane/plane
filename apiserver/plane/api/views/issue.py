@@ -201,6 +201,7 @@ class IssueAPIEndpoint(BaseAPIView):
                     queryset=User.objects.filter(
                         member_project__is_active=True,
                         issue_assignee__deleted_at__isnull=True,
+                        issue_assignee__issue_id=pk,
                     ).distinct()
                 )
             ).get(workspace__slug=slug, project_id=project_id, pk=pk)
