@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { StoreContext } from "@/lib/store-context";
 // mobx store
 import { IProjectPageStore } from "@/store/pages/project-page.store";
+import { IPageFolderStore } from "@/store/pages/page-folder.store";
 
 export enum EPageStoreType {
   PROJECT = "PROJECT_PAGE",
@@ -21,4 +22,11 @@ export const usePageStore = <T extends EPageStoreType>(storeType: T): TReturnTyp
   }
 
   throw new Error(`Invalid store type: ${storeType}`);
+};
+
+export const usePageFolderStore = (): IPageFolderStore => {
+  const context = useContext(StoreContext);
+  if (context === undefined) throw new Error("usePageFolderStore must be used within StoreProvider");
+
+  return context.pageFolders;
 };
