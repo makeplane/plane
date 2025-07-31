@@ -226,6 +226,9 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # marketing
+    has_marketing_email_consent = models.BooleanField(default=False)
+
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
@@ -273,9 +276,9 @@ def create_user_notification(sender, instance, created, **kwargs):
 
         UserNotificationPreference.objects.create(
             user=instance,
-            property_change=False,
-            state_change=False,
-            comment=False,
-            mention=False,
-            issue_completed=False,
+            property_change=True,
+            state_change=True,
+            comment=True,
+            mention=True,
+            issue_completed=True,
         )

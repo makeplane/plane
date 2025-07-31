@@ -194,10 +194,18 @@
     "@babel/types" "^7.28.0"
     debug "^4.3.1"
 
-"@babel/types@^7.0.0", "@babel/types@^7.18.9", "@babel/types@^7.20.7", "@babel/types@^7.26.10", "@babel/types@^7.27.1", "@babel/types@^7.28.0":
+"@babel/types@^7.0.0", "@babel/types@^7.18.9", "@babel/types@^7.20.7", "@babel/types@^7.27.1", "@babel/types@^7.28.0":
   version "7.28.1"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.28.1.tgz#2aaf3c10b31ba03a77ac84f52b3912a0edef4cf9"
   integrity sha512-x0LvFTekgSX+83TI28Y9wYPUfzrnl2aT5+5QLnO6v7mSJYtEEevuDRN0F0uSHRk1G1IWZC43o00Y0xDDrpBGPQ==
+  dependencies:
+    "@babel/helper-string-parser" "^7.27.1"
+    "@babel/helper-validator-identifier" "^7.27.1"
+
+"@babel/types@^7.26.10":
+  version "7.28.2"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.28.2.tgz#da9db0856a9a88e0a13b019881d7513588cf712b"
+  integrity sha512-ruv7Ae4J5dUYULmeXw1gmb7rYRz57OWCPM57pHojnLq/3Z1CK2lNSLTCVjxVk1F/TZHwOZZrOWi0ur95BbLxNQ==
   dependencies:
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.27.1"
@@ -6777,10 +6785,10 @@ linkify-it@^5.0.0:
   dependencies:
     uc.micro "^2.0.0"
 
-linkifyjs@^4.1.3:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-4.3.1.tgz#1f246ebf4be040002accd1f4535b6af7c7e37898"
-  integrity sha512-DRSlB9DKVW04c4SUdGvKK5FR6be45lTU9M76JnngqPeeGDqPwYc0zdUErtsNVMtxPXgUWV4HbXbnC4sNyBxkYg==
+linkifyjs@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/linkifyjs/-/linkifyjs-4.3.2.tgz#d97eb45419aabf97ceb4b05a7adeb7b8c8ade2b1"
+  integrity sha512-NT1CJtq3hHIreOianA8aSXn6Cw0JzYOuDQbOrSPe7gqFnCpKP++MQe3ODgO3oh2GJFORkAAdqredOa60z63GbA==
 
 load-tsconfig@^0.2.3:
   version "0.2.5"

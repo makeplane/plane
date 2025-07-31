@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType } from "@plane/constants";
+import { EIssueFilterType, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, IIssueFilterOptions } from "@plane/types";
 // hooks
 import { Header, EHeaderVariant } from "@plane/ui";
@@ -94,6 +94,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
           display_filters: issueFilters?.displayFilters,
           display_properties: issueFilters?.displayProperties,
         }}
+        trackerElement={PROJECT_VIEW_TRACKER_ELEMENTS.MODULE_HEADER_SAVE_AS_VIEW_BUTTON}
       />
     </Header>
   );

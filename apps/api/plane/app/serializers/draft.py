@@ -21,6 +21,11 @@ from plane.db.models import (
     ProjectMember,
     EstimatePoint,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+    validate_json_content,
+    validate_binary_data,
+)
 from plane.app.permissions import ROLE
 
 
@@ -70,14 +75,21 @@ class DraftIssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
-        try:
-            if attrs.get("description_html", None) is not None:
-                parsed = html.fromstring(attrs["description_html"])
-                parsed_str = html.tostring(parsed, encoding="unicode")
-                attrs["description_html"] = parsed_str
+        # Validate description content for security
+        if "description" in attrs and attrs["description"]:
+            is_valid, error_msg = validate_json_content(attrs["description"])
+            if not is_valid:
+                raise serializers.ValidationError({"description": error_msg})
 
-        except Exception:
-            raise serializers.ValidationError("Invalid HTML passed")
+        if "description_html" in attrs and attrs["description_html"]:
+            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_html": error_msg})
+
+        if "description_binary" in attrs and attrs["description_binary"]:
+            is_valid, error_msg = validate_binary_data(attrs["description_binary"])
+            if not is_valid:
+                raise serializers.ValidationError({"description_binary": error_msg})
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -248,7 +260,7 @@ class DraftIssueCreateSerializer(BaseSerializer):
             DraftIssueLabel.objects.bulk_create(
                 [
                     DraftIssueLabel(
-                        label=label,
+                        label_id=label,
                         draft_issue=instance,
                         workspace_id=workspace_id,
                         project_id=project_id,

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserProjectRoles } from "@plane/types";
 // components
@@ -10,6 +10,7 @@ import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/componen
 import { ViewListLoader } from "@/components/ui";
 import { ProjectViewListItem } from "@/components/views";
 // hooks
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette, useProjectView, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
@@ -71,7 +72,10 @@ export const ProjectViewsList = observer(() => {
               label={t("project_views.empty_state.general.primary_button.text")}
               title={t("project_views.empty_state.general.primary_button.comic.title")}
               description={t("project_views.empty_state.general.primary_button.comic.description")}
-              onClick={() => toggleCreateViewModal(true)}
+              onClick={() => {
+                toggleCreateViewModal(true);
+                captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
+              }}
               disabled={!canPerformEmptyStateActions}
             />
           }

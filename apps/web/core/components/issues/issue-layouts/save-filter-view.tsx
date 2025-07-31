@@ -14,10 +14,11 @@ interface ISaveFilterView {
     display_filters?: IIssueDisplayFilterOptions;
     display_properties?: IIssueDisplayProperties;
   };
+  trackerElement: string;
 }
 
 export const SaveFilterView: FC<ISaveFilterView> = (props) => {
-  const { workspaceSlug, projectId, filterParams } = props;
+  const { workspaceSlug, projectId, filterParams, trackerElement } = props;
 
   const [viewModal, setViewModal] = useState<boolean>(false);
 
@@ -31,7 +32,7 @@ export const SaveFilterView: FC<ISaveFilterView> = (props) => {
         onClose={() => setViewModal(false)}
       />
 
-      <Button size="sm" onClick={() => setViewModal(true)}>
+      <Button size="sm" onClick={() => setViewModal(true)} data-ph-element={trackerElement}>
         Save View
       </Button>
     </div>
