@@ -15,7 +15,7 @@ type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI 
 
 declare module "@tiptap/core" {
   interface Commands {
-    utility: {
+    [CORE_EXTENSIONS.UTILITY]: {
       updateAssetsUploadStatus: (updatedStatus: TFileHandler["assetsUploadStatus"]) => () => void;
       updateAssetsList: (
         args:
@@ -27,6 +27,9 @@ declare module "@tiptap/core" {
             }
       ) => () => void;
     };
+  }
+  interface Storage {
+    [CORE_EXTENSIONS.UTILITY]: UtilityExtensionStorage;
   }
 }
 

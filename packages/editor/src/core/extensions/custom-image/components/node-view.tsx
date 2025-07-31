@@ -1,9 +1,5 @@
-import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
 import type { CustomImageExtension, TCustomImageAttributes } from "../types";
 import { CustomImageBlock } from "./block";
@@ -11,13 +7,10 @@ import { CustomImageUploader } from "./uploader";
 
 export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "updateAttributes"> & {
   extension: CustomImageExtension;
-  getPos: () => number;
-  editor: Editor;
   node: NodeViewProps["node"] & {
     attrs: TCustomImageAttributes;
   };
   updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
-  selected: boolean;
 };
 
 export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
@@ -84,7 +77,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
           <CustomImageUploader
             failedToLoadImage={failedToLoadImage}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE).maxFileSize}
+            maxFileSize={editor.storage.imageComponent?.maxFileSize}
             setIsUploaded={setIsUploaded}
             {...props}
           />

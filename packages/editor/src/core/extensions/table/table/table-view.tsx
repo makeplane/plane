@@ -1,10 +1,10 @@
-import { Editor } from "@tiptap/core";
-import { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
+import type { Editor, NodeViewProps } from "@tiptap/core";
+import type { Node as ProseMirrorNode, ResolvedPos } from "@tiptap/pm/model";
 import { CellSelection, TableMap, updateColumnsOnResize } from "@tiptap/pm/tables";
-import { Decoration, NodeView } from "@tiptap/pm/view";
+import type { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
 import { icons } from "src/core/extensions/table/table/icons";
-import tippy, { Instance, Props } from "tippy.js";
+import tippy, { type Instance, type Props } from "tippy.js";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { isCellSelection } from "./utilities/helpers";
 
@@ -146,7 +146,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -174,7 +174,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",
@@ -256,9 +256,9 @@ function createToolbox({
 export class TableView implements NodeView {
   node: ProseMirrorNode;
   cellMinWidth: number;
-  decorations: Decoration[];
+  decorations: readonly Decoration[];
   editor: Editor;
-  getPos: () => number;
+  getPos: NodeViewProps["getPos"];
   hoveredCell: ResolvedPos | null = null;
   map: TableMap;
   root: HTMLElement;
@@ -282,9 +282,9 @@ export class TableView implements NodeView {
   constructor(
     node: ProseMirrorNode,
     cellMinWidth: number,
-    decorations: Decoration[],
+    decorations: readonly Decoration[],
     editor: Editor,
-    getPos: () => number
+    getPos: NodeViewProps["getPos"]
   ) {
     this.node = node;
     this.cellMinWidth = cellMinWidth;
@@ -469,22 +469,24 @@ export class TableView implements NodeView {
   }
 
   selectColumn() {
-    if (!this.hoveredCell) return;
+    const pos = this.getPos();
+    if (!this.hoveredCell || pos === undefined) return;
 
-    const colIndex = this.map.colCount(this.hoveredCell.pos - (this.getPos() + 1));
+    const colIndex = this.map.colCount(this.hoveredCell.pos - (pos + 1));
     const anchorCellPos = this.hoveredCell.pos;
-    const headCellPos = this.map.map[colIndex + this.map.width * (this.map.height - 1)] + (this.getPos() + 1);
+    const headCellPos = this.map.map[colIndex + this.map.width * (this.map.height - 1)] + (pos + 1);
 
     const cellSelection = CellSelection.create(this.editor.view.state.doc, anchorCellPos, headCellPos);
     this.editor.view.dispatch(this.editor.state.tr.setSelection(cellSelection));
   }
 
   selectRow() {
-    if (!this.hoveredCell) return;
+    const pos = this.getPos();
+    if (!this.hoveredCell || pos === undefined) return;
 
     const anchorCellPos = this.hoveredCell.pos;
-    const anchorCellIndex = this.map.map.indexOf(anchorCellPos - (this.getPos() + 1));
-    const headCellPos = this.map.map[anchorCellIndex + (this.map.width - 1)] + (this.getPos() + 1);
+    const anchorCellIndex = this.map.map.indexOf(anchorCellPos - (pos + 1));
+    const headCellPos = this.map.map[anchorCellIndex + (this.map.width - 1)] + (pos + 1);
 
     const cellSelection = CellSelection.create(this.editor.state.doc, anchorCellPos, headCellPos);
     this.editor.view.dispatch(this.editor.view.state.tr.setSelection(cellSelection));

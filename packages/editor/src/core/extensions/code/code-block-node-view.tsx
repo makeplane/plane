@@ -56,7 +56,7 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
       </Tooltip>
 
       <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-4 my-2">
-        <NodeViewContent as="code" className="whitespace-pre-wrap" />
+        <NodeViewContent as="div" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
   );

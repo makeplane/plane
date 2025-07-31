@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/core";
+import type { Editor, NodeViewProps } from "@tiptap/core";
 import { DragEvent, useCallback, useEffect, useState } from "react";
 // helpers
 import { EFileError, isFileValid } from "@/helpers/file";
@@ -90,16 +90,18 @@ export const useUploader = (args: TUploaderArgs) => {
 
 type TDropzoneArgs = {
   editor: Editor;
-  pos: number;
+  getPos: NodeViewProps["getPos"];
   type: Extract<TEditorCommands, "attachment" | "image">;
   uploader: (file: File) => Promise<void>;
 };
 
 export const useDropZone = (args: TDropzoneArgs) => {
-  const { editor, pos, type, uploader } = args;
+  const { editor, getPos, type, uploader } = args;
   // states
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [draggedInside, setDraggedInside] = useState<boolean>(false);
+  // derived values
+  const pos = getPos();
 
   useEffect(() => {
     const dragStartHandler = () => {
@@ -125,7 +127,7 @@ export const useDropZone = (args: TDropzoneArgs) => {
       setDraggedInside(false);
       const filesList = e.dataTransfer.files;
 
-      if (filesList.length === 0 || !editor.isEditable) {
+      if (filesList.length === 0 || !editor.isEditable || pos === undefined) {
         return;
       }
 

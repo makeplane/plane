@@ -3,7 +3,12 @@ import { Image as BaseImageExtension } from "@tiptap/extension-image";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
-import { type CustomImageExtension, ECustomImageAttributeNames, type InsertImageComponentProps } from "./types";
+import {
+  type CustomImageExtension,
+  type CustomImageExtensionStorage,
+  ECustomImageAttributeNames,
+  type InsertImageComponentProps,
+} from "./types";
 import { DEFAULT_CUSTOM_IMAGE_ATTRIBUTES } from "./utils";
 
 declare module "@tiptap/core" {
@@ -11,6 +16,9 @@ declare module "@tiptap/core" {
     [CORE_EXTENSIONS.CUSTOM_IMAGE]: {
       insertImageComponent: ({ file, pos, event }: InsertImageComponentProps) => ReturnType;
     };
+  }
+  interface Storage {
+    [CORE_EXTENSIONS.CUSTOM_IMAGE]: CustomImageExtensionStorage;
   }
 }
 

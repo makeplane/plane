@@ -189,6 +189,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       const pos = getPos();
+      if (pos === undefined) return;
       const nodeSelection = NodeSelection.create(editor.state.doc, pos);
       editor.view.dispatch(editor.state.tr.setSelection(nodeSelection));
     },
