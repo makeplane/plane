@@ -27,6 +27,8 @@ export const CustomStarterKitExtension = (args: TArgs) => {
     codeBlock: false,
     horizontalRule: false,
     blockquote: false,
+    link: false,
+    listKeymap: false,
     paragraph: {
       HTMLAttributes: {
         class: "editor-paragraph-block",
