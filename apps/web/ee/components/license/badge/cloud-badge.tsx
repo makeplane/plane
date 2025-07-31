@@ -92,7 +92,7 @@ export const CloudEditionBadge = observer(() => {
             `
           ) : (
             <>
-              <PlaneIcon className="size-3 flex-shrink-0" />
+              <PlaneIcon className="size-4 flex-shrink-0" />
               <span className="truncate ">{getSubscriptionName(currentSubscription)}</span>
             </>
           )}
