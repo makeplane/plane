@@ -1465,7 +1465,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="issue_comment",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=None,
                 actor_id=request.user.id,
