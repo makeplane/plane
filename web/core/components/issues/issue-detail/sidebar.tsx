@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users, Info } from "lucide-react";
 import axios from "axios";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
 // components
 import {
@@ -30,6 +29,7 @@ import { IssueWorklogProperty } from "@/plane-web/components/issues";
 import type { TIssueOperations } from "./root";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 import { CustomProperty } from "../custom-properties";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   workspaceSlug: string;

@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { DATE_AFTER_FILTER_OPTIONS } from "@/constants/filters";
 import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { capitalizeFirstLetter } from "@/helpers/string.helper";
-import { useTranslation } from "@plane/i18n";
 // constants
 
 type Props = {
@@ -16,14 +15,13 @@ type Props = {
 
 export const AppliedDateFilters: React.FC<Props> = observer((props) => {
   const { editable, handleRemove, values } = props;
-  const { t } = useTranslation();
 
   const getDateLabel = (value: string): string => {
     let dateLabel = "";
 
     const dateDetails = DATE_AFTER_FILTER_OPTIONS.find((d) => d.value === value);
 
-    if (dateDetails) dateLabel = t(dateDetails.name);
+    if (dateDetails) dateLabel = dateDetails.name;
     else {
       const dateParts = value.split(";");
 

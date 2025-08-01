@@ -8,7 +8,6 @@ import { PlusIcon } from "lucide-react";
 // types
 import { IProject, TIssue } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/ui";
 // components
 import { CreateIssueToastActionItems } from "@/components/issues";
@@ -22,6 +21,7 @@ import { createIssuePayload } from "@/helpers/issue.helper";
 import { useEventTracker } from "@/hooks/store";
 // plane web components
 import { QuickAddIssueFormRoot } from "@/plane-web/components/issues";
+import { useTranslation } from "@plane/i18n";
 
 export type TQuickAddIssueForm = {
   ref: React.RefObject<HTMLFormElement>;

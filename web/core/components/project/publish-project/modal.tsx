@@ -8,7 +8,6 @@ import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { IProject, TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Button, Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@/helpers/common.helper";
@@ -56,7 +55,6 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     unPublishProject,
     fetchSettingsLoader,
   } = useProjectPublish();
-  const { t } = useTranslation();
   // derived values
   const projectPublishSettings = getPublishSettingsByProjectID(project.id);
   // form info
@@ -232,7 +230,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
             )}
             <div className="space-y-4">
               <div className="relative flex items-center justify-between gap-2">
-                <div className="text-sm">{t("views")}</div>
+                <div className="text-sm">Views</div>
                 <Controller
                   control={control}
                   name="view_props"

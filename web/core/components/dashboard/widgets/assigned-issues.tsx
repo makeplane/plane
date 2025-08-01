@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Tab } from "@headlessui/react";
 import { TAssignedIssuesWidgetFilters, TAssignedIssuesWidgetResponse } from "@plane/types";
 // hooks
-import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 import {
   DurationFilterDropdown,
@@ -14,6 +13,7 @@ import {
   WidgetLoader,
   WidgetProps,
 } from "@/components/dashboard/widgets";
+import { useTranslation } from "@plane/i18n";
 import { EDurationFilters, FILTERED_ISSUES_TABS_LIST, UNFILTERED_ISSUES_TABS_LIST } from "@/constants/dashboard";
 import { getCustomDates, getRedirectionFilters, getTabKey } from "@/helpers/dashboard.helper";
 import { useDashboard } from "@/hooks/store";

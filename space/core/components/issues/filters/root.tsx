@@ -4,7 +4,6 @@ import { FC, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "@plane/i18n";
 // components
 import { FiltersDropdown } from "@/components/issues/filters/helpers/dropdown";
 import { FilterSelection } from "@/components/issues/filters/selection";
@@ -16,6 +15,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { useIssueFilter } from "@/hooks/store";
 // types
 import { TIssueQueryFilters } from "@/types/issue";
+import { useTranslation } from "@plane/i18n";
 
 type IssueFiltersDropdownProps = {
   anchor: string;

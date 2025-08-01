@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // plane ui
-import { useTranslation } from "@plane/i18n";
 import { Loader, Avatar } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
@@ -12,6 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useMember, useUser } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;

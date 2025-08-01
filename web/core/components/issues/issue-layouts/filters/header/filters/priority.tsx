@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 
 // ui
-import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/ui";
 
 // components
@@ -12,6 +11,7 @@ import { FilterHeader, FilterOption } from "@/components/issues";
 
 // constants
 import { ISSUE_PRIORITIES } from "@/constants/issue";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -45,7 +45,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
                 isChecked={appliedFilters?.includes(priority.key) ? true : false}
                 onClick={() => handleUpdate(priority.key)}
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
-                title={t(priority.key)}
+                title={priority.title}
               />
             ))
           ) : (

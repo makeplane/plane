@@ -1,7 +1,6 @@
 import { RefObject } from "react";
 import { observer } from "mobx-react";
 // components
-import { useTranslation } from "@plane/i18n";
 import { Row, ERowVariant } from "@plane/ui";
 import { MultipleSelectGroupAction } from "@/components/core";
 import { ChartDataType, IBlockUpdateData, IGanttBlock } from "@/components/gantt-chart";
@@ -11,6 +10,7 @@ import { cn } from "@/helpers/common.helper";
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
 import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   blockIds: string[];

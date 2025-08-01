@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { IUserProfileProjectSegregation } from "@plane/types";
-import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common";
 // components
@@ -25,7 +24,6 @@ type TUserProfileHeader = {
 
 export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
-  const { t } = useTranslation();
   // router
   const { workspaceSlug, userId } = useParams();
   // store hooks
@@ -88,7 +86,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
                   href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
                   className="w-full text-custom-text-300"
                 >
-                  {tab.key ? t(tab.key) : null}
+                  {tab.label}
                 </Link>
               </CustomMenu.MenuItem>
             ))}

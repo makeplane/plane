@@ -4,7 +4,6 @@ import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { TIssuePriorities } from "@plane/types";
-import { useTranslation } from "@plane/i18n";
 import { PriorityIcon, Tag } from "@plane/ui";
 // constants
 import { ISSUE_PRIORITIES } from "@/constants/issue";
@@ -13,7 +12,6 @@ import { useProjectInbox } from "@/hooks/store";
 
 export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   // hooks
-  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // derived values
   const filteredValues = inboxFilters?.priority || [];
@@ -28,7 +26,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{t("Priority")}</div>
+      <div className="text-xs text-custom-text-200">Priority</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -37,7 +35,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
             <div className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden">
               <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
             </div>
-            <div className="text-xs truncate">{t(optionDetail?.title)}</div>
+            <div className="text-xs truncate">{optionDetail?.title}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}

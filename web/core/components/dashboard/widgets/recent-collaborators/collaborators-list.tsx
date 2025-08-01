@@ -7,7 +7,6 @@ import useSWR from "swr";
 // types
 import { TRecentCollaboratorsWidgetResponse } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@/helpers/file.helper";
@@ -15,6 +14,7 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useDashboard, useMember, useUser } from "@/hooks/store";
 // components
 import { WidgetLoader } from "../loaders";
+import { useTranslation } from "@plane/i18n";
 
 type CollaboratorListItemProps = {
   issueCount: number;

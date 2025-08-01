@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // editor
 import { EditorRefApi } from "@plane/editor";
-import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 // editor components
@@ -17,6 +16,7 @@ import { FileService } from "@/services/file.service";
 const fileService = new FileService();
 // types
 import { Comment } from "@/types/issue";
+import { useTranslation } from "@plane/i18n";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",

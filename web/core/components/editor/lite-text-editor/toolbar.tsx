@@ -5,13 +5,13 @@ import { Globe2, Lock, LucideIcon } from "lucide-react";
 // editor
 import { EditorRefApi, TEditorCommands, TNonColorEditorCommands } from "@plane/editor";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Button, Tooltip } from "@plane/ui";
 // constants
 import { TOOLBAR_ITEMS } from "@/constants/editor";
 import { EIssueCommentAccessSpecifier } from "@/constants/issue";
 // helpers
 import { cn } from "@/helpers/common.helper";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   accessSpecifier?: EIssueCommentAccessSpecifier;

@@ -3,7 +3,6 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { TIssuePriorities } from "@plane/types";
-import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues";
@@ -19,7 +18,6 @@ type Props = {
 export const FilterPriority: FC<Props> = observer((props) => {
   const { searchQuery } = props;
   // hooks
-  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);
@@ -34,7 +32,7 @@ export const FilterPriority: FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`${t("Priority")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Priority${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -47,11 +45,11 @@ export const FilterPriority: FC<Props> = observer((props) => {
                 isChecked={filterValue?.includes(priority.key) ? true : false}
                 onClick={() => handleInboxIssueFilters("priority", handleFilterValue(priority.key))}
                 icon={<PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />}
-                title={t(priority.title)}
+                title={priority.title}
               />
             ))
           ) : (
-            <p className="text-xs italic text-custom-text-400">{t("no_matches_found")}</p>
+            <p className="text-xs italic text-custom-text-400">No matches found</p>
           )}
         </div>
       )}

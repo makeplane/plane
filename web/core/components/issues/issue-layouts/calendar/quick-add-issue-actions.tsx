@@ -8,7 +8,6 @@ import { PlusIcon } from "lucide-react";
 // types
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { CustomMenu, setPromiseToast } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "@/components/core";
@@ -18,6 +17,7 @@ import { EIssueLayoutTypes } from "@/constants/issue";
 import { cn } from "@/helpers/common.helper";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;

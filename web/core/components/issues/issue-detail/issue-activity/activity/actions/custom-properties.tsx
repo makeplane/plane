@@ -7,8 +7,8 @@ import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
-import { useTranslation } from "@plane/i18n";
 import { DoubleCircleIcon } from "@plane/ui";
+import { useTranslation } from "@plane/i18n";
 
 type TIssueCustomPropertyActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 

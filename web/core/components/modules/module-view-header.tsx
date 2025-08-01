@@ -12,7 +12,6 @@ import { useOutsideClickDetector } from "@plane/helpers";
 // types
 import { TModuleFilters } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/ui";
 // components
 import { FiltersDropdown } from "@/components/issues";
@@ -24,6 +23,7 @@ import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useMember, useModuleFilter } from "@/hooks/store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useTranslation } from "@plane/i18n";
 
 export const ModuleViewHeader: FC = observer(() => {
   const { t } = useTranslation();

@@ -1,12 +1,12 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Check, ListFilter } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
 import { Button, PopoverMenu } from "@plane/ui";
 // helper
 import { cn } from "@/helpers/common.helper";
 // constants
 import { TActivityFilterOption, TActivityFilters } from "@/plane-web/constants/issues";
+import { useTranslation } from "@plane/i18n";
 
 type TActivityFilter = {
   selectedFilters: TActivityFilters[];

@@ -62,7 +62,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}
                   onClick={() => handleUpdate(option.value)}
-                  title={t(option.name)}
+                  title={option.name}
                   multiple
                 />
               ))}

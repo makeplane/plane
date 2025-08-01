@@ -6,7 +6,6 @@ import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, U
 import axios from "axios";
 // hooks
 // ui icons
-import { useTranslation } from "@plane/i18n";
 import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
 // components
 import {
@@ -35,6 +34,7 @@ import { IssueAdditionalPropertyValuesUpdate } from "@/plane-web/components/issu
 import { IssueWorklogProperty} from "@/plane-web/components/issues";
 import { ISSUE_ADDITIONAL_PROPERTIES } from "@/constants/issue";
 import { CustomProperty } from "../custom-properties";
+import { useTranslation } from "@plane/i18n";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;

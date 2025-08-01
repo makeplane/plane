@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 
 // icons
 import { Expand, Shrink, X } from "lucide-react";
@@ -13,11 +12,10 @@ type Props = {
 
 export const ProjectAnalyticsModalHeader: React.FC<Props> = observer((props) => {
   const { fullScreen, handleClose, setFullScreen, title } = props;
-  const { t } = useTranslation();
 
   return (
     <div className="flex items-center justify-between gap-4 bg-custom-background-100 px-5 py-4 text-sm">
-      <h3 className="break-words">{t("Analytics for")} {title}</h3>
+      <h3 className="break-words">Analytics for {title}</h3>
       <div className="flex items-center gap-2">
         <button
           type="button"

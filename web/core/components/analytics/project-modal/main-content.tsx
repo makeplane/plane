@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 import { ICycle, IModule, IProject } from "@plane/types";
-import { useTranslation } from "@plane/i18n";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
 // types
@@ -18,7 +17,6 @@ type Props = {
 
 export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props) => {
   const { fullScreen, cycleDetails, moduleDetails } = props;
-  const { t } = useTranslation();
 
   return (
     <Tab.Group as={React.Fragment}>
@@ -31,7 +29,7 @@ export const ProjectAnalyticsModalMainContent: React.FC<Props> = observer((props
                   selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
                 }`}
               >
-                {t(tab.title)}
+                {tab.title}
                 <div
                   className={`border absolute bottom-0 right-0 left-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
                 />

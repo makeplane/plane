@@ -16,7 +16,6 @@ import {
   TCalendarLayouts,
   TIssueKanbanFilters,
 } from "@plane/types";
-import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
@@ -28,6 +27,7 @@ import { ICycleIssuesFilter } from "@/store/issue/cycle";
 import { IModuleIssuesFilter } from "@/store/issue/module";
 import { IProjectIssuesFilter } from "@/store/issue/project";
 import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { useTranslation } from "@plane/i18n";
 
 interface ICalendarHeader {
   issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;

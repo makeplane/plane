@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 // icons
 import { Search } from "lucide-react";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Input } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core";
@@ -14,6 +13,7 @@ import { GlobalDefaultViewListItem, GlobalViewsList } from "@/components/workspa
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 const WorkspaceViewsPage = observer(() => {
   const [query, setQuery] = useState("");
@@ -21,7 +21,7 @@ const WorkspaceViewsPage = observer(() => {
   // store
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All ${t("views")}` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
 
   return (
     <>

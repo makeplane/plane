@@ -1,6 +1,5 @@
 import { ComputedDatum } from "@nivo/bar";
 import { Theme } from "@nivo/core";
-import { useTranslation } from "@plane/i18n";
 // components
 import { TIssuePriorities } from "@plane/types";
 import { BarGraph } from "@/components/ui";
@@ -37,11 +36,9 @@ const PRIORITY_TEXT_COLORS = {
 
 export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
   const { borderRadius = 8, data, height = 300, onBarClick, padding = 0.05, theme } = props;
-  const { t } = useTranslation();
 
   const chartData = data.map((priority) => ({
-    priorityKey: capitalizeFirstLetter(priority.priority),
-    priority: t(capitalizeFirstLetter(priority.priority)),
+    priority: capitalizeFirstLetter(priority.priority),
     value: priority.priority_count,
   }));
 
@@ -63,14 +60,14 @@ export const IssuesByPriorityGraph: React.FC<Props> = (props) => {
           <span
             className="h-3 w-3 rounded"
             style={{
-              backgroundColor: PRIORITY_TEXT_COLORS[`${datum.data.priorityKey}`.toLowerCase() as TIssuePriorities],
+              backgroundColor: PRIORITY_TEXT_COLORS[`${datum.data.priority}`.toLowerCase() as TIssuePriorities],
             }}
           />
           <span className="font-medium text-custom-text-200">{datum.data.priority}:</span>
           <span>{datum.value}</span>
         </div>
       )}
-      colors={({ data }) => `url(#gradient${data.priorityKey})`}
+      colors={({ data }) => `url(#gradient${data.priority})`}
       defs={PRIORITY_GRAPH_GRADIENTS}
       fill={ISSUE_PRIORITIES.map((p) => ({
         match: {

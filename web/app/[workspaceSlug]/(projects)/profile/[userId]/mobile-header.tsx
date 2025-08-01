@@ -8,7 +8,6 @@ import { ChevronDown } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
@@ -24,6 +23,7 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useLabel } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 export const ProfileIssuesMobileHeader = observer(() => {
   const { t } = useTranslation();

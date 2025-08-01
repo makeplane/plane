@@ -7,7 +7,6 @@ import { Layers } from "lucide-react";
 // types
 import { IProjectView, IIssueFilterOptions, IIssueDisplayProperties, IIssueDisplayFilterOptions } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -26,6 +25,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 
 import { AccessController } from "@/plane-web/components/views/access-controller";
 import { LayoutDropDown } from "../dropdowns/layout";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   data?: IProjectView | null;

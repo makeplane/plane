@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Tooltip, ToggleSwitch } from "@plane/ui";
 // components
 import { ProductUpdatesModal } from "@/components/global";
@@ -17,6 +16,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 import { ENABLE_LOCAL_DB_CACHE } from "@/plane-web/constants/issues";
+import { useTranslation } from "@plane/i18n";
 
 export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;

@@ -17,18 +17,16 @@ import { EViewAccess } from "@/constants/views";
 import { calculateTotalFilters } from "@/helpers/filter.helper";
 // hooks
 import { useProject, useProjectView } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 const ProjectViewsPage = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
-  const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
   const { filters, updateFilters, clearAllFilters } = useProjectView();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
-  const pageTitle = project?.name ? `${project?.name} - ${t("views")}` : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
 
   if (!workspaceSlug || !projectId) return <></>;
 

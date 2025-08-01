@@ -3,7 +3,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTranslation } from "@plane/i18n";
 // components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { CountChip } from "@/components/common";
@@ -23,7 +22,6 @@ import { getNumberCount } from "@/helpers/string.helper";
 import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
 
 export const NotificationsSidebar: FC = observer(() => {
-  const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -68,7 +66,7 @@ export const NotificationsSidebar: FC = observer(() => {
                     : "text-custom-text-100 hover:text-custom-text-200"
                 )}
               >
-                <div className="font-medium">{t(tab.label)}</div>
+                <div className="font-medium">{tab.label}</div>
                 {tab.count(unreadNotificationsCount) > 0 && (
                   <CountChip count={getNumberCount(tab.count(unreadNotificationsCount))} />
                 )}

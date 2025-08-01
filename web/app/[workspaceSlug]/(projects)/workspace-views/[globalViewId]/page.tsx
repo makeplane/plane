@@ -10,18 +10,16 @@ import { GlobalViewsHeader } from "@/components/workspace";
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@/constants/workspace";
 // hooks
 import { useWorkspace } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 const GlobalViewIssuesPage = observer(() => {
   // router
   const { globalViewId } = useParams();
   // store hooks
   const { currentWorkspace } = useWorkspace();
-  const { t } = useTranslation();
 
   // derived values
   const defaultView = DEFAULT_GLOBAL_VIEWS_LIST.find((view) => view.key === globalViewId);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All ${t("views")}` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - All Views` : undefined;
 
   return (
     <>

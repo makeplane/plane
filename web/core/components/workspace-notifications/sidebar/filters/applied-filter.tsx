@@ -3,7 +3,6 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
 // constants
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@/constants/notification";
@@ -16,7 +15,6 @@ type TAppliedFilters = {
 
 export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
   const { workspaceSlug } = props;
-  const { t } = useTranslation();
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();
   // derived values
@@ -49,7 +47,7 @@ export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
               className="flex flex-wrap flex-start"
               onClick={() => handleFilterTypeChange(filter?.value, !isSelected)}
             >
-              <div className="whitespace-nowrap text-custom-text-200">{t(filter.label)}</div>
+              <div className="whitespace-nowrap text-custom-text-200">{filter.label}</div>
               <div className="w-4 h-4 flex justify-center items-center transition-all rounded-sm text-custom-text-200 hover:text-custom-text-100">
                 <X className="h-3 w-3" />
               </div>

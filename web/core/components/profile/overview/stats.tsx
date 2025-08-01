@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useTranslation } from "@plane/i18n";
 
 // ui
 import { UserCircle2 } from "lucide-react";
@@ -16,7 +15,6 @@ type Props = {
 
 export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
   const { workspaceSlug, userId } = useParams();
-  const { t } = useTranslation();
 
   const overviewCards = [
     {
@@ -41,7 +39,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("Overview")}</h3>
+      <h3 className="text-lg font-medium">Overview</h3>
       {userProfile ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {overviewCards.map((card) => (
@@ -51,7 +49,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-custom-text-400">{t(card.title)}</p>
+                  <p className="text-sm text-custom-text-400">{card.title}</p>
                   <p className="text-xl font-semibold">{card.value}</p>
                 </div>
               </Card>

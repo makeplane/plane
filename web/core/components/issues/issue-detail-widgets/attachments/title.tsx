@@ -1,12 +1,12 @@
 "use client";
 import React, { FC, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useTranslation } from "@plane/i18n";
 import { CollapsibleButton } from "@plane/ui";
 // components
 import { IssueAttachmentActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
 import { useIssueDetail } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 type Props = {
   isOpen: boolean;

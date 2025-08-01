@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { TOverviewStatsWidgetResponse } from "@plane/types";
 // hooks
-import { useTranslation } from "@plane/i18n";
 import { Card, ECardSpacing } from "@plane/ui";
 import { WidgetLoader } from "@/components/dashboard/widgets";
 import { cn } from "@/helpers/common.helper";
@@ -12,6 +11,7 @@ import { useDashboard } from "@/hooks/store";
 // components
 // helpers
 // types
+import { useTranslation } from "@plane/i18n";
 
 export type WidgetProps = {
   dashboardId: string;

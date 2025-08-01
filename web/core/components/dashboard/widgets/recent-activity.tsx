@@ -7,7 +7,6 @@ import { History } from "lucide-react";
 // types
 import { TRecentActivityWidgetResponse } from "@plane/types";
 // components
-import { useTranslation } from "@plane/i18n";
 import { Card, Avatar, getButtonStyling } from "@plane/ui";
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core";
 import { RecentActivityEmptyState, WidgetLoader, WidgetProps } from "@/components/dashboard/widgets";
@@ -17,6 +16,7 @@ import { calculateTimeAgo } from "@/helpers/date-time.helper";
 import { getFileURL } from "@/helpers/file.helper";
 // hooks
 import { useDashboard, useUser } from "@/hooks/store";
+import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "recent_activity";
 

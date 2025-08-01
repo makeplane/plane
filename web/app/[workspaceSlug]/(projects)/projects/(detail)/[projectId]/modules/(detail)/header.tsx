@@ -9,7 +9,6 @@ import { ArrowRight, PanelRight } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, CustomMenu, DiceIcon, Tooltip, Header } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
@@ -43,6 +42,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
+import { useTranslation } from "@plane/i18n";
 
 const ModuleDropdownOption: React.FC<{ moduleId: string }> = ({ moduleId }) => {
   const { t } = useTranslation();
