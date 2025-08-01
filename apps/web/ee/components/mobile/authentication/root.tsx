@@ -125,6 +125,9 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
           <MobileAuthBanner bannerData={errorInfo} handleBannerData={handleErrorInfo} />
         )}
 
+        {/* oauth */}
+        <OAuthRoot invitationDetails={invitationDetails} config={config} />
+
         {/* auth content */}
         <div>
           {authStep === EMobileAuthSteps.EMAIL && (
@@ -159,9 +162,6 @@ export const AuthRoot: FC<TAuthRoot> = (props) => {
             />
           )}
         </div>
-
-        {/* oauth */}
-        <OAuthRoot invitationDetails={invitationDetails} config={config} />
 
         {/* terms and conditions */}
         <MobileTermsAndConditions />
