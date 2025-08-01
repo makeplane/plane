@@ -143,7 +143,7 @@ export class WorkspaceSubscriptionStore implements IWorkspaceSubscriptionStore {
     const subscriptionDetail = this.currentWorkspaceSubscribedPlanDetail;
     if (!subscriptionDetail) return false;
     if (subscriptionDetail.is_offline_payment || this.rootStore.instance.config?.is_airgapped) return false;
-    return SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
+    return SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail.product);
   }
 
   // --------------- Computed function ---------------

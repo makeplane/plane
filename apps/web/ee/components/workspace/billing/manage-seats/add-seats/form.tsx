@@ -22,11 +22,12 @@ type TModalStep = "SELECT_SEATS" | "CONFIRM_PRICE";
 
 type TAddSeatsFormProps = {
   onClose?: () => void;
+  onSuccess?: () => void;
   onPreviousStep?: () => void;
 };
 
 export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
-  const { onClose, onPreviousStep } = props;
+  const { onClose, onSuccess, onPreviousStep } = props;
   // router
   const { workspaceSlug } = useParams();
   // mobx store
@@ -133,7 +134,7 @@ export const AddSeatsForm: React.FC<TAddSeatsFormProps> = observer((props) => {
         updateSubscribedPlan(workspaceSlug?.toString(), {
           purchased_seats: response?.seats,
         });
-        handleClose();
+        onSuccess?.();
       })
       .catch((err) => {
         setToast({

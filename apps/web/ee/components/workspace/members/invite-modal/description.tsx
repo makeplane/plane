@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 // plane imports
-import { SUBSCRIPTION_WITH_SEATS_MANAGEMENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TMemberInviteCheck } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -17,14 +16,11 @@ export const InvitationDescription = observer((props: TInvitationDescriptionProp
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
-  // derived values
-  const isSeatsManagementEnabled =
-    subscriptionDetail && SUBSCRIPTION_WITH_SEATS_MANAGEMENT.includes(subscriptionDetail?.product);
+  const { isSeatManagementEnabled } = useWorkspaceSubscription();
 
   return (
     <>
-      {isSeatsManagementEnabled ? (
+      {isSeatManagementEnabled ? (
         <>
           {isLoading ? (
             <Loader className="w-full h-10">

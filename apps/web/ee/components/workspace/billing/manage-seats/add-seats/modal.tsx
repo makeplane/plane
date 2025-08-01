@@ -25,7 +25,7 @@ export const AddSeatsModal: React.FC<TAddSeatsModalProps> = observer((props) => 
       width={EModalWidth.XXL}
       className="transition-all duration-300 ease-in-out"
     >
-      <AddSeatsForm onClose={onClose} />
+      <AddSeatsForm onClose={onClose} onSuccess={onClose} />
     </ModalCore>
   );
 });
