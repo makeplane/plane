@@ -10,7 +10,7 @@ type PushStateInput = [data: any, unused: string, url?: string | URL | null | un
 
 export const AppProgressBar = React.memo(
   ({
-    color = "#0A2FFF",
+    color = "rgb(var(--color-primary-100))",
     height = "2px",
     options,
     shallowRouting = false,
