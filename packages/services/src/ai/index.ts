@@ -1,1 +1,2 @@
-export * from "./ai.service";
+export * from "./core";
+export * from "./extended";

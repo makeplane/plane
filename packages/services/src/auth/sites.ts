@@ -1,8 +1,8 @@
 import { API_BASE_URL } from "@plane/constants";
-// types
-import { IEmailCheckData, IEmailCheckResponse } from "@plane/types";
 // services
 import { APIService } from "../api.service";
+// types
+import { EmailCheckResponseSchema, TEmailCheckResponse, TEmailCheckData } from "./types";
 
 /**
  * Service class for handling authentication-related operations for Plane space application
@@ -11,10 +11,6 @@ import { APIService } from "../api.service";
  * @remarks This service is only available for plane sites
  */
 export class SitesAuthService extends APIService {
-  /**
-   * Creates an instance of SitesAuthService
-   * Initializes with the base API URL
-   */
   constructor(BASE_URL?: string) {
     super(BASE_URL || API_BASE_URL);
   }
@@ -25,9 +21,9 @@ export class SitesAuthService extends APIService {
    * @returns {Promise<IEmailCheckResponse>} Response indicating email status
    * @throws {Error} Throws response data if the request fails
    */
-  async emailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
+  async emailCheck(data: TEmailCheckData): Promise<TEmailCheckResponse> {
     return this.post("/auth/spaces/email-check/", data, { headers: {} })
-      .then((response) => response?.data)
+      .then((response) => EmailCheckResponseSchema.parse(response?.data))
       .catch((error) => {
         throw error?.response?.data;
       });
