@@ -12,8 +12,8 @@ import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SettingsHeading } from "@/components/settings";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.png";
-import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.png";
+import EpicsUpgradeDark from "@/public/empty-state/epics/settings-dark.webp";
+import EpicsUpgradeLight from "@/public/empty-state/epics/settings-light.webp";
 
 export const EpicsUpgrade: FC = observer(() => {
   // store hooks
