@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/ui";
 // components
 import { issuePriorityFilters } from "@/constants/issue";
