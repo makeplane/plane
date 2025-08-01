@@ -84,6 +84,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
                 });
                 await fetchWorkspaces();
                 await completeStep(workspaceResponse.id);
+                onComplete(formData.organization_size === "Just myself");
               })
               .catch(() => {
                 captureError({
@@ -99,7 +100,7 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
               });
           } else setSlugError(true);
 
-          onComplete(formData.organization_size === "Just myself");
+
         })
         .catch(() =>
           setToast({

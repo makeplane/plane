@@ -168,7 +168,11 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
         )}
       />
       <div className="flex items-center gap-4">
-        <div className="size-12 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-xl">
+        <button
+          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-white font-semibold text-xl"
+          type="button"
+          onClick={() => setIsImageUploadModalOpen(true)}
+        >
           {userAvatar ? (
             <img
               src={getFileURL(userAvatar ?? "")}
@@ -179,7 +183,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
           ) : (
             <>{watch("first_name")[0] ?? "R"}</>
           )}
-        </div>
+        </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
           className="flex items-center gap-1.5 text-custom-text-300 hover:text-custom-text-200 text-sm px-2 py-1"
@@ -187,7 +191,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageIcon className="size-4" />
-          <span className="text-sm">Add an image</span>
+          <span className="text-sm">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
 
