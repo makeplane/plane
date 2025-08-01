@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/ui";
 
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
@@ -23,7 +24,6 @@ import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 import { TProject } from "@/plane-web/types";
 // local components
 import { ProjectAnalyticsModal } from "../analytics";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   currentProjectDetails: TProject | undefined;

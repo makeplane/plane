@@ -1,6 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, ContentWrapper, Loader } from "@plane/ui";
 // components
@@ -19,6 +20,7 @@ const analyticsService = new AnalyticsService();
 
 export const ScopeAndDemand: React.FC<Props> = (props) => {
   const { fullScreen = true } = props;
+  const { t } = useTranslation();
 
   const { workspaceSlug, projectId, cycleId, moduleId } = useParams();
 
@@ -66,7 +68,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
                   count: user?.count,
                   id: user?.created_by__id,
                 }))}
-                title="Most issues created"
+                title={t("Most issues created")}
                 emptyStateMessage="Co-workers and the number of issues created by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />
@@ -79,7 +81,7 @@ export const ScopeAndDemand: React.FC<Props> = (props) => {
                   count: user?.count,
                   id: user?.assignees__id,
                 }))}
-                title="Most issues closed"
+                title={t("Most issues closed")}
                 emptyStateMessage="Co-workers and the number of issues closed by them appears here."
                 workspaceSlug={workspaceSlug?.toString() ?? ""}
               />

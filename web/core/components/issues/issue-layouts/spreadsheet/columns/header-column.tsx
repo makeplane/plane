@@ -3,13 +3,13 @@
 //ui
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Row } from "@plane/ui";
 //hooks
 import { SPREADSHEET_PROPERTY_DETAILS } from "@/constants/spreadsheet";
 import useLocalStorage from "@/hooks/use-local-storage";
 //types
 //constants
-import { useTranslation } from "@plane/i18n";
 import { useParams } from "next/navigation";
 import { Tags } from "lucide-react";
 import { SpreadsheetCustomPropertiesColumn } from "@/components/issues/issue-layouts/spreadsheet";

@@ -4,13 +4,13 @@ import React, { useMemo, useState } from "react";
 import sortBy from "lodash/sortBy";
 import { observer } from "mobx-react";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Loader } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
 import { FilterHeader, FilterOption } from "@/components/issues";
 // hooks
 import { useProject } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 type Props = {
   appliedFilters: string[] | null;
