@@ -1,8 +1,7 @@
 import React from "react";
 // plane imports
-import { NodeViewProps } from "@tiptap/react";
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
@@ -11,28 +10,34 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
 import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
 
-interface LiteTextEditorWrapperProps
-  extends MakeOptional<
-    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
-    "disabledExtensions" | "flaggedExtensions"
-  > {
+type LiteTextEditorWrapperProps = MakeOptional<
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "embedHandler">,
+  "disabledExtensions" | "flaggedExtensions"
+> & {
   anchor: string;
-  workspaceId: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
-  uploadFile: TFileHandler["upload"];
-}
+  workspaceId: string;
+} & (
+    | {
+        editable: false;
+      }
+    | {
+        editable: true;
+        uploadFile: TFileHandler["upload"];
+      }
+  );
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
     anchor,
     containerClassName,
-    workspaceId,
+    disabledExtensions,
+    editable,
+    flaggedExtensions,
     isSubmitting = false,
     showSubmitButton = true,
-    uploadFile,
-    disabledExtensions,
-    flaggedExtensions,
+    workspaceId,
     ...rest
   } = props;
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -50,9 +55,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
         ref={ref}
         disabledExtensions={disabledExtensions ?? []}
         flaggedExtensions={flaggedExtensions ?? []}
+        editable={editable}
         fileHandler={getEditorFileHandlers({
           anchor,
-          uploadFile,
+          uploadFile: editable ? props.uploadFile : async () => "",
           workspaceId,
         })}
         mentionHandler={{

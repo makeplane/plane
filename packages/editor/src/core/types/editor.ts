@@ -1,5 +1,5 @@
-import { Extensions, JSONContent } from "@tiptap/core";
-import { Selection } from "@tiptap/pm/state";
+import type { Content, Extensions, JSONContent } from "@tiptap/core";
+import type { Selection } from "@tiptap/pm/state";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // helpers
@@ -15,8 +15,6 @@ import type {
   TExtensions,
   TFileHandler,
   TMentionHandler,
-  TReadOnlyFileHandler,
-  TReadOnlyMentionHandler,
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
@@ -84,9 +82,12 @@ export type TDocumentInfo = {
   words: number;
 };
 
-// editor refs
-export type EditorReadOnlyRefApi = {
+export type EditorRefApi = {
+  blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
+  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
+  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
+  getCurrentCursorPosition: () => number | undefined;
   getDocument: () => {
     binary: Uint8Array | null;
     html: string;
@@ -95,15 +96,6 @@ export type EditorReadOnlyRefApi = {
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
   getMarkDown: () => string;
-  scrollSummary: (marking: IMarking) => void;
-  setEditorValue: (content: string, emitUpdate?: boolean) => void;
-};
-
-export interface EditorRefApi extends EditorReadOnlyRefApi {
-  blur: () => void;
-  emitRealTimeUpdate: (action: TDocumentEventsServer) => void;
-  executeMenuItemCommand: <T extends TEditorCommands>(props: TCommandWithPropsWithItemKey<T>) => void;
-  getCurrentCursorPosition: () => number | undefined;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isEditorReadyToDiscard: () => boolean;
@@ -112,12 +104,14 @@ export interface EditorRefApi extends EditorReadOnlyRefApi {
   onDocumentInfoChange: (callback: (documentInfo: TDocumentInfo) => void) => () => void;
   onHeadingChange: (callback: (headings: IMarking[]) => void) => () => void;
   onStateChange: (callback: () => void) => () => void;
+  scrollSummary: (marking: IMarking) => void;
   // eslint-disable-next-line no-undef
   scrollToNodeViaDOMCoordinates: (behavior?: ScrollBehavior, position?: number) => void;
+  setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
   setFocusAtPosition: (position: number) => void;
   setProviderDocument: (value: Uint8Array) => void;
-}
+};
 
 // editor props
 export interface IEditorProps {
@@ -126,6 +120,7 @@ export interface IEditorProps {
   containerClassName?: string;
   displayConfig?: TDisplayConfig;
   disabledExtensions: TExtensions[];
+  editable: boolean;
   editorClassName?: string;
   extensions?: Extensions;
   embedHandler?: TEmbedConfig;
@@ -149,14 +144,13 @@ export type ILiteTextEditorProps = IEditorProps;
 
 export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
-  editable: boolean;
 };
 
 export interface ICollaborativeDocumentEditorProps
   extends Omit<IEditorProps, "extensions" | "initialValue" | "onEnterKeyPress" | "value"> {
   aiHandler?: TAIHandler;
   editable: boolean;
-  embedHandler?: TEmbedConfig;
+  embedHandler: TEmbedConfig;
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
@@ -169,7 +163,6 @@ export interface IReadOnlyEditorProps
     | "containerClassName"
     | "disabledExtensions"
     | "flaggedExtensions"
-    | "embedHandler"
     | "displayConfig"
     | "editorClassName"
     | "extensions"
@@ -186,6 +179,8 @@ export type ILiteTextReadOnlyEditorProps = IReadOnlyEditorProps;
 
 export interface IDocumentReadOnlyEditorProps extends IReadOnlyEditorProps {
   embedHandler: TEmbedConfig;
+  user?: TUserDetails;
+  value: Content;
 }
 
 export interface EditorEvents {

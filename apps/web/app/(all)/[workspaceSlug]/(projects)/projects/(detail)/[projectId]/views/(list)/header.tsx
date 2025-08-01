@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EProjectFeatureKey } from "@plane/constants";
+import { EProjectFeatureKey, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { Breadcrumbs, Button, Header } from "@plane/ui";
 // components
 import { ViewListHeader } from "@/components/views";
@@ -34,7 +34,12 @@ export const ProjectViewsHeader = observer(() => {
         <Header.RightItem>
           <ViewListHeader />
           <div>
-            <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
+            <Button
+              data-ph-element={PROJECT_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
+              variant="primary"
+              size="sm"
+              onClick={() => toggleCreateViewModal(true)}
+            >
               Add view
             </Button>
           </div>

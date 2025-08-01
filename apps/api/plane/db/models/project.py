@@ -120,7 +120,7 @@ class Project(BaseModel):
     )
     archived_at = models.DateTimeField(null=True)
     # timezone
-    TIMEZONE_CHOICES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
+    TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)

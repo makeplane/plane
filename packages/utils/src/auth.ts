@@ -1,15 +1,8 @@
 "use client";
 
 import { ReactNode } from "react";
-import zxcvbn from "zxcvbn";
 // plane imports
-import {
-  E_PASSWORD_STRENGTH,
-  PASSWORD_MIN_LENGTH,
-  EErrorAlertType,
-  EAuthErrorCodes,
-  TAuthErrorInfo,
-} from "@plane/constants";
+import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
 
 /**
  * @description Password strength levels
@@ -23,70 +16,66 @@ export enum PasswordStrength {
 }
 
 /**
- * @description Password strength criteria type
+ * Calculate password strength based on various criteria
  */
-export type PasswordCriterion = {
-  regex: RegExp;
-  description: string;
+export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
+  if (!password || password === "" || password.length <= 0) {
+    return E_PASSWORD_STRENGTH.EMPTY;
+  }
+
+  if (password.length < 8) {
+    return E_PASSWORD_STRENGTH.LENGTH_NOT_VALID;
+  }
+
+  // Check all criteria
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasDigit = /[0-9]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password);
+
+  if (hasUpperCase && hasLowerCase && hasDigit && hasSpecialChar) {
+    return E_PASSWORD_STRENGTH.STRENGTH_VALID;
+  }
+
+  return E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
+};
+
+export type PasswordCriteria = {
+  key: string;
+  label: string;
+  isValid: boolean;
 };
 
 /**
- * @description Password strength criteria
+ * Get password criteria for validation display
  */
-export const PASSWORD_CRITERIA = [
+export const getPasswordCriteria = (password: string): PasswordCriteria[] => [
   {
-    key: "min_8_char",
+    key: "length",
     label: "Min 8 characters",
-    isCriteriaValid: (password: string) => password.length >= PASSWORD_MIN_LENGTH,
+    isValid: password.length >= 8,
   },
-  // {
-  //   key: "min_1_upper_case",
-  //   label: "Min 1 upper-case letter",
-  //   isCriteriaValid: (password: string) => PASSWORD_NUMBER_REGEX.test(password),
-  // },
-  // {
-  //   key: "min_1_number",
-  //   label: "Min 1 number",
-  //   isCriteriaValid: (password: string) => PASSWORD_CHAR_CAPS_REGEX.test(password),
-  // },
-  // {
-  //   key: "min_1_special_char",
-  //   label: "Min 1 special character",
-  //   isCriteriaValid: (password: string) => PASSWORD_SPECIAL_CHAR_REGEX.test(password),
-  // },
+  {
+    key: "uppercase",
+    label: "Min 1 upper-case letter",
+    isValid: /[A-Z]/.test(password),
+  },
+  {
+    key: "lowercase",
+    label: "Min 1 lower-case letter",
+    isValid: /[a-z]/.test(password),
+  },
+  {
+    key: "number",
+    label: "Min 1 number",
+    isValid: /[0-9]/.test(password),
+  },
+  {
+    key: "special",
+    label: "Min 1 special character",
+    isValid: /[!@#$%^&*()\-_+=\[\]{}|;:'",.<>?/]/.test(password),
+  },
 ];
-
-// Password strength check
-export const getPasswordStrength = (password: string): E_PASSWORD_STRENGTH => {
-  let passwordStrength: E_PASSWORD_STRENGTH = E_PASSWORD_STRENGTH.EMPTY;
-
-  if (!password || password === "" || password.length <= 0) {
-    return passwordStrength;
-  }
-
-  if (password.length >= PASSWORD_MIN_LENGTH) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
-  } else {
-    passwordStrength = E_PASSWORD_STRENGTH.LENGTH_NOT_VALID;
-    return passwordStrength;
-  }
-
-  const passwordCriteriaValidation = PASSWORD_CRITERIA.map((criteria) => criteria.isCriteriaValid(password)).every(
-    (criterion) => criterion
-  );
-  const passwordStrengthScore = zxcvbn(password).score;
-
-  if (passwordCriteriaValidation === false || passwordStrengthScore <= 2) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_NOT_VALID;
-    return passwordStrength;
-  }
-
-  if (passwordCriteriaValidation === true && passwordStrengthScore >= 3) {
-    passwordStrength = E_PASSWORD_STRENGTH.STRENGTH_VALID;
-  }
-
-  return passwordStrength;
-};
 
 // Error code messages
 const errorCodeMessages: {

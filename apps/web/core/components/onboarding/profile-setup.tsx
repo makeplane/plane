@@ -6,15 +6,19 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
-import { E_PASSWORD_STRENGTH, ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
+import {
+  AUTH_TRACKER_EVENTS,
+  E_PASSWORD_STRENGTH,
+  ONBOARDING_TRACKER_ELEMENTS,
+  USER_TRACKER_EVENTS,
+} from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Button, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
-import { PasswordStrengthMeter } from "@/components/account";
 import { UserImageUploadModal } from "@/components/core";
 import { OnboardingHeader, SwitchAccountDropdown } from "@/components/onboarding";
 // constants
@@ -124,7 +128,18 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
-    await authService.setPassword(token, { password });
+    await authService
+      .setPassword(token, { password })
+      .then(() => {
+        captureSuccess({
+          eventName: AUTH_TRACKER_EVENTS.password_created,
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: AUTH_TRACKER_EVENTS.password_created,
+        });
+      });
   };
 
   const handleSubmitProfileSetup = async (formData: TProfileSetupFormValues) => {
@@ -181,7 +196,18 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
       await Promise.all([
         updateCurrentUser(userDetailsPayload),
         formData.password && handleSetPassword(formData.password),
-      ]).then(() => setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION));
+      ]).then(() => {
+        if (formData.password) {
+          captureView({
+            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SELECTED,
+          });
+        } else {
+          captureView({
+            elementName: ONBOARDING_TRACKER_ELEMENTS.PASSWORD_CREATION_SKIPPED,
+          });
+        }
+        setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
+      });
     } catch {
       captureError({
         eventName: USER_TRACKER_EVENTS.add_details,
@@ -454,7 +480,10 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       />
-                      <PasswordStrengthMeter password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
+                      <PasswordStrengthIndicator
+                        password={watch("password") ?? ""}
+                        isFocused={isPasswordInputFocused}
+                      />
                     </div>
                     <div className="space-y-1">
                       <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">

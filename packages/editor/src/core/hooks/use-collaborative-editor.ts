@@ -99,6 +99,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
         embedConfig: embedHandler,
         fileHandler,
         flaggedExtensions,
+        isEditable: editable,
         provider,
         userDetails: user,
       }),

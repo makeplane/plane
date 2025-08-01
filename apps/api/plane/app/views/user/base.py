@@ -44,6 +44,7 @@ from django.views.decorators.vary import vary_on_cookie
 class UserEndpoint(BaseViewSet):
     serializer_class = UserSerializer
     model = User
+    use_read_replica = True
 
     def get_object(self):
         return self.request.user

@@ -113,6 +113,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
+                editable
                 workspaceId={workspaceId}
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}

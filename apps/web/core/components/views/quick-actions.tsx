@@ -4,7 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { IProjectView } from "@plane/types";
 // ui
 import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
@@ -12,6 +12,7 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "@/components/views";
 // helpers
+import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
@@ -83,6 +84,14 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
 
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
+    ...item,
+    action: () => {
+      captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
+      item.action();
+    },
+  }));
+
   return (
     <>
       <CreateUpdateProjectViewModal
@@ -94,7 +103,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       />
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
-      <ContextMenu parentRef={parentRef} items={MENU_ITEMS} />
+      <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
@@ -104,6 +113,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS });
                 item.action();
               }}
               className={cn(

@@ -5,10 +5,8 @@ import { observer } from "mobx-react";
 // types
 // plane imports
 import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getButtonStyling, Loader } from "@plane/ui";
+import { getButtonStyling, getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web imports
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
 
