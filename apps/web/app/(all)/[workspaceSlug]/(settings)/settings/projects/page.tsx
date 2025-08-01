@@ -14,8 +14,8 @@ const ProjectSettingsPage = () => {
   // derived values
   const resolvedPath =
     resolvedTheme === "dark"
-      ? "/empty-state/project-settings/no-projects-dark.png"
-      : "/empty-state/project-settings/no-projects-light.png";
+      ? "/empty-state/project-settings/no-projects-dark.webp"
+      : "/empty-state/project-settings/no-projects-light.webp";
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-full max-w-[480px] mx-auto">
       <Image src={resolvedPath} alt="No projects yet" width={384} height={250} />
