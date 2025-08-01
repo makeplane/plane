@@ -22,7 +22,7 @@ export const ImportersEmptyState: FC<ImportersEmptyStateProps> = observer((props
       <div
         className={cn("item-center flex min-h-[25rem] justify-between rounded-xl", {
           "bg-gradient-to-l from-[#343434] via-[#484848]  to-[#1E1E1E]": theme === "dark",
-          "bg-gradient-to-l from-[#3b5ec6] to-[#f5f7fe]": theme === "light",
+          "bg-gradient-to-l from-[#EBEBEB] to-[#FAFAFA] border border-custom-border-400": theme === "light",
         })}
       >
         <div className="relative flex flex-col justify-center gap-7 pl-8 lg:w-1/2">

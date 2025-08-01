@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Avatar, Button, PlaneLockup } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { useUser, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store";
 
 export type TTourSteps = "welcome" | "work-items" | "cycles" | "modules" | "views" | "pages";
 
@@ -43,14 +43,13 @@ type Props = {
 export const TourRoot: React.FC<Props> = observer((props) => {
   const { onComplete } = props;
   const { workspaceSlug } = useParams();
-  const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
   const currentWorkspace = getWorkspaceBySlug(workspaceSlug.toString());
 
-  if (!currentUser) return null;
+  if (!currentWorkspace) return null;
 
   return (
-    <div className="flex bg-custom-primary-200 rounded-lg w-[60%]">
+    <div className="flex bg-[#006399] rounded-lg w-[60%]">
       <div className="w-[40%] py-9 px-8 flex flex-col gap-5 justify-around">
         <div className="font-medium text-white flex items-center gap-2 justify-center">
           <PlaneLockup className="h-6 w-auto" /> <span className="font-bold text-2xl mt-2">Business</span>
@@ -69,7 +68,12 @@ export const TourRoot: React.FC<Props> = observer((props) => {
           <p className="font-medium text-custom-text-100 text-lg">
             Features you&apos;ll get with <span className="text-custom-primary-90">Business</span> plan
           </p>
-          <Avatar src={getFileURL(currentUser.avatar_url)} size={30} shape="square" />
+          <Avatar
+            src={getFileURL(currentWorkspace.logo_url || "")}
+            name={currentWorkspace?.name}
+            size={30}
+            shape="square"
+          />
           <p>
             <span className="font-medium">{currentWorkspace?.name}</span> workspace with Business
           </p>
