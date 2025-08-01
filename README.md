@@ -5,7 +5,7 @@
   <img src="https://media.docs.plane.so/logo/plane_github_readme.png" alt="Plane Logo" width="400">
 </a>
 </p>
-<p align="center"><b>Open-source project management that unlocks customer value</b></p>
+<p align="center"><b>Modern project management for all teams</b></p>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
