@@ -1,11 +1,9 @@
 "use client";
 
 import { FC } from "react";
-import Image from "next/image";
 import { EMobileAuthModes, EMobileAuthSteps, TMobileAuthModes, TMobileAuthSteps } from "@plane/constants";
 import { TMobileWorkspaceInvitation } from "@plane/types";
-// assets
-import planeLogo from "@/public/plane-logos/blue-without-text.png";
+import { PlaneLogo } from "@plane/ui";
 
 const AUTH_SIGNUP_HEADER_CONTENT_OPTIONS = {
   [EMobileAuthSteps.EMAIL]: {
@@ -69,11 +67,9 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
 
   return (
     <div className="relative space-y-6">
-      <div className="relative h-[50px] w-[50px]">
-        <Image src={planeLogo} alt="Plane logo" className="object-contain" />
-      </div>
-      <div className="space-y-1">
-        <h3 className="text-3xl font-semibold text-custom-text-100">{title}</h3>
+      <PlaneLogo height={51} width={84} className="text-custom-text-100" />
+      <div className="flex flex-col gap-1">
+        <h3 className="text-2xl font-semibold text-custom-text-100">{title}</h3>
         {description && <p className="font-medium text-custom-text-400">{description}</p>}
       </div>
     </div>

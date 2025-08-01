@@ -130,7 +130,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-onboarding-text-400 border-0`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
@@ -153,7 +153,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+            className="disable-autofill-style h-10 w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="on"
@@ -186,7 +186,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="disable-autofill-style h-10 w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

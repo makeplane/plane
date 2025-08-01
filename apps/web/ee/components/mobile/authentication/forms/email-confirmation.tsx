@@ -135,14 +135,14 @@ export const MobileAuthEmailValidationForm: FC<TMobileAuthEmailValidationForm> =
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+              className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
               autoComplete="on"
               autoFocus
               ref={inputRef}
             />
             {email.length > 0 && (
               <XCircle
-                className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs"
+                className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs"
                 onClick={() => {
                   setEmail("");
                   inputRef.current?.focus();

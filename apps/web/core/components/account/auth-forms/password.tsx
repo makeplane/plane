@@ -195,7 +195,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
               placeholder={t("auth.common.email.placeholder")}
-              className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 border-0`}
+              className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
               disabled
             />
             {passwordFormData.email.length > 0 && (
@@ -223,7 +223,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -260,7 +260,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />

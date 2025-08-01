@@ -26,7 +26,7 @@ const BRAND_LOGOS: {
 
 export const AuthFooter = () => (
   <div className="flex flex-col items-center gap-6">
-    <span className="text-md text-custom-text-300 whitespace-nowrap">Join 10,000+ teams building with Plane</span>
+    <span className="text-sm text-custom-text-300 whitespace-nowrap">Join 10,000+ teams building with Plane</span>
     <div className="flex items-center justify-center gap-x-10 gap-y-4 w-full flex-wrap">
       {BRAND_LOGOS.map((brand) => (
         <div className="flex items-center justify-center h-7 flex-1" key={brand.id}>
