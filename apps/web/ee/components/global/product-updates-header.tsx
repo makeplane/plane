@@ -1,18 +1,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { ExternalLink, RefreshCw } from "lucide-react";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane imports
-import { Button, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button, setToast, TOAST_TYPE, PlaneLogo } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 // services
 import { InstanceService } from "@/services/instance.service";
 
@@ -93,7 +89,7 @@ export const ProductUpdatesHeader = observer(() => {
             Perpetual license
           </div>
         )}
-        <Image src={PlaneLogo} alt="Plane" width={24} height={24} />
+        <PlaneLogo className="h-6 w-auto text-custom-text-100" />
       </div>
     </div>
   );
