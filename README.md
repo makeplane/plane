@@ -2,10 +2,9 @@
 
 <p align="center">
 <a href="https://plane.so">
-  <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-readme/plane_logo_.webp" alt="Plane Logo" width="70">
+  <img src="https://pub-ec813ba884f74cd8851107c5d6fbb7c6.r2.dev/Plane%20Github%20readme.png" alt="Plane Logo" width="400">
 </a>
 </p>
-<h1 align="center"><b>Plane</b></h1>
 <p align="center"><b>Open-source project management that unlocks customer value</b></p>
 
 <p align="center">
