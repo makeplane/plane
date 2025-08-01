@@ -1,7 +1,7 @@
-import { Editor } from "@tiptap/core";
+import { computePosition, flip, shift } from "@floating-ui/dom";
+import { type Editor, posToDOMRect } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import { SuggestionOptions } from "@tiptap/suggestion";
-import tippy, { Instance } from "tippy.js";
 // helpers
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { CommandListInstance } from "@/helpers/tippy";
@@ -10,16 +10,32 @@ import { TMentionHandler } from "@/types";
 // local components
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
 
+const updatePosition = (editor: Editor, element: HTMLElement) => {
+  const virtualElement = {
+    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
+  };
+
+  computePosition(virtualElement, element, {
+    placement: "bottom-start",
+    strategy: "absolute",
+    middleware: [shift(), flip()],
+  }).then(({ x, y, strategy }) => {
+    element.style.width = "max-content";
+    element.style.position = strategy;
+    element.style.left = `${x}px`;
+    element.style.top = `${y}px`;
+  });
+};
+
 export const renderMentionsDropdown =
   (props: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>
   // @ts-expect-error - Tiptap types are incorrect
   () => {
     const { searchCallback } = props;
     let component: ReactRenderer<CommandListInstance, MentionsListDropdownProps> | null = null;
-    let popup: Instance | null = null;
 
     return {
-      onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onStart: (props) => {
         if (!searchCallback) return;
         if (!props.clientRect) return;
         component = new ReactRenderer<CommandListInstance, MentionsListDropdownProps>(MentionsListDropdown, {
@@ -30,27 +46,19 @@ export const renderMentionsDropdown =
           editor: props.editor,
         });
         props.editor.storage.utility.activeDropbarExtensions.push(CORE_EXTENSIONS.MENTION);
-        // @ts-expect-error - Tippy types are incorrect
-        popup = tippy("body", {
-          getReferenceClientRect: props.clientRect,
-          appendTo: () =>
-            document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]'),
-          content: component.element,
-          showOnCreate: true,
-          interactive: true,
-          trigger: "manual",
-          placement: "bottom-start",
-        });
+        const element = component.element as HTMLElement;
+        element.style.position = "absolute";
+        document.body.appendChild(element);
+        updatePosition(props.editor, element);
       },
-      onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+      onUpdate: (props) => {
         component?.updateProps(props);
-        popup?.[0]?.setProps({
-          getReferenceClientRect: props.clientRect,
-        });
+        if (!props.clientRect) return;
+        updatePosition(props.editor, component?.element as HTMLElement);
       },
-      onKeyDown: (props: { event: KeyboardEvent }) => {
+      onKeyDown: (props) => {
         if (props.event.key === "Escape") {
-          popup?.[0]?.hide();
+          component?.destroy();
           return true;
         }
 
@@ -58,19 +66,12 @@ export const renderMentionsDropdown =
 
         if (navigationKeys.includes(props.event.key)) {
           props.event?.stopPropagation();
-          if (component?.ref?.onKeyDown(props)) {
-            return true;
-          }
+          return component?.ref?.onKeyDown(props);
         }
-        return false;
+        return component?.ref?.onKeyDown(props);
       },
-      onExit: (props: { editor: Editor; event: KeyboardEvent }) => {
-        const { activeDropbarExtensions } = props.editor.storage.utility;
-        const index = activeDropbarExtensions.indexOf(CORE_EXTENSIONS.MENTION);
-        if (index > -1) {
-          activeDropbarExtensions.splice(index, 1);
-        }
-        popup?.[0]?.destroy();
+      onExit: () => {
+        component?.element.remove();
         component?.destroy();
       },
     };
