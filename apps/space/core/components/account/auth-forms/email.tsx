@@ -46,13 +46,13 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
           Email
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-onboarding-background-200 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+            `relative flex items-center rounded-md bg-custom-background-100 border`,
+            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-100`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -68,7 +68,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}

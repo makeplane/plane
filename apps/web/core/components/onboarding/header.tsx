@@ -6,6 +6,7 @@ import { ChevronLeft } from "lucide-react";
 // plane imports
 import { EOnboardingSteps, TOnboardingStep } from "@plane/types";
 import { PlaneLockup, Tooltip } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { SwitchAccountDropdown } from "@/components/onboarding";
 // hooks
@@ -68,11 +69,11 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
           />
         </Tooltip>
       </div>
-      <div className="flex items-center justify-between gap-6 w-full px-6">
-        <div className="flex items-center gap-2">
+      <div className={cn("flex items-center justify-between gap-6 w-full px-6", canGoBack && "pl-4 pr-6")}>
+        <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeft className="size-5 text-custom-text-400" />
+              <ChevronLeft className="size-6 text-custom-text-400" />
             </button>
           )}
           <PlaneLockup height={20} width={95} className="text-custom-text-100" />

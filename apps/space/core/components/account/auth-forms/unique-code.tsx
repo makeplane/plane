@@ -81,11 +81,11 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       <input type="hidden" value={uniqueCodeFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
           Email
         </label>
         <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
         >
           <Input
             id="email"
@@ -94,7 +94,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             value={uniqueCodeFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-onboarding-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
             disabled
           />
           {uniqueCodeFormData.email.length > 0 && (
@@ -107,7 +107,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="code">
+        <label className="text-sm font-medium text-custom-text-300" htmlFor="code">
           Unique code
         </label>
         <Input
@@ -115,7 +115,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder="gets-sets-flys"
-          className="disable-autofill-style h-10 w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+          className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
@@ -128,7 +128,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={`${
               isRequestNewCodeDisabled
-                ? "text-onboarding-text-400"
+                ? "text-custom-text-400"
                 : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
             }`}
             disabled={isRequestNewCodeDisabled}

@@ -69,8 +69,8 @@ export const MobileAuthHeader: FC<TMobileAuthHeader> = (props) => {
     <div className="relative space-y-6">
       <PlaneLogo height={51} width={84} className="text-custom-text-100" />
       <div className="flex flex-col gap-1">
-        <h3 className="text-2xl font-semibold text-custom-text-100">{title}</h3>
-        {description && <p className="font-medium text-custom-text-400">{description}</p>}
+        <h3 className="text-2xl font-semibold text-custom-text-100 leading-7">{title}</h3>
+        {description && <p className="font-medium text-custom-text-400 leading-7">{description}</p>}
       </div>
     </div>
   );

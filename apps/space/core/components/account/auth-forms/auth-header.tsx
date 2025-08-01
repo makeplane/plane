@@ -1,12 +1,11 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 // helpers
 import { EAuthModes } from "@/types/auth";
 
 type TAuthHeader = {
   authMode: EAuthModes;
-  children: ReactNode;
 };
 
 type TAuthHeaderContent = {
@@ -30,7 +29,7 @@ const Titles: TAuthHeaderDetails = {
 };
 
 export const AuthHeader: FC<TAuthHeader> = (props) => {
-  const { authMode, children } = props;
+  const { authMode } = props;
 
   const getHeaderSubHeader = (mode: EAuthModes | null): TAuthHeaderContent => {
     if (mode) {
@@ -47,11 +46,10 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
 
   return (
     <>
-      <div className="space-y-1 text-center">
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-onboarding-text-100">{header}</h3>
-        <p className="text-xs sm:text-sm md:text-base font-medium text-onboarding-text-400">{subHeader}</p>
+      <div className="flex flex-col gap-1">
+        <span className="text-2xl font-semibold text-custom-text-100 leading-7">{header}</span>
+        <span className="text-2xl font-semibold text-custom-text-400 leading-7">{subHeader}</span>
       </div>
-      {children}
     </>
   );
 };

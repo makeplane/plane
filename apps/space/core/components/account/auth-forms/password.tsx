@@ -117,11 +117,11 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-onboarding-text-300" htmlFor="email">
+        <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
           Email
         </label>
         <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-onboarding-border-100`}
+          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
         >
           <Input
             id="email"
@@ -130,7 +130,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             value={passwordFormData.email}
             onChange={(e) => handleFormChange("email", e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-10 w-full placeholder:text-onboarding-text-400 border-0`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 border-0`}
             disabled
           />
           {passwordFormData.email.length > 0 && (
@@ -143,17 +143,17 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
-        <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+        <div className="relative flex items-center rounded-md bg-custom-background-100">
           <Input
             type={showPassword?.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+            className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="on"
@@ -176,17 +176,17 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+          <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
             Confirm password
           </label>
-          <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+          <div className="relative flex items-center rounded-md bg-custom-background-100">
             <Input
               type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-10 w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+              className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />
