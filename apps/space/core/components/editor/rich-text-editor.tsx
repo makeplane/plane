@@ -27,7 +27,7 @@ type RichTextEditorWrapperProps = MakeOptional<
   );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, ...rest } = props;
+  const { anchor, containerClassName, editable, workspaceId, ...rest } = props;
   const { getMemberById } = useMember();
   const { richText } = useEditorFlagging(anchor);
 
@@ -40,7 +40,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         }),
       }}
       ref={ref}
-      disabledExtensions={disabledExtensions ?? []}
+      disabledExtensions={richText.disabled}
       editable={editable}
       fileHandler={getEditorFileHandlers({
         anchor,

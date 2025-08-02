@@ -32,7 +32,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const {
     anchor,
     containerClassName,
-    disabledExtensions,
     editable,
     isSubmitting = false,
     showSubmitButton = true,
@@ -51,7 +50,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions ?? []}
+        disabledExtensions={liteText.disabled}
         flaggedExtensions={liteText.flagged}
         editable={editable}
         fileHandler={getEditorFileHandlers({
