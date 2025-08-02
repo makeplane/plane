@@ -61,6 +61,9 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): boolean => {
+      if (query.length <= 0) {
+        return false;
+      }
       if (event.key === "Escape") {
         event.preventDefault();
         return true;
