@@ -89,7 +89,7 @@ export const EmojiList = forwardRef<EmojiListRef, EmojiListProps>((props, ref) =
 
       return false;
     },
-    [items.length, selectedIndex, selectItem]
+    [query.length, items.length, selectItem, selectedIndex]
   );
 
   // Update position when items change
