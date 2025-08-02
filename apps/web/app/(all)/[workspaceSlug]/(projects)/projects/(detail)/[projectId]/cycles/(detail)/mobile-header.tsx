@@ -22,8 +22,9 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutI
 // helpers
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
+import { observer } from "mobx-react";
 
-export const CycleIssuesMobileHeader = () => {
+const CycleIssuesMobileHeaderComponent = () => {
   // i18n
   const { t } = useTranslation();
 
@@ -214,3 +215,5 @@ export const CycleIssuesMobileHeader = () => {
     </>
   );
 };
+
+export const CycleIssuesMobileHeader = observer(CycleIssuesMobileHeaderComponent);
