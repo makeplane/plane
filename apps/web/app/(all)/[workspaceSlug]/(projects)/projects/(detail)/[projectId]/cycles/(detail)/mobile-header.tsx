@@ -24,7 +24,7 @@ import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, IssueLayoutI
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
 import { observer } from "mobx-react";
 
-const CycleIssuesMobileHeaderComponent = () => {
+const CycleIssuesMobileHeaderComponent: React.FC = () => {
   // i18n
   const { t } = useTranslation();
 
