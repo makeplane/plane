@@ -103,7 +103,7 @@ export const UserMenuRoot = observer((props: Props) => {
                 {...attributes.popper}
               >
                 <div className="flex flex-col gap-2.5 pb-2">
-                  <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                  <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
                   <Link href={`/${workspaceSlug}/settings/account`}>
                     <Menu.Item as="div">
                       <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">

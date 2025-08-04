@@ -7,6 +7,7 @@ import type { TTextAlign } from "@/extensions";
 // types
 import type {
   IMarking,
+  EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
   TDocumentEventEmitter,
@@ -36,6 +37,7 @@ export type TEditorCommands =
   | "bulleted-list"
   | "numbered-list"
   | "to-do-list"
+  | "toggle-list"
   | "quote"
   | "code"
   | "table"
@@ -47,6 +49,7 @@ export type TEditorCommands =
   | "background-color"
   | "text-align"
   | "callout"
+  | "page-embed"
   | "attachment"
   | "emoji";
 
@@ -99,6 +102,17 @@ export type EditorRefApi = {
     attribute: string | NodeType | MarkType
   ) => Record<string, any> | undefined;
   getCoordsFromPos: (pos?: number) => ReturnType<EditorView["coordsAtPos"]> | undefined;
+  editorHasSynced: () => boolean;
+  findAndDeleteNode: (
+    {
+      attribute,
+      value,
+    }: {
+      attribute: string;
+      value: string | string[];
+    },
+    nodeName: string
+  ) => void;
   getCurrentCursorPosition: () => number | undefined;
   getDocument: () => {
     binary: Uint8Array | null;
@@ -127,6 +141,8 @@ export type EditorRefApi = {
   undo: () => void;
 };
 
+export type EditorTitleRefApi = EditorRefApi;
+
 // editor props
 export type IEditorProps = {
   autofocus?: boolean;
@@ -149,6 +165,7 @@ export type IEditorProps = {
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
   onChange?: (json: object, html: string) => void;
+  isSmoothCursorEnabled: boolean;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
@@ -171,6 +188,14 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   realtimeConfig: TRealtimeConfig;
   serverHandler?: TServerHandler;
   user: TUserDetails;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {

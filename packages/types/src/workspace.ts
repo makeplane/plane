@@ -1,9 +1,12 @@
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
 import { TUserPermissions } from "./enums";
+import { EProductSubscriptionEnum } from "./payment";
 import { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { IWorkspaceViewProps } from "./view-props";
+// extended imports
+import { TWorkspaceExtendedResultEntities } from "./workspace-extended";
 
 export enum EUserWorkspaceRoles {
   ADMIN = 20,
@@ -25,6 +28,8 @@ export interface IWorkspace {
   readonly updated_by: string;
   organization_size: string;
   total_projects?: number;
+  current_plan?: EProductSubscriptionEnum;
+  is_on_trial?: boolean;
   role: number;
 }
 
@@ -99,6 +104,7 @@ export interface IWorkspaceMemberMe {
   view_props: IWorkspaceViewProps;
   workspace: string;
   draft_issue_count: number;
+  active_cycles_count: number;
 }
 
 export interface ILastActiveWorkspaceDetails {
@@ -153,7 +159,7 @@ export interface IWorkspaceSearchResults {
     module: IWorkspaceDefaultSearchResult[];
     issue_view: IWorkspaceDefaultSearchResult[];
     page: IWorkspacePageSearchResult[];
-  };
+  } & TWorkspaceExtendedResultEntities;
 }
 
 export interface IProductUpdateResponse {
@@ -243,3 +249,93 @@ export interface IWorkspaceSidebarNavigationItem {
 export interface IWorkspaceSidebarNavigation {
   [key: string]: IWorkspaceSidebarNavigationItem;
 }
+
+export enum EOnboardingSteps {
+  PROFILE_SETUP = "PROFILE_SETUP",
+  ROLE_SETUP = "ROLE_SETUP",
+  USE_CASE_SETUP = "USE_CASE_SETUP",
+  WORKSPACE_CREATE_OR_JOIN = "WORKSPACE_CREATE_OR_JOIN",
+  INVITE_MEMBERS = "INVITE_MEMBERS",
+}
+
+export type TOnboardingStep = EOnboardingSteps;
+
+export enum ECreateOrJoinWorkspaceViews {
+  WORKSPACE_CREATE = "WORKSPACE_CREATE",
+  WORKSPACE_JOIN = "WORKSPACE_JOIN",
+}
+
+export type TWorkspaceConnection<TConnectionConfig = object, TConnectionData = object> = {
+  id: string;
+  workspace_id: string;
+  workspace_slug: string;
+  credential_id: string;
+  target_hostname?: string | null;
+  source_hostname?: string | null;
+  connection_type: string;
+  connection_id: string;
+  connection_data: TConnectionData;
+  connection_slug?: string | null;
+  scopes: string[];
+  config: TConnectionConfig;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type TWorkspaceUserConnection = TWorkspaceConnection & {
+  isUserConnected: boolean;
+};
+
+export type TWorkspaceEntityConnection<TConnectionConfig = object> = {
+  id: string;
+  type: string;
+  workspace_connection_id: string;
+  workspace_id: string;
+  workspace_slug: string;
+  project_id?: string | null;
+  issue_id?: string | null;
+  entity_type?: string | null;
+  entity_id?: string | null;
+  entity_slug?: string | null;
+  entity_data: object;
+  config: TConnectionConfig;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type TWorkspaceCredential = {
+  id: string;
+  source: string;
+  workspace_id: string;
+  user_id: string;
+  source_identifier?: string | null;
+  source_authorization_type?: string | null;
+  source_auth_email?: string | null;
+  source_access_token?: string | null;
+  source_refresh_token?: string | null;
+  source_hostname?: string | null;
+  target_identifier?: string | null;
+  target_authorization_type?: string | null;
+  target_access_token?: string | null;
+  target_refresh_token?: string | null;
+  target_hostname?: string | null;
+  is_pat?: boolean | false;
+  is_active?: boolean | false;
+  created_at?: string;
+  updated_at?: string;
+};
+
+// Type for verification of both target credentials
+export type TWorkspaceCredentialVerification = {
+  isAuthenticated: boolean;
+  isOAuthEnabled: boolean;
+};
+
+// Type for verification of both source and target credentials
+export type TImporterCredentialValidation = TWorkspaceCredentialVerification & {
+  sourceTokenInvalid?: boolean;
+};
+
+export type TWorkspaceEpicsSearchParams = {
+  initiative_id?: string;
+};

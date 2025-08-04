@@ -8,3 +8,4 @@ export * from "./step-indicator";
 export * from "./switch-account-dropdown";
 export * from "./switch-account-modal";
 export * from "./header";
+export * from "./root";
