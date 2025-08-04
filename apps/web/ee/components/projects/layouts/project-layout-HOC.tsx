@@ -16,7 +16,6 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import { EProjectLayouts } from "@/plane-web/types/workspace-project-filters";
 // assets
-import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
 
 const ActiveLoader = (props: { layout: EProjectLayouts }) => {
   const { layout } = props;
@@ -54,6 +53,8 @@ export const ProjectLayoutHOC = observer((props: Props) => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+
   const hasProjectMemberPermissions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
@@ -89,7 +90,7 @@ export const ProjectLayoutHOC = observer((props: Props) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image src={AllFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
+          <Image src={resolvedFiltersImage} className="mx-auto h-36 w-36 sm:h-48 sm:w-48" alt="No matching projects" />
           <h5 className="mb-1 mt-7 text-xl font-medium">No matching projects</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">
             {`No projects detected with the matching\ncriteria. Create a new project instead`}

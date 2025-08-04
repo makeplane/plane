@@ -16,9 +16,6 @@ import { useCommandPalette, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
-// assets
-import AllFiltersImage from "@/public/empty-state/pages/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/pages/name-filter.svg";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -172,13 +169,19 @@ export const WikiPagesListLayoutRoot: React.FC<Props> = observer((props) => {
     );
   }
 
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/name-filter",
+    extension: "svg",
+  });
+
   // if no pages match the filter criteria
   if (filters.searchQuery && pageIds.length === 0)
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
           <Image
-            src={filters.searchQuery.length > 0 ? NameFilterImage : AllFiltersImage}
+            src={filters.searchQuery.length > 0 ? resolvedNameFilterImage : resolvedFiltersImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching pages"
           />
