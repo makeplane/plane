@@ -50,17 +50,16 @@ export const EditorContainer: FC<Props> = (props) => {
         return;
       }
 
-      // Get the last node in the document
-      const docSize = editor.state.doc.content.size;
-      const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
-      const lastNode = lastNodePos.node();
+      // Get the last child node in the document
+      const doc = editor.state.doc;
+      const lastNode = doc.lastChild;
 
       // Check if its last node and add new node
       if (lastNode) {
-        const isLastNodeEmptyParagraph =
-          lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
-        // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
-        if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
+        const isLastNodeParagraph = lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH;
+        // Insert a new paragraph if the last node is not a paragraph and not a doc node
+        if (!isLastNodeParagraph && lastNode.type.name !== CORE_EXTENSIONS.DOCUMENT) {
+          // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
           const endPosition = editor?.state.doc.content.size;
           editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).focus("end").run();
         }
