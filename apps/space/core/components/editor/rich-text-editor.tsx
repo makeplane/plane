@@ -27,9 +27,16 @@ type RichTextEditorWrapperProps = MakeOptional<
   );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, editable, workspaceId, ...rest } = props;
+  const {
+    anchor,
+    containerClassName,
+    editable,
+    workspaceId,
+    disabledExtensions: additionalDisabledExtensions = [],
+    ...rest
+  } = props;
   const { getMemberById } = useMember();
-  const { richText } = useEditorFlagging(anchor);
+  const { richText: richTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
     <RichTextEditorWithRef
@@ -40,14 +47,14 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         }),
       }}
       ref={ref}
-      disabledExtensions={richText.disabled}
+      disabledExtensions={[...richTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
       editable={editable}
       fileHandler={getEditorFileHandlers({
         anchor,
         uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
-      flaggedExtensions={richText.flagged}
+      flaggedExtensions={richTextEditorExtensions.flagged}
       {...rest}
       containerClassName={containerClassName}
       editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"

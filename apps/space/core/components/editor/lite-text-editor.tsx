@@ -32,6 +32,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const {
     anchor,
     containerClassName,
+    disabledExtensions: additionalDisabledExtensions = [],
     editable,
     isSubmitting = false,
     showSubmitButton = true,
@@ -44,14 +45,14 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-  const { liteText } = useEditorFlagging(anchor);
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={liteText.disabled}
-        flaggedExtensions={liteText.flagged}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
         editable={editable}
         fileHandler={getEditorFileHandlers({
           anchor,
