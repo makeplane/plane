@@ -1,6 +1,8 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import { CellSelection } from "@tiptap/pm/tables";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 
 /**
  * @description Check if the selection is a cell selection
@@ -22,7 +24,7 @@ export const isCellEmpty = (cell: ProseMirrorNode | null): boolean => {
   // Check if cell has any non-empty content
   let hasContent = false;
   cell.content.forEach((node) => {
-    if (node.type.name === "paragraph") {
+    if (node.type.name === CORE_EXTENSIONS.PARAGRAPH) {
       if (node.content.size > 0) {
         hasContent = true;
       }

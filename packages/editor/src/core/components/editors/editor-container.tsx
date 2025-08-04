@@ -10,15 +10,15 @@ import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
 
-interface EditorContainerProps {
+type Props = {
   children: ReactNode;
   displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
-}
+};
 
-export const EditorContainer: FC<EditorContainerProps> = (props) => {
+export const EditorContainer: FC<Props> = (props) => {
   const { children, displayConfig, editor, editorContainerClassName, id } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
