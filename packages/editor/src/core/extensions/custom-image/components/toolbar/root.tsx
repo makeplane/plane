@@ -11,16 +11,17 @@ import { ImageFullScreenActionRoot } from "./full-screen";
 type Props = {
   alignment: TCustomImageAlignment;
   editor: Editor;
-  width: string;
-  height: string;
   aspectRatio: number;
-  src: string;
   downloadSrc: string;
   handleAlignmentChange: (alignment: TCustomImageAlignment) => void;
+  height: string;
+  isTouchDevice: boolean;
+  src: string;
+  width: string;
 };
 
 export const ImageToolbarRoot: React.FC<Props> = (props) => {
-  const { alignment, editor, downloadSrc, handleAlignmentChange } = props;
+  const { alignment, editor, downloadSrc, handleAlignmentChange, isTouchDevice } = props;
   // states
   const [shouldShowToolbar, setShouldShowToolbar] = useState(false);
   // derived values
@@ -36,7 +37,7 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
           }
         )}
       >
-        <ImageDownloadAction src={downloadSrc} />
+        {!isTouchDevice && <ImageDownloadAction src={downloadSrc} />}
         {isEditable && (
           <ImageAlignmentAction
             activeAlignment={alignment}
@@ -44,7 +45,11 @@ export const ImageToolbarRoot: React.FC<Props> = (props) => {
             toggleToolbarViewStatus={setShouldShowToolbar}
           />
         )}
-        <ImageFullScreenActionRoot image={props} toggleToolbarViewStatus={setShouldShowToolbar} />
+        <ImageFullScreenActionRoot
+          image={props}
+          isTouchDevice={isTouchDevice}
+          toggleToolbarViewStatus={setShouldShowToolbar}
+        />
       </div>
     </>
   );

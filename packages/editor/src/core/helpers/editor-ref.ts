@@ -24,8 +24,41 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
   const { editor, provider } = args;
 
   return {
+    blur: () => editor?.commands.blur(),
     clearEditor: (emitUpdate = false) => {
       editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
+    },
+    createSelectionAtCursorPosition: () => {
+      if (!editor) return;
+      const { empty } = editor.state.selection;
+
+      if (empty) {
+        // Get the text content and position info
+        const { $from } = editor.state.selection;
+        const textContent = $from.parent.textContent;
+        const posInNode = $from.parentOffset;
+
+        // Find word boundaries
+        let start = posInNode;
+        let end = posInNode;
+
+        // Move start position backwards until we hit a word boundary
+        while (start > 0 && /\w/.test(textContent[start - 1])) {
+          start--;
+        }
+
+        // Move end position forwards until we hit a word boundary
+        while (end < textContent.length && /\w/.test(textContent[end])) {
+          end++;
+        }
+
+        // If we found a word, select it using editor commands
+        if (start !== end) {
+          const from = $from.start() + start;
+          const to = $from.start() + end;
+          editor.commands.setTextSelection({ from, to });
+        }
+      }
     },
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
@@ -55,7 +88,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     setEditorValue: (content, emitUpdate = false) => {
       editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
     },
-    blur: () => editor?.commands.blur(),
     emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
       const { itemKey } = props;
@@ -70,7 +102,14 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         console.warn(`No command found for item: ${itemKey}`);
       }
     },
+    focus: (args) => editor?.commands.focus(args),
+    getCoordsFromPos: (pos) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
     getCurrentCursorPosition: () => editor?.state.selection.from,
+    getAttributesWithExtendedMark: (mark, attribute) => {
+      if (!editor) return;
+      editor.commands.extendMarkRange(mark);
+      return editor.getAttributes(attribute);
+    },
     getSelectedText: () => {
       if (!editor) return null;
 
@@ -165,7 +204,8 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         editor?.off("transaction", callback);
       };
     },
-    scrollToNodeViaDOMCoordinates(behavior, pos) {
+    redo: () => editor?.commands.redo(),
+    scrollToNodeViaDOMCoordinates({ pos, behavior = "smooth" }) {
       const resolvedPos = pos ?? editor?.state.selection.from;
       if (!editor || !resolvedPos) return;
       scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
@@ -197,5 +237,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!document) return;
       Y.applyUpdate(document, value);
     },
+    undo: () => editor?.commands.undo(),
   };
 };
