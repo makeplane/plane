@@ -9,9 +9,9 @@ import { TableCellSelectionOutlinePlugin } from "./plugins/selection-outline/plu
 import { DEFAULT_COLUMN_WIDTH } from "./table";
 import { isCellSelection } from "./table/utilities/helpers";
 
-export interface TableCellOptions {
-  HTMLAttributes: Record<string, any>;
-}
+type TableCellOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 export const TableCell = Node.create<TableCellOptions>({
   name: CORE_EXTENSIONS.TABLE_CELL,

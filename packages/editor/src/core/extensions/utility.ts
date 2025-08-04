@@ -30,13 +30,13 @@ declare module "@tiptap/core" {
   }
 }
 
-export interface UtilityExtensionStorage {
+export type UtilityExtensionStorage = {
   assetsList: TEditorAsset[];
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
   activeDropbarExtensions: TActiveDropbarExtensions[];
   isTouchDevice: boolean;
-}
+};
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
   fileHandler: TFileHandler;
