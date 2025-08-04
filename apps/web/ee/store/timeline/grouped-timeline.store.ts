@@ -1,6 +1,7 @@
 import set from "lodash/set";
 import { action, autorun, makeObservable, observable } from "mobx";
 // Store
+import { computedFn } from "mobx-utils";
 import { EGanttBlockType, TGanttBlockGroup } from "@plane/types";
 import { RootStore } from "@/plane-web/store/root.store";
 import { BaseTimeLineStore, IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
@@ -43,14 +44,19 @@ export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTime
     this.setBlockIds(flattenedBlockIds);
   };
 
-  getGroupedBlockIds = (): TGanttBlockGroup[] => {
+  getGroupedBlockIds = computedFn((): TGanttBlockGroup[] => {
     const groupBlockIds: TGanttBlockGroup[] = this.blockGroups.map((group) => ({
       type: group,
       blockIds: [],
       count: 0,
     }));
 
-    Object.entries(this.blocksMap).forEach(([blockId, block]) => {
+    if (!this.blockIds) return groupBlockIds;
+
+    this.blockIds.forEach((blockId) => {
+      const block = this.blocksMap[blockId];
+      if (!block) return;
+
       const type = block.meta?.type as EGanttBlockType;
       if (type) {
         const group = groupBlockIds.find((group) => group.type === type);
@@ -66,5 +72,5 @@ export class GroupedTimeLineStore extends BaseTimeLineStore implements IBaseTime
     });
 
     return groupBlockIds;
-  };
+  });
 }
