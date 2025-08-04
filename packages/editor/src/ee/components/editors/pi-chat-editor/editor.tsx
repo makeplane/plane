@@ -5,7 +5,7 @@ import { cn } from "@plane/utils";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { PiChatEditorExtensions } from "@/plane-editor/extensions/pi-chat-editor/extensions";
 
-interface IItem {
+type IItem = {
   id: string;
   label: string;
   entity_name: string;
@@ -17,11 +17,11 @@ interface IItem {
   sequence_id?: string;
   title: string;
   subTitle: string | undefined;
-}
+};
 
-export interface IMentions {
+export type IMentions = {
   [key: string]: Partial<IItem>[] | undefined;
-}
+};
 
 type PiChatEditorProps = {
   className?: string;

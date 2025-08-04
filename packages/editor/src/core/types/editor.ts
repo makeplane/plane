@@ -4,10 +4,9 @@ import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 // extension types
 import type { TTextAlign } from "@/extensions";
-// helpers
-import type { IMarking } from "@/helpers/scroll-to-node";
 // types
 import type {
+  IMarking,
   EventToPayloadMap,
   TAIHandler,
   TDisplayConfig,
@@ -145,7 +144,7 @@ export type EditorRefApi = {
 export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
-export interface IEditorProps {
+export type IEditorProps = {
   autofocus?: boolean;
   bubbleMenuEnabled?: boolean;
   containerClassName?: string;
@@ -172,7 +171,7 @@ export interface IEditorProps {
   placeholder?: string | ((isFocused: boolean, value: string) => string);
   tabIndex?: number;
   value?: string | null;
-}
+};
 
 export type ILiteTextEditorProps = IEditorProps;
 
@@ -180,8 +179,7 @@ export type IRichTextEditorProps = IEditorProps & {
   dragDropEnabled?: boolean;
 };
 
-export interface ICollaborativeDocumentEditorProps
-  extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
+export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
   documentLoaderClassName?: string;
   dragDropEnabled?: boolean;
@@ -198,24 +196,16 @@ export interface ICollaborativeDocumentEditorProps
   ) => void;
   pageRestorationInProgress?: boolean;
   titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
-}
+};
 
-export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
-  aiHandler?: TAIHandler;
-  editable: boolean;
-  embedHandler: TEmbedConfig;
-  user?: TUserDetails;
-  value: Content;
-}
-
-export interface IDocumentEditorProps extends Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> {
+export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
   aiHandler?: TAIHandler;
   embedHandler: TEmbedConfig;
   user?: TUserDetails;
   value: Content;
-}
+};
 
-export interface EditorEvents {
+export type EditorEvents = {
   beforeCreate: never;
   create: never;
   update: never;
@@ -225,4 +215,4 @@ export interface EditorEvents {
   blur: never;
   destroy: never;
   ready: { height: number };
-}
+};

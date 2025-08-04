@@ -5,10 +5,10 @@ import tippy from "tippy.js";
 import { PiChatEditorMentionsList } from "./mentions-list";
 import { PiChatEditorMentionNodeView } from "./node-view";
 
-interface CustomMentionOptions extends MentionOptions {
+type CustomMentionOptions = MentionOptions & {
   mentionHighlights: () => Promise<string[]>;
   readonly?: boolean;
-}
+};
 
 export type IMentionSuggestion = {
   id: string;

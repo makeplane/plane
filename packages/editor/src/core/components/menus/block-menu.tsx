@@ -8,7 +8,7 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
@@ -16,11 +16,11 @@ import { cn } from "@plane/utils";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
-interface BlockMenuProps {
+type Props = {
   editor: Editor;
-}
+};
 
-export const BlockMenu = (props: BlockMenuProps) => {
+export const BlockMenu = (props: Props) => {
   const { editor } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);

@@ -32,14 +32,14 @@ import { insertLineAboveTableAction } from "./utilities/insert-line-above-table-
 import { insertLineBelowTableAction } from "./utilities/insert-line-below-table-action";
 import { DEFAULT_COLUMN_WIDTH } from ".";
 
-export interface TableOptions {
-  HTMLAttributes: Record<string, any>;
+type TableOptions = {
+  HTMLAttributes: Record<string, unknown>;
   resizable: boolean;
   handleWidth: number;
   cellMinWidth: number;
   lastColumnResizable: boolean;
   allowTableNodeSelection: boolean;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
