@@ -48,9 +48,21 @@ module.exports = {
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
         "custom-sidebar-shadow-4xl": "var(--color-sidebar-shadow-4xl)",
-        "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
+        pi: {
+          50: convertToRGB("--color-pi-50"),
+          100: convertToRGB("--color-pi-100"),
+          200: convertToRGB("--color-pi-200"),
+          300: convertToRGB("--color-pi-300"),
+          400: convertToRGB("--color-pi-400"),
+          500: convertToRGB("--color-pi-500"),
+          600: convertToRGB("--color-pi-600"),
+          700: convertToRGB("--color-pi-700"),
+          800: convertToRGB("--color-pi-800"),
+          900: convertToRGB("--color-pi-900"),
+          950: convertToRGB("--color-pi-950"),
+        },
         custom: {
           primary: {
             0: "rgb(255, 255, 255)",
@@ -232,25 +244,6 @@ module.exports = {
             },
           },
         },
-        onboarding: {
-          background: {
-            100: convertToRGB("--color-onboarding-background-100"),
-            200: convertToRGB("--color-onboarding-background-200"),
-            300: convertToRGB("--color-onboarding-background-300"),
-            400: convertToRGB("--color-onboarding-background-400"),
-          },
-          text: {
-            100: convertToRGB("--color-onboarding-text-100"),
-            200: convertToRGB("--color-onboarding-text-200"),
-            300: convertToRGB("--color-onboarding-text-300"),
-            400: convertToRGB("--color-onboarding-text-400"),
-          },
-          border: {
-            100: convertToRGB("--color-onboarding-border-100"),
-            200: convertToRGB("--color-onboarding-border-200"),
-            300: convertToRGB("--color-onboarding-border-300"),
-          },
-        },
         toast: {
           text: {
             success: convertToRGB("--color-toast-success-text"),
@@ -314,6 +307,7 @@ module.exports = {
         },
       }),
       screens: {
+        xs: "480px",
         "3xl": "1792px",
       },
       // scale down font sizes to 90% of default
@@ -458,11 +452,6 @@ module.exports = {
         72: "16.2rem",
         80: "18rem",
         96: "21.6rem",
-      },
-      backgroundImage: {
-        "onboarding-gradient-100": "var( --gradient-onboarding-100)",
-        "onboarding-gradient-200": "var( --gradient-onboarding-200)",
-        "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
       fontFamily: {
         custom: ["Inter", "sans-serif"],

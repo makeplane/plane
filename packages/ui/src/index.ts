@@ -1,5 +1,6 @@
 export * from "./avatar";
 export * from "./badge";
+export * from "./beta";
 export * from "./breadcrumbs";
 export * from "./button";
 export * from "./calendar";
@@ -36,3 +37,4 @@ export * from "./tooltip";
 export * from "./typography";
 export * from "./utils";
 export * from "./billing";
+export * from "./oauth";

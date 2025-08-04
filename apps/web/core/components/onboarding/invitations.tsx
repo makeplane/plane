@@ -75,8 +75,8 @@ export const Invitations: React.FC<Props> = (props) => {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-onboarding-text-100">You are invited!</h3>
-        <p className="font-medium text-onboarding-text-400">Accept the invites to collaborate with your team.</p>
+        <h3 className="text-3xl font-bold text-custom-text-100">You are invited!</h3>
+        <p className="font-medium text-custom-text-400">Accept the invites to collaborate with your team.</p>
       </div>
       <div>
         {invitations &&
@@ -119,9 +119,9 @@ export const Invitations: React.FC<Props> = (props) => {
         {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
-        <hr className="w-full border-onboarding-border-100" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">or</p>
-        <hr className="w-full border-onboarding-border-100" />
+        <hr className="w-full border-custom-border-300" />
+        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+        <hr className="w-full border-custom-border-300" />
       </div>
       <Button
         variant="link-neutral"

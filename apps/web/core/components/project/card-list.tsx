@@ -12,9 +12,6 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette, useProject, useProjectFilter, useUserPermissions } from "@/hooks/store";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// assets
-import AllFiltersImage from "@/public/empty-state/project/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/project/name-filter.svg";
 
 type TProjectCardListProps = {
   totalProjectIds?: string[];
@@ -74,12 +71,18 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
       />
     );
 
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/project/name-filter",
+    extension: "svg",
+  });
+
   if (filteredProjectIds.length === 0)
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
           <Image
-            src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
+            src={searchQuery.trim() === "" ? resolvedFiltersImage : resolvedNameFilterImage}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
             alt="No matching projects"
           />
