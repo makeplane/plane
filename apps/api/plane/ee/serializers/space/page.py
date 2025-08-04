@@ -16,7 +16,7 @@ class PagePublicSerializer(BaseSerializer):
         fields = [
             "id",
             "name",
-            "description_html",
+            "description",
             "created_at",
             "updated_at",
             "logo_props",

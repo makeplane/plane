@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { FileText } from "lucide-react";
 // plane imports
-import { DocumentEditorWithRef, EditorRefApi } from "@plane/editor";
+import { DocumentEditorWithRef, type EditorRefApi } from "@plane/editor";
 import { ERowVariant, Logo, Row } from "@plane/ui";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
@@ -44,7 +44,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
     }
   );
 
-  if (!publishSettings || !pageDetails || !pageDetails.id) return null;
+  if (!publishSettings || !pageDetails || !pageDetails.id || !pageDetails.description) return null;
 
   return (
     <Row
@@ -71,7 +71,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             id={pageDetails.id}
             disabledExtensions={[]}
             flaggedExtensions={[]}
-            value={pageDetails.description_html ?? "<p></p>"}
+            value={pageDetails.description}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getEditorFileHandlers({
               anchor,

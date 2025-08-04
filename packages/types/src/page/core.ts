@@ -2,12 +2,13 @@ import { TLogoProps } from "../common";
 import { EPageAccess } from "../enums";
 import { TPageExtended } from "./extended";
 
-export type TPage = TPageExtended & {
+export type TPage = {
   access: EPageAccess | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
+  description: object | undefined;
   description_html: string | undefined;
   is_description_empty: boolean;
   id: string | undefined;
@@ -90,7 +91,7 @@ export type TWebhookConnectionQueryParams = {
 export type TPublicPageResponse = Pick<
   TPage,
   | "created_at"
-  | "description_html"
+  | "description"
   | "id"
   | "logo_props"
   | "name"

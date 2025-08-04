@@ -38,7 +38,7 @@ export class Page implements IPage {
   issueEmbedData: TIssueEmbed[] | undefined = undefined;
   // page properties
   created_at: Date | undefined;
-  description_html: string | undefined;
+  description: object | undefined;
   id: string | undefined;
   logo_props: TLogoProps | undefined;
   name: string | undefined;
@@ -57,7 +57,7 @@ export class Page implements IPage {
     page: TPublicPageResponse
   ) {
     this.created_at = page.created_at || undefined;
-    this.description_html = page.description_html || undefined;
+    this.description = page.description || undefined;
     this.id = page.id || undefined;
     this.logo_props = page.logo_props || undefined;
     this.name = page.name || undefined;
@@ -74,7 +74,7 @@ export class Page implements IPage {
       issueEmbedData: observable,
       // page properties
       created_at: observable,
-      description_html: observable.ref,
+      description: observable,
       id: observable.ref,
       logo_props: observable,
       name: observable.ref,
@@ -98,7 +98,7 @@ export class Page implements IPage {
   get asJSON() {
     return {
       created_at: this.created_at,
-      description_html: this.description_html,
+      description: this.description,
       id: this.id,
       logo_props: this.logo_props,
       name: this.name,
@@ -152,7 +152,7 @@ export class Page implements IPage {
     runInAction(() => {
       // Update basic properties
       if (data.created_at !== undefined) this.created_at = data.created_at;
-      if (data.description_html !== undefined) this.description_html = data.description_html;
+      if (data.description !== undefined) this.description = data.description;
       if (data.id !== undefined) this.id = data.id;
       if (data.logo_props !== undefined) this.logo_props = data.logo_props;
       if (shouldUpdateName && data.name !== undefined) this.name = data.name;
