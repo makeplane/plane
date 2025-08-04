@@ -1,5 +1,4 @@
-// tiptap
-import { Extensions } from "@tiptap/core";
+import type { Extensions } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import React, { useEffect, useMemo } from "react";
 // plane imports
@@ -17,27 +16,33 @@ import { getExtensionStorage } from "@/helpers/get-extension-storage";
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
-import { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
+import type { EditorRefApi, EventToPayloadMap, ICollaborativeDocumentEditorProps } from "@/types";
 
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
     containerClassName,
+    documentLoaderClassName,
+    extensions: externalExtensions = [],
     disabledExtensions,
     displayConfig = DEFAULT_DISPLAY_CONFIG,
     editable,
     editorClassName = "",
+    editorProps,
     embedHandler,
     fileHandler,
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled = true,
+    isTouchDevice,
     mentionHandler,
     pageRestorationInProgress,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     realtimeConfig,
@@ -50,16 +55,18 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
   } = props;
 
   const extensions: Extensions = useMemo(() => {
-    const ext: Extensions = [];
+    const allExtensions = [...externalExtensions];
+
     if (embedHandler?.issue) {
-      ext.push(
+      allExtensions.push(
         WorkItemEmbedExtension({
           widgetCallback: embedHandler.issue.widgetCallback,
         })
       );
     }
-    return ext;
-  }, [embedHandler]);
+
+    return allExtensions;
+  }, [externalExtensions, embedHandler.issue]);
 
   // use document editor
   const { editor, hasServerConnectionFailed, hasServerSynced, titleEditor, isContentInIndexedDb, isIndexedDbSynced } =
@@ -67,6 +74,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       disabledExtensions,
       editable,
       editorClassName,
+      editorProps,
       embedHandler,
       extensions,
       fileHandler,
@@ -74,10 +82,13 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       forwardedRef,
       handleEditorReady,
       id,
+      dragDropEnabled,
       isSmoothCursorEnabled,
+      isTouchDevice,
       mentionHandler,
       onAssetChange,
       onChange,
+      onEditorFocus,
       onTransaction,
       placeholder,
       realtimeConfig,
@@ -107,6 +118,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         aiHandler={aiHandler}
         bubbleMenuEnabled={bubbleMenuEnabled}
         displayConfig={displayConfig}
+        documentLoaderClassName={documentLoaderClassName}
         editor={editor}
         titleEditor={titleEditor}
         editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
@@ -114,6 +126,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         isLoading={
           (!hasServerSynced && !hasServerConnectionFailed && !isContentInIndexedDb) || pageRestorationInProgress
         }
+        isTouchDevice={!!isTouchDevice}
         tabIndex={tabIndex}
       />
     </>

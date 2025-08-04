@@ -172,7 +172,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       // page properties
       id: observable.ref,
       name: observable.ref,
-      logo_props: observable,
+      logo_props: observable.ref,
       description: observable,
       description_html: observable.ref,
       color: observable.ref,

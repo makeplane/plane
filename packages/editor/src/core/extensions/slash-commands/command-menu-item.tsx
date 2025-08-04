@@ -60,6 +60,7 @@ export const CommandMenuItem: React.FC<Props> = (props) => {
         {item.icon}
       </span>
       <p className="flex-grow truncate">{query ? highlightMatch(item.title, query) : item.title}</p>
+      {item.badge}
     </button>
   );
 };

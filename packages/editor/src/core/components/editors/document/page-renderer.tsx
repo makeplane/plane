@@ -11,11 +11,13 @@ type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
   id: string;
   isLoading?: boolean;
+  isTouchDevice: boolean;
   tabIndex?: number;
 };
 
@@ -24,12 +26,14 @@ export const PageRenderer = (props: Props) => {
     aiHandler,
     bubbleMenuEnabled,
     displayConfig,
+    documentLoaderClassName,
     editor,
     editorContainerClassName,
     id,
+    isLoading,
+    isTouchDevice,
     tabIndex,
     titleEditor,
-    isLoading = false,
   } = props;
 
   return (
@@ -39,7 +43,7 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
           {titleEditor && (
@@ -47,6 +51,7 @@ export const PageRenderer = (props: Props) => {
               <EditorContainer
                 editor={titleEditor}
                 id={id + "-title"}
+                isTouchDevice={isTouchDevice}
                 editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
                 displayConfig={displayConfig}
               >
@@ -64,9 +69,10 @@ export const PageRenderer = (props: Props) => {
             editor={editor}
             editorContainerClassName={editorContainerClassName}
             id={id}
+            isTouchDevice={isTouchDevice}
           >
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-            {editor.isEditable && (
+            {editor.isEditable && !isTouchDevice && (
               <div>
                 {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
                 <BlockMenu editor={editor} />

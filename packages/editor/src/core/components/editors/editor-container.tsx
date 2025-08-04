@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { FC, ReactNode, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -10,16 +10,18 @@ import { TDisplayConfig } from "@/types";
 // components
 import { LinkViewContainer } from "./link-view-container";
 
-interface EditorContainerProps {
+type Props = {
   children: ReactNode;
   displayConfig: TDisplayConfig;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
-}
+  isTouchDevice: boolean;
+};
 
-export const EditorContainer: FC<EditorContainerProps> = (props) => {
-  const { children, displayConfig, editor, editorContainerClassName, id } = props;
+export const EditorContainer: FC<Props> = (props) => {
+  const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
+  // refs
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleContainerClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -48,17 +50,16 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         return;
       }
 
-      // Get the last node in the document
-      const docSize = editor.state.doc.content.size;
-      const lastNodePos = editor.state.doc.resolve(Math.max(0, docSize - 2));
-      const lastNode = lastNodePos.node();
+      // Get the last child node in the document
+      const doc = editor.state.doc;
+      const lastNode = doc.lastChild;
 
       // Check if its last node and add new node
       if (lastNode) {
-        const isLastNodeEmptyParagraph =
-          lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH && lastNode.content.size === 0;
-        // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
-        if (!isLastNodeEmptyParagraph && lastNode.type.name !== "doc") {
+        const isLastNodeParagraph = lastNode.type.name === CORE_EXTENSIONS.PARAGRAPH;
+        // Insert a new paragraph if the last node is not a paragraph and not a doc node
+        if (!isLastNodeParagraph && lastNode.type.name !== CORE_EXTENSIONS.DOCUMENT) {
+          // Only insert a new paragraph if the last node is not an empty paragraph and not a doc node
           const endPosition = editor?.state.doc.content.size;
           editor?.chain().insertContentAt(endPosition, { type: "paragraph" }).focus("end").run();
         }
@@ -93,7 +94,7 @@ export const EditorContainer: FC<EditorContainerProps> = (props) => {
         )}
       >
         {children}
-        <LinkViewContainer editor={editor} containerRef={containerRef} />
+        {!isTouchDevice && <LinkViewContainer editor={editor} containerRef={containerRef} />}
       </div>
     </>
   );

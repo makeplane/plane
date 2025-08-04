@@ -1,8 +1,13 @@
 // plane imports
 import { Loader } from "@plane/ui";
+import { cn } from "@plane/utils";
 
-export const DocumentContentLoader = () => (
-  <div className="document-editor-loader">
+type Props = {
+  className?: string;
+};
+
+export const DocumentContentLoader = ({ className }: Props) => (
+  <div className={cn("document-editor-loader", className)}>
     <Loader className="relative space-y-4">
       <div className="space-y-2">
         <div className="py-2">

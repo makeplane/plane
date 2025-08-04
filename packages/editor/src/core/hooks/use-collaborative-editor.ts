@@ -35,7 +35,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled = true,
+    isTouchDevice,
     mentionHandler,
+    onEditorFocus,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -134,7 +137,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       // Core extensions
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
+        dragDropEnabled,
       }),
       HeadingListExtension,
       // Collaboration extension
@@ -160,10 +163,12 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     flaggedExtensions,
     forwardedRef,
     handleEditorReady,
+    isTouchDevice,
     isSmoothCursorEnabled,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,
