@@ -14,7 +14,11 @@ import {
   TLoader,
   TProfileViews,
 } from "@plane/types";
-import { useTeamIssueActions, useTeamViewIssueActions } from "@/plane-web/helpers/issue-action-helper";
+import {
+  useTeamIssueActions,
+  useTeamViewIssueActions,
+  useTeamProjectWorkItemsActions,
+} from "@/plane-web/helpers/issue-action-helper";
 import { useIssues } from "./store";
 
 export interface IssueActions {
@@ -51,6 +55,7 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
   const draftIssueActions = useDraftIssueActions();
   const archivedIssueActions = useArchivedIssueActions();
   const workspaceDraftIssueActions = useWorkspaceDraftIssueActions();
+  const teamProjectWorkItemsActions = useTeamProjectWorkItemsActions();
 
   switch (storeType) {
     case EIssuesStoreType.TEAM_VIEW:
@@ -76,6 +81,8 @@ export const useIssuesActions = (storeType: EIssuesStoreType): IssueActions => {
       return workspaceDraftIssueActions;
     case EIssuesStoreType.EPIC:
       return projectEpicsActions;
+    case EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS:
+      return teamProjectWorkItemsActions;
     case EIssuesStoreType.PROJECT:
     default:
       return projectIssueActions;

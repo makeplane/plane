@@ -31,6 +31,8 @@ export const useIssueStoreType = () => {
 
   if (teamspaceId && viewId) return EIssuesStoreType.TEAM_VIEW;
 
+  if (teamspaceId && projectId) return EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
+
   return EIssuesStoreType.PROJECT;
 };
 
