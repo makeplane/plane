@@ -19,6 +19,7 @@ import {
   EModalWidth,
   EModalPosition,
   Loader,
+  Checkbox,
 } from "@plane/ui";
 // types
 // components
@@ -218,7 +219,7 @@ const PagesMultiSelectModal = observer(
                     }
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <input type="checkbox" checked={selected} readOnly />
+                      <Checkbox checked={selected} readOnly />
                       <div className="flex-shrink-0">
                         {page.logo_props && page.logo_props?.in_use ? (
                           <Logo logo={page.logo_props} size={16} type="lucide" />
