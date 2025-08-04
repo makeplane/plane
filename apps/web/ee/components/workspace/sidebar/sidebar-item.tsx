@@ -41,7 +41,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
     if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
   };
 
-  const staticItems = ["home", "inbox", "pi_chat", "projects"];
+  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work"];
 
   if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
     return null;
@@ -51,7 +51,7 @@ export const SidebarItem: FC<TSidebarItemProps> = observer((props) => {
 
   const itemHref =
     item.key === "your_work"
-      ? `/${workspaceSlug.toString()}${item.href}/${data?.id}`
+      ? `/${workspaceSlug.toString()}${item.href}${data?.id}/`
       : `/${workspaceSlug.toString()}${item.href}`;
 
   const isActive = itemHref === pathname;
