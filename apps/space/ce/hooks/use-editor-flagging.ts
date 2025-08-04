@@ -19,17 +19,17 @@ export type TEditorFlaggingHookReturnType = {
 /**
  * @description extensions disabled in various editors
  */
-export const useEditorFlagging = (workspaceSlug: string): TEditorFlaggingHookReturnType => ({
+export const useEditorFlagging = (anchor: string): TEditorFlaggingHookReturnType => ({
   document: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: [],
     flagged: [],
   },
   liteText: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: [],
     flagged: [],
   },
   richText: {
-    disabled: ["ai", "collaboration-cursor"],
+    disabled: [],
     flagged: [],
   },
 });
