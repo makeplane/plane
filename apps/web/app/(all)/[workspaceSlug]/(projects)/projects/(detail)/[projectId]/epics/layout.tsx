@@ -29,12 +29,7 @@ const EpicsLayout = observer(({ children }: { children: ReactNode }) => {
   if (project && !isEpicsEnabled)
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <EpicsEmptyState
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          className="items-center"
-          redirect
-        />
+        <EpicsEmptyState workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} redirect />
       </div>
     );
 

@@ -4,9 +4,13 @@ export const EPIC_TRACKER_EVENTS = {
   delete: "epic_deleted",
   archive: "epic_archived",
   restore: "epic_restored",
+  toggle: "epic_toggled",
+  enable: "epic_enabled",
+  disable: "epic_disabled",
 };
 export const EPIC_TRACKER_ELEMENTS = {
   QUICK_ACTIONS: "epic_quick_actions",
+  TOGGLE_EPICS_BUTTON: "toggle_epics_button",
 };
 
 export const LICENSE_TRACKER_EVENTS = {

@@ -15,6 +15,7 @@ import { EpicsEmptyState, EpicPropertiesRoot } from "@/plane-web/components/epic
 // plane web hooks
 import { useIssueType, useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { epicsTrackers } from "../trackers";
 
 export const EpicsRoot = observer(() => {
   // router
@@ -32,8 +33,13 @@ export const EpicsRoot = observer(() => {
   const projectFeatures = getProjectFeatures(projectId?.toString());
   const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
+  // trackers
+  const trackers = epicsTrackers(workspaceSlug?.toString(), projectId?.toString());
+
   const handleEnableDisableEpic = async () => {
     setIsLoading(true);
+    trackers.toggleEpicsClicked();
+
     const epicStatusPromise = isEpicsEnabled
       ? disableEpics(workspaceSlug?.toString(), projectId?.toString())
       : enableEpics(workspaceSlug?.toString(), projectId?.toString());
@@ -50,9 +56,17 @@ export const EpicsRoot = observer(() => {
           `${epicDetails?.name} epic could not be ${isEpicsEnabled ? "disabled" : "enabled"}. Please try again.`,
       },
     });
-    await epicStatusPromise.finally(() => {
-      setIsLoading(false);
-    });
+
+    // trackers
+    await epicStatusPromise
+      .then(() => {
+        trackers.toggleEpicsSuccess(isEpicsEnabled ? "disable" : "enable");
+      })
+      .catch(() => {
+        trackers.toggleEpicsError(isEpicsEnabled ? "disable" : "enable");
+      });
+
+    setIsLoading(false);
   };
 
   if (!isEpicsEnabled && project) {

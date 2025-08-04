@@ -12,17 +12,17 @@ import { DetailedEmptyState } from "@/components/empty-state";
 // plane web hooks
 import { SettingsHeading } from "@/components/settings";
 import { useFlag, useIssueTypes, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { epicsTrackers } from "../trackers";
 
 type TIssueTypeEmptyState = {
   workspaceSlug: string;
   projectId: string;
   redirect?: boolean;
-  className?: string;
 };
 
 export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // props
-  const { workspaceSlug, projectId, redirect = false, className = "" } = props;
+  const { workspaceSlug, projectId, redirect = false } = props;
   // theme
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -36,8 +36,13 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
   // derived values
   const isEpicsSettingsEnabled = useFlag(workspaceSlug, "EPICS");
   const resolvedEmptyStatePath = `/empty-state/epics/epics-${resolvedTheme === "light" ? "light" : "dark"}.webp`;
+
+  // trackers
+  const trackers = epicsTrackers(workspaceSlug, projectId);
+
   // handlers
   const handleEnableEpic = async () => {
+    trackers.toggleEpicsClicked();
     setIsLoading(true);
     await enableEpics(workspaceSlug, projectId)
       .then(() => {
@@ -46,6 +51,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
           title: "Success!",
           message: "Epics is enabled for this project",
         });
+        trackers.toggleEpicsSuccess("enable");
       })
       .catch(() => {
         setToast({
@@ -53,6 +59,7 @@ export const EpicsEmptyState: FC<TIssueTypeEmptyState> = observer((props) => {
           title: "Error!",
           message: "Failed to enable epics",
         });
+        trackers.toggleEpicsError("enable");
       })
       .finally(() => {
         setIsLoading(false);
