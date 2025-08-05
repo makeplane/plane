@@ -3,7 +3,6 @@
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
-  swcMinify: true,
   output: "standalone",
   images: {
     unoptimized: true,

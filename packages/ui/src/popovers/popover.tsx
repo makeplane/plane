@@ -1,11 +1,16 @@
+import {
+  Popover as HeadlessPopover,
+  PopoverButton as HeadlessPopoverButton,
+  PopoverPanel as HeadlessPopoverPanel,
+  Transition,
+} from "@headlessui/react";
+import { EllipsisVertical } from "lucide-react";
 import React, { Fragment, Ref, useState } from "react";
 import { usePopper } from "react-popper";
-import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
 // helpers
 import { cn } from "../../helpers";
 // types
 import { TPopover } from "./types";
-import { EllipsisVertical } from "lucide-react";
 
 export const Popover = (props: TPopover) => {
   const {
@@ -38,9 +43,9 @@ export const Popover = (props: TPopover) => {
   });
 
   return (
-    <HeadlessReactPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
+    <HeadlessPopover className={cn("relative flex h-full w-full items-center justify-center", popoverClassName)}>
       <div ref={setReferenceElement} className={cn("w-full", buttonRefClassName)}>
-        <HeadlessReactPopover.Button
+        <HeadlessPopoverButton
           ref={popoverButtonRef as Ref<HTMLButtonElement>}
           className={cn(
             {
@@ -52,7 +57,7 @@ export const Popover = (props: TPopover) => {
           disabled={disabled}
         >
           {button ? button : <EllipsisVertical className="h-3 w-3" />}
-        </HeadlessReactPopover.Button>
+        </HeadlessPopoverButton>
       </div>
 
       <Transition
@@ -64,15 +69,15 @@ export const Popover = (props: TPopover) => {
         leaveFrom="opacity-100 translate-y-0"
         leaveTo="opacity-0 translate-y-1"
       >
-        <HeadlessReactPopover.Panel
-          ref={setPopperElement}
+        <HeadlessPopoverPanel
+          ref={setPopperElement as any}
           style={styles.popper}
           {...attributes.popper}
           className={cn("absolute left-0 top-full z-20 w-screen max-w-xs mt-2", panelClassName)}
         >
           {children}
-        </HeadlessReactPopover.Panel>
+        </HeadlessPopoverPanel>
       </Transition>
-    </HeadlessReactPopover>
+    </HeadlessPopover>
   );
 };

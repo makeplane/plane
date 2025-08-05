@@ -43,7 +43,7 @@ type ChartViewRootProps = {
   loadMoreBlocks?: () => void;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
   canLoadMoreBlocks?: boolean;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.React.ReactNode | undefined;
   showToday: boolean;
   isEpic?: boolean;
 };

@@ -1,6 +1,24 @@
-// FIXME: fix this!!!
-import { Placement } from "@blueprintjs/popover2";
 import { ICustomSearchSelectOption } from "@plane/types";
+
+// Define our own placement type to replace Blueprint's Placement
+export type Placement =
+  | "top"
+  | "right"
+  | "bottom"
+  | "left"
+  | "auto"
+  | "auto-end"
+  | "auto-start"
+  | "bottom-left"
+  | "bottom-right"
+  | "bottom-start"
+  | "bottom-end"
+  | "left-bottom"
+  | "left-top"
+  | "right-bottom"
+  | "right-top"
+  | "top-left"
+  | "top-right";
 
 export interface IDropdownProps {
   customButtonClassName?: string;

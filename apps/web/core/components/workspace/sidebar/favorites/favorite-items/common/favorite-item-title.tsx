@@ -9,7 +9,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type Props = {
   href: string;
   title: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 };
 
 export const FavoriteItemTitle: FC<Props> = observer((props) => {

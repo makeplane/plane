@@ -69,8 +69,8 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
           <div className="flex items-center gap-2.5 p-1">
             {isLoading ? (
               <BreadcrumbItemLoader />
-            ) : React.isValidElement(childrenArray[childrenArray.length - 1]) ? (
-              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement, {
+            ) : React.isValidElement<BreadcrumbItemProps>(childrenArray[childrenArray.length - 1]) ? (
+              React.cloneElement(childrenArray[childrenArray.length - 1] as React.ReactElement<BreadcrumbItemProps>, {
                 isLast: true,
               })
             ) : (
@@ -87,12 +87,9 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
 // breadcrumb item
 type BreadcrumbItemProps = {
   component?: React.ReactNode;
-<<<<<<< HEAD
   link?: React.ReactNode;
-=======
   showSeparator?: boolean;
   isLast?: boolean;
->>>>>>> dffe3a844fcdd0a68cd931b68cbae76e0bea63d2
 };
 
 const BreadcrumbItem: React.FC<BreadcrumbItemProps> = (props) => {

@@ -6,7 +6,6 @@ require("dotenv").config({ path: ".env" });
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: false,
-  swcMinify: true,
   output: "standalone",
   async headers() {
     return [

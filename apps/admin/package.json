@@ -17,7 +17,7 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.19",
+    "@headlessui/react": "2.2.7",
     "@plane/constants": "*",
     "@plane/hooks": "*",
     "@plane/propel": "*",

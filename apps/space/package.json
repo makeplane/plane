@@ -15,11 +15,9 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
-    "@blueprintjs/core": "^4.16.3",
-    "@blueprintjs/popover2": "^1.13.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@headlessui/react": "^1.7.13",
+    "@headlessui/react": "2.2.7",
     "@mui/material": "^5.14.1",
     "@plane/constants": "*",
     "@plane/editor": "*",

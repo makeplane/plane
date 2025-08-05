@@ -18,7 +18,7 @@
     "@atlaskit/pragmatic-drag-and-drop": "^1.1.3",
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "^1.3.0",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "2.2.7",
     "@intercom/messenger-js-sdk": "^0.0.12",
     "@plane/constants": "*",
     "@plane/editor": "*",

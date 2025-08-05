@@ -1,4 +1,3 @@
-import { Tooltip2 } from "@blueprintjs/popover2";
 import React, { useEffect, useRef, useState } from "react";
 // helpers
 import { cn } from "../../helpers";
@@ -46,11 +45,31 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   renderByDefault = true, //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
 }) => {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
-
   const [shouldRender, setShouldRender] = useState(renderByDefault);
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const onHover = () => {
     setShouldRender(true);
+  };
+
+  const handleMouseEnter = () => {
+    if (disabled) return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(true);
+    }, openDelay);
+  };
+
+  const handleMouseLeave = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, closeDelay || 0);
   };
 
   useEffect(() => {
@@ -62,6 +81,9 @@ export const Tooltip: React.FC<ITooltipProps> = ({
 
     return () => {
       element?.removeEventListener("mouseenter", onHover);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, [toolTipRef, shouldRender]);
 
@@ -73,38 +95,61 @@ export const Tooltip: React.FC<ITooltipProps> = ({
     );
   }
 
+  if (disabled) {
+    return <>{children}</>;
+  }
+
+  const getPositionClasses = () => {
+    switch (position) {
+      case "top":
+        return "bottom-full left-1/2 transform -translate-x-1/2 mb-2";
+      case "bottom":
+        return "top-full left-1/2 transform -translate-x-1/2 mt-2";
+      case "left":
+        return "right-full top-1/2 transform -translate-y-1/2 mr-2";
+      case "right":
+        return "left-full top-1/2 transform -translate-y-1/2 ml-2";
+      case "top-left":
+        return "bottom-full right-0 mb-2";
+      case "top-right":
+        return "bottom-full left-0 mb-2";
+      case "bottom-left":
+        return "top-full right-0 mt-2";
+      case "bottom-right":
+        return "top-full left-0 mt-2";
+      case "left-top":
+        return "right-full bottom-0 mr-2";
+      case "left-bottom":
+        return "right-full top-0 mr-2";
+      case "right-top":
+        return "left-full bottom-0 ml-2";
+      case "right-bottom":
+        return "left-full top-0 ml-2";
+      default:
+        return "bottom-full left-1/2 transform -translate-x-1/2 mb-2";
+    }
+  };
+
   return (
-    <Tooltip2
-      disabled={disabled}
-      hoverOpenDelay={openDelay}
-      hoverCloseDelay={closeDelay}
-      content={
+    <div className="relative inline-block">
+      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="inline-block">
+        {React.cloneElement(children, {
+          ...children.props,
+        })}
+      </div>
+
+      {isOpen && !isMobile && (
         <div
           className={cn(
-            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md",
-            {
-              hidden: isMobile,
-            },
+            "absolute z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-md",
+            getPositionClasses(),
             className
           )}
         >
           {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
           {tooltipContent}
         </div>
-      }
-      position={position}
-      renderTarget={({
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isOpen: isTooltipOpen,
-        ref: eleReference,
-        ...tooltipProps
-      }) =>
-        React.cloneElement(children, {
-          ref: eleReference,
-          ...tooltipProps,
-          ...children.props,
-        })
-      }
-    />
+      )}
+    </div>
   );
 };
