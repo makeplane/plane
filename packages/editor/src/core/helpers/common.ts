@@ -1,3 +1,4 @@
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { EditorState, Selection } from "@tiptap/pm/state";
 import { Node as ProsemirrorNode } from "prosemirror-model";
 // plane imports
@@ -5,13 +6,13 @@ import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
-interface EditorClassNames {
+type EditorClassNameArgs = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   containerClassName?: string;
-}
+};
 
-export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNames) =>
+export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNameArgs) =>
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {
@@ -22,20 +23,28 @@ export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassNam
   );
 
 // Helper function to find the parent node of a specific type
-export function findParentNodeOfType(selection: Selection, typeName: string): {
-  node: ProsemirrorNode;
+export const findParentNodeOfType = (
+  selection: Selection,
+  typeName: string[]
+): {
+  node: ProseMirrorNode;
   pos: number;
-} | null {
+  depth: number;
+} | null => {
   let depth = selection.$anchor.depth;
   while (depth > 0) {
     const node = selection.$anchor.node(depth);
-    if (node.type.name === typeName) {
-      return { node, pos: selection.$anchor.start(depth) - 1 };
+    if (typeName.includes(node.type.name)) {
+      return {
+        node,
+        pos: selection.$anchor.start(depth) - 1,
+        depth,
+      };
     }
     depth--;
   }
   return null;
-}
+};
 
 export const findTableAncestor = (node: Node | null): HTMLTableElement | null => {
   while (node !== null && node.nodeName !== "TABLE") {

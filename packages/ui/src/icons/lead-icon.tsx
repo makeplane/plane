@@ -8,11 +8,11 @@ export const LeadIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...r
       d="M0.571533 9C0.571533 4.02944 4.60097 0 9.57153 0C14.5421 0 18.5715 4.02944 18.5715 9C18.5715 13.9706 14.5421 18 9.57153 18C4.60097 18 0.571533 13.9706 0.571533 9Z"
       fill="#3372FF"
     />
-    <g clip-path="url(#clip0_8992_2377)">
+    <g clipPath="url(#clip0_8992_2377)">
       <circle cx="9.57153" cy="6.5" r="2.5" fill="#F5F5FF" />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M8.94653 9.625C6.53029 9.625 4.57153 11.5838 4.57153 14H9.57153H14.5715C14.5715 11.5838 12.6128 9.625 10.1965 9.625H9.82153L10.8215 13.0278L9.57153 14L8.32153 13.0278L9.32153 9.625H8.94653Z"
         fill="#F5F5FF"
       />

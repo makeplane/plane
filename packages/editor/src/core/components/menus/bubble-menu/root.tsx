@@ -24,12 +24,12 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
 import { TEditorCommands } from "@/types";
-// local components
+// local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
-export interface EditorStateType {
+export type EditorStateType = {
   code: boolean;
   bold: boolean;
   italic: boolean;
@@ -47,7 +47,7 @@ export interface EditorStateType {
         backgroundColor: string;
       }
     | undefined;
-}
+};
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
   const menuRef = useRef<HTMLDivElement>(null);

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // constant
-import { EIssueLayoutTypes, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -14,6 +14,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   IWorkspaceView,
+  EIssueLayoutTypes,
 } from "@plane/types";
 // ui
 import { Button, Input, TextArea } from "@plane/ui";

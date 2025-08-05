@@ -1,12 +1,19 @@
 {
   "name": "@plane/logger",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "license": "AGPL-3.0",
   "description": "Logger shared across multiple apps internally",
   "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist/**"
   ],

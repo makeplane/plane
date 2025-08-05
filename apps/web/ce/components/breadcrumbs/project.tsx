@@ -37,7 +37,9 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
       return {
         value: projectId,
         query: project?.name,
-        content: <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} />,
+        content: (
+          <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} type="material" />
+        ),
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -65,6 +67,7 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
               if (handleOnClick) handleOnClick();
               else router.push(`/${workspaceSlug}/projects/${currentProjectDetails.id}/issues/`);
             }}
+            shouldTruncate
           />
         }
         showSeparator={false}

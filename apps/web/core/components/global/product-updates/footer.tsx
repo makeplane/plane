@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { getButtonStyling } from "@plane/ui";
@@ -23,6 +24,7 @@ export const ProductUpdatesFooter = () => {
           <circle cx={1} cy={1} r={1} />
         </svg>
         <a
+          data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"

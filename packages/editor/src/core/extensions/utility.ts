@@ -10,7 +10,7 @@ import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
 
-import type { IEditorProps, TEditorAsset, TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
 type TActiveDropbarExtensions = CORE_EXTENSIONS.MENTION | CORE_EXTENSIONS.EMOJI | TAdditionalActiveDropbarExtensions;
 
 declare module "@tiptap/core" {
@@ -30,20 +30,22 @@ declare module "@tiptap/core" {
   }
 }
 
-export interface UtilityExtensionStorage {
+export type UtilityExtensionStorage = {
   assetsList: TEditorAsset[];
   assetsUploadStatus: TFileHandler["assetsUploadStatus"];
   uploadInProgress: boolean;
   activeDropbarExtensions: TActiveDropbarExtensions[];
-}
+  isTouchDevice: boolean;
+};
 
 type Props = Pick<IEditorProps, "disabledExtensions"> & {
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
   isEditable: boolean;
+  isTouchDevice: boolean;
 };
 
 export const UtilityExtension = (props: Props) => {
-  const { disabledExtensions, fileHandler, isEditable } = props;
+  const { disabledExtensions, fileHandler, isEditable, isTouchDevice } = props;
   const { restore } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
@@ -76,6 +78,7 @@ export const UtilityExtension = (props: Props) => {
         assetsUploadStatus: isEditable && "assetsUploadStatus" in fileHandler ? fileHandler.assetsUploadStatus : {},
         uploadInProgress: false,
         activeDropbarExtensions: [],
+        isTouchDevice,
       };
     },
 

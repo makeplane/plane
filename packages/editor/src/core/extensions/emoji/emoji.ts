@@ -15,6 +15,8 @@ import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
+// helpers
+import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -63,11 +65,11 @@ export type EmojiItem = {
   /**
    * Store some custom data
    */
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type EmojiOptions = {
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   emojis: EmojiItem[];
   enableEmoticons: boolean;
   forceFallbackImages: boolean;
@@ -343,6 +345,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
     return [
       Suggestion({
         editor: this.editor,
+        findSuggestionMatch: customFindSuggestionMatch,
         ...this.options.suggestion,
       }),
 

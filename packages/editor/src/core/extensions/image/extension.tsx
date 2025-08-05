@@ -2,9 +2,9 @@ import { ReactNodeViewRenderer } from "@tiptap/react";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
-import type { TFileHandler, TReadOnlyFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView } from "../custom-image/components/node-view";
+import { CustomImageNodeView, CustomImageNodeViewProps } from "../custom-image/components/node-view";
 import { ImageExtensionConfig } from "./extension-config";
 
 export type ImageExtensionStorage = {
@@ -12,7 +12,7 @@ export type ImageExtensionStorage = {
 };
 
 type Props = {
-  fileHandler: TFileHandler | TReadOnlyFileHandler;
+  fileHandler: TFileHandler;
 };
 
 export const ImageExtension = (props: Props) => {
@@ -47,7 +47,9 @@ export const ImageExtension = (props: Props) => {
 
     // render custom image node
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNodeView);
+      return ReactNodeViewRenderer((props) => (
+        <CustomImageNodeView {...props} node={props.node as CustomImageNodeViewProps["node"]} />
+      ));
     },
   });
 };

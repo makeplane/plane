@@ -25,6 +25,7 @@ from plane.app.serializers import (
     PageSerializer,
     SubPageSerializer,
     PageDetailSerializer,
+    PageBinaryUpdateSerializer,
 )
 from plane.db.models import (
     Page,
@@ -40,7 +41,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.bgtasks.page_version_task import page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
-from plane.bgtasks.copy_s3_object import copy_s3_objects
+from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -538,32 +539,27 @@ class PagesDescriptionViewSet(BaseViewSet):
             {"description_html": page.description_html}, cls=DjangoJSONEncoder
         )
 
-        # Get the base64 data from the request
-        base64_data = request.data.get("description_binary")
-
-        # If base64 data is provided
-        if base64_data:
-            # Decode the base64 data to bytes
-            new_binary_data = base64.b64decode(base64_data)
-            # capture the page transaction
+        # Use serializer for validation and update
+        serializer = PageBinaryUpdateSerializer(page, data=request.data, partial=True)
+        if serializer.is_valid():
+            # Capture the page transaction
             if request.data.get("description_html"):
                 page_transaction.delay(
                     new_value=request.data, old_value=existing_instance, page_id=pk
                 )
-            # Store the updated binary data
-            page.description_binary = new_binary_data
-            page.description_html = request.data.get("description_html")
-            page.description = request.data.get("description")
-            page.save()
-            # Return a success response
+
+            # Update the page using serializer
+            updated_page = serializer.save()
+
+            # Run background tasks
             page_version.delay(
-                page_id=page.id,
+                page_id=updated_page.id,
                 existing_instance=existing_instance,
                 user_id=request.user.id,
             )
             return Response({"message": "Updated successfully"})
         else:
-            return Response({"error": "No binary data provided"})
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PageDuplicateEndpoint(BaseAPIView):
@@ -606,7 +602,7 @@ class PageDuplicateEndpoint(BaseAPIView):
         )
 
         # Copy the s3 objects uploaded in the page
-        copy_s3_objects.delay(
+        copy_s3_objects_of_description_and_assets.delay(
             entity_name="PAGE",
             entity_identifier=page.id,
             project_id=project_id,

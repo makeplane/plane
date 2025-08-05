@@ -12,6 +12,7 @@ from celery import shared_task
 
 # Django imports
 from django.conf import settings
+from django.db.models import Prefetch
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.core.serializers.json import DjangoJSONEncoder
 from django.template.loader import render_to_string
@@ -42,6 +43,8 @@ from plane.db.models import (
     Webhook,
     WebhookLog,
     IntakeIssue,
+    IssueLabel,
+    IssueAssignee,
 )
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
@@ -74,6 +77,15 @@ MODEL_MAPPER = {
 logger = logging.getLogger("plane.worker")
 
 
+def get_issue_prefetches():
+    return [
+        Prefetch("label_issue", queryset=IssueLabel.objects.select_related("label")),
+        Prefetch(
+            "issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")
+        ),
+    ]
+
+
 def get_model_data(
     event: str, event_id: Union[str, List[str]], many: bool = False
 ) -> Dict[str, Any]:
@@ -103,10 +115,27 @@ def get_model_data(
             queryset = model.objects.get(pk=event_id)
 
         serializer = SERIALIZER_MAPPER.get(event)
+
         if serializer is None:
             raise ValueError(f"Serializer not found for event: {event}")
 
-        return serializer(queryset, many=many).data
+        issue_prefetches = get_issue_prefetches()
+        if event == "issue":
+            if many:
+                queryset = queryset.prefetch_related(*issue_prefetches)
+            else:
+                issue_id = queryset.id
+                queryset = (
+                    model.objects.filter(pk=issue_id)
+                    .prefetch_related(*issue_prefetches)
+                    .first()
+                )
+
+            return serializer(
+                queryset, many=many, context={"expand": ["labels", "assignees"]}
+            ).data
+        else:
+            return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
         raise ObjectDoesNotExist(f"No {event} found with id: {event_id}")
 

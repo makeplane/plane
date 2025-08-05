@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
+import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -12,17 +12,26 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { Button } from "@plane/ui";
 // components
 import { isIssueFilterActive } from "@plane/utils";
-import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "@/components/issues";
+import {
+  DisplayFiltersSelection,
+  FiltersDropdown,
+  FilterSelection,
+  IssueLayoutIcon,
+  LayoutSelection,
+  MobileLayoutSelection,
+} from "@/components/issues";
 // helpers
 // hooks
 import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
 // plane web types
 import { TProject } from "@/plane-web/types";
 import { WorkItemsModal } from "../analytics/work-items/modal";
+import { ChartNoAxesColumn, ChevronDown, ListFilter, SlidersHorizontal } from "lucide-react";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -31,6 +40,13 @@ type Props = {
   canUserCreateIssue: boolean | undefined;
   storeType?: EIssuesStoreType.PROJECT | EIssuesStoreType.EPIC;
 };
+const LAYOUTS = [
+  EIssueLayoutTypes.LIST,
+  EIssueLayoutTypes.KANBAN,
+  EIssueLayoutTypes.CALENDAR,
+  EIssueLayoutTypes.SPREADSHEET,
+  EIssueLayoutTypes.GANTT,
+];
 const HeaderFilters = observer((props: Props) => {
   const {
     currentProjectDetails,
@@ -108,21 +124,25 @@ const HeaderFilters = observer((props: Props) => {
         projectDetails={currentProjectDetails ?? undefined}
         isEpic={storeType === EIssuesStoreType.EPIC}
       />
-      <LayoutSelection
-        layouts={[
-          EIssueLayoutTypes.LIST,
-          EIssueLayoutTypes.KANBAN,
-          EIssueLayoutTypes.CALENDAR,
-          EIssueLayoutTypes.SPREADSHEET,
-          EIssueLayoutTypes.GANTT,
-        ]}
-        onChange={(layout) => handleLayoutChange(layout)}
-        selectedLayout={activeLayout}
-      />
+      <div className="hidden @4xl:flex">
+        <LayoutSelection
+          layouts={LAYOUTS}
+          onChange={(layout) => handleLayoutChange(layout)}
+          selectedLayout={activeLayout}
+        />
+      </div>
+      <div className="flex @4xl:hidden">
+        <MobileLayoutSelection
+          layouts={LAYOUTS}
+          onChange={(layout) => handleLayoutChange(layout)}
+          activeLayout={activeLayout}
+        />
+      </div>
       <FiltersDropdown
         title={t("common.filters")}
         placement="bottom-end"
         isFiltersApplied={isIssueFilterActive(issueFilters)}
+        miniIcon={<ListFilter className="size-3.5" />}
       >
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
@@ -139,7 +159,11 @@ const HeaderFilters = observer((props: Props) => {
           isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
-      <FiltersDropdown title={t("common.display")} placement="bottom-end">
+      <FiltersDropdown
+        miniIcon={<SlidersHorizontal className="size-3.5" />}
+        title={t("common.display")}
+        placement="bottom-end"
+      >
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
           displayFilters={issueFilters?.displayFilters ?? {}}
@@ -152,8 +176,16 @@ const HeaderFilters = observer((props: Props) => {
         />
       </FiltersDropdown>
       {canUserCreateIssue ? (
-        <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-          {t("common.analytics")}
+        <Button
+          className="hidden md:block px-2"
+          onClick={() => setAnalyticsModal(true)}
+          variant="neutral-primary"
+          size="sm"
+        >
+          <div className="hidden @4xl:flex">{t("common.analytics")}</div>
+          <div className="flex @4xl:hidden">
+            <ChartNoAxesColumn className="size-3.5" />
+          </div>
         </Button>
       ) : (
         <></>

@@ -12,6 +12,7 @@ from plane.app.permissions import allow_permission, ROLE
 
 class UserRecentVisitViewSet(BaseViewSet):
     model = UserRecentVisit
+    use_read_replica = True
 
     def get_serializer_class(self):
         return WorkspaceRecentVisitSerializer

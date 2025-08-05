@@ -48,6 +48,7 @@ export const ChartAddBlock: React.FC<Props> = observer((props) => {
     blockUpdateHandler(block.data, {
       start_date: renderFormattedPayloadDate(startDate) ?? undefined,
       target_date: renderFormattedPayloadDate(endDate) ?? undefined,
+      meta: block.meta,
     });
   };
 

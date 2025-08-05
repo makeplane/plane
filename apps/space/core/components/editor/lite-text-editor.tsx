@@ -1,36 +1,42 @@
 import React from "react";
 // plane imports
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
+import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { EditorMentionsRoot, IssueCommentToolbar } from "@/components/editor";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
 import { isCommentEmpty } from "@/helpers/string.helper";
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 
-interface LiteTextEditorWrapperProps
-  extends MakeOptional<
-    Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
-    "disabledExtensions" | "flaggedExtensions"
-  > {
+type LiteTextEditorWrapperProps = MakeOptional<
+  Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler">,
+  "disabledExtensions" | "flaggedExtensions"
+> & {
   anchor: string;
-  workspaceId: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
-  uploadFile: TFileHandler["upload"];
-}
+  workspaceId: string;
+} & (
+    | {
+        editable: false;
+      }
+    | {
+        editable: true;
+        uploadFile: TFileHandler["upload"];
+      }
+  );
 
 export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
   const {
     anchor,
     containerClassName,
-    workspaceId,
+    disabledExtensions: additionalDisabledExtensions = [],
+    editable,
     isSubmitting = false,
     showSubmitButton = true,
-    uploadFile,
-    disabledExtensions,
-    flaggedExtensions,
+    workspaceId,
     ...rest
   } = props;
   function isMutableRefObject<T>(ref: React.ForwardedRef<T>): ref is React.MutableRefObject<T | null> {
@@ -39,16 +45,18 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+  const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
         ref={ref}
-        disabledExtensions={disabledExtensions ?? []}
-        flaggedExtensions={flaggedExtensions ?? []}
+        disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
+        flaggedExtensions={liteTextEditorExtensions.flagged}
+        editable={editable}
         fileHandler={getEditorFileHandlers({
           anchor,
-          uploadFile,
+          uploadFile: editable ? props.uploadFile : async () => "",
           workspaceId,
         })}
         mentionHandler={{

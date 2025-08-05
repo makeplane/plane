@@ -4,13 +4,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
+import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { AuthService } from "@plane/services";
-import { Button, Input, Spinner } from "@plane/ui";
-// components
-import { PasswordStrengthMeter } from "@/components/account";
-// helpers
-import { E_PASSWORD_STRENGTH, getPasswordStrength } from "@/helpers/password.helper";
+import { Button, Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
+import { getPasswordStrength } from "@plane/utils";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
 
@@ -72,7 +69,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
   const passwordSupport = passwordFormData.password.length > 0 &&
     mode === EAuthModes.SIGN_UP &&
     getPasswordStrength(passwordFormData.password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
-      <PasswordStrengthMeter password={passwordFormData.password} isFocused={isPasswordInputFocused} />
+      <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
     );
 
   const isButtonDisabled = useMemo(
@@ -109,7 +106,9 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
       onSubmit={async (event) => {
         event.preventDefault();
         await handleCSRFToken();
-        formRef.current && formRef.current.submit();
+        if (formRef.current) {
+          formRef.current.submit();
+        }
         setIsSubmitting(true);
       }}
       onError={() => setIsSubmitting(false)}

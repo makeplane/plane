@@ -1,6 +1,8 @@
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { addColumn, removeColumn, addRow, removeRow, TableMap } from "@tiptap/pm/tables";
+// local imports
+import { isCellEmpty } from "../../table/utilities/helpers";
 
 const addSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path
@@ -317,27 +319,6 @@ const removeLastColumn = (editor: Editor, tableInfo: TableInfo): boolean => {
   removeColumn(tr, rect, lastColumnIndex);
   editor.view.dispatch(tr);
   return true;
-};
-
-// Helper function to check if a single cell is empty
-const isCellEmpty = (cell: ProseMirrorNode | null | undefined): boolean => {
-  if (!cell || cell.content.size === 0) {
-    return true;
-  }
-
-  // Check if cell has any non-empty content
-  let hasContent = false;
-  cell.content.forEach((node) => {
-    if (node.type.name === "paragraph") {
-      if (node.content.size > 0) {
-        hasContent = true;
-      }
-    } else if (node.content.size > 0 || node.isText) {
-      hasContent = true;
-    }
-  });
-
-  return !hasContent;
 };
 
 const isColumnEmpty = (tableInfo: TableInfo, columnIndex: number): boolean => {

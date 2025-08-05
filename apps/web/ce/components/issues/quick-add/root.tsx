@@ -2,11 +2,10 @@ import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue } from "@plane/types";
+import { TIssue, EIssueLayoutTypes } from "@plane/types";
 // components
 import {
   CalendarQuickAddIssueForm,

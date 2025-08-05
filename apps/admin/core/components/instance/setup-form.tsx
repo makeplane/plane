@@ -7,11 +7,10 @@ import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { AuthService } from "@plane/services";
-import { Button, Checkbox, Input, Spinner } from "@plane/ui";
+import { Button, Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { Banner } from "@/components/common/banner";
-import { PasswordStrengthMeter } from "@/components/common/password-strength-meter";
 
 // service initialization
 const authService = new AuthService();
@@ -274,7 +273,7 @@ export const InstanceSetupForm: FC = (props) => {
             {errorData.type && errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message && (
               <p className="px-1 text-xs text-red-500">{errorData.message}</p>
             )}
-            <PasswordStrengthMeter password={formData.password} isFocused={isPasswordInputFocused} />
+            <PasswordStrengthIndicator password={formData.password} isFocused={isPasswordInputFocused} />
           </div>
 
           <div className="w-full space-y-1">

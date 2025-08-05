@@ -8,7 +8,6 @@ import { Layers } from "lucide-react";
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
-  EIssueLayoutTypes,
   GLOBAL_VIEW_TRACKER_ELEMENTS,
   DEFAULT_GLOBAL_VIEWS_LIST,
 } from "@plane/constants";
@@ -19,6 +18,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   ICustomSearchSelectOption,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { Breadcrumbs, Button, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";

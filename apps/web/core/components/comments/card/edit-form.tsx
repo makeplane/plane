@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
 import { Check, X } from "lucide-react";
 // plane imports
-import type { EditorReadOnlyRefApi, EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // components
@@ -14,7 +14,7 @@ type Props = {
   comment: TIssueComment;
   isEditing: boolean;
   projectId?: string;
-  readOnlyEditorRef: EditorReadOnlyRefApi | null;
+  readOnlyEditorRef: EditorRefApi | null;
   setIsEditing: (isEditing: boolean) => void;
   workspaceId: string;
   workspaceSlug: string;
@@ -75,6 +75,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
         }}
       >
         <LiteTextEditor
+          editable
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
           ref={editorRef}

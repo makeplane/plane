@@ -19,6 +19,7 @@ from plane.db.models import IssueActivity, IssueComment, CommentReaction, Intake
 
 class IssueActivityEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])

@@ -83,6 +83,7 @@ export interface IWorkspaceMember {
   joining_date?: string;
   display_name?: string;
   last_login_medium?: string;
+  is_active?: boolean;
 }
 
 export interface IWorkspaceMemberMe {

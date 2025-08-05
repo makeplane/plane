@@ -19,6 +19,7 @@ export interface IWorkspaceMembership {
   id: string;
   member: string;
   role: EUserPermissions;
+  is_active?: boolean;
 }
 
 export interface IWorkspaceMemberStore {
@@ -119,7 +120,9 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
     ]);
     //filter out bots
-    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
+    const memberIds = members
+      .filter((m) => m.is_active && !this.memberRoot?.memberMap?.[m.member]?.is_bot)
+      .map((m) => m.member);
     return memberIds;
   });
 
@@ -175,6 +178,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       id: workspaceMember.id,
       role: workspaceMember.role,
       member: this.memberRoot?.memberMap?.[workspaceMember.member],
+      is_active: workspaceMember.is_active,
     };
     return memberDetails;
   });
@@ -207,6 +211,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
             id: member.id,
             member: member.member.id,
             role: member.role,
+            is_active: member.is_active,
           });
         });
       });
@@ -248,8 +253,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     if (!memberDetails) throw new Error("Member not found");
     await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberDetails?.id).then(() => {
       runInAction(() => {
-        delete this.memberRoot?.memberMap?.[userId];
-        delete this.workspaceMemberMap?.[workspaceSlug]?.[userId];
+        set(this.workspaceMemberMap, [workspaceSlug, userId, "is_active"], false);
       });
     });
   };

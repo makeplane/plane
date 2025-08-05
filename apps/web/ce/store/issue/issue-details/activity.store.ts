@@ -43,7 +43,7 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
-  getActivityCommentByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
+  getActivityAndCommentsByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
@@ -84,7 +84,7 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     if (!issueId) return undefined;
 
     let activityComments: TIssueActivityComment[] = [];
@@ -92,10 +92,12 @@ export class IssueActivityStore implements IIssueActivityStore {
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
 
-    const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
+    const activities = this.getActivitiesByIssueId(issueId);
+    const comments = currentStore.comment.getCommentsByIssueId(issueId);
 
-    activities.forEach((activityId) => {
+    if (!activities || !comments) return undefined;
+
+    activities?.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
       activityComments.push({
@@ -105,7 +107,7 @@ export class IssueActivityStore implements IIssueActivityStore {
       });
     });
 
-    comments.forEach((commentId) => {
+    comments?.forEach((commentId) => {
       const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
       activityComments.push({

@@ -1,7 +1,6 @@
 import { useCallback } from "react";
-// plane editor
-import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
-// helpers
+// plane imports
+import type { TFileHandler } from "@plane/editor";
 import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store";
@@ -24,14 +23,29 @@ export const useEditorConfig = () => {
   // file size
   const { maxFileSize } = useFileSize();
 
-  const getReadOnlyEditorFileHandlers = useCallback(
-    (args: Pick<TArgs, "projectId" | "workspaceId" | "workspaceSlug">): TReadOnlyFileHandler => {
-      const { projectId, workspaceId, workspaceSlug } = args;
+  const getEditorFileHandlers = useCallback(
+    (args: TArgs): TFileHandler => {
+      const { projectId, uploadFile, workspaceId, workspaceSlug } = args;
 
       return {
+        assetsUploadStatus: assetsUploadPercentage,
+        cancel: fileService.cancelUpload,
         checkIfAssetExists: async (assetId: string) => {
           const res = await fileService.checkIfAssetExists(workspaceSlug, assetId);
           return res?.exists ?? false;
+        },
+        delete: async (src: string) => {
+          if (src?.startsWith("http")) {
+            await fileService.deleteOldWorkspaceAsset(workspaceId, src);
+          } else {
+            await fileService.deleteNewAsset(
+              getEditorAssetSrc({
+                assetId: src,
+                projectId,
+                workspaceSlug,
+              }) ?? ""
+            );
+          }
         },
         getAssetDownloadSrc: async (path) => {
           if (!path) return "";
@@ -68,47 +82,16 @@ export const useEditorConfig = () => {
             await fileService.restoreNewAsset(workspaceSlug, src);
           }
         },
-      };
-    },
-    []
-  );
-
-  const getEditorFileHandlers = useCallback(
-    (args: TArgs): TFileHandler => {
-      const { projectId, uploadFile, workspaceId, workspaceSlug } = args;
-
-      return {
-        ...getReadOnlyEditorFileHandlers({
-          projectId,
-          workspaceId,
-          workspaceSlug,
-        }),
-        assetsUploadStatus: assetsUploadPercentage,
         upload: uploadFile,
-        delete: async (src: string) => {
-          if (src?.startsWith("http")) {
-            await fileService.deleteOldWorkspaceAsset(workspaceId, src);
-          } else {
-            await fileService.deleteNewAsset(
-              getEditorAssetSrc({
-                assetId: src,
-                projectId,
-                workspaceSlug,
-              }) ?? ""
-            );
-          }
-        },
-        cancel: fileService.cancelUpload,
         validation: {
           maxFileSize,
         },
       };
     },
-    [assetsUploadPercentage, getReadOnlyEditorFileHandlers, maxFileSize]
+    [assetsUploadPercentage, maxFileSize]
   );
 
   return {
     getEditorFileHandlers,
-    getReadOnlyEditorFileHandlers,
   };
 };

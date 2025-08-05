@@ -6,13 +6,14 @@ import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
+  EIssueLayoutTypes,
 } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { isIssueFilterActive } from "@plane/utils";
@@ -23,6 +24,7 @@ import {
   FilterSelection,
   FiltersDropdown,
   IssueLayoutIcon,
+  MobileLayoutSelection,
 } from "@/components/issues/issue-layouts";
 // helpers
 // hooks
@@ -107,32 +109,10 @@ export const ProjectIssuesMobileHeader = observer(() => {
         projectDetails={currentProjectDetails ?? undefined}
       />
       <div className="md:hidden flex justify-evenly border-b border-custom-border-200 py-2 z-[13] bg-custom-background-100">
-        <CustomMenu
-          maxHeight={"md"}
-          className="flex flex-grow justify-center text-sm text-custom-text-200"
-          placement="bottom-start"
-          customButton={
-            <div className="flex flex-start text-sm text-custom-text-200">
-              {t("common.layout")}
-              <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
-            </div>
-          }
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
-          closeOnSelect
-        >
-          {layouts.map((layout, index) => (
-            <CustomMenu.MenuItem
-              key={index}
-              onClick={() => {
-                handleLayoutChange(ISSUE_LAYOUTS[index].key);
-              }}
-              className="flex items-center gap-2"
-            >
-              <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="h-3 w-3" />
-              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
-            </CustomMenu.MenuItem>
-          ))}
-        </CustomMenu>
+        <MobileLayoutSelection
+          layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
+          onChange={handleLayoutChange}
+        />
         <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
             title={t("common.filters")}
