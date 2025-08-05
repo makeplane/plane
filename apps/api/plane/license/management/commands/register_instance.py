@@ -2,6 +2,7 @@
 import json
 import secrets
 import os
+import requests
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
@@ -20,20 +21,36 @@ class Command(BaseCommand):
         # Positional argument
         parser.add_argument("machine_signature", type=str, help="Machine signature")
 
-    def read_package_json(self):
-        with open("package.json", "r") as file:
-            # Load JSON content from the file
-            data = json.load(file)
+    def check_for_current_version(self):
+        if os.environ.get("APP_VERSION", False):
+            return os.environ.get("APP_VERSION")
 
-        payload = {
-            "instance_key": settings.INSTANCE_KEY,
-            "version": data.get("version", 0.1),
-        }
-        return payload
+        try:
+            with open("package.json", "r") as file:
+                data = json.load(file)
+                return data.get("version", 0.1)
+        except Exception:
+            self.stdout.write("Error checking for current version")
+            return "latest"
+
+    def check_for_latest_version(self, fallback_version):
+        try:
+            response = requests.get(
+                "https://api.github.com/repos/makeplane/plane/releases/latest"
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data.get("tag_name", fallback_version)
+        except Exception:
+            self.stdout.write("Error checking for latest version")
+            return fallback_version
 
     def handle(self, *args, **options):
         # Check if the instance is registered
         instance = Instance.objects.first()
+
+        current_version = self.check_for_current_version()
+        latest_version = self.check_for_latest_version(current_version)
 
         # If instance is None then register this instance
         if instance is None:
@@ -42,13 +59,11 @@ class Command(BaseCommand):
             if not machine_signature:
                 raise CommandError("Machine signature is required")
 
-            payload = self.read_package_json()
-
             instance = Instance.objects.create(
                 instance_name="Plane Community Edition",
                 instance_id=secrets.token_hex(12),
-                current_version=payload.get("version"),
-                latest_version=payload.get("version"),
+                current_version=current_version,
+                latest_version=latest_version,
                 last_checked_at=timezone.now(),
                 is_test=os.environ.get("IS_TEST", "0") == "1",
                 edition=InstanceEdition.PLANE_COMMUNITY.value,
@@ -57,11 +72,11 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Instance registered"))
         else:
             self.stdout.write(self.style.SUCCESS("Instance already registered"))
-            payload = self.read_package_json()
+
             # Update the instance details
             instance.last_checked_at = timezone.now()
-            instance.current_version = payload.get("version")
-            instance.latest_version = payload.get("version")
+            instance.current_version = current_version
+            instance.latest_version = latest_version
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"
             instance.edition = InstanceEdition.PLANE_COMMUNITY.value
             instance.save()
