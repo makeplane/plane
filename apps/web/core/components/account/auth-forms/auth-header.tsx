@@ -103,10 +103,10 @@ export const AuthHeader: FC<TAuthHeader> = observer((props) => {
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-2xl font-semibold text-custom-text-100">
+      <span className="text-2xl font-semibold text-custom-text-100 leading-7">
         {typeof header === "string" ? t(header) : header}
       </span>
-      <span className="text-2xl font-semibold text-custom-text-400">{subHeader}</span>
+      <span className="text-2xl font-semibold text-custom-text-400 leading-7">{subHeader}</span>
     </div>
   );
 });
