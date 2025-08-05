@@ -56,6 +56,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isArchiveIssueModalOpen, setIsArchiveIssueModalOpen] = useState(false);
   const [isDuplicateIssueModalOpen, setIsDuplicateIssueModalOpen] = useState(false);
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
+  const [isIssueEditNotAllowed, setIssueEditNotAllowed] = useState(true);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
   // store hooks
@@ -78,6 +79,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const toggleArchiveIssueModal = (value: boolean) => setIsArchiveIssueModalOpen(value);
   const toggleDuplicateIssueModal = (value: boolean) => setIsDuplicateIssueModalOpen(value);
   const toggleEditIssueModal = (value: boolean) => setIsEditIssueModalOpen(value);
+  const toggleEditIssueAllowed = () => setIssueEditNotAllowed(!isIssueEditNotAllowed);
 
   const isAnyLocalModalOpen =
     isDeleteIssueModalOpen || isArchiveIssueModalOpen || isDuplicateIssueModalOpen || isEditIssueModalOpen;
@@ -158,13 +160,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 toggleDuplicateIssueModal={toggleDuplicateIssueModal}
                 toggleEditIssueModal={toggleEditIssueModal}
                 handleRestoreIssue={handleRestore}
+                toggleEditIssueAllowed={toggleEditIssueAllowed}
                 isArchived={is_archived}
                 issueId={issueId}
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 isSubmitting={isSubmitting}
-                disabled={disabled}
+                disabled={isIssueEditNotAllowed || disabled}
                 embedIssue={embedIssue}
+                isIssueEditNotAllowed={isIssueEditNotAllowed}
               />
               {/* content */}
               <div className="vertical-scrollbar scrollbar-md relative h-full w-full overflow-hidden overflow-y-auto">
@@ -175,7 +179,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={disabled || isLocalDBIssueDescription}
+                      disabled={isIssueEditNotAllowed || disabled || isLocalDBIssueDescription}
                       isArchived={is_archived}
                       isSubmitting={isSubmitting}
                       setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -186,7 +190,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         workspaceSlug={workspaceSlug}
                         projectId={projectId}
                         issueId={issueId}
-                        disabled={disabled || is_archived}
+                        disabled={isIssueEditNotAllowed || disabled || is_archived}
                         issueServiceType={EIssueServiceType.ISSUES}
                       />
                     </div>
@@ -196,14 +200,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={disabled || is_archived}
+                      disabled={isIssueEditNotAllowed || disabled || is_archived}
                     />
 
                     <IssueActivity
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
                       issueId={issueId}
-                      disabled={is_archived}
+                      disabled={isIssueEditNotAllowed || is_archived}
                     />
                   </div>
                 ) : (
@@ -215,7 +219,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled || isLocalDBIssueDescription}
+                          disabled={isIssueEditNotAllowed || disabled || isLocalDBIssueDescription}
                           isArchived={is_archived}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -226,7 +230,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             workspaceSlug={workspaceSlug}
                             projectId={projectId}
                             issueId={issueId}
-                            disabled={disabled}
+                            disabled={isIssueEditNotAllowed || disabled}
                             issueServiceType={EIssueServiceType.ISSUES}
                           />
                         </div>
@@ -235,7 +239,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          disabled={is_archived}
+                          disabled={isIssueEditNotAllowed || is_archived}
                         />
                       </div>
                     </div>
@@ -249,7 +253,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived}
+                        disabled={isIssueEditNotAllowed || disabled || is_archived}
                       />
                     </div>
                   </div>

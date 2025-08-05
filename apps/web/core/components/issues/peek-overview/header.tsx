@@ -3,7 +3,7 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
+import { Link2, MoveDiagonal, MoveRight, Pencil, Lock } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -63,7 +63,9 @@ export type PeekOverviewHeaderProps = {
   toggleDuplicateIssueModal: (value: boolean) => void;
   toggleEditIssueModal: (value: boolean) => void;
   handleRestoreIssue: () => Promise<void>;
+  toggleEditIssueAllowed: () => void;
   isSubmitting: TNameDescriptionLoader;
+  isIssueEditNotAllowed: boolean;
 };
 
 export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
@@ -82,7 +84,9 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     toggleDuplicateIssueModal,
     toggleEditIssueModal,
     handleRestoreIssue,
+    toggleEditIssueAllowed,
     isSubmitting,
+    isIssueEditNotAllowed = true,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -230,6 +234,12 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
               <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+            </button>
+          </Tooltip>
+          <Tooltip tooltipContent={t("common.actions.edit")} isMobile={isMobile}>
+            <button type="button" onClick={toggleEditIssueAllowed}>
+              {isIssueEditNotAllowed && <Pencil className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />}
+              {!isIssueEditNotAllowed && <Lock className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />}
             </button>
           </Tooltip>
           {issueDetails && (

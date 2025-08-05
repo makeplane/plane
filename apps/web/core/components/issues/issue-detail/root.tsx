@@ -19,6 +19,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // images
 import emptyIssue from "@/public/empty-state/issue.svg";
 // local components
+import { useIssueEditNotAllowedContext } from "./issue-edit-not-allowed-context";
 import { IssueMainContent } from "./main-content";
 
 export type TIssueOperations = {
@@ -274,6 +275,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
       issueId,
     ]
   );
+  const { isIssueEditNotAllowed, toggleIssueEditAllowed } = useIssueEditNotAllowedContext();
 
   // issue details
   const issue = getIssueById(issueId);
@@ -305,7 +307,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              isEditable={isEditable}
+              isEditable={isEditable && !isIssueEditNotAllowed}
               isArchived={is_archived}
             />
           </div>
@@ -318,7 +320,7 @@ export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              isEditable={!is_archived && isEditable}
+              isEditable={!is_archived && isEditable && !isIssueEditNotAllowed}
             />
           </div>
         </div>

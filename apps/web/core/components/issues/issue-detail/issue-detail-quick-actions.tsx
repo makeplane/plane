@@ -2,7 +2,7 @@
 
 import React, { FC, useRef } from "react";
 import { observer } from "mobx-react";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, Pencil, Lock } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType } from "@plane/types";
@@ -17,6 +17,7 @@ import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { useIssueEditNotAllowedContext } from "./issue-edit-not-allowed-context";
 
 type Props = {
   workspaceSlug: string;
@@ -49,6 +50,7 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
+  const { isIssueEditNotAllowed, toggleIssueEditAllowed } = useIssueEditNotAllowedContext();
 
   // derived values
   const issue = getIssueById(issueId);
@@ -157,6 +159,16 @@ export const IssueDetailQuickActions: FC<Props> = observer((props) => {
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-4 w-4" />
+              </button>
+            </Tooltip>
+            <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
+              <button
+                type="button"
+                className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                onClick={toggleIssueEditAllowed}
+              >
+                {isIssueEditNotAllowed && <Pencil className="h-4 w-4" />}
+                {!isIssueEditNotAllowed && <Lock className="h-4 w-4" />}
               </button>
             </Tooltip>
             <WorkItemDetailQuickActions
