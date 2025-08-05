@@ -1,8 +1,8 @@
-import { env } from "@/env";
 import { ExState, IssueWithExpanded } from "@plane/sdk";
-import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
+import { env } from "@/env";
 import { ACTIONS, PLANE_PRIORITIES } from "../helpers/constants";
 import { convertUnicodeToSlackEmoji } from "../helpers/emoji-converter";
+import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
 export const createSlackLinkback = (
   workspaceSlug: string,
@@ -40,7 +40,7 @@ export const createSlackLinkback = (
       elements: [
         {
           type: "image",
-          image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+          image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
           alt_text: "Plane",
         },
         {
@@ -67,9 +67,9 @@ export const createSlackLinkback = (
   if (issue.project.name) {
     const emoji =
       issue.project.logo_props &&
-      issue.project.logo_props?.in_use === "emoji" &&
-      issue.project.logo_props?.emoji &&
-      issue.project.logo_props?.emoji?.value
+        issue.project.logo_props?.in_use === "emoji" &&
+        issue.project.logo_props?.emoji &&
+        issue.project.logo_props?.emoji?.value
         ? convertUnicodeToSlackEmoji(issue.project.logo_props?.emoji?.value)
         : "📋";
 
@@ -119,7 +119,7 @@ export const createSlackLinkback = (
       elements: [
         {
           type: "image",
-          image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+          image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
           alt_text: "Plane",
         },
         {

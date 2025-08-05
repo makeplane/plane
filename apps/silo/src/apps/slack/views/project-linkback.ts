@@ -10,7 +10,7 @@ export const createProjectLinkback = (project: ExProject, members: PlaneUser[]) 
     elements: [
       {
         type: "image",
-        image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+        image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
         alt_text: "Plane",
       },
       {
@@ -23,9 +23,9 @@ export const createProjectLinkback = (project: ExProject, members: PlaneUser[]) 
   // Project header with emoji and name
   const emoji =
     project.logo_props &&
-    project.logo_props?.in_use === "emoji" &&
-    project.logo_props?.emoji &&
-    project.logo_props?.emoji?.value
+      project.logo_props?.in_use === "emoji" &&
+      project.logo_props?.emoji &&
+      project.logo_props?.emoji?.value
       ? convertUnicodeToSlackEmoji(project.logo_props?.emoji?.value)
       : "📋";
   blocks.push({

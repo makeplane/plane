@@ -11,7 +11,7 @@ export const createCycleLinkback = (workspaceSlug: string, project: ExProject, c
     elements: [
       {
         type: "image",
-        image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+        image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
         alt_text: "Plane",
       },
       {

@@ -1,6 +1,6 @@
 import { ExModule, ExProject, TModuleStatus } from "@plane/sdk";
-import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 import { env } from "@/env";
+import { formatTimestampToNaturalLanguage } from "../helpers/format-date";
 
 export const createModuleLinkback = (workspaceSlug: string, project: ExProject, module: ExModule) => {
   const blocks: any[] = [];
@@ -11,7 +11,7 @@ export const createModuleLinkback = (workspaceSlug: string, project: ExProject, 
     elements: [
       {
         type: "image",
-        image_url: "https://res.cloudinary.com/ddglxo0l3/image/upload/v1732200793/xljpcpmftawmjkv4x61s.png",
+        image_url: "https://media.docs.plane.so/logo/favicon-512x512.png",
         alt_text: "Plane",
       },
       {
