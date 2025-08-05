@@ -39,7 +39,7 @@
     "mobx": "^6.10.0",
     "mobx-react": "^9.1.1",
     "mobx-utils": "^6.0.8",
-    "next": "^15.3.3",
+    "next": "15.4.5",
     "next-themes": "^0.2.1",
     "nprogress": "^0.2.0",
     "react": "19.1.0",
