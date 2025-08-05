@@ -519,7 +519,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
                             value === userRole ? "border-custom-primary-100" : "border-custom-border-300"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userRole)}
@@ -550,7 +550,7 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                       {USER_DOMAIN.map((userDomain) => (
                         <div
                           key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
                             value === userDomain ? "border-custom-primary-100" : "border-custom-border-300"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userDomain)}

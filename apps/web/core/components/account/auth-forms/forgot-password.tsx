@@ -111,7 +111,7 @@ export const ForgotPasswordForm = observer(() => {
                 ref={ref}
                 hasError={Boolean(errors.email)}
                 placeholder={t("auth.common.email.placeholder")}
-                className="h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
+                className="h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                 autoComplete="on"
                 disabled={resendTimerCode > 0}
               />

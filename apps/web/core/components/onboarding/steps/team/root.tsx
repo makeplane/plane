@@ -207,7 +207,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-onboarding-background-200 shadow-sm focus:outline-none"
+                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-sm focus:outline-none"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}

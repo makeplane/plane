@@ -86,7 +86,7 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-custom-border-200 hover:bg-onboarding-background-300/30`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-custom-border-200 hover:bg-custom-background-90`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">

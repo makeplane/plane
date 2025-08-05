@@ -186,7 +186,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             {t("auth.common.email.label")}
           </label>
           <div
-            className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-custom-border-300`}
+            className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
           >
             <Input
               id="email"
@@ -215,7 +215,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
           <label htmlFor="password" className="text-sm text-custom-text-300 font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
-          <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+          <div className="relative flex items-center rounded-md bg-custom-background-100">
             <Input
               type={showPassword?.password ? "text" : "password"}
               id="password"
@@ -223,7 +223,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -252,7 +252,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             <label htmlFor="confirm-password" className="text-sm text-custom-text-300 font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
-            <div className="relative flex items-center rounded-md bg-onboarding-background-200">
+            <div className="relative flex items-center rounded-md bg-custom-background-100">
               <Input
                 type={showPassword?.retypePassword ? "text" : "password"}
                 id="confirm-password"
@@ -260,7 +260,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
+                className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />

@@ -120,7 +120,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           {t("auth.common.email.label")}
         </label>
         <div
-          className={`relative flex items-center rounded-md bg-onboarding-background-200 border border-custom-border-300`}
+          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
         >
           <Input
             id="email"
@@ -156,7 +156,7 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
           placeholder={t("auth.common.unique_code.placeholder")}
-          className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-onboarding-background-200 pr-12 placeholder:text-custom-text-400"
+          className="disable-autofill-style h-[46px] w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
           autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 text-xs pt-1">
