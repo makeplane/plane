@@ -7,7 +7,7 @@ import requests
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
-from django.conf import settings
+
 
 # Module imports
 from plane.license.models import Instance, InstanceEdition
@@ -28,10 +28,10 @@ class Command(BaseCommand):
         try:
             with open("package.json", "r") as file:
                 data = json.load(file)
-                return data.get("version", 0.1)
+                return data.get("version", "v0.1.0")
         except Exception:
             self.stdout.write("Error checking for current version")
-            return "latest"
+            return "v0.1.0"
 
     def check_for_latest_version(self, fallback_version):
         try:
