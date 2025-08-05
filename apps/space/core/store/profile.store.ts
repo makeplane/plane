@@ -51,6 +51,7 @@ export class ProfileStore implements IProfileStore {
     billing_address_country: undefined,
     billing_address: undefined,
     has_billing_address: false,
+    has_marketing_email_consent: false,
     created_at: "",
     updated_at: "",
     language: "",
