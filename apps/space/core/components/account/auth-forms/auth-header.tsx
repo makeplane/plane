@@ -48,8 +48,8 @@ export const AuthHeader: FC<TAuthHeader> = (props) => {
   return (
     <>
       <div className="space-y-1 text-center">
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-onboarding-text-100">{header}</h3>
-        <p className="text-xs sm:text-sm md:text-base font-medium text-onboarding-text-400">{subHeader}</p>
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-custom-text-100">{header}</h3>
+        <p className="text-xs sm:text-sm md:text-base font-medium text-custom-text-400">{subHeader}</p>
       </div>
       {children}
     </>
