@@ -16,6 +16,7 @@ import { WorkItemEmbedCard } from "@/plane-web/components/pages";
 // plane web hooks
 import { usePage, usePagesList } from "@/plane-web/hooks/store";
 // local imports
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { PageEmbedCardRoot } from "./page/root";
 
 type Props = {
@@ -44,6 +45,7 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
     }
   );
 
+  const { document } = useEditorFlagging(anchor);
   if (!publishSettings || !pageDetails || !pageDetails.id || !pageDetails.description) return null;
 
   return (
@@ -69,8 +71,8 @@ export const PageDetailsMainContent: React.FC<Props> = observer((props) => {
             editable={false}
             ref={editorRef}
             id={pageDetails.id}
-            disabledExtensions={[]}
-            flaggedExtensions={[]}
+            disabledExtensions={document.disabled}
+            flaggedExtensions={document.flagged}
             value={pageDetails.description}
             containerClassName="p-0 pb-64 border-none"
             fileHandler={getEditorFileHandlers({

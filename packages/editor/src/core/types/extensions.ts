@@ -7,4 +7,5 @@ export type TExtensions =
   | "enter-key"
   | "image"
   | "nested-pages"
-  | "attachments";
+  | "attachments"
+  | "mathematics";

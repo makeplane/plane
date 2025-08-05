@@ -35,7 +35,8 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(.table-wrapper) {
+.ProseMirror:not(.dragging)
+  .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(.table-wrapper):not(.node-blockMath) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -63,7 +64,8 @@
 
   &.node-imageComponent,
   &.node-image,
-  &.table-wrapper {
+  &.table-wrapper,
+  &.node-blockMath {
     --horizontal-offset: 0px;
 
     &::after {
@@ -73,7 +75,8 @@
 }
 
 .ProseMirror node-image,
-.ProseMirror node-imageComponent {
+.ProseMirror node-imageComponent,
+.ProseMirror node-blockMath {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;
 

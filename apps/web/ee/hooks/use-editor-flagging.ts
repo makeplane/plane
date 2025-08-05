@@ -14,12 +14,17 @@ export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreT
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);
   const isEditorAttachmentsEnabled = useFlag(workspaceSlug, "EDITOR_ATTACHMENTS");
+  const isEditorMathematicsEnabled = useFlag(workspaceSlug, "EDITOR_MATHEMATICS");
   // disabled and flagged in the document editor
   const documentDisabled: TExtensions[] = [];
   const documentFlagged: TExtensions[] = [];
   // disabled and flagged in the rich text editor
   const richTextDisabled: TExtensions[] = [];
   const richTextFlagged: TExtensions[] = [];
+  // disabled and flagged in the lite text editor
+  const liteTextDisabled: TExtensions[] = [];
+  const liteTextFlagged: TExtensions[] = [];
+
   if (!isWorkItemEmbedEnabled) {
     documentFlagged.push("issue-embed");
   }
@@ -36,15 +41,19 @@ export const useEditorFlagging = (workspaceSlug: string, storeType?: EPageStoreT
     documentFlagged.push("attachments");
     richTextFlagged.push("attachments");
   }
-
+  if (!isEditorMathematicsEnabled) {
+    documentFlagged.push("mathematics");
+    richTextFlagged.push("mathematics");
+    liteTextFlagged.push("mathematics");
+  }
   return {
     document: {
       disabled: documentDisabled,
       flagged: documentFlagged,
     },
     liteText: {
-      disabled: [],
-      flagged: [],
+      disabled: liteTextDisabled,
+      flagged: liteTextFlagged,
     },
     richText: {
       disabled: richTextDisabled,

@@ -51,7 +51,9 @@ export type TEditorCommands =
   | "callout"
   | "page-embed"
   | "attachment"
-  | "emoji";
+  | "emoji"
+  | "block-equation"
+  | "inline-equation";
 
 export type TCommandExtraProps = {
   image: {

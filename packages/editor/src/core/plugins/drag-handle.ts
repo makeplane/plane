@@ -23,6 +23,7 @@ const generalSelectors = [
   ".editor-callout-component",
   ".editor-attachment-component",
   ".page-embed-component",
+  ".editor-mathematics-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
