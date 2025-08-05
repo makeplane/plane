@@ -8,11 +8,11 @@ import { Plus } from "lucide-react";
 import { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
+import { useTranslation } from "@plane/i18n";
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@/helpers/string.helper";
 import { useCommandPalette, useEventTracker, useProject } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 // types
 
 export const JiraGetImportDetail: React.FC = observer(() => {

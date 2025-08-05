@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TAssignedIssuesWidgetResponse, TCreatedIssuesWidgetResponse, TIssue, TIssuesListTypes } from "@plane/types";
 // hooks
 // components
+import { useTranslation } from "@plane/i18n";
 import { Loader, getButtonStyling } from "@plane/ui";
 import {
   AssignedCompletedIssueListItem,
@@ -23,7 +24,6 @@ import { getRedirectionFilters } from "@/helpers/dashboard.helper";
 // hooks
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { useTranslation } from "@plane/i18n";
 
 export type WidgetIssuesListProps = {
   isLoading: boolean;

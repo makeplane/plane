@@ -3,12 +3,12 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
+import { useTranslation } from "@plane/i18n";
 import { ContrastIcon } from "@plane/ui";
 import { useIssueDetail } from "@/hooks/store";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons
-import { useTranslation } from "@plane/i18n";
 
 type TIssueCycleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 

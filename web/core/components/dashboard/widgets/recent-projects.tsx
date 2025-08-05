@@ -7,6 +7,7 @@ import { Plus } from "lucide-react";
 // plane types
 import { TRecentProjectsWidgetResponse } from "@plane/types";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { Avatar, AvatarGroup, Card } from "@plane/ui";
 // components
 import { Logo } from "@/components/common";
@@ -19,7 +20,6 @@ import { getFileURL } from "@/helpers/file.helper";
 import { useEventTracker, useDashboard, useProject, useCommandPalette, useUserPermissions } from "@/hooks/store";
 // plane web constants
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 const WIDGET_KEY = "recent_projects";
 

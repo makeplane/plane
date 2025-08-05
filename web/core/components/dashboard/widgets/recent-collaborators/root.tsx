@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 // types
+import { useTranslation } from "@plane/i18n";
 import { Card } from "@plane/ui";
 import { WidgetProps } from "@/components/dashboard/widgets";
 // components
 import { CollaboratorsList } from "./collaborators-list";
-import { useTranslation } from "@plane/i18n";
 
 export const RecentCollaboratorsWidget: React.FC<WidgetProps> = (props) => {
   const { dashboardId, workspaceSlug } = props;

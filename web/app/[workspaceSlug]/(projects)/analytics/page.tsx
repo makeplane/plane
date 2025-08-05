@@ -4,6 +4,7 @@ import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { Tab } from "@headlessui/react";
+import { useTranslation } from "@plane/i18n";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { CustomAnalytics, ScopeAndDemand } from "@/components/analytics";
@@ -16,6 +17,7 @@ import { EmptyStateType } from "@/constants/empty-state";
 import { useCommandPalette, useEventTracker, useProject, useWorkspace } from "@/hooks/store";
 
 const AnalyticsPage = observer(() => {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const analytics_tab = searchParams.get("analytics_tab");
   // store hooks
@@ -45,7 +47,7 @@ const AnalyticsPage = observer(() => {
                               selected ? "text-custom-primary-100 " : "hover:text-custom-text-200"
                             }`}
                           >
-                            {tab.title}
+                            {t(tab.title)}
                             <div
                               className={`border absolute bottom-0 right-0 left-0 rounded-t-md ${selected ? "border-custom-primary-100" : "border-transparent group-hover:border-custom-border-200"}`}
                             />

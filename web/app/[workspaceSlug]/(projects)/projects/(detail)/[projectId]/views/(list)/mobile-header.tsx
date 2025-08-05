@@ -4,13 +4,13 @@ import { observer } from "mobx-react";
 // icons
 import { ChevronDown, ListFilter } from "lucide-react";
 // components
+import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 import { FiltersDropdown } from "@/components/issues/issue-layouts";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // hooks
 import { useMember, useProjectView } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const ViewMobileHeader = observer(() => {
   const { t } = useTranslation();

@@ -7,6 +7,7 @@ import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 // components
 import { ProjectAnalyticsModal } from "@/components/analytics";
@@ -23,7 +24,6 @@ import {
 import { isIssueFilterActive } from "@/helpers/filter.helper";
 // hooks
 import { useIssues, useCycle, useProjectState, useLabel, useMember, useProject } from "@/hooks/store";
-import { useTranslation } from "@plane/i18n";
 
 export const CycleIssuesMobileHeader = () => {
   const { t } = useTranslation();
