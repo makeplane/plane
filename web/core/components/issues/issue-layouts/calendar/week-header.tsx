@@ -1,4 +1,5 @@
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 
 // constants
 import { DAYS_LIST } from "@/constants/calendar";
@@ -10,6 +11,7 @@ type Props = {
 
 export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
   const { isLoading, showWeekends } = props;
+  const { t } = useTranslation();
 
   return (
     <div
@@ -28,7 +30,7 @@ export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
             key={day.shortTitle}
             className="flex h-11 items-center justify-center md:justify-end bg-custom-background-90 px-4"
           >
-            {day.shortTitle}
+            {t(day.shortTitle)}
           </div>
         );
       })}

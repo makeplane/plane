@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/ui";
 // components
@@ -15,6 +16,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/u
 const PER_PAGE = 100;
 
 const ProfileActivityPage = observer(() => {
+  const { t } = useTranslation();
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -50,7 +52,7 @@ const ProfileActivityPage = observer(() => {
       <PageHead title="Profile - Activity" />
       <div className="flex h-full w-full flex-col overflow-hidden py-5">
         <div className="flex items-center justify-between gap-2 px-5 md:px-9">
-          <h3 className="text-lg font-medium">Recent activity</h3>
+          <h3 className="text-lg font-medium">{t("Recent activity")}</h3>
           {canDownloadActivity && <DownloadActivityButton />}
         </div>
         <div className="vertical-scrollbar scrollbar-md flex h-full flex-col overflow-y-auto px-5 md:px-9">

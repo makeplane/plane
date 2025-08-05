@@ -4,6 +4,7 @@ import { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";
 import { TNotificationFilter } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, PopoverMenu } from "@plane/ui";
 // components
 import { NotificationMenuOptionItem } from "@/components/workspace-notifications";
@@ -22,6 +23,7 @@ export type TPopoverMenuOptions = {
 };
 
 export const NotificationHeaderMenuOption = observer(() => {
+  const { t } = useTranslation();
   // hooks
   const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotifications();
 
@@ -34,7 +36,7 @@ export const NotificationHeaderMenuOption = observer(() => {
     {
       key: "menu-unread",
       type: "menu-item",
-      label: "Show unread",
+      label: t("Show unread"),
       isActive: filters?.read,
       prependIcon: <CheckCircle className="flex-shrink-0 h-3 w-3" />,
       appendIcon: filters?.read ? <Check className="w-3 h-3" /> : undefined,
@@ -43,7 +45,7 @@ export const NotificationHeaderMenuOption = observer(() => {
     {
       key: "menu-archived",
       type: "menu-item",
-      label: "Show archived",
+      label: t("Show archived"),
       isActive: filters?.archived,
       prependIcon: <ArchiveIcon className="flex-shrink-0 h-3 w-3" />,
       appendIcon: filters?.archived ? <Check className="w-3 h-3" /> : undefined,
@@ -56,7 +58,7 @@ export const NotificationHeaderMenuOption = observer(() => {
     {
       key: "menu-snoozed",
       type: "menu-item",
-      label: "Show snoozed",
+      label: t("Show snoozed"),
       isActive: filters?.snoozed,
       prependIcon: <Clock className="flex-shrink-0 h-3 w-3" />,
       appendIcon: filters?.snoozed ? <Check className="w-3 h-3" /> : undefined,

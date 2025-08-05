@@ -10,6 +10,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // types
 import { IWorkspaceSearchResults } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // components
 import {
@@ -42,7 +43,6 @@ import { WorkspaceService } from "@/plane-web/services";
 // services
 import { IssueService } from "@/services/issue";
 import { EUserPermissions, EUserPermissionsLevel } from "ee/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();

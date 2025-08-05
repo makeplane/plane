@@ -8,6 +8,7 @@ import { Layers, Lock } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "@plane/types";
 // ui
+import { useTranslation } from "@plane/i18n";
 import { Breadcrumbs, Button, CustomMenu, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink, Logo } from "@/components/common";
@@ -37,7 +38,6 @@ import {
   useUserPermissions,
 } from "@/hooks/store";
 import { EUserPermissions, EUserPermissionsLevel } from "@/plane-web/constants/user-permissions";
-import { useTranslation } from "@plane/i18n";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const { t } = useTranslation();
