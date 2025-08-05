@@ -2,15 +2,13 @@
 
 import uniqBy from "lodash/uniqBy";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 // plane imports
-import { ChatIcon, Loader } from "@plane/ui";
-import { cn, joinUrlPath } from "@plane/utils";
+import { useParams } from "next/navigation";
+import { Loader } from "@plane/ui";
 // hooks
 // plane-web
 import { TUserThreads } from "@/plane-web/types";
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarItem } from "./sidebar-item";
 
 type TProps = {
   userThreads: TUserThreads[];
@@ -19,7 +17,6 @@ type TProps = {
 };
 const RecentChats = observer((props: TProps) => {
   const { userThreads, isProjectLevel = false, isLoading = false } = props;
-  // router
   const { workspaceSlug, chatId } = useParams();
 
   return (
@@ -28,20 +25,15 @@ const RecentChats = observer((props: TProps) => {
       <div className="flex flex-col gap-0.5">
         {userThreads && userThreads.length > 0 ? (
           uniqBy(userThreads, "chat_id").map((thread) => (
-            <Link
-              key={`${thread.chat_id}-${thread.last_modified}`}
-              href={joinUrlPath(
-                workspaceSlug?.toString() || "",
-                isProjectLevel ? "projects" : "",
-                "pi-chat",
-                thread.chat_id
-              )}
-              className="py-0.5"
-            >
-              <SidebarNavItem isActive={chatId === thread.chat_id}>
-                <div className="text-sm leading-5 font-medium truncate"> {thread.title || "No title"}</div>
-              </SidebarNavItem>
-            </Link>
+            <SidebarItem
+              key={thread.chat_id}
+              isActive={chatId === thread.chat_id}
+              chatId={thread.chat_id}
+              title={thread.title}
+              workspaceSlug={workspaceSlug?.toString() || ""}
+              isProjectLevel={isProjectLevel}
+              isFavorite={thread.is_favorite}
+            />
           ))
         ) : isLoading ? (
           <Loader className="mx-auto w-full flex flex-col gap-2">

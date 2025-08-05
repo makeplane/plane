@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams, useRouter } from "next/navigation";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 
@@ -20,6 +21,8 @@ export const ChatDeleteModal: React.FC<IChatDelete> = observer((props) => {
   const [loader, setLoader] = useState(false);
   // hooks
   const { deleteChat } = usePiChat();
+  const { chatId: activeChatId } = useParams();
+  const router = useRouter();
 
   const formSubmit = async () => {
     setLoader(true);
@@ -36,6 +39,9 @@ export const ChatDeleteModal: React.FC<IChatDelete> = observer((props) => {
         title: "Warning!",
         message: "Something went wrong please try again later.",
       });
+    }
+    if (activeChatId === chatId) {
+      router.push(`/${workspaceSlug}/pi-chat/new`);
     }
     setLoader(false);
     handleClose();

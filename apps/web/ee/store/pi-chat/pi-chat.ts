@@ -493,6 +493,7 @@ export class PiChatStore implements IPiChatStore {
       response.forEach((chat) => {
         update(this.chatMap, chat.chat_id, (prev) => ({
           ...prev,
+          chat_id: chat.chat_id,
           title: chat.title,
           is_favorite: true,
         }));
