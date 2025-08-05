@@ -19,7 +19,7 @@
     "prettier-plugin-tailwindcss": "^0.5.4",
     "turbo": "^2.5.5"
   },
-  "packageManager": "pnpm@10.12.1",
+  "packageManager": "pnpm@10.14.0",
   "resolutions": {
     "brace-expansion": "2.0.2",
     "nanoid": "3.3.8",
