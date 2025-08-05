@@ -35,7 +35,7 @@ const HomePage = observer(() => {
   const enableSignUpConfig = config?.enable_signup ?? false;
 
   const logo = resolvedTheme === "light" ? BlackHorizontalLogo : WhiteHorizontalLogo;
-
+  console.log("config", enableSignUpConfig);
   return (
     <DefaultLayout>
       <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>

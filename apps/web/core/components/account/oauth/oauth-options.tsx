@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // components
-import { GithubOAuthButton, GitlabOAuthButton, GoogleOAuthButton } from "@/components/account";
+import { GithubOAuthButton, GitlabOAuthButton, GoogleOAuthButton, GiteaOAuthButton } from "@/components/account";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -13,7 +13,7 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
   const { config } = useInstance();
 
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled || config?.is_gitea_enabled)) || false;
 
   if (!isOAuthEnabled) return null;
 
@@ -32,6 +32,7 @@ export const OAuthOptions: React.FC<TOAuthOptionProps> = observer(() => {
         )}
         {config?.is_github_enabled && <GithubOAuthButton text="Continue with GitHub" />}
         {config?.is_gitlab_enabled && <GitlabOAuthButton text="Continue with GitLab" />}
+        {config?.is_gitea_enabled && <GiteaOAuthButton text="Continue with Gitea" />}
       </div>
     </>
   );
