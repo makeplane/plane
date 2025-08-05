@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Info } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Button, Tooltip } from "@plane/ui";
+import { Button, Tooltip, BetaBadge } from "@plane/ui";
 // plane web components
 import { IntegrationProps } from "@/plane-web/components/integrations";
 // plane web hooks
@@ -38,11 +38,7 @@ export const IntegrationListItem: FC<IntegrationListItemProps> = (props) => {
 
       <div className="relative flex items-center gap-2">
         <h3 className="flex items-center gap-4 text-sm font-medium">{t(`${provider.key}_integration.name`)}</h3>
-        {provider.beta && (
-          <div className="w-fit cursor-pointer rounded-2xl text-custom-primary-200 bg-custom-primary-100/20 text-center font-medium outline-none text-xs px-2">
-            Beta
-          </div>
-        )}
+        {provider.beta && <BetaBadge />}
       </div>
       <p className="text-sm tracking-tight text-custom-text-300">{t(`${provider.key}_integration.description`)}</p>
 
