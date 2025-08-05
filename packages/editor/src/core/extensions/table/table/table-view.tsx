@@ -5,8 +5,8 @@ import { Decoration, NodeView } from "@tiptap/pm/view";
 import { h } from "jsx-dom-cjs";
 import { icons } from "src/core/extensions/table/table/icons";
 import tippy, { Instance, Props } from "tippy.js";
-// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+import { isCellSelection } from "./utilities/helpers";
 
 type ToolboxItem = {
   label: string;
@@ -95,7 +95,7 @@ function setCellsBackgroundColor(editor: Editor, color: { backgroundColor: strin
 function setTableRowBackgroundColor(editor: Editor, color: { backgroundColor: string; textColor: string }) {
   const { state, dispatch } = editor.view;
   const { selection } = state;
-  if (!(selection instanceof CellSelection)) {
+  if (!isCellSelection(selection)) {
     return false;
   }
 
@@ -146,7 +146,7 @@ const columnsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "", // No icon needed for color picker
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete column",
@@ -174,7 +174,7 @@ const rowsToolboxItems: ToolboxItem[] = [
   {
     label: "Pick color",
     icon: "",
-    action: (args: any) => {}, // Placeholder action; actual color picking is handled in `createToolbox`
+    action: (_args: unknown) => { }, // Placeholder action; actual color picking is handled in `createToolbox`
   },
   {
     label: "Delete row",
@@ -215,7 +215,7 @@ function createToolbox({
             h(
               "div",
               { className: "grid grid-cols-6 gap-x-1 gap-y-2.5 mt-2" },
-              Object.entries(colors).map(([colorName, colorValue]) =>
+              Object.entries(colors).map(([_, colorValue]) =>
                 h("div", {
                   className: "grid place-items-center size-6 rounded cursor-pointer",
                   style: `background-color: ${colorValue.backgroundColor};color: ${colorValue.textColor || "inherit"};`,
@@ -387,7 +387,7 @@ export class TableView implements NodeView {
     this.root = h(
       "div",
       {
-        className: "table-wrapper horizontal-scrollbar scrollbar-md controls--disabled",
+        className: "table-wrapper editor-full-width-block horizontal-scrollbar scrollbar-sm controls--disabled",
       },
       this.controls,
       this.table

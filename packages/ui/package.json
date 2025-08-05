@@ -2,24 +2,27 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.26.0",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "version": "0.28.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "files": [
-    "dist/**"
+    "dist"
   ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "build": "tsup --minify",
+    "dev": "tsup --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "check:lint": "eslint . --max-warnings 94",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
     "react": "19.1.0",
@@ -31,8 +34,10 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
+    "@plane/constants": "*",
     "@plane/hooks": "*",
     "@plane/utils": "*",
+    "@plane/types": "*",
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
@@ -67,11 +72,10 @@
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "^19.1.5",
     "autoprefixer": "^10.4.19",
-    "classnames": "^2.3.2",
     "postcss-cli": "^11.0.0",
     "postcss-nested": "^6.0.1",
     "storybook": "^8.1.1",
     "tsup": "8.4.0",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }

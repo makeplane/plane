@@ -1,0 +1,12 @@
+-r base.txt
+# test framework
+pytest==7.4.0
+pytest-django==4.5.2
+pytest-cov==4.1.0
+pytest-xdist==3.3.1
+pytest-mock==3.11.1
+factory-boy==3.3.0
+freezegun==1.2.2
+coverage==7.2.7
+httpx==0.24.1
+requests==2.32.4

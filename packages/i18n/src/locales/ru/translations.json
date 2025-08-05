@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Не удалось удалить проект из избранного. Попробуйте снова.",
   "project_created_successfully": "Проект успешно создан",
   "project_created_successfully_description": "Проект успешно создан. Теперь вы можете добавлять рабочие элементы.",
+  "project_name_already_taken": "Имя проекта уже используется.",
+  "project_identifier_already_taken": "Идентификатор проекта уже используется.",
   "project_cover_image_alt": "Обложка проекта",
   "name_is_required": "Требуется имя",
   "title_should_be_less_than_255_characters": "Заголовок должен быть короче 255 символов",
@@ -868,7 +870,21 @@
     "view": "Просмотр",
     "deactivated_user": "Деактивированный пользователь",
     "apply": "Применить",
-    "applying": "Применение"
+    "applying": "Применение",
+    "users": "Пользователи",
+    "admins": "Администраторы",
+    "guests": "Гости",
+    "on_track": "По плану",
+    "off_track": "Отклонение от плана",
+    "at_risk": "Под угрозой",
+    "timeline": "Хронология",
+    "completion": "Завершение",
+    "upcoming": "Предстоящие",
+    "completed": "Завершено",
+    "in_progress": "В процессе",
+    "planned": "Запланировано",
+    "paused": "На паузе",
+    "no_of": "Количество {entity}"
   },
   "chart": {
     "x_axis": "Ось X",
@@ -1028,6 +1044,10 @@
       },
       "upload": {
         "error": "Ошибка загрузки файла. Попробуйте позже."
+      },
+      "copy_link": {
+        "success": "Ссылка на комментарий скопирована в буфер обмена",
+        "error": "Ошибка при копировании ссылки на комментарий. Попробуйте позже."
       }
     },
     "empty_state": {
@@ -1318,19 +1338,6 @@
       "custom": "Пользовательская аналитика"
     },
     "empty_state": {
-      "general": {
-        "title": "Отслеживайте прогресс, загрузку и распределение ресурсов",
-        "description": "Анализируйте объёмы работ, оценивайте сроки и контролируйте выполнение проектов. Отслеживайте производительность команды и соблюдайте сроки.",
-        "primary_button": {
-          "text": "Начать первый проект",
-          "comic": {
-            "title": "Аналитика лучше всего работает с Циклами + Модулями",
-            "description": "Сначала группируйте рабочие элементы в Циклы, а при возможности - объединяйте рабочие элементы в Модули. Найдите оба раздела в левом меню."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь.",
         "title": "Данных пока нет"
@@ -1342,25 +1349,37 @@
       "project_insights": {
         "title": "Данных пока нет",
         "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь."
+      },
+      "general": {
+        "title": "Отслеживайте прогресс, рабочие нагрузки и распределения. Выявляйте тренды, устраняйте блокировки и ускоряйте работу",
+        "description": "Смотрите объём versus спрос, оценки и расширение объёма. Получайте производительность по членам команды и командам, и убеждайтесь, что ваш проект выполняется в срок.",
+        "primary_button": {
+          "text": "Начать ваш первый проект",
+          "comic": {
+            "title": "Аналитика работает лучше всего с Циклами + Модулями",
+            "description": "Сначала ограничьте по времени ваши задачи в Циклах и, если можете, сгруппируйте задачи, которые длятся больше одного цикла, в Модули. Проверьте оба в левой навигации."
+          }
+        }
       }
     },
     "created_vs_resolved": "Создано vs Решено",
     "customized_insights": "Индивидуальные аналитические данные",
-    "backlog_work_items": "Элементы работы в бэклоге",
+    "backlog_work_items": "{entity} в бэклоге",
     "active_projects": "Активные проекты",
     "trend_on_charts": "Тренд на графиках",
     "all_projects": "Все проекты",
     "summary_of_projects": "Сводка по проектам",
     "project_insights": "Аналитика проекта",
-    "started_work_items": "Начатые рабочие элементы",
-    "total_work_items": "Общее количество рабочих элементов",
+    "started_work_items": "Начатые {entity}",
+    "total_work_items": "Общее количество {entity}",
     "total_projects": "Всего проектов",
     "total_admins": "Всего администраторов",
     "total_users": "Всего пользователей",
     "total_intake": "Общий доход",
-    "un_started_work_items": "Не начатые рабочие элементы",
+    "un_started_work_items": "Не начатые {entity}",
     "total_guests": "Всего гостей",
-    "completed_work_items": "Завершённые рабочие элементы"
+    "completed_work_items": "Завершённые {entity}",
+    "total": "Общее количество {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проект} other {Проекты}}",
@@ -2464,5 +2483,50 @@
     "last_edited_by": "Последнее редактирование",
     "previously_edited_by": "Ранее отредактировано",
     "edited_by": "Отредактировано"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane не запустился. Это может быть из-за того, что один или несколько сервисов Plane не смогли запуститься.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Выберите View Logs из setup.sh и логов Docker, чтобы убедиться."
+  },
+  "no_of": "Количество {entity}",
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Отсутствуют заголовки",
+          "description": "Давайте добавим несколько заголовков на эту страницу, чтобы увидеть их здесь."
+        }
+      },
+      "info": {
+        "label": "Информация",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символы",
+          "paragraphs": "Абзацы",
+          "read_time": "Время чтения"
+        },
+        "actors_info": {
+          "edited_by": "Отредактировано",
+          "created_by": "Создано"
+        },
+        "version_history": {
+          "label": "История версий",
+          "current_version": "Текущая версия"
+        }
+      },
+      "assets": {
+        "label": "Ресурсы",
+        "download_button": "Скачать",
+        "empty_state": {
+          "title": "Отсутствуют изображения",
+          "description": "Добавьте изображения, чтобы увидеть их здесь."
+        }
+      }
+    },
+    "open_button": "Открыть панель навигации",
+    "close_button": "Закрыть панель навигации",
+    "outline_floating_button": "Открыть структуру"
   }
 }

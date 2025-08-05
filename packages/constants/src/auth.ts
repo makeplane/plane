@@ -11,8 +11,7 @@ export const SPACE_PASSWORD_CRITERIA = [
   {
     key: "min_8_char",
     label: "Min 8 characters",
-    isCriteriaValid: (password: string) =>
-      password.length >= PASSWORD_MIN_LENGTH,
+    isCriteriaValid: (password: string) => password.length >= PASSWORD_MIN_LENGTH,
   },
   // {
   //   key: "min_1_upper_case",
@@ -69,9 +68,9 @@ export enum EErrorAlertType {
 
 export type TAuthErrorInfo = {
   type: EErrorAlertType;
-  code: EAdminAuthErrorCodes;
+  code: EAuthErrorCodes;
   title: string;
-  message: any;
+  message: string | React.ReactNode;
 };
 
 export enum EAdminAuthErrorCodes {
@@ -86,6 +85,13 @@ export enum EAdminAuthErrorCodes {
   ADMIN_USER_DOES_NOT_EXIST = "5185",
   ADMIN_USER_DEACTIVATED = "5190",
 }
+
+export type TAdminAuthErrorInfo = {
+  type: EErrorAlertType;
+  code: EAdminAuthErrorCodes;
+  title: string;
+  message: string | React.ReactNode;
+};
 
 export enum EAuthErrorCodes {
   // Global

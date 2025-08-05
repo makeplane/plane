@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Proje favorilerden kaldırılamadı. Lütfen tekrar deneyin.",
   "project_created_successfully": "Proje başarıyla oluşturuldu",
   "project_created_successfully_description": "Proje başarıyla oluşturuldu. Artık iş öğeleri eklemeye başlayabilirsiniz.",
+  "project_name_already_taken": "Proje ismi zaten kullanılıyor.",
+  "project_identifier_already_taken": "Proje kimliği zaten kullanılıyor.",
   "project_cover_image_alt": "Proje kapak resmi",
   "name_is_required": "Ad gereklidir",
   "title_should_be_less_than_255_characters": "Başlık 255 karakterden az olmalı",
@@ -869,7 +871,21 @@
     "view": "Görünüm",
     "deactivated_user": "Devre dışı bırakılmış kullanıcı",
     "apply": "Uygula",
-    "applying": "Uygulanıyor"
+    "applying": "Uygulanıyor",
+    "users": "Kullanıcılar",
+    "admins": "Yöneticiler",
+    "guests": "Misafirler",
+    "on_track": "Yolunda",
+    "off_track": "Yolunda değil",
+    "at_risk": "Risk altında",
+    "timeline": "Zaman çizelgesi",
+    "completion": "Tamamlama",
+    "upcoming": "Yaklaşan",
+    "completed": "Tamamlandı",
+    "in_progress": "Devam ediyor",
+    "planned": "Planlandı",
+    "paused": "Durduruldu",
+    "no_of": "{entity} sayısı"
   },
   "chart": {
     "x_axis": "X ekseni",
@@ -1029,6 +1045,10 @@
       },
       "upload": {
         "error": "Dosya yüklenemedi. Lütfen daha sonra tekrar deneyin."
+      },
+      "copy_link": {
+        "success": "Yorum bağlantısı panoya kopyalandı",
+        "error": "Yorum bağlantısı kopyalanırken hata oluştu. Lütfen daha sonra tekrar deneyin."
       }
     },
     "empty_state": {
@@ -1319,19 +1339,6 @@
       "custom": "Özel Analitik"
     },
     "empty_state": {
-      "general": {
-        "title": "İlerlemeyi, iş yükünü ve tahsisatları izleyin. Eğilimleri tespit edin, engelleri kaldırın ve işleri hızlandırın",
-        "description": "Kapsam ve talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve ekiplerin performansını izleyin ve projenizin zamanında ilerlemesini sağlayın.",
-        "primary_button": {
-          "text": "İlk projenizi başlatın",
-          "comic": {
-            "title": "Analitik Döngüler + Modüllerle en iyi şekilde çalışır",
-            "description": "Öncelikle, iş öğelerinizi Döngülere zamanlayın ve mümkünse, bir döngüden uzun süren iş öğelerini Modüllerde gruplayın. Her ikisini de sol gezintide bulabilirsiniz."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir.",
         "title": "Henüz veri yok"
@@ -1343,25 +1350,37 @@
       "project_insights": {
         "title": "Henüz veri yok",
         "description": "Size atanan iş öğeleri, duruma göre ayrılarak burada gösterilecektir."
+      },
+      "general": {
+        "title": "İlerlemeyi, iş yüklerini ve tahsisleri takip edin. Eğilimleri tespit edin, engelleri kaldırın ve işi hızlandırın",
+        "description": "Kapsam ile talep, tahminler ve kapsam genişlemesini görün. Takım üyeleri ve takımlar bazında performans alın ve projenizin zamanında çalıştığından emin olun.",
+        "primary_button": {
+          "text": "İlk projenizi başlatın",
+          "comic": {
+            "title": "Analitik en iyi Döngüler + Modüller ile çalışır",
+            "description": "İlk olarak, sorunlarınızı Döngülere sınırlandırın ve eğer mümkünse, bir döngüden fazla süren sorunları Modüllere gruplandırın. Sol navigasyonda ikisini de kontrol edin."
+          }
+        }
       }
     },
     "created_vs_resolved": "Oluşturulan vs Çözülen",
     "customized_insights": "Özelleştirilmiş İçgörüler",
-    "backlog_work_items": "Backlog iş öğeleri",
+    "backlog_work_items": "Backlog {entity}",
     "active_projects": "Aktif Projeler",
     "trend_on_charts": "Grafiklerdeki eğilim",
     "all_projects": "Tüm Projeler",
     "summary_of_projects": "Projelerin Özeti",
     "project_insights": "Proje İçgörüleri",
-    "started_work_items": "Başlatılan iş öğeleri",
-    "total_work_items": "Toplam iş öğesi",
+    "started_work_items": "Başlatılan {entity}",
+    "total_work_items": "Toplam {entity}",
     "total_projects": "Toplam Proje",
     "total_admins": "Toplam Yönetici",
     "total_users": "Toplam Kullanıcı",
     "total_intake": "Toplam Gelir",
-    "un_started_work_items": "Başlanmamış iş öğeleri",
+    "un_started_work_items": "Başlanmamış {entity}",
     "total_guests": "Toplam Misafir",
-    "completed_work_items": "Tamamlanmış iş öğeleri"
+    "completed_work_items": "Tamamlanmış {entity}",
+    "total": "Toplam {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proje} other {Projeler}}",
@@ -2442,5 +2461,49 @@
     "last_edited_by": "Son düzenleyen",
     "previously_edited_by": "Önceki düzenleyen",
     "edited_by": "Tarafından düzenlendi"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane başlatılamadı. Bu, bir veya daha fazla Plane servisinin başlatılamaması nedeniyle olabilir.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Emin olmak için setup.sh ve Docker loglarından View Logs&apos;u seçin."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Ana Hat",
+        "empty_state": {
+          "title": "Eksik başlıklar",
+          "description": "Bu sayfaya bazı başlıklar ekleyelim ki burada görebilelim."
+        }
+      },
+      "info": {
+        "label": "Bilgi",
+        "document_info": {
+          "words": "Kelimeler",
+          "characters": "Karakterler",
+          "paragraphs": "Paragraflar",
+          "read_time": "Okuma süresi"
+        },
+        "actors_info": {
+          "edited_by": "Düzenleyen",
+          "created_by": "Oluşturan"
+        },
+        "version_history": {
+          "label": "Sürüm geçmişi",
+          "current_version": "Mevcut sürüm"
+        }
+      },
+      "assets": {
+        "label": "Varlıklar",
+        "download_button": "İndir",
+        "empty_state": {
+          "title": "Eksik görseller",
+          "description": "Burada görmek için görseller ekleyin."
+        }
+      }
+    },
+    "open_button": "Navigasyon panelini aç",
+    "close_button": "Navigasyon panelini kapat",
+    "outline_floating_button": "Ana hatları aç"
   }
 }

@@ -10,6 +10,7 @@ import {
   BubbleMenuLinkSelector,
   BubbleMenuNodeSelector,
   CodeItem,
+  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   TextAlignItem,
@@ -20,18 +21,20 @@ import {
 import { COLORS_LIST } from "@/constants/common";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { isCellSelection } from "@/extensions/table/table/utilities/is-cell-selection";
-// local components
+import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
+// types
+import { TEditorCommands } from "@/types";
+// local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
-export interface EditorStateType {
+export type EditorStateType = {
   code: boolean;
   bold: boolean;
   italic: boolean;
   underline: boolean;
-  strike: boolean;
+  strikethrough: boolean;
   left: boolean;
   right: boolean;
   center: boolean;
@@ -44,7 +47,7 @@ export interface EditorStateType {
         backgroundColor: string;
       }
     | undefined;
-}
+};
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Editor }) => {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -58,8 +61,10 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
     bold: BoldItem(props.editor),
     italic: ItalicItem(props.editor),
     underline: UnderLineItem(props.editor),
-    strike: StrikeThroughItem(props.editor),
-    textAlign: TextAlignItem(props.editor),
+    strikethrough: StrikeThroughItem(props.editor),
+    "text-align": TextAlignItem(props.editor),
+  } satisfies {
+    [K in TEditorCommands]?: EditorMenuItem<K>;
   };
 
   const editorState: EditorStateType = useEditorState({
@@ -69,10 +74,10 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
       bold: formattingItems.bold.isActive(),
       italic: formattingItems.italic.isActive(),
       underline: formattingItems.underline.isActive(),
-      strike: formattingItems.strike.isActive(),
-      left: formattingItems.textAlign.isActive({ alignment: "left" }),
-      right: formattingItems.textAlign.isActive({ alignment: "right" }),
-      center: formattingItems.textAlign.isActive({ alignment: "center" }),
+      strikethrough: formattingItems.strikethrough.isActive(),
+      left: formattingItems["text-align"].isActive({ alignment: "left" }),
+      right: formattingItems["text-align"].isActive({ alignment: "right" }),
+      center: formattingItems["text-align"].isActive({ alignment: "center" }),
       color: COLORS_LIST.find((c) => TextColorItem(editor).isActive({ color: c.key })),
       backgroundColor: COLORS_LIST.find((c) => BackgroundColorItem(editor).isActive({ color: c.key })),
     }),
@@ -80,7 +85,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: { editor: Edi
 
   const basicFormattingOptions = editorState.code
     ? [formattingItems.code]
-    : [formattingItems.bold, formattingItems.italic, formattingItems.underline, formattingItems.strike];
+    : [formattingItems.bold, formattingItems.italic, formattingItems.underline, formattingItems.strikethrough];
 
   const bubbleMenuProps: EditorBubbleMenuProps = {
     ...props,

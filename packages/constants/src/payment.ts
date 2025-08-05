@@ -1,15 +1,4 @@
-import { IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
-
-/**
- * Enum representing different product subscription types
- */
-export enum EProductSubscriptionEnum {
-  FREE = "FREE",
-  ONE = "ONE",
-  PRO = "PRO",
-  BUSINESS = "BUSINESS",
-  ENTERPRISE = "ENTERPRISE",
-}
+import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
 
 /**
  * Default billing frequency for each product subscription type
@@ -72,23 +61,23 @@ export const PLANE_COMMUNITY_PRODUCTS: Record<string, IPaymentProduct> = {
     prices: [
       {
         id: `price_yearly_${EProductSubscriptionEnum.BUSINESS}`,
-        unit_amount: 0,
+        unit_amount: 15600,
         recurring: "year",
         currency: "usd",
-        workspace_amount: 0,
+        workspace_amount: 15600,
         product: EProductSubscriptionEnum.BUSINESS,
       },
       {
         id: `price_monthly_${EProductSubscriptionEnum.BUSINESS}`,
-        unit_amount: 0,
+        unit_amount: 1500,
         recurring: "month",
         currency: "usd",
-        workspace_amount: 0,
+        workspace_amount: 1500,
         product: EProductSubscriptionEnum.BUSINESS,
       },
     ],
     payment_quantity: 1,
-    is_active: false,
+    is_active: true,
   },
   [EProductSubscriptionEnum.ENTERPRISE]: {
     id: EProductSubscriptionEnum.ENTERPRISE,
@@ -141,8 +130,8 @@ export const SUBSCRIPTION_REDIRECTION_URLS: Record<EProductSubscriptionEnum, Rec
     year: "https://app.plane.so/upgrade/pro/self-hosted?plan=year",
   },
   [EProductSubscriptionEnum.BUSINESS]: {
-    month: TALK_TO_SALES_URL,
-    year: TALK_TO_SALES_URL,
+    month: "https://app.plane.so/upgrade/business/self-hosted?plan=month",
+    year: "https://app.plane.so/upgrade/business/self-hosted?plan=year",
   },
   [EProductSubscriptionEnum.ENTERPRISE]: {
     month: TALK_TO_SALES_URL,

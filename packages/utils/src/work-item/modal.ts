@@ -1,3 +1,4 @@
+import set from "lodash/set";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import { IPartialProject, ISearchIssueResponse, IState, TIssue } from "@plane/types";
@@ -31,3 +32,16 @@ export const convertWorkItemDataToSearchResponse = (
   state__name: state?.name ?? "",
   workspace__slug: workspaceSlug,
 });
+
+export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {
+  const changedFields = {};
+
+  const dirtyFieldKeys = Object.keys(dirtyFields) as (keyof TIssue)[];
+  for (const dirtyField of dirtyFieldKeys) {
+    if (!!dirtyFields[dirtyField]) {
+      set(changedFields, [dirtyField], formData[dirtyField]);
+    }
+  }
+
+  return changedFields as Partial<TIssue>;
+}

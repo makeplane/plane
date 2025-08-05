@@ -1,23 +1,33 @@
-import { Image as BaseImageExtension } from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-// extensions
-import { CustomImageNode } from "@/extensions";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
+// local imports
+import { CustomImageNodeView, CustomImageNodeViewProps } from "../custom-image/components/node-view";
+import { ImageExtensionConfig } from "./extension-config";
 
 export type ImageExtensionStorage = {
   deletedImageSet: Map<string, boolean>;
 };
 
-export const ImageExtension = (fileHandler: TFileHandler) => {
-  const {
-    getAssetSrc,
-    validation: { maxFileSize },
-  } = fileHandler;
+type Props = {
+  fileHandler: TFileHandler;
+};
 
-  return BaseImageExtension.extend<unknown, ImageExtensionStorage>({
+export const ImageExtension = (props: Props) => {
+  const { fileHandler } = props;
+  // derived values
+  const { getAssetSrc } = fileHandler;
+
+  return ImageExtensionConfig.extend({
+    addOptions() {
+      return {
+        ...this.parent?.(),
+        getImageSource: getAssetSrc,
+      };
+    },
+
     addKeyboardShortcuts() {
       return {
         ArrowDown: insertEmptyParagraphAtNodeBoundaries("down", this.name),
@@ -27,36 +37,19 @@ export const ImageExtension = (fileHandler: TFileHandler) => {
 
     // storage to keep track of image states Map<src, isDeleted>
     addStorage() {
+      const maxFileSize = "validation" in fileHandler ? fileHandler.validation?.maxFileSize : 0;
+
       return {
         deletedImageSet: new Map<string, boolean>(),
         maxFileSize,
       };
     },
 
-    addAttributes() {
-      return {
-        ...this.parent?.(),
-        width: {
-          default: "35%",
-        },
-        height: {
-          default: null,
-        },
-        aspectRatio: {
-          default: null,
-        },
-      };
-    },
-
-    addCommands() {
-      return {
-        getImageSource: (path: string) => async () => await getAssetSrc(path),
-      };
-    },
-
     // render custom image node
     addNodeView() {
-      return ReactNodeViewRenderer(CustomImageNode);
+      return ReactNodeViewRenderer((props) => (
+        <CustomImageNodeView {...props} node={props.node as CustomImageNodeViewProps["node"]} />
+      ));
     },
   });
 };

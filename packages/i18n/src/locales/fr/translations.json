@@ -316,6 +316,8 @@
   "failed_to_remove_project_from_favorites": "Impossible de supprimer le projet des favoris. Veuillez réessayer.",
   "project_created_successfully": "Projet créé avec succès",
   "project_created_successfully_description": "Projet créé avec succès. Vous pouvez maintenant commencer à ajouter des éléments de travail.",
+  "project_name_already_taken": "Le nom du projet est déjà pris.",
+  "project_identifier_already_taken": "L’identifiant du projet est déjà pris.",
   "project_cover_image_alt": "Image de couverture du projet",
   "name_is_required": "Le nom est requis",
   "title_should_be_less_than_255_characters": "Le titre doit faire moins de 255 caractères",
@@ -867,7 +869,21 @@
     "view": "Afficher",
     "deactivated_user": "Utilisateur désactivé",
     "apply": "Appliquer",
-    "applying": "Application"
+    "applying": "Application",
+    "users": "Utilisateurs",
+    "admins": "Administrateurs",
+    "guests": "Invités",
+    "on_track": "Sur la bonne voie",
+    "off_track": "Hors de la bonne voie",
+    "at_risk": "À risque",
+    "timeline": "Chronologie",
+    "completion": "Achèvement",
+    "upcoming": "À venir",
+    "completed": "Terminé",
+    "in_progress": "En cours",
+    "planned": "Planifié",
+    "paused": "En pause",
+    "no_of": "Nº de {entity}"
   },
   "chart": {
     "x_axis": "Axe X",
@@ -1027,6 +1043,10 @@
       },
       "upload": {
         "error": "Échec du téléchargement du fichier. Veuillez réessayer plus tard."
+      },
+      "copy_link": {
+        "success": "Lien du commentaire copié dans le presse-papiers",
+        "error": "Erreur lors de la copie du lien du commentaire. Veuillez réessayer plus tard."
       }
     },
     "empty_state": {
@@ -1317,19 +1337,6 @@
       "custom": "Analytique Personnalisée"
     },
     "empty_state": {
-      "general": {
-        "title": "Suivez les progrès, les charges de travail et les allocations. Repérez les tendances, supprimez les blocages et accélérez le travail",
-        "description": "Visualisez la portée par rapport à la demande, les estimations et l'augmentation de la portée. Obtenez les performances par membres de l'équipe et équipes, et assurez-vous que votre projet se déroule dans les délais.",
-        "primary_button": {
-          "text": "Commencez votre premier projet",
-          "comic": {
-            "title": "L'analytique fonctionne mieux avec les Cycles + Modules",
-            "description": "D'abord, planifiez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments de travail qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
-          }
-        }
-      }
-    },
-    "empty_state_v2": {
       "customized_insights": {
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici.",
         "title": "Pas encore de données"
@@ -1341,25 +1348,37 @@
       "project_insights": {
         "title": "Pas encore de données",
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s'afficheront ici."
+      },
+      "general": {
+        "title": "Suivez les progrès, les charges de travail et les allocations. Identifiez les tendances, supprimez les blocages et travaillez plus rapidement",
+        "description": "Voyez la portée par rapport à la demande, les estimations et l'évolution du périmètre. Obtenez les performances par les membres de l'équipe et les équipes, et assurez-vous que votre projet se déroule dans les temps.",
+        "primary_button": {
+          "text": "Commencez votre premier projet",
+          "comic": {
+            "title": "L'analytics fonctionne mieux avec les Cycles + Modules",
+            "description": "D'abord, encadrez vos éléments de travail dans des Cycles et, si possible, regroupez les éléments qui s'étendent sur plus d'un cycle dans des Modules. Consultez les deux dans la navigation de gauche."
+          }
+        }
       }
     },
     "created_vs_resolved": "Créé vs Résolu",
     "customized_insights": "Informations personnalisées",
-    "backlog_work_items": "Éléments de travail en backlog",
+    "backlog_work_items": "{entity} en backlog",
     "active_projects": "Projets actifs",
     "trend_on_charts": "Tendance sur les graphiques",
     "all_projects": "Tous les projets",
     "summary_of_projects": "Résumé des projets",
     "project_insights": "Aperçus du projet",
-    "started_work_items": "Éléments de travail commencés",
-    "total_work_items": "Total des éléments de travail",
+    "started_work_items": "{entity} commencés",
+    "total_work_items": "Total des {entity}",
     "total_projects": "Total des projets",
     "total_admins": "Total des administrateurs",
     "total_users": "Nombre total d'utilisateurs",
     "total_intake": "Revenu total",
-    "un_started_work_items": "Éléments de travail non commencés",
+    "un_started_work_items": "{entity} non commencés",
     "total_guests": "Nombre total d'invités",
-    "completed_work_items": "Éléments de travail terminés"
+    "completed_work_items": "{entity} terminés",
+    "total": "Total des {entity}"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",
@@ -2462,5 +2481,49 @@
     "last_edited_by": "Dernière modification par",
     "previously_edited_by": "Précédemment modifié par",
     "edited_by": "Modifié par"
+  },
+  "self_hosted_maintenance_message": {
+    "plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start": "Plane n&apos;a pas démarré. Cela pourrait être dû au fait qu&apos;un ou plusieurs services Plane ont échoué à démarrer.",
+    "choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure": "Choisissez View Logs depuis setup.sh et les logs Docker pour en être sûr."
+  },
+
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Plan",
+        "empty_state": {
+          "title": "Titres manquants",
+          "description": "Ajoutons quelques titres à cette page pour les voir ici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Mots",
+          "characters": "Caractères",
+          "paragraphs": "Paragraphes",
+          "read_time": "Temps de lecture"
+        },
+        "actors_info": {
+          "edited_by": "Modifié par",
+          "created_by": "Créé par"
+        },
+        "version_history": {
+          "label": "Historique des versions",
+          "current_version": "Version actuelle"
+        }
+      },
+      "assets": {
+        "label": "Ressources",
+        "download_button": "Télécharger",
+        "empty_state": {
+          "title": "Images manquantes",
+          "description": "Ajoutez des images pour les voir ici."
+        }
+      }
+    },
+    "open_button": "Ouvrir le panneau de navigation",
+    "close_button": "Fermer le panneau de navigation",
+    "outline_floating_button": "Ouvrir le plan"
   }
 }

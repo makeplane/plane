@@ -1,5 +1,4 @@
-import { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
-import { EUserWorkspaceRoles } from "./user";
+import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
 
 export const ORGANIZATION_SIZE = [
   "Just myself", // TODO: translate
@@ -255,12 +254,6 @@ export interface IWorkspaceSidebarNavigationItem {
 }
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
-  "your-work": {
-    key: "your_work",
-    labelTranslationKey: "your_work",
-    href: `/profile/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-  },
   views: {
     key: "views",
     labelTranslationKey: "views",
@@ -289,7 +282,6 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["your-work"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["drafts"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
 ];
@@ -307,6 +299,12 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     href: `/notifications/`,
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
   },
+  "your-work": {
+    key: "your_work",
+    labelTranslationKey: "your_work",
+    href: `/profile/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+  },
   projects: {
     key: "projects",
     labelTranslationKey: "projects",
@@ -318,6 +316,10 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["inbox"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["your-work"],
+];
+
+export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["projects"],
 ];
 
