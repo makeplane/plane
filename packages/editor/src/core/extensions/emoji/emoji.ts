@@ -65,11 +65,11 @@ export type EmojiItem = {
   /**
    * Store some custom data
    */
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type EmojiOptions = {
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   emojis: EmojiItem[];
   enableEmoticons: boolean;
   forceFallbackImages: boolean;
