@@ -70,7 +70,7 @@ class Command(BaseCommand):
             instance = Instance.objects.create(
                 instance_name="Plane Commercial Edition",
                 instance_id=data.get("instance_id", secrets.token_hex(12)),
-                current_version=data.get("user_version", app_version),
+                current_version=app_version,
                 latest_version=data.get("latest_version", app_version),
                 last_checked_at=timezone.now(),
                 domain=domain,
@@ -83,10 +83,10 @@ class Command(BaseCommand):
         else:
             # Update the instance
             instance.instance_id = data.get("instance_id", instance.instance_id)
+            instance.current_version = app_version
             instance.latest_version = data.get(
                 "latest_version", instance.latest_version
             )
-            instance.current_version = data.get("user_version", app_version)
             instance.edition = InstanceEdition.PLANE_COMMERCIAL.value
             instance.last_checked_at = timezone.now()
             instance.is_test = os.environ.get("IS_TEST", "0") == "1"
