@@ -68,7 +68,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}
@@ -83,7 +83,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
+              <XCircle className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
             </button>
           )}
         </div>

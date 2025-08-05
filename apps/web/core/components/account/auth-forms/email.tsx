@@ -67,7 +67,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}
