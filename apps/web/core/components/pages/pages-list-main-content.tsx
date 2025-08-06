@@ -47,6 +47,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
   const archivedPageResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/pages/archived",
   });
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/name-filter",
+    extension: "svg",
+  });
 
   if (loader === "init-loader") return <PageLoader />;
   // if no pages exist in the active page type
@@ -109,11 +114,6 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         />
       );
   }
-  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/pages/name-filter",
-    extension: "svg",
-  });
   // if no pages match the filter criteria
   if (filteredPageIds?.length === 0)
     return (
