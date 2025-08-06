@@ -37,7 +37,7 @@ export const InstanceProvider = observer(({ children }: { children: ReactNode })
 
   if (!instance && !error)
     return (
-      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+      <div className="flex items-center justify-center h-screen w-full">
         <LogoSpinner />
       </div>
     );

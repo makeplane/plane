@@ -39,7 +39,7 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const noProjectResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+  const noProjectResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/draft/draft-issues-empty" });
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);

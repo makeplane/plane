@@ -16,6 +16,12 @@ import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } 
 import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
 import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
 import {
+  ITeamProjectWorkItemsFilter,
+  TeamProjectWorkItemsFilter,
+  ITeamProjectWorkItems,
+  TeamProjectWorkItems,
+} from "@/plane-web/store/issue/team-project";
+import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,
   TeamViewIssues,
@@ -102,6 +108,9 @@ export interface IIssueRootStore {
   teamViewIssuesFilter: ITeamViewIssuesFilter;
   teamViewIssues: ITeamViewIssues;
 
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
+
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
 
@@ -172,6 +181,9 @@ export class IssueRootStore implements IIssueRootStore {
 
   projectViewIssuesFilter: IProjectViewIssuesFilter;
   projectViewIssues: IProjectViewIssues;
+
+  teamProjectWorkItemsFilter: ITeamProjectWorkItemsFilter;
+  teamProjectWorkItems: ITeamProjectWorkItems;
 
   archivedIssuesFilter: IArchivedIssuesFilter;
   archivedIssues: IArchivedIssues;
@@ -263,6 +275,9 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.projectViewIssuesFilter = new ProjectViewIssuesFilter(this);
     this.projectViewIssues = new ProjectViewIssues(this, this.projectViewIssuesFilter);
+
+    this.teamProjectWorkItemsFilter = new TeamProjectWorkItemsFilter(this);
+    this.teamProjectWorkItems = new TeamProjectWorkItems(this, this.teamProjectWorkItemsFilter);
 
     this.archivedIssuesFilter = new ArchivedIssuesFilter(this);
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);

@@ -40,7 +40,12 @@ export const ViewsClientLayout = observer((props: Props) => {
 
   if (error) return <SomethingWentWrongError />;
 
-  if (!publishSettings || !viewData) return <LogoSpinner />;
+  if (!publishSettings || !viewData)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">

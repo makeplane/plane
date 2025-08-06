@@ -8,7 +8,7 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers";
 
-const SignInPage = () => (
+const SignUpPage = () => (
   <DefaultLayout>
     <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
       <AuthBase authType={EAuthModes.SIGN_UP} />
@@ -16,4 +16,4 @@ const SignInPage = () => (
   </DefaultLayout>
 );
 
-export default SignInPage;
+export default SignUpPage;
