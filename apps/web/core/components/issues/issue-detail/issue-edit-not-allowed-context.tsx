@@ -10,12 +10,12 @@ const IssueEditNotAllowedContext = createContext<{
 export default function IssueEditNotAllowedContextProvider({ children }: { children: React.ReactNode }) {
   const [isIssueEditNotAllowed, setIssueEditNotAllowed] = useState(true);
 
-  // 更新值的方法
+  // toggle allowed status
   const toggleIssueEditAllowed = () => {
     setIssueEditNotAllowed(!isIssueEditNotAllowed);
   };
 
-  // 提供value和updateValue给子组件
+  // Provider Component
   return (
     <IssueEditNotAllowedContext.Provider value={{ isIssueEditNotAllowed, toggleIssueEditAllowed }}>
       {children}
