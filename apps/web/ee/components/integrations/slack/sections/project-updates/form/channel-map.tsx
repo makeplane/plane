@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ArrowRight, Hash, Briefcase } from "lucide-react";
 
 // Plane components
+import { PlaneLogo } from "@plane/ui";
 import { Logo } from "@/components/common";
 import { Dropdown } from "@/plane-web/components/importers/ui";
 
@@ -16,7 +17,6 @@ import { SlackProjectNotificationMap } from "./form";
 
 // Assets
 import SlackLogo from "@/public/services/slack.png";
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import { useTranslation } from "@plane/i18n";
 
 type TSlackProjectChannelForm = {
@@ -80,7 +80,7 @@ export const SlackProjectChannelForm: FC<TSlackProjectChannelForm> = observer((p
           {/* Project Selection - Left side */}
           <div className="flex-1 space-y-1 min-w-[100px]">
             <div className="flex items-center gap-1.5 ml-2">
-              <Image src={PlaneLogo} alt="Plane" width={12} height={12} />
+              <PlaneLogo className="h-3 w-auto flex-shrink-0 text-custom-primary-100" />
               <div className="text-sm font-medium text-custom-text-200">
                 {t("slack_integration.project_updates.project_updates_form.project_dropdown.label")}
               </div>

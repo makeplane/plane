@@ -1,10 +1,9 @@
 import { ReactNode } from "react";
-import Image, { StaticImageData } from "next/image";
+import { StaticImageData } from "next/image";
 import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { IProject } from "@plane/types";
-import { Button, Logo } from "@plane/ui";
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
+import { Button, Logo, PlaneLogo } from "@plane/ui";
 
 type TIntegrationsMappingProps = {
   entityName: string | ReactNode;
@@ -25,7 +24,7 @@ export const IntegrationsMapping = (props: TIntegrationsMappingProps) => {
         <div className="flex-1 flex flex-col gap-2 md:flex-row md:items-center transition-all duration-300 ease-in-out pr-0 md:group-hover:pr-[70px]">
           {/* Project Side */}
           <div className="flex w-full flex-1 min-w-0 items-center gap-2 bg-custom-background-90 py-2 px-3 rounded-lg border border-custom-border-200 shadow-sm transition-all duration-200 group-hover:border-custom-border-300">
-            <Image src={PlaneLogo} alt="Plane" className="h-5 w-5 flex-shrink-0 relative" />
+            <PlaneLogo className="h-5 w-auto flex-shrink-0 relative text-custom-text-100" />
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
               <div className="h-4 w-4 flex-shrink-0 bg-custom-background-100 rounded overflow-hidden flex items-center justify-center">
                 {project?.logo_props ? (

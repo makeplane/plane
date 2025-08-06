@@ -2,9 +2,8 @@ import { useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { EditorRefApi } from "@plane/editor";
 import { IProject } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { setToast, TOAST_TYPE, PlaneLogo } from "@plane/ui";
 import { useIntake } from "@/plane-web/hooks/store/use-intake";
-import PlaneLogo from "@/public/plane-logos/blue-without-text-new.png";
 import IssueForm from "./form";
 import FormSuccess from "./success";
 import Image from "next/image";
@@ -86,7 +85,7 @@ const CreateIssueModal = ({ project, anchor }: TProps) => {
       {!success && <Image src={gridBgImage} alt="Grid Background" className="absolute top-0 left-0 w-full h-full " />}
       <div className="flex justify-between pt-6 px-page-x z-10">
         <div className="flex gap-2 items-center">
-          <Image src={PlaneLogo} alt="Plane Logo" height={24} />
+          <PlaneLogo className="h-6 w-auto text-custom-text-100" />
           <div className="text-2xl text-custom-text-100 font-semibold">Plane</div>
           <div className="text-2xl text-custom-text-300 font-semibold">Intake</div>
         </div>

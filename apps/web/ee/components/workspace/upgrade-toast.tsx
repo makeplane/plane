@@ -1,11 +1,9 @@
-import Image from "next/image";
-// assets
-import BluePlaneLogoWithoutText from "@/public/plane-logos/blue-without-text.png";
+import { PlaneLogo } from "@plane/ui";
 
 export const UpgradeToast: React.FC = () => (
   <div className="flex gap-2 px-2">
     <div className="flex-shrink-0 pt-1.5">
-      <Image src={BluePlaneLogoWithoutText} height={12} width={12} alt="Plane Logo" />
+      <PlaneLogo className="h-3 w-auto text-custom-primary-100" />
     </div>
     <div className="flex flex-col gap-0.5">
       <div className="text-sm font-medium leading-5">Upgrade</div>

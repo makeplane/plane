@@ -7,12 +7,11 @@ import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { IWorkspace, TUserApplication } from "@plane/types";
-import { Button, CustomMenu, setToast, TOAST_TYPE } from "@plane/ui";
+import { Button, CustomMenu, PlaneLogo, setToast, TOAST_TYPE } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store";
 import { ApplicationService, OAuthService, TConsentParams } from "@/plane-web/services/marketplace";
 import ConnectSvg from "@/public/marketplace/connect.svg";
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import { AuthService } from "@/services/auth.service";
 import {
   ApplicationPermissionText,
@@ -97,7 +96,7 @@ export const AppConsent = observer(({ application, consentParams, workspaceSlug 
           </div>
         )}
         <Image src={ConnectSvg} alt="Connect" className="w-5 h-5" />
-        <Image src={PlaneLogo} alt="Plane logo" className="w-10 h-10" />
+        <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
       </div>
       <h1>{t("workspace_settings.settings.applications.app_consent_title", { app: application?.name })}</h1>
 

@@ -1,13 +1,11 @@
 "use client";
 
 import { FC, ReactNode, useEffect } from "react";
-import Image from "next/image";
 import useSWR from "swr";
 import { TMobileWorkspaceInvitation } from "@plane/types";
+import { PlaneLogo } from "@plane/ui";
 // plane web mobile services
 import mobileAuthService from "@/plane-web/services/mobile.service";
-// assets
-import planeLogo from "@/public/plane-logos/blue-without-text.png";
 
 type TMobileAuthInvitationWrapper = {
   invitationId: string | undefined;
@@ -47,9 +45,7 @@ export const MobileAuthInvitationWrapper: FC<TMobileAuthInvitationWrapper> = (pr
   if (isLoading) {
     return (
       <div className="relative flex justify-center items-center animate-pulse">
-        <div className="relative h-[50px] w-[50px]">
-          <Image src={planeLogo} alt="Plane logo" className="object-contain" />
-        </div>
+        <PlaneLogo className="h-10 w-auto text-custom-primary-100" />
       </div>
     );
   }

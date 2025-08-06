@@ -2,9 +2,8 @@ import Image from "next/image";
 import { Hash, Pencil, Trash2, ArrowRight } from "lucide-react";
 import { TSlackProjectUpdatesConfig } from "@plane/etl/slack";
 import { TWorkspaceEntityConnection } from "@plane/types";
-import { Button, Logo } from "@plane/ui";
+import { Button, Logo, PlaneLogo } from "@plane/ui";
 import { useSlackIntegration } from "@/plane-web/hooks/store";
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 import SlackLogo from "@/public/services/slack.png";
 
 interface ConnectionItemProps {
@@ -55,9 +54,7 @@ export const ConnectionItem: React.FC<ConnectionItemProps> = ({ connection, onEd
               `}
               >
                 {/* Plane Logo */}
-                <div className="h-5 w-5 flex-shrink-0 relative">
-                  <Image src={PlaneLogo} alt="Plane" layout="fill" objectFit="contain" className="rounded-sm" />
-                </div>
+                <PlaneLogo className="h-5 w-auto flex-shrink-0 text-custom-primary-100" />
 
                 {/* Project Info with Logo */}
                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
