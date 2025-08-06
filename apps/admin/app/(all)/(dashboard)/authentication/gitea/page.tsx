@@ -25,7 +25,6 @@ const InstanceGiteaAuthenticationPage = observer(() => {
   // theme
   const { resolvedTheme } = useTheme();
   // config
-  console.log("formattedConfig", formattedConfig);
   const enableGiteaConfig = formattedConfig?.IS_GITEA_ENABLED ?? "";
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
