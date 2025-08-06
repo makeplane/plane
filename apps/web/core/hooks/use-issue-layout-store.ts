@@ -17,6 +17,10 @@ export const useIssueStoreType = () => {
 
   if (userId) return EIssuesStoreType.PROFILE;
 
+  if (teamspaceId && viewId) return EIssuesStoreType.TEAM_VIEW;
+
+  if (teamspaceId && projectId) return EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
+
   if (viewId) return EIssuesStoreType.PROJECT_VIEW;
 
   if (cycleId) return EIssuesStoreType.CYCLE;
@@ -28,10 +32,6 @@ export const useIssueStoreType = () => {
   if (projectId) return EIssuesStoreType.PROJECT;
 
   if (teamspaceId) return EIssuesStoreType.TEAM;
-
-  if (teamspaceId && viewId) return EIssuesStoreType.TEAM_VIEW;
-
-  if (teamspaceId && projectId) return EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
 
   return EIssuesStoreType.PROJECT;
 };
