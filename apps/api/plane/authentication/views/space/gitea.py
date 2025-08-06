@@ -62,8 +62,8 @@ class GiteaCallbackSpaceEndpoint(View):
 
         if state != request.session.get("state", ""):
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
-                error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
+                error_message="GITEA_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
             if next_path:
