@@ -3,7 +3,8 @@
 import { FC } from "react";
 import { TInstanceConfig, TMobileWorkspaceInvitation } from "@plane/types";
 // plane web components
-import { GoogleAuthButton, GitHubAuthButton } from "@/plane-web/components/mobile";
+import { GitHubAuthButton } from "./github";
+import { GoogleAuthButton } from "./google";
 
 type TOAuthRoot = {
   invitationDetails: TMobileWorkspaceInvitation | undefined;

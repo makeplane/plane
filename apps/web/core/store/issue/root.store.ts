@@ -18,8 +18,9 @@ import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/
 import {
   ITeamProjectWorkItemsFilter,
   TeamProjectWorkItemsFilter,
-} from "@/plane-web/store/issue/team-project/filter.store";
-import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
+  ITeamProjectWorkItems,
+  TeamProjectWorkItems,
+} from "@/plane-web/store/issue/team-project";
 import {
   ITeamViewIssues,
   ITeamViewIssuesFilter,

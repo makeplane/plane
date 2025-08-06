@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { StaticImageData } from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { INTEGRATION_TRACKER_ELEMENTS } from "@plane/constants";
 import { IProject } from "@plane/types";
