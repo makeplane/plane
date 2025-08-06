@@ -9,6 +9,8 @@ import type { IIssueLabel } from "@plane/types";
 import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useLabel } from "@/hooks/store";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -37,10 +39,26 @@ export const DeleteLabelModal: React.FC<Props> = observer((props) => {
 
     await deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
+        captureSuccess({
+          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
+          payload: {
+            name: data.name,
+            project_id: projectId,
+          },
+        });
         handleClose();
       })
       .catch((err) => {
         setIsDeleteLoading(false);
+
+        captureError({
+          eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_deleted,
+          payload: {
+            name: data.name,
+            project_id: projectId,
+          },
+          error: err,
+        });
 
         const error = err?.error || "Label could not be deleted. Please try again.";
         setToast({
