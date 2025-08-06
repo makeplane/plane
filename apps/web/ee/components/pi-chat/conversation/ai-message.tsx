@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Copy, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Loader, PiIcon, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
@@ -52,8 +53,6 @@ export const AiMessage = observer((props: TProps) => {
     }
   };
 
-  const handleMessage = () => ((message.match(/```/g) || []).length % 2 !== 0 ? message + "```" : message);
-
   return (
     <div className="flex gap-4 mr-[50px]" id={id}>
       {/* Avatar */}
@@ -66,6 +65,7 @@ export const AiMessage = observer((props: TProps) => {
           <div className="flex flex-col gap-4">
             {reasoning && <ReasoningBlock reasoning={reasoning} isLatest={isLatest} />}
             <Markdown
+              remarkPlugins={[remarkGfm]}
               className="pi-chat-root [&>*:first-child]:mt-0"
               components={{
                 a: ({ children, href }) => (
@@ -73,9 +73,16 @@ export const AiMessage = observer((props: TProps) => {
                     {children}
                   </a>
                 ),
+                table: ({ children }) => (
+                  <div className="overflow-x-auto w-full my-4">
+                    <table className="min-w-full border-collapse">{children}</table>
+                  </div>
+                ),
+                th: ({ children }) => <th className="px-2 py-3">{children}</th>,
+                td: ({ children }) => <td className="px-2 py-3">{children}</td>,
               }}
             >
-              {handleMessage()}
+              {message}
             </Markdown>
           </div>
         )}

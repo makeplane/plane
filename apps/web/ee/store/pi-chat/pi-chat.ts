@@ -221,6 +221,66 @@ export class PiChatStore implements IPiChatStore {
     return response?.templates;
   };
 
+  getStreamingAnswer = async (
+    isNewChat: boolean,
+    chatId: string,
+    payload: TQuery,
+    callback: (property: "answer" | "reasoning", value: string) => void
+  ) => {
+    const token = await this.piChatService.retrieveToken(payload);
+    const url = `${PI_BASE_URL}/api/v1/chat/stream-answer/${token}`;
+
+    const eventSource = new EventSource(url, {
+      withCredentials: true,
+    });
+
+    // 🔹 Handles `delta` chunks
+    eventSource.addEventListener("delta", (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        callback("answer", data.chunk);
+      } catch (e) {
+        console.error("Delta parse error", e);
+      }
+    });
+
+    // 🔹 Handles reasoning events
+    eventSource.addEventListener("reasoning", (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        callback("reasoning", data.reasoning);
+      } catch (e) {
+        console.error("Reasoning parse error", e);
+      }
+    });
+    eventSource.onopen = () => {
+      if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
+    };
+
+    // 🔹 Handles done event
+    eventSource.addEventListener("done", async () => {
+      eventSource.close();
+      this.isPiTypingMap[chatId] = false;
+      // Call the title api if its a new chat
+      if (isNewChat) {
+        const title = await this.piChatService.retrieveTitle(chatId);
+        runInAction(() => {
+          this.isNewChat = false;
+          update(this.chatMap, chatId, (chat) => ({
+            ...chat,
+            title: title.title,
+            last_modified: new Date().toISOString(),
+          }));
+        });
+      }
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      eventSource.close();
+    };
+  };
+
   getAnswer = async (chatId: string, query: string, focus: TFocus, isProjectChat: boolean = false) => {
     if (!chatId) {
       throw new Error("Chat not initialized");
@@ -230,6 +290,8 @@ export class PiChatStore implements IPiChatStore {
     const newDialogue: TDialogue = {
       query,
       llm: this.activeModel?.id,
+      answer: "",
+      reasoning: "",
     };
 
     try {
@@ -277,62 +339,17 @@ export class PiChatStore implements IPiChatStore {
       }
 
       // Api call here
-      const response = await fetch(`${PI_BASE_URL}/api/v1/chat/get-answer/`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
-
-      // Parse code for a streaming response
-      if (!response.ok) throw new Error(await response.text());
-      const reader = response?.body?.pipeThrough(new TextDecoderStream()).getReader();
-
-      let latestAiMessage = "";
-      let latestAiReasoning = "";
-      let isReasoning = false;
-
-      while (true) {
-        const { done, value } = await (reader?.read() as Promise<{ done: boolean; value: string }>);
-        if (this.isPiThinkingMap[chatId]) this.isPiThinkingMap[chatId] = false;
-        if (done) break;
-        if (value.startsWith("title: ")) continue; // Use this title value and remove the api call to get title in the future
-        if (value.startsWith("reasoning: ")) isReasoning = true;
-        if (value.startsWith("data: ")) isReasoning = false;
-        if (isReasoning) {
-          latestAiReasoning += value.replaceAll("reasoning: ", "");
-          newDialogue.reasoning = latestAiReasoning;
-        } else {
-          latestAiMessage += value.replaceAll("data: ", "");
-          newDialogue.answer = latestAiMessage;
-        }
-        // Update the store with the latest ai message
+      this.getStreamingAnswer(isNewChat, chatId, payload, (property, value) => {
+        newDialogue[property] += value;
         runInAction(() => {
           update(this.chatMap, chatId, (chat) => ({
             ...chat,
             dialogue: [...dialogueHistory, newDialogue],
           }));
         });
-      }
+      });
 
-      this.isPiTypingMap[chatId] = false;
-      // Call the title api if its a new chat
-      if (isNewChat) {
-        const title = await this.piChatService.retrieveTitle(chatId);
-        runInAction(() => {
-          this.isNewChat = false;
-          update(this.chatMap, chatId, (chat) => ({
-            ...chat,
-            title: title.title,
-            last_modified: new Date().toISOString(),
-          }));
-        });
-      }
-      // Todo: Optimistically update the chat history
-      return latestAiMessage;
+      return newDialogue.answer;
     } catch (e) {
       console.log(e);
       runInAction(() => {

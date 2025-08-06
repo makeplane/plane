@@ -101,7 +101,7 @@ export const FocusFilter = observer((props: TProps) => {
                     value={`project_id%${id}`}
                     className="text-sm text-custom-text-200 font-medium"
                   >
-                    <div className="flex flex-start gap-2">
+                    <div className="flex flex-start gap-2 max-w-full">
                       <div className="size-4 m-auto">{project && <Logo logo={project?.logo_props} />}</div>{" "}
                       <span className="truncate">{project?.name}</span>
                     </div>

@@ -4,7 +4,6 @@ import { IUser } from "@plane/types";
 import { cn } from "@plane/utils";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { TDialogue } from "@/plane-web/types";
-import { scrollIntoViewHelper } from "../helper";
 import { AiMessage } from "./ai-message";
 import { MyMessage } from "./my-message";
 import { NewConversation } from "./new-converstaion";
@@ -32,7 +31,7 @@ export const Messages = observer((props: TProps) => {
 
   const checkIfHasMore = () => {
     const el: HTMLElement | null = containerRef.current;
-    if (!el) return;
+    if (!el || activeChat?.dialogue?.length === 0) return;
 
     const isOverflowing = (el as HTMLElement).scrollHeight > (el as HTMLElement).clientHeight;
     const isNotAtBottom =
@@ -58,7 +57,7 @@ export const Messages = observer((props: TProps) => {
   useEffect(() => {
     //Always scroll to the latest message
     if (!activeChat?.dialogue) return;
-    scrollIntoViewHelper("observer-element");
+    if (activeChat?.dialogue.length === 0) setHasMoreMessages(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChat?.dialogue?.length]);
 
@@ -75,7 +74,7 @@ export const Messages = observer((props: TProps) => {
   return (
     <div
       ref={containerRef}
-      className={cn("flex flex-col gap-8 max-h-full h-full w-full mx-auto overflow-scroll pt-8 pb-[230px]")}
+      className={cn("flex flex-col gap-8 max-h-full h-full w-full mx-auto overflow-y-scroll pt-8 pb-[230px]")}
     >
       {activeChat?.dialogue?.map((message: TDialogue, index: number) => (
         <div key={index} className="space-y-4">

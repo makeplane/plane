@@ -48,6 +48,16 @@ export class PiChatService extends APIService {
     return r;
   }
 
+  async retrieveToken(data: TQuery): Promise<string> {
+    const streamToken = await this.post(`/api/v1/chat/queue-answer/`, data)
+      .then((response) => response?.data?.stream_token)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+
+    return streamToken;
+  }
+
   // fetch answer
   async retrieveAnswer(data: TQuery): Promise<string> {
     const r = await this.post(`/api/v1/chat/get-answer/`, data)
