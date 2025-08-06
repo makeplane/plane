@@ -1,6 +1,6 @@
 import * as React from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 
 export interface ISpinner extends React.SVGAttributes<SVGElement> {
   height?: string;

@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 // headless ui
 import { Combobox } from "@headlessui/react";
 // helper
-import { cn } from "../../../helpers";
+import { cn } from "@/utils";
 import { IMultiSelectDropdownButton, ISingleSelectDropdownButton } from "../dropdown";
 
 export const DropdownButton: React.FC<IMultiSelectDropdownButton | ISingleSelectDropdownButton> = (props) => {

@@ -3,7 +3,7 @@ import * as React from "react";
 import { ColorResult, SketchPicker } from "react-color";
 import { usePopper } from "react-popper";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 // components
 import { Button } from "../button";
 import { Input } from "./input";

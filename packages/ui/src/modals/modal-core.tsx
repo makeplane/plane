@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // constants
 import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 
 type Props = {
   children: React.ReactNode;

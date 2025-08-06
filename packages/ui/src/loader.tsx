@@ -1,6 +1,6 @@
 import React from "react";
 // helpers
-import { cn } from "../helpers";
+import { cn } from "@/utils";
 
 type Props = {
   children: React.ReactNode;

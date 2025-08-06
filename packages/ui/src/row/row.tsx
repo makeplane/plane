@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 import { ERowVariant, rowStyle, TRowVariant } from "./helper";
 
 export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "../../../helpers";
+import { cn } from "@/utils";
 // hooks
 import { usePlatformOS } from "../../hooks/use-platform-os";
 // components

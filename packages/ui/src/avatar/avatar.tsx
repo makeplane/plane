@@ -1,52 +1,19 @@
+import { Avatar as AvatarPrimitive } from "@base-ui-components/react/avatar";
 import React from "react";
-// ui
-import { Tooltip } from "../tooltip";
-// helpers
-import { cn } from "../../helpers";
+// utils
+import { cn } from "@/utils";
 
 export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 
 type Props = {
-  /**
-   * The name of the avatar which will be displayed on the tooltip
-   */
-  name?: string;
-  /**
-   * The background color if the avatar image fails to load
-   */
-  fallbackBackgroundColor?: string;
-  /**
-   * The text to display if the avatar image fails to load
-   */
+  name?: string; //The name of the avatar which will be displayed on the tooltip
+  fallbackBackgroundColor?: string; //The background color if the avatar image fails to load
   fallbackText?: string;
-  /**
-   * The text color if the avatar image fails to load
-   */
-  fallbackTextColor?: string;
-  /**
-   * Whether to show the tooltip or not
-   * @default true
-   */
+  fallbackTextColor?: string; //The text color if the avatar image fails to load
   showTooltip?: boolean;
-  /**
-   * The size of the avatars
-   * Possible values: "sm", "md", "base", "lg"
-   * @default "md"
-   */
-  size?: TAvatarSize;
-  /**
-   * The shape of the avatar
-   * Possible values: "circle", "square"
-   * @default "circle"
-   */
+  size?: TAvatarSize; //The size of the avatars
   shape?: "circle" | "square";
-  /**
-   * The source of the avatar image
-   */
-  src?: string;
-  /**
-   * The custom CSS class name to apply to the component
-   */
+  src?: string; //The source of the avatar image
   className?: string;
 };
 
@@ -129,41 +96,26 @@ export const Avatar: React.FC<Props> = (props) => {
   // get size details based on the size prop
   const sizeInfo = getSizeInfo(size);
 
+  const fallbackLetter = name?.[0]?.toUpperCase() ?? fallbackText ?? "?";
   return (
-    <Tooltip tooltipContent={fallbackText ?? name ?? "?"} disabled={!showTooltip}>
-      <div
-        className={cn("grid place-items-center overflow-hidden", getBorderRadius(shape), {
-          [sizeInfo.avatarSize]: !isAValidNumber(size),
-        })}
-        style={
-          isAValidNumber(size)
-            ? {
-                height: `${size}px`,
-                width: `${size}px`,
-              }
-            : {}
-        }
-        tabIndex={-1}
-      >
-        {src ? (
-          <img src={src} className={cn("h-full w-full", getBorderRadius(shape), className)} alt={name} />
-        ) : (
-          <div
-            className={cn(
-              sizeInfo.fontSize,
-              "grid h-full w-full place-items-center",
-              getBorderRadius(shape),
-              className
-            )}
-            style={{
-              backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
-              color: fallbackTextColor ?? "#ffffff",
-            }}
-          >
-            {name?.[0]?.toUpperCase() ?? fallbackText ?? "?"}
-          </div>
-        )}
-      </div>
-    </Tooltip>
+    <div
+      className={cn("grid place-items-center overflow-hidden", getBorderRadius(shape), {
+        [sizeInfo.avatarSize]: !isAValidNumber(size),
+      })}
+      tabIndex={-1}
+    >
+      <AvatarPrimitive.Root className={cn("h-full w-full", getBorderRadius(shape), className)}>
+        <AvatarPrimitive.Image src={src} width="48" height="48" />
+        <AvatarPrimitive.Fallback
+          className={cn(sizeInfo.fontSize, "grid h-full w-full place-items-center", getBorderRadius(shape), className)}
+          style={{
+            backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
+            color: fallbackTextColor ?? "#ffffff",
+          }}
+        >
+          {fallbackLetter}
+        </AvatarPrimitive.Fallback>
+      </AvatarPrimitive.Root>
+    </div>
   );
 };

@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react";
 import React, { FC, Fragment, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 // types
 import { TabList, TabListItem } from "./tab-list";
 

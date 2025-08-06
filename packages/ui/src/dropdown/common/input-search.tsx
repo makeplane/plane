@@ -4,7 +4,7 @@ import { Combobox } from "@headlessui/react";
 // icons
 import { Search } from "lucide-react";
 // helpers
-import { cn } from "../../../helpers";
+import { cn } from "@/utils";
 
 interface IInputSearch {
   isOpen: boolean;

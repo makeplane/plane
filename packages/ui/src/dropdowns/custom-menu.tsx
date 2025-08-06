@@ -6,7 +6,7 @@ import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // types

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Switch } from "@headlessui/react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "@/utils";
 
 interface IToggleSwitchProps {
   value: boolean;
