@@ -156,7 +156,7 @@ export const Avatar: React.FC<Props> = (props) => {
               className
             )}
             style={{
-              backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
+              backgroundColor: fallbackBackgroundColor ?? "#028375",
               color: fallbackTextColor ?? "#ffffff",
             }}
           >

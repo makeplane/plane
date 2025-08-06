@@ -49,7 +49,7 @@ export const getStrengthInfo = (strength: E_PASSWORD_STRENGTH): StrengthInfo => 
  */
 export const getFragmentColor = (fragmentIndex: number, activeFragments: number): string => {
   if (fragmentIndex >= activeFragments) {
-    return "bg-custom-background-90";
+    return "bg-custom-background-80";
   }
 
   switch (activeFragments) {
@@ -60,6 +60,6 @@ export const getFragmentColor = (fragmentIndex: number, activeFragments: number)
     case 3:
       return "bg-green-500";
     default:
-      return "bg-custom-background-90";
+      return "bg-custom-background-80";
   }
 };
