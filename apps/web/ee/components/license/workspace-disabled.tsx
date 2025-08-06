@@ -1,24 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { AppSidebar } from "app/(all)/[workspaceSlug]/(projects)/sidebar";
+import { ProjectAppSidebar } from "app/(all)/[workspaceSlug]/(projects)/_sidebar";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
-import { CircleAlert } from "lucide-react";
 // hooks
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
-import { AlertModalCore, Button } from "@plane/ui";
-import { useUserPermissions } from "@/hooks/store";
+import { AlertModalCore, Button, PlaneLockup } from "@plane/ui";
+import { useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web components
 import { PaidPlanUpgradeModal } from "@/plane-web/components/license";
-// plane web constants
-// assets
-import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
 
 export const WorkspaceDisabledPage: React.FC = observer(() => {
   // router
@@ -28,10 +21,11 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
   const [isPaidPlanModalOpen, togglePaidPlanModal] = useState(false);
   const [isDowngradeModalOpen, toggleDowngradeModal] = useState(false);
   // hooks
-  const { resolvedTheme } = useTheme();
   const { allowPermissions } = useUserPermissions();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  const workspace = getWorkspaceBySlug(workspaceSlug);
   const isWorkspaceAdmin = allowPermissions(
     [EUserWorkspaceRoles.ADMIN],
     EUserPermissionsLevel.WORKSPACE,
@@ -60,41 +54,26 @@ export const WorkspaceDisabledPage: React.FC = observer(() => {
       />
       <PaidPlanUpgradeModal isOpen={isPaidPlanModalOpen} handleClose={() => togglePaidPlanModal(false)} />
       <div className="relative flex h-full w-full overflow-hidden">
-        <AppSidebar />
-        <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src={resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern}
-              className="w-full h-full object-cover"
-              alt="Plane background pattern"
-            />
-          </div>
-          <div className="relative z-10 w-full h-full overflow-hidden overflow-y-auto flex flex-col">
-            <div className="grow w-full max-w-lg h-full mx-auto flex flex-col items-center justify-center">
-              <div className="py-6">
-                <CircleAlert className="size-14 text-red-500" />
-              </div>
-              <div className="text-center">
-                <p className="text-xl font-medium py-2.5">
-                  {isWorkspaceAdmin ? "We couldn't collect your last invoiced payment." : "A payment is overdue."}
-                </p>
-                <p className="text-custom-text-300">
-                  {isWorkspaceAdmin
-                    ? "You have a payment due for your Pro workspace. Please clear it to continue using Pro features or downgrade to Free."
-                    : "Your have a payment due for your Pro workspace. Get in touch with one of your admins to fix this."}
-                </p>
-              </div>
-              {isWorkspaceAdmin && (
-                <div className="flex items-center justify-center gap-4 pt-8">
-                  <Button size="md" onClick={() => togglePaidPlanModal(true)}>
-                    Continue subscription
-                  </Button>
-                  <Button size="md" variant="link-neutral" onClick={() => toggleDowngradeModal(true)}>
-                    Downgrade
-                  </Button>
-                </div>
-              )}
+        <ProjectAppSidebar />
+        <main className="relative flex h-full w-full flex-col justify-center items-center overflow-hidden bg-custom-background-100">
+          <div className="flex flex-col gap-12 items-center justify-center py-6 max-w-lg">
+            <PlaneLockup className="h-5 w-auto text-custom-text-100" />
+            <div className="flex flex-col gap-2">
+              <span className="text-lg font-medium text-custom-text-200 text-center">Your payment needs attention</span>
+              <p className="text-sm text-custom-text-300 text-center">
+                {`Your payment for ${workspace?.name} couldn't be processed. Update your payment method to keep all your Business features.`}
+              </p>
             </div>
+            {isWorkspaceAdmin && (
+              <div className="flex flex-col items-center justify-center gap-4 max-w-64">
+                <Button size="md" className="w-full" onClick={() => togglePaidPlanModal(true)}>
+                  Select your plan
+                </Button>
+                <Button size="md" className="w-full" variant="link-neutral" onClick={() => toggleDowngradeModal(true)}>
+                  Downgrade to free plan with 12 users
+                </Button>
+              </div>
+            )}
           </div>
         </main>
       </div>
