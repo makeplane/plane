@@ -12,24 +12,24 @@
   :root {
     color-scheme: light !important;
 
-    --color-primary-10: 236, 241, 255;
-    --color-primary-20: 217, 228, 255;
-    --color-primary-30: 197, 214, 255;
-    --color-primary-40: 178, 200, 255;
-    --color-primary-50: 159, 187, 255;
-    --color-primary-60: 140, 173, 255;
-    --color-primary-70: 121, 159, 255;
-    --color-primary-80: 101, 145, 255;
-    --color-primary-90: 82, 132, 255;
-    --color-primary-100: 63, 118, 255;
-    --color-primary-200: 57, 106, 230;
-    --color-primary-300: 50, 94, 204;
-    --color-primary-400: 44, 83, 179;
-    --color-primary-500: 38, 71, 153;
-    --color-primary-600: 32, 59, 128;
-    --color-primary-700: 25, 47, 102;
-    --color-primary-800: 19, 35, 76;
-    --color-primary-900: 13, 24, 51;
+    --color-primary-10: 229, 243, 250;
+    --color-primary-20: 216, 237, 248;
+    --color-primary-30: 199, 229, 244;
+    --color-primary-40: 169, 214, 239;
+    --color-primary-50: 144, 202, 234;
+    --color-primary-60: 109, 186, 227;
+    --color-primary-70: 75, 170, 221;
+    --color-primary-80: 41, 154, 214;
+    --color-primary-90: 34, 129, 180;
+    --color-primary-100: 0, 99, 153;
+    --color-primary-200: 0, 92, 143;
+    --color-primary-300: 0, 86, 133;
+    --color-primary-400: 0, 77, 117;
+    --color-primary-500: 0, 66, 102;
+    --color-primary-600: 0, 53, 82;
+    --color-primary-700: 0, 43, 66;
+    --color-primary-800: 0, 33, 51;
+    --color-primary-900: 0, 23, 36;
 
     --color-background-100: 255, 255, 255; /* primary bg */
     --color-background-90: 247, 247, 247; /* secondary bg */
@@ -185,6 +185,25 @@
   [data-theme="dark-contrast"] {
     color-scheme: dark !important;
 
+    --color-primary-10: 8, 31, 43;
+    --color-primary-20: 10, 37, 51;
+    --color-primary-30: 13, 49, 69;
+    --color-primary-40: 16, 58, 81;
+    --color-primary-50: 18, 68, 94;
+    --color-primary-60: 23, 86, 120;
+    --color-primary-70: 28, 104, 146;
+    --color-primary-80: 31, 116, 163;
+    --color-primary-90: 34, 129, 180;
+    --color-primary-100: 40, 146, 204;
+    --color-primary-200: 41, 154, 214;
+    --color-primary-300: 75, 170, 221;
+    --color-primary-400: 109, 186, 227;
+    --color-primary-500: 144, 202, 234;
+    --color-primary-600: 169, 214, 239;
+    --color-primary-700: 199, 229, 244;
+    --color-primary-800: 216, 237, 248;
+    --color-primary-900: 229, 243, 250;
+
     --color-background-100: 25, 25, 25; /* primary bg */
     --color-background-90: 32, 32, 32; /* secondary bg */
     --color-background-80: 44, 44, 44; /* tertiary bg */
@@ -274,25 +293,6 @@
   [data-theme="dark"],
   [data-theme="light-contrast"],
   [data-theme="dark-contrast"] {
-    --color-primary-10: 236, 241, 255;
-    --color-primary-20: 217, 228, 255;
-    --color-primary-30: 197, 214, 255;
-    --color-primary-40: 178, 200, 255;
-    --color-primary-50: 159, 187, 255;
-    --color-primary-60: 140, 173, 255;
-    --color-primary-70: 121, 159, 255;
-    --color-primary-80: 101, 145, 255;
-    --color-primary-90: 82, 132, 255;
-    --color-primary-100: 63, 118, 255;
-    --color-primary-200: 57, 106, 230;
-    --color-primary-300: 50, 94, 204;
-    --color-primary-400: 44, 83, 179;
-    --color-primary-500: 38, 71, 153;
-    --color-primary-600: 32, 59, 128;
-    --color-primary-700: 25, 47, 102;
-    --color-primary-800: 19, 35, 76;
-    --color-primary-900: 13, 24, 51;
-
     --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
     --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
     --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */

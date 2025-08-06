@@ -11,7 +11,13 @@ import { useUser } from "@/hooks/store";
 const HomePage = observer(() => {
   const { data: currentUser, isAuthenticated, isLoading } = useUser();
 
-  if (isLoading) return <LogoSpinner />;
+
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <LogoSpinner />
+      </div>
+    );
 
   if (currentUser && isAuthenticated) return <UserLoggedIn />;
 
