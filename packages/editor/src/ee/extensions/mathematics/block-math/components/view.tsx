@@ -18,7 +18,7 @@ export const BlockMathView: FC<TBlockMathComponentProps> = ({ latex, onClick, is
     <BlockMathContainer onClick={onClick} variant="content" isEditable={isEditable}>
       <div
         ref={mathRef}
-        className="block-equation-inner max-h-full overflow-hidden flex items-center justify-center"
+        className="block-equation-inner max-h-full overflow-x-auto overflow-y-hidden text-center horizontal-scrollbar scrollbar-xs"
         role="math"
         aria-label={`Block math equation: ${latex}`}
       />

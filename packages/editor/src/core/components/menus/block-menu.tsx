@@ -11,8 +11,9 @@ import {
 import type { Editor } from "@tiptap/react";
 import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { cn } from "@plane/utils";
-// cotatast
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
@@ -154,7 +155,16 @@ export const BlockMenu = (props: Props) => {
           if (insertPos < 0 || insertPos > docSize) {
             throw new Error("The insertion position is invalid or outside the document.");
           }
-          const contentToInsert = firstChild.toJSON();
+          let contentToInsert = firstChild.toJSON();
+          if (contentToInsert.type === ADDITIONAL_EXTENSIONS.BLOCK_MATH) {
+            contentToInsert = {
+              type: ADDITIONAL_EXTENSIONS.BLOCK_MATH,
+              attrs: {
+                id: uuidv4(),
+                latex: contentToInsert.attrs.latex,
+              },
+            };
+          }
           editor
             .chain()
             .insertContentAt(insertPos, contentToInsert, {

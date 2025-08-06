@@ -35,7 +35,7 @@ export const BlockMathContainer: React.FC<TBlockMathContainerProps> = ({
       }
     ),
     error: `flex bg-custom-background-90 py-3 text-custom-text-100 ${isEditable ? "hover:bg-custom-background-80 hover:shadow-md cursor-pointer" : "cursor-default"}`,
-    content: `text-center flex items-center justify-center bg-custom-background-90 text-custom-text-100 overflow-hidden ${isEditable ? "cursor-pointer hover:bg-custom-background-80 hover:shadow-md" : "cursor-default"}`,
+    content: `text-center bg-custom-background-90 text-custom-text-100 overflow-hidden ${isEditable ? "cursor-pointer hover:bg-custom-background-80 hover:shadow-md" : "cursor-default"}`,
   };
 
   return (

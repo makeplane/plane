@@ -77,13 +77,24 @@ export const useMathNodeView = (props: UseMathNodeViewProps) => {
     [getPos, nodeType, editor]
   );
 
+  const cleanLatex = useCallback(
+    (latex: string) =>
+      // Remove empty lines (lines that contain only whitespace)
+      latex
+        .split("\n")
+        .filter((line) => line.trim() !== "")
+        .join("\n"),
+    []
+  );
+
   const handleSave = useCallback(
     (latex: string) => {
-      updateMathNode(latex);
+      const cleanedLatex = cleanLatex(latex);
+      updateMathNode(cleanedLatex);
       setIsModalOpen(false);
       setPreviewLatex(null);
     },
-    [updateMathNode]
+    [updateMathNode, cleanLatex]
   );
 
   const handleClose = useCallback(() => {

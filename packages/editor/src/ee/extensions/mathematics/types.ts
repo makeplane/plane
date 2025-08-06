@@ -3,7 +3,7 @@ import { ADDITIONAL_EXTENSIONS } from "@/plane-editor/constants/extensions";
 
 export enum EMathAttributeNames {
   LATEX = "latex",
-  ID = "Id",
+  ID = "id",
 }
 
 // COMMON ATTRIBUTE TYPES
