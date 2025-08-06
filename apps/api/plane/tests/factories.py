@@ -3,6 +3,7 @@ from uuid import uuid4
 from django.utils import timezone
 
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.authentication.models import Application, ApplicationOwner, WorkspaceAppInstallation
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -79,3 +80,51 @@ class ProjectMemberFactory(factory.django.DjangoModelFactory):
     role = 20  # Admin role by default
     created_at = factory.LazyFunction(timezone.now)
     updated_at = factory.LazyFunction(timezone.now)
+
+
+class ApplicationFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Application instances"""
+
+    class Meta:
+        model = Application
+        django_get_or_create = ("slug",)
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"Test App {n}")
+    slug = factory.Sequence(lambda n: f"test-app-{n}")
+    short_description = factory.Sequence(lambda n: f"Test application {n}")
+    description_html = "<p>Test description</p>"
+    company_name = factory.Sequence(lambda n: f"Test Company {n}")
+    user = factory.SubFactory(UserFactory)
+    created_by = factory.SelfAttribute("user")
+    updated_by = factory.SelfAttribute("user")
+    client_id = factory.Sequence(lambda n: f"test-client-id-{n}")
+    client_secret = factory.Sequence(lambda n: f"test-client-secret-{n}")
+    client_type = Application.CLIENT_CONFIDENTIAL
+    authorization_grant_type = Application.GRANT_AUTHORIZATION_CODE
+    webhook_url = factory.Sequence(lambda n: f"https://test-webhook-url-{n}")
+
+
+class ApplicationOwnerFactory(factory.django.DjangoModelFactory):
+    """Factory for creating ApplicationOwner instances"""
+
+    class Meta:
+        model = ApplicationOwner
+
+    id = factory.LazyFunction(uuid4)
+    user = factory.SubFactory(UserFactory)
+    application = factory.SubFactory(ApplicationFactory)
+    workspace = factory.SubFactory(WorkspaceFactory)
+
+
+class WorkspaceAppInstallationFactory(factory.django.DjangoModelFactory):
+    """Factory for creating WorkspaceAppInstallation instances"""
+
+    class Meta:
+        model = WorkspaceAppInstallation
+
+    id = factory.LazyFunction(uuid4)
+    workspace = factory.SubFactory(WorkspaceFactory)
+    application = factory.SubFactory(ApplicationFactory)
+    installed_by = factory.SubFactory(UserFactory)
+    status = WorkspaceAppInstallation.Status.INSTALLED

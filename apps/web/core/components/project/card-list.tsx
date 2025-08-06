@@ -79,6 +79,12 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
       />
     );
 
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/project/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/project/name-filter",
+    extension: "svg",
+  });
+
   if (filteredProjectIds.length === 0)
     return (
       <div className="grid h-full w-full place-items-center">

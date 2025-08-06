@@ -13,14 +13,15 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
+const storeType = EPageStoreType.PROJECT;
+
 type Props = {
   children: React.ReactNode;
   pageType: TPageNavigationTabs;
-  storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
-  const { children, pageType, storeType } = props;
+export const ProjectPagesListMainContent: React.FC<Props> = observer((props) => {
+  const { children, pageType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -114,6 +115,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
         />
       );
   }
+  const resolvedFiltersImage = useResolvedAssetPath({ basePath: "/empty-state/pages/all-filters", extension: "svg" });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/pages/name-filter",
+    extension: "svg",
+  });
   // if no pages match the filter criteria
   if (filteredPageIds?.length === 0)
     return (

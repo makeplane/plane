@@ -87,7 +87,6 @@ export const EditorContainer: FC<Props> = (props) => {
           `editor-container cursor-text relative line-spacing-${displayConfig.lineSpacing ?? DEFAULT_DISPLAY_CONFIG.lineSpacing}`,
           {
             "active-editor": editor?.isFocused && editor?.isEditable,
-            "wide-layout": displayConfig.wideLayout,
           },
           displayConfig.fontSize ?? DEFAULT_DISPLAY_CONFIG.fontSize,
           displayConfig.fontStyle ?? DEFAULT_DISPLAY_CONFIG.fontStyle,

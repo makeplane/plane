@@ -9,7 +9,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { IUser, IImporterService } from "@plane/types";
 // ui
-import { Button, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button, Checkbox, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useProject, useUser } from "@/hooks/store";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -166,7 +166,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
                     onClick={() => setMultiple(!multiple)}
                     className="flex max-w-min cursor-pointer items-center gap-2"
                   >
-                    <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
+                    <Checkbox checked={multiple} onChange={() => setMultiple(!multiple)} />
                     <div className="whitespace-nowrap text-sm">
                       {t("workspace_settings.settings.exports.export_separate_files")}
                     </div>

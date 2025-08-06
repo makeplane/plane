@@ -12,3 +12,8 @@ export * from "./common";
 export * from "./forgot-password";
 export * from "./reset-password";
 export * from "./set-password";
+
+
+export * from "./common";
+export * from "./forgot-password";
+export * from "./reset-password";

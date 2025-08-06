@@ -32,6 +32,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     id,
     isTouchDevice,
     handleEditorReady,
+    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
     user,
@@ -80,6 +81,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
     handleEditorReady,
     id,
     initialValue: value,
+    isSmoothCursorEnabled,
     mentionHandler,
     onChange,
   });

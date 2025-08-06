@@ -20,6 +20,7 @@ import {
   CustomTypographyExtension,
   ImageExtension,
   ListKeymap,
+  SmoothCursorExtension,
   Table,
   TableCell,
   TableHeader,
@@ -47,6 +48,7 @@ type TArguments = Pick<
   | "tabIndex"
 > & {
   enableHistory: boolean;
+  isSmoothCursorEnabled: boolean;
   editable: boolean;
 };
 
@@ -57,6 +59,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     fileHandler,
     flaggedExtensions,
     isTouchDevice = false,
+    isSmoothCursorEnabled,
     mentionHandler,
     placeholder,
     tabIndex,
@@ -117,6 +120,10 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       fileHandler,
     }),
   ];
+
+  if (isSmoothCursorEnabled) {
+    extensions.push(SmoothCursorExtension);
+  }
 
   if (!disabledExtensions.includes("image")) {
     extensions.push(
