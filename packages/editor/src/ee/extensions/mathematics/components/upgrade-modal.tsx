@@ -10,7 +10,6 @@ export const MathUpgradeModal: React.FC = () => (
 
       {/* Title */}
       <h3 className="text-base font-semibold text-custom-text-100 leading-tight">Upgrade to access this feature.</h3>
-
       {/* Description */}
       <p className="text-sm text-custom-text-200 leading-relaxed">
         This is a paid feature. You can upgrade your workspace to let all your members use it.

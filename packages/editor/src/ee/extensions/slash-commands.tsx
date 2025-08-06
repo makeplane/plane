@@ -45,8 +45,9 @@ export const coreEditorAdditionalSlashCommandOptions = (props: Props): TSlashCom
       badge: flaggedExtensions?.includes("mathematics") ? <ProBadge /> : undefined,
     },
   ];
-
-  options.push(...mathOptions);
-
+  // Remove Slash if exteension is flagged
+  if (!flaggedExtensions?.includes("mathematics")) {
+    options.push(...mathOptions);
+  }
   return options;
 };
