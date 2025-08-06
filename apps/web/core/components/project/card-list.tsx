@@ -36,6 +36,14 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
 
   // helper hooks
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
+  const resolvedFiltersImage = useResolvedAssetPath({
+    basePath: "/empty-state/project/all-filters",
+    extension: "svg",
+  });
+  const resolvedNameFilterImage = useResolvedAssetPath({
+    basePath: "/empty-state/project/name-filter",
+    extension: "svg",
+  });
 
   // derived values
   const workspaceProjectIds = totalProjectIdsProps ?? storeWorkspaceProjectIds;
@@ -70,15 +78,6 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
         }
       />
     );
-
-  const resolvedFiltersImage = useResolvedAssetPath({
-    basePath: "/empty-state/project/all-filters",
-    extension: "svg",
-  });
-  const resolvedNameFilterImage = useResolvedAssetPath({
-    basePath: "/empty-state/project/name-filter",
-    extension: "svg",
-  });
 
   if (filteredProjectIds.length === 0)
     return (
