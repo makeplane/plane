@@ -36,7 +36,12 @@ export const IntakeClientLayout = observer((props: Props) => {
 
   if (error) return <SomethingWentWrongError />;
 
-  if (!publishSettings) return <LogoSpinner />;
+  if (!publishSettings)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   return (
     <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">

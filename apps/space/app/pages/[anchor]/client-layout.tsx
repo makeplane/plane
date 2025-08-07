@@ -26,7 +26,12 @@ export const PagesClientLayout = observer((props: Props) => {
     anchor ? () => fetchPublishSettings(anchor) : null
   );
 
-  if (!entity_identifier && !error) return <LogoSpinner />;
+  if (!entity_identifier && !error)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <LogoSpinner />
+      </div>
+    );
 
   if (error?.status === 404) return <PageNotFound />;
 
