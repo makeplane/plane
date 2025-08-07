@@ -74,7 +74,6 @@
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
-    "ts-to-zod": "^3.13.0",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "tsup": "8.4.0",
