@@ -62,6 +62,7 @@ export class ProfileStore implements IUserProfileStore {
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    is_app_rail_docked: true,
   };
 
   // services

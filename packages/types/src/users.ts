@@ -46,6 +46,7 @@ export interface IUser extends IUserLite {
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
   avatar: string;
+  is_app_rail_docked: boolean;
 }
 
 export interface IUserAccount {
@@ -83,6 +84,7 @@ export type TUserProfile = {
   created_at: Date | string;
   updated_at: Date | string;
   start_of_the_week: EStartOfTheWeek;
+  is_app_rail_docked?: boolean;
 };
 
 export interface IInstanceAdminStatus {
