@@ -71,6 +71,19 @@ class IssuePropertyValueAPISerializer(BaseSerializer):
         ]
 
 
+class IssuePropertyValueAPIDetailSerializer(serializers.Serializer):
+    """
+    Serializer for aggregated issue property values response.
+    This serializer handles the response format from the query_annotator method
+    which returns property_id and values (ArrayAgg of property values).
+    """
+    property_id = serializers.UUIDField(help_text="The ID of the issue property")
+    values = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="List of aggregated property values for the given property"
+    )
+
+
 class IssuePropertyActivityAPISerializer(BaseSerializer):
     class Meta:
         model = IssuePropertyActivity

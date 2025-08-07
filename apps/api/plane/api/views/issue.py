@@ -43,6 +43,7 @@ from plane.api.serializers import (
     IssueAttachmentSerializer,
     IssueActivitySerializer,
     IssueCommentSerializer,
+    IssueDetailSerializer,
     IssueLinkSerializer,
     IssueSerializer,
     LabelSerializer,
@@ -552,7 +553,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="List of issues or issue details",
-                response=IssueSerializer,
+                response=IssueDetailSerializer,
                 examples=[ISSUE_EXAMPLE],
             ),
             400: INVALID_REQUEST_RESPONSE,
@@ -574,7 +575,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         ).get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         return Response(
-            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            IssueDetailSerializer(issue, fields=self.fields, expand=self.expand).data,
             status=status.HTTP_200_OK,
         )
 

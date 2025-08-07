@@ -720,9 +720,9 @@ class IssueAttachmentUploadSerializer(serializers.Serializer):
     )
 
 
-class IssueSearchSerializer(serializers.Serializer):
+class IssueSearchItemSerializer(serializers.Serializer):
     """
-    Serializer for work item search result data formatting.
+    Individual issue component for search results.
 
     Provides standardized search result structure including work item identifiers,
     project context, and workspace information for search API responses.
@@ -736,3 +736,34 @@ class IssueSearchSerializer(serializers.Serializer):
     )
     project_id = serializers.CharField(required=True, help_text="Project ID")
     workspace__slug = serializers.CharField(required=True, help_text="Workspace slug")
+
+
+class IssueSearchSerializer(serializers.Serializer):
+    """
+    Search results for work items.
+
+    Provides list of issues with their identifiers, names, and project context.
+    """
+
+    issues = IssueSearchItemSerializer(many=True)
+
+class IssueDetailSerializer(IssueSerializer):
+    """
+    Comprehensive work item serializer with full relationship management.
+
+    Handles complete work item lifecycle including assignees, labels, validation,
+    and related model updates. Supports dynamic field expansion and HTML content processing.
+    """
+
+    assignees = UserLiteSerializer(many=True)
+
+    labels = LabelSerializer(many=True)
+
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
+
+    class Meta:
+        model = Issue
+        read_only_fields = ["id", "workspace", "project", "updated_by", "updated_at"]
+        exclude = ["description"]

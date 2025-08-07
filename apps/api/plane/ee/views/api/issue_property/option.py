@@ -36,7 +36,7 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="Issue property options",
-                response=IssuePropertyOptionAPISerializer,
+                response=IssuePropertyOptionAPISerializer(many=True),
             ),
             404: OpenApiResponse(description="Issue property not found"),
         },

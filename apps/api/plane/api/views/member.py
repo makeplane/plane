@@ -113,7 +113,7 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="List of project members with their roles",
-                response=UserLiteSerializer,
+                response=UserLiteSerializer(many=True),
                 examples=[PROJECT_MEMBER_EXAMPLE],
             ),
             401: UNAUTHORIZED_RESPONSE,

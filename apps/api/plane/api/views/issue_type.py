@@ -111,7 +111,8 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
         summary="List issue types",
         responses={
             200: OpenApiResponse(
-                description="Issue types", response=IssueTypeAPISerializer
+                description="Issue types",
+                response=IssueTypeAPISerializer(many=True),
             ),
             404: OpenApiResponse(description="Issue type not found"),
         },

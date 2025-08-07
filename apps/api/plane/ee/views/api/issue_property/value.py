@@ -13,7 +13,10 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExampl
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
-from plane.ee.serializers.api import IssuePropertyValueAPISerializer
+from plane.ee.serializers.api import (
+    IssuePropertyValueAPISerializer,
+    IssuePropertyValueAPIDetailSerializer,
+)
 from plane.ee.utils.external_issue_property_validator import (
     externalIssuePropertyValueValidator,
     externalIssuePropertyValueSaver,
@@ -111,7 +114,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
         responses={
             200: OpenApiResponse(
                 description="Issue property values",
-                response=IssuePropertyValueAPISerializer,
+                response=IssuePropertyValueAPIDetailSerializer(many=True),
             ),
         },
     )

@@ -67,7 +67,8 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
         summary="List issue properties",
         responses={
             200: OpenApiResponse(
-                description="Issue properties", response=IssuePropertyAPISerializer
+                description="Issue properties",
+                response=IssuePropertyAPISerializer(many=True),
             ),
         },
     )

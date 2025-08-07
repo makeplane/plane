@@ -11,6 +11,7 @@ from .issue import (
     LabelCreateUpdateSerializer,
     LabelSerializer,
     IssueLinkSerializer,
+    IssueDetailSerializer,
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,
