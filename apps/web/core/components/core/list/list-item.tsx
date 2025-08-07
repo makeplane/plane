@@ -23,7 +23,7 @@ interface IListItemProps {
   actionItemContainerClassName?: string;
   isSidebarOpen?: boolean;
   quickActionElement?: JSX.Element;
-  preventDefaultNProgress?: boolean;
+  preventDefaultBProgress?: boolean;
   leftElementClassName?: string;
   rightElementClassName?: string;
 }
@@ -45,7 +45,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
     isSidebarOpen = false,
     quickActionElement,
     itemClassName = "",
-    preventDefaultNProgress = false,
+    preventDefaultBProgress = false,
     leftElementClassName = "",
     rightElementClassName = "",
   } = props;
@@ -76,7 +76,7 @@ export const ListItem: FC<IListItemProps> = (props) => {
             target="_self"
             onClick={handleControlLinkClick}
             disabled={disableLink}
-            data-prevent-nprogress={preventDefaultNProgress}
+            data-prevent-progress={preventDefaultBProgress}
           >
             <div className={cn("flex items-center gap-4 truncate", leftElementClassName)}>
               {prependTitleElement && <span className="flex items-center flex-shrink-0">{prependTitleElement}</span>}

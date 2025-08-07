@@ -121,7 +121,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, {}, { showProgressBar: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, { showProgress: false }),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
@@ -200,7 +200,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
-        data-prevent-nprogress={!isMemberOfProject || isArchived}
+        data-prevent-progress={!isMemberOfProject || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -232,7 +232,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             </div>
 
             {!isArchived && (
-              <div data-prevent-nprogress className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                   onClick={(e) => {
