@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 // plane editor
-import { EditorRefApi, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+import { EditorRefApi, getBinaryDataFromHTMLString } from "@plane/editor";
 // plane types
 import { TDocumentPayload } from "@plane/types";
 // hooks
@@ -27,7 +27,7 @@ export const usePageFallback = (args: TArgs) => {
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
         latestDecodedDescription = new Uint8Array(latestEncodedDescription);
       } else {
-        latestDecodedDescription = getBinaryDataFromDocumentEditorHTMLString("<p></p>");
+        latestDecodedDescription = getBinaryDataFromHTMLString("<p></p>");
       }
 
       editor.setProviderDocument(latestDecodedDescription);

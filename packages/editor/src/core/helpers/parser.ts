@@ -6,7 +6,7 @@ import {
   replaceAdditionalAssetsInHTMLContent,
 } from "@/plane-editor/helpers/parser";
 // local imports
-import { convertHTMLDocumentToAllFormats } from "./yjs-utils";
+import { getAllDocumentFormatsFromHTMLString } from "./yjs-utils";
 
 /**
  * @description function to extract all assets from HTML content
@@ -62,10 +62,9 @@ export const getEditorContentWithReplacedAssets = async (props: {
   entityId: string;
   entityType: TEditorAssetType;
   projectId: string | undefined;
-  variant: "rich" | "document";
   duplicateAssetService: (params: TDuplicateAssetData) => Promise<TDuplicateAssetResponse>;
 }): Promise<TDocumentPayload> => {
-  const { descriptionHTML, entityId, entityType, projectId, variant, duplicateAssetService } = props;
+  const { descriptionHTML, entityId, entityType, projectId, duplicateAssetService } = props;
   let replacedDescription = descriptionHTML;
   // step 1: extract image assets from the description
   const assetIds = extractAssetsFromHTMLContent(descriptionHTML);
@@ -86,9 +85,8 @@ export const getEditorContentWithReplacedAssets = async (props: {
     }
   }
   // step 4: convert the description to the document payload
-  const documentPayload = convertHTMLDocumentToAllFormats({
+  const documentPayload = getAllDocumentFormatsFromHTMLString({
     document_html: replacedDescription,
-    variant,
   });
   return documentPayload;
 };

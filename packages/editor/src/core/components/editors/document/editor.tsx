@@ -7,7 +7,7 @@ import { PageRenderer } from "@/components/editors";
 // constants
 import { DEFAULT_DISPLAY_CONFIG } from "@/constants/config";
 // extensions
-import { HeadingListExtension, WorkItemEmbedExtension, SideMenuExtension } from "@/extensions";
+import { HeadingListExtension, SideMenuExtension } from "@/extensions";
 // helpers
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
@@ -39,13 +39,6 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
   } = props;
   const extensions: Extensions = useMemo(() => {
     const additionalExtensions: Extensions = [];
-    if (embedHandler?.issue) {
-      additionalExtensions.push(
-        WorkItemEmbedExtension({
-          widgetCallback: embedHandler.issue.widgetCallback,
-        })
-      );
-    }
     additionalExtensions.push(
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
