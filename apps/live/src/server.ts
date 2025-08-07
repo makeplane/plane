@@ -73,7 +73,7 @@ export class Server {
           return;
         }
         const { description, description_binary } = getAllDocumentFormatsFromHTMLString({
-          document_html: description_html,
+          descriptionHTML: description_html,
         });
         res.status(200).json({
           description,

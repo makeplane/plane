@@ -27,7 +27,9 @@ export const usePageFallback = (args: TArgs) => {
       if (latestEncodedDescription && latestEncodedDescription.byteLength > 0) {
         latestDecodedDescription = new Uint8Array(latestEncodedDescription);
       } else {
-        latestDecodedDescription = getBinaryDataFromHTMLString("<p></p>");
+        latestDecodedDescription = getBinaryDataFromHTMLString({
+          descriptionHTML: "<p></p>",
+        });
       }
 
       editor.setProviderDocument(latestDecodedDescription);

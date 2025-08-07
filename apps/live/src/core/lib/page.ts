@@ -1,5 +1,5 @@
 // helpers
-import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@/core/helpers/page.js";
+import { getAllDocumentFormatsFromBinaryData, getBinaryDataFromHTMLString } from "@plane/editor/lib";
 // services
 import { PageService } from "@/core/services/page.service.js";
 import { manualLogger } from "../helpers/logger.js";
@@ -19,7 +19,9 @@ export const updatePageDescription = async (
   const projectId = params.get("projectId")?.toString();
   if (!workspaceSlug || !projectId || !cookie) return;
 
-  const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(updatedDescription);
+  const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData({
+    descriptionBinary: updatedDescription,
+  });
   try {
     const payload = {
       description_binary: contentBinaryEncoded,
@@ -44,7 +46,9 @@ const fetchDescriptionHTMLAndTransform = async (
 
   try {
     const pageDetails = await pageService.fetchDetails(workspaceSlug, projectId, pageId, cookie);
-    const { contentBinary } = getBinaryDataFromHTMLString(pageDetails.description_html ?? "<p></p>");
+    const contentBinary = getBinaryDataFromHTMLString({
+      descriptionHTML: pageDetails.description_html ?? "<p></p>",
+    });
     return contentBinary;
   } catch (error) {
     manualLogger.error("Error while transforming from HTML to Uint8Array", error);
