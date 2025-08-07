@@ -275,7 +275,8 @@ def get_intake_work_items_async(
 def get_intake_work_item(
     workspace_slug: str,
     project_id: str,
-    intake_work_item_id: str,
+    intake_work_item_id: Optional[str] = None,
+    work_item_id: Optional[str] = None,
     user_id: Optional[str] = None,
 ):
     base_query = intake_work_item_base_query(
@@ -283,7 +284,10 @@ def get_intake_work_item(
     )
 
     try:
-        return base_query.get(id=intake_work_item_id)
+        if intake_work_item_id:
+            return base_query.get(id=intake_work_item_id)
+        elif work_item_id:
+            return base_query.get(issue_id=work_item_id)
     except IntakeIssue.DoesNotExist:
         message = "Intake work item not found"
         error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
@@ -294,12 +298,19 @@ def get_intake_work_item(
 def get_intake_work_item_async(
     workspace_slug: str,
     project_id: str,
-    intake_work_item_id: str,
+    intake_work_item_id: Optional[str] = None,
+    work_item_id: Optional[str] = None,
     user_id: Optional[str] = None,
 ):
+    if intake_work_item_id is None and work_item_id is None:
+        message = "Intake work item id or work item id is required"
+        error_extensions = {"code": "NOT_FOUND", "statusCode": 404}
+        raise GraphQLError(message, extensions=error_extensions)
+
     return get_intake_work_item(
         workspace_slug=workspace_slug,
         project_id=project_id,
         intake_work_item_id=intake_work_item_id,
+        work_item_id=work_item_id,
         user_id=user_id,
     )

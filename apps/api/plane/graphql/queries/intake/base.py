@@ -249,3 +249,62 @@ class IntakeWorkItemQuery:
                 raise GraphQLError(message, extensions=error_extensions)
 
         return intake_work_item
+
+    @strawberry.field(
+        extensions=[PermissionExtension(permissions=[ProjectPermission()])]
+    )
+    async def intake_work_item_by_work_item(
+        self, info: Info, slug: str, project: str, work_item: str
+    ) -> IntakeWorkItemType:
+        user = info.context.user
+        user_id = str(user.id)
+
+        # get the workspace
+        workspace = await get_workspace(workspace_slug=slug)
+        workspace_slug = workspace.slug
+
+        # get the project
+        project_details = await get_project(
+            workspace_slug=workspace_slug, project_id=project
+        )
+        project_id = str(project_details.id)
+
+        await is_project_intakes_enabled_async(
+            workspace_slug=workspace_slug, project_id=project_id
+        )
+
+        current_user_role = None
+        project_member = await get_project_member(
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            user_id=user_id,
+            raise_exception=False,
+        )
+        if not project_member:
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=workspace_slug,
+            )
+            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
+            if project_id not in teamspace_project_ids:
+                message = "You are not allowed to access this project"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+            current_user_role = Roles.MEMBER.value
+        else:
+            current_user_role = project_member.role
+
+        intake_work_item = await get_intake_work_item_async(
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            work_item_id=work_item,
+        )
+
+        work_item_creator_id = str(intake_work_item.created_by_id)
+        if current_user_role == Roles.GUEST.value:
+            if work_item_creator_id != user_id:
+                message = "You are not allowed to access this intake work item"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+
+        return intake_work_item
