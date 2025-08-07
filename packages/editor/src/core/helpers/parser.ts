@@ -86,7 +86,7 @@ export const getEditorContentWithReplacedAssets = async (props: {
   }
   // step 4: convert the description to the document payload
   const documentPayload = getAllDocumentFormatsFromHTMLString({
-    document_html: replacedDescription,
+    descriptionHTML: replacedDescription,
   });
   return documentPayload;
 };

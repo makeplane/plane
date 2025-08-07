@@ -42,11 +42,10 @@ export const convertBinaryDataToBase64String = (document: Uint8Array): string =>
 export const convertBase64StringToBinaryData = (document: string): ArrayBuffer => Buffer.from(document, "base64");
 
 /**
- * @description this function generates the binary equivalent of html content for the rich text editor
- * @param {string} descriptionHTML
+ * @description Converts HTML string to binary data
  * @returns {Uint8Array}
  */
-export const getBinaryDataFromHTMLString = (descriptionHTML: string): Uint8Array => {
+export const getBinaryDataFromHTMLString = ({ descriptionHTML }: { descriptionHTML: string }): Uint8Array => {
   // convert HTML to JSON
   const contentJSON = generateJSON(descriptionHTML ?? "<p></p>", PARSER_KIT);
   // convert JSON to Y.Doc format
@@ -57,21 +56,22 @@ export const getBinaryDataFromHTMLString = (descriptionHTML: string): Uint8Array
 };
 
 /**
- * @description this function generates all document formats for the provided binary data for the rich text editor
- * @param {Uint8Array} description
+ * @description Converts binary data to all supported document formats (JSON, HTML, and binary)
  * @returns
  */
-export const getAllDocumentFormatsFromBinaryData = (
-  description: Uint8Array
-): {
+export const getAllDocumentFormatsFromBinaryData = ({
+  descriptionBinary,
+}: {
+  descriptionBinary: Uint8Array;
+}): {
   contentBinaryEncoded: string;
   contentJSON: object;
   contentHTML: string;
 } => {
   // encode binary description data
-  const base64Data = convertBinaryDataToBase64String(description);
+  const base64Data = convertBinaryDataToBase64String(descriptionBinary);
   const yDoc = new Y.Doc();
-  Y.applyUpdate(yDoc, description);
+  Y.applyUpdate(yDoc, descriptionBinary);
   // convert to JSON
   const type = yDoc.getXmlFragment("default");
   const contentJSON = yXmlFragmentToProseMirrorRootNode(type, parserSchema).toJSON();
@@ -85,22 +85,21 @@ export const getAllDocumentFormatsFromBinaryData = (
   };
 };
 
-type TConvertHTMLDocumentToAllFormatsArgs = {
-  document_html: string;
-};
-
 /**
  * @description Converts HTML string to all supported document formats (JSON, HTML, and binary)
- * @param {TConvertHTMLDocumentToAllFormatsArgs} args - Arguments containing HTML content and variant type
  * @returns {TDocumentPayload} Object containing the document in all supported formats
  */
-export const getAllDocumentFormatsFromHTMLString = (args: TConvertHTMLDocumentToAllFormatsArgs): TDocumentPayload => {
-  const { document_html } = args;
-
+export const getAllDocumentFormatsFromHTMLString = ({
+  descriptionHTML,
+}: {
+  descriptionHTML: string;
+}): TDocumentPayload => {
   // Convert HTML to binary format for rich text editor
-  const contentBinary = getBinaryDataFromHTMLString(document_html);
+  const contentBinary = getBinaryDataFromHTMLString({ descriptionHTML });
   // Generate all document formats from the binary data
-  const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData(contentBinary);
+  const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromBinaryData({
+    descriptionBinary: contentBinary,
+  });
 
   return {
     description: contentJSON,
