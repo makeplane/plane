@@ -191,7 +191,7 @@ export class MQActorBase {
   }
 
   private async setupQueuesAndExchanges() {
-    if (this.queueName !== "celery") {
+    if (this.queueName !== env.IMPORTERS_QUEUE_NAME) {
       const dlxExchange = `dlx_exchange`;
       const dlxQueue = `${this.queueName}.dlx`;
       const dlxRoutingKey = `dlx_routing_key`;

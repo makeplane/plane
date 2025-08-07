@@ -17,6 +17,7 @@ const envSchema = z.object({
   PG_SCHEMA: z.string().optional(),
   MAX_STORE_CONNECTION_ATTEMPTS: z.string().default("20"),
   MAX_DB_CONNECTION_ATTEMPTS: z.string().default("5"),
+  IMPORTERS_QUEUE_NAME: z.string().default("celery"),
   APP_BASE_URL: z
     .string()
     .default("")

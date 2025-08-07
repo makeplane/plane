@@ -1,5 +1,6 @@
 import DB from "@/db/client";
 import { importTaskManger, integrationTaskManager, celeryProducer } from "@/worker";
+import { env } from "@/env";
 import { logger } from "./logger";
 import Server from "./server";
 import { initializeS3Client, Store } from "./worker/base";
@@ -31,9 +32,9 @@ import { initializeS3Client, Store } from "./worker/base";
 
       await celeryProducer.start({
         appType: "extension",
-        queueName: "celery",
-        routingKey: "celery",
-        exchange: "celery",
+        queueName: env.IMPORTERS_QUEUE_NAME,
+        routingKey: env.IMPORTERS_QUEUE_NAME,
+        exchange: env.IMPORTERS_QUEUE_NAME,
       });
 
       logger.info("All Good! Booted (source -> plane) worker ⛑︎⛑︎⛑︎");
