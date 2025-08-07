@@ -141,7 +141,7 @@ def filter_updated_at(param_values, intake_work_item_filter, prefix=""):
     return intake_work_item_filter
 
 
-def intake_filters(query_params, prefix="", issue_prefix="issue_intake__"):
+def intake_filters(query_params, prefix="", issue_prefix="issue__"):
     intake_filter = {}
 
     INTAKE_FILTER_MAP = {
