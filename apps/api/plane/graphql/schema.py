@@ -111,6 +111,7 @@ from .queries.intake import (
     IntakeWorkItemCommentQuery,
     IntakeWorkItemCommentReactionQuery,
     IntakeWorkItemQuery,
+    IntakeSearchQuery,
 )
 from .queries.issue import (
     IssueCommentActivityQuery,
@@ -283,6 +284,7 @@ class Query(
     IntakeWorkItemCommentQuery,
     IntakeWorkItemCommentReactionQuery,
     IntakeWorkItemAttachmentQuery,
+    IntakeSearchQuery,
 ):
     pass
 

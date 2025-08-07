@@ -61,9 +61,26 @@ class IntakeCountQuery:
             workspace_slug=workspace_slug, project_id=project_id
         )
 
+        current_user_role = None
         project_member = await get_project_member(
-            workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
+            workspace_slug=workspace_slug,
+            project_id=project_id,
+            user_id=user_id,
+            raise_exception=False,
         )
+        if not project_member:
+            project_teamspace_filter = await project_member_filter_via_teamspaces_async(
+                user_id=user_id,
+                workspace_slug=workspace_slug,
+            )
+            teamspace_project_ids = project_teamspace_filter.teamspace_project_ids
+            if project_id not in teamspace_project_ids:
+                message = "You are not allowed to access this project"
+                error_extensions = {"code": "FORBIDDEN", "statusCode": 403}
+                raise GraphQLError(message, extensions=error_extensions)
+            current_user_role = Roles.MEMBER.value
+        else:
+            current_user_role = project_member.role
 
         filters = intake_filters(filters)
 
@@ -83,7 +100,7 @@ class IntakeCountQuery:
             is_snoozed_work_items_required = True
 
         intake_work_items = await get_intake_work_items_async(
-            user_id=user_id if project_member.role == Roles.GUEST.value else None,
+            user_id=user_id if current_user_role == Roles.GUEST.value else None,
             workspace_slug=workspace_slug,
             project_id=project_id,
             filters=filters,

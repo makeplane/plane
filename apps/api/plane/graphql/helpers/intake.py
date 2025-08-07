@@ -1,4 +1,5 @@
 # Python imports
+import re
 from typing import Optional
 
 # Third Party Imports
@@ -212,6 +213,7 @@ def get_intake_work_items(
     filters: Optional[JSON] = {},
     orderBy: Optional[str] = "-created_at",
     is_snoozed_work_items_required: Optional[bool] = False,
+    search: Optional[str] = None,
 ):
     base_query = intake_work_item_base_query(
         workspace_slug=workspace_slug, project_id=project_id, user_id=user_id
@@ -225,6 +227,18 @@ def get_intake_work_items(
             )
             | Q(snoozed_till__isnull=True)
         )
+
+    if search:
+        q = Q()
+        fields = ["issue__name", "issue__sequence_id", "issue__project__identifier"]
+        for field in fields:
+            if field == "issue__sequence_id":
+                sequences = re.findall(r"\b\d+\b", search)
+                for sequence_id in sequences:
+                    q |= Q(**{"issue__sequence_id": sequence_id})
+            else:
+                q |= Q(**{f"{field}__icontains": search})
+        base_query = base_query.filter(q)
 
     intakes = (
         base_query.filter(**filters)
@@ -244,6 +258,7 @@ def get_intake_work_items_async(
     filters: Optional[JSON] = {},
     orderBy: Optional[str] = "-created_at",
     is_snoozed_work_items_required: Optional[bool] = False,
+    search: Optional[str] = None,
 ):
     return get_intake_work_items(
         workspace_slug=workspace_slug,
@@ -252,6 +267,7 @@ def get_intake_work_items_async(
         filters=filters,
         orderBy=orderBy,
         is_snoozed_work_items_required=is_snoozed_work_items_required,
+        search=search,
     )
 
 
