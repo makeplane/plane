@@ -2,7 +2,7 @@ import type { Content, Extensions, JSONContent, RawCommands } from "@tiptap/core
 import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
-import type { NodeViewProps as nodeViewProps } from "@tiptap/react";
+import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // types
@@ -195,4 +195,4 @@ export type EditorEvents = {
   ready: { height: number };
 };
 
-export type NodeViewProps = nodeViewProps;
+export type NodeViewProps = TNodeViewProps;
