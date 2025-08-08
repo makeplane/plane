@@ -5,9 +5,7 @@ import requests
 from django.conf import settings
 
 # Third party imports
-from openfeature.provider import AbstractProvider
-from openfeature.provider.metadata import Metadata
-from openfeature.flag_evaluation import FlagResolutionDetails
+from openfeature.provider import AbstractProvider, FlagResolutionDetails, Metadata
 
 # Module imports
 from plane.utils.exception_logger import log_exception

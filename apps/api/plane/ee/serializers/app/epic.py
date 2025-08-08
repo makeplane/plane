@@ -2,6 +2,7 @@
 from django.utils import timezone
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 
 # Third Party imports
 from rest_framework import serializers
@@ -163,53 +164,109 @@ class EpicCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if initiative_ids is not None:
-            InitiativeEpic.objects.filter(epic=instance).delete()
-            InitiativeEpic.objects.bulk_create(
-                [
-                    InitiativeEpic(
-                        epic_id=instance.id,
-                        initiative_id=initiative_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for initiative_id in initiative_ids
-                ],
-                batch_size=10,
-            )
+            current_initiatives = InitiativeEpic.objects.filter(
+                epic=instance
+            ).values_list("initiative_id", flat=True)
+
+            # Get the initiatives to add and initiatives to remove from both the current and the new initiatives
+            initiatives_to_add = list(set(initiative_ids) - set(current_initiatives))
+            initiatives_to_remove = list(set(current_initiatives) - set(initiative_ids))
+
+            # Delete the initiatives to remove
+            InitiativeEpic.objects.filter(
+                epic=instance, initiative_id__in=initiatives_to_remove
+            ).delete()
+
+            # Create the initiatives to add
+            try:
+                InitiativeEpic.objects.bulk_create(
+                    [
+                        InitiativeEpic(
+                            epic_id=instance.id,
+                            initiative_id=initiative_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for initiative_id in initiatives_to_add
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
+
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
-            IssueAssignee.objects.bulk_create(
-                [
-                    IssueAssignee(
-                        assignee=user,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for user in assignees
-                ],
-                batch_size=10,
-            )
+            current_assignee_ids = IssueAssignee.objects.filter(
+                issue=instance
+            ).values_list("assignee_id", flat=True)
+
+            assignee_ids = [assignee.id for assignee in assignees]
+
+            # Get the assignees to add and assignees to remove from both the current and the new assignees
+            assignees_to_add = list(set(assignee_ids) - set(current_assignee_ids))
+            assignees_to_remove = list(set(current_assignee_ids) - set(assignee_ids))
+
+            # Delete the assignees to remove
+            IssueAssignee.objects.filter(
+                issue=instance, assignee_id__in=assignees_to_remove
+            ).delete()
+
+            # Create the assignees to add
+            try:
+                IssueAssignee.objects.bulk_create(
+                    [
+                        IssueAssignee(
+                            assignee_id=user,
+                            issue=instance,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for user in assignees_to_add
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
-            IssueLabel.objects.bulk_create(
-                [
-                    IssueLabel(
-                        label=label,
-                        issue=instance,
-                        project_id=project_id,
-                        workspace_id=workspace_id,
-                        created_by_id=created_by_id,
-                        updated_by_id=updated_by_id,
-                    )
-                    for label in labels
-                ],
-                batch_size=10,
+            current_label_ids = IssueLabel.objects.filter(issue=instance).values_list(
+                "label_id", flat=True
             )
+
+            requested_label_ids = [label.id for label in labels]
+
+            # Get the labels to add and labels to remove from both the current and the new labels
+            labels_to_add = list(set(requested_label_ids) - set(current_label_ids))
+            labels_to_remove = list(set(current_label_ids) - set(requested_label_ids))
+
+            # Delete the labels to remove
+            IssueLabel.objects.filter(
+                issue=instance, label_id__in=labels_to_remove
+            ).delete()
+
+            # Create the labels to add
+            try:
+                IssueLabel.objects.bulk_create(
+                    [
+                        IssueLabel(
+                            label_id=label,
+                            issue=instance,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for label in labels_to_add
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()

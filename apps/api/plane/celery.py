@@ -105,6 +105,11 @@ EE_JOBS = {
         "task": "plane.ee.bgtasks.batched_search_update_task.log_opensearch_update_queue_metrics",  # noqa: E501
         "schedule": crontab(minute="*/15"),  # Every 15 minutes
     },
+    # Outbox cleaner
+    "check-every-day-to-delete-outbox-records": {
+        "task": "plane.event_stream.bgtasks.outbox_cleaner.delete_outbox_records",
+        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
+    },
 }
 
 

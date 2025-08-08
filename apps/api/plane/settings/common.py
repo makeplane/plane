@@ -53,12 +53,14 @@ INSTALLED_APPS = [
     "plane.graphql",
     "plane.payment",
     "plane.silo",
+    "plane.event_stream",
     # Third-party things
     "strawberry.django",
     "rest_framework",
     "oauth2_provider",
     "corsheaders",
     "django_celery_beat",
+    "pgtrigger",
 ]
 
 # Middlewares

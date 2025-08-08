@@ -3,6 +3,7 @@ from celery import shared_task
 
 from plane.db.models import Issue, IssueRelation
 from plane.ee.models.job import ImportJob
+from django.db import transaction, connection
 
 logger = logging.getLogger("plane.worker")
 
@@ -70,9 +71,11 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
                 created_by_id=user_id,
             )
         )
-
-    # Bulk create relations, ignoring any duplicates
-    IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
+    with transaction.atomic():
+        with connection.cursor() as cur:
+            cur.execute("SET LOCAL plane.initiator_type = 'SYSTEM.IMPORT'")
+            # Bulk create relations, ignoring any duplicates
+            IssueRelation.objects.bulk_create(issue_relations, ignore_conflicts=True)
 
     # Handle parent_id relations
     for ex_issue_id, parent_ex_id in parent_id_relations:
@@ -83,7 +86,9 @@ def bulk_update_issue_relations_task(job_id: str, user_id: str | None = None):
             logger.warning(f"Issue {ex_issue_id} or parent {parent_ex_id} not found")
             continue
 
-        # Update parent_id
-        Issue.objects.filter(id=issue_id).update(
-            parent_id=parent_id, updated_by_id=user_id
-        )
+        with connection.cursor() as cur:
+            cur.execute("SET LOCAL plane.initiator_type = 'SYSTEM.IMPORT'")
+            # Update parent_id
+            Issue.objects.filter(id=issue_id).update(
+                parent_id=parent_id, updated_by_id=user_id
+            )

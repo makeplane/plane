@@ -14,7 +14,6 @@ from unittest.mock import MagicMock
 
 @pytest.mark.contract
 class TestIssueDuplicateEndpointContrasts:
-    @pytest.mark.django_db
     @pytest.fixture
     def base_setup(self, session_client, create_user):
         """Base setup for all tests"""

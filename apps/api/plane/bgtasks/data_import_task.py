@@ -1,10 +1,12 @@
+# Python imports
+import logging
+
 # Third party imports
 from celery import shared_task
 import requests
-from django.db import transaction
+from django.db import transaction, connection
 from django.conf import settings
 
-import logging
 from plane.utils.exception_logger import log_exception
 from plane.utils.helpers import get_boolean_value
 from plane.api.serializers.issue import IssueSerializer
@@ -154,6 +156,8 @@ def sanitize_issue_data(issue_data):
 def process_single_issue(slug, project, user_id, issue_data):
     try:
         with transaction.atomic():
+            with connection.cursor() as cur:
+                cur.execute("SET LOCAL plane.initiator_type = 'SYSTEM.IMPORT'")
             # Process the main issue
             issue_data = sanitize_issue_data(issue_data)
             serializer = IssueSerializer(

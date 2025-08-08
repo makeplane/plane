@@ -12,6 +12,9 @@ from django.db.models import Q
 from django import apps
 from django.db import connection
 
+# Third party imports
+import pgtrigger
+
 # Module imports
 from plane.utils.html_processor import strip_tags
 from plane.db.models.project import ProjectManager

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('authentication', '0003_application_website_applicationcategory_is_active'),
+        ("authentication", "0003_application_website_applicationcategory_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='application',
-            name='is_mentionable',
+            model_name="application",
+            name="is_mentionable",
             field=models.BooleanField(default=False),
         ),
     ]

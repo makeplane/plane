@@ -6,7 +6,7 @@ from typing import List, Optional
 # Django imports
 from django.utils import timezone
 from django.db.models.functions import Coalesce
-from django.db.models import Q, Value, UUIDField, F, Subquery, OuterRef, Prefetch
+from django.db.models import Q, Value, UUIDField, Prefetch
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.core.serializers.json import DjangoJSONEncoder
@@ -205,6 +205,10 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 )
 
         for issue in issues:
+            # Update the updated_at and updated_by_id
+            issue.updated_at = timezone.now()
+            issue.updated_by_id = request.user.id
+
             # Priority
             if properties.get("priority", False):
                 issue_activities.append(
@@ -379,9 +383,10 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         IssueLabel(
                             issue=issue,
                             label_id=label_id,
-                            created_by=request.user,
+                            created_by_id=request.user.id,
                             project_id=project_id,
                             workspace_id=workspace_id,
+                            updated_by_id=request.user.id,
                         )
                     )
                 bulk_issue_activities.append(
@@ -411,7 +416,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                         IssueAssignee(
                             issue=issue,
                             assignee_id=assignee_id,
-                            created_by=request.user,
+                            created_by_id=request.user.id,
                             project_id=project_id,
                             workspace_id=workspace_id,
                         )
@@ -448,7 +453,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                                 module_id=module_id,
                                 project_id=project_id,
                                 workspace_id=project.workspace_id,
-                                created_by=request.user,
+                                created_by_id=request.user.id,
                             )
                         )
                         issue_activities.append(
@@ -549,6 +554,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 "completed_at",
                 "estimate_point_id",
                 "type_id",
+                "updated_at",
+                "updated_by_id",
             ],
             batch_size=100,
         )

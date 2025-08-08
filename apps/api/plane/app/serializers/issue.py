@@ -366,7 +366,21 @@ class IssueCreateSerializer(BaseSerializer):
         updated_by_id = instance.updated_by_id
 
         if assignees is not None:
-            IssueAssignee.objects.filter(issue=instance).delete()
+            # Here because of validate the assignee_ids are list of uuids
+            current_assignees = IssueAssignee.objects.filter(
+                issue=instance
+            ).values_list("assignee_id", flat=True)
+
+            # Get the assignees to add and assignees to remove from both the current and the new assignees
+            assignees_to_add = list(set(assignees) - set(current_assignees))
+            assignees_to_remove = list(set(current_assignees) - set(assignees))
+
+            # Delete the assignees to remove
+            IssueAssignee.objects.filter(
+                issue=instance, assignee_id__in=assignees_to_remove
+            ).delete()
+
+            # Create the assignees to add
             try:
                 IssueAssignee.objects.bulk_create(
                     [
@@ -378,7 +392,7 @@ class IssueCreateSerializer(BaseSerializer):
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for assignee_id in assignees
+                        for assignee_id in assignees_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -387,19 +401,37 @@ class IssueCreateSerializer(BaseSerializer):
                 pass
 
         if labels is not None:
-            IssueLabel.objects.filter(issue=instance).delete()
+            # Here we get label instances as a list
+            current_label_ids = list(
+                IssueLabel.objects.filter(issue=instance).values_list(
+                    "label_id", flat=True
+                )
+            )
+
+            requested_label_ids = labels
+
+            # Get the labels to add and labels to remove from both the current and the new labels
+            labels_to_add = list(set(requested_label_ids) - set(current_label_ids))
+            labels_to_remove = list(set(current_label_ids) - set(requested_label_ids))
+
+            # Delete the labels to remove
+            IssueLabel.objects.filter(
+                issue=instance, label_id__in=labels_to_remove
+            ).delete()
+
+            # Create the labels to add
             try:
                 IssueLabel.objects.bulk_create(
                     [
                         IssueLabel(
-                            label_id=label_id,
+                            label_id=label,
                             issue=instance,
                             project_id=project_id,
                             workspace_id=workspace_id,
                             created_by_id=created_by_id,
                             updated_by_id=updated_by_id,
                         )
-                        for label_id in labels
+                        for label in labels_to_add
                     ],
                     batch_size=10,
                     ignore_conflicts=True,

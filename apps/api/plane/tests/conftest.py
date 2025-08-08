@@ -58,7 +58,7 @@ def workspace(db, create_user):
 def project(db, workspace, create_user):
     """Create and return a project instance for OAuth testing"""
     from plane.tests.factories import ProjectFactory
-    
+
     return ProjectFactory(
         workspace=workspace,
         created_by=create_user,
@@ -193,20 +193,20 @@ def plane_server(live_server):
 def oauth_application(db, create_user, workspace):
     """Create and return an OAuth application instance"""
     from plane.tests.factories import ApplicationFactory, ApplicationOwnerFactory
-    
+
     app = ApplicationFactory(
         user=create_user,
         created_by=create_user,
         updated_by=create_user,
     )
-    
+
     # Create application owner
     ApplicationOwnerFactory(
         user=create_user,
         application=app,
         workspace=workspace,
     )
-    
+
     return app
 
 
@@ -215,7 +215,7 @@ def workspace_app_installation(db, workspace, oauth_application, create_user):
     """Create and return a workspace app installation instance"""
     from plane.tests.factories import WorkspaceAppInstallationFactory
     from plane.authentication.models import WorkspaceAppInstallation
-    
+
     # When this factory creates and saves the WorkspaceAppInstallation,
     # the model's save() method automatically creates a bot user and adds it
     # to workspace and project members
@@ -225,6 +225,7 @@ def workspace_app_installation(db, workspace, oauth_application, create_user):
         installed_by=create_user,
         status=WorkspaceAppInstallation.Status.INSTALLED,
     )
+
 
 @pytest.fixture
 def workspace(create_user):
