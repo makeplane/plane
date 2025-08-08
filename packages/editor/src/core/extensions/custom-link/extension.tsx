@@ -10,12 +10,12 @@ import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
 
-export interface LinkProtocolOptions {
+type LinkProtocolOptions = {
   scheme: string;
   optionalSlashes?: boolean;
-}
+};
 
-export interface LinkOptions {
+type LinkOptions = {
   /**
    * If enabled, it adds links as you type.
    */
@@ -40,14 +40,14 @@ export interface LinkOptions {
   /**
    * A list of HTML attributes to be rendered.
    */
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   /**
    * A validation function that modifies link verification for the auto linker.
    * @param url - The url to be validated.
    * @returns - True if the url is valid, false otherwise.
    */
   validate?: (url: string) => boolean;
-}
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {

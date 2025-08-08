@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 // plane imports
+import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
 import { NodeViewProps } from "@tiptap/react";
 import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
 import { MakeOptional } from "@plane/types";
@@ -28,8 +29,17 @@ type RichTextEditorWrapperProps = MakeOptional<
   );
 
 export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
+  const {
+    anchor,
+    containerClassName,
+    editable,
+    workspaceId,
+    disabledExtensions: additionalDisabledExtensions = [],
+    ...rest
+  } = props;
   const { getMemberById } = useMember();
+  const { richText: richTextEditorExtensions } = useEditorFlagging(anchor);
+
   return (
     <RichTextEditorWithRef
       mentionHandler={{
@@ -39,14 +49,14 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         }),
       }}
       ref={ref}
-      disabledExtensions={disabledExtensions ?? []}
+      disabledExtensions={[...richTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
       editable={editable}
       fileHandler={getEditorFileHandlers({
         anchor,
         uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
-      flaggedExtensions={flaggedExtensions ?? []}
+      flaggedExtensions={richTextEditorExtensions.flagged}
       {...rest}
       embedHandler={{
         externalEmbedComponent: {

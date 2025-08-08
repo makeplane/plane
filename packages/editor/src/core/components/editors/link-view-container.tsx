@@ -8,12 +8,12 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
 import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
-interface LinkViewContainerProps {
+type Props = {
   editor: Editor;
   containerRef: React.RefObject<HTMLDivElement>;
-}
+};
 
-export const LinkViewContainer: FC<LinkViewContainerProps> = ({ editor, containerRef }) => {
+export const LinkViewContainer: FC<Props> = ({ editor, containerRef }) => {
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<Element | null>(null);

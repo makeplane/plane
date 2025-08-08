@@ -9,9 +9,14 @@ import { AuthView } from "@/components/views";
 import { useUser } from "@/hooks/store";
 
 const HomePage = observer(() => {
-  const { data: currentUser, isAuthenticated, isLoading } = useUser();
+  const { data: currentUser, isAuthenticated, isInitializing } = useUser();
 
-  if (isLoading) return <LogoSpinner />;
+  if (isInitializing)
+    return (
+      <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
+        <LogoSpinner />
+      </div>
+    );
 
   if (currentUser && isAuthenticated) return <UserLoggedIn />;
 

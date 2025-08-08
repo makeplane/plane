@@ -11,10 +11,12 @@ type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
   id: string;
   isLoading?: boolean;
+  isTouchDevice: boolean;
   tabIndex?: number;
   disabledExtensions: IEditorProps["disabledExtensions"];
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
@@ -25,12 +27,13 @@ export const PageRenderer = (props: Props) => {
     aiHandler,
     bubbleMenuEnabled,
     displayConfig,
+    documentLoaderClassName,
     editor,
     editorContainerClassName,
     id,
     isLoading,
+    isTouchDevice,
     tabIndex,
-    disabledExtensions,
     flaggedExtensions,
   } = props;
 
@@ -41,23 +44,20 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <EditorContainer
           displayConfig={displayConfig}
           editor={editor}
           editorContainerClassName={editorContainerClassName}
           id={id}
+          isTouchDevice={isTouchDevice}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && (
+          {editor.isEditable && !isTouchDevice && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu
-                editor={editor}
-                disabledExtensions={disabledExtensions}
-                flaggedExtensions={flaggedExtensions}
-              />
+              <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}

@@ -11,10 +11,8 @@ export const LogoSpinner = () => {
   const logoSrc = resolvedTheme === "dark" ? LogoSpinnerDark : LogoSpinnerLight;
 
   return (
-    <div className="h-screen w-full flex min-h-[600px] justify-center items-center">
-      <div className="flex items-center justify-center">
-        <Image src={logoSrc} alt="logo" className="w-[82px] h-[82px] mr-2" />
-      </div>
+    <div className="flex items-center justify-center">
+      <Image src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" />
     </div>
   );
 };
