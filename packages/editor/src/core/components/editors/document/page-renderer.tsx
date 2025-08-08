@@ -17,6 +17,7 @@ type Props = {
   isLoading?: boolean;
   tabIndex?: number;
   disabledExtensions: IEditorProps["disabledExtensions"];
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
@@ -30,6 +31,7 @@ export const PageRenderer = (props: Props) => {
     isLoading,
     tabIndex,
     disabledExtensions,
+    flaggedExtensions,
   } = props;
 
   return (
@@ -51,7 +53,11 @@ export const PageRenderer = (props: Props) => {
           {editor.isEditable && (
             <div>
               {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu editor={editor} disabledExtensions={disabledExtensions} />
+              <BlockMenu
+                editor={editor}
+                disabledExtensions={disabledExtensions}
+                flaggedExtensions={flaggedExtensions}
+              />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}

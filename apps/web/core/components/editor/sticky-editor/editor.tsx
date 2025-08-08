@@ -61,9 +61,6 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-  const embedHandlerConfig = {
-    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
-  };
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -86,7 +83,9 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         }}
         containerClassName={cn(containerClassName, "relative")}
         {...rest}
-        embedHandler={embedHandlerConfig}
+        embedHandler={{
+          externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
+        }}
       />
       {showToolbar && (
         <div

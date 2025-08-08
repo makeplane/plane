@@ -93,6 +93,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       isLoading={!hasServerSynced && !hasServerConnectionFailed}
       tabIndex={tabIndex}
       disabledExtensions={disabledExtensions}
+      flaggedExtensions={flaggedExtensions}
     />
   );
 };

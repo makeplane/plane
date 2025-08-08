@@ -89,9 +89,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-  const embedHandlerConfig = {
-    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
-  };
   return (
     <div
       className={cn(
@@ -131,7 +128,9 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           "p-2": !editable,
         })}
         {...rest}
-        embedHandler={embedHandlerConfig}
+        embedHandler={{
+          externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} /> },
+        }}
       />
       {showToolbar && editable && (
         <div

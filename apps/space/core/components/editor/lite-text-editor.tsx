@@ -1,5 +1,6 @@
 import React from "react";
 // plane imports
+import { NodeViewProps } from "@tiptap/react";
 import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -46,9 +47,6 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
-  const embedHandlerConfig = {
-    externalEmbedComponent: { widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} anchor={anchor} /> },
-  };
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
       <LiteTextEditorWithRef
@@ -65,7 +63,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}
         {...rest}
-        embedHandler={embedHandlerConfig}
+        embedHandler={{
+          externalEmbedComponent: {
+            widgetCallback: (props: NodeViewProps) => <EmbedHandler {...props} anchor={anchor} />,
+          },
+        }}
         // overriding the containerClassName to add relative class passed
         containerClassName={cn(containerClassName, "relative")}
       />

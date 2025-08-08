@@ -9,6 +9,7 @@ import { IEditorProps } from "@/types";
 interface BlockMenuProps {
   editor: Editor;
   disabledExtensions: IEditorProps["disabledExtensions"];
+  flaggedExtensions?: IEditorProps["flaggedExtensions"];
 }
 
 export const BlockMenu = (props: BlockMenuProps) => {
