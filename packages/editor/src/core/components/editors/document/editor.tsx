@@ -98,6 +98,8 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
       id={id}
       isTouchDevice={!!isTouchDevice}
+      disabledExtensions={disabledExtensions}
+      flaggedExtensions={flaggedExtensions}
     />
   );
 };
