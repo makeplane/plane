@@ -32,7 +32,6 @@
     "@popperjs/core": "^2.11.8",
     "@react-pdf/renderer": "^3.4.5",
     "@tanstack/react-table": "^8.21.3",
-    "@types/tldjs": "^2.3.4",
     "axios": "1.11.0",
     "clsx": "^2.0.0",
     "cmdk": "^1.0.0",
@@ -65,7 +64,6 @@
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",
-    "tldjs": "^2.3.2",
     "use-font-face-observer": "^1.2.2",
     "uuid": "^9.0.0"
   },

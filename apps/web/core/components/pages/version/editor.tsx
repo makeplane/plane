@@ -10,10 +10,6 @@ import { DocumentEditor } from "@/components/editor/document/editor";
 // hooks
 import { useWorkspace } from "@/hooks/store";
 import { usePageFilters } from "@/hooks/use-page-filters";
-// plane web hooks
-import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
-import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
-import { useIssueEmbed } from "@/plane-web/hooks/use-issue-embed";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
