@@ -18,7 +18,7 @@ import { TWorkItemBlueprintPropertiesWithMobxProps } from "./common";
  */
 export const WorkItemBlueprintPropertiesWithMobx = observer(
   <T extends FieldValues>(props: TWorkItemBlueprintPropertiesWithMobxProps<T>) => {
-    const { fieldPaths, projectId } = props;
+    const { fieldPaths, projectId, shouldLoadDefaultValues = false } = props;
     // form state
     const { watch } = useFormContext<T>();
     // store hooks
@@ -41,6 +41,7 @@ export const WorkItemBlueprintPropertiesWithMobx = observer(
               issueId={undefined}
               issueTypeId={watch(fieldPaths.issueTypeId)}
               projectId={projectId}
+              shouldLoadDefaultValues={shouldLoadDefaultValues}
             />
           </div>
         )}

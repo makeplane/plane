@@ -11,7 +11,7 @@ class IssueTypeAPISerializer(BaseSerializer):
 
     class Meta:
         model = IssueType
-        fields = fields = "__all__"
+        fields = "__all__"
         read_only_fields = [
             "workspace",
             "logo_props",
@@ -28,7 +28,7 @@ class IssueTypeAPISerializer(BaseSerializer):
 class ProjectIssueTypeAPISerializer(BaseSerializer):
     class Meta:
         model = ProjectIssueType
-        fields = fields = "__all__"
+        fields = "__all__"
         read_only_fields = [
             "workspace",
             "project",

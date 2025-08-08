@@ -52,6 +52,14 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname.startsWith(`${baseUrl}/templates/`),
     Icon: SettingIcon,
   },
+  recurring_work_items: {
+    key: "recurring_work_items",
+    i18n_label: "common.recurring_work_items",
+    href: `/recurring-work-items`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname.startsWith(`${baseUrl}/recurring-work-items/`),
+    Icon: SettingIcon,
+  },
 };
 
 export const PROJECT_SETTINGS_LINKS: {
@@ -74,4 +82,5 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["epics"],
   PROJECT_SETTINGS["project_updates"],
   PROJECT_SETTINGS["templates"],
+  PROJECT_SETTINGS["recurring_work_items"],
 ];

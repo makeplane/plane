@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module imports
 from plane.app.serializers.base import BaseSerializer
-from plane.db.models import Project, Page, Label, ProjectPage, PageLabel, PageVersion
+from plane.db.models import Page, Label, ProjectPage, PageLabel, PageVersion
 
 
 class WorkspacePageSerializer(BaseSerializer):

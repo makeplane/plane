@@ -23,17 +23,11 @@ class RecurringWorkitemTask(ProjectBaseModel):
     INTERVAL_MONTHLY = "monthly"
     INTERVAL_YEARLY = "yearly"
 
-    # Temp intervals for testing
-    INVERVAL_MINUTLY = "minutly"
-    INTERVAL_HOURLY = "hourly"
-
     INTERVAL_CHOICES = [
         (INTERVAL_DAILY, "Daily"),
         (INTERVAL_WEEKLY, "Weekly"),
         (INTERVAL_MONTHLY, "Monthly"),
         (INTERVAL_YEARLY, "Yearly"),
-        (INVERVAL_MINUTLY, "Minutly"),
-        (INTERVAL_HOURLY, "Hourly"),
     ]
 
     # Celery task name constant
@@ -147,10 +141,6 @@ class RecurringWorkitemTask(ProjectBaseModel):
             return f"{minute} {hour} {day} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
         elif interval_type == cls.INTERVAL_YEARLY:
             return f"{minute} {hour} {day} {month} {cls.CRON_WILDCARD}"
-        elif interval_type == cls.INVERVAL_MINUTLY:
-            return f"{cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
-        elif interval_type == cls.INTERVAL_HOURLY:
-            return f"{minute} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD} {cls.CRON_WILDCARD}"
 
     @classmethod
     def _convert_python_weekday_to_cron(cls, python_weekday):

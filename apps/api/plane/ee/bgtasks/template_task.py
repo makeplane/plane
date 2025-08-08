@@ -9,6 +9,9 @@ from typing import Any, Dict, Optional
 # Django imports
 from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Case, When, Func, F, CharField, Value, Q
+from django.db.models.functions import Cast
+from django.contrib.postgres.aggregates import ArrayAgg
 
 # Third party imports
 from celery import shared_task
@@ -41,7 +44,12 @@ from plane.ee.models import (
 from plane.utils.exception_logger import log_exception
 from plane.app.serializers import IssueDetailSerializer
 from plane.bgtasks.webhook_task import model_activity
+from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
+from plane.ee.utils.issue_property_validators import (
+    property_validators,
+    property_savers,
+)
 
 logger = logging.getLogger("plane.worker")
 
@@ -142,6 +150,53 @@ def _get_property_value_data(
             f"Failed to process value {value} for property {property_obj.id}: {e}"
         )
         return None
+
+
+def query_annotator(query):
+    return query.values("property_id").annotate(
+        values=ArrayAgg(
+            Case(
+                When(
+                    property__property_type__in=[
+                        PropertyTypeEnum.TEXT,
+                        PropertyTypeEnum.URL,
+                        PropertyTypeEnum.EMAIL,
+                        PropertyTypeEnum.FILE,
+                    ],
+                    then=F("value_text"),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.DATETIME,
+                    then=Func(
+                        F("value_datetime"),
+                        function="TO_CHAR",
+                        template="%(function)s(%(expressions)s, 'YYYY-MM-DD')",
+                        output_field=CharField(),
+                    ),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.DECIMAL,
+                    then=Cast(F("value_decimal"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.BOOLEAN,
+                    then=Cast(F("value_boolean"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.RELATION,
+                    then=Cast(F("value_uuid"), output_field=CharField()),
+                ),
+                When(
+                    property__property_type=PropertyTypeEnum.OPTION,
+                    then=Cast(F("value_option"), output_field=CharField()),
+                ),
+                default=Value(""),  # Default value if none of the conditions match
+                output_field=CharField(),
+            ),
+            filter=Q(property_id=F("property_id")),
+            distinct=True,
+        )
+    )
 
 
 def create_estimates(estimate_data, project_id, project, user_id):
@@ -381,53 +436,67 @@ def create_issue_property_values(
     property_values_to_create = []
     logger.info(f"Creating issue property values for issue: {issue.id}")
 
-    for blueprint_property in blueprint_properties:
-        # Get the mapped property ID
-        old_property_id = str(blueprint_property.get("id"))
-        new_property_id = workitem_property_map.get(old_property_id)
-
-        if not new_property_id:
-            logger.info(f"Property mapping not found for: {old_property_id}")
-            continue
-
-        try:
-            property_obj = IssueProperty.objects.get(id=new_property_id)
-        except IssueProperty.DoesNotExist:
-            logger.info(f"Property does not exist: {new_property_id}")
-            continue
-
-        property_values = blueprint_property.get("values", [])
-        if not property_values:
-            logger.info(f"No values for property: {new_property_id}")
-            continue
-
-        # Process each value for this property
-        for value in property_values:
-            property_value_data = _get_property_value_data(
-                property_obj, value, workitem_property_option_map
-            )
-
-            if property_value_data:
-                property_value_data.update(
-                    {
-                        "issue": issue,
-                        "property": property_obj,
-                        "workspace_id": workspace_id,
-                        "project_id": project_id,
-                        "created_by_id": user_id,
-                    }
-                )
-                property_values_to_create.append(
-                    IssuePropertyValue(**property_value_data)
-                )
-
-    if property_values_to_create:
-        IssuePropertyValue.objects.bulk_create(
-            property_values_to_create,
-            batch_size=BULK_CREATE_BATCH_SIZE,
-            ignore_conflicts=True,
+    existing_prop_values = query_annotator(
+        IssuePropertyValue.objects.filter(
+            workspace_id=workspace_id,
+            project_id=project_id,
+            issue_id=issue.id,
         )
-        logger.info(f"Created {len(property_values_to_create)} issue property values")
+    ).values("property_id", "values")
+
+    # Get all issue properties
+    issue_properties = IssueProperty.objects.filter(
+        workspace_id=workspace_id,
+        project_id=project_id,
+        issue_type_id=issue.type_id,
+        issue_type__is_epic=False,
+        is_active=True,
+    )
+
+    # Convert blueprint properties to use actual project property IDs
+    converted_properties = {}
+    for property in blueprint_properties:
+        template_property_id = str(property.get("id"))
+        actual_property_id = workitem_property_map.get(template_property_id)
+        if actual_property_id:
+            converted_properties[actual_property_id] = property.get("values", [])
+
+    # Validate the data
+    property_validators(
+        properties=issue_properties,
+        property_values=converted_properties,
+        existing_prop_values=existing_prop_values,
+    )
+
+    # Save the data
+    bulk_issue_property_values = property_savers(
+        properties=issue_properties,
+        property_values=converted_properties,
+        issue_id=issue.id,
+        workspace_id=workspace_id,
+        project_id=project_id,
+        existing_prop_values=existing_prop_values,
+    )
+
+    # Bulk create the epic property values
+    IssuePropertyValue.objects.bulk_create(
+        bulk_issue_property_values,
+        batch_size=BULK_CREATE_BATCH_SIZE,
+        ignore_conflicts=True,
+    )
+
+    # Log the activity
+    issue_property_activity.delay(
+        existing_values={
+            str(prop["property_id"]): prop["values"] for prop in existing_prop_values
+        },
+        requested_values=converted_properties,
+        issue_id=issue.id,
+        user_id=user_id,
+        epoch=int(timezone.now().timestamp()),
+    )
+
+    logger.info(f"Created {len(property_values_to_create)} issue property values")
 
 
 def create_workitems(
@@ -458,25 +527,26 @@ def create_workitems(
         user_id: The ID of the user
 
     """
+    created_workitems = []
     # Create workitems
     for blueprint in workitem_blueprints:
 
         # Check if the state is present in the state map
-        if blueprint.state:
+        if blueprint.state and state_map:
             state_id = state_map.get(str(blueprint.state.get("id")))
         else:
-            state = State.objects.filter(
-                project_id=project_id,
-                workspace_id=workspace_id,
-                default=True,
-            ).first()
-            logger.info(f"State found: {state.id}")
-            # If no state is present, use the default state
-            if state:
-                state_id = state.id
-            else:
-                state_id = None
-            logger.info(f"State found: {state.id}")
+            state_id = (
+                State.objects.filter(
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    default=True,
+                )
+                .first()
+                .id
+            )
+
+        logger.info(f"State found: {state_id}")
+
         # Check if the type is present in the workitem type map
         if blueprint.type:
             type_id = workitem_type_map.get(str(blueprint.type.get("id")))
@@ -499,10 +569,10 @@ def create_workitems(
             sort_order=random.randint(0, 65535),
             created_by_id=user_id,
         )
-
         new_issue_id = new_issue.id
 
         logger.info(f"Issue created: {new_issue_id}")
+
         # Create the issue sequence
         IssueSequence.objects.create(
             issue_id=new_issue_id,
@@ -571,12 +641,13 @@ def create_workitems(
             batch_size=BULK_CREATE_BATCH_SIZE,
             ignore_conflicts=True,
         )
-        logger.info(f"Issue assignees created: {new_issue_id}")
+        logger.info(f"Issue assignees created: {new_issue.id}")
+
         # Create the labels
         IssueLabel.objects.bulk_create(
             [
                 IssueLabel(
-                    issue_id=new_issue_id,
+                    issue_id=new_issue.id,
                     label_id=labels_map.get(str(label.get("id"))),
                     project_id=project_id,
                     workspace_id=workspace_id,
@@ -590,21 +661,29 @@ def create_workitems(
         )
 
         logger.info(f"Issue labels created: {new_issue_id}")
-        # create the issue property values
-        create_issue_property_values(
-            issue=new_issue,
-            blueprint_properties=blueprint.properties,
-            workitem_property_map=workitem_property_map,
-            workitem_property_option_map=workitem_property_option_map,
-            workspace_id=workspace_id,
-            project_id=project_id,
-            user_id=user_id,
-        )
+
+        if type_id:
+            # create the issue property values
+            create_issue_property_values(
+                issue=new_issue,
+                blueprint_properties=blueprint.properties,
+                workitem_property_map=workitem_property_map,
+                workitem_property_option_map=workitem_property_option_map,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                user_id=user_id,
+            )
         logger.info(f"Issue property values created: {new_issue_id}")
+
+        created_workitems.append(new_issue)
+
+    return created_workitems
 
 
 @shared_task
-def create_project_from_template(template_id, project_id, user_id, state_map, origin=None):
+def create_project_from_template(
+    template_id, project_id, user_id, state_map, origin=None
+):
     try:
         """
         Create a project from a template and copy the workitems, labels, estimates, etc.

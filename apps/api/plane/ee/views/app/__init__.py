@@ -10,7 +10,9 @@ from plane.ee.views.app.issue import (
     IssueDuplicateEndpoint,
     IssuePageViewSet,
     PageSearchViewSet,
+    RecurringWorkItemViewSet,
     SubWorkitemTemplateEndpoint,
+    RecurringWorkItemActivitiesEndpoint,
 )
 from plane.ee.views.app.assets import DuplicateAssetEndpoint
 from plane.ee.views.app.intake import ProjectInTakePublishViewSet

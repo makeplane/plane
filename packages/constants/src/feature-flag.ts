@@ -102,6 +102,8 @@ export enum E_FEATURE_FLAGS {
   ANALYTICS_ADVANCED = "ANALYTICS_ADVANCED",
   // app rail
   APP_RAIL = "APP_RAIL",
+  // recurring workitems
+  RECURRING_WORKITEMS = "RECURRING_WORKITEMS",
 }
 
 /**
@@ -119,6 +121,7 @@ export const FEATURE_TO_BASE_PLAN_MAP = {
   [E_FEATURE_FLAGS.SILO_INTEGRATIONS]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.EPICS]: EProductSubscriptionEnum.PRO,
   [E_FEATURE_FLAGS.PROJECT_UPDATES]: EProductSubscriptionEnum.PRO,
+  [E_FEATURE_FLAGS.RECURRING_WORKITEMS]: EProductSubscriptionEnum.BUSINESS,
 };
 
 export type TSupportedFlagsForUpgrade = keyof typeof FEATURE_TO_BASE_PLAN_MAP;

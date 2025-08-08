@@ -14,13 +14,14 @@ import { IssueAdditionalPropertiesBase } from "./additional-properties-base";
 const draftIssuePropertyValuesService = new DraftIssuePropertyValuesService();
 
 type TIssueAdditionalPropertiesProps = {
-  issueId: string | undefined;
-  issueTypeId: string | null;
-  projectId: string;
-  workspaceSlug: string;
   entityType?: EWorkItemTypeEntity;
   isDraft?: boolean;
+  issueId: string | undefined;
   issueServiceType?: TIssueServiceType;
+  issueTypeId: string | null;
+  projectId: string;
+  shouldLoadDefaultValues?: boolean;
+  workspaceSlug: string;
 };
 
 /**
@@ -29,12 +30,13 @@ type TIssueAdditionalPropertiesProps = {
  */
 export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps> = observer((props) => {
   const {
-    issueId,
-    isDraft = false,
-    projectId,
-    workspaceSlug,
     entityType = EWorkItemTypeEntity.WORK_ITEM,
+    isDraft = false,
+    issueId,
     issueServiceType = EIssueServiceType.ISSUES,
+    projectId,
+    shouldLoadDefaultValues = true,
+    workspaceSlug,
   } = props;
   // store hooks
   const {
@@ -78,11 +80,12 @@ export const IssueAdditionalProperties: React.FC<TIssueAdditionalPropertiesProps
 
   return (
     <IssueAdditionalPropertiesBase
-      getWorkItemTypeById={getIssueTypeById}
       areCustomPropertiesInitializing={propertiesLoader === "init-loader"}
-      isWorkItemTypeEntityEnabled={isWorkItemTypeEntityEnabledForProject}
-      issuePropertyValues={issuePropertyValues}
       arePropertyValuesInitializing={arePropertyValuesInitializing}
+      getWorkItemTypeById={getIssueTypeById}
+      issuePropertyValues={issuePropertyValues}
+      isWorkItemTypeEntityEnabled={isWorkItemTypeEntityEnabledForProject}
+      shouldLoadDefaultValues={shouldLoadDefaultValues}
       {...props}
     />
   );

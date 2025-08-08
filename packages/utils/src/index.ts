@@ -41,3 +41,4 @@ export * from "./theme";
 export * from "./work-item";
 export * from "./workspace";
 export * from "./mobile";
+export * from "./recurring-work-items";

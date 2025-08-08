@@ -9,15 +9,16 @@ import { Loader } from "@plane/ui";
 import { IssueAdditionalPropertyValuesCreate } from "@/plane-web/components/issue-types/values/create";
 
 type TIssueAdditionalPropertiesBaseProps = {
-  entityType?: EWorkItemTypeEntity;
-  issueTypeId: string | null;
-  projectId: string;
-  workspaceSlug: string;
-  issuePropertyValues: TIssuePropertyValues;
-  arePropertyValuesInitializing: boolean;
-  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
   areCustomPropertiesInitializing: boolean;
+  arePropertyValuesInitializing: boolean;
+  entityType?: EWorkItemTypeEntity;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
+  issuePropertyValues: TIssuePropertyValues;
+  issueTypeId: string | null;
   isWorkItemTypeEntityEnabled: (workspaceSlug: string, projectId: string, entityType: EWorkItemTypeEntity) => boolean;
+  projectId: string;
+  shouldLoadDefaultValues: boolean;
+  workspaceSlug: string;
 };
 
 /**
@@ -28,14 +29,15 @@ type TIssueAdditionalPropertiesBaseProps = {
  */
 export const IssueAdditionalPropertiesBase: React.FC<TIssueAdditionalPropertiesBaseProps> = observer((props) => {
   const {
-    entityType = EWorkItemTypeEntity.WORK_ITEM,
-    getWorkItemTypeById,
     areCustomPropertiesInitializing = false,
     arePropertyValuesInitializing = false,
+    entityType = EWorkItemTypeEntity.WORK_ITEM,
+    getWorkItemTypeById,
     issuePropertyValues,
     issueTypeId,
     isWorkItemTypeEntityEnabled,
     projectId,
+    shouldLoadDefaultValues,
     workspaceSlug,
   } = props;
   // derived values
@@ -56,11 +58,12 @@ export const IssueAdditionalPropertiesBase: React.FC<TIssueAdditionalPropertiesB
 
   return (
     <IssueAdditionalPropertyValuesCreate
-      getWorkItemTypeById={getWorkItemTypeById}
       arePropertyValuesInitializing={arePropertyValuesInitializing}
+      getWorkItemTypeById={getWorkItemTypeById}
       issuePropertyValues={issuePropertyValues}
       issueTypeId={issueTypeId}
       projectId={projectId}
+      shouldLoadDefaultValues={shouldLoadDefaultValues}
     />
   );
 });

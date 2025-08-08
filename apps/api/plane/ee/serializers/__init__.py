@@ -98,6 +98,11 @@ from .app.template import (
     ProjectTemplateSerializer,
 )
 
+from .app.recurring_work_item import (
+    RecurringWorkItemSerializer,
+    RecurringWorkItemTaskActivitySerializer,
+)
+
 # Space imports
 from .space.page import (
     PagePublicSerializer,

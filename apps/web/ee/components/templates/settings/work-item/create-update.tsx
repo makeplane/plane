@@ -75,7 +75,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
   const {
     isApplyingTemplate,
     issuePropertyValues,
-    setWorkItemTemplateId,
     setIsApplyingTemplate,
     setIssuePropertyValues,
     handleProjectEntitiesFetch,
@@ -177,7 +176,6 @@ export const CreateUpdateWorkItemTemplate = observer((props: TCreateUpdateWorkIt
     };
 
     if (templateId) {
-      setWorkItemTemplateId(templateId);
       handleTemplateDataPreload();
     } else {
       resetLocalStates();

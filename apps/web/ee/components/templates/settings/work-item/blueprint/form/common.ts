@@ -60,6 +60,7 @@ export type TWorkItemBlueprintPropertiesBaseProps<T extends FieldValues> = {
   workspaceSlug: string;
   inputBorderVariant?: "primary" | "true-transparent";
   inputTextSize?: "md" | "lg";
+  shouldLoadDefaultValues?: boolean;
 };
 
 export type TWorkItemBlueprintPropertiesWithMobxProps<T extends FieldValues> = TWorkItemBlueprintPropertiesBaseProps<T> &

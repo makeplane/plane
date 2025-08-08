@@ -8,3 +8,7 @@ from .convert import IssueConvertEndpoint
 from .duplicate import IssueDuplicateEndpoint
 from .issue_page import IssuePageViewSet, PageSearchViewSet
 from .template import SubWorkitemTemplateEndpoint
+from .recurring_work_item import (
+    RecurringWorkItemViewSet,
+    RecurringWorkItemActivitiesEndpoint,
+)

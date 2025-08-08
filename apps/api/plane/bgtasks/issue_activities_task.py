@@ -969,26 +969,70 @@ def create_module_issue_activity(
     epoch,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
-    module = Module.objects.filter(pk=requested_data.get("module_id")).first()
-    issue = Issue.objects.filter(pk=issue_id).first()
-    if issue:
-        issue.updated_at = timezone.now()
-        issue.save(update_fields=["updated_at"])
-    issue_activities.append(
-        IssueActivity(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="created",
-            old_value="",
-            new_value=module.name if module else "",
-            field="modules",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"added module {module.name if module else ''}",
-            new_identifier=requested_data.get("module_id"),
-            epoch=epoch,
-        )
+    current_instance = (
+        json.loads(current_instance) if current_instance is not None else None
     )
+
+    # Updated Records:
+    updated_records = current_instance.get("updated_module_issues", [])
+    created_records = json.loads(current_instance.get("created_module_issues", []))
+
+    for updated_record in updated_records:
+        old_module = Module.objects.filter(
+            pk=updated_record.get("old_module_id", None)
+        ).first()
+        new_module = Module.objects.filter(
+            pk=updated_record.get("new_module_id", None)
+        ).first()
+        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=updated_record.get("issue_id"),
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_module.name if old_module else "",
+                new_value=new_module.name if new_module else "",
+                field="modules",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"""updated module from {old_module.name if old_module else ""}
+                to {new_module.name if new_module else ""}""",
+                old_identifier=old_module.id if old_module else None,
+                new_identifier=new_module.id if new_module else None,
+                epoch=epoch,
+            )
+        )
+
+    for created_record in created_records:
+        module = Module.objects.filter(
+            pk=created_record.get("fields").get("module")
+        ).first()
+        issue = Issue.objects.filter(
+            pk=created_record.get("fields").get("issue")
+        ).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=created_record.get("fields").get("issue"),
+                actor_id=actor_id,
+                verb="created",
+                old_value="",
+                new_value=module.name,
+                field="modules",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"added module {module.name}",
+                new_identifier=module.id,
+                epoch=epoch,
+            )
+        )
 
 
 def delete_module_issue_activity(
@@ -1843,6 +1887,7 @@ def issue_activity(
             "cycle.activity.created": create_cycle_issue_activity,
             "cycle.activity.deleted": delete_cycle_issue_activity,
             "module.activity.created": create_module_issue_activity,
+            "module.activity.updated": create_module_issue_activity,
             "module.activity.deleted": delete_module_issue_activity,
             "link.activity.created": create_link_activity,
             "link.activity.updated": update_link_activity,
@@ -1890,16 +1935,12 @@ def issue_activity(
                     event=(
                         "issue_comment"
                         if activity.field == "comment"
-                        else "intake_issue"
-                        if intake
-                        else "issue"
+                        else "intake_issue" if intake else "issue"
                     ),
                     event_id=(
                         activity.issue_comment_id
                         if activity.field == "comment"
-                        else intake
-                        if intake
-                        else activity.issue_id
+                        else intake if intake else activity.issue_id
                     ),
                     verb=activity.verb,
                     field=(

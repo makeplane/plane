@@ -25,6 +25,7 @@ export const WorkItemBlueprintPropertiesWithAdditionalProps = observer(
       isWorkItemTypeEntityEnabled,
       projectId,
       workspaceSlug,
+      shouldLoadDefaultValues = false,
     } = props;
     // form state
     const { watch } = useFormContext<T>();
@@ -56,6 +57,7 @@ export const WorkItemBlueprintPropertiesWithAdditionalProps = observer(
               issuePropertyValues={issuePropertyValues}
               issueTypeId={watch(fieldPaths.issueTypeId)}
               projectId={projectId}
+              shouldLoadDefaultValues={shouldLoadDefaultValues}
             />
           </div>
         )}

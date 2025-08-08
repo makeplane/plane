@@ -10,7 +10,9 @@ from plane.ee.views.app import (
     IssueDuplicateEndpoint,
     IssuePageViewSet,
     PageSearchViewSet,
+    RecurringWorkItemViewSet,
     SubWorkitemTemplateEndpoint,
+    RecurringWorkItemActivitiesEndpoint,
 )
 
 
@@ -78,6 +80,23 @@ urlpatterns = [
         name="issue-page-search",
     ),
     # End Page List Endpoint
+    # Recurring Work Item Endpoint
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/recurring-work-items/",
+        RecurringWorkItemViewSet.as_view(),
+        name="recurring-work-items",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/recurring-work-items/<uuid:pk>/",
+        RecurringWorkItemViewSet.as_view(),
+        name="recurring-work-items",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/recurring-work-items/<uuid:pk>/activities/",
+        RecurringWorkItemActivitiesEndpoint.as_view(),
+        name="recurring-work-items-activities",
+    ),
+    # End Recurring Work Item Endpoint
     # Sub-workitem Template Endpoint
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:workitem_id>/sub-workitem-template/",

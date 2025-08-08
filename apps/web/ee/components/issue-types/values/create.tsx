@@ -11,19 +11,26 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { IssueAdditionalPropertyValues } from "@/plane-web/components/issue-types/values/root";
 
 type TIssueAdditionalPropertyValuesCreateProps = {
-  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
-  issueTypeId: string;
-  issuePropertyValues: TIssuePropertyValues;
   arePropertyValuesInitializing: boolean;
+  getWorkItemTypeById: (issueTypeId: string) => IIssueType | undefined;
+  issuePropertyValues: TIssuePropertyValues;
+  issueTypeId: string;
   projectId: string;
+  shouldLoadDefaultValues: boolean;
 };
 
 export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPropertyValuesCreateProps> = observer(
   (props) => {
-    const { getWorkItemTypeById, issueTypeId, issuePropertyValues, arePropertyValuesInitializing, projectId } = props;
+    const {
+      arePropertyValuesInitializing,
+      getWorkItemTypeById,
+      issuePropertyValues,
+      issueTypeId,
+      projectId,
+      shouldLoadDefaultValues,
+    } = props;
     // store hooks
     const {
-      workItemTemplateId,
       issuePropertyValues: issuePropertyDefaultValues,
       issuePropertyValueErrors,
       setIssuePropertyValues: handleIssuePropertyValueUpdate,
@@ -34,16 +41,15 @@ export const IssueAdditionalPropertyValuesCreate: React.FC<TIssueAdditionalPrope
     const activeProperties = issueType?.activeProperties;
 
     useEffect(() => {
-      // If template is applied, then we don't need to set the default values from here.
-      // It will be set in the provider -> handleTemplateChange.
-      if (!workItemTemplateId && activeProperties?.length) {
+      // Only set default values if shouldLoadDefaultValues is true and we have active properties
+      if (shouldLoadDefaultValues && activeProperties?.length) {
         handleIssuePropertyValueUpdate({
           ...getPropertiesDefaultValues(activeProperties),
           ...issuePropertyValues,
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeProperties, handleIssuePropertyValueUpdate, workItemTemplateId]);
+    }, [activeProperties, handleIssuePropertyValueUpdate, shouldLoadDefaultValues]);
 
     const handlePropertyValueChange = (propertyId: string, value: string[]) => {
       handleIssuePropertyValueUpdate((prev) => ({
