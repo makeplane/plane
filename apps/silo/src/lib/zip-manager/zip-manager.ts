@@ -93,35 +93,8 @@ export class ZipManager {
       throw new Error("Manager not initialized");
     }
 
-    // Handle root directory specially
-    const isRootDir = directoryNode.path === "/" || directoryNode.path === "";
-
     // Extract files from the directory
-    const allFiles = await extractDirectoryFromZip(this.zipStream, directoryNode, ignoredFileTypes, acceptedFileTypes);
-    // Filter out files from subdirectories
-    const directFiles = new Map<string, Buffer>();
-
-    for (const [filePath, content] of allFiles.entries()) {
-      // Special handling for root directory
-      if (isRootDir) {
-        // For root, include only files without any path separator after the first one
-        const pathWithoutLeadingSlash = filePath.startsWith("/") ? filePath.substring(1) : filePath;
-        if (!pathWithoutLeadingSlash.includes("/")) {
-          directFiles.set(filePath, content);
-        }
-      } else {
-        directFiles.set(filePath, content);
-        // // Regular case - get the relative path from the directory
-        // const relativePath = filePath.substring(directoryNode.path.length);
-        // const pathWithoutLeadingSlash = relativePath.startsWith("/") ? relativePath.substring(1) : relativePath;
-
-        // // Include only direct children (no additional slashes in relative path)
-        // if (!pathWithoutLeadingSlash.includes("/")) {
-        // }
-      }
-    }
-
-    return directFiles;
+    return await extractDirectoryFromZip(this.zipStream, directoryNode, ignoredFileTypes, acceptedFileTypes);
   }
 
   /**
