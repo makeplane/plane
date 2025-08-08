@@ -47,7 +47,9 @@ class Outbox(models.Model):
     project_id = models.UUIDField()
 
     # The user ID that the event belongs to
-    initiator_id = models.UUIDField(help_text="The user ID who triggered the event")
+    initiator_id = models.UUIDField(
+        help_text="The user ID who triggered the event", null=True, blank=True
+    )
 
     # The type of initiator that triggered the event
     initiator_type = models.CharField(max_length=255, default=InitiatorTypes.USER)
