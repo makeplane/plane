@@ -18,7 +18,6 @@ type Props = {
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  disabledExtensions: IEditorProps["disabledExtensions"];
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
 };
 
