@@ -38,17 +38,12 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  | | "disabledExtensions"
- 
+  | "disabledExtensions"
   | "flaggedExtensions"
- 
   | "fileHandler"
   | "isTouchDevice"
- 
   | "mentionHandler"
- 
   | "placeholder"
- 
   | "tabIndex"
   | "embedHandler"
 > & {
