@@ -1,7 +1,12 @@
 import React, { forwardRef } from "react";
-import { NodeViewProps } from "@tiptap/react";
 // plane imports
-import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import {
+  type NodeViewProps,
+  type EditorRefApi,
+  type IRichTextEditorProps,
+  RichTextEditorWithRef,
+  type TFileHandler,
+} from "@plane/editor";
 import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // components

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 // plane constants
-import { NodeViewProps } from "@tiptap/react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { EditorRefApi, ILiteTextEditorProps, LiteTextEditorWithRef, TFileHandler } from "@plane/editor";
+import {
+  type NodeViewProps,
+  EditorRefApi,
+  ILiteTextEditorProps,
+  LiteTextEditorWithRef,
+  TFileHandler,
+} from "@plane/editor";
 // components
 import { TSticky } from "@plane/types";
 // helpers

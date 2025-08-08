@@ -1,4 +1,3 @@
-import { NodeViewProps } from "@tiptap/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports

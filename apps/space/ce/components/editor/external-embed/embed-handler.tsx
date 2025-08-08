@@ -1,4 +1,4 @@
-import { NodeViewProps } from "@tiptap/react";
+import type { NodeViewProps } from "@plane/editor";
 
 interface EmbedHandlerProps extends NodeViewProps {
   anchor?: string;

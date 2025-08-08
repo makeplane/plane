@@ -1,7 +1,12 @@
 import React from "react";
 // plane imports
-import { NodeViewProps } from "@tiptap/react";
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import {
+  type NodeViewProps,
+  type EditorRefApi,
+  type ILiteTextEditorProps,
+  LiteTextEditorWithRef,
+  type TFileHandler,
+} from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn } from "@plane/utils";
 // components

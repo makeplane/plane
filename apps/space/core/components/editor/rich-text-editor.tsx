@@ -1,8 +1,12 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
-import { NodeViewProps } from "@tiptap/react";
-import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
+import {
+  EditorRefApi,
+  IRichTextEditorProps,
+  RichTextEditorWithRef,
+  TFileHandler,
+  type NodeViewProps,
+} from "@plane/editor";
 import { MakeOptional } from "@plane/types";
 // components
 import { EditorMentionsRoot } from "@/components/editor";
@@ -11,6 +15,7 @@ import { getEditorFileHandlers } from "@/helpers/editor.helper";
 // store hooks
 import { useMember } from "@/hooks/store";
 import { EmbedHandler } from "@/plane-web/components/editor/external-embed/embed-handler";
+import { useEditorFlagging } from "ce/hooks/use-editor-flagging";
 
 type RichTextEditorWrapperProps = MakeOptional<
   Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "embedHandler">,
