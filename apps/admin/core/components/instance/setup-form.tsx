@@ -134,12 +134,10 @@ export const InstanceSetupForm: FC = (props) => {
     <div className="max-w-lg lg:max-w-md w-full">
       <div className="relative flex flex-col space-y-6">
         <div className="text-center space-y-1">
-          <h3 className="flex gap-4 justify-center text-3xl font-bold text-onboarding-text-100">
+          <h3 className="flex gap-4 justify-center text-3xl font-bold text-custom-text-100">
             Setup your Plane Instance
           </h3>
-          <p className="font-medium text-onboarding-text-400">
-            Post setup you will be able to manage this Plane instance.
-          </p>
+          <p className="font-medium text-custom-text-400">Post setup you will be able to manage this Plane instance.</p>
         </div>
 
         {errorData.type &&
@@ -160,11 +158,11 @@ export const InstanceSetupForm: FC = (props) => {
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="w-full space-y-1">
-              <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="first_name">
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="first_name">
                 First name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="first_name"
                 name="first_name"
                 type="text"
@@ -177,11 +175,11 @@ export const InstanceSetupForm: FC = (props) => {
               />
             </div>
             <div className="w-full space-y-1">
-              <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="last_name">
+              <label className="text-sm text-custom-text-300 font-medium" htmlFor="last_name">
                 Last name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="last_name"
                 name="last_name"
                 type="text"
@@ -195,11 +193,11 @@ export const InstanceSetupForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
               Email <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+              className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
               id="email"
               name="email"
               type="email"
@@ -216,11 +214,11 @@ export const InstanceSetupForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="company_name">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="company_name">
               Company name <span className="text-red-500">*</span>
             </label>
             <Input
-              className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+              className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
               id="company_name"
               name="company_name"
               type="text"
@@ -232,12 +230,12 @@ export const InstanceSetupForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
               Set a password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Input
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="password"
                 name="password"
                 type={showPassword.password ? "text" : "password"}
@@ -277,7 +275,7 @@ export const InstanceSetupForm: FC = (props) => {
           </div>
 
           <div className="w-full space-y-1">
-            <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="confirm_password">
+            <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
               Confirm password <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -289,7 +287,7 @@ export const InstanceSetupForm: FC = (props) => {
                 value={formData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder="Confirm password"
-                className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
+                className="w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />
@@ -328,10 +326,7 @@ export const InstanceSetupForm: FC = (props) => {
                 checked={formData.is_telemetry_enabled}
               />
             </div>
-            <label
-              className="text-sm text-onboarding-text-300 font-medium cursor-pointer"
-              htmlFor="is_telemetry_enabled"
-            >
+            <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
               Allow Plane to anonymously collect usage events.
             </label>
             <a

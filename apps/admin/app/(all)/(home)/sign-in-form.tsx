@@ -116,11 +116,11 @@ export const InstanceSignInForm: FC = () => {
       <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
       <div className="w-full space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
           Email <span className="text-red-500">*</span>
         </label>
         <Input
-          className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+          className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
           id="email"
           name="email"
           type="email"
@@ -134,12 +134,12 @@ export const InstanceSignInForm: FC = () => {
       </div>
 
       <div className="w-full space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="password">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
           Password <span className="text-red-500">*</span>
         </label>
         <div className="relative">
           <Input
-            className="w-full border border-onboarding-border-100 !bg-onboarding-background-200 placeholder:text-onboarding-text-400"
+            className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
