@@ -99,6 +99,8 @@ export const WorkspaceCreateStep: React.FC<Props> = observer(
                 });
               });
           } else setSlugError(true);
+
+
         })
         .catch(() =>
           setToast({

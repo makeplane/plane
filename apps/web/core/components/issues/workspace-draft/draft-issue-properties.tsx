@@ -161,7 +161,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
 
       <IssuePropertyLabels
         projectId={issue?.project_id || null}
-        value={issue?.label_ids || null}
+        value={issue?.label_ids || []}
         defaultOptions={defaultLabelOptions}
         onChange={handleLabel}
         renderByDefault={isMobile}

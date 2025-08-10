@@ -1,0 +1,305 @@
+name: Appliance Build Docker EE
+
+on:
+  workflow_dispatch:
+    inputs:
+      ami_prefix:
+        description: 'AMI Prefix'
+        required: true
+        default: 'plane-commercial'
+      prime_host:
+        description: 'Prime Host'
+        required: true
+        default: 'https://prime.plane.so'
+      ami_publish_region:
+        description: 'AMI Publish Regions (comma separated)'
+        type: string
+        required: true
+        default: 'us-east-1'
+      mark_manifest_latest:
+        description: 'Mark manifest as latest'
+        type: boolean
+        required: false
+        default: false
+
+env:
+  # Inputs
+  AMI_PREFIX: ${{ inputs.ami_prefix || 'plane-commercial' }}
+  PRIME_HOST: ${{ inputs.prime_host || 'https://prime.plane.so' }}
+  AMI_PUBLISH_REGION: ${{ inputs.ami_publish_region || 'us-east-1' }}
+  # Inputs by Devops
+  AWS_MANIFEST_BUCKET: 'plane-terraform-marketplace'
+  AWS_VPC_CIDR: '10.34.0.0/16'
+  AWS_SUBNET_CIDR: '10.34.1.0/24'
+  AWS_VPC_REGION: 'us-east-1'
+  AWS_BASE_IMAGE_OWNER: '099720109477'
+  # Secrets
+  AWS_ACCESS_KEY: ${{ secrets.MARKETPLACE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_KEY: ${{ secrets.MARKETPLACE_AWS_SECRET_ACCESS_KEY }}
+  # Constants
+  CURRENT_MANIFEST_FILE: 'ee-docker-aws-ami-manifest.json'
+  EE_PACKER_FILE: 'ee-docker-aws-ami.pkr.hcl'
+  CF_TEMPLATE_FILE: deployments/ami/commercial/ee-cloudformation-template.yaml
+  CF_OUTPUT_FILE: deployments/ami/commercial/plane-commercial-cloudformation.yaml
+  MARK_MANIFEST_LATEST: ${{ inputs.mark_manifest_latest || false }}
+
+jobs:
+
+  build_aws_appliance_ee:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_VPC_REGION }}
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: latest
+      - name: Copy Upload Assets
+        run: |
+          mkdir -p plane-dist
+          cp deployments/ami/commercial/cloudinit-ee/* plane-dist/
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
+
+      - name: Run `packer validate`
+        id: validate
+        run: "packer validate ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}"
+
+      - name: Make Variables File
+        id: make_variables_file
+        run: |
+          touch variables.pkrvars.hcl
+          echo "aws_region = \"${AWS_VPC_REGION}\"" >> variables.pkrvars.hcl
+          echo "ami_name_prefix = \"${AMI_PREFIX}\"" >> variables.pkrvars.hcl
+          echo "vpc_cidr = \"${AWS_VPC_CIDR}\"" >> variables.pkrvars.hcl
+          echo "subnet_cidr = \"${AWS_SUBNET_CIDR}\"" >> variables.pkrvars.hcl
+          echo "base_image_owner = \"${AWS_BASE_IMAGE_OWNER}\"" >> variables.pkrvars.hcl
+          echo "prime_host = \"${PRIME_HOST}\"" >> variables.pkrvars.hcl
+          echo "instance_type = \"t3a.xlarge\"" >> variables.pkrvars.hcl
+          echo "manifest_file_name = \"${{ env.CURRENT_MANIFEST_FILE }}\"" >> variables.pkrvars.hcl
+
+          # split AMI_PUBLISH_REGION by comma and add to ami_regions
+          ami_regions=$(echo "${AMI_PUBLISH_REGION}" | sed 's/[[:space:]]*,[[:space:]]*/\n/g' | jq -R . | jq -s -c .)
+          echo "ami_regions = ${ami_regions}" >> variables.pkrvars.hcl
+
+          cat variables.pkrvars.hcl
+
+      - name: Run `packer build`
+        id: build
+        run: |
+          packer build \
+            -var "aws_access_key=${{ env.AWS_ACCESS_KEY }}" \
+            -var "aws_secret_key=${{ env.AWS_SECRET_KEY }}" \
+            -var-file=variables.pkrvars.hcl \
+            ./deployments/ami/commercial/${{ env.EE_PACKER_FILE }}
+
+      - name: Extract AMI Information and Create Summary
+        id: ami_info
+        run: |
+          # Extract AMI details from manifest
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ${{env.CURRENT_MANIFEST_FILE}})
+          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Create array of AMI information
+          declare -a AMI_INFO
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            AMI_INFO+=("$REGION:$AMI_ID")
+          done
+          
+          # Add git information to manifest
+          jq --arg branch "${{ github.ref_name }}" \
+             --arg commit "${{ github.sha }}" \
+             --arg build_time "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+             '.builds[-1].custom_data += {git_branch: $branch, git_commit: $commit, build_timestamp: $build_time}' \
+             ${{env.CURRENT_MANIFEST_FILE}} > temp-manifest.json
+          mv temp-manifest.json ${{env.CURRENT_MANIFEST_FILE}}
+
+      - name: Store Manifest in S3
+        run: |
+          # Also store a versioned copy
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} "s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json"
+
+      - name: Store Manifest in S3 as latest
+        if: ${{ env.MARK_MANIFEST_LATEST == 'true' }}
+        run: |
+          # Store the current manifest as latest
+          aws s3 cp ${{env.CURRENT_MANIFEST_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json || true
+
+      - name: Upload Build Manifest as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ee-docker-aws-ami-manifest
+          path: ${{env.CURRENT_MANIFEST_FILE}}
+          retention-days: 30
+
+      - name: Tag AMIs
+        run: |
+          # Extract AMI string again
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Process and tag each AMI in its respective region
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            
+            echo "Tagging AMI ${AMI_ID} in region ${REGION}"
+            aws ec2 create-tags \
+              --region "$REGION" \
+              --resources "$AMI_ID" \
+              --tags \
+                Key=GitBranch,Value=${{ github.ref_name }} \
+                Key=GitCommit,Value=${{ github.sha }} \
+                Key=BuildTime,Value=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          done
+
+      - name: Update CloudFormation Template
+        run: |
+          # Install yq if not present
+          if ! command -v yq &> /dev/null; then
+            echo "Installing yq..."
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+            sudo chmod +x /usr/local/bin/yq
+          fi
+
+          if ! command -v jq &> /dev/null; then
+              echo "Error: jq is required but not installed. Please install jq to continue."
+              exit 1
+          fi
+
+          ARTIFACT_ID=$(jq -r '.builds[0].artifact_id' "${{ env.CURRENT_MANIFEST_FILE }}")
+
+          if [[ "$ARTIFACT_ID" == "null" || -z "$ARTIFACT_ID" ]]; then
+              echo "Error: Could not extract artifact_id from manifest file"
+              exit 1
+          fi
+
+          echo "Found artifact_id: $ARTIFACT_ID"
+
+          REGIONS=()
+          AMIS=()
+
+          # Split by comma and process each region:ami pair
+          IFS=',' read -ra PAIRS <<< "$ARTIFACT_ID"
+          for pair in "${PAIRS[@]}"; do
+              # Trim whitespace
+              pair=$(echo "$pair" | xargs)
+              
+              # Split by colon to get region and ami
+              IFS=':' read -ra REGION_AMI <<< "$pair"
+              if [[ ${#REGION_AMI[@]} -eq 2 ]]; then
+                  region="${REGION_AMI[0]}"
+                  ami="${REGION_AMI[1]}"
+                  REGIONS+=("$region")
+                  AMIS+=("$ami")
+                  echo "  $region -> $ami"
+              fi
+          done
+
+          # Check if we found any AMI mappings
+          if [[ ${#REGIONS[@]} -eq 0 ]]; then
+              echo "Error: No valid region:ami pairs found in artifact_id"
+              exit 1
+          fi
+
+          # Copy the original template to output file
+          cp "${{ env.CF_TEMPLATE_FILE }}" "${{ env.CF_OUTPUT_FILE }}"
+
+          echo "Regions: ${REGIONS[@]}"
+          echo "AMIs: ${AMIS[@]}"
+
+          echo "Updating AMI IDs in template..."
+
+          REGION_RESTRICTIONS=()
+          # Update AMI IDs for each region found in the manifest
+          REGIONS_STRING=""
+          for i in "${!REGIONS[@]}"; do
+              region="${REGIONS[$i]}"
+              ami_id="${AMIS[$i]}"
+              echo "  Updating $region with AMI: $ami_id"
+              REGIONS_STRING+="${region}, "
+              yq eval ".Parameters.AMIId.Default = \"${ami_id}\"" -i "${{ env.CF_OUTPUT_FILE }}"
+          done
+
+          cat "${{ env.CF_OUTPUT_FILE }}"
+
+          echo "Updated template saved as: ${{ env.CF_OUTPUT_FILE }}"  
+
+      - name: Store CloudFormation Template in S3
+        run: |
+          # Store the current manifest as latest
+          aws s3 cp ${{env.CF_OUTPUT_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-latest.yaml
+
+          date_string=$(date +%d%b%Y)
+          aws s3 cp ${{env.CF_OUTPUT_FILE}} s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-${date_string}.yaml
+
+      - name: Upload Updated CloudFormation Template
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudformation-template
+          path: ${{ env.CF_OUTPUT_FILE }}
+          retention-days: 30
+
+      - name: Print Build Summary
+        id: print_build_summary
+        run: |
+          # Extract AMI details from manifest
+          AMI_STRING=$(jq -r '.builds[-1].artifact_id' ${{env.CURRENT_MANIFEST_FILE}})
+          AMI_NAME=$(jq -r '.builds[-1].custom_data.ami_name' ${{env.CURRENT_MANIFEST_FILE}})
+          BUILD_TIME=$(jq -r '.builds[-1].custom_data.build_time' ${{env.CURRENT_MANIFEST_FILE}})
+          
+          # Create array of AMI information
+          declare -a AMI_INFO
+          IFS=',' read -ra AMI_ARRAY <<< "$AMI_STRING"
+          for ami in "${AMI_ARRAY[@]}"; do
+            REGION=$(echo "$ami" | cut -d ":" -f1)
+            AMI_ID=$(echo "$ami" | cut -d ":" -f2)
+            AMI_INFO+=("$REGION:$AMI_ID")
+          done
+          
+          # Create build summary with all AMIs
+          {
+            echo "### 🌎 Regional AMI Distribution"
+            echo "| Region | AMI ID |"
+            echo "| --- | --- |"
+            for ami_info in "${AMI_INFO[@]}"; do
+              region=${ami_info%:*}
+              ami_id=${ami_info#*:}
+              echo "| \`${region}\` | \`${ami_id}\` |"
+            done
+          } >> $GITHUB_STEP_SUMMARY
+
+          date_string=$(date +%d%b%Y)
+          {
+            echo "### 📁 S3 Files"
+            echo "| File | Path | "
+            echo "| --- | --- |"
+            echo "| Latest CF Template | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-latest.yaml\` |"
+            echo "| CF Template | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/cloudformation/plane-commercial-cloudformation-${date_string}.yaml\` |"
+            echo "| Current Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-${{ github.sha }}.json\` |"
+            echo "| Latest Manifest | \`s3://${{ env.AWS_MANIFEST_BUCKET }}/plane-commercial/ami/manifests/plane-commercial-manifest-latest.json\` |"
+          } >> $GITHUB_STEP_SUMMARY
+          
+          # Console output for logs
+          echo "✅ AMI built successfully!"
+          echo "🔹 AMI Information:"
+          for ami_info in "${AMI_INFO[@]}"; do
+            region=${ami_info%:*}
+            ami_id=${ami_info#*:}
+            echo "   • Region: ${region}, AMI ID: ${ami_id}"
+          done

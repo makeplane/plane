@@ -6,9 +6,12 @@ Django==4.2.22
 djangorestframework==3.15.2
 # postgres
 psycopg==3.1.18
-psycopg-binary==3.1.18
+psycopg-binary==3.2.3
 psycopg-c==3.1.18
 dj-database-url==2.1.0
+psycopg-pool==3.2.6
+# mongo
+pymongo==4.6.3
 # redis
 redis==5.0.4
 django-redis==5.4.0
@@ -38,8 +41,6 @@ channels==4.1.0
 openai==1.63.2
 # slack
 slack-sdk==3.27.1
-# apm
-scout-apm==3.1.0
 # xlsx generation
 openpyxl==3.1.2
 # logging
@@ -50,8 +51,10 @@ beautifulsoup4==4.12.3
 posthog==3.5.0
 # crypto
 cryptography==44.0.1
+pycryptodome==3.22.0
 # html validator
-lxml==5.2.1
+lxml==5.4.0
+xmlsec==1.3.15
 # s3
 boto3==1.34.96
 # password validator
@@ -65,5 +68,37 @@ opentelemetry-api==1.28.1
 opentelemetry-sdk==1.28.1
 opentelemetry-instrumentation-django==0.49b1
 opentelemetry-exporter-otlp==1.28.1
+# SAML
+python3-saml==1.16.0
+# feature flag
+openfeature-sdk==0.7.0
+# graphql
+strawberry-graphql-django==0.48.0
+# django rest framework jwt
+djangorestframework-simplejwt==5.4.0
+# firebase admin
+firebase-admin==6.6.0
+# oauth toolkit
+django-oauth-toolkit==3.0.1
+
+# types
+pydantic==2.10.6
+
+# rate limiting
+django-ratelimit==4.1.0
+
 # OpenAPI Specification
 drf-spectacular==0.28.0
+
+# OpenSearch Integration
+opensearch-py==2.8.0
+django-opensearch-dsl==0.7.0
+
+# pika for rabbitmq
+pika==1.3.2
+
+# psutil for monitoring
+psutil==7.0.0
+
+# pgtriggers
+django-pgtrigger==4.15.3

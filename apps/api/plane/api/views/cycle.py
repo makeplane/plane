@@ -51,6 +51,9 @@ from plane.utils.analytics_plot import burndown_plot
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
+from plane.ee.bgtasks.entity_issue_state_progress_task import (
+    entity_issue_state_activity_task,
+)
 from plane.utils.openapi.decorators import cycle_docs
 from plane.utils.openapi import (
     CURSOR_PARAMETER,
@@ -341,6 +344,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                         status=status.HTTP_409_CONFLICT,
                     )
                 serializer.save(project_id=project_id, owned_by=request.user)
+
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -962,17 +966,41 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        # Get all CycleWorkItems already created
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
+            return Response(
+                {
+                    "error": "The Cycle has already been completed so no new issues can be added"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get all CycleIssues already created
         cycle_issues = list(
             CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
         )
-
-        existing_issues = [
-            str(cycle_issue.issue_id)
-            for cycle_issue in cycle_issues
-            if str(cycle_issue.issue_id) in issues
-        ]
+        existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
+
+        issue_cycle_data_added = [
+            {
+                "issue_id": str(issue_id),
+                "cycle_id": str(cycle_id),
+            }
+            for issue_id in issues
+        ]
+
+        issues_removed = CycleIssue.objects.filter(
+            issue_id__in=existing_issues,
+            workspace__slug=slug,
+        ).values("issue_id", "cycle_id")
+
+        issue_cycle_data_removed = [
+            {
+                "issue_id": str(issue["issue_id"]),
+                "cycle_id": str(issue["cycle_id"]),
+            }
+            for issue in issues_removed
+        ]
 
         # New issues to create
         created_records = CycleIssue.objects.bulk_create(
@@ -980,6 +1008,8 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                 CycleIssue(
                     project_id=project_id,
                     workspace_id=cycle.workspace_id,
+                    created_by_id=request.user.id,
+                    updated_by_id=request.user.id,
                     cycle_id=cycle_id,
                     issue_id=issue,
                 )
@@ -1010,6 +1040,22 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
 
         # Update the cycle issues
         CycleIssue.objects.bulk_update(updated_records, ["cycle_id"], batch_size=100)
+
+        # For REMOVED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=issue_cycle_data_removed,
+            user_id=str(request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
+
+        # For ADDED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=issue_cycle_data_added,
+            user_id=str(request.user.id),
+            slug=slug,
+            action="ADDED",
+        )
 
         # Capture Issue Activity
         issue_activity.delay(
@@ -1139,6 +1185,18 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
+        )
+        # Trigger the entity issue state activity task
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(issue_id),
+                    "cycle_id": str(cycle_id),
+                }
+            ],
+            user_id=str(self.request.user.id),
+            slug=slug,
+            action="REMOVED",
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -1599,6 +1657,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
             issue__state__group__in=["backlog", "unstarted", "started"],
+            issue__deleted_at__isnull=True,
         )
 
         updated_cycles = []
@@ -1618,6 +1677,39 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             updated_cycles, ["cycle_id"], batch_size=100
         )
 
+        # EE code
+        # Extract issue IDs from cycle_issues
+        issue_ids = [ci.issue_id for ci in updated_cycles]
+
+        # Trigger Celery task for REMOVED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(issue_id),
+                    "cycle_id": str(cycle_id),
+                }
+                for issue_id in issue_ids
+            ],
+            user_id=str(request.user.id),
+            slug=slug,
+            action="REMOVED",
+        )
+
+        # Trigger Celery task for ADDED
+        entity_issue_state_activity_task.delay(
+            issue_cycle_data=[
+                {
+                    "issue_id": str(issue_id),
+                    "cycle_id": str(new_cycle_id),
+                }
+                for issue_id in issue_ids
+            ],
+            user_id=str(request.user.id),
+            slug=slug,
+            action="ADDED",
+        )
+
+        # EE code end here
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
